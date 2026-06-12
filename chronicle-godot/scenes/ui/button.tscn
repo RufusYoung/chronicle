@@ -1,0 +1,89 @@
+[gd_scene load_steps=2 format=3 uid="uid://ftbvlv2s2krk"]
+
+[ext_resource type="FontFile" uid="uid://p0c7nu1f53no" path="res://assets/fonts/SourceHanSerifSC-VF.ttf" id="1_sugp2"]
+
+[node name="Journey" type="Control"]
+show_behind_parent = true
+layout_mode = 3
+anchor_left = 0.00021875006
+anchor_right = 1.9992187
+anchor_bottom = 1.9972222
+offset_left = -0.2800001
+offset_right = -1279.0
+offset_bottom = -720.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+modulate = Color(0.87058824, 0.87058824, 0, 1)
+top_level = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 644.0
+offset_bottom = -4.0
+theme_override_constants/separation = 206
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 642.0
+offset_right = 271.0
+offset_bottom = 710.0
+theme_override_fonts/font = ExtResource("1_sugp2")
+theme_override_font_sizes/font_size = 41
+text = "地图"
+
+[node name="Button2" type="Button" parent="."]
+layout_mode = 0
+offset_left = 431.0
+offset_top = 642.0
+offset_right = 521.0
+offset_bottom = 710.0
+theme_override_fonts/font = ExtResource("1_sugp2")
+theme_override_font_sizes/font_size = 41
+text = "日志
+"
+metadata/_edit_use_anchors_ = true
+
+[node name="Button3" type="Button" parent="."]
+layout_mode = 0
+offset_left = 631.0
+offset_top = 642.0
+offset_right = 721.0
+offset_bottom = 710.0
+theme_override_fonts/font = ExtResource("1_sugp2")
+theme_override_font_sizes/font_size = 41
+text = "成长"
+metadata/_edit_use_anchors_ = true
+
+[node name="Button4" type="Button" parent="."]
+layout_mode = 0
+offset_left = 831.0
+offset_top = 642.0
+offset_right = 921.0
+offset_bottom = 710.0
+theme_override_fonts/font = ExtResource("1_sugp2")
+theme_override_font_sizes/font_size = 41
+text = "背包"
+metadata/_edit_use_anchors_ = true
+
+[node name="Button5" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.994
+offset_left = 1031.0
+offset_top = 642.0
+offset_right = -159.0
+offset_bottom = -3.6920166
+theme_override_fonts/font = ExtResource("1_sugp2")
+theme_override_font_sizes/font_size = 41
+text = "选择
+"
+metadata/_edit_use_anchors_ = true

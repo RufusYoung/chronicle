@@ -1,0 +1,56 @@
+{
+  "id": "zone_forest_dying_light",
+  "name": "光灭森林",
+  "alias": "Forest of Dying Light",
+  "biome": "sacred_forest",
+  "description": "无数‘光莹’栖息于此，群体同步明灭，整座森林像在缓慢呼吸。这里是林精举行光明仪式的圣地。",
+  "factions": [{"id":"elf_court","name":"镜湖林精议会","influence":90,"stance":"sacred"}],
+  "traits": [
+    {"id":"trait_photon_pulse","name":"光脉同调","effect":"夜间视野+1；对‘光’敏感生物易聚集","tags":["light","ritual"]},
+    {"id":"trait_insect_shroud","name":"虫幕","effect":"火种消耗+1；烟雾可驱散风险-1","tags":["swarm","risk_mod"]}
+  ],
+  "travel": {"base_days": 1.5, "mod":[{"tag":"night","days":"-0.2"}]},
+  "pools": {
+    "weather": [
+      {"ref":"common:weather:clear_night"},
+      {"ref":"common:weather:calm"},
+      {"id":"wx_lumen_breath","name":"光息","weight":5,"tags":["glow","calm"],"text":"光莹潮起潮落，光在叶脉间流动。"}
+    ],
+    "sublocations": [
+      {"id":"sub_lumen_grove","name":"光莹林坛","weight":7,"tags":["ritual","sacred"]},
+      {"id":"sub_cicada_spire","name":"鸣翅尖塔","weight":4,"tags":["insect","sound"]},
+      {"id":"sub_dark_fold","name":"暗褶岔口","weight":3,"tags":["hazard","ambush"]}
+    ],
+    "micro_locations": [
+      {"id":"micro_lumen_nest","name":"光莹巢团","weight":5,"tags":["harvest","glow"]},
+      {"id":"micro_scorched_mark","name":"灼痕地缝","weight":2,"tags":["omen","relic"]}
+    ],
+    "flora": [
+      {"id":"flora_lumen_herb","name":"光息草","weight":5,"tags":["glow","alchemy"],"gather":{"dc":11,"yields":[{"id":"lumen_dust","q":[1,2]}]}},
+      {"id":"flora_sweet_bark","name":"甘光树皮","weight":3,"tags":["food","trade"],"gather":{"dc":9,"yields":[{"id":"sweet_bark","q":[1,2]}]}}
+    ],
+    "fauna": [
+      {"id":"cre_lumen_moth","name":"光莹蛾群","weight":6,"tags":["swarm","glow"],"danger":1},
+      {"id":"cre_sun_deer","name":"日纹鹿","weight":2,"tags":["beast","sacred"],"danger":2}
+    ]
+  },
+  "encounters": [
+    {"id":"enc_ritual_warden","name":"仪式守卫","weight":5,"tags":["npc","elf","guard"],
+     "text_templates":["她点燃一束香草：‘步伐随光。’"]},
+    {"id":"enc_lumen_keeper","name":"光莹看护者","weight":4,"tags":["npc","elf","healer"],
+     "text_templates":["他端起木碗，光莹在碗沿落下像金粉。"]}
+  ],
+  "events": [
+    {"id":"ev_breathing_forest","name":"森林呼吸","weight":6,"tags":["glow","awe"],
+     "text_templates":["所有光同时一灭一亮，你恍惚看见树的心跳。","你的影子被抻长又回缩，像被世界轻轻呼出吞回。"]},
+    {"id":"ev_moth_swarm","name":"蛾群环舞","weight":4,"tags":["insect","hazard"],
+     "text_templates":["微光成涌，你被迫遮住火种以免招来更多。"]}
+  ],
+  "loot_tables": [
+    {"id":"loot_lumen","name":"光灭采撷","entries":[
+      {"id":"lumen_dust","weight":6,"q":[1,3]},
+      {"id":"sweet_bark","weight":4,"q":[1,2]},
+      {"id":"herb_rare","weight":2,"q":[1,1]}
+    ]}
+  ]
+}

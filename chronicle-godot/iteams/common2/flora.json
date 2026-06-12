@@ -1,0 +1,167 @@
+{
+  "moss_glow": {
+	"id": "moss_glow",
+	"name": "荧苔",
+	"tags": ["forest","biolum"],
+	"weight": 10,
+	"effects": {"forage":"+1"},
+	"text_templates": [
+	  "一片会微微发蓝光的苔衣伏在树根，像星尘落地。",
+      "指尖轻触，荧光顺着纹理慢慢流动。"
+	]
+  },
+  "fern_whisper": {
+	"id": "fern_whisper",
+	"name": "低语蕨",
+	"tags": ["forest","sound"],
+	"weight": 9,
+	"effects": {"omen":"+1"},
+	"text_templates": [
+	  "蕨叶彼此摩挲，发出像语言的沙沙声。",
+      "风过处，蕨影像手语般起伏。"
+	]
+  },
+  "crown_shroom": {
+	"id": "crown_shroom",
+	"name": "冠冕菇",
+	"tags": ["fungi","food"],
+	"weight": 8,
+	"effects": {"food":"+1"},
+	"text_templates": [
+	  "褶边像小小王冠的蘑菇簇拥在朽木上。",
+      "你掀开枯叶，几枚冠冕菇露出赤金色的盖。"
+	]
+  },
+  "silk_vine": {
+	"id": "silk_vine",
+	"name": "绢丝藤",
+	"tags": ["fiber","craft"],
+	"weight": 7,
+	"effects": {"craft":"+1"},
+	"text_templates": [
+	  "一种能抽丝的藤蔓缠满树干，表面细腻如绢。",
+      "你割下一段藤，拉扯时竟能抽出柔韧的丝线。"
+	]
+  },
+  "amber_berry": {
+	"id": "amber_berry",
+	"name": "琥珀莓",
+	"tags": ["food","forest"],
+	"weight": 8,
+	"effects": {"food":"+2","sanity":"+1"},
+	"text_templates": [
+	  "一串半透明的浆果在光里呈现蜜色。",
+      "汁液甘甜，像被阳光温过的糖。"
+	]
+  },
+  "mirror_reed": {
+	"id": "mirror_reed",
+	"name": "镜芦",
+	"tags": ["lake","reagent"],
+	"weight": 6,
+	"effects": {"alchemy":"+1"},
+	"text_templates": [
+	  "湖畔的芦苇像镜面一样折射出月光。",
+      "折下一截，切面平整，能映出你的眼睛。"
+	]
+  },
+  "owl_bloom": {
+	"id": "owl_bloom",
+	"name": "枭花",
+	"tags": ["night","scent"],
+	"weight": 5,
+	"effects": {"stealth":"+1"},
+	"text_templates": [
+	  "夜里才开的白花，花蕊像极了鹰枭的眼。",
+      "淡香顺着黑暗扩散，驱散了虫鸣。"
+	]
+  },
+  "ash_thorn": {
+	"id": "ash_thorn",
+	"name": "灰刺",
+	"tags": ["thorn","hazard"],
+	"weight": 7,
+	"effects": {"injury":"+1"},
+	"text_templates": [
+	  "一丛灰白色的荆棘密布路口，尖端有微量麻毒。",
+      "你的披风被刺住，发出不情愿的撕扯声。"
+	]
+  },
+  "echo_bark": {
+	"id": "echo_bark",
+	"name": "回声树皮",
+	"tags": ["lore","craft"],
+	"weight": 6,
+	"effects": {"lore":"+1"},
+	"text_templates": [
+	  "树皮能轻轻回弹触碰的声音，像记住了你的指纹。",
+      "有人用它做鼓，能敲出远古的节律。"
+	]
+  },
+  "moon_spore": {
+	"id": "moon_spore",
+	"name": "月孢",
+	"tags": ["fungi","mystic"],
+	"weight": 4,
+	"effects": {"sanity":"+1","omen":"+1"},
+	"text_templates": [
+	  "粉末在月光下浮起银色的辉尘。",
+      "你打个喷嚏，短暂地想起一段陌生的记忆。"
+	]
+  },
+  "root_spring": {
+	"id": "root_spring",
+	"name": "根泉草",
+	"tags": ["medic","water"],
+	"weight": 6,
+	"effects": {"heal":"+1"},
+	"text_templates": [
+	  "从树根缝里渗出的水被一团青绿草丝包着。",
+      "轻轻挤压，几滴澄澈的露水落在指尖。"
+	]
+  },
+  "glass_leaf": {
+	"id": "glass_leaf",
+	"name": "玻叶",
+	"tags": ["sharp","craft"],
+	"weight": 5,
+	"effects": {"tool":"+1"},
+	"text_templates": [
+	  "叶片薄得像玻璃，边缘光洁，能割开粗藤。",
+      "折下时发出清脆的响声。"
+	]
+  },
+  "star_lichen": {
+	"id": "star_lichen",
+	"name": "星苔",
+	"tags": ["biolum","omen"],
+	"weight": 3,
+	"effects": {"luck":"+1"},
+	"text_templates": [
+	  "点点冷光在岩面汇成一个星座。",
+      "据说辨认出它们的图样能带来好运。"
+	]
+  },
+  "wolfmint": {
+	"id": "wolfmint",
+	"name": "狼薄荷",
+	"tags": ["scent","repel"],
+	"weight": 6,
+	"effects": {"beast_repel":"+1"},
+	"text_templates": [
+	  "带辛凉气味的草丛让兽类不安。",
+      "你揉碎叶片，指尖留下一缕冰凉。"
+	]
+  },
+  "sunresin": {
+	"id": "sunresin",
+	"name": "日树脂",
+	"tags": ["resin","fuel"],
+	"weight": 6,
+	"effects": {"torch":"+1"},
+	"text_templates": [
+	  "树干渗出的金色树脂在光里微微发暖。",
+      "收集一些，足够让火把更耐烧。"
+	]
+  }
+}

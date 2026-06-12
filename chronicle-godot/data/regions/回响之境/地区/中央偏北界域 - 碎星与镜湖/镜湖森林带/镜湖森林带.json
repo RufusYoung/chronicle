@@ -1,0 +1,166 @@
+{
+  "id": "region_mirrorlake_belt",
+  "name": "镜湖森林带",
+
+  "tone": { "warm": 0.6, "peril": 0.4 },
+
+  "bias": {
+    "time_of_day": { "day": 1.0, "night": 0.85, "dawn": 0.95, "dusk": 0.95 },
+    "season":      { "spring": 1.0, "summer": 1.0, "autumn": 0.9, "winter": 0.8 }
+  },
+
+  "narrative_snippets": [
+    "林冠层缓慢起伏，薄雾沿树干下泻，像被拧开的白线。",
+    "潮湿腐殖的气味里混着一丝铁腥，似看不见的旧伤。",
+    "风过树巢，枝叶上挂着细白的雾盐，磷光在苔藓间潜伏。",
+    "你停下脚步，树皮下传来若有若无的回声，仿佛有人低语。",
+    "苔面被踩得发亮，远处水鸟的影子在树影间闪烁。",
+    "路径像被温柔地整理过，泥痕却在暗处辗转。"
+  ],
+
+  "local_rules": {
+    "default_travel_cost_mult": 1.0,
+    "foraging_bonus": 0.1,
+    "night_event_risk_mult": 1.1
+  },
+
+  "pools": {
+    "weather": [
+      { "id": "ml_clear",     "weight": 3, "ref": "common:weather:clear" },
+      { "id": "ml_overcast",  "weight": 4, "ref": "common:weather:overcast" },
+      { "id": "ml_mist",      "weight": 6, "ref": "common:weather:mist" }
+    ],
+
+    "flora": [
+      { "id": "fern_glass",     "weight": 1.0, "ref": "common:flora:fern_glass" },
+      { "id": "moss_phosphor",  "weight": 0.8, "ref": "common:flora:moss_phosphor" }
+    ],
+
+    "creatures": [
+      { "id": "heron_gray",   "weight": 0.8, "ref": "common:creatures:heron_gray" },
+      { "id": "fox_rust",     "weight": 0.5, "ref": "common:creatures:fox_rust" }
+    ],
+
+    "hazards": [
+      { "id": "bog_soft",     "weight": 0.7, "ref": "common:hazards:bog_soft" },
+      { "id": "thorn_brush",  "weight": 0.6, "ref": "common:hazards:thorn_brush" }
+    ],
+
+    "events": [
+      {
+        "weight": 1.0,
+        "event": {
+          "id": "ev.mirrorlake.starter.fog",
+          "name": "雾起林带",
+          "starter": true,
+          "text_templates": [
+            "你在林带的一道树影下停住，薄雾把远处的声音揉碎。前方更深处，比夜还安静。"
+          ],
+          "effects": [
+            { "op": "chronicle_push", "text": "你抵达镜湖森林带的边缘。" },
+            { "op": "flag_set", "id": "in_mirrorlake" },
+            { "op": "counter_add", "k": "belt_steps", "inc": 1 }
+          ],
+          "next": [
+            { "id": "ev.mirrorlake.find.trail", "weight": 1.0 }
+          ]
+        }
+      },
+
+      {
+        "weight": 0.9,
+        "event": {
+          "id": "ev.mirrorlake.find.trail",
+          "name": "旧径的记号",
+          "text_templates": [
+            "树干上有褪色的刻痕，像某种离开的方向。你顺手摸了一下，灰白的苔落在指尖。"
+          ],
+          "effects": [
+            { "op": "flag_set", "id": "trail_seen" },
+            { "op": "counter_add", "k": "belt_steps", "inc": 1 }
+          ],
+          "choices": [
+            {
+              "id": "follow",
+              "text": "沿着刻痕前行",
+              "effects": [
+                { "op": "counter_add", "k": "trail_follow", "inc": 1 }
+              ]
+            },
+            {
+              "id": "stay",
+              "text": "在原地观察更久",
+              "effects": [
+                { "op": "counter_add", "k": "careful_mood", "inc": 1 }
+              ]
+            }
+          ],
+          "next": [
+            { "id": "ev.mirrorlake.clearing",  "weight": 0.7 },
+            { "id": "ev.mirrorlake.edge.to.silence", "weight": 0.6 }
+          ]
+        }
+      },
+
+      {
+        "weight": 0.7,
+        "event": {
+          "id": "ev.mirrorlake.clearing",
+          "name": "心语空地",
+          "pre": [
+            { "counter_gte": { "k": "belt_steps", "v": 2 } }
+          ],
+          "text_templates": [
+            "空地像被人打扫过，风把叶影抹平。你在边缘处停住，听见很轻的水声。"
+          ],
+          "effects": [
+            { "op": "chronicle_push", "text": "你在镜湖森林带记下一处空地。" }
+          ],
+          "choices": [
+            {
+              "id": "rest",
+              "text": "短休（-疲惫 +轻寒）",
+              "effects": [
+                { "op": "meter_add", "k": "fatigue", "inc": -8, "min": 0 },
+                { "op": "meter_add", "k": "cold", "inc": 2, "max": 100 }
+              ]
+            }
+          ],
+          "next": [
+            { "id": "ev.mirrorlake.find.trail", "weight": 0.8 }
+          ]
+        }
+      },
+
+      {
+        "weight": 0.6,
+        "event": {
+          "id": "ev.mirrorlake.edge.to.silence",
+          "name": "通往沉默的路",
+          "text_templates": [
+            "树影忽然稀薄，像是通往另一片更深的林地。你在那片阴影前犹豫。"
+          ],
+          "choices": [
+            {
+              "id": "go",
+              "text": "迈过去（进入沉默森林）",
+              "effects": [
+                { "op": "travel_to_region", "to": "region.silence.forest", "hours": 2 }
+              ]
+            },
+            {
+              "id": "back",
+              "text": "收回脚步，先做记录",
+              "effects": [
+                { "op": "chronicle_push", "text": "你在镜湖林带的阴影前止步。" }
+              ]
+            }
+          ],
+          "next": [
+            { "id": "ev.mirrorlake.clearing", "weight": 0.6 }
+          ]
+        }
+      }
+    ]
+  }
+}

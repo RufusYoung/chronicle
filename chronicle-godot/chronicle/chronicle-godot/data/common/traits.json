@@ -1,0 +1,42 @@
+{
+  "keen_sense": {
+	"id": "keen_sense",
+	"name": "敏锐感知",
+	"tags": ["explore","passive"],
+	"weight": 10,
+	"effects": {"perception":"+2","trap_detect":"+10"},
+	"text_templates": ["你对风吹草动异常敏感。"]
+  },
+  "iron_will": {
+	"id": "iron_will",
+	"name": "钢铁意志",
+	"tags": ["sanity","passive"],
+	"weight": 8,
+	"effects": {"sanity_resist":"+2"},
+	"text_templates": ["你的心智像岩石。"]
+  },
+  "foragers_instinct": {
+	"id": "foragers_instinct",
+	"name": "采集直觉",
+	"tags": ["gather","passive"],
+	"weight": 9,
+	"effects": {"forage_bonus":"+15"},
+	"text_templates": ["你总能在不起眼处找到收获。"]
+  },
+  "night_eyes": {
+	"id": "night_eyes",
+	"name": "夜眼",
+	"tags": ["night","rare"],
+	"weight": 4,
+	"effects": {"night_vision":"+2"},
+	"text_templates": ["黑暗对你更友好一些。"]
+  },
+  "echo_attuned": {
+	"id": "echo_attuned",
+	"name": "回声调谐",
+	"tags": ["mystic","rare"],
+	"weight": 2,
+	"effects": {"echo_magic":"+1","event_shift":"+1"},
+	"text_templates": ["你能在回声里听见别人的意思。"]
+  }
+}

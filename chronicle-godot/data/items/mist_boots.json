@@ -1,0 +1,8 @@
+{
+  "id":"mist_boots",
+  "name":"雾步靴",
+  "slot":"boots",
+  "combat_affixes":[{"type":"evasion_pct","value":5}],
+  "explore_affixes":[{"type":"travel_time_pct","value":-10}],
+  "scaling":{"formula":"(敏捷+感知)/25","cap":0.5}
+}

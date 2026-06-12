@@ -1,0 +1,21 @@
+{
+  "foraging_forest": {
+	"id": "foraging_forest",
+	"name": "林地采集掉落",
+	"entries": [
+	  { "ref": "common:resources:berry_amber",      "weight": 10, "q": [1,2] },
+	  { "ref": "common:resources:resin_sun",        "weight": 6,  "q": [1,1] },
+	  { "ref": "common:resources:fiber_silk_vine",  "weight": 8,  "q": [1,2] },
+	  { "ref": "common:resources:herb_root_spring", "weight": 5,  "q": [1,1] }
+	]
+  },
+  "beast_basic": {
+	"id": "beast_basic",
+	"name": "野兽基础掉落",
+	"entries": [
+	  { "ref": "common:misc:pelt",   "weight": 8, "q": [1,1] },
+	  { "ref": "common:misc:meat",   "weight": 6, "q": [1,2] },
+	  { "ref": "common:misc:bone",   "weight": 5, "q": [1,2] }
+	]
+  }
+}

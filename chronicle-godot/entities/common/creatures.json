@@ -1,0 +1,134 @@
+{
+  "boar": {
+    "id": "boar",
+    "name": "野猪",
+    "tags": ["beast","forage","temper:aggressive"],
+    "weight": 9,
+    "description": "拱翻落叶寻找根茎，受惊会正面冲撞。",
+    "text_templates": [
+      "一头野猪在泥里翻找，鼻息急促如小风暴。",
+      "獠牙擦过枯枝，发出干涩的响声。"
+    ]
+  },
+  "stag": {
+    "id": "stag",
+    "name": "雄鹿",
+    "tags": ["beast","omen","skittish"],
+    "weight": 7,
+    "description": "鹿角挂着苔丝，敏捷而多疑。",
+    "text_templates": [
+      "一抹影子在树干后停顿，那是雄鹿的眼睛。",
+      "鹿角掠过树皮，落下浅白的划痕。"
+    ]
+  },
+  "wolf_gray": {
+    "id": "wolf_gray",
+    "name": "灰狼",
+    "tags": ["beast","predator","pack"],
+    "weight": 6,
+    "description": "成群行动，趁虚而入。",
+    "text_templates": [
+      "远处传来一声长嚎，随后被林叶吞没。",
+      "脚印在湿土上相互覆盖，数量难以判断。"
+    ]
+  },
+  "fox_red": {
+    "id": "fox_red",
+    "name": "赤狐",
+    "tags": ["beast","cunning"],
+    "weight": 8,
+    "description": "狡黠而轻手，擅长在边界活动。",
+    "text_templates": [
+      "一只赤狐停在你的侧后，尾尖轻轻摆动。",
+      "它叼走了一颗浆果，回头看了你一眼。"
+    ]
+  },
+  "bear_brown": {
+    "id": "bear_brown",
+    "name": "棕熊",
+    "tags": ["beast","large","danger:3"],
+    "weight": 3,
+    "description": "罕见但致命，不主动招惹。",
+    "text_templates": [
+      "粗重的呼吸声隔着树干传来，地面有细微颤动。",
+      "有巨大的爪痕从树皮上一直拉到地面。"
+    ]
+  },
+  "hare": {
+    "id": "hare",
+    "name": "野兔",
+    "tags": ["beast","prey"],
+    "weight": 10,
+    "description": "常见的小型猎物。",
+    "text_templates": [
+      "一只兔子从你的脚边蹦起，几步就没了影。",
+      "草尖上还有它刚才折断的露水。"
+    ]
+  },
+  "raven": {
+    "id": "raven",
+    "name": "渡鸦",
+    "tags": ["bird","omen"],
+    "weight": 7,
+    "description": "聪明的清道夫，常在边缘观察。",
+    "text_templates": [
+      "黑色的羽毛在阳光里泛蓝，渡鸦歪着头打量你。",
+      "它低低地叫了两声，像在回应什么。"
+    ]
+  },
+  "owl": {
+    "id": "owl",
+    "name": "鸮",
+    "tags": ["bird","night"],
+    "weight": 6,
+    "description": "夜行的猎手，安静地从头顶滑过。",
+    "text_templates": [
+      "一团阴影自你上方掠过，空气被轻轻切开。",
+      "它落在枯枝上，圆眼在黑暗里更圆了一分。"
+    ]
+  },
+  "snake_viper": {
+    "id": "snake_viper",
+    "name": "蝮蛇",
+    "tags": ["reptile","venom","stealthy"],
+    "weight": 5,
+    "description": "常伏于落叶下，咬合迅捷。",
+    "text_templates": [
+      "落叶里有一簇不自然的波纹，那是蛇的行迹。",
+      "你听见极轻的吐信声。"
+    ]
+  },
+  "spider_wood": {
+    "id": "spider_wood",
+    "name": "木蛛",
+    "tags": ["insect","web"],
+    "weight": 8,
+    "description": "网结在枝杈，捕食小型昆兽。",
+    "text_templates": [
+      "蛛丝在斑驳的光里泛亮。",
+      "几只小飞虫已经停在命运的尽头。"
+    ]
+  },
+  "toad_giant": {
+    "id": "toad_giant",
+    "name": "巨蟾",
+    "tags": ["amphibian","wetland"],
+    "weight": 4,
+    "description": "潮湿地带的庞大两栖类。",
+    "text_templates": [
+      "一声闷雷似的“咕”从水塘边冒出。",
+      "巨蟾的眼睛像两颗湿润的石头。"
+    ]
+  },
+  "glow_moth": {
+    "id": "glow_moth",
+    "name": "光莹蛾",
+    "tags": ["insect","biolum"],
+    "weight": 9,
+    "description": "会发光的蛾类，常被误认作萤火。",
+    "text_templates": [
+      "几只光点在你指尖起落，像是试探。",
+      "风过，它们一起暗了一瞬。"
+    ]
+  }
+}

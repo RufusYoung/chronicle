@@ -1,0 +1,56 @@
+{
+  "id": "zone_forest_echoing",
+  "name": "倒影之森",
+  "alias": "Forest of Echoing Reflections",
+  "biome": "lake_forest",
+  "description": "树与岩皆生回声，镜面般的苔皮与水洼会在不同时刻回放秘密。",
+  "factions": [{"id":"elf_court","name":"镜湖林精议会","influence":85,"stance":"research"}],
+  "traits": [
+    {"id":"trait_echo","name":"声镜回放","effect":"带‘secret’标签的事件更易触发","tags":["sound","mirror"]},
+    {"id":"trait_daze","name":"映像眩惑","effect":"导航检定-1，发现检定+1","tags":["mind","risk_mod"]}
+  ],
+  "travel": {"base_days": 1.5, "mod":[{"tag":"rain","days":"+0.5"}]},
+  "pools": {
+    "weather": [
+      {"ref":"common:weather:fog"},
+      {"ref":"common:weather:drizzle"},
+      {"id":"wx_resonant_rain","name":"谐振雨","weight":3,"tags":["rain","sound"],"text":"雨点在叶面击出和弦。"}
+    ],
+    "sublocations": [
+      {"id":"sub_echo_pool","name":"回声潭","weight":6,"tags":["water","mirror","secret"]},
+      {"id":"sub_glass_bark","name":"玻璃树皮带","weight":5,"tags":["hazard","mirror"]},
+      {"id":"sub_research_stake","name":"林精测声桩","weight":3,"tags":["elf","lab"]}
+    ],
+    "micro_locations": [
+      {"id":"micro_crest_ripples","name":"逆纹水痕","weight":3,"tags":["omen","mirror"]},
+      {"id":"micro_ringed_stone","name":"环纹立石","weight":2,"tags":["relic","sound"]}
+    ],
+    "flora": [
+      {"id":"flora_echo_lichen","name":"回声地衣","weight":5,"tags":["alchemy","sound"],"gather":{"dc":12,"yields":[{"id":"resonant_spore","q":[1,2]}]}},
+      {"id":"flora_glass_moss","name":"玻璃苔","weight":3,"tags":["mirror","craft"],"gather":{"dc":10,"yields":[{"id":"glass_moss","q":[1,1]}]}}
+    ],
+    "fauna": [
+      {"id":"cre_reflection_wisp","name":"倒影灵","weight":4,"tags":["spirit","mirror"],"danger":2},
+      {"id":"cre_lake_otter","name":"湖獭","weight":2,"tags":["beast","curious"],"danger":1}
+    ]
+  },
+  "encounters": [
+    {"id":"enc_echo_scholar","name":"测声学者","weight":4,"tags":["npc","elf","research"],
+     "text_templates":["他竖起听筒：‘别说话，让树回忆。’"]},
+    {"id":"enc_secret_reverb","name":"秘密的回放","weight":3,"tags":["event","secret"],
+     "text_templates":["昨日你低语的心事，被潭面轻轻复述。"]}
+  ],
+  "events": [
+    {"id":"ev_split_image","name":"映像分身","weight":4,"tags":["mirror","mind"],
+     "text_templates":["水面映出两个你的背影，一个正抬眼看向你。"]},
+    {"id":"ev_resonant_path","name":"谐振指路","weight":3,"tags":["sound","guide"],
+     "text_templates":["回声在林间连成一串，像谁在远处拍掌邀你前行。"]}
+  ],
+  "loot_tables": [
+    {"id":"loot_echo_foraging","name":"倒影林采撷","entries":[
+      {"id":"resonant_spore","weight":5,"q":[1,2]},
+      {"id":"glass_moss","weight":3,"q":[1,1]},
+      {"id":"herb_common","weight":4,"q":[1,2]}
+    ]}
+  ]
+}

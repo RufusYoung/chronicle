@@ -1,0 +1,50 @@
+{
+  "keen_sense": {
+    "id": "keen_sense",
+    "name": "敏锐感知",
+    "tags": ["explore","passive"],
+    "weight": 10,
+    "description": "对风吹草动更敏感，陷阱更易被你捕捉。",
+    "text_templates": ["你的注意力像在林子里铺开了一张网。"]
+  },
+  "iron_will": {
+    "id": "iron_will",
+    "name": "钢铁意志",
+    "tags": ["sanity","passive"],
+    "weight": 8,
+    "description": "心智更加稳固，阴影不易侵入。",
+    "text_templates": ["你的心智像岩石。"]
+  },
+  "foragers_instinct": {
+    "id": "foragers_instinct",
+    "name": "采集直觉",
+    "tags": ["gather","passive"],
+    "weight": 9,
+    "description": "总能在不起眼处找到收获。",
+    "text_templates": ["你顺手就把关键的东西找到了。"]
+  },
+  "night_eyes": {
+    "id": "night_eyes",
+    "name": "夜眼",
+    "tags": ["night","rare"],
+    "weight": 5,
+    "description": "在夜色里看得更清。",
+    "text_templates": ["黑暗对你更友好一些。"]
+  },
+  "pathfinder": {
+    "id": "pathfinder",
+    "name": "寻路者",
+    "tags": ["travel","passive"],
+    "weight": 8,
+    "description": "读地形的能力更强，绕开麻烦的路。",
+    "text_templates": ["你下意识地挑了更稳妥的步伐。"]
+  },
+  "light_step": {
+    "id": "light_step",
+    "name": "轻步",
+    "tags": ["stealth","passive"],
+    "weight": 7,
+    "description": "行动噪音更小。",
+    "text_templates": ["你的落脚像和土地达成了某种默契。"]
+  }
+}

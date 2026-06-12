@@ -1,0 +1,35 @@
+[
+  {
+	"id":"healing_herb",
+	"name":"疗伤草",
+	"tags":["medicinal","common"],
+	"weight":6,
+	"gather":{"dc":10,"yields":[{"id":"herb_bundle","q":[1,2]}]},
+	"text_templates":[
+	  "你在潮湿的树根旁找到一簇疗伤草，叶脉清晰，气味辛辣。",
+      "几株疗伤草挤在腐木边上，似乎刚被野生动物蹭倒。"
+	]
+  },
+  {
+	"id":"glowcap",
+	"name":"荧帽菇",
+	"tags":["fungi","light"],
+	"weight":4,
+	"gather":{"dc":8,"yields":[{"id":"mushroom_glowcap","q":[1,3]}]},
+	"text_templates":[
+	  "荧帽菇在树荫下连成一串，微光像从地里渗出来。",
+      "你踮脚摘下一枚荧帽菇，指尖沾着一层冷淡的光。"
+	]
+  },
+  {
+	"id":"echo_reed",
+	"name":"回声芦",
+	"tags":["echo","fiber"],
+	"weight":5,
+	"gather":{"dc":10,"yields":[{"id":"fiber","q":[1,3]}]},
+	"text_templates":[
+	  "风过时，回声芦发出低哼，像远处的鼓点。",
+      "你折下一截回声芦，管腔里存着昨夜的风声。"
+	]
+  }
+]

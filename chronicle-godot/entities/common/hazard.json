@@ -1,0 +1,62 @@
+{
+  "pitfall": {
+    "id": "pitfall",
+    "name": "陷坑",
+    "tags": ["terrain","trap"],
+    "danger": 2,
+    "weight": 8,
+    "description": "落叶覆盖的浅坑，常伴随扭伤。",
+    "text_templates": [
+      "脚下一空，枯叶塌陷，你一把抓住旁边的藤条。",
+      "泥皮被踩破，露出湿暗的坑壁。"
+    ]
+  },
+  "spore_bloom": {
+    "id": "spore_bloom",
+    "name": "孢潮",
+    "tags": ["air","spore"],
+    "danger": 3,
+    "weight": 5,
+    "description": "真菌爆发期的孢子云，会刺激呼吸。",
+    "text_templates": [
+      "细小的孢子泡在光里起伏，你屏住了呼吸。",
+      "一阵轻咳后，喉咙像被涂了尘。"
+    ]
+  },
+  "thorn_brush": {
+    "id": "thorn_brush",
+    "name": "荆棘丛",
+    "tags": ["vegetation","scratch"],
+    "danger": 1,
+    "weight": 9,
+    "description": "划伤为主，拖慢速度。",
+    "text_templates": [
+      "衣角被挂住，你退回一步又听到细响。",
+      "几道浅白的痕在手臂上迅速浮现。"
+    ]
+  },
+  "unstable_ledge": {
+    "id": "unstable_ledge",
+    "name": "松动的土台",
+    "tags": ["slope","fall"],
+    "danger": 2,
+    "weight": 6,
+    "description": "站位不稳易滑坠。",
+    "text_templates": [
+      "脚下土层一阵细密的碎响，边缘在下塌。",
+      "你连忙趴低重心，碎土滚落树根间。"
+    ]
+  },
+  "quicksand": {
+    "id": "quicksand",
+    "name": "流沙",
+    "tags": ["wetland","trap"],
+    "danger": 3,
+    "weight": 3,
+    "description": "少见但致命的湿陷区。",
+    "text_templates": [
+      "地面看似完整，脚印却开始冒水。",
+      "你用枝杖试探，泥面微微下吸。"
+    ]
+  }
+}

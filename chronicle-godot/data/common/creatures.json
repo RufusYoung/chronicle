@@ -1,0 +1,112 @@
+{
+  "dryad": {
+	"id": "dryad",
+	"name": "林中树精",
+	"tags": ["forest","npc","mystic"],
+	"weight": 6,
+	"effects": {"trade":"herb","temper":"wary"},
+	"text_templates": [
+	  "树影里站着一位像树皮与藤蔓编成的女子。",
+      "她的声音像风穿过树冠。"
+	]
+  },
+  "moss_boar": {
+	"id": "moss_boar",
+	"name": "苔背野猪",
+	"tags": ["beast","forage"],
+	"weight": 8,
+	"effects": {"danger":"+1","meat":"+1"},
+	"text_templates": [
+	  "一头结着苔的野猪拱开落叶，鼻息像小风暴。",
+      "它的獠牙带着潮湿泥土的味道。"
+	]
+  },
+  "echo_wolf": {
+	"id": "echo_wolf",
+	"name": "回声狼",
+	"tags": ["beast","sound"],
+	"weight": 5,
+	"effects": {"stealth_check":"+1"},
+	"text_templates": [
+	  "狼嚎在林间层层回荡，难辨方向。",
+      "你只看见影子在树影之间溜走。"
+	]
+  },
+  "glow_moth": {
+	"id": "glow_moth",
+	"name": "光莹蛾",
+	"tags": ["insect","biolum"],
+	"weight": 10,
+	"effects": {"sanity":"+1"},
+	"text_templates": [
+	  "几只会发光的蛾子在你火把旁盘旋，像萤火溅起的碎片。",
+      "它们互相呼应，光点一明一灭。"
+	]
+  },
+  "reed_otter": {
+	"id": "reed_otter",
+	"name": "芦间獭",
+	"tags": ["lake","beast"],
+	"weight": 6,
+	"effects": {"pelt":"+1"},
+	"text_templates": [
+	  "水边一抹暗影潜入芦苇，带起一串涟漪。",
+      "湿亮的眼睛在水面停留了一瞬。"
+	]
+  },
+  "stone_golem": {
+	"id": "stone_golem",
+	"name": "碎星石傀",
+	"tags": ["construct","rare"],
+	"weight": 2,
+	"effects": {"danger":"+2","lore":"+1"},
+	"text_templates": [
+	  "几块石板突然合拢成肢体，发出石磨般的声响。",
+      "它胸口的裂纹里有微弱的光。"
+	]
+  },
+  "heron_gray": {
+	"id": "heron_gray",
+	"name": "灰羽鹭",
+	"tags": ["lake","bird"],
+	"weight": 7,
+	"effects": {"calm":"+1"},
+	"text_templates": [
+	  "一只灰羽鹭掠过浅水，喙尖带起细碎银光。",
+      "它在水边停住，像一枚被放慢的影子。"
+	]
+  },
+  "fox_rust": {
+	"id": "fox_rust",
+	"name": "锈尾狐",
+	"tags": ["forest","beast"],
+	"weight": 6,
+	"effects": {"stealth":"+1"},
+	"text_templates": [
+	  "锈尾狐从树根间一闪而过，只留下一抹暖色。",
+      "它回头看了你一眼，随后消失在雾里。"
+	]
+  },
+  "blind_deer": {
+	"id": "blind_deer",
+	"name": "盲眸鹿",
+	"tags": ["mystic","beast"],
+	"weight": 4,
+	"effects": {"omen":"+1"},
+	"text_templates": [
+	  "一头盲眸鹿站在雾后，耳尖轻颤却不后退。",
+      "它没有看你，却像早已知道你的到来。"
+	]
+  },
+  "moss_wren": {
+	"id": "moss_wren",
+	"name": "苔羽鹪鹩",
+	"tags": ["bird","forest"],
+	"weight": 5,
+	"effects": {"awareness":"+1"},
+	"text_templates": [
+	  "苔羽鹪鹩在枝头跳跃，尾羽抖落细小苔屑。",
+      "它鸣声短促，像在提醒你前方的动静。"
+	]
+  }
+}

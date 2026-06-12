@@ -1,0 +1,44 @@
+{
+  "id": "spot_dream_cliff",
+  "name": "梦境之崖",
+  "alias": "Dreamer’s Bluff",
+  "biome": "cliff_forest",
+  "description": "悬崖面如墨镜，夜里会显露行者梦境的倒影；清晨风起，梦自动剥落。",
+  "factions": [{"id":"elf_court","name":"镜湖林精议会","influence":40,"stance":"study"}],
+  "traits": [
+    {"id":"trait_dream_shed","name":"梦屑","effect":"休息时理智小回复；同时更易触发‘噩梦’事件","tags":["sleep","risk_mod"]}
+  ],
+  "travel": {"base_days": 0.5, "mod":[{"tag":"night","days":"+0.2"}]},
+  "pools": {
+    "weather": [
+      {"ref":"common:weather:clear_night"},
+      {"id":"wx_dream_draft","name":"梦风","weight":3,"tags":["wind","weird"],"text":"风像从睡着的人胸口吹来。"}
+    ],
+    "sublocations": [
+      {"id":"sub_mirror_lip","name":"镜缘台","weight":5,"tags":["ledge","mirror"]},
+      {"id":"sub_dream_scree","name":"梦砂坡","weight":3,"tags":["sand","sleep"]}
+    ],
+    "flora": [
+      {"id":"flora_sleep_thorn","name":"眠刺藤","weight":3,"tags":["sleep","hazard"],"gather":{"dc":12,"yields":[{"id":"sleep_thorn","q":[1,1]}]}}
+    ],
+    "fauna": [
+      {"id":"cre_dream_martin","name":"梦貂","weight":2,"tags":["beast","sleep"],"danger":1}
+    ]
+  },
+  "encounters": [
+    {"id":"enc_dream_watcher","name":"望梦者","weight":3,"tags":["npc","elf","mystic"],
+     "text_templates":["他把你的梦抖到崖面上：‘别紧张，它很快会醒。’"]}
+  ],
+  "events": [
+    {"id":"ev_dream_peel","name":"梦皮脱落","weight":4,"tags":["sleep","mirror"],
+     "text_templates":["你的影子像剥皮那样从崖面退下，里面藏着一句提醒。"]},
+    {"id":"ev_night_vision","name":"夜目开启","weight":3,"tags":["perk","vision"],
+     "text_templates":["你在黑里看见黄绿的轮廓线，像光莹的余韵。"]}
+  ],
+  "loot_tables": [
+    {"id":"loot_dream_cliff","name":"梦崖拾取","entries":[
+      {"id":"sleep_thorn","weight":4,"q":[1,1]},
+      {"id":"resonant_spore","weight":2,"q":[1,1]}
+    ]}
+  ]
+}

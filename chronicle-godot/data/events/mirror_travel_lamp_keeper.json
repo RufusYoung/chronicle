@@ -1,0 +1,15 @@
+{
+  "id": "mirror_lamp_keeper",
+  "pool": "mirror_travel",
+  "tags": ["雨","火种为零"],
+  "setup": "暴雨里，一盏灯始终没有灭。守灯人向你点头。",
+  "options": [
+	{
+	  "label": "交换一个秘密换取火种",
+	  "effects": ["add:torch","sanity:-1","mark:confessor+1"]
+	},
+	{ "label": "谢绝并离开", "effects": ["nothing"] }
+  ],
+  "weights": {"base": 6},
+  "cooldown_days": 5
+}

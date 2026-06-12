@@ -1,0 +1,25 @@
+[
+  {
+	"id":"pitfall",
+	"name":"陷坑",
+	"tags":["terrain"],
+	"danger":2,
+	"weight":5,
+	"text_templates":[
+	  "脚下泥皮忽然塌陷，你一把抓住旁边藤条。",
+      "落叶覆着浅坑，里头潮得像刚下过雨。"
+	]
+  },
+  {
+	"id":"spore_bloom",
+	"name":"孢潮",
+	"tags":["spore","air"],
+	"danger":3,
+	"weight":3,
+	"effects":[{"status":"cough"},{"sanity_mod":-1}],
+	"text_templates":[
+	  "淡绿的雾团从蕈环中鼓出，你屏住呼吸绕开。",
+      "鼻腔发痒，细小的孢子泡在光里起伏。"
+	]
+  }
+]

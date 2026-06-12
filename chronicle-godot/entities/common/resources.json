@@ -1,0 +1,98 @@
+{
+  "timber": {
+    "id": "timber",
+    "name": "木材",
+    "tags": ["craft","common"],
+    "weight": 10,
+    "description": "风干直纹木料，可作柄、桩与支架。",
+    "text_templates": ["你截取了一段顺直的木料。"]
+  },
+  "stone_chunk": {
+    "id": "stone_chunk",
+    "name": "石块",
+    "tags": ["craft","common"],
+    "weight": 9,
+    "description": "耐砸耐磨，粗加工用。",
+    "text_templates": ["你挑了几块密实的石头装袋。"]
+  },
+  "fiber_silk_vine": {
+    "id": "fiber_silk_vine",
+    "name": "绢丝藤纤维",
+    "tags": ["fiber","craft"],
+    "weight": 8,
+    "description": "可抽丝编绳。",
+    "text_templates": ["几束细纤维在手里很听话。"]
+  },
+  "resin_sun": {
+    "id": "resin_sun",
+    "name": "日树脂",
+    "tags": ["resin","fuel"],
+    "weight": 7,
+    "description": "金黄透明，良好引火物。",
+    "text_templates": ["你刮下的树脂在阳光里发亮。"]
+  },
+  "berry_amber": {
+    "id": "berry_amber",
+    "name": "琥珀莓果",
+    "tags": ["food"],
+    "weight": 10,
+    "description": "甜度可观的野果，适合充饥。",
+    "text_templates": ["一把蜜色的浆果完好无损。"]
+  },
+  "mushroom_common": {
+    "id": "mushroom_common",
+    "name": "木生菇",
+    "tags": ["food","fungi"],
+    "weight": 8,
+    "description": "常见食用菌，需辨别新鲜度。",
+    "text_templates": ["你切下两朵形状规整的木生菇。"]
+  },
+  "herb_common": {
+    "id": "herb_common",
+    "name": "常用草药",
+    "tags": ["medicinal"],
+    "weight": 7,
+    "description": "止血/消肿的常见草药束。",
+    "text_templates": ["药束的气味辛而不刺。"]
+  },
+  "water_clean": {
+    "id": "water_clean",
+    "name": "清水",
+    "tags": ["drink"],
+    "weight": 9,
+    "description": "可直接饮用或煮用。",
+    "text_templates": ["你把净水装满了皮囊。"]
+  },
+  "pelt": {
+    "id": "pelt",
+    "name": "兽皮",
+    "tags": ["trade","craft"],
+    "weight": 6,
+    "description": "可制衣物或铺垫。",
+    "text_templates": ["这张皮毛尚算完整。"]
+  },
+  "meat": {
+    "id": "meat",
+    "name": "肉块",
+    "tags": ["food"],
+    "weight": 7,
+    "description": "新鲜蛋白，需尽快处理。",
+    "text_templates": ["温热还未散尽。"]
+  },
+  "bone": {
+    "id": "bone",
+    "name": "骨骼",
+    "tags": ["craft"],
+    "weight": 6,
+    "description": "可磨成针钩或柄。",
+    "text_templates": ["骨节处的纹理清晰可见。"]
+  },
+  "medicinal": {
+    "id": "medicinal",
+    "name": "药材",
+    "tags": ["medicinal","trade"],
+    "weight": 6,
+    "description": "可煎煮的基础药材束。",
+    "text_templates": ["你把药草扎成一把，挂在背侧。"]
+  }
+}

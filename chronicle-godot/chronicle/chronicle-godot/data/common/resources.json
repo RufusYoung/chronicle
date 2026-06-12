@@ -1,0 +1,46 @@
+{
+  "fiber_silk_vine": {
+	"id": "fiber_silk_vine",
+	"name": "绢丝藤纤维",
+	"tags": ["fiber","craft"],
+	"weight": 10,
+	"effects": {"craft":"+1"},
+	"text_templates": [
+	  "你收集了几束可抽丝的藤纤维。",
+      "这些纤维在手里很听话。"
+	]
+  },
+  "resin_sun": {
+	"id": "resin_sun",
+	"name": "日树脂",
+	"tags": ["resin","fuel"],
+	"weight": 8,
+	"effects": {"torch":"+1"},
+	"text_templates": [
+	  "几团金色树脂被你装进罐里。",
+      "点火时能更快燃起。"
+	]
+  },
+  "berry_amber": {
+	"id": "berry_amber",
+	"name": "琥珀莓果",
+	"tags": ["food"],
+	"weight": 9,
+	"effects": {"food":"+2"},
+	"text_templates": [
+	  "一把蜜色的浆果，完好无损。",
+      "你大概能做一份甜汤。"
+	]
+  },
+  "herb_root_spring": {
+	"id": "herb_root_spring",
+	"name": "根泉草束",
+	"tags": ["medic"],
+	"weight": 7,
+	"effects": {"heal":"+1"},
+	"text_templates": [
+	  "几撮青绿的根泉草还带着露水。",
+      "气味清新，能止微弱的伤口渗血。"
+	]
+  }
+}

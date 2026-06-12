@@ -1,0 +1,19 @@
+{
+  "clear":        { "id":"clear",        "name":"晴朗",   "tag":"clear",  "weight":7 },
+  "mist":         { "id":"mist",         "name":"薄雾",   "tag":"fog",    "weight":8 },
+  "drizzle":      { "id":"drizzle",      "name":"微雨",   "tag":"rain",   "weight":6 },
+  "light_rain":   { "id":"light_rain",   "name":"小雨",   "tag":"rain",   "weight":5 },
+  "downpour":     { "id":"downpour",     "name":"暴雨",   "tag":"rain",   "weight":3 },
+  "thunderstorm": { "id":"thunderstorm", "name":"雷暴",   "tag":"storm",  "weight":2 },
+  "gale":         { "id":"gale",         "name":"大风",   "tag":"wind",   "weight":4 },
+  "blizzard":     { "id":"blizzard",     "name":"暴风雪", "tag":"snow",   "weight":1 },
+
+  "full_moon":    { "id":"full_moon",    "name":"月圆夜", "tag":"night",  "weight":4,
+					"text_templates": ["月轮沉在林梢，湖面像被擦亮的银盘。"] },
+  "lunar_eclipse":{ "id":"lunar_eclipse","name":"月蚀",   "tag":"omen",   "weight":1,
+					"text_templates": ["阴影爬上月面，鸟群在树冠间骚动。"] },
+  "solar_eclipse":{ "id":"solar_eclipse","name":"日蚀",   "tag":"omen",   "weight":1,
+					"text_templates": ["白昼短暂沉入冷色，林中昆虫一齐停了歌。"] },
+  "meteor_shower":{ "id":"meteor_shower","name":"流星雨","tag":"sky",    "weight":1,
+					"text_templates": ["碎光成川，倒映在镜湖上像被撕开的天幕。"] }
+}

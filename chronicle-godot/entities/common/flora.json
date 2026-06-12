@@ -1,0 +1,68 @@
+{
+  "healing_herb": {
+    "id": "healing_herb",
+    "name": "疗伤草",
+    "tags": ["medicinal","common"],
+    "weight": 9,
+    "description": "揉碎外敷可止微渗血，味辛。",
+    "text_templates": [
+      "树根旁的疗伤草叶脉清晰，指尖有凉意。",
+      "几株挤在腐木边，像被动物蹭倒过。"
+    ]
+  },
+  "glowcap": {
+    "id": "glowcap",
+    "name": "荧帽菇",
+    "tags": ["fungi","light"],
+    "weight": 6,
+    "description": "伞面微光，可作记号或微弱照明。",
+    "text_templates": [
+      "荧帽菇连成一串，光像从土里渗出。",
+      "你捻起一枚，指尖沾了一层冷光。"
+    ]
+  },
+  "wild_berry_bush": {
+    "id": "wild_berry_bush",
+    "name": "野莓灌丛",
+    "tags": ["food","shrub"],
+    "weight": 10,
+    "description": "常见浆果来源，酸甜不一。",
+    "text_templates": [
+      "灌丛里挂着几串小小的红雀斑。",
+      "你甩掉一只也惦记它的鸟。"
+    ]
+  },
+  "reed_common": {
+    "id": "reed_common",
+    "name": "普通芦苇",
+    "tags": ["fiber","wetland"],
+    "weight": 7,
+    "description": "可取纤维或编织容器。",
+    "text_templates": [
+      "风过浅水，芦苇同向一倾。",
+      "你折下一截，管腔里是昨夜的风声。"
+    ]
+  },
+  "fern_bracken": {
+    "id": "fern_bracken",
+    "name": "蕨类（虎杖）",
+    "tags": ["edible","common"],
+    "weight": 8,
+    "description": "嫩芽可食，成熟后略涩。",
+    "text_templates": [
+      "一蓬卷曲的新芽在苔间探头。",
+      "手背上残留一股青涩的气味。"
+    ]
+  },
+  "moss_blue": {
+    "id": "moss_blue",
+    "name": "蓝苔",
+    "tags": ["moss","indicator"],
+    "weight": 5,
+    "description": "偏好潮冷之地，常附着在阴面。",
+    "text_templates": [
+      "蓝苔像一层淡淡的阴影铺开。",
+      "指尖一抹，留下了一道更深的颜色。"
+    ]
+  }
+}

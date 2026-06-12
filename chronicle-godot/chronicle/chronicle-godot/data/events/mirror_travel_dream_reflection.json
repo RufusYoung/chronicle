@@ -1,0 +1,23 @@
+{
+  "id": "mirror_dream_reflection",
+  "pool": "mirror_travel",
+  "tags": ["湖","夜","理智中低"],
+  "setup": "夜色压在湖面，倒影与现实错开了半拍。",
+  "options": [
+    {
+      "label": "靠近观察",
+      "checks": {"perception": 10},
+      "cost": {"time_h": 1},
+      "effects": ["sanity:-3","mark:dreamer+1"]
+    },
+    {
+      "label": "装入梦之瓶",
+      "requires": ["item:dream_bottle"],
+      "cost": {"time_h": 2},
+      "rewards": ["item:dream_fragment"]
+    },
+    { "label": "后退离开", "effects": ["nothing"] }
+  ],
+  "weights": {"base": 8, "season_bonus": {"winter": 2}},
+  "cooldown_days": 10
+}

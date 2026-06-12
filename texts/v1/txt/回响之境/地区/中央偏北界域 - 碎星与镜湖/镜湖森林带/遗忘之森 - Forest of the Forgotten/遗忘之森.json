@@ -1,0 +1,56 @@
+{
+  "id": "zone_forest_forgotten",
+  "name": "遗忘之森",
+  "alias": "Forest of the Forgotten",
+  "biome": "deep_forest",
+  "description": "孢粉像温柔的尘雪，走得越深越容易忘记来路。长老说，中心守着一块古老的‘记忆水晶’。",
+  "factions": [{"id":"elf_court","name":"镜湖林精议会","influence":95,"stance":"forbid"}],
+  "traits": [
+	{"id":"trait_lapse","name":"记忆迟滞","effect":"旅行事件更易触发‘迷路/回溯’分支","tags":["mind","spore"]},
+	{"id":"trait_soft_step","name":"柔脚地毯","effect":"追踪难度+1，伏击难度+1","tags":["moss","risk_mod"]}
+  ],
+  "travel": {"base_days": 2, "mod":[{"tag":"spore_heavy","days":"+1"}]},
+  "pools": {
+	"weather": [
+	  {"id":"wx_spore_mist","name":"孢雾","weight":6,"tags":["fog","spore"],"text":"白软的雾像从树皮里冒出。"},
+	  {"ref":"common:weather:fog"},
+	  {"ref":"common:weather:drizzle"}
+	],
+	"sublocations": [
+	  {"id":"sub_crystal_ward","name":"水晶护圃","weight":4,"tags":["relic","guard"]},
+	  {"id":"sub_lost_rings","name":"迷环树阵","weight":6,"tags":["maze","spore"]},
+	  {"id":"sub_moss_library","name":"苔书库","weight":3,"tags":["lore","secret"]}
+	],
+	"micro_locations": [
+	  {"id":"micro_echo_stump","name":"回声枯桩","weight":3,"tags":["sound","memory"]},
+	  {"id":"micro_spore_fall","name":"孢粉瀑","weight":2,"tags":["hazard","beauty"]}
+	],
+	"flora": [
+	  {"id":"flora_mnemoshroom","name":"忆菇","weight":5,"tags":["memory","alchemy"],"gather":{"dc":12,"yields":[{"id":"memory_spore","q":[1,2]}]}},
+	  {"id":"flora_cord_moss","name":"缆藤苔","weight":3,"tags":["craft","climb"],"gather":{"dc":10,"yields":[{"id":"cord_moss","q":[1,1]}]}}
+	],
+	"fauna": [
+	  {"id":"cre_forgotten_stag","name":"失名鹿","weight":3,"tags":["spirit","beast"],"danger":2},
+	  {"id":"cre_spore_mote","name":"孢尘小灵","weight":4,"tags":["swarm","spirit"],"danger":1}
+	]
+  },
+  "encounters": [
+	{"id":"enc_elder_pathkeeper","name":"长老引路者","weight":3,"tags":["npc","elf","guide"],"attitude":"testing",
+	 "text_templates":["她用带孢粉的手指在空中画弧：‘跟着这个味道。’"]},
+	{"id":"enc_lost_self","name":"迷路的自己","weight":2,"tags":["mind","weird"],
+	 "text_templates":["你与几小时前的自己擦肩而过。TA没有注意到你。"]}
+  ],
+  "events": [
+	{"id":"ev_crystal_pulse","name":"水晶脉动","weight":4,"tags":["relic","memory"],
+	  "text_templates":["你听见像古语的低吟，眼前道路重叠一瞬。","手指轻触树皮，昨日的对话被温柔回放。"]},
+	{"id":"ev_lost_and_loop","name":"迷路与回环","weight":5,"tags":["maze","lost"],
+	  "text_templates":["你绕回原地，鞋印却不是现在的。","一圈又一圈，最后你在自己的影子里停下。"]}
+  ],
+  "loot_tables": [
+	{"id":"loot_forgotten_forest","name":"遗忘林采撷","entries":[
+	  {"id":"memory_spore","weight":6,"q":[1,2]},
+	  {"id":"cord_moss","weight":3,"q":[1,1]},
+	  {"id":"herb_common","weight":3,"q":[1,2]}
+	]}
+  ]
+}

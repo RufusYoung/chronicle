@@ -1,0 +1,124 @@
+{
+  "id": "zone_forest_silence",
+  "name": "沉默森林",
+  "alias": "Forest of Silence",
+  "biome": "forest_edge",
+  "description": "这里并不死寂——风、枝叶与鸟兽以心声相通。未经允许的言语会被森林本身排斥。",
+  "factions": [
+	{"id":"elf_court","name":"镜湖林精议会","influence":80,"stance":"guard"}
+  ],
+  "traits": [
+	{"id":"trait_mindspeech","name":"心语薄雾","effect":"与‘自然/心灵’标签的遭遇更常见","tags":["mind","nature"]},
+	{"id":"trait_ward","name":"静守屏障","effect":"暴露类风险-1；言语挑衅事件更易触发","tags":["ward","risk_mod"]}
+  ],
+  "travel": {"base_days": 1, "mod": [{"tag":"fatigue_high","days":"+0.5"}]},
+  "pools": {
+	"weather": [
+	  {"ref":"common:weather:mist"},
+	  {"ref":"common:weather:drizzle"},
+	  {"id":"wx_whisper_wind","name":"耳语风","weight":3,"tags":["breeze","mind"], "text":"风像低声对话。"}
+	],
+	"sublocations": [
+	  {"id":"sub_mind_glade","name":"心语空地","weight":6,"tags":["glade","ritual"]},
+	  {"id":"sub_root_gate","name":"树根门","weight":4,"tags":["threshold","ward"]},
+	  {"id":"sub_fern_pass","name":"蕨影小径","weight":5,"tags":["trail","stealth"]}
+	],
+	"micro_locations": [
+	  {"id":"micro_lark_nest","name":"云雀巢","weight":3,"tags":["track","bird"]},
+	  {"id":"micro_sap_trickle","name":"树脂渗口","weight":3,"tags":["harvest","resin"]}
+	],
+	"flora": [
+	  {"id":"flora_resin_fern","name":"树脂蕨","weight":5,"tags":["resin","trade"],"gather":{"dc":10,"yields":[{"id":"amber_sap","q":[1,2]}]}},
+	  {"id":"flora_whisper_bloom","name":"耳语花","weight":4,"tags":["mind","ritual"],"gather":{"dc":12,"yields":[{"id":"whisper_petals","q":[1,1]}]}}
+	],
+	"fauna": [
+	  {"id":"cre_wood_sprite","name":"木精灵碎影","weight":4,"tags":["spirit","elf"],"danger":1},
+	  {"id":"cre_fox_shade","name":"影纹狐","weight":3,"tags":["beast","stealth"],"danger":1}
+	]
+  },
+  "encounters": [
+	{"id":"enc_elf_warder","name":"林精守望者","weight":5,"tags":["npc","elf","guard"],"attitude":"wary",
+	 "text_templates":["他按住胸前的叶纹徽记，示意你放低声线。","她抬手指向树冠，那里正有看不见的目光。"]},
+	{"id":"enc_stray_peddler","name":"迷路的小贩","weight":2,"tags":["npc","human","trade"],
+	 "text_templates":["驮袋叮当作响，他悄声问：‘能带我出去吗？’"]}
+  ],
+  
+  "events": [
+	{
+	  "id": "silence_entry",
+	  "title": "进入沉默之森",
+	  "text": "空气在此凝结成透明的墙。你刚踏入边界，所有声音被剥离，连心跳也变得迟钝。树叶的摆动在无声中如慢镜头般展开。",
+	  "effects": [
+		{"op": "set_flag", "key": "in_silent_forest", "val": true}
+	  ],
+	  "next": [
+		{"id": "whispering_tree", "weight": 2},
+		{"id": "wandering_light", "weight": 1}
+	  ]
+	},
+	{
+	  "id": "whispering_tree",
+	  "title": "低语之树",
+	  "text": "一棵树向你伸出根须，似乎在无声地邀请。你的意识被拉入一片梦境般的幻野——那里有林精、矮人、自由民三族的记忆交织。",
+	  "conditions": [
+		{"type": "flag_present", "key": "in_silent_forest"}
+	  ],
+	  "effects": [
+		{"op": "add_mark", "mark": "heard_the_forest"}
+	  ],
+	  "next": [
+		{"id": "memory_echo", "weight": 1},
+		{"id": "silent_hunger", "weight": 1}
+	  ]
+	},
+	{
+	  "id": "memory_echo",
+	  "title": "回声的回声",
+	  "text": "你的梦境中，碎星山的矮人敲击着空洞的石壁。每一锤都回荡着‘记忆苏醒’的预兆。你醒来时，发现身边的岩石也在轻轻振动。",
+	  "conditions": [
+		{"type": "has_mark", "mark": "heard_the_forest"}
+	  ],
+	  "effects": [
+		{"op": "inv_add", "key": "stone_fragment", "val": 1},
+		{"op": "set_flag", "key": "heard_echo", "val": true}
+	  ],
+	  "next": [
+		{"id": "forest_dream_end", "weight": 1}
+	  ]
+	},
+	{
+	  "id": "silent_hunger",
+	  "title": "沉默的饥饿",
+	  "text": "森林的寂静忽然变得锋利。你感到饥饿，却不知饥饿来自哪里。你的火把无法点燃，仿佛光也被噤声吞噬。",
+	  "conditions": [
+		{"type": "flag_present", "key": "in_silent_forest"}
+	  ],
+	  "effects": [
+		{"op": "inv_consume", "key": "food", "val": 2}
+	  ],
+	  "next": [
+		{"id": "forest_dream_end", "weight": 1}
+	  ]
+	},
+	{
+	  "id": "forest_dream_end",
+	  "title": "梦醒时分",
+	  "text": "你在回音的森林中醒来，掌心紧握着一块微微颤动的石头。它似乎在低语，呼唤你深入镜湖的方向。梦境和现实的界线，开始模糊。",
+	  "conditions": [
+		{"type": "flag_present", "key": "heard_echo"}
+	  ],
+	  "effects": [
+		{"op": "set_flag", "key": "forest_dream_done", "val": true},
+		{"op": "add_mark", "mark": "dreamer"}
+	  ]
+	}
+  ],
+
+  "loot_tables": [
+	{"id":"loot_silence_foraging","name":"沉默林采撷","entries":[
+	  {"id":"amber_sap","weight":5,"q":[1,2]},
+	  {"id":"whisper_petals","weight":3,"q":[1,1]},
+	  {"id":"herb_common","weight":4,"q":[1,2]}
+	]}
+  ]
+}

@@ -1,0 +1,380 @@
+[gd_scene load_steps=17 format=3 uid="uid://cdvbwwryyo5rb"]
+
+[ext_resource type="Texture2D" uid="uid://c2htv2l268sj2" path="res://素材包/ui/topbar/微信图片_20251024191137_618_42.jpg" id="1_6lh64"]
+[ext_resource type="Script" uid="uid://8w5fdi01n4p4" path="res://scenes/ui/stats_area.gd" id="2_25qqm"]
+[ext_resource type="FontFile" uid="uid://p0c7nu1f53no" path="res://assets/fonts/SourceHanSerifSC-VF.ttf" id="2_iumbh"]
+[ext_resource type="Texture2D" uid="uid://1lb4ugsf7op0" path="res://素材包/ui/topbar/helth.png" id="3_iumbh"]
+[ext_resource type="Texture2D" uid="uid://dm20awbt03cdq" path="res://素材包/ui/topbar/sanity.png" id="4_poe2d"]
+[ext_resource type="Texture2D" uid="uid://c1ngy1r61dxrq" path="res://素材包/ui/topbar/hug.png" id="5_gyh0m"]
+[ext_resource type="Texture2D" uid="uid://ct78run1g0541" path="res://素材包/ui/topbar/sleep.png" id="6_tl828"]
+[ext_resource type="Texture2D" uid="uid://dr3samxdjoqwi" path="res://素材包/ui/topbar/str.png" id="8_phlu0"]
+[ext_resource type="Texture2D" uid="uid://booetmv6bwu1w" path="res://素材包/ui/topbar/dex.png" id="9_4upum"]
+[ext_resource type="Texture2D" uid="uid://1tktdgjca4ue" path="res://素材包/ui/topbar/int.png" id="10_uebhd"]
+[ext_resource type="Texture2D" uid="uid://dus4pmrwfwqq8" path="res://素材包/ui/topbar/cha.png" id="11_t4awb"]
+[ext_resource type="Texture2D" uid="uid://dcyqyxntbmclb" path="res://素材包/ui/topbar/constitution.png" id="12_4upum"]
+[ext_resource type="Texture2D" uid="uid://bmtkjnkiub3cw" path="res://素材包/ui/topbar/wis.png" id="13_hg8mt"]
+[ext_resource type="PackedScene" uid="uid://dkw2ip3stu1jc" path="res://scenes/player.tscn" id="13_uebhd"]
+[ext_resource type="PackedScene" uid="uid://ftbvlv2s2krk" path="res://scenes/ui/button.tscn" id="14_t4awb"]
+[ext_resource type="Script" uid="uid://bd74fj57ghsmq" path="res://scenes/ui/story_player.gd" id="16_02e3m"]
+
+[node name="mainui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="topbar" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 198.0
+
+[node name="information" type="Control" parent="topbar"]
+anchors_preset = 0
+offset_right = 256.0
+offset_bottom = 192.0
+
+[node name="portrait" type="TextureRect" parent="topbar/information"]
+top_level = true
+layout_mode = 0
+offset_left = 8.0
+offset_top = 32.0
+offset_right = 199.30435
+offset_bottom = 223.30435
+scale = Vector2(0.46, 0.46)
+texture = ExtResource("1_6lh64")
+expand_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="topbar/information"]
+layout_mode = 0
+offset_left = 8.0
+offset_right = 328.0
+offset_bottom = 32.0
+
+[node name="trait" type="Label" parent="topbar/information/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 16
+text = "怒放的"
+
+[node name="title" type="Label" parent="topbar/information/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 16
+text = "毁灭者"
+
+[node name="name" type="Label" parent="topbar/information/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 16
+text = "rufus"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="topbar"]
+top_level = true
+layout_mode = 0
+offset_left = 104.0
+offset_top = 32.0
+offset_right = 128.0
+offset_bottom = 149.0
+scale = Vector2(0.725, 0.725)
+theme_override_constants/separation = 7
+
+[node name="TextureRect" type="TextureRect" parent="topbar/VBoxContainer"]
+custom_minimum_size = Vector2(10, 24)
+layout_mode = 2
+texture = ExtResource("3_iumbh")
+expand_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="topbar/VBoxContainer"]
+custom_minimum_size = Vector2(10, 24)
+layout_mode = 2
+texture = ExtResource("4_poe2d")
+expand_mode = 1
+
+[node name="TextureRect3" type="TextureRect" parent="topbar/VBoxContainer"]
+custom_minimum_size = Vector2(10, 24)
+layout_mode = 2
+texture = ExtResource("5_gyh0m")
+expand_mode = 1
+
+[node name="TextureRect4" type="TextureRect" parent="topbar/VBoxContainer"]
+custom_minimum_size = Vector2(10, 24)
+layout_mode = 2
+texture = ExtResource("6_tl828")
+expand_mode = 1
+
+[node name="Status" type="VBoxContainer" parent="topbar"]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 32.0
+offset_right = 400.0
+offset_bottom = 150.0
+scale = Vector2(0.725, 0.725)
+theme_override_constants/separation = 4
+script = ExtResource("2_25qqm")
+
+[node name="ProgressBar1" type="ProgressBar" parent="topbar/Status"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 13
+value = 79.0
+show_percentage = false
+
+[node name="CenterContainer" type="CenterContainer" parent="topbar/Status/ProgressBar1"]
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 24.0
+
+[node name="Label" type="Label" parent="topbar/Status/ProgressBar1/CenterContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 21
+text = "475/600"
+
+[node name="ProgressBar2" type="ProgressBar" parent="topbar/Status"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 13
+show_percentage = false
+
+[node name="CenterContainer" type="CenterContainer" parent="topbar/Status/ProgressBar2"]
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 24.0
+
+[node name="Label" type="Label" parent="topbar/Status/ProgressBar2/CenterContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 21
+text = "475/600"
+
+[node name="ProgressBar3" type="ProgressBar" parent="topbar/Status"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 13
+show_percentage = false
+
+[node name="CenterContainer" type="CenterContainer" parent="topbar/Status/ProgressBar3"]
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 24.0
+
+[node name="Label" type="Label" parent="topbar/Status/ProgressBar3/CenterContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 21
+text = "5/6"
+
+[node name="ProgressBar4" type="ProgressBar" parent="topbar/Status"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 13
+show_percentage = false
+
+[node name="CenterContainer" type="CenterContainer" parent="topbar/Status/ProgressBar4"]
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 24.0
+
+[node name="Label" type="Label" parent="topbar/Status/ProgressBar4/CenterContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 21
+text = "4/18"
+
+[node name="attribute" type="Control" parent="topbar"]
+anchors_preset = 0
+offset_right = 328.0
+offset_bottom = 40.0
+
+[node name="attribute1" type="HBoxContainer" parent="topbar/attribute"]
+top_level = true
+layout_mode = 1
+offset_left = 360.0
+offset_top = 32.0
+offset_right = 616.0
+offset_bottom = 72.0
+theme_override_constants/separation = 60
+
+[node name="TextureRect" type="TextureRect" parent="topbar/attribute/attribute1"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+texture = ExtResource("8_phlu0")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="TextureRect2" type="TextureRect" parent="topbar/attribute/attribute1"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+texture = ExtResource("9_4upum")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="TextureRect3" type="TextureRect" parent="topbar/attribute/attribute1"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+texture = ExtResource("10_uebhd")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="attribute2" type="HBoxContainer" parent="topbar/attribute"]
+top_level = true
+layout_mode = 0
+offset_left = 360.0
+offset_top = 80.0
+offset_right = 616.0
+offset_bottom = 120.0
+theme_override_constants/separation = 60
+
+[node name="TextureRect" type="TextureRect" parent="topbar/attribute/attribute2"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+texture = ExtResource("11_t4awb")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="TextureRect2" type="TextureRect" parent="topbar/attribute/attribute2"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+texture = ExtResource("12_4upum")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="TextureRect3" type="TextureRect" parent="topbar/attribute/attribute2"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+texture = ExtResource("13_hg8mt")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="lable1" type="HBoxContainer" parent="topbar/attribute"]
+top_level = true
+layout_mode = 0
+offset_left = 408.0
+offset_top = 32.0
+offset_right = 664.0
+offset_bottom = 72.0
+theme_override_constants/separation = 60
+
+[node name="TextureRect" type="Label" parent="topbar/attribute/lable1"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "10"
+
+[node name="TextureRect2" type="Label" parent="topbar/attribute/lable1"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "10"
+
+[node name="TextureRect3" type="Label" parent="topbar/attribute/lable1"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "10"
+
+[node name="lable2" type="HBoxContainer" parent="topbar/attribute"]
+top_level = true
+layout_mode = 0
+offset_left = 408.0
+offset_top = 80.0
+offset_right = 664.0
+offset_bottom = 120.0
+theme_override_constants/separation = 60
+
+[node name="TextureRect" type="Label" parent="topbar/attribute/lable2"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "10"
+
+[node name="TextureRect2" type="Label" parent="topbar/attribute/lable2"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "10"
+
+[node name="TextureRect3" type="Label" parent="topbar/attribute/lable2"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "10"
+
+[node name="player" parent="." instance=ExtResource("13_uebhd")]
+position = Vector2(248.00002, 272.00003)
+scale = Vector2(7.625, 7.625)
+
+[node name="Journey" parent="." instance=ExtResource("14_t4awb")]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="StoryPlayer" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 636.0
+offset_top = 8.0
+offset_right = 1260.0
+offset_bottom = 624.0
+script = ExtResource("16_02e3m")
+
+[node name="StoryBox" type="RichTextLabel" parent="StoryPlayer"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 8.0
+offset_right = 628.0
+offset_bottom = 456.0
+theme_override_fonts/normal_font = ExtResource("2_iumbh")
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+
+[node name="Btns" type="VBoxContainer" parent="StoryPlayer"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 184.0
+offset_right = 52.0
+offset_bottom = 550.0
+theme_override_constants/separation = 31
+
+[node name="RestartBtn" type="Button" parent="StoryPlayer/Btns"]
+texture_filter = 1
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "重启"
+autowrap_mode = 2
+
+[node name="NewRunBtn" type="Button" parent="StoryPlayer/Btns"]
+texture_filter = 1
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "新的开始"
+autowrap_mode = 2
+
+[node name="ContinueBtn" type="Button" parent="StoryPlayer/Btns"]
+texture_filter = 1
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_iumbh")
+theme_override_font_sizes/font_size = 24
+text = "继续"
+autowrap_mode = 2
+
+[node name="ChoicesBox" type="VBoxContainer" parent="StoryPlayer"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 472.0
+offset_right = 628.0
+offset_bottom = 624.0

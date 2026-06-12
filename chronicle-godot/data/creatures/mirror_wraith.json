@@ -1,0 +1,7 @@
+{
+  "id":"mirror_wraith",
+  "name":"镜雾灵",
+  "tags":["ghost","fog"],
+  "base": {"hp": 30, "atk": 6},
+  "affixes":[{"type":"sanity_hit","value":2}]
+}

@@ -1,0 +1,205 @@
+{
+  "clear": {
+	"id": "clear",
+	"name": "晴朗",
+	"tag": "clear",
+	"weight": 12,
+	"effects": { "visibility": "+2", "travel_speed": "+5" },
+	"text_templates": [
+	  "天空高远而澄净，薄云被阳光撕成丝缕。",
+      "树影轻晃，连风都显得温柔。"
+	]
+  },
+
+  "overcast": {
+	"id": "overcast",
+	"name": "阴天",
+	"tag": "calm",
+	"weight": 10,
+	"effects": { "visibility": "0" },
+	"text_templates": [
+	  "天光灰白，像被布帘遮住了光。",
+      "鸟雀变得安静，只剩树叶的摩挲声。"
+	]
+  },
+
+  "mist": {
+	"id": "mist",
+	"name": "薄雾",
+	"tag": "fog",
+	"weight": 8,
+	"effects": { "visibility": "-2", "encounter_rate": "-10" },
+	"text_templates": [
+	  "雾像从地面生长出来，包裹住每一步气息。",
+      "远处的声音被雾揉碎，只剩下模糊的回响。"
+	]
+  },
+
+  "drizzle": {
+	"id": "drizzle",
+	"name": "微雨",
+	"tag": "rain",
+	"weight": 6,
+	"effects": { "visibility": "-1", "travel_speed": "-3" },
+	"text_templates": [
+	  "细雨轻敲树叶，像是森林在低语。",
+      "雨丝连成幕，你的脚印在湿泥上渐渐模糊。"
+	]
+  },
+
+  "rain": {
+	"id": "rain",
+	"name": "中雨",
+	"tag": "rain",
+	"weight": 5,
+	"effects": { "visibility": "-2", "sound_mask": "+10" },
+	"text_templates": [
+	  "雨声密集得像是在织布，遮掩了一切脚步声。",
+      "湿气缠绕着皮肤，连呼吸都变得沉重。"
+	]
+  },
+
+  "downpour": {
+	"id": "downpour",
+	"name": "暴雨",
+	"tag": "storm",
+	"weight": 3,
+	"effects": { "visibility": "-4", "camp_risk": "+20" },
+	"text_templates": [
+	  "骤雨倾盆而下，水幕遮住了前路。",
+      "闪电撕裂了天空，空气中弥漫着焦味。"
+	]
+  },
+
+  "thunder": {
+	"id": "thunder",
+	"name": "雷暴",
+	"tag": "storm",
+	"weight": 2,
+	"effects": { "morale": "-1", "sanity": "-1" },
+	"text_templates": [
+	  "雷声在山谷回荡，像巨兽在沉眠中翻身。",
+      "电光照亮了湿漉漉的树干，像短暂的白昼。"
+	]
+  },
+
+  "gale": {
+	"id": "gale",
+	"name": "大风",
+	"tag": "wind",
+	"weight": 4,
+	"effects": { "travel_speed": "-8", "ranged_penalty": "+15" },
+	"text_templates": [
+	  "风像在和山对话，带着破碎的低吟。",
+      "你得低头前行，风拍打着斗篷的边缘。"
+	]
+  },
+
+  "blizzard": {
+	"id": "blizzard",
+	"name": "暴风雪",
+	"tag": "snow",
+	"weight": 1,
+	"effects": { "body_temp": "-3", "visibility": "-5" },
+	"text_templates": [
+	  "天地混作一色，风雪啸叫如群兽奔腾。",
+      "冰屑打在脸上，像细针刺入皮肤。"
+	]
+  },
+
+  "spore_mist": {
+	"id": "spore_mist",
+	"name": "孢雾",
+	"tag": "spore",
+	"weight": 4,
+	"effects": { "sanity": "-1", "encounter_rate": "+5" },
+	"text_templates": [
+	  "雾中飘浮着细小的荧光点，像无声的梦。",
+      "你感觉思绪开始发散，心跳与呼吸的节奏都变得奇怪。"
+	]
+  },
+
+  "dream_wind": {
+	"id": "dream_wind",
+	"name": "梦风",
+	"tag": "mystic",
+	"weight": 2,
+	"effects": { "sanity": "+1" },
+	"text_templates": [
+	  "风带着花香与低语，你听见了未曾听懂的语言。",
+      "那一刻，你分不清是梦还是回忆。"
+	]
+  },
+
+  "moonlit_night": {
+	"id": "moonlit_night",
+	"name": "月光夜",
+	"tag": "night",
+	"weight": 5,
+	"effects": { "visibility": "+1", "omen": "+1" },
+	"text_templates": [
+	  "月色洒在林间，树影如水流动。",
+      "银白的光映在湖面，静得像是幻觉。"
+	]
+  },
+
+  "full_moon": {
+	"id": "full_moon",
+	"name": "月圆夜",
+	"tag": "night",
+	"weight": 3,
+	"effects": { "omen": "+2", "sanity": "+1" },
+	"text_templates": [
+	  "圆月升起，光线让影子变得锋利。",
+      "据说在这样的夜晚，镜湖会映出人的前世。"
+	]
+  },
+
+  "lunar_eclipse": {
+	"id": "lunar_eclipse",
+	"name": "月蚀",
+	"tag": "omen",
+	"weight": 1,
+	"effects": { "sanity": "-2", "omen": "+3" },
+	"text_templates": [
+	  "月亮被一点点吞噬，世界陷入诡异的红暗。",
+      "连风都停了下来，仿佛在等待某种回声。"
+	]
+  },
+
+  "solar_eclipse": {
+	"id": "solar_eclipse",
+	"name": "日蚀",
+	"tag": "omen",
+	"weight": 1,
+	"effects": { "sanity": "-2", "creature_aggression": "+10" },
+	"text_templates": [
+	  "光在瞬间被撕开，白昼化作黑夜。",
+      "阴影像活物般蠕动，你的心跳与世界的脉搏重叠。"
+	]
+  },
+
+  "meteor_shower": {
+	"id": "meteor_shower",
+	"name": "流星雨",
+	"tag": "rare",
+	"weight": 1,
+	"effects": { "luck": "+3", "sanity": "+1" },
+	"text_templates": [
+	  "天空被火光划破，星屑坠入镜湖。",
+      "每一颗划过的星，都像是某种记忆的坠落。"
+	]
+  },
+
+  "aurora_night": {
+	"id": "aurora_night",
+	"name": "极光夜",
+	"tag": "mystic",
+	"weight": 1,
+	"effects": { "omen": "+2" },
+	"text_templates": [
+	  "天穹被极光染成流动的色带。",
+      "光在呼吸，风在歌唱。"
+	]
+  }
+}

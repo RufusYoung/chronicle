@@ -1,0 +1,20 @@
+{
+  "regions": [
+	{
+	  "id": "region_mirrorlake_belt",
+	  "path": "res://data/regions/回响之境/地区/中央偏北界域 - 碎星与镜湖/镜湖森林带/镜湖森林带.json"
+	},
+	{
+	  "id": "region.silence.forest",
+	  "path": "res://data/regions/回响之境/地区/中央偏北界域 - 碎星与镜湖/镜湖森林带/沉默森林 - Forest of Silence/沉默森林.json"
+	},
+	{
+	  "id": "region_forest_lakebelt",
+	  "path": "res://data/regions/回响之境/地区/中央偏北界域 - 碎星与镜湖/镜湖森林带/镜湖森林带.json"
+	},
+	{
+	  "id": "region_forest_silence",
+	  "path": "res://data/regions/回响之境/地区/中央偏北界域 - 碎星与镜湖/镜湖森林带/沉默森林 - Forest of Silence/沉默森林.json"
+	}
+  ]
+}

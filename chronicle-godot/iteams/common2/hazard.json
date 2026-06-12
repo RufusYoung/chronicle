@@ -1,0 +1,46 @@
+{
+  "spore_haze": {
+	"id": "spore_haze",
+	"name": "孢子雾",
+	"tags": ["forest","mind"],
+	"weight": 7,
+	"effects": {"sanity":"-1"},
+	"text_templates": [
+	  "空气里漂浮着细微的粉尘，呼吸变得像在做梦。",
+      "你突然忘了来时的路。"
+	]
+  },
+  "bog_suction": {
+	"id": "bog_suction",
+	"name": "沼陷",
+	"tags": ["terrain","water"],
+	"weight": 6,
+	"effects": {"travel_speed":"-10"},
+	"text_templates": [
+	  "脚下泥面塌陷，靴子被死死吸住。",
+      "你不得不丢掉一部分负重才挣脱。"
+	]
+  },
+  "thorn_tangle": {
+	"id": "thorn_tangle",
+	"name": "荆棘纠",
+	"tags": ["terrain","bleed"],
+	"weight": 8,
+	"effects": {"injury":"+1"},
+	"text_templates": [
+	  "前路是一道难缠的荆篱，带倒刺。",
+      "披风被扯开了几道口子。"
+	]
+  },
+  "echo_mirage": {
+	"id": "echo_mirage",
+	"name": "回声幻影",
+	"tags": ["sound","mind","mystic"],
+	"weight": 4,
+	"effects": {"sanity":"-1","lore":"+1"},
+	"text_templates": [
+	  "你听见自己的脚步在别处重复，像有人在模仿你。",
+      "影子错位了一瞬。"
+	]
+  }
+}

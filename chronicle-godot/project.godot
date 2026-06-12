@@ -1,0 +1,41 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="CHRONICLE_GODOT"
+run/main_scene="uid://cdvbwwryyo5rb"
+config/features=PackedStringArray("4.5", "Mobile")
+config/icon="res://icon.svg"
+
+[autoload]
+
+_RNG="*res://scripts/sys/RNG.gd"
+_WorldState="*res://scripts/sys/WorldState.gd"
+_Registry="*res://scripts/gen/registry.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="viewport"
+
+[editor]
+
+version_control/autoload_on_startup=true
+
+[gui]
+
+theme/custom_font="uid://p0c7nu1f53no"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="mobile"

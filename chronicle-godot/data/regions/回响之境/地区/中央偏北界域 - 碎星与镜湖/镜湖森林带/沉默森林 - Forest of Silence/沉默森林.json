@@ -1,0 +1,200 @@
+{
+  "id": "region.silence.forest",
+  "name": "沉默森林",
+
+  "tone": { "warm": 0.3, "peril": 0.7 },
+
+  "bias": {
+	"time_of_day": { "day": 0.9, "night": 1.1, "dawn": 1.0, "dusk": 1.05 },
+	"season":      { "spring": 0.95, "summer": 0.9, "autumn": 1.0, "winter": 1.1 }
+  },
+
+  "narrative_snippets": [
+	"树干之间的距离变得均匀，像某种被维护的秩序。",
+	"潮气里有细微的铁味，像抹过伤口又被风吹干。",
+	"回声被雾吞下，只剩脚步在泥里轻轻坠落。",
+    "光在叶片边缘钝下去，像被谁温柔地挡住了。"
+  ],
+
+  "local_rules": {
+	"default_travel_cost_mult": 1.2,
+	"foraging_bonus": -0.1,
+	"night_event_risk_mult": 1.2
+  },
+
+  "pools": {
+	"weather": [
+	  { "id": "deep_fog", "ref": "common:weather:deep_fog", "weight": 1.2 },
+	  { "id": "overcast", "ref": "common:weather:overcast", "weight": 0.7 }
+	],
+
+	"flora": [
+	  { "id": "whisper_grass", "ref": "common:flora:whisper_grass", "weight": 0.8 },
+	  { "id": "lumen_fungus",  "ref": "common:flora:lumen_fungus",  "weight": 0.6 }
+	],
+
+	"fauna": [
+	  { "id": "blind_deer", "ref": "common:creatures:blind_deer", "weight": 0.5 },
+	  { "id": "moss_wren",  "ref": "common:creatures:moss_wren",  "weight": 0.5 }
+	],
+
+	"hazards": [
+	  { "id": "root_snare", "ref": "common:hazards:root_snare", "weight": 0.6 },
+	  { "id": "cold_draft", "ref": "common:hazards:cold_draft", "weight": 0.5 }
+	],
+
+	"events": [
+	  {
+		"weight": 1.0,
+		"event": {
+		  "id": "ev.silence.arrive.edge",
+		  "name": "沉默边界",
+		  "starter": true,
+		  "text_templates": [
+            "你踏进边界时，空气的回声消失了。风还在，但听不见。"
+		  ],
+		  "effects": [
+			{ "op": "chronicle_push", "text": "你进入了沉默森林的边界。" },
+			{ "op": "flag_set", "id": "inside_silence" }
+		  ],
+		  "next": [
+			{ "id": "ev.silence.deepen", "weight": 1.0 }
+		  ]
+		}
+	  },
+
+	  {
+		"weight": 1.0,
+		"event": {
+		  "id": "ev.silence.deepen",
+		  "name": "深入林心",
+		  "pre": [ { "flag_present": "inside_silence" } ],
+		  "text_templates": [
+            "树干之间的间距开始变得一致。你的脚步也不自觉变轻。"
+		  ],
+		  "effects": [
+			{ "op": "counter_add", "k": "inner_steps", "inc": 1 }
+		  ],
+		  "choices": [
+			{
+			  "id": "kneel",
+			  "text": "单膝触地，按礼致意",
+			  "effects": [
+				{ "op": "counter_add", "k": "silence_ritual_progress", "inc": 1 }
+			  ]
+			},
+			{
+			  "id": "hum",
+			  "text": "用喉咙发出极轻的嗡鸣（试探）",
+			  "effects": [
+				{ "op": "counter_add", "k": "anger_spirit", "inc": 1 }
+			  ],
+			  "goto": "ev.silence.reject"
+			}
+		  ],
+		  "next": [
+			{
+			  "id": "ev.silence.badge.obtain",
+			  "weight": 1.0,
+			  "req": [ { "counter_gte": { "k": "silence_ritual_progress", "v": 2 } } ]
+			},
+			{ "id": "ev.silence.waystone", "weight": 0.6 }
+		  ]
+		}
+	  },
+
+	  {
+		"weight": 0.8,
+		"event": {
+		  "id": "ev.silence.waystone",
+		  "name": "路标石",
+		  "pre": [ { "counter_gte": { "k": "inner_steps", "v": 2 } } ],
+		  "text_templates": [
+            "根须之间嵌着一块低矮的石头，表面有细微刻痕，像是某种指向。"
+		  ],
+		  "effects": [
+			{ "op": "flag_set", "id": "waystone_seen" },
+			{ "op": "chronicle_push", "text": "你在沉默森林记下一枚路标石。" }
+		  ],
+		  "choices": [
+			{
+			  "id": "back",
+			  "text": "循路返回镜湖森林带",
+			  "effects": [],
+			  "goto": "ev.travel.back.mirrorlake"
+			}
+		  ],
+		  "next": [
+			{ "id": "ev.silence.deepen", "weight": 0.7 }
+		  ]
+		}
+	  },
+
+	  {
+		"weight": 0.0,
+		"event": {
+		  "id": "ev.silence.badge.obtain",
+		  "name": "沉默之礼·授记",
+		  "pre": [
+			{ "flag_absent": "silent_badge" },
+			{ "counter_gte": { "k": "silence_ritual_progress", "v": 2 } }
+		  ],
+		  "text_templates": [
+            "枝叶间恰好让出一条缝。一点阴影落在你的额头，又轻轻抹去。"
+		  ],
+		  "effects": [
+			{ "op": "flag_set", "id": "silent_badge" },
+			{ "op": "chronicle_push", "text": "沉默承认了你，你得到了可以通行的徽记。" }
+		  ],
+		  "next": [
+			{ "id": "ev.silence.waystone", "weight": 1.0 }
+		  ]
+		}
+	  },
+
+	  {
+		"weight": 0.0,
+		"event": {
+		  "id": "ev.silence.reject",
+		  "name": "逆礼之惩",
+		  "text_templates": [
+            "林间忽然起了一阵冷风，却没有声音。你被逼得后退一步。"
+		  ],
+		  "effects": [
+			{ "op": "flag_set", "id": "banished_by_forest" },
+			{ "op": "timer_set", "k": "banish_cooldown_h", "hours": 72 },
+			{ "op": "chronicle_push", "text": "你冒犯了沉默，被驱逐三天。" }
+		  ],
+		  "next": [
+			{ "id": "ev.travel.back.mirrorlake", "weight": 1.0 }
+		  ]
+		}
+	  },
+
+	  {
+		"weight": 0.9,
+		"event": {
+		  "id": "ev.travel.back.mirrorlake",
+		  "name": "离开沉默森林",
+		  "text_templates": [
+            "你退到树影稀薄处，远处像是湖面上风的回声。"
+		  ],
+		  "effects": [
+			{ "op": "travel_to_region", "to": "region_mirrorlake_belt", "hours": 3 }
+		  ],
+		  "next": [
+			{ "id": "ev.mirrorlake.starter.fog", "weight": 1.0 }
+		  ]
+		}
+	  }
+	]
+  },
+
+  "sublocations": [
+	{ "id": "sub.silence.heart", "name": "林心", "tags": ["grove", "sacred", "inner"], "props": {} }
+  ],
+
+  "edges": [
+	{ "to": "region_mirrorlake_belt", "base_hours": 3 }
+  ]
+}

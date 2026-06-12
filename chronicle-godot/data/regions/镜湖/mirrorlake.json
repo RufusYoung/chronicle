@@ -1,0 +1,9 @@
+{
+  "id": "mirrorlake",
+  "name": "镜湖地带",
+  "time_scale": 1.0,
+  "risk": 3,
+  "biomes": ["lake","wetland","ruin","night_bloom"],
+  "event_pools": ["mirror_common","mirror_night","mirror_travel"],
+  "travel_speed_mod": 1.0
+}
