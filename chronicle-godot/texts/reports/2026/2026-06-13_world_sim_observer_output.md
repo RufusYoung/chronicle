@@ -9,7 +9,7 @@
 
 ## 2. 无模拟干预 30 天总览
 
-- 总量：world_fact 192，world_news 98，LeadCandidate 40，适配后线索 40
+- 总量：world_fact 192，world_news 41，新闻历史 13，LeadCandidate 40，适配后线索 40
 - 线索类型分布：`{"传闻":15,"河流":3,"烟柱":13,"足迹":9}`
 - 30 天后地区最终状态：
   - border_town：danger 66.69 / order 0.00 / scarcity 98.00 / mystic 40.69 / food 3.61 / herbs 47.22 / relics 15.30 / information 100.00 / tags [danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route]
@@ -38,10 +38,13 @@
 - smugglers：power 46.50 / wealth 55.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 62.70 / wealth 57.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：回声教团从遗迹深处带出了遗物。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 1 / 累计 1：守望者突袭了边境镇的走私据点。
+- border_town / 雾路走私团 / 阶段 1 / 累计 1：一批补给在边境镇外被截走。
+- old_ruins / 回声教团 / 阶段 1 / 累计 1：回声教团从遗迹深处带出了遗物。
+
+连续事件摘要：
+- 无
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d01_005_raid_supplies / risk 0.53 / urgency 0.71
@@ -65,10 +68,12 @@
 - smugglers：power 45.00 / wealth 58.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 63.40 / wealth 56.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- mirror_lake_forest / 回声教团 / 阶段 1 / 累计 1：森林中的稀有草药被成批采走。
+
+连续事件摘要：
+- border_town / 阶段 1 / 累计 2：守望者清剿走私据点已持续 2 次，盘查与暗线活动同时增加。
+- border_town / 阶段 1 / 累计 2：走私者袭击补给线已持续 2 次，边境镇粮食压力仍在升高。
 
 当天 LeadCandidate：
 - 无
@@ -88,10 +93,14 @@
 - smugglers：power 43.50 / wealth 61.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 64.10 / wealth 55.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 2 / 累计 3：守望者连续清剿走私据点，路口盘查变多。
+- border_town / 雾路走私团 / 阶段 2 / 累计 3：补给线已遇袭 3 次，边境镇的空货架越来越多。
+- border_town / 回声教团 / 阶段 1 / 累计 1：镇民开始梦见同一片倒悬的湖面。
+
+连续事件摘要：
+- border_town / 阶段 2 / 累计 3：守望者清剿走私据点已持续 3 次，盘查与暗线活动同时增加。
+- border_town / 阶段 2 / 累计 3：走私者袭击补给线已持续 3 次，边境镇粮食压力仍在升高。
 
 当天 LeadCandidate：
 - tracks / beast_migration / fact_d03_016_region_daily_shift / risk 0.62 / urgency 0.70
@@ -113,10 +122,13 @@
 - smugglers：power 42.00 / wealth 64.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 64.80 / wealth 54.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：旧日遗迹上空出现了不自然的回声。
+当天新新闻：
+- old_ruins / 回声教团 / 阶段 1 / 累计 1：旧日遗迹上空出现了不自然的回声。
+- border_town / 地区观察 / 阶段 1 / 累计 1：边境镇 的状态标签发生变化：populated, resource_strained, scarcity_high, town, trade_route
+
+连续事件摘要：
+- border_town / 阶段 2 / 累计 4：守望者清剿走私据点已持续 4 次，盘查与暗线活动同时增加。
+- border_town / 阶段 2 / 累计 4：走私者袭击补给线已持续 4 次，边境镇粮食压力仍在升高。
 
 当天 LeadCandidate：
 - 无
@@ -136,10 +148,14 @@
 - smugglers：power 42.70 / wealth 66.80 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 65.30 / wealth 52.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 1 / 累计 1：已护送 1 批粮车，边境镇的粮食压力仍未解除。
+- border_town / 雾路走私团 / 阶段 3 / 累计 5：补给线已遇袭 5 次，边境镇的空货架越来越多。
+
+连续事件摘要：
+- border_town / 阶段 3 / 累计 5：走私者袭击补给线已持续 5 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 2 / 累计 4：守望者清剿走私据点已持续 4 次，盘查与暗线活动同时增加。
+- mirror_lake_forest / 阶段 1 / 累计 2：森林草药采集已持续 2 次，湖岸资源压力继续累积。
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d05_034_raid_supplies / risk 0.63 / urgency 0.86
@@ -163,10 +179,13 @@
 - smugglers：power 43.40 / wealth 69.60 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 65.80 / wealth 50.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- border_town / 地区观察 / 阶段 1 / 累计 2：边境镇 的状态标签发生变化：populated, scarcity_high, town, trade_route（第 2 次进入该状态）
+
+连续事件摘要：
+- border_town / 阶段 3 / 累计 6：走私者袭击补给线已持续 6 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 2 / 累计 4：守望者清剿走私据点已持续 4 次，盘查与暗线活动同时增加。
+- border_town / 阶段 1 / 累计 2：回声教团的相关活动已持续 2 次，旧日遗迹神秘压力维持高位。
 
 当天 LeadCandidate：
 - 无
@@ -186,10 +205,15 @@
 - smugglers：power 41.90 / wealth 72.60 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 66.50 / wealth 49.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：回声教团从遗迹深处带出了遗物。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 3 / 累计 5：走私者转入暗线，镇上公开冲突减少但传闻增多。
+- old_ruins / 回声教团 / 阶段 1 / 累计 2：教团已 2 次带出遗物，遗迹附近的回声越发密集。
+- border_town / 地区观察 / 阶段 1 / 累计 2：边境镇 的状态标签发生变化：populated, resource_strained, scarcity_high, town, trade_route（第 2 次进入该状态）
+
+连续事件摘要：
+- border_town / 阶段 3 / 累计 7：走私者袭击补给线已持续 7 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 5：守望者清剿走私据点已持续 5 次，盘查与暗线活动同时增加。
+- old_ruins / 阶段 1 / 累计 2：回声教团的相关活动已持续 2 次，旧日遗迹神秘压力维持高位。
 
 当天 LeadCandidate：
 - tracks / beast_migration / fact_d07_044_region_daily_shift / risk 0.63 / urgency 0.71
@@ -211,10 +235,14 @@
 - smugglers：power 42.60 / wealth 75.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 67.00 / wealth 47.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：旧日遗迹上空出现了不自然的回声。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 2 / 累计 3：已护送 3 批粮车，边境镇的粮食压力仍未解除。
+- old_ruins / 回声教团 / 阶段 1 / 累计 2：教团已举行 2 次仪式，遗迹上空的回声持续整夜。
+
+连续事件摘要：
+- border_town / 阶段 3 / 累计 8：走私者袭击补给线已持续 8 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 5：守望者清剿走私据点已持续 5 次，盘查与暗线活动同时增加。
+- border_town / 阶段 2 / 累计 3：守望者已护送 3 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
 - 无
@@ -234,10 +262,13 @@
 - smugglers：power 43.30 / wealth 78.20 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 67.50 / wealth 45.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- border_town / 回声教团 / 阶段 2 / 累计 3：镇民反复梦见同一片倒悬的湖面。
+
+连续事件摘要：
+- border_town / 阶段 3 / 累计 9：走私者袭击补给线已持续 9 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 5：守望者清剿走私据点已持续 5 次，盘查与暗线活动同时增加。
+- border_town / 阶段 2 / 累计 4：守望者已护送 4 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d09_060_raid_supplies / risk 0.66 / urgency 0.90
@@ -259,10 +290,14 @@
 - smugglers：power 41.80 / wealth 81.20 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 68.20 / wealth 44.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：回声教团从遗迹深处带出了遗物。
+当天新新闻：
+- border_town / 雾路走私团 / 阶段 4 / 累计 10：补给线已遇袭 10 次，边境镇粮食接近见底。
+- old_ruins / 回声教团 / 阶段 2 / 累计 3：教团已 3 次带出遗物，遗迹附近的回声越发密集。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 10：走私者袭击补给线已持续 10 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 6：守望者清剿走私据点已持续 6 次，盘查与暗线活动同时增加。
+- old_ruins / 阶段 2 / 累计 3：回声教团的相关活动已持续 3 次，旧日遗迹神秘压力维持高位。
 
 当天 LeadCandidate：
 - 无
@@ -282,10 +317,14 @@
 - smugglers：power 42.50 / wealth 84.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 68.70 / wealth 42.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 3 / 累计 5：已护送 5 批粮车，边境镇的粮食压力仍未解除。
+- mirror_lake_forest / 回声教团 / 阶段 2 / 累计 3：湖岸药草变少，采药人开始深入危险地带。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 11：走私者袭击补给线已持续 11 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 6：守望者清剿走私据点已持续 6 次，盘查与暗线活动同时增加。
+- border_town / 阶段 3 / 累计 5：守望者已护送 5 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
 - tracks / beast_migration / fact_d11_073_harvest_herbs / risk 0.65 / urgency 0.72
@@ -307,10 +346,13 @@
 - smugglers：power 43.20 / wealth 86.80 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 69.20 / wealth 40.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：旧日遗迹上空出现了不自然的回声。
+当天新新闻：
+- old_ruins / 回声教团 / 阶段 2 / 累计 3：教团已举行 3 次仪式，遗迹神秘压力接近失控。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 12：走私者袭击补给线已持续 12 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 6：守望者已护送 6 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 6：守望者清剿走私据点已持续 6 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -330,10 +372,14 @@
 - smugglers：power 41.70 / wealth 89.80 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 69.90 / wealth 39.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：回声教团从遗迹深处带出了遗物。
+当天新新闻：
+- border_town / 雾路走私团 / 阶段 4 / 累计 13：补给线已遇袭 13 次，边境镇粮食接近见底。
+- old_ruins / 回声教团 / 阶段 2 / 累计 4：教团第 4 次带出遗物，遗迹神秘压力接近失控。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 13：走私者袭击补给线已持续 13 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 7：守望者清剿走私据点已持续 7 次，盘查与暗线活动同时增加。
+- border_town / 阶段 3 / 累计 6：守望者已护送 6 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d13_084_raid_supplies / risk 0.73 / urgency 1.00
@@ -357,10 +403,13 @@
 - smugglers：power 42.40 / wealth 92.60 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 70.40 / wealth 37.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 14：走私者袭击补给线已持续 14 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 7：守望者已护送 7 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 7：守望者清剿走私据点已持续 7 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -380,10 +429,13 @@
 - smugglers：power 43.10 / wealth 95.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 70.90 / wealth 35.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 15：走私者袭击补给线已持续 15 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 8：守望者已护送 8 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 7：守望者清剿走私据点已持续 7 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - tracks / beast_migration / fact_d15_094_region_daily_shift / risk 0.67 / urgency 0.74
@@ -405,10 +457,14 @@
 - smugglers：power 41.60 / wealth 98.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 71.60 / wealth 34.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：旧日遗迹上空出现了不自然的回声。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 3 / 累计 8：清剿累计 8 次，走私者转入暗线，镇上传闻更多了。
+- border_town / 地区观察 / 阶段 1 / 累计 1：边境镇 的状态标签发生变化：order_low, populated, resource_strained, scarcity_high, town, trade_route
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 16：走私者袭击补给线已持续 16 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 8：守望者清剿走私据点已持续 8 次，盘查与暗线活动同时增加。
+- border_town / 阶段 3 / 累计 8：守望者已护送 8 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
 - 无
@@ -428,10 +484,13 @@
 - smugglers：power 42.30 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 72.10 / wealth 32.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- mirror_lake_forest / 回声教团 / 阶段 3 / 累计 5：草药短缺开始影响镇上的伤病治疗。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 17：走私者袭击补给线已持续 17 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 9：守望者已护送 9 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 8：守望者清剿走私据点已持续 8 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d17_110_raid_supplies / risk 0.74 / urgency 0.98
@@ -455,10 +514,14 @@
 - smugglers：power 43.00 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 72.60 / wealth 30.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 10：已护送 10 批粮车，边境镇的粮食压力仍未解除。
+- border_town / 回声教团 / 阶段 3 / 累计 5：越来越多镇民梦见倒悬湖面，白日里也有人听见回声。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 18：走私者袭击补给线已持续 18 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 10：守望者已护送 10 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 8：守望者清剿走私据点已持续 8 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -478,10 +541,13 @@
 - smugglers：power 41.50 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 73.30 / wealth 29.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：回声教团从遗迹深处带出了遗物。
+当天新新闻：
+- old_ruins / 回声教团 / 阶段 3 / 累计 5：教团第 5 次带出遗物，遗迹神秘压力接近失控。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 19：走私者袭击补给线已持续 19 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 10：守望者已护送 10 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - tracks / beast_migration / fact_d19_119_region_daily_shift / risk 0.68 / urgency 0.72
@@ -503,10 +569,14 @@
 - smugglers：power 42.20 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 73.80 / wealth 27.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：旧日遗迹上空出现了不自然的回声。
+当天新新闻：
+- border_town / 雾路走私团 / 阶段 5 / 累计 20：补给线已遇袭 20 次，边境镇粮食接近见底。
+- old_ruins / 回声教团 / 阶段 3 / 累计 5：教团已举行 5 次仪式，遗迹神秘压力接近失控。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 20：走私者袭击补给线已持续 20 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 11：守望者已护送 11 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -526,10 +596,13 @@
 - smugglers：power 42.90 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 74.30 / wealth 25.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 21：走私者袭击补给线已持续 21 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 12：守望者已护送 12 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d21_134_raid_supplies / risk 0.76 / urgency 0.98
@@ -553,10 +626,13 @@
 - smugglers：power 43.60 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 74.80 / wealth 23.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：回声教团从遗迹深处带出了遗物。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 22：走私者袭击补给线已持续 22 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 13：守望者已护送 13 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -576,10 +652,13 @@
 - smugglers：power 42.10 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 75.50 / wealth 22.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 10：第 10 次清剿后，边境镇秩序仍跌入危险线。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 23：走私者袭击补给线已持续 23 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 13：守望者已护送 13 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - tracks / beast_migration / fact_d23_148_harvest_herbs / risk 0.69 / urgency 0.72
@@ -603,10 +682,13 @@
 - smugglers：power 42.80 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 76.00 / wealth 20.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：旧日遗迹上空出现了不自然的回声。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 24：走私者袭击补给线已持续 24 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 14：守望者已护送 14 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -626,10 +708,13 @@
 - smugglers：power 43.50 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 76.50 / wealth 18.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：回声教团从遗迹深处带出了遗物。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 25：走私者袭击补给线已持续 25 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 15：守望者已护送 15 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d25_159_raid_supplies / risk 0.78 / urgency 0.98
@@ -653,10 +738,13 @@
 - smugglers：power 42.00 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 77.20 / wealth 17.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 26：走私者袭击补给线已持续 26 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 15：守望者已护送 15 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 11：守望者清剿走私据点已持续 11 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -676,10 +764,13 @@
 - smugglers：power 42.70 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 77.70 / wealth 15.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 16：已护送 16 批粮车，但补给速度仍追不上消耗。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 27：走私者袭击补给线已持续 27 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 16：守望者已护送 16 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 11：守望者清剿走私据点已持续 11 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - tracks / beast_migration / fact_d27_168_region_daily_shift / risk 0.70 / urgency 0.71
@@ -703,10 +794,13 @@
 - smugglers：power 43.40 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 78.20 / wealth 13.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- old_ruins / 回声教团：旧日遗迹上空出现了不自然的回声。
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 28：走私者袭击补给线已持续 28 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 17：守望者已护送 17 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 11：守望者清剿走私据点已持续 11 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -726,10 +820,14 @@
 - smugglers：power 41.90 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 78.90 / wealth 12.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者突袭了边境镇的走私据点。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- mirror_lake_forest / 回声教团：森林中的稀有草药被成批采走。
+当天新新闻：
+- mirror_lake_forest / 回声教团 / 阶段 3 / 累计 8：草药已被集中采集 8 次，采药人开始深入危险地带。
+- border_town / 地区观察 / 阶段 1 / 累计 1：边境镇 的状态标签发生变化：danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 29：走私者袭击补给线已持续 29 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 17：守望者已护送 17 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 12：守望者清剿走私据点已持续 12 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - caravan / scarcity_high_and_smuggler_raid / fact_d29_183_raid_supplies / risk 0.83 / urgency 1.00
@@ -753,10 +851,13 @@
 - smugglers：power 42.60 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 79.40 / wealth 10.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
-当天新闻：
-- border_town / 镜湖守望者：守望者护送粮车进入边境镇。
-- border_town / 雾路走私团：一批补给在边境镇外被截走。
-- border_town / 回声教团：镇民开始梦见同一片倒悬的湖面。
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 18：已护送 18 批粮车，但补给速度仍追不上消耗。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 30：走私者袭击补给线已持续 30 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 18：守望者已护送 18 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 12：守望者清剿走私据点已持续 12 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
 - 无
@@ -766,7 +867,7 @@
 
 ## 4. 第 3 天测试注入后 30 天总览
 
-- 总量：world_fact 202，world_news 103，LeadCandidate 39，适配后线索 39
+- 总量：world_fact 202，world_news 46，新闻历史 12，LeadCandidate 39，适配后线索 39
 - 线索类型分布：`{"传闻":15,"河流":3,"烟柱":12,"足迹":9}`
 - 30 天后地区最终状态：
   - border_town：danger 62.55 / order 1.53 / scarcity 75.37 / mystic 40.69 / food 32.61 / herbs 47.22 / relics 15.30 / information 100.00 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]

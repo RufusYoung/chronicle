@@ -148,6 +148,12 @@ class WorldNews:
 	var summary: String = ""
 	var truth_level: float = 1.0
 	var related_fact_id: String = ""
+	var news_key: String = ""
+	var stage: int = 1
+	var occurrence_count: int = 1
+	var world_cause: String = ""
+	var related_fact_ids: Array[String] = []
+	var kind: String = "news"
 
 
 class LeadCandidate:
@@ -173,6 +179,7 @@ var regions: Dictionary = {}
 var factions: Dictionary = {}
 var world_facts: Array[WorldFact] = []
 var world_news: Array[WorldNews] = []
+var news_history: Dictionary = {}
 var lead_candidates: Array[LeadCandidate] = []
 var rng_state: int = 0
 
@@ -210,7 +217,8 @@ func add_news(
 		source: String,
 		summary: String,
 		truth_level: float,
-		related_fact_id: String
+		related_fact_id: String,
+		metadata: Dictionary = {}
 	) -> WorldNews:
 	var news := WorldNews.new()
 	news.id = "news_d%02d_%03d" % [day, world_news.size() + 1]
@@ -220,6 +228,13 @@ func add_news(
 	news.summary = summary
 	news.truth_level = clampf(truth_level, 0.0, 1.0)
 	news.related_fact_id = related_fact_id
+	news.news_key = String(metadata.get("news_key", ""))
+	news.stage = int(metadata.get("stage", 1))
+	news.occurrence_count = int(metadata.get("occurrence_count", 1))
+	news.world_cause = String(metadata.get("world_cause", ""))
+	for fact_id: Variant in metadata.get("related_fact_ids", [related_fact_id]):
+		news.related_fact_ids.append(String(fact_id))
+	news.kind = String(metadata.get("kind", "news"))
 	world_news.append(news)
 	return news
 
@@ -245,5 +260,6 @@ func snapshot() -> Dictionary:
 		"regions": region_snapshot,
 		"factions": faction_snapshot,
 		"news_count": world_news.size(),
+		"news_history_count": news_history.size(),
 		"lead_count": lead_candidates.size(),
 	}

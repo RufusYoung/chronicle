@@ -4,6 +4,7 @@ class_name WorldSimObserver
 const SimulatorModel = preload("res://scripts/sim/world_simulator.gd")
 const PlayerActionsModel = preload("res://scripts/sim/player_world_actions.gd")
 const AdapterModel = preload("res://scripts/sim/world_sim_lead_adapter.gd")
+const NewsDigestModel = preload("res://scripts/sim/world_news_digest.gd")
 
 const SEED_PATH := "res://data/world_seed_mirror_lake.json"
 const REGION_METRICS: Array[String] = [
@@ -25,6 +26,7 @@ const FACTION_METRICS: Array[String] = [
 var simulator := SimulatorModel.new()
 var player_actions := PlayerActionsModel.new()
 var adapter := AdapterModel.new()
+var news_digest := NewsDigestModel.new()
 
 
 func run_baseline(days: int = 30) -> Dictionary:
@@ -38,6 +40,7 @@ func run_with_test_injection(days: int = 30, injection_day: int = 3) -> Dictiona
 func build_daily_snapshot(state: Variant) -> Dictionary:
 	var day := _state_day(state)
 	var news := build_news_summary(state, day)
+	var continuous_news := build_continuous_news_summary(state)
 	var leads := build_lead_summary(state, day)
 	var adapted_leads := build_adapted_lead_summary(state, day)
 	return {
@@ -45,6 +48,7 @@ func build_daily_snapshot(state: Variant) -> Dictionary:
 		"regions": build_region_summary(state),
 		"factions": build_faction_summary(state),
 		"news": news,
+		"continuous_news": continuous_news,
 		"leads": leads,
 		"adapted_leads": adapted_leads,
 		"news_signatures": _news_summary_signatures(news),
@@ -143,8 +147,19 @@ func build_news_summary(state: Variant, day: int) -> Array:
 			"summary": news.summary,
 			"truth_level": _round(news.truth_level),
 			"related_fact_id": news.related_fact_id,
+			"news_key": news.news_key,
+			"stage": news.stage,
+			"occurrence_count": news.occurrence_count,
+			"world_cause": news.world_cause,
+			"kind": news.kind,
 		})
 	return output
+
+
+func build_continuous_news_summary(state: Variant) -> Array:
+	if not state is WorldSimState:
+		return []
+	return news_digest.build_continuous_summaries(state, 3)
 
 
 func build_lead_summary(state: Variant, day: int) -> Array:
@@ -344,6 +359,7 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 		"totals": {
 			"world_facts": state.world_facts.size(),
 			"world_news": state.world_news.size(),
+			"news_history": state.news_history.size(),
 			"lead_candidates": state.lead_candidates.size(),
 			"adapted_leads": all_adapted.size(),
 		},
@@ -485,10 +501,11 @@ func _news_summary_signatures(news: Array) -> Array[String]:
 	for news_value: Variant in news:
 		var item := news_value as Dictionary
 		output.append(
-			"%s|%s|%s"
+			"%s|%s|%d|%s"
 			% [
-				item.get("region_id", ""),
-				item.get("source", ""),
+				item.get("news_key", ""),
+				item.get("kind", ""),
+				int(item.get("stage", 0)),
 				item.get("summary", ""),
 			]
 		)
@@ -562,10 +579,11 @@ func _adapted_object_signatures(leads: Array) -> Array[String]:
 func _append_run_overview(lines: Array[String], run: Dictionary) -> void:
 	var totals := run.get("totals", {}) as Dictionary
 	lines.append(
-		"- 总量：world_fact %d，world_news %d，LeadCandidate %d，适配后线索 %d"
+		"- 总量：world_fact %d，world_news %d，新闻历史 %d，LeadCandidate %d，适配后线索 %d"
 		% [
 			int(totals.get("world_facts", 0)),
 			int(totals.get("world_news", 0)),
+			int(totals.get("news_history", 0)),
 			int(totals.get("lead_candidates", 0)),
 			int(totals.get("adapted_leads", 0)),
 		]
@@ -608,8 +626,15 @@ func _append_daily_snapshot(lines: Array[String], snapshot: Dictionary) -> void:
 		var faction := faction_value as Dictionary
 		lines.append("- %s：%s" % [faction.get("id", ""), _faction_metric_text(faction)])
 	lines.append("")
-	lines.append("当天新闻：")
+	lines.append("当天新新闻：")
 	_append_limited_news(lines, snapshot.get("news", []) as Array, 3)
+	lines.append("")
+	lines.append("连续事件摘要：")
+	_append_limited_continuous_news(
+		lines,
+		snapshot.get("continuous_news", []) as Array,
+		3
+	)
 	lines.append("")
 	lines.append("当天 LeadCandidate：")
 	_append_limited_leads(lines, snapshot.get("leads", []) as Array, 3)
@@ -626,8 +651,35 @@ func _append_limited_news(lines: Array[String], news: Array, limit: int) -> void
 	for index: int in range(mini(limit, news.size())):
 		var item := news[index] as Dictionary
 		lines.append(
-			"- %s / %s：%s"
-			% [item.get("region_id", ""), item.get("source", ""), item.get("summary", "")]
+			"- %s / %s / 阶段 %d / 累计 %d：%s"
+			% [
+				item.get("region_id", ""),
+				item.get("source", ""),
+				int(item.get("stage", 0)),
+				int(item.get("occurrence_count", 0)),
+				item.get("summary", ""),
+			]
+		)
+
+
+func _append_limited_continuous_news(
+		lines: Array[String],
+		news: Array,
+		limit: int
+	) -> void:
+	if news.is_empty():
+		lines.append("- 无")
+		return
+	for index: int in range(mini(limit, news.size())):
+		var item := news[index] as Dictionary
+		lines.append(
+			"- %s / 阶段 %d / 累计 %d：%s"
+			% [
+				item.get("region_id", ""),
+				int(item.get("stage", 0)),
+				int(item.get("count", 0)),
+				item.get("summary", ""),
+			]
 		)
 
 

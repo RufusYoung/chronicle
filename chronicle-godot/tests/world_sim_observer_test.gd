@@ -44,6 +44,7 @@ func _run() -> void:
 	)
 	_check(_daily_summaries_exist(baseline), "every baseline day has region and faction summaries")
 	_check(_has_daily_news(baseline), "baseline includes world_news summaries")
+	_check(_has_continuous_news(baseline), "baseline includes continuous event summaries")
 	_check(_has_daily_leads(baseline), "baseline includes LeadCandidate summaries")
 	_check(_has_daily_adapted_leads(baseline), "baseline includes adapted v0.3 lead summaries")
 	_check(
@@ -60,6 +61,8 @@ func _run() -> void:
 	)
 	_check(FileAccess.file_exists(OUTPUT_PATH), "Markdown observation output exists")
 	_check(_markdown_has_required_sections(), "Markdown observation output has required sections")
+	_check(_markdown_has_news_categories(), "Markdown separates new news and continuous summaries")
+	_check(_observer_news_not_repetitive(baseline), "observer output avoids repeated daily news text")
 	_check(_markdown_uses_test_injection_terms(), "Markdown uses test injection terminology")
 	_check(protected_before == protected_after, "protected Demo files were not modified")
 
@@ -95,6 +98,8 @@ func _daily_summaries_exist(result: Dictionary) -> bool:
 			return false
 		if not snapshot.has("news") or not snapshot.has("leads"):
 			return false
+		if not snapshot.has("continuous_news"):
+			return false
 		if not snapshot.has("adapted_leads"):
 			return false
 	return true
@@ -104,6 +109,14 @@ func _has_daily_news(result: Dictionary) -> bool:
 	for snapshot_value: Variant in result.get("daily_snapshots", []):
 		var snapshot := snapshot_value as Dictionary
 		if not (snapshot.get("news", []) as Array).is_empty():
+			return true
+	return false
+
+
+func _has_continuous_news(result: Dictionary) -> bool:
+	for snapshot_value: Variant in result.get("daily_snapshots", []):
+		var snapshot := snapshot_value as Dictionary
+		if not (snapshot.get("continuous_news", []) as Array).is_empty():
 			return true
 	return false
 
@@ -143,6 +156,27 @@ func _markdown_has_required_sections() -> bool:
 	return true
 
 
+func _markdown_has_news_categories() -> bool:
+	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
+	return "当天新新闻：" in text and "连续事件摘要：" in text
+
+
+func _observer_news_not_repetitive(result: Dictionary) -> bool:
+	var counts: Dictionary = {}
+	var total := 0
+	for snapshot_value: Variant in result.get("daily_snapshots", []):
+		var snapshot := snapshot_value as Dictionary
+		for news_value: Variant in snapshot.get("news", []):
+			var news := news_value as Dictionary
+			var summary := String(news.get("summary", ""))
+			counts[summary] = int(counts.get(summary, 0)) + 1
+			total += 1
+	var repeated := 0
+	for count_value: Variant in counts.values():
+		repeated += maxi(int(count_value) - 1, 0)
+	return float(repeated) / float(maxi(total, 1)) <= 0.15
+
+
 func _markdown_uses_test_injection_terms() -> bool:
 	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
 	for forbidden: String in ["玩家选择", "玩家行为", "玩家干预"]:
@@ -161,11 +195,12 @@ func _read_protected_files() -> Dictionary:
 func _print_summary(label: String, result: Dictionary) -> void:
 	var totals := result.get("totals", {}) as Dictionary
 	print(
-		"[OBSERVER %s] facts=%d news=%d candidates=%d adapted=%d types=%s"
+		"[OBSERVER %s] facts=%d news=%d histories=%d candidates=%d adapted=%d types=%s"
 		% [
 			label,
 			int(totals.get("world_facts", 0)),
 			int(totals.get("world_news", 0)),
+			int(totals.get("news_history", 0)),
 			int(totals.get("lead_candidates", 0)),
 			int(totals.get("adapted_leads", 0)),
 			JSON.stringify(result.get("lead_type_distribution", {})),

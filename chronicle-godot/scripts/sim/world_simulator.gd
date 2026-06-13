@@ -3,6 +3,7 @@ class_name WorldSimulator
 
 const StateModel = preload("res://scripts/sim/world_sim_state.gd")
 const ProjectorModel = preload("res://scripts/sim/world_to_leads_projector.gd")
+const NewsDigestModel = preload("res://scripts/sim/world_news_digest.gd")
 
 const DYNAMIC_TAGS: Array[String] = [
 	"danger_high",
@@ -15,6 +16,7 @@ const DYNAMIC_TAGS: Array[String] = [
 ]
 
 var projector := ProjectorModel.new()
+var news_digest := NewsDigestModel.new()
 
 
 func load_seed(path: String) -> WorldSimState:
@@ -376,7 +378,7 @@ func _record_action(
 			"faction_wealth": faction.wealth,
 		}
 	)
-	state.add_news(region.id, faction.name, summary, 0.85, fact.id)
+	news_digest.record_action(state, fact, faction.name, summary)
 
 
 func _update_region_tags(state: WorldSimState) -> void:
@@ -409,12 +411,16 @@ func _update_region_tags(state: WorldSimState) -> void:
 				{"before": previous, "after": region.tags.duplicate()}
 			)
 			if "mystic_surge" in region.tags or "scarcity_high" in region.tags:
-				state.add_news(
-					region.id,
+				news_digest.record_immediate(
+					state,
+					fact,
 					"地区观察",
-					"%s 的状态标签发生变化：%s" % [region.name, ", ".join(region.tags)],
-					1.0,
-					fact.id
+					"%s 的状态标签发生变化：%s" % [
+						region.name,
+						", ".join(region.tags),
+					],
+					"region_tags_changed",
+					",".join(region.tags)
 				)
 
 
