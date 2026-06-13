@@ -164,7 +164,7 @@ origin = world_sim
 [WORLD SIM LEAD ADAPTER RESULT] PASS
 ```
 
-## 9. 无玩家干预适配样例
+## 9. 无模拟干预适配样例
 
 以下样例来自无干预 A 组。
 
