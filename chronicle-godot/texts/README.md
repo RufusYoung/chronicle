@@ -59,6 +59,7 @@ Chronicle 是一个自运行世界驱动的文字冒险 RPG。
 ### Reports
 
 - `reports/2026/2026-06-13_project_cleanup_report.md`
+- `reports/2026/2026-06-13_world_sim_mvp_report.md`
 
 ### Decisions
 

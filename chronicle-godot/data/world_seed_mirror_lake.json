@@ -1,0 +1,101 @@
+{
+  "seed": 20260613,
+  "day": 0,
+  "regions": [
+    {
+      "id": "mirror_lake_forest",
+      "name": "镜湖森林",
+      "danger": 52.0,
+      "order": 39.0,
+      "scarcity": 42.0,
+      "mystic": 55.0,
+      "food": 62.0,
+      "herbs": 82.0,
+      "relics": 25.0,
+      "information": 48.0,
+      "beasts": 69.0,
+      "population": 38.0,
+      "owner_faction_id": "wardens",
+      "tags": ["forest", "lake", "herb_rich"]
+    },
+    {
+      "id": "border_town",
+      "name": "边境镇",
+      "danger": 34.0,
+      "order": 72.0,
+      "scarcity": 66.0,
+      "mystic": 24.0,
+      "food": 58.0,
+      "herbs": 40.0,
+      "relics": 18.0,
+      "information": 68.0,
+      "beasts": 18.0,
+      "population": 84.0,
+      "owner_faction_id": "wardens",
+      "tags": ["town", "trade_route", "populated"]
+    },
+    {
+      "id": "old_ruins",
+      "name": "旧日遗迹",
+      "danger": 76.0,
+      "order": 18.0,
+      "scarcity": 30.0,
+      "mystic": 68.0,
+      "food": 20.0,
+      "herbs": 55.0,
+      "relics": 88.0,
+      "information": 52.0,
+      "beasts": 46.0,
+      "population": 9.0,
+      "owner_faction_id": "echo_cult",
+      "tags": ["ruins", "relic_rich", "unstable"]
+    }
+  ],
+  "factions": [
+    {
+      "id": "wardens",
+      "name": "镜湖守望者",
+      "power": 62.0,
+      "wealth": 58.0,
+      "food_need": 34.0,
+      "hostility_to_player": 0.0,
+      "relations": {
+        "smugglers": -55.0,
+        "echo_cult": -45.0
+      },
+      "goal": "维护秩序、压制走私者、阻止回声教团扩张",
+      "known_facts": [],
+      "active_region_id": "border_town"
+    },
+    {
+      "id": "smugglers",
+      "name": "雾路走私团",
+      "power": 48.0,
+      "wealth": 52.0,
+      "food_need": 24.0,
+      "hostility_to_player": 0.0,
+      "relations": {
+        "wardens": -55.0,
+        "echo_cult": 8.0
+      },
+      "goal": "获取财富和情报，利用匮乏并削弱地区秩序",
+      "known_facts": [],
+      "active_region_id": "border_town"
+    },
+    {
+      "id": "echo_cult",
+      "name": "回声教团",
+      "power": 46.0,
+      "wealth": 35.0,
+      "food_need": 18.0,
+      "hostility_to_player": 0.0,
+      "relations": {
+        "wardens": -45.0,
+        "smugglers": 8.0
+      },
+      "goal": "获取遗物与草药，提高神秘压力并制造异象",
+      "known_facts": [],
+      "active_region_id": "old_ruins"
+    }
+  ]
+}

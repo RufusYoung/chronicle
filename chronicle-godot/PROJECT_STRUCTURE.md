@@ -8,6 +8,10 @@
 - 当前世界逻辑：`scripts/gen/world_generation_v03.gd`
 - 默认地区文件：`data/regions/回响之境/地区/中央偏北界域 - 碎星与镜湖/镜湖森林带/镜湖森林带.json`
 
+## 开发与验证环境
+
+项目以 Godot 4.5 为目标版本。当前清理阶段曾使用 Godot 4.6.3 stable 进行无头加载和冒烟测试。后续发布或课程展示前，应固定最终 Godot 版本并重新验证。
+
 ## 当前 Demo 必需文件
 
 核心运行文件：
@@ -74,16 +78,16 @@
 - `WorldState`
 - `RNG`
 
-## 后续 world_sim_mvp 推荐位置
+## world_sim_mvp 当前位置
 
-建议新增：
+第一阶段无 UI 世界模拟核心位于：
 
 ```text
 scripts/sim/
 data/world_seed_mirror_lake.json
 ```
 
-当前清理任务不创建这些实现文件。
+其中包含世界状态、每日 tick、势力行动、线索投影、玩家行为写回和无头调试 Runner。该模块目前保持独立，尚未接入 `story_player.gd` 或主界面。
 
 ## 当前保留的核心循环
 
