@@ -97,5 +97,149 @@
       "known_facts": [],
       "active_region_id": "old_ruins"
     }
-  ]
+  ],
+  "micro_world": {
+    "state": {
+      "region_id": "lake_town",
+      "macro_region_id": "border_town",
+      "food_price_index": 1.0,
+      "last_update_day": 0,
+      "food_price_fact_id": "",
+      "spoiled_grain_fact_id": "",
+      "closed_shop_fact_id": ""
+    },
+    "npcs": [
+      {
+        "id": "old_chen",
+        "name": "老陈",
+        "tier": "S",
+        "role": "grocer",
+        "location_id": "old_chen_shop",
+        "health": 72.0,
+        "stress": 32.0,
+        "debt": 38.0,
+        "money": 9.0,
+        "family_food": 24.0,
+        "needs": {
+          "food": 42.0,
+          "money": 55.0,
+          "safety": 25.0
+        },
+        "memories": [],
+        "status_tags": []
+      },
+      {
+        "id": "chen_mi",
+        "name": "陈米",
+        "tier": "S",
+        "role": "child",
+        "location_id": "old_chen_shop",
+        "hunger": 44.0,
+        "fear": 20.0,
+        "health": 88.0,
+        "needs": {
+          "food": 44.0,
+          "safety": 30.0
+        },
+        "inventory": [],
+        "memories": [],
+        "status_tags": []
+      }
+    ],
+    "locations": [
+      {
+        "id": "lake_town_market",
+        "name": "湖湾镇集市",
+        "region_id": "lake_town",
+        "type": "market",
+        "state": {
+          "food_price_index": 1.0
+        },
+        "present_npcs": [],
+        "traces": [],
+        "tags": ["market"]
+      },
+      {
+        "id": "old_chen_shop",
+        "name": "老陈的杂货铺",
+        "region_id": "lake_town",
+        "type": "shop",
+        "state": {
+          "is_open": true,
+          "food_stock": 28.0,
+          "price_notice": false,
+          "family_crisis": false
+        },
+        "present_npcs": ["old_chen", "chen_mi"],
+        "traces": [],
+        "tags": ["shop", "family_home"]
+      },
+      {
+        "id": "abandoned_granary",
+        "name": "废弃粮仓",
+        "region_id": "lake_town",
+        "type": "ruin_storage",
+        "state": {
+          "spoiled_grain_stock": 3.0,
+          "disease_risk": 0.65,
+          "is_known_to_children": true
+        },
+        "present_npcs": [],
+        "traces": [],
+        "tags": ["abandoned", "spoiled_food"]
+      }
+    ],
+    "items": [
+      {
+        "id": "spoiled_grain",
+        "type": "food_resource",
+        "owner_id": "abandoned_granary",
+        "amount": 3.0,
+        "quality": 0.1,
+        "active": true,
+        "source_fact_id": "",
+        "tags": ["spoiled", "disease_risk"]
+      },
+      {
+        "id": "price_notice",
+        "type": "location_marker",
+        "owner_id": "old_chen_shop",
+        "amount": 1.0,
+        "quality": 1.0,
+        "active": false,
+        "source_fact_id": "",
+        "tags": ["price_rise"]
+      },
+      {
+        "id": "closed_shop",
+        "type": "location_marker",
+        "owner_id": "old_chen_shop",
+        "amount": 1.0,
+        "quality": 1.0,
+        "active": false,
+        "source_fact_id": "",
+        "tags": ["closed"]
+      },
+      {
+        "id": "hidden_bag",
+        "type": "carried_marker",
+        "owner_id": "chen_mi",
+        "amount": 1.0,
+        "quality": 1.0,
+        "active": false,
+        "source_fact_id": "",
+        "tags": ["hidden", "secret"]
+      },
+      {
+        "id": "grain_dust",
+        "type": "body_trace_marker",
+        "owner_id": "chen_mi",
+        "amount": 1.0,
+        "quality": 1.0,
+        "active": false,
+        "source_fact_id": "",
+        "tags": ["grain", "sleeve"]
+      }
+    ]
+  }
 }

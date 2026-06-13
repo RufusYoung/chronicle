@@ -9,7 +9,7 @@
 
 ## 2. 无模拟干预 30 天总览
 
-- 总量：world_fact 192，world_news 41，新闻历史 13，LeadCandidate 40，适配后线索 40
+- 总量：world_fact 195（微观事实 3），world_news 41，新闻历史 13，LeadCandidate 40，适配后线索 40，Trace 6，可叙述状态 1
 - 线索类型分布：`{"传闻":15,"河流":3,"烟柱":13,"足迹":9}`
 - 30 天后地区最终状态：
   - border_town：danger 66.69 / order 0.00 / scarcity 98.00 / mystic 40.69 / food 3.61 / herbs 47.22 / relics 15.30 / information 100.00 / tags [danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route]
@@ -24,6 +24,14 @@
   - mirror_lake_forest：新增 [danger_high, order_low]，移除 []
   - old_ruins：新增 [danger_high, mystic_surge, order_low, resource_strained]，移除 []
 
+## 湖湾镇微观链观察
+
+- 当前微观区域从 `border_town` 读取宏观粮食与匮乏压力，尚未独立为正式 RegionState。
+- 粮价指数：5.00；微观事实：3；Trace：6；可叙述状态：1
+- 可叙述状态：陈米藏着一袋发霉麦子
+  原因：lake_town_food_price_rising (fact_d01_009_lake_town_food_price_rising) -> chen_mi_took_spoiled_grain (fact_d06_044_chen_mi_took_spoiled_grain) -> old_chen_closed_shop_due_to_family_crisis (fact_d06_045_old_chen_closed_shop_due_to_family_crisis)
+  痕迹：closed_shop (trace_closed_shop) -> price_rise_notice (trace_price_rise_notice) -> child_hiding_bag (trace_child_hiding_bag) -> spoiled_grain_bag (trace_spoiled_grain_bag)
+
 ## 3. 每日摘要
 
 ### Day 1
@@ -37,6 +45,17 @@
 - echo_cult：power 47.00 / wealth 36.00 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 46.50 / wealth 55.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 62.70 / wealth 57.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 35.51 / debt 39.53 / family_food 21.10 / shop_open true / tags []
+- chen_mi：hunger 45.00 / fear 20.00 / health 88.00 / inventory [] / tags []
+- old_chen_shop：is_open true / food_stock 26.49 / family_crisis false / traces [trace_price_rise_notice]
+- abandoned_granary：spoiled_grain_stock 3.00 / disease_risk 0.65 / traces []
+湖湾镇新增事实：
+- lake_town_food_price_rising / fact_d01_009_lake_town_food_price_rising / causes [fact_d01_005_raid_supplies]
+湖湾镇新增痕迹：
+- price_rise_notice / trace_price_rise_notice / source fact_d01_009_lake_town_food_price_rising
+湖湾镇可叙述状态：
 
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 1 / 累计 1：守望者突袭了边境镇的走私据点。
@@ -68,6 +87,13 @@
 - smugglers：power 45.00 / wealth 58.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 63.40 / wealth 56.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 39.62 / debt 41.22 / family_food 18.01 / shop_open true / tags []
+- chen_mi：hunger 50.00 / fear 20.00 / health 88.00 / inventory [] / tags []
+- old_chen_shop：is_open true / food_stock 24.88 / family_crisis false / traces [trace_price_rise_notice]
+- abandoned_granary：spoiled_grain_stock 3.00 / disease_risk 0.65 / traces []
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - mirror_lake_forest / 回声教团 / 阶段 1 / 累计 1：森林中的稀有草药被成批采走。
 
@@ -93,6 +119,13 @@
 - smugglers：power 43.50 / wealth 61.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 64.10 / wealth 55.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 44.70 / debt 43.13 / family_food 14.64 / shop_open true / tags []
+- chen_mi：hunger 55.00 / fear 20.00 / health 88.00 / inventory [] / tags []
+- old_chen_shop：is_open true / food_stock 23.11 / family_crisis false / traces [trace_price_rise_notice]
+- abandoned_granary：spoiled_grain_stock 3.00 / disease_risk 0.65 / traces []
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 2 / 累计 3：守望者连续清剿走私据点，路口盘查变多。
 - border_town / 雾路走私团 / 阶段 2 / 累计 3：补给线已遇袭 3 次，边境镇的空货架越来越多。
@@ -103,8 +136,8 @@
 - border_town / 阶段 2 / 累计 3：走私者袭击补给线已持续 3 次，边境镇粮食压力仍在升高。
 
 当天 LeadCandidate：
-- tracks / beast_migration / fact_d03_016_region_daily_shift / risk 0.62 / urgency 0.70
-- rumor / smuggler_information_market / fact_d03_015_region_daily_shift / risk 0.44 / urgency 0.73
+- tracks / beast_migration / fact_d03_017_region_daily_shift / risk 0.62 / urgency 0.70
+- rumor / smuggler_information_market / fact_d03_016_region_daily_shift / risk 0.44 / urgency 0.73
 
 当天适配后 v0.3 线索：
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.62 / 狩猎, 跟随, 设陷, 警告旅人
@@ -121,6 +154,13 @@
 - echo_cult：power 49.60 / wealth 36.70 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 42.00 / wealth 64.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 64.80 / wealth 54.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 50.93 / debt 45.35 / family_food 10.90 / shop_open true / tags []
+- chen_mi：hunger 60.00 / fear 20.00 / health 88.00 / inventory [] / tags []
+- old_chen_shop：is_open true / food_stock 21.13 / family_crisis false / traces [trace_price_rise_notice]
+- abandoned_granary：spoiled_grain_stock 3.00 / disease_risk 0.65 / traces []
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - old_ruins / 回声教团 / 阶段 1 / 累计 1：旧日遗迹上空出现了不自然的回声。
@@ -148,6 +188,13 @@
 - smugglers：power 42.70 / wealth 66.80 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 65.30 / wealth 52.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 58.35 / debt 47.85 / family_food 6.90 / shop_open true / tags []
+- chen_mi：hunger 65.00 / fear 20.00 / health 88.00 / inventory [] / tags []
+- old_chen_shop：is_open true / food_stock 18.95 / family_crisis false / traces [trace_price_rise_notice]
+- abandoned_granary：spoiled_grain_stock 3.00 / disease_risk 0.65 / traces []
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 1 / 累计 1：已护送 1 批粮车，边境镇的粮食压力仍未解除。
 - border_town / 雾路走私团 / 阶段 3 / 累计 5：补给线已遇袭 5 次，边境镇的空货架越来越多。
@@ -158,9 +205,9 @@
 - mirror_lake_forest / 阶段 1 / 累计 2：森林草药采集已持续 2 次，湖岸资源压力继续累积。
 
 当天 LeadCandidate：
-- caravan / scarcity_high_and_smuggler_raid / fact_d05_034_raid_supplies / risk 0.63 / urgency 0.86
-- apparition / cult_ritual_and_mystic_pressure / fact_d05_032_region_daily_shift / risk 0.81 / urgency 0.80
-- checkpoint / warden_security_response / fact_d05_033_escort_supplies / risk 0.36 / urgency 0.64
+- caravan / scarcity_high_and_smuggler_raid / fact_d05_035_raid_supplies / risk 0.63 / urgency 0.86
+- apparition / cult_ritual_and_mystic_pressure / fact_d05_033_region_daily_shift / risk 0.81 / urgency 0.80
+- checkpoint / warden_security_response / fact_d05_034_escort_supplies / risk 0.36 / urgency 0.64
 
 当天适配后 v0.3 线索：
 - 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.63 / 调查, 护送, 劫掠, 放任
@@ -178,6 +225,25 @@
 - echo_cult：power 50.70 / wealth 37.90 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 43.40 / wealth 69.60 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 65.80 / wealth 50.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 81.93 / debt 50.63 / family_food 2.90 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 74.00 / fear 41.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 16.58 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇新增事实：
+- chen_mi_took_spoiled_grain / fact_d06_044_chen_mi_took_spoiled_grain / causes [fact_d01_009_lake_town_food_price_rising]
+- old_chen_closed_shop_due_to_family_crisis / fact_d06_045_old_chen_closed_shop_due_to_family_crisis / causes [fact_d01_009_lake_town_food_price_rising, fact_d06_044_chen_mi_took_spoiled_grain]
+湖湾镇新增痕迹：
+- child_hiding_bag / trace_child_hiding_bag / source fact_d06_044_chen_mi_took_spoiled_grain
+- spoiled_grain_bag / trace_spoiled_grain_bag / source fact_d06_044_chen_mi_took_spoiled_grain
+- grain_dust_on_sleeve / trace_grain_dust_on_sleeve / source fact_d06_044_chen_mi_took_spoiled_grain
+- granary_missing_grain / trace_granary_missing_grain / source fact_d06_044_chen_mi_took_spoiled_grain
+- closed_shop / trace_closed_shop / source fact_d06_045_old_chen_closed_shop_due_to_family_crisis
+湖湾镇可叙述状态：
+- 可叙述状态：陈米藏着一袋发霉麦子
+  原因：lake_town_food_price_rising (fact_d01_009_lake_town_food_price_rising) -> chen_mi_took_spoiled_grain (fact_d06_044_chen_mi_took_spoiled_grain) -> old_chen_closed_shop_due_to_family_crisis (fact_d06_045_old_chen_closed_shop_due_to_family_crisis)
+  痕迹：closed_shop (trace_closed_shop) -> price_rise_notice (trace_price_rise_notice) -> child_hiding_bag (trace_child_hiding_bag) -> spoiled_grain_bag (trace_spoiled_grain_bag)
 
 当天新新闻：
 - border_town / 地区观察 / 阶段 1 / 累计 2：边境镇 的状态标签发生变化：populated, scarcity_high, town, trade_route（第 2 次进入该状态）
@@ -205,6 +271,13 @@
 - smugglers：power 41.90 / wealth 72.60 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 66.50 / wealth 49.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 91.60 / debt 53.76 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 85.00 / fear 43.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 14.08 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 3 / 累计 5：走私者转入暗线，镇上公开冲突减少但传闻增多。
 - old_ruins / 回声教团 / 阶段 1 / 累计 2：教团已 2 次带出遗物，遗迹附近的回声越发密集。
@@ -216,8 +289,8 @@
 - old_ruins / 阶段 1 / 累计 2：回声教团的相关活动已持续 2 次，旧日遗迹神秘压力维持高位。
 
 当天 LeadCandidate：
-- tracks / beast_migration / fact_d07_044_region_daily_shift / risk 0.63 / urgency 0.71
-- rumor / smuggler_information_market / fact_d07_043_region_daily_shift / risk 0.42 / urgency 0.77
+- tracks / beast_migration / fact_d07_047_region_daily_shift / risk 0.63 / urgency 0.71
+- rumor / smuggler_information_market / fact_d07_046_region_daily_shift / risk 0.42 / urgency 0.77
 
 当天适配后 v0.3 线索：
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.63 / 狩猎, 跟随, 设陷, 警告旅人
@@ -234,6 +307,13 @@
 - echo_cult：power 53.20 / wealth 38.40 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 42.60 / wealth 75.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 67.00 / wealth 47.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 57.23 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 96.00 / fear 44.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 11.58 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 2 / 累计 3：已护送 3 批粮车，边境镇的粮食压力仍未解除。
@@ -262,6 +342,13 @@
 - smugglers：power 43.30 / wealth 78.20 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 67.50 / wealth 45.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 61.03 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 46.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 9.08 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 回声教团 / 阶段 2 / 累计 3：镇民反复梦见同一片倒悬的湖面。
 
@@ -271,8 +358,8 @@
 - border_town / 阶段 2 / 累计 4：守望者已护送 4 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
-- caravan / scarcity_high_and_smuggler_raid / fact_d09_060_raid_supplies / risk 0.66 / urgency 0.90
-- apparition / cult_ritual_and_mystic_pressure / fact_d09_058_region_daily_shift / risk 0.90 / urgency 0.90
+- caravan / scarcity_high_and_smuggler_raid / fact_d09_063_raid_supplies / risk 0.66 / urgency 0.90
+- apparition / cult_ritual_and_mystic_pressure / fact_d09_061_region_daily_shift / risk 0.90 / urgency 0.90
 
 当天适配后 v0.3 线索：
 - 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.66 / 调查, 护送, 劫掠, 放任
@@ -289,6 +376,13 @@
 - echo_cult：power 54.80 / wealth 39.40 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 41.80 / wealth 81.20 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 68.20 / wealth 44.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 65.08 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 47.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 6.58 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - border_town / 雾路走私团 / 阶段 4 / 累计 10：补给线已遇袭 10 次，边境镇粮食接近见底。
@@ -317,6 +411,13 @@
 - smugglers：power 42.50 / wealth 84.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 68.70 / wealth 42.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 69.13 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 49.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 4.08 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 3 / 累计 5：已护送 5 批粮车，边境镇的粮食压力仍未解除。
 - mirror_lake_forest / 回声教团 / 阶段 2 / 累计 3：湖岸药草变少，采药人开始深入危险地带。
@@ -327,8 +428,8 @@
 - border_town / 阶段 3 / 累计 5：守望者已护送 5 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
-- tracks / beast_migration / fact_d11_073_harvest_herbs / risk 0.65 / urgency 0.72
-- rumor / smuggler_information_market / fact_d11_068_region_daily_shift / risk 0.43 / urgency 0.81
+- tracks / beast_migration / fact_d11_076_harvest_herbs / risk 0.65 / urgency 0.72
+- rumor / smuggler_information_market / fact_d11_071_region_daily_shift / risk 0.43 / urgency 0.81
 
 当天适配后 v0.3 线索：
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.65 / 狩猎, 跟随, 设陷, 警告旅人
@@ -345,6 +446,13 @@
 - echo_cult：power 56.80 / wealth 40.10 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 43.20 / wealth 86.80 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 69.20 / wealth 40.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 73.18 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 50.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 1.58 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - old_ruins / 回声教团 / 阶段 2 / 累计 3：教团已举行 3 次仪式，遗迹神秘压力接近失控。
@@ -372,6 +480,13 @@
 - smugglers：power 41.70 / wealth 89.80 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 69.90 / wealth 39.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 77.23 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 52.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 雾路走私团 / 阶段 4 / 累计 13：补给线已遇袭 13 次，边境镇粮食接近见底。
 - old_ruins / 回声教团 / 阶段 2 / 累计 4：教团第 4 次带出遗物，遗迹神秘压力接近失控。
@@ -382,9 +497,9 @@
 - border_town / 阶段 3 / 累计 6：守望者已护送 6 批补给，粮食危机仍未完全缓解。
 
 当天 LeadCandidate：
-- caravan / scarcity_high_and_smuggler_raid / fact_d13_084_raid_supplies / risk 0.73 / urgency 1.00
-- apparition / cult_ritual_and_mystic_pressure / fact_d13_082_region_daily_shift / risk 1.00 / urgency 1.00
-- smoke / order_collapse_and_forest_conflict / fact_d13_086_region_tags_changed / risk 0.59 / urgency 0.65
+- caravan / scarcity_high_and_smuggler_raid / fact_d13_087_raid_supplies / risk 0.73 / urgency 1.00
+- apparition / cult_ritual_and_mystic_pressure / fact_d13_085_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d13_089_region_tags_changed / risk 0.59 / urgency 0.65
 
 当天适配后 v0.3 线索：
 - 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.73 / 调查, 护送, 劫掠, 放任
@@ -402,6 +517,13 @@
 - echo_cult：power 58.30 / wealth 42.30 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 42.40 / wealth 92.60 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 70.40 / wealth 37.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 81.28 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 53.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - 无
@@ -429,6 +551,13 @@
 - smugglers：power 43.10 / wealth 95.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 70.90 / wealth 35.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 85.33 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 55.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - 无
 
@@ -438,8 +567,8 @@
 - border_town / 阶段 3 / 累计 7：守望者清剿走私据点已持续 7 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- tracks / beast_migration / fact_d15_094_region_daily_shift / risk 0.67 / urgency 0.74
-- rumor / smuggler_information_market / fact_d15_093_region_daily_shift / risk 0.43 / urgency 0.86
+- tracks / beast_migration / fact_d15_097_region_daily_shift / risk 0.67 / urgency 0.74
+- rumor / smuggler_information_market / fact_d15_096_region_daily_shift / risk 0.43 / urgency 0.86
 
 当天适配后 v0.3 线索：
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.67 / 狩猎, 跟随, 设陷, 警告旅人
@@ -456,6 +585,13 @@
 - echo_cult：power 60.40 / wealth 41.80 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 41.60 / wealth 98.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 71.60 / wealth 34.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 89.38 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 56.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 3 / 累计 8：清剿累计 8 次，走私者转入暗线，镇上传闻更多了。
@@ -484,6 +620,13 @@
 - smugglers：power 42.30 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 72.10 / wealth 32.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 93.43 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 58.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - mirror_lake_forest / 回声教团 / 阶段 3 / 累计 5：草药短缺开始影响镇上的伤病治疗。
 
@@ -493,9 +636,9 @@
 - border_town / 阶段 3 / 累计 8：守望者清剿走私据点已持续 8 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- caravan / scarcity_high_and_smuggler_raid / fact_d17_110_raid_supplies / risk 0.74 / urgency 0.98
-- apparition / cult_ritual_and_mystic_pressure / fact_d17_108_region_daily_shift / risk 1.00 / urgency 1.00
-- smoke / order_collapse_and_forest_conflict / fact_d17_111_harvest_herbs / risk 0.62 / urgency 0.66
+- caravan / scarcity_high_and_smuggler_raid / fact_d17_113_raid_supplies / risk 0.74 / urgency 0.98
+- apparition / cult_ritual_and_mystic_pressure / fact_d17_111_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d17_114_harvest_herbs / risk 0.62 / urgency 0.66
 
 当天适配后 v0.3 线索：
 - 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.74 / 调查, 护送, 劫掠, 放任
@@ -513,6 +656,13 @@
 - echo_cult：power 61.50 / wealth 43.00 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 43.00 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 72.60 / wealth 30.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 97.48 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 59.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 4 / 累计 10：已护送 10 批粮车，边境镇的粮食压力仍未解除。
@@ -541,6 +691,13 @@
 - smugglers：power 41.50 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 73.30 / wealth 29.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 61.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - old_ruins / 回声教团 / 阶段 3 / 累计 5：教团第 5 次带出遗物，遗迹神秘压力接近失控。
 
@@ -550,8 +707,8 @@
 - border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- tracks / beast_migration / fact_d19_119_region_daily_shift / risk 0.68 / urgency 0.72
-- rumor / smuggler_information_market / fact_d19_118_region_daily_shift / risk 0.42 / urgency 0.92
+- tracks / beast_migration / fact_d19_122_region_daily_shift / risk 0.68 / urgency 0.72
+- rumor / smuggler_information_market / fact_d19_121_region_daily_shift / risk 0.42 / urgency 0.92
 
 当天适配后 v0.3 线索：
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.68 / 狩猎, 跟随, 设陷, 警告旅人
@@ -568,6 +725,13 @@
 - echo_cult：power 64.00 / wealth 43.50 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 42.20 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 73.80 / wealth 27.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 62.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - border_town / 雾路走私团 / 阶段 5 / 累计 20：补给线已遇袭 20 次，边境镇粮食接近见底。
@@ -596,6 +760,13 @@
 - smugglers：power 42.90 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 74.30 / wealth 25.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 64.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - 无
 
@@ -605,9 +776,9 @@
 - border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- caravan / scarcity_high_and_smuggler_raid / fact_d21_134_raid_supplies / risk 0.76 / urgency 0.98
-- apparition / cult_ritual_and_mystic_pressure / fact_d21_132_region_daily_shift / risk 1.00 / urgency 1.00
-- smoke / order_collapse_and_forest_conflict / fact_d21_136_region_tags_changed / risk 0.65 / urgency 0.68
+- caravan / scarcity_high_and_smuggler_raid / fact_d21_137_raid_supplies / risk 0.76 / urgency 0.98
+- apparition / cult_ritual_and_mystic_pressure / fact_d21_135_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d21_139_region_tags_changed / risk 0.65 / urgency 0.68
 
 当天适配后 v0.3 线索：
 - 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.76 / 调查, 护送, 劫掠, 放任
@@ -625,6 +796,13 @@
 - echo_cult：power 65.60 / wealth 44.50 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 43.60 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 74.80 / wealth 23.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 65.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - 无
@@ -652,6 +830,13 @@
 - smugglers：power 42.10 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 75.50 / wealth 22.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 67.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 4 / 累计 10：第 10 次清剿后，边境镇秩序仍跌入危险线。
 
@@ -661,9 +846,9 @@
 - border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- tracks / beast_migration / fact_d23_148_harvest_herbs / risk 0.69 / urgency 0.72
-- river / resource_pressure_along_lake_routes / fact_d23_148_harvest_herbs / risk 0.49 / urgency 0.51
-- rumor / smuggler_information_market / fact_d23_143_region_daily_shift / risk 0.42 / urgency 0.95
+- tracks / beast_migration / fact_d23_151_harvest_herbs / risk 0.69 / urgency 0.72
+- river / resource_pressure_along_lake_routes / fact_d23_151_harvest_herbs / risk 0.49 / urgency 0.51
+- rumor / smuggler_information_market / fact_d23_146_region_daily_shift / risk 0.42 / urgency 0.95
 
 当天适配后 v0.3 线索：
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.69 / 狩猎, 跟随, 设陷, 警告旅人
@@ -681,6 +866,13 @@
 - echo_cult：power 67.60 / wealth 45.20 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 42.80 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 76.00 / wealth 20.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 68.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - 无
@@ -708,6 +900,13 @@
 - smugglers：power 43.50 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 76.50 / wealth 18.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 70.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - 无
 
@@ -717,9 +916,9 @@
 - border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- caravan / scarcity_high_and_smuggler_raid / fact_d25_159_raid_supplies / risk 0.78 / urgency 0.98
-- apparition / cult_ritual_and_mystic_pressure / fact_d25_157_region_daily_shift / risk 1.00 / urgency 1.00
-- smoke / order_collapse_and_forest_conflict / fact_d25_156_region_daily_shift / risk 0.68 / urgency 0.69
+- caravan / scarcity_high_and_smuggler_raid / fact_d25_162_raid_supplies / risk 0.78 / urgency 0.98
+- apparition / cult_ritual_and_mystic_pressure / fact_d25_160_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d25_159_region_daily_shift / risk 0.68 / urgency 0.69
 
 当天适配后 v0.3 线索：
 - 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.78 / 调查, 护送, 劫掠, 放任
@@ -737,6 +936,13 @@
 - echo_cult：power 69.10 / wealth 47.40 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 42.00 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 77.20 / wealth 17.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 71.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - 无
@@ -764,6 +970,13 @@
 - smugglers：power 42.70 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 77.70 / wealth 15.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 73.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 4 / 累计 16：已护送 16 批粮车，但补给速度仍追不上消耗。
 
@@ -773,9 +986,9 @@
 - border_town / 阶段 4 / 累计 11：守望者清剿走私据点已持续 11 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- tracks / beast_migration / fact_d27_168_region_daily_shift / risk 0.70 / urgency 0.71
-- river / resource_pressure_along_lake_routes / fact_d27_168_region_daily_shift / risk 0.52 / urgency 0.50
-- rumor / smuggler_information_market / fact_d27_167_region_daily_shift / risk 0.43 / urgency 0.95
+- tracks / beast_migration / fact_d27_171_region_daily_shift / risk 0.70 / urgency 0.71
+- river / resource_pressure_along_lake_routes / fact_d27_171_region_daily_shift / risk 0.52 / urgency 0.50
+- rumor / smuggler_information_market / fact_d27_170_region_daily_shift / risk 0.43 / urgency 0.95
 
 当天适配后 v0.3 线索：
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.70 / 狩猎, 跟随, 设陷, 警告旅人
@@ -793,6 +1006,13 @@
 - echo_cult：power 71.20 / wealth 46.90 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
 - smugglers：power 43.40 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 78.20 / wealth 13.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 74.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
 
 当天新新闻：
 - 无
@@ -820,6 +1040,13 @@
 - smugglers：power 41.90 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 78.90 / wealth 12.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 76.00 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - mirror_lake_forest / 回声教团 / 阶段 3 / 累计 8：草药已被集中采集 8 次，采药人开始深入危险地带。
 - border_town / 地区观察 / 阶段 1 / 累计 1：边境镇 的状态标签发生变化：danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route
@@ -830,9 +1057,9 @@
 - border_town / 阶段 4 / 累计 12：守望者清剿走私据点已持续 12 次，盘查与暗线活动同时增加。
 
 当天 LeadCandidate：
-- caravan / scarcity_high_and_smuggler_raid / fact_d29_183_raid_supplies / risk 0.83 / urgency 1.00
-- apparition / cult_ritual_and_mystic_pressure / fact_d29_181_region_daily_shift / risk 1.00 / urgency 1.00
-- smoke / order_collapse_and_forest_conflict / fact_d29_184_harvest_herbs / risk 0.71 / urgency 0.71
+- caravan / scarcity_high_and_smuggler_raid / fact_d29_186_raid_supplies / risk 0.83 / urgency 1.00
+- apparition / cult_ritual_and_mystic_pressure / fact_d29_184_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d29_187_harvest_herbs / risk 0.71 / urgency 0.71
 
 当天适配后 v0.3 线索：
 - 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.83 / 调查, 护送, 劫掠, 放任
@@ -851,6 +1078,13 @@
 - smugglers：power 42.60 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
 - wardens：power 79.40 / wealth 10.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 
+湖湾镇微观状态：
+- old_chen：stress 100.00 / debt 100.00 / family_food 0.00 / shop_open false / tags [family_crisis, shop_closed]
+- chen_mi：hunger 100.00 / fear 77.50 / health 84.00 / inventory [spoiled_grain] / tags [hiding_spoiled_grain, disease_risk]
+- old_chen_shop：is_open false / food_stock 0.00 / family_crisis true / traces [trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag, trace_grain_dust_on_sleeve, trace_closed_shop]
+- abandoned_granary：spoiled_grain_stock 2.00 / disease_risk 0.65 / traces [trace_granary_missing_grain]
+湖湾镇微观链：无新增事实、痕迹或可叙述状态。
+
 当天新新闻：
 - border_town / 镜湖守望者 / 阶段 4 / 累计 18：已护送 18 批粮车，但补给速度仍追不上消耗。
 
@@ -867,7 +1101,7 @@
 
 ## 4. 第 3 天测试注入后 30 天总览
 
-- 总量：world_fact 202，world_news 46，新闻历史 12，LeadCandidate 39，适配后线索 39
+- 总量：world_fact 205（微观事实 3），world_news 46，新闻历史 12，LeadCandidate 39，适配后线索 39，Trace 6，可叙述状态 1
 - 线索类型分布：`{"传闻":15,"河流":3,"烟柱":12,"足迹":9}`
 - 30 天后地区最终状态：
   - border_town：danger 62.55 / order 1.53 / scarcity 75.37 / mystic 40.69 / food 32.61 / herbs 47.22 / relics 15.30 / information 100.00 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]

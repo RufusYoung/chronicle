@@ -19,9 +19,13 @@ func _initialize() -> void:
 func _run() -> void:
 	var protected_before := _read_protected_files()
 	var observer := ObserverModel.new()
+	print("[WORLD SIM OBSERVER TEST] baseline start")
 	var baseline := observer.run_baseline(30)
+	print("[WORLD SIM OBSERVER TEST] baseline complete")
 	var test_injection := observer.run_with_test_injection(30, 3)
+	print("[WORLD SIM OBSERVER TEST] test injection complete")
 	var comparison := observer.compare_runs(baseline, test_injection)
+	print("[WORLD SIM OBSERVER TEST] comparison complete")
 	observer.export_markdown_report(
 		{
 			"baseline": baseline,
@@ -30,6 +34,7 @@ func _run() -> void:
 		},
 		OUTPUT_PATH
 	)
+	print("[WORLD SIM OBSERVER TEST] Markdown export complete")
 	var protected_after := _read_protected_files()
 
 	_check(not baseline.is_empty(), "baseline observation completed")
@@ -47,6 +52,7 @@ func _run() -> void:
 	_check(_has_continuous_news(baseline), "baseline includes continuous event summaries")
 	_check(_has_daily_leads(baseline), "baseline includes LeadCandidate summaries")
 	_check(_has_daily_adapted_leads(baseline), "baseline includes adapted v0.3 lead summaries")
+	_check(_has_lake_town_chain(baseline), "baseline includes lake town micro chain summaries")
 	_check(
 		bool(comparison.get("day_10_has_difference", false)),
 		"A/B comparison differs by day 10"
@@ -62,6 +68,8 @@ func _run() -> void:
 	_check(FileAccess.file_exists(OUTPUT_PATH), "Markdown observation output exists")
 	_check(_markdown_has_required_sections(), "Markdown observation output has required sections")
 	_check(_markdown_has_news_categories(), "Markdown separates new news and continuous summaries")
+	_check(_markdown_has_lake_town_chain(), "Markdown includes the lake town micro chain section")
+	_check(_markdown_has_traceable_micro_scene(), "Markdown shows the complete micro scene causes")
 	_check(_observer_news_not_repetitive(baseline), "observer output avoids repeated daily news text")
 	_check(_markdown_uses_test_injection_terms(), "Markdown uses test injection terminology")
 	_check(protected_before == protected_after, "protected Demo files were not modified")
@@ -102,6 +110,8 @@ func _daily_summaries_exist(result: Dictionary) -> bool:
 			return false
 		if not snapshot.has("adapted_leads"):
 			return false
+		if not snapshot.has("lake_town"):
+			return false
 	return true
 
 
@@ -137,12 +147,27 @@ func _has_daily_adapted_leads(result: Dictionary) -> bool:
 	return false
 
 
+func _has_lake_town_chain(result: Dictionary) -> bool:
+	var final_summary := result.get("lake_town_final", {}) as Dictionary
+	if final_summary.is_empty():
+		return false
+	for scene_value: Variant in final_summary.get("narratable_states", []):
+		var scene := scene_value as Dictionary
+		if String(scene.get("id", "")) == "chen_mi_hiding_spoiled_grain_scene":
+			return (
+				not (scene.get("source_fact_ids", []) as Array).is_empty()
+				and not (scene.get("trace_ids", []) as Array).is_empty()
+			)
+	return false
+
+
 func _markdown_has_required_sections() -> bool:
 	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
 	for heading: String in [
 		"# world_sim 观察输出",
 		"## 1. 运行设置",
 		"## 2. 无模拟干预 30 天总览",
+		"## 湖湾镇微观链观察",
 		"## 3. 每日摘要",
 		"### Day 1",
 		"### Day 30",
@@ -159,6 +184,28 @@ func _markdown_has_required_sections() -> bool:
 func _markdown_has_news_categories() -> bool:
 	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
 	return "当天新新闻：" in text and "连续事件摘要：" in text
+
+
+func _markdown_has_lake_town_chain() -> bool:
+	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
+	return (
+		"湖湾镇微观状态：" in text
+		and "湖湾镇新增事实：" in text
+		and "湖湾镇新增痕迹：" in text
+		and "湖湾镇可叙述状态：" in text
+	)
+
+
+func _markdown_has_traceable_micro_scene() -> bool:
+	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
+	return (
+		"陈米藏着一袋发霉麦子" in text
+		and "lake_town_food_price_rising" in text
+		and "chen_mi_took_spoiled_grain" in text
+		and "old_chen_closed_shop_due_to_family_crisis" in text
+		and "child_hiding_bag" in text
+		and "spoiled_grain_bag" in text
+	)
 
 
 func _observer_news_not_repetitive(result: Dictionary) -> bool:

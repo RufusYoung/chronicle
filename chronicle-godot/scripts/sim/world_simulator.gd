@@ -4,6 +4,7 @@ class_name WorldSimulator
 const StateModel = preload("res://scripts/sim/world_sim_state.gd")
 const ProjectorModel = preload("res://scripts/sim/world_to_leads_projector.gd")
 const NewsDigestModel = preload("res://scripts/sim/world_news_digest.gd")
+const LakeTownFoodChainModel = preload("res://scripts/sim/lake_town_food_chain.gd")
 
 const DYNAMIC_TAGS: Array[String] = [
 	"danger_high",
@@ -17,6 +18,7 @@ const DYNAMIC_TAGS: Array[String] = [
 
 var projector := ProjectorModel.new()
 var news_digest := NewsDigestModel.new()
+var lake_town_food_chain := LakeTownFoodChainModel.new()
 
 
 func load_seed(path: String) -> WorldSimState:
@@ -41,6 +43,10 @@ func load_seed(path: String) -> WorldSimState:
 		if faction_data is Dictionary:
 			var faction := StateModel.FactionState.from_dictionary(faction_data as Dictionary)
 			state.factions[faction.id] = faction
+	lake_town_food_chain.initialize_from_seed(
+		state,
+		data.get("micro_world", {}) as Dictionary
+	)
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = state.seed
@@ -69,6 +75,7 @@ func advance_one_day(state: WorldSimState) -> void:
 		_apply_faction_action(state, faction_id, action)
 
 	_update_region_tags(state)
+	lake_town_food_chain.advance_one_day(state)
 	projector.generate_leads_from_world(state)
 	state.rng_state = rng.state
 

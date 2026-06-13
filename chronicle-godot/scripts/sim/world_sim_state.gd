@@ -135,6 +135,12 @@ class WorldFact:
 	var type: String = ""
 	var region_id: String = ""
 	var faction_id: String = ""
+	var actors: Array[String] = []
+	var location_id: String = ""
+	var cause_fact_ids: Array[String] = []
+	var effects: Dictionary = {}
+	var tags: Array[String] = []
+	var importance: float = 0.0
 	var data: Dictionary = {}
 
 
@@ -181,6 +187,12 @@ var world_facts: Array[WorldFact] = []
 var world_news: Array[WorldNews] = []
 var news_history: Dictionary = {}
 var lead_candidates: Array[LeadCandidate] = []
+var micro_state: Dictionary = {}
+var npcs: Dictionary = {}
+var locations: Dictionary = {}
+var items: Dictionary = {}
+var traces: Array[Dictionary] = []
+var narratable_states: Array[Dictionary] = []
 var rng_state: int = 0
 
 
@@ -190,6 +202,18 @@ func get_region(region_id: String) -> RegionState:
 
 func get_faction(faction_id: String) -> FactionState:
 	return factions.get(faction_id) as FactionState
+
+
+func get_npc(npc_id: String) -> Dictionary:
+	return npcs.get(npc_id, {}) as Dictionary
+
+
+func get_location(location_id: String) -> Dictionary:
+	return locations.get(location_id, {}) as Dictionary
+
+
+func get_item(item_id: String) -> Dictionary:
+	return items.get(item_id, {}) as Dictionary
 
 
 func add_fact(
@@ -205,6 +229,17 @@ func add_fact(
 	fact.region_id = region_id
 	fact.faction_id = faction_id
 	fact.data = fact_data.duplicate(true)
+	for actor: Variant in fact_data.get("actors", []):
+		fact.actors.append(String(actor))
+	fact.location_id = String(fact_data.get("location_id", ""))
+	for cause_fact_id: Variant in fact_data.get("cause_fact_ids", []):
+		fact.cause_fact_ids.append(String(cause_fact_id))
+	fact.effects = (
+		fact_data.get("effects", {}) as Dictionary
+	).duplicate(true)
+	for tag: Variant in fact_data.get("tags", []):
+		fact.tags.append(String(tag))
+	fact.importance = float(fact_data.get("importance", 0.0))
 	world_facts.append(fact)
 	var faction := get_faction(faction_id)
 	if faction != null and not fact.id in faction.known_facts:
@@ -259,6 +294,13 @@ func snapshot() -> Dictionary:
 		"day": day,
 		"regions": region_snapshot,
 		"factions": faction_snapshot,
+		"micro_state": micro_state.duplicate(true),
+		"npcs": npcs.duplicate(true),
+		"locations": locations.duplicate(true),
+		"items": items.duplicate(true),
+		"traces": traces.duplicate(true),
+		"narratable_states": narratable_states.duplicate(true),
+		"world_fact_count": world_facts.size(),
 		"news_count": world_news.size(),
 		"news_history_count": news_history.size(),
 		"lead_count": lead_candidates.size(),

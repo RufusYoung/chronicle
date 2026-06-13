@@ -51,10 +51,105 @@ func build_daily_snapshot(state: Variant) -> Dictionary:
 		"continuous_news": continuous_news,
 		"leads": leads,
 		"adapted_leads": adapted_leads,
+		"lake_town": build_lake_town_summary(state, day),
 		"news_signatures": _news_summary_signatures(news),
 		"lead_signatures": _lead_summary_signatures(leads),
 		"adapted_lead_signatures": _adapted_summary_signatures(adapted_leads),
 	}
+
+
+func build_lake_town_summary(state: Variant, target_day: int = -1) -> Dictionary:
+	if not state is WorldSimState:
+		return {}
+	if state.get_npc("old_chen").is_empty():
+		return {}
+	var old_chen: Dictionary = state.get_npc("old_chen")
+	var chen_mi: Dictionary = state.get_npc("chen_mi")
+	var shop: Dictionary = state.get_location("old_chen_shop")
+	var granary: Dictionary = state.get_location("abandoned_granary")
+	var shop_state := shop.get("state", {}) as Dictionary
+	var granary_state := granary.get("state", {}) as Dictionary
+	var facts: Array[Dictionary] = []
+	for fact in state.world_facts:
+		if String(fact.data.get("scope", "")) != "micro":
+			continue
+		if target_day >= 0 and fact.day != target_day:
+			continue
+		facts.append({
+			"id": fact.id,
+			"type": fact.type,
+			"day": fact.day,
+			"location_id": fact.location_id,
+			"cause_fact_ids": fact.cause_fact_ids.duplicate(),
+		})
+	var traces: Array[Dictionary] = []
+	for trace_value: Variant in state.traces:
+		var trace := trace_value as Dictionary
+		if target_day >= 0 and int(trace.get("created_day", 0)) != target_day:
+			continue
+		traces.append(trace.duplicate(true))
+	var scenes: Array[Dictionary] = []
+	for scene_value: Variant in state.narratable_states:
+		var scene := (scene_value as Dictionary).duplicate(true)
+		if target_day >= 0 and int(scene.get("created_day", 0)) != target_day:
+			continue
+		scene["source_fact_types"] = _fact_types_for_ids(
+			state,
+			scene.get("source_fact_ids", []) as Array
+		)
+		scene["trace_types"] = _trace_types_for_ids(
+			state,
+			scene.get("trace_ids", []) as Array
+		)
+		scenes.append(scene)
+	var old_chen_summary: Dictionary = {
+		"stress": _round(float(old_chen.get("stress", 0.0))),
+		"debt": _round(float(old_chen.get("debt", 0.0))),
+		"family_food": _round(float(old_chen.get("family_food", 0.0))),
+		"money": _round(float(old_chen.get("money", 0.0))),
+		"shop_open": bool(shop_state.get("is_open", false)),
+		"status_tags": (
+			old_chen.get("status_tags", []) as Array
+		).duplicate(),
+	}
+	var chen_mi_summary: Dictionary = {
+		"hunger": _round(float(chen_mi.get("hunger", 0.0))),
+		"fear": _round(float(chen_mi.get("fear", 0.0))),
+		"health": _round(float(chen_mi.get("health", 0.0))),
+		"inventory": (
+			chen_mi.get("inventory", []) as Array
+		).duplicate(),
+		"status_tags": (
+			chen_mi.get("status_tags", []) as Array
+		).duplicate(),
+	}
+	var shop_summary: Dictionary = {
+		"is_open": bool(shop_state.get("is_open", false)),
+		"food_stock": _round(float(shop_state.get("food_stock", 0.0))),
+		"family_crisis": bool(shop_state.get("family_crisis", false)),
+		"traces": (shop.get("traces", []) as Array).duplicate(),
+	}
+	var granary_summary: Dictionary = {
+		"spoiled_grain_stock": _round(
+			float(granary_state.get("spoiled_grain_stock", 0.0))
+		),
+		"disease_risk": _round(
+			float(granary_state.get("disease_risk", 0.0))
+		),
+		"traces": (granary.get("traces", []) as Array).duplicate(),
+	}
+	var output: Dictionary = {}
+	output["old_chen"] = old_chen_summary
+	output["chen_mi"] = chen_mi_summary
+	output["old_chen_shop"] = shop_summary
+	output["abandoned_granary"] = granary_summary
+	output["food_price_index"] = _round(
+		float(state.micro_state.get("food_price_index", 1.0))
+	)
+	output["new_facts"] = facts
+	output["new_traces"] = traces
+	output["narratable_states"] = scenes
+	return output
 
 
 func build_region_summary(state: Variant) -> Array:
@@ -287,6 +382,13 @@ func export_markdown_report(result: Dictionary, output_path: String) -> void:
 	]
 	_append_run_overview(lines, baseline)
 	lines.append("")
+	lines.append("## 湖湾镇微观链观察")
+	lines.append("")
+	_append_lake_town_overview(
+		lines,
+		baseline.get("lake_town_final", {}) as Dictionary
+	)
+	lines.append("")
 	lines.append("## 3. 每日摘要")
 	lines.append("")
 	for snapshot_value: Variant in baseline.get("daily_snapshots", []):
@@ -356,12 +458,16 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 		"daily_snapshots": daily_snapshots,
 		"final_regions": build_region_summary(state),
 		"final_factions": build_faction_summary(state),
+		"lake_town_final": build_lake_town_summary(state, -1),
 		"totals": {
 			"world_facts": state.world_facts.size(),
+			"micro_world_facts": _micro_fact_count(state),
 			"world_news": state.world_news.size(),
 			"news_history": state.news_history.size(),
 			"lead_candidates": state.lead_candidates.size(),
 			"adapted_leads": all_adapted.size(),
+			"traces": state.traces.size(),
+			"narratable_states": state.narratable_states.size(),
 		},
 		"lead_type_distribution": _type_distribution(all_adapted),
 		"region_tag_changes": _region_tag_changes(
@@ -379,6 +485,43 @@ func _state_day(state: Variant) -> int:
 	if state is Dictionary:
 		return int(state.get("day", 0))
 	return 0
+
+
+func _micro_fact_count(state: WorldSimState) -> int:
+	var count := 0
+	for fact in state.world_facts:
+		if String(fact.data.get("scope", "")) == "micro":
+			count += 1
+	return count
+
+
+func _fact_types_for_ids(
+		state: WorldSimState,
+		fact_ids: Array
+	) -> Array[String]:
+	var output: Array[String] = []
+	for fact_id_value: Variant in fact_ids:
+		var fact_id := String(fact_id_value)
+		for fact in state.world_facts:
+			if fact.id == fact_id:
+				output.append(fact.type)
+				break
+	return output
+
+
+func _trace_types_for_ids(
+		state: WorldSimState,
+		trace_ids: Array
+	) -> Array[String]:
+	var output: Array[String] = []
+	for trace_id_value: Variant in trace_ids:
+		var trace_id := String(trace_id_value)
+		for trace_value: Variant in state.traces:
+			var trace := trace_value as Dictionary
+			if String(trace.get("id", "")) == trace_id:
+				output.append(String(trace.get("type", "")))
+				break
+	return output
 
 
 func _candidate_dictionary(lead: Variant) -> Dictionary:
@@ -578,16 +721,20 @@ func _adapted_object_signatures(leads: Array) -> Array[String]:
 
 func _append_run_overview(lines: Array[String], run: Dictionary) -> void:
 	var totals := run.get("totals", {}) as Dictionary
-	lines.append(
-		"- 总量：world_fact %d，world_news %d，新闻历史 %d，LeadCandidate %d，适配后线索 %d"
-		% [
-			int(totals.get("world_facts", 0)),
-			int(totals.get("world_news", 0)),
-			int(totals.get("news_history", 0)),
-			int(totals.get("lead_candidates", 0)),
-			int(totals.get("adapted_leads", 0)),
-		]
+	var total_format := (
+		"- 总量：world_fact %d（微观事实 %d），world_news %d，新闻历史 %d，"
+		+ "LeadCandidate %d，适配后线索 %d，Trace %d，可叙述状态 %d"
 	)
+	lines.append(total_format % [
+		int(totals.get("world_facts", 0)),
+		int(totals.get("micro_world_facts", 0)),
+		int(totals.get("world_news", 0)),
+		int(totals.get("news_history", 0)),
+		int(totals.get("lead_candidates", 0)),
+		int(totals.get("adapted_leads", 0)),
+		int(totals.get("traces", 0)),
+		int(totals.get("narratable_states", 0)),
+	])
 	lines.append(
 		"- 线索类型分布：`%s`"
 		% JSON.stringify(run.get("lead_type_distribution", {}))
@@ -626,6 +773,11 @@ func _append_daily_snapshot(lines: Array[String], snapshot: Dictionary) -> void:
 		var faction := faction_value as Dictionary
 		lines.append("- %s：%s" % [faction.get("id", ""), _faction_metric_text(faction)])
 	lines.append("")
+	_append_lake_town_daily(
+		lines,
+		snapshot.get("lake_town", {}) as Dictionary
+	)
+	lines.append("")
 	lines.append("当天新新闻：")
 	_append_limited_news(lines, snapshot.get("news", []) as Array, 3)
 	lines.append("")
@@ -642,6 +794,144 @@ func _append_daily_snapshot(lines: Array[String], snapshot: Dictionary) -> void:
 	lines.append("当天适配后 v0.3 线索：")
 	_append_limited_adapted(lines, snapshot.get("adapted_leads", []) as Array, 3)
 	lines.append("")
+
+
+func _append_lake_town_daily(
+		lines: Array[String],
+		summary: Dictionary
+	) -> void:
+	lines.append("湖湾镇微观状态：")
+	if summary.is_empty():
+		lines.append("- 未初始化")
+		return
+	var old_chen := summary.get("old_chen", {}) as Dictionary
+	var chen_mi := summary.get("chen_mi", {}) as Dictionary
+	var shop := summary.get("old_chen_shop", {}) as Dictionary
+	var granary := summary.get("abandoned_granary", {}) as Dictionary
+	var old_chen_format := (
+		"- old_chen：stress %.2f / debt %.2f / family_food %.2f / "
+		+ "shop_open %s / tags [%s]"
+	)
+	lines.append(old_chen_format % [
+		float(old_chen.get("stress", 0.0)),
+		float(old_chen.get("debt", 0.0)),
+		float(old_chen.get("family_food", 0.0)),
+		old_chen.get("shop_open", false),
+		", ".join(old_chen.get("status_tags", [])),
+	])
+	var chen_mi_format := (
+		"- chen_mi：hunger %.2f / fear %.2f / health %.2f / "
+		+ "inventory [%s] / tags [%s]"
+	)
+	lines.append(chen_mi_format % [
+		float(chen_mi.get("hunger", 0.0)),
+		float(chen_mi.get("fear", 0.0)),
+		float(chen_mi.get("health", 0.0)),
+		", ".join(chen_mi.get("inventory", [])),
+		", ".join(chen_mi.get("status_tags", [])),
+	])
+	var shop_format := (
+		"- old_chen_shop：is_open %s / food_stock %.2f / "
+		+ "family_crisis %s / traces [%s]"
+	)
+	lines.append(shop_format % [
+		shop.get("is_open", false),
+		float(shop.get("food_stock", 0.0)),
+		shop.get("family_crisis", false),
+		", ".join(shop.get("traces", [])),
+	])
+	var granary_format := (
+		"- abandoned_granary：spoiled_grain_stock %.2f / "
+		+ "disease_risk %.2f / traces [%s]"
+	)
+	lines.append(granary_format % [
+		float(granary.get("spoiled_grain_stock", 0.0)),
+		float(granary.get("disease_risk", 0.0)),
+		", ".join(granary.get("traces", [])),
+	])
+	var facts := summary.get("new_facts", []) as Array
+	var traces := summary.get("new_traces", []) as Array
+	var scenes := summary.get("narratable_states", []) as Array
+	if facts.is_empty() and traces.is_empty() and scenes.is_empty():
+		lines.append("湖湾镇微观链：无新增事实、痕迹或可叙述状态。")
+		return
+	lines.append("湖湾镇新增事实：")
+	for fact_value: Variant in facts:
+		var fact := fact_value as Dictionary
+		lines.append(
+			"- %s / %s / causes [%s]"
+			% [
+				fact.get("type", ""),
+				fact.get("id", ""),
+				", ".join(fact.get("cause_fact_ids", [])),
+			]
+		)
+	lines.append("湖湾镇新增痕迹：")
+	for trace_value: Variant in traces:
+		var trace := trace_value as Dictionary
+		lines.append(
+			"- %s / %s / source %s"
+			% [
+				trace.get("type", ""),
+				trace.get("id", ""),
+				trace.get("source_fact_id", ""),
+			]
+		)
+	lines.append("湖湾镇可叙述状态：")
+	for scene_value: Variant in scenes:
+		_append_narratable_scene(lines, scene_value as Dictionary)
+
+
+func _append_lake_town_overview(
+		lines: Array[String],
+		summary: Dictionary
+	) -> void:
+	if summary.is_empty():
+		lines.append("- 未初始化")
+		return
+	lines.append(
+		"- 当前微观区域从 `border_town` 读取宏观粮食与匮乏压力，"
+		+ "尚未独立为正式 RegionState。"
+	)
+	lines.append(
+		"- 粮价指数：%.2f；微观事实：%d；Trace：%d；可叙述状态：%d"
+		% [
+			float(summary.get("food_price_index", 1.0)),
+			(summary.get("new_facts", []) as Array).size(),
+			(summary.get("new_traces", []) as Array).size(),
+			(summary.get("narratable_states", []) as Array).size(),
+		]
+	)
+	for scene_value: Variant in summary.get("narratable_states", []):
+		_append_narratable_scene(lines, scene_value as Dictionary)
+
+
+func _append_narratable_scene(
+		lines: Array[String],
+		scene: Dictionary
+	) -> void:
+	lines.append("- 可叙述状态：%s" % scene.get("title", ""))
+	lines.append(
+		"  原因：%s"
+		% _typed_reference_chain(
+			scene.get("source_fact_types", []) as Array,
+			scene.get("source_fact_ids", []) as Array
+		)
+	)
+	lines.append(
+		"  痕迹：%s"
+		% _typed_reference_chain(
+			scene.get("trace_types", []) as Array,
+			scene.get("trace_ids", []) as Array
+		)
+	)
+
+
+func _typed_reference_chain(types: Array, ids: Array) -> String:
+	var output: Array[String] = []
+	for index: int in range(mini(types.size(), ids.size())):
+		output.append("%s (%s)" % [types[index], ids[index]])
+	return " -> ".join(output)
 
 
 func _append_limited_news(lines: Array[String], news: Array, limit: int) -> void:

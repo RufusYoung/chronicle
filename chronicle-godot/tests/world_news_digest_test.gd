@@ -40,12 +40,12 @@ func _run() -> void:
 	)
 
 	_check(
-		baseline.world_facts.size() == 192,
-		"baseline WorldFact count remains complete at 192"
+		_macro_fact_count(baseline) == 192,
+		"baseline macro WorldFact count remains complete at 192"
 	)
 	_check(
-		test_injection.world_facts.size() == 202,
-		"test injection WorldFact count remains complete at 202"
+		_macro_fact_count(test_injection) == 202,
+		"test injection macro WorldFact count remains complete at 202"
 	)
 	_check(
 		baseline.world_news.size() < PRE_DIGEST_BASELINE_NEWS_COUNT,
@@ -149,6 +149,14 @@ func _repeated_text_count(state: WorldSimState) -> int:
 	for count_value: Variant in counts.values():
 		repeated += maxi(int(count_value) - 1, 0)
 	return repeated
+
+
+func _macro_fact_count(state: WorldSimState) -> int:
+	var count := 0
+	for fact in state.world_facts:
+		if String(fact.data.get("scope", "")) != "micro":
+			count += 1
+	return count
 
 
 func _no_daily_same_key_repeats(state: WorldSimState) -> bool:
