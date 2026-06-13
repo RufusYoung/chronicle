@@ -89,6 +89,8 @@ data/world_seed_mirror_lake.json
 
 其中包含世界状态、每日 tick、势力行动、线索投影、玩家行为写回和无头调试 Runner。该模块目前保持独立，尚未接入 `story_player.gd` 或主界面。
 
+`scripts/sim/world_sim_lead_adapter.gd` 属于表现层适配工具，只把已有 `LeadCandidate` 转换为 v0.3 四类线索字典。它不生成世界事实、不创建新线索，也未接入当前 Demo。
+
 ## 当前保留的核心循环
 
 线索 -> 行动 -> 事件 -> 后果回流
