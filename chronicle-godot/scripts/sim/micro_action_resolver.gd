@@ -1,7 +1,12 @@
 extends RefCounted
 class_name MicroActionResolver
 
+const RecoverySystemModel = preload(
+	"res://scripts/sim/lake_town_recovery_system.gd"
+)
+
 const SCENE_ID := "chen_mi_hiding_spoiled_grain_scene"
+const TRUST_SCENE_ID := "chen_mi_recognizes_actor_scene"
 const CHEN_MI_ID := "chen_mi"
 const OLD_CHEN_ID := "old_chen"
 const SHOP_ID := "old_chen_shop"
@@ -14,7 +19,10 @@ const ACTION_IDS: Array[String] = [
 	"report_to_guard",
 	"ignore_chen_mi",
 	"buy_spoiled_grain_low",
+	"comfort_chen_mi",
 ]
+
+var recovery_system := RecoverySystemModel.new()
 
 
 func build_action_candidates(
@@ -34,6 +42,40 @@ func build_action_candidates(
 	return output
 
 
+func build_all_action_candidates(
+		state: Variant,
+		actor_state: Dictionary
+	) -> Array:
+	var output: Array[Dictionary] = []
+	if not state is WorldSimState:
+		return output
+	for scene_value: Variant in state.narratable_states:
+		var scene := scene_value as Dictionary
+		if bool(scene.get("action_locked", false)):
+			continue
+		output.append_array(
+			build_action_candidates(
+				state,
+				actor_state,
+				String(scene.get("id", ""))
+			)
+		)
+	return output
+
+
+func relationship_blocked_action_ids(
+		state: Variant,
+		actor_state: Dictionary
+	) -> Array[String]:
+	var output: Array[String] = []
+	if not state is WorldSimState:
+		return output
+	for action_id: String in ACTION_IDS:
+		if _relationship_block_reason(state, actor_state, action_id) != "":
+			output.append(action_id)
+	return output
+
+
 func resolve_micro_action(
 		state: Variant,
 		actor_state: Dictionary,
@@ -43,6 +85,9 @@ func resolve_micro_action(
 	var failed := _base_result(action_id)
 	if not state is WorldSimState:
 		failed["error"] = "invalid_world_state"
+		return failed
+	if _relationship_block_reason(state, actor_state, action_id) != "":
+		failed["error"] = "relationship_blocked"
 		return failed
 	var scene := _find_open_scene(state, narratable_state_id)
 	if scene.is_empty() or not _requirements_met(
@@ -66,6 +111,8 @@ func resolve_micro_action(
 			_resolve_ignore(state, actor_state, scene, result)
 		"buy_spoiled_grain_low":
 			_resolve_buy_grain(state, actor_state, scene, result)
+		"comfort_chen_mi":
+			_resolve_comfort_chen_mi(state, actor_state, scene, result)
 		_:
 			result["error"] = "unknown_action"
 			return result
@@ -80,6 +127,8 @@ func can_resolve_action(
 		narratable_state_id: String
 	) -> bool:
 	if not state is WorldSimState:
+		return false
+	if _relationship_block_reason(state, actor_state, action_id) != "":
 		return false
 	var scene := _find_open_scene(state, narratable_state_id)
 	return (
@@ -178,6 +227,18 @@ func _build_candidate(
 			"outcome_preview": "将发霉麦子转给测试 actor，并加深陈米的不安。",
 			"condition_summary": "需要 actor.money > 0 且陈米持有 spoiled_grain",
 		},
+		"comfort_chen_mi": {
+			"label": "Comfort Chen Mi",
+			"targets": [CHEN_MI_ID],
+			"required_state": {
+				"fact_type": "chen_mi_trust_echo_for_actor",
+				"chen_mi.fear_min": 20.0,
+			},
+			"visible_if": {"relationship_echo": "trust"},
+			"risk": 0.05,
+			"outcome_preview": "A quiet conversation may reduce Chen Mi's fear.",
+			"condition_summary": "Requires a trust echo and Chen Mi fear above 20",
+		},
 	}
 	var definition := definitions.get(action_id, {}) as Dictionary
 	return {
@@ -211,6 +272,14 @@ func _requirements_met(
 		scene: Dictionary
 	) -> bool:
 	if scene.is_empty() or bool(scene.get("action_locked", false)):
+		return false
+	if action_id == "comfort_chen_mi":
+		return (
+			String(scene.get("id", "")) == TRUST_SCENE_ID
+			and _has_fact_type(state, "chen_mi_trust_echo_for_actor")
+			and float(state.get_npc(CHEN_MI_ID).get("fear", 0.0)) > 20.0
+		)
+	if String(scene.get("id", "")) != SCENE_ID:
 		return false
 	var chen_mi := state.get_npc(CHEN_MI_ID)
 	match action_id:
@@ -261,8 +330,6 @@ func _resolve_give_food(
 	old_chen["stress"] = maxf(0.0, float(old_chen.get("stress", 0.0)) - 8.0)
 	state.npcs[CHEN_MI_ID] = chen_mi
 	state.npcs[OLD_CHEN_ID] = old_chen
-	_change_trust(state, actor_state, CHEN_MI_ID, 20.0)
-	_change_trust(state, actor_state, OLD_CHEN_ID, 8.0)
 	var fact := _add_action_fact(
 		state,
 		scene,
@@ -278,6 +345,49 @@ func _resolve_give_food(
 		["micro_action", "aid", "food_crisis"]
 	)
 	_record_fact(result, fact)
+	var actor_id := String(actor_state.get("id", "test_actor"))
+	recovery_system.adjust_micro_relationship(
+		state,
+		actor_id,
+		CHEN_MI_ID,
+		{"trust": 20.0, "familiarity": 8.0},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		actor_id,
+		OLD_CHEN_ID,
+		{"trust": 8.0, "familiarity": 5.0},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		CHEN_MI_ID,
+		actor_id,
+		{"trust": 18.0, "gratitude": 25.0, "familiarity": 12.0},
+		fact.id
+	)
+	recovery_system.add_relationship_tag(
+		state,
+		CHEN_MI_ID,
+		actor_id,
+		"received_food_help",
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		OLD_CHEN_ID,
+		actor_id,
+		{"trust": 10.0, "gratitude": 15.0, "familiarity": 8.0},
+		fact.id
+	)
+	recovery_system.add_relationship_tag(
+		state,
+		OLD_CHEN_ID,
+		actor_id,
+		"actor_helped_family",
+		fact.id
+	)
 	_record_memory(
 		result,
 		_add_memory(
@@ -377,8 +487,6 @@ func _resolve_report_to_guard(
 	_add_status_tag(old_chen, "guard_attention")
 	state.npcs[CHEN_MI_ID] = chen_mi
 	state.npcs[OLD_CHEN_ID] = old_chen
-	_change_trust(state, actor_state, CHEN_MI_ID, -25.0)
-	_change_trust(state, actor_state, OLD_CHEN_ID, -15.0)
 	var attention := state.micro_state.get("guard_attention", {}) as Dictionary
 	attention["wardens"] = clampf(
 		float(attention.get("wardens", 0.0)) + 25.0,
@@ -400,6 +508,45 @@ func _resolve_report_to_guard(
 		["micro_action", "report", "guard_pressure"]
 	)
 	_record_fact(result, fact)
+	var actor_id := String(actor_state.get("id", "test_actor"))
+	recovery_system.adjust_micro_relationship(
+		state,
+		actor_id,
+		CHEN_MI_ID,
+		{"trust": -25.0, "familiarity": 10.0},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		actor_id,
+		OLD_CHEN_ID,
+		{"trust": -15.0, "familiarity": 8.0},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		CHEN_MI_ID,
+		actor_id,
+		{
+			"trust": -25.0,
+			"fear": 30.0,
+			"resentment": 25.0,
+			"familiarity": 10.0,
+		},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		OLD_CHEN_ID,
+		actor_id,
+		{
+			"trust": -20.0,
+			"fear": 10.0,
+			"resentment": 25.0,
+			"familiarity": 10.0,
+		},
+		fact.id
+	)
 	_record_memory(
 		result,
 		_add_memory(
@@ -496,8 +643,6 @@ func _resolve_buy_grain(
 	_add_status_tag(chen_mi, "grain_taken_by_actor")
 	state.npcs[CHEN_MI_ID] = chen_mi
 	state.npcs[OLD_CHEN_ID] = old_chen
-	_change_trust(state, actor_state, CHEN_MI_ID, -20.0)
-	_change_trust(state, actor_state, OLD_CHEN_ID, -10.0)
 	var fact := _add_action_fact(
 		state,
 		scene,
@@ -514,6 +659,40 @@ func _resolve_buy_grain(
 		["micro_action", "exploitative_trade", "spoiled_food"]
 	)
 	_record_fact(result, fact)
+	var actor_id := String(actor_state.get("id", "test_actor"))
+	recovery_system.adjust_micro_relationship(
+		state,
+		actor_id,
+		CHEN_MI_ID,
+		{"trust": -20.0, "familiarity": 10.0},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		actor_id,
+		OLD_CHEN_ID,
+		{"trust": -10.0, "familiarity": 8.0},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		CHEN_MI_ID,
+		actor_id,
+		{
+			"trust": -20.0,
+			"fear": 18.0,
+			"resentment": 25.0,
+			"familiarity": 10.0,
+		},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		OLD_CHEN_ID,
+		actor_id,
+		{"trust": -15.0, "resentment": 18.0, "familiarity": 8.0},
+		fact.id
+	)
 	_record_memory(
 		result,
 		_add_memory(
@@ -545,6 +724,66 @@ func _resolve_buy_grain(
 		"actor.inventory.spoiled_grain": {
 			"before": actor_grain_before,
 			"after": actor_grain_before + 1,
+		},
+	}
+
+
+func _resolve_comfort_chen_mi(
+		state: WorldSimState,
+		actor_state: Dictionary,
+		scene: Dictionary,
+		result: Dictionary
+	) -> void:
+	var chen_mi := state.get_npc(CHEN_MI_ID)
+	var fear_before := float(chen_mi.get("fear", 0.0))
+	chen_mi["fear"] = maxf(0.0, fear_before - 12.0)
+	_add_status_tag(chen_mi, "comforted_by_actor")
+	state.npcs[CHEN_MI_ID] = chen_mi
+	var fact := _add_action_fact(
+		state,
+		scene,
+		actor_state,
+		"actor_comforted_chen_mi",
+		[CHEN_MI_ID],
+		{"chen_mi.fear_delta": -12.0},
+		["micro_action", "comfort", "relationship_echo"]
+	)
+	_record_fact(result, fact)
+	var actor_id := String(actor_state.get("id", "test_actor"))
+	recovery_system.adjust_micro_relationship(
+		state,
+		CHEN_MI_ID,
+		actor_id,
+		{"trust": 5.0, "familiarity": 8.0},
+		fact.id
+	)
+	_record_memory(
+		result,
+		_add_memory(
+			state,
+			"chen_mi_remembers_being_comforted",
+			CHEN_MI_ID,
+			fact.id,
+			0.8,
+			["comfort", "quiet_talk", actor_id]
+		)
+	)
+	_record_trace(
+		result,
+		_add_action_trace(
+			state,
+			"quiet_talk_at_shop_step",
+			fact.id,
+			SHOP_ID,
+			CHEN_MI_ID,
+			["quiet_talk", "shop_step", "comfort"]
+		)
+	)
+	_mark_scene_resolved(state, scene, actor_state, "comforted")
+	result["state_changes"] = {
+		"chen_mi.fear": {
+			"before": fear_before,
+			"after": chen_mi["fear"],
 		},
 	}
 
@@ -650,32 +889,6 @@ func _add_memory(
 	return memory
 
 
-func _change_trust(
-		state: WorldSimState,
-		actor_state: Dictionary,
-		target_id: String,
-		delta: float
-	) -> void:
-	var actor_id := String(actor_state.get("id", "test_actor"))
-	var relationships := (
-		state.micro_state.get("micro_relationships", {}) as Dictionary
-	)
-	var actor_relationships := relationships.get(actor_id, {}) as Dictionary
-	var relationship := actor_relationships.get(
-		target_id,
-		{"trust": 0.0, "last_interaction_day": 0}
-	) as Dictionary
-	relationship["trust"] = clampf(
-		float(relationship.get("trust", 0.0)) + delta,
-		-100.0,
-		100.0
-	)
-	relationship["last_interaction_day"] = state.day
-	actor_relationships[target_id] = relationship
-	relationships[actor_id] = actor_relationships
-	state.micro_state["micro_relationships"] = relationships
-
-
 func _mark_scene_resolved(
 		state: WorldSimState,
 		scene: Dictionary,
@@ -700,7 +913,7 @@ func _find_open_scene(
 		state: WorldSimState,
 		narratable_state_id: String
 	) -> Dictionary:
-	if narratable_state_id != SCENE_ID:
+	if narratable_state_id == "":
 		return {}
 	for scene_value: Variant in state.narratable_states:
 		var scene := scene_value as Dictionary
@@ -710,6 +923,24 @@ func _find_open_scene(
 		):
 			return scene
 	return {}
+
+
+func _relationship_block_reason(
+		state: WorldSimState,
+		_actor_state: Dictionary,
+		action_id: String
+	) -> String:
+	if (
+		_has_fact_type(state, "chen_mi_avoidance_echo_for_actor")
+		and action_id in ["ask_grain_origin", "comfort_chen_mi"]
+	):
+		return "chen_mi_avoidance"
+	if (
+		_has_fact_type(state, "old_chen_closes_door_to_actor")
+		and action_id == "buy_spoiled_grain_low"
+	):
+		return "old_chen_refusal"
+	return ""
 
 
 func _guard_system_exists(state: WorldSimState) -> bool:

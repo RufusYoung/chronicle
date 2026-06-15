@@ -70,7 +70,7 @@ func _run() -> void:
 	)
 	_check(
 		_has_micro_action_followups(baseline),
-		"baseline includes differentiated three-day action followups"
+		"baseline includes differentiated five-day action followups"
 	)
 	_check(
 		bool(comparison.get("day_10_has_difference", false)),
@@ -277,7 +277,8 @@ func _markdown_has_required_sections() -> bool:
 		"## 2. 无模拟干预 30 天总览",
 		"## 湖湾镇微观链观察",
 		"## 湖湾镇微观后续反应时间线",
-		"## 外部模拟行动后三日后续分支",
+		"## 湖湾镇恢复与关系回声时间线",
+		"## 外部模拟行动后五日恢复分支",
 		"## 3. 每日摘要",
 		"### Day 1",
 		"### Day 30",
@@ -323,7 +324,7 @@ func _markdown_has_micro_action_sections() -> bool:
 	return (
 		"湖湾镇可行动候选：" in text
 		and "## 湖湾镇模拟行动后果对照" in text
-		and "## 外部模拟行动后三日后续分支" in text
+		and "## 外部模拟行动后五日恢复分支" in text
 		and "### give_food_to_chen_mi" in text
 		and "### ask_grain_origin" in text
 		and "### report_to_guard" in text

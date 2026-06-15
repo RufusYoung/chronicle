@@ -338,8 +338,8 @@ func _run() -> void:
 	var output_text := FileAccess.get_file_as_string(OUTPUT_PATH)
 	_check(
 		"## 湖湾镇微观后续反应时间线" in output_text
-		and "## 外部模拟行动后三日后续分支" in output_text,
-		"observer output contains reaction timeline and three-day branches"
+		and "## 外部模拟行动后五日恢复分支" in output_text,
+		"observer output contains reaction timeline and five-day branches"
 	)
 
 	print(

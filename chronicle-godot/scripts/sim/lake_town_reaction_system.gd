@@ -1,6 +1,10 @@
 extends RefCounted
 class_name LakeTownReactionSystem
 
+const RecoverySystemModel = preload(
+	"res://scripts/sim/lake_town_recovery_system.gd"
+)
+
 const MICRO_REGION_ID := "lake_town"
 const SHOP_ID := "old_chen_shop"
 const GRANARY_ID := "abandoned_granary"
@@ -19,6 +23,8 @@ const REACTION_IDS: Array[String] = [
 	"creditor_left_debt_notice",
 	"guard_checked_old_chen_shop",
 ]
+
+var recovery_system := RecoverySystemModel.new()
 
 
 func tick_reactions(state: Variant) -> Array:
@@ -672,8 +678,6 @@ func _apply_ma_shen_brought_porridge(
 	state.npcs[MA_SHEN_ID] = ma_shen
 	state.npcs[CHEN_MI_ID] = chen_mi
 	state.npcs[OLD_CHEN_ID] = old_chen
-	_change_micro_trust(state, MA_SHEN_ID, OLD_CHEN_ID, 12.0)
-	_change_micro_trust(state, OLD_CHEN_ID, MA_SHEN_ID, 8.0)
 	var fact := _add_reaction_fact(
 		state,
 		"ma_shen_brought_porridge",
@@ -687,6 +691,20 @@ func _apply_ma_shen_brought_porridge(
 		["neighbor", "aid", "food_crisis"]
 	)
 	_record_fact(result, fact)
+	recovery_system.adjust_micro_relationship(
+		state,
+		MA_SHEN_ID,
+		OLD_CHEN_ID,
+		{"trust": 12.0, "familiarity": 8.0},
+		fact.id
+	)
+	recovery_system.adjust_micro_relationship(
+		state,
+		OLD_CHEN_ID,
+		MA_SHEN_ID,
+		{"trust": 8.0, "gratitude": 10.0, "familiarity": 8.0},
+		fact.id
+	)
 	var trace := _add_trace(
 		state,
 		"empty_porridge_bowl_at_door",
@@ -1003,31 +1021,6 @@ func _finish_reaction(
 	state.micro_state["scene_followup"] = followup
 	result["fact_id"] = fact.id
 	result["created_fact_ids"] = [fact.id]
-
-
-func _change_micro_trust(
-		state: WorldSimState,
-		source_id: String,
-		target_id: String,
-		delta: float
-	) -> void:
-	var relationships := (
-		state.micro_state.get("micro_relationships", {}) as Dictionary
-	)
-	var source_relationships := relationships.get(source_id, {}) as Dictionary
-	var relationship := source_relationships.get(
-		target_id,
-		{"trust": 0.0, "last_interaction_day": 0}
-	) as Dictionary
-	relationship["trust"] = clampf(
-		float(relationship.get("trust", 0.0)) + delta,
-		-100.0,
-		100.0
-	)
-	relationship["last_interaction_day"] = state.day
-	source_relationships[target_id] = relationship
-	relationships[source_id] = source_relationships
-	state.micro_state["micro_relationships"] = relationships
 
 
 func _food_crisis_unresolved(state: WorldSimState) -> bool:

@@ -86,6 +86,12 @@ func build_lake_town_summary(state: Variant, target_day: int = -1) -> Dictionary
 			"is_reaction": String(
 				fact.data.get("reaction_key", "")
 			) != "",
+			"is_recovery": String(
+				fact.data.get("recovery_key", "")
+			) != "",
+			"is_relationship_echo": String(
+				fact.data.get("relationship_echo_key", "")
+			) != "",
 		})
 	var traces: Array[Dictionary] = []
 	for trace_value: Variant in state.traces:
@@ -113,6 +119,19 @@ func build_lake_town_summary(state: Variant, target_day: int = -1) -> Dictionary
 		if target_day >= 0 and int(reaction.get("day", 0)) != target_day:
 			continue
 		reactions.append(reaction.duplicate(true))
+	var recoveries: Array[Dictionary] = []
+	var recovery_state := state.micro_state.get(
+		"recovery_state",
+		{}
+	) as Dictionary
+	for recovery_value: Variant in recovery_state.get(
+		"recovery_history",
+		[]
+	):
+		var recovery := recovery_value as Dictionary
+		if target_day >= 0 and int(recovery.get("day", 0)) != target_day:
+			continue
+		recoveries.append(recovery.duplicate(true))
 	var scenes: Array[Dictionary] = []
 	for scene_value: Variant in state.narratable_states:
 		var scene := (scene_value as Dictionary).duplicate(true)
@@ -175,6 +194,7 @@ func build_lake_town_summary(state: Variant, target_day: int = -1) -> Dictionary
 	output["new_traces"] = traces
 	output["new_memories"] = memories
 	output["reactions"] = reactions
+	output["recoveries"] = recoveries
 	output["narratable_states"] = scenes
 	output["reaction_state"] = {
 		"closed_shop_days": int(
@@ -196,6 +216,10 @@ func build_lake_town_summary(state: Variant, target_day: int = -1) -> Dictionary
 			float(state.micro_state.get("rumor_pressure", 0.0))
 		),
 	}
+	output["recovery_state"] = recovery_state.duplicate(true)
+	output["micro_relationships"] = (
+		state.micro_state.get("micro_relationships", {}) as Dictionary
+	).duplicate(true)
 	return output
 
 
@@ -442,6 +466,13 @@ func export_markdown_report(result: Dictionary, output_path: String) -> void:
 		lines,
 		baseline.get("lake_town_reaction_timeline", []) as Array
 	)
+	lines.append("")
+	lines.append("## 湖湾镇恢复与关系回声时间线")
+	lines.append("")
+	_append_recovery_timeline(
+		lines,
+		baseline.get("lake_town_recovery_timeline", []) as Array
+	)
 	_append_micro_action_candidates(
 		lines,
 		baseline.get("micro_action_candidates", []) as Array
@@ -459,11 +490,11 @@ func export_markdown_report(result: Dictionary, output_path: String) -> void:
 		baseline.get("micro_action_results", []) as Array
 	)
 	lines.append("")
-	lines.append("## 外部模拟行动后三日后续分支")
+	lines.append("## 外部模拟行动后五日恢复分支")
 	lines.append("")
 	lines.append(
-		"- 以下分支从同一个 Day 6 场景基线独立克隆，执行无头模拟行动后"
-		+ "继续推进 3 天，不是真实 UI 输入。"
+		"- 以下分支从同一个 Day 6 场景基线独立克隆，执行外部模拟行动后"
+		+ "继续推进 5 天，不是真实 UI 输入。"
 	)
 	lines.append("")
 	_append_micro_action_followups(
@@ -560,6 +591,7 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 			[]
 		),
 		"lake_town_reaction_timeline": _build_reaction_timeline(state),
+		"lake_town_recovery_timeline": _build_recovery_timeline(state),
 		"totals": {
 			"world_facts": state.world_facts.size(),
 			"micro_world_facts": _micro_fact_count(state),
@@ -632,13 +664,30 @@ func _build_micro_action_observation(
 		var fact_start := after.world_facts.size()
 		var trace_start := after.traces.size()
 		var memory_start := after.memories.size()
-		simulator.advance_days(after, 3)
+		var scene_start := after.narratable_states.size()
+		simulator.advance_days(after, 5)
+		var final_candidates := (
+			micro_action_resolver.build_all_action_candidates(
+				after,
+				action_actor
+			)
+		)
 		followups.append({
 			"action_id": String(candidate.get("id", "")),
-			"days": 3,
+			"days": 5,
 			"new_fact_types": _micro_fact_types_from(
 				after,
 				fact_start
+			),
+			"recovery_fact_types": _fact_types_by_key_from(
+				after,
+				fact_start,
+				"recovery_key"
+			),
+			"relationship_echo_fact_types": _fact_types_by_key_from(
+				after,
+				fact_start,
+				"relationship_echo_key"
 			),
 			"new_trace_types": _trace_types_from(after, trace_start),
 			"new_memory_types": _memory_types_from(
@@ -647,12 +696,52 @@ func _build_micro_action_observation(
 			),
 			"chen_mi": _npc_followup_summary(after, "chen_mi"),
 			"old_chen": _npc_followup_summary(after, "old_chen"),
+			"shop": _shop_followup_summary(after),
+			"relationships": _branch_relationship_summary(after),
+			"new_narratable_state_ids": _scene_ids_from(
+				after,
+				scene_start
+			),
+			"available_action_candidate_ids": _action_candidate_ids(
+				final_candidates
+			),
+			"relationship_blocked_action_ids": (
+				micro_action_resolver.relationship_blocked_action_ids(
+					after,
+					action_actor
+				)
+			),
 		})
 	return {
 		"candidates": candidates,
 		"results": results,
 		"followups": followups,
 	}
+
+
+func _build_recovery_timeline(state: WorldSimState) -> Array[Dictionary]:
+	var output: Array[Dictionary] = []
+	var recovery_state := state.micro_state.get(
+		"recovery_state",
+		{}
+	) as Dictionary
+	for history_value: Variant in recovery_state.get(
+		"recovery_history",
+		[]
+	):
+		var history := history_value as Dictionary
+		var fact_id := String(history.get("fact_id", ""))
+		output.append({
+			"day": int(history.get("day", 0)),
+			"kind": String(history.get("kind", "")),
+			"recovery_key": String(history.get("recovery_key", "")),
+			"fact_id": fact_id,
+			"fact_type": _fact_type_for_id(state, fact_id),
+			"cause_fact_ids": _cause_ids_for_fact(state, fact_id),
+			"trace_types": _trace_types_for_source_fact(state, fact_id),
+			"memory_types": _memory_types_for_fact(state, fact_id),
+		})
+	return output
 
 
 func _build_reaction_timeline(state: WorldSimState) -> Array[Dictionary]:
@@ -689,6 +778,19 @@ func _micro_fact_types_from(
 	return output
 
 
+func _fact_types_by_key_from(
+		state: WorldSimState,
+		start_index: int,
+		key: String
+	) -> Array[String]:
+	var output: Array[String] = []
+	for index: int in range(start_index, state.world_facts.size()):
+		var fact := state.world_facts[index]
+		if String(fact.data.get(key, "")) != "":
+			output.append(fact.type)
+	return output
+
+
 func _trace_types_from(
 		state: WorldSimState,
 		start_index: int
@@ -706,6 +808,24 @@ func _memory_types_from(
 	var output: Array[String] = []
 	for index: int in range(start_index, state.memories.size()):
 		output.append(String(state.memories[index].get("type", "")))
+	return output
+
+
+func _scene_ids_from(
+		state: WorldSimState,
+		start_index: int
+	) -> Array[String]:
+	var output: Array[String] = []
+	for index: int in range(start_index, state.narratable_states.size()):
+		output.append(String(state.narratable_states[index].get("id", "")))
+	return output
+
+
+func _action_candidate_ids(candidates: Array) -> Array[String]:
+	var output: Array[String] = []
+	for candidate_value: Variant in candidates:
+		var candidate := candidate_value as Dictionary
+		output.append(String(candidate.get("id", "")))
 	return output
 
 
@@ -728,6 +848,57 @@ func _npc_followup_summary(
 			npc.get("inventory", []) as Array
 		).duplicate()
 	return output
+
+
+func _shop_followup_summary(state: WorldSimState) -> Dictionary:
+	var shop := state.get_location("old_chen_shop")
+	var shop_state := shop.get("state", {}) as Dictionary
+	return {
+		"is_open": bool(shop_state.get("is_open", false)),
+		"partial_open": bool(shop_state.get("partial_open", false)),
+		"actor_access_blocked": bool(
+			shop_state.get("actor_access_blocked", false)
+		),
+		"tags": (shop.get("tags", []) as Array).duplicate(),
+	}
+
+
+func _branch_relationship_summary(state: WorldSimState) -> Dictionary:
+	var relationships := state.micro_state.get(
+		"micro_relationships",
+		{}
+	) as Dictionary
+	return {
+		"test_actor_to_chen_mi": _relationship_copy(
+			relationships,
+			"test_actor",
+			"chen_mi"
+		),
+		"test_actor_to_old_chen": _relationship_copy(
+			relationships,
+			"test_actor",
+			"old_chen"
+		),
+		"chen_mi_to_test_actor": _relationship_copy(
+			relationships,
+			"chen_mi",
+			"test_actor"
+		),
+		"old_chen_to_test_actor": _relationship_copy(
+			relationships,
+			"old_chen",
+			"test_actor"
+		),
+	}
+
+
+func _relationship_copy(
+		relationships: Dictionary,
+		from_id: String,
+		to_id: String
+	) -> Dictionary:
+	var outgoing := relationships.get(from_id, {}) as Dictionary
+	return (outgoing.get(to_id, {}) as Dictionary).duplicate(true)
 
 
 func _cause_ids_for_fact(
@@ -1159,12 +1330,18 @@ func _append_lake_town_daily(
 		lines.append("湖湾镇微观链：未初始化。")
 		return
 	var reactions := summary.get("reactions", []) as Array
+	var recoveries := summary.get("recoveries", []) as Array
 	if reactions.is_empty():
 		lines.append("湖湾镇微观链：今日无新增反应。")
 	else:
 		lines.append(
 			"湖湾镇微观链：新增 %d 条反应，见“微观后续反应时间线”。"
 			% reactions.size()
+		)
+	if not recoveries.is_empty():
+		lines.append(
+			"湖湾镇恢复与关系回声：新增 %d 条，见恢复时间线。"
+			% recoveries.size()
 		)
 	var facts := summary.get("new_facts", []) as Array
 	var traces := summary.get("new_traces", []) as Array
@@ -1283,6 +1460,49 @@ func _append_reaction_timeline(
 		lines.append("")
 
 
+func _append_recovery_timeline(
+		lines: Array[String],
+		timeline: Array
+	) -> void:
+	if timeline.is_empty():
+		lines.append("- 无恢复或关系回声。")
+		return
+	var grouped: Dictionary = {}
+	for entry_value: Variant in timeline:
+		var entry := entry_value as Dictionary
+		var day := int(entry.get("day", 0))
+		if not grouped.has(day):
+			grouped[day] = []
+		(grouped[day] as Array).append(entry)
+	var days: Array = grouped.keys()
+	days.sort()
+	for day_value: Variant in days:
+		lines.append("### Day %d" % int(day_value))
+		lines.append("")
+		for entry_value: Variant in grouped[day_value]:
+			var entry := entry_value as Dictionary
+			lines.append(
+				"- %s：%s"
+				% [
+					entry.get("kind", ""),
+					entry.get("fact_type", ""),
+				]
+			)
+			lines.append(
+				"  来源：[%s]；Trace：%s；Memory：%s"
+				% [
+					", ".join(entry.get("cause_fact_ids", [])),
+					_joined_or_none(
+						entry.get("trace_types", []) as Array
+					),
+					_joined_or_none(
+						entry.get("memory_types", []) as Array
+					),
+				]
+			)
+		lines.append("")
+
+
 func _append_micro_action_candidates(
 		lines: Array[String],
 		candidates: Array
@@ -1352,6 +1572,7 @@ func _append_micro_action_followups(
 		var followup := followup_value as Dictionary
 		var chen_mi := followup.get("chen_mi", {}) as Dictionary
 		var old_chen := followup.get("old_chen", {}) as Dictionary
+		var shop := followup.get("shop", {}) as Dictionary
 		lines.append(
 			"### %s + %d days"
 			% [
@@ -1398,6 +1619,58 @@ func _append_micro_action_followups(
 				float(old_chen.get("debt", 0.0)),
 				", ".join(old_chen.get("status_tags", [])),
 			]
+		)
+		lines.append(
+			"- 恢复事实：%s"
+			% _joined_or_none(
+				followup.get("recovery_fact_types", []) as Array
+			)
+		)
+		lines.append(
+			"- 关系回声：%s"
+			% _joined_or_none(
+				followup.get(
+					"relationship_echo_fact_types",
+					[]
+				) as Array
+			)
+		)
+		lines.append(
+			"- 店铺状态：open %s / partial_open %s / actor_access_blocked %s / tags [%s]"
+			% [
+				shop.get("is_open", false),
+				shop.get("partial_open", false),
+				shop.get("actor_access_blocked", false),
+				", ".join(shop.get("tags", [])),
+			]
+		)
+		lines.append(
+			"- 关系变化：`%s`"
+			% JSON.stringify(followup.get("relationships", {}))
+		)
+		lines.append(
+			"- 新增 NarratableState：%s"
+			% _joined_or_none(
+				followup.get("new_narratable_state_ids", []) as Array
+			)
+		)
+		lines.append(
+			"- 可用 ActionCandidate：%s"
+			% _joined_or_none(
+				followup.get(
+					"available_action_candidate_ids",
+					[]
+				) as Array
+			)
+		)
+		lines.append(
+			"- 关系阻断 ActionCandidate：%s"
+			% _joined_or_none(
+				followup.get(
+					"relationship_blocked_action_ids",
+					[]
+				) as Array
+			)
 		)
 		lines.append("")
 

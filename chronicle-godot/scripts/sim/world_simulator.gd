@@ -8,6 +8,9 @@ const LakeTownFoodChainModel = preload("res://scripts/sim/lake_town_food_chain.g
 const LakeTownReactionSystemModel = preload(
 	"res://scripts/sim/lake_town_reaction_system.gd"
 )
+const LakeTownRecoverySystemModel = preload(
+	"res://scripts/sim/lake_town_recovery_system.gd"
+)
 
 const DYNAMIC_TAGS: Array[String] = [
 	"danger_high",
@@ -23,6 +26,7 @@ var projector := ProjectorModel.new()
 var news_digest := NewsDigestModel.new()
 var lake_town_food_chain := LakeTownFoodChainModel.new()
 var lake_town_reaction_system := LakeTownReactionSystemModel.new()
+var lake_town_recovery_system := LakeTownRecoverySystemModel.new()
 
 
 func load_seed(path: String) -> WorldSimState:
@@ -81,6 +85,7 @@ func advance_one_day(state: WorldSimState) -> void:
 	_update_region_tags(state)
 	lake_town_food_chain.advance_one_day(state)
 	lake_town_reaction_system.tick_reactions(state)
+	lake_town_recovery_system.tick_recovery(state)
 	projector.generate_leads_from_world(state)
 	state.rng_state = rng.state
 

@@ -108,6 +108,16 @@
       "spoiled_grain_fact_id": "",
       "closed_shop_fact_id": "",
       "micro_relationships": {},
+      "recovery_state": {
+        "chen_mi_recovery_level": 0.0,
+        "old_chen_recovery_level": 0.0,
+        "shop_recovery_level": 0.0,
+        "community_support": 0.0,
+        "actor_reputation_in_lake_town": 0.0,
+        "actor_reputation_tags": [],
+        "recovery_history": [],
+        "last_recovery_day": -1
+      },
       "guard_attention": {
         "wardens": 0.0
       },
