@@ -83,13 +83,36 @@ func build_lake_town_summary(state: Variant, target_day: int = -1) -> Dictionary
 			"day": fact.day,
 			"location_id": fact.location_id,
 			"cause_fact_ids": fact.cause_fact_ids.duplicate(),
+			"is_reaction": String(
+				fact.data.get("reaction_key", "")
+			) != "",
 		})
 	var traces: Array[Dictionary] = []
 	for trace_value: Variant in state.traces:
 		var trace := trace_value as Dictionary
 		if target_day >= 0 and int(trace.get("created_day", 0)) != target_day:
 			continue
-		traces.append(trace.duplicate(true))
+		var trace_summary := trace.duplicate(true)
+		trace_summary["source_fact_type"] = _fact_type_for_id(
+			state,
+			String(trace.get("source_fact_id", ""))
+		)
+		traces.append(trace_summary)
+	var memories: Array[Dictionary] = []
+	for memory_value: Variant in state.memories:
+		var memory := memory_value as Dictionary
+		if target_day >= 0 and int(memory.get("created_day", 0)) != target_day:
+			continue
+		memories.append(memory.duplicate(true))
+	var reactions: Array[Dictionary] = []
+	for reaction_value: Variant in state.micro_state.get(
+		"reaction_history",
+		[]
+	):
+		var reaction := reaction_value as Dictionary
+		if target_day >= 0 and int(reaction.get("day", 0)) != target_day:
+			continue
+		reactions.append(reaction.duplicate(true))
 	var scenes: Array[Dictionary] = []
 	for scene_value: Variant in state.narratable_states:
 		var scene := (scene_value as Dictionary).duplicate(true)
@@ -150,7 +173,29 @@ func build_lake_town_summary(state: Variant, target_day: int = -1) -> Dictionary
 	)
 	output["new_facts"] = facts
 	output["new_traces"] = traces
+	output["new_memories"] = memories
+	output["reactions"] = reactions
 	output["narratable_states"] = scenes
+	output["reaction_state"] = {
+		"closed_shop_days": int(
+			state.micro_state.get("closed_shop_days", 0)
+		),
+		"unresolved_scene_days": int(
+			state.micro_state.get("unresolved_scene_days", 0)
+		),
+		"neighbor_attention": _round(
+			float(state.micro_state.get("neighbor_attention", 0.0))
+		),
+		"debt_pressure": _round(
+			float(state.micro_state.get("debt_pressure", 0.0))
+		),
+		"health_pressure": _round(
+			float(state.micro_state.get("health_pressure", 0.0))
+		),
+		"rumor_pressure": _round(
+			float(state.micro_state.get("rumor_pressure", 0.0))
+		),
+	}
 	return output
 
 
@@ -390,6 +435,13 @@ func export_markdown_report(result: Dictionary, output_path: String) -> void:
 		lines,
 		baseline.get("lake_town_final", {}) as Dictionary
 	)
+	lines.append("")
+	lines.append("## 湖湾镇微观后续反应时间线")
+	lines.append("")
+	_append_reaction_timeline(
+		lines,
+		baseline.get("lake_town_reaction_timeline", []) as Array
+	)
 	_append_micro_action_candidates(
 		lines,
 		baseline.get("micro_action_candidates", []) as Array
@@ -405,6 +457,18 @@ func export_markdown_report(result: Dictionary, output_path: String) -> void:
 	_append_micro_action_results(
 		lines,
 		baseline.get("micro_action_results", []) as Array
+	)
+	lines.append("")
+	lines.append("## 外部模拟行动后三日后续分支")
+	lines.append("")
+	lines.append(
+		"- 以下分支从同一个 Day 6 场景基线独立克隆，执行无头模拟行动后"
+		+ "继续推进 3 天，不是真实 UI 输入。"
+	)
+	lines.append("")
+	_append_micro_action_followups(
+		lines,
+		baseline.get("micro_action_followups", []) as Array
 	)
 	lines.append("")
 	lines.append("## 3. 每日摘要")
@@ -491,6 +555,11 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 			[]
 		),
 		"micro_action_results": micro_action_observation.get("results", []),
+		"micro_action_followups": micro_action_observation.get(
+			"followups",
+			[]
+		),
+		"lake_town_reaction_timeline": _build_reaction_timeline(state),
 		"totals": {
 			"world_facts": state.world_facts.size(),
 			"micro_world_facts": _micro_fact_count(state),
@@ -516,7 +585,7 @@ func _build_micro_action_observation(
 		baseline: WorldSimState
 	) -> Dictionary:
 	if baseline == null:
-		return {"candidates": [], "results": []}
+		return {"candidates": [], "results": [], "followups": []}
 	var actor := _test_actor()
 	var candidates := micro_action_resolver.build_action_candidates(
 		baseline,
@@ -524,6 +593,7 @@ func _build_micro_action_observation(
 		"chen_mi_hiding_spoiled_grain_scene"
 	)
 	var results: Array[Dictionary] = []
+	var followups: Array[Dictionary] = []
 	for candidate_value: Variant in candidates:
 		var candidate := candidate_value as Dictionary
 		var before := baseline.duplicate_state()
@@ -559,10 +629,152 @@ func _build_micro_action_observation(
 				summary.get("state_changes", {}) as Dictionary
 			),
 		})
+		var fact_start := after.world_facts.size()
+		var trace_start := after.traces.size()
+		var memory_start := after.memories.size()
+		simulator.advance_days(after, 3)
+		followups.append({
+			"action_id": String(candidate.get("id", "")),
+			"days": 3,
+			"new_fact_types": _micro_fact_types_from(
+				after,
+				fact_start
+			),
+			"new_trace_types": _trace_types_from(after, trace_start),
+			"new_memory_types": _memory_types_from(
+				after,
+				memory_start
+			),
+			"chen_mi": _npc_followup_summary(after, "chen_mi"),
+			"old_chen": _npc_followup_summary(after, "old_chen"),
+		})
 	return {
 		"candidates": candidates,
 		"results": results,
+		"followups": followups,
 	}
+
+
+func _build_reaction_timeline(state: WorldSimState) -> Array[Dictionary]:
+	var output: Array[Dictionary] = []
+	for history_value: Variant in state.micro_state.get(
+		"reaction_history",
+		[]
+	):
+		var history := history_value as Dictionary
+		var fact_id := String(history.get("fact_id", ""))
+		var fact_type := _fact_type_for_id(state, fact_id)
+		output.append({
+			"day": int(history.get("day", 0)),
+			"reaction_key": String(history.get("reaction_key", "")),
+			"fact_id": fact_id,
+			"fact_type": fact_type,
+			"cause_fact_ids": _cause_ids_for_fact(state, fact_id),
+			"trace_types": _trace_types_for_source_fact(state, fact_id),
+			"memory_types": _memory_types_for_fact(state, fact_id),
+			"summary": _reaction_summary_text(fact_type),
+		})
+	return output
+
+
+func _micro_fact_types_from(
+		state: WorldSimState,
+		start_index: int
+	) -> Array[String]:
+	var output: Array[String] = []
+	for index: int in range(start_index, state.world_facts.size()):
+		var fact := state.world_facts[index]
+		if String(fact.data.get("scope", "")) == "micro":
+			output.append(fact.type)
+	return output
+
+
+func _trace_types_from(
+		state: WorldSimState,
+		start_index: int
+	) -> Array[String]:
+	var output: Array[String] = []
+	for index: int in range(start_index, state.traces.size()):
+		output.append(String(state.traces[index].get("type", "")))
+	return output
+
+
+func _memory_types_from(
+		state: WorldSimState,
+		start_index: int
+	) -> Array[String]:
+	var output: Array[String] = []
+	for index: int in range(start_index, state.memories.size()):
+		output.append(String(state.memories[index].get("type", "")))
+	return output
+
+
+func _npc_followup_summary(
+		state: WorldSimState,
+		npc_id: String
+	) -> Dictionary:
+	var npc := state.get_npc(npc_id)
+	var output := {
+		"id": npc_id,
+		"status_tags": (
+			npc.get("status_tags", []) as Array
+		).duplicate(),
+	}
+	for key: String in ["hunger", "fear", "health", "stress", "debt"]:
+		if npc.has(key):
+			output[key] = _round(float(npc.get(key, 0.0)))
+	if npc.has("inventory"):
+		output["inventory"] = (
+			npc.get("inventory", []) as Array
+		).duplicate()
+	return output
+
+
+func _cause_ids_for_fact(
+		state: WorldSimState,
+		fact_id: String
+	) -> Array[String]:
+	for fact in state.world_facts:
+		if fact.id == fact_id:
+			return fact.cause_fact_ids.duplicate()
+	return []
+
+
+func _trace_types_for_source_fact(
+		state: WorldSimState,
+		fact_id: String
+	) -> Array[String]:
+	var output: Array[String] = []
+	for trace_value: Variant in state.traces:
+		var trace := trace_value as Dictionary
+		if String(trace.get("source_fact_id", "")) == fact_id:
+			output.append(String(trace.get("type", "")))
+	return output
+
+
+func _memory_types_for_fact(
+		state: WorldSimState,
+		fact_id: String
+	) -> Array[String]:
+	var output: Array[String] = []
+	for memory_value: Variant in state.memories:
+		var memory := memory_value as Dictionary
+		if String(memory.get("fact_id", "")) == fact_id:
+			output.append(String(memory.get("type", "")))
+	return output
+
+
+func _reaction_summary_text(fact_type: String) -> String:
+	var summaries := {
+		"chen_mi_ate_spoiled_grain": "陈米因持续饥饿吃掉了一部分发霉麦子。",
+		"chen_mi_fell_sick_from_spoiled_grain": "陈米吃过发霉麦子后身体变差。",
+		"old_chen_discovered_spoiled_grain": "老陈发现了陈米藏着的发霉麦子。",
+		"ma_shen_noticed_closed_shop": "玛婶注意到老陈的店连续关门。",
+		"ma_shen_brought_porridge": "玛婶把一碗粥送到了店门口。",
+		"creditor_left_debt_notice": "刘账房在关着的店门上留下催债告示。",
+		"guard_checked_old_chen_shop": "守卫来到老陈店门口盘问偷粮的事。",
+	}
+	return String(summaries.get(fact_type, fact_type))
 
 
 func _compact_micro_action_changes(changes: Dictionary) -> Dictionary:
@@ -640,6 +852,16 @@ func _fact_types_for_ids(
 				output.append(fact.type)
 				break
 	return output
+
+
+func _fact_type_for_id(
+		state: WorldSimState,
+		fact_id: String
+	) -> String:
+	for fact in state.world_facts:
+		if fact.id == fact_id:
+			return fact.type
+	return ""
 
 
 func _trace_types_for_ids(
@@ -933,64 +1155,41 @@ func _append_lake_town_daily(
 		lines: Array[String],
 		summary: Dictionary
 	) -> void:
-	lines.append("湖湾镇微观状态：")
 	if summary.is_empty():
-		lines.append("- 未初始化")
+		lines.append("湖湾镇微观链：未初始化。")
 		return
-	var old_chen := summary.get("old_chen", {}) as Dictionary
-	var chen_mi := summary.get("chen_mi", {}) as Dictionary
-	var shop := summary.get("old_chen_shop", {}) as Dictionary
-	var granary := summary.get("abandoned_granary", {}) as Dictionary
-	var old_chen_format := (
-		"- old_chen：stress %.2f / debt %.2f / family_food %.2f / "
-		+ "shop_open %s / tags [%s]"
-	)
-	lines.append(old_chen_format % [
-		float(old_chen.get("stress", 0.0)),
-		float(old_chen.get("debt", 0.0)),
-		float(old_chen.get("family_food", 0.0)),
-		old_chen.get("shop_open", false),
-		", ".join(old_chen.get("status_tags", [])),
-	])
-	var chen_mi_format := (
-		"- chen_mi：hunger %.2f / fear %.2f / health %.2f / "
-		+ "inventory [%s] / tags [%s]"
-	)
-	lines.append(chen_mi_format % [
-		float(chen_mi.get("hunger", 0.0)),
-		float(chen_mi.get("fear", 0.0)),
-		float(chen_mi.get("health", 0.0)),
-		", ".join(chen_mi.get("inventory", [])),
-		", ".join(chen_mi.get("status_tags", [])),
-	])
-	var shop_format := (
-		"- old_chen_shop：is_open %s / food_stock %.2f / "
-		+ "family_crisis %s / traces [%s]"
-	)
-	lines.append(shop_format % [
-		shop.get("is_open", false),
-		float(shop.get("food_stock", 0.0)),
-		shop.get("family_crisis", false),
-		", ".join(shop.get("traces", [])),
-	])
-	var granary_format := (
-		"- abandoned_granary：spoiled_grain_stock %.2f / "
-		+ "disease_risk %.2f / traces [%s]"
-	)
-	lines.append(granary_format % [
-		float(granary.get("spoiled_grain_stock", 0.0)),
-		float(granary.get("disease_risk", 0.0)),
-		", ".join(granary.get("traces", [])),
-	])
+	var reactions := summary.get("reactions", []) as Array
+	if reactions.is_empty():
+		lines.append("湖湾镇微观链：今日无新增反应。")
+	else:
+		lines.append(
+			"湖湾镇微观链：新增 %d 条反应，见“微观后续反应时间线”。"
+			% reactions.size()
+		)
 	var facts := summary.get("new_facts", []) as Array
 	var traces := summary.get("new_traces", []) as Array
 	var scenes := summary.get("narratable_states", []) as Array
-	if facts.is_empty() and traces.is_empty() and scenes.is_empty():
-		lines.append("湖湾镇微观链：无新增事实、痕迹或可叙述状态。")
-		return
-	lines.append("湖湾镇新增事实：")
+	var base_facts: Array[Dictionary] = []
 	for fact_value: Variant in facts:
 		var fact := fact_value as Dictionary
+		if not bool(fact.get("is_reaction", false)):
+			base_facts.append(fact)
+	var base_traces: Array[Dictionary] = []
+	for trace_value: Variant in traces:
+		var trace := trace_value as Dictionary
+		if not String(trace.get("source_fact_type", "")) in [
+			"chen_mi_ate_spoiled_grain",
+			"chen_mi_fell_sick_from_spoiled_grain",
+			"old_chen_discovered_spoiled_grain",
+			"ma_shen_noticed_closed_shop",
+			"ma_shen_brought_porridge",
+			"creditor_left_debt_notice",
+			"guard_checked_old_chen_shop",
+		]:
+			base_traces.append(trace)
+	if not base_facts.is_empty():
+		lines.append("湖湾镇新增基础事实：")
+	for fact: Dictionary in base_facts:
 		lines.append(
 			"- %s / %s / causes [%s]"
 			% [
@@ -999,9 +1198,9 @@ func _append_lake_town_daily(
 				", ".join(fact.get("cause_fact_ids", [])),
 			]
 		)
-	lines.append("湖湾镇新增痕迹：")
-	for trace_value: Variant in traces:
-		var trace := trace_value as Dictionary
+	if not base_traces.is_empty():
+		lines.append("湖湾镇新增基础痕迹：")
+	for trace: Dictionary in base_traces:
 		lines.append(
 			"- %s / %s / source %s"
 			% [
@@ -1010,9 +1209,11 @@ func _append_lake_town_daily(
 				trace.get("source_fact_id", ""),
 			]
 		)
-	lines.append("湖湾镇可叙述状态：")
 	for scene_value: Variant in scenes:
-		_append_narratable_scene(lines, scene_value as Dictionary)
+		var scene := scene_value as Dictionary
+		if String(scene.get("id", "")) == "chen_mi_hiding_spoiled_grain_scene":
+			lines.append("湖湾镇基础可叙述状态：")
+			_append_narratable_scene(lines, scene)
 
 
 func _append_lake_town_overview(
@@ -1037,6 +1238,49 @@ func _append_lake_town_overview(
 	)
 	for scene_value: Variant in summary.get("narratable_states", []):
 		_append_narratable_scene(lines, scene_value as Dictionary)
+
+
+func _append_reaction_timeline(
+		lines: Array[String],
+		timeline: Array
+	) -> void:
+	if timeline.is_empty():
+		lines.append("- 无后续反应。")
+		return
+	var grouped: Dictionary = {}
+	for entry_value: Variant in timeline:
+		var entry := entry_value as Dictionary
+		var day := int(entry.get("day", 0))
+		if not grouped.has(day):
+			grouped[day] = []
+		(grouped[day] as Array).append(entry)
+	var days: Array = grouped.keys()
+	days.sort()
+	for day_value: Variant in days:
+		lines.append("### Day %d" % int(day_value))
+		lines.append("")
+		for entry_value: Variant in grouped[day_value]:
+			var entry := entry_value as Dictionary
+			lines.append("- %s" % entry.get("summary", ""))
+			lines.append(
+				"  - Fact：%s；来源：[%s]"
+				% [
+					entry.get("fact_type", ""),
+					", ".join(entry.get("cause_fact_ids", [])),
+				]
+			)
+			lines.append(
+				"  - Trace：%s；Memory：%s"
+				% [
+					_joined_or_none(
+						entry.get("trace_types", []) as Array
+					),
+					_joined_or_none(
+						entry.get("memory_types", []) as Array
+					),
+				]
+			)
+		lines.append("")
 
 
 func _append_micro_action_candidates(
@@ -1072,19 +1316,88 @@ func _append_micro_action_results(
 		lines.append("")
 		lines.append(
 			"- 新事实：%s"
-			% _joined_or_none(result.get("created_fact_types", []) as Array)
+			% _joined_or_none(
+				result.get("created_fact_types", []) as Array
+			)
 		)
 		lines.append(
 			"- 状态变化：%s"
-			% _state_change_text(result.get("state_changes", {}) as Dictionary)
+			% _state_change_text(
+				result.get("state_changes", {}) as Dictionary
+			)
 		)
 		lines.append(
 			"- 新 Trace：%s"
-			% _joined_or_none(result.get("created_trace_types", []) as Array)
+			% _joined_or_none(
+				result.get("created_trace_types", []) as Array
+			)
 		)
 		lines.append(
 			"- 新 Memory：%s"
-			% _joined_or_none(result.get("created_memory_types", []) as Array)
+			% _joined_or_none(
+				result.get("created_memory_types", []) as Array
+			)
+		)
+		lines.append("")
+
+
+func _append_micro_action_followups(
+		lines: Array[String],
+		followups: Array
+	) -> void:
+	if followups.is_empty():
+		lines.append("- 未生成三日后续分支。")
+		return
+	for followup_value: Variant in followups:
+		var followup := followup_value as Dictionary
+		var chen_mi := followup.get("chen_mi", {}) as Dictionary
+		var old_chen := followup.get("old_chen", {}) as Dictionary
+		lines.append(
+			"### %s + %d days"
+			% [
+				followup.get("action_id", ""),
+				int(followup.get("days", 0)),
+			]
+		)
+		lines.append("")
+		lines.append(
+			"- 新增事实：%s"
+			% _joined_or_none(
+				followup.get("new_fact_types", []) as Array
+			)
+		)
+		lines.append(
+			"- 新 Trace：%s"
+			% _joined_or_none(
+				followup.get("new_trace_types", []) as Array
+			)
+		)
+		lines.append(
+			"- 新 Memory：%s"
+			% _joined_or_none(
+				followup.get("new_memory_types", []) as Array
+			)
+		)
+		lines.append(
+			(
+				"- 陈米状态：hunger %.2f / fear %.2f / health %.2f / "
+				+ "inventory [%s] / tags [%s]"
+			)
+			% [
+				float(chen_mi.get("hunger", 0.0)),
+				float(chen_mi.get("fear", 0.0)),
+				float(chen_mi.get("health", 0.0)),
+				", ".join(chen_mi.get("inventory", [])),
+				", ".join(chen_mi.get("status_tags", [])),
+			]
+		)
+		lines.append(
+			"- 老陈状态：stress %.2f / debt %.2f / tags [%s]"
+			% [
+				float(old_chen.get("stress", 0.0)),
+				float(old_chen.get("debt", 0.0)),
+				", ".join(old_chen.get("status_tags", [])),
+			]
 		)
 		lines.append("")
 

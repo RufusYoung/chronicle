@@ -110,7 +110,28 @@
       "micro_relationships": {},
       "guard_attention": {
         "wardens": 0.0
-      }
+      },
+      "reaction_history": [],
+      "scene_followup": {
+        "chen_mi_scene_started_day": 0,
+        "chen_mi_scene_resolved": false,
+        "last_reaction_day": 0,
+        "chen_mi_ate_spoiled_grain": false,
+        "chen_mi_ate_spoiled_grain_day": 0,
+        "old_chen_discovered_grain": false,
+        "neighbor_noticed_closed_shop": false,
+        "creditor_visited": false,
+        "ma_shen_helped": false,
+        "guard_checked_shop": false
+      },
+      "closed_shop_days": 0,
+      "unresolved_scene_days": 0,
+      "neighbor_attention": 0.0,
+      "debt_pressure": 0.0,
+      "health_pressure": 0.0,
+      "rumor_pressure": 0.0,
+      "last_reaction_day": 0,
+      "reaction_state_update_day": 0
     },
     "npcs": [
       {
@@ -146,6 +167,29 @@
           "safety": 30.0
         },
         "inventory": [],
+        "memories": [],
+        "status_tags": []
+      },
+      {
+        "id": "ma_shen",
+        "name": "玛婶",
+        "tier": "A",
+        "role": "neighbor",
+        "location_id": "lake_town_market",
+        "concern": 45.0,
+        "food_spare": 2.0,
+        "trust_to_old_chen": 68.0,
+        "memories": [],
+        "status_tags": []
+      },
+      {
+        "id": "liu_zhangfang",
+        "name": "刘账房",
+        "tier": "A",
+        "role": "creditor",
+        "location_id": "lake_town_market",
+        "patience": 75.0,
+        "debt_claim": 38.0,
         "memories": [],
         "status_tags": []
       }

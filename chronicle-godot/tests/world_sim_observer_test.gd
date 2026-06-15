@@ -65,6 +65,14 @@ func _run() -> void:
 		"baseline includes isolated micro action result comparisons"
 	)
 	_check(
+		_has_reaction_timeline(baseline),
+		"baseline includes traceable lake town reaction timeline"
+	)
+	_check(
+		_has_micro_action_followups(baseline),
+		"baseline includes differentiated three-day action followups"
+	)
+	_check(
 		bool(comparison.get("day_10_has_difference", false)),
 		"A/B comparison differs by day 10"
 	)
@@ -108,7 +116,7 @@ func _run() -> void:
 	else:
 		for failure: String in failures:
 			push_error("[WORLD SIM OBSERVER FAIL] " + failure)
-		print("[WORLD SIM OBSERVER RESULT] FAIL: %s" % failures)
+		print("[WORLD SIM OBSERVER RESULT] FAIL: %s" % JSON.stringify(failures))
 		quit(1)
 
 
@@ -206,6 +214,61 @@ func _has_micro_action_results(result: Dictionary) -> bool:
 	return true
 
 
+func _has_reaction_timeline(result: Dictionary) -> bool:
+	var timeline := result.get("lake_town_reaction_timeline", []) as Array
+	if timeline.size() < 2:
+		return false
+	var fact_types: Array[String] = []
+	for entry_value: Variant in timeline:
+		var entry := entry_value as Dictionary
+		if (entry.get("cause_fact_ids", []) as Array).is_empty():
+			return false
+		if (entry.get("trace_types", []) as Array).is_empty():
+			return false
+		if (entry.get("memory_types", []) as Array).is_empty():
+			return false
+		fact_types.append(String(entry.get("fact_type", "")))
+	return (
+		"chen_mi_ate_spoiled_grain" in fact_types
+		and "ma_shen_noticed_closed_shop" in fact_types
+	)
+
+
+func _has_micro_action_followups(result: Dictionary) -> bool:
+	var followups := result.get("micro_action_followups", []) as Array
+	if followups.size() != 5:
+		return false
+	var by_action: Dictionary = {}
+	for followup_value: Variant in followups:
+		var followup := followup_value as Dictionary
+		by_action[String(followup.get("action_id", ""))] = followup
+	for action_id: String in [
+		"give_food_to_chen_mi",
+		"ignore_chen_mi",
+		"report_to_guard",
+		"buy_spoiled_grain_low",
+	]:
+		if not by_action.has(action_id):
+			return false
+	var give := by_action["give_food_to_chen_mi"] as Dictionary
+	var ignore := by_action["ignore_chen_mi"] as Dictionary
+	var report := by_action["report_to_guard"] as Dictionary
+	var buy := by_action["buy_spoiled_grain_low"] as Dictionary
+	var give_facts := give.get("new_fact_types", []) as Array
+	var ignore_facts := ignore.get("new_fact_types", []) as Array
+	var report_facts := report.get("new_fact_types", []) as Array
+	var buy_facts := buy.get("new_fact_types", []) as Array
+	var buy_chen_mi := buy.get("chen_mi", {}) as Dictionary
+	return (
+		not "chen_mi_ate_spoiled_grain" in give_facts
+		and "chen_mi_ate_spoiled_grain" in ignore_facts
+		and "chen_mi_fell_sick_from_spoiled_grain" in ignore_facts
+		and "guard_checked_old_chen_shop" in report_facts
+		and not "chen_mi_ate_spoiled_grain" in buy_facts
+		and (buy_chen_mi.get("inventory", []) as Array).is_empty()
+	)
+
+
 func _markdown_has_required_sections() -> bool:
 	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
 	for heading: String in [
@@ -213,6 +276,8 @@ func _markdown_has_required_sections() -> bool:
 		"## 1. 运行设置",
 		"## 2. 无模拟干预 30 天总览",
 		"## 湖湾镇微观链观察",
+		"## 湖湾镇微观后续反应时间线",
+		"## 外部模拟行动后三日后续分支",
 		"## 3. 每日摘要",
 		"### Day 1",
 		"### Day 30",
@@ -234,10 +299,10 @@ func _markdown_has_news_categories() -> bool:
 func _markdown_has_lake_town_chain() -> bool:
 	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
 	return (
-		"湖湾镇微观状态：" in text
-		and "湖湾镇新增事实：" in text
-		and "湖湾镇新增痕迹：" in text
-		and "湖湾镇可叙述状态：" in text
+		"湖湾镇微观链：" in text
+		and "湖湾镇新增基础事实：" in text
+		and "湖湾镇新增基础痕迹：" in text
+		and "湖湾镇基础可叙述状态：" in text
 	)
 
 
@@ -258,6 +323,7 @@ func _markdown_has_micro_action_sections() -> bool:
 	return (
 		"湖湾镇可行动候选：" in text
 		and "## 湖湾镇模拟行动后果对照" in text
+		and "## 外部模拟行动后三日后续分支" in text
 		and "### give_food_to_chen_mi" in text
 		and "### ask_grain_origin" in text
 		and "### report_to_guard" in text
@@ -265,6 +331,7 @@ func _markdown_has_micro_action_sections() -> bool:
 		and "### buy_spoiled_grain_low" in text
 		and "无头模拟行动" in text
 		and "不是真实 UI 输入" in text
+		and "guard_checked_old_chen_shop" in text
 	)
 
 
