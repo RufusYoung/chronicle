@@ -37,6 +37,21 @@ const DEFAULT_SEEDS: Array[int] = [
 	2026061519,
 	2026061520,
 ]
+const PRIOR_UNRESOLVED_HUNGER_SEEDS: Array[int] = [
+	2026061503,
+	2026061507,
+	2026061509,
+]
+const HUNGER_CLOSURE_FACT_TYPES: Array[String] = [
+	"chen_mi_collapsed_from_hunger",
+	"ma_shen_emergency_food_for_chen_mi",
+	"old_chen_sold_shop_goods_for_food",
+	"old_chen_took_chen_mi_to_seek_help",
+	"lake_town_emergency_credit_food",
+	"chen_mi_health_crashed_from_hunger",
+	"chen_mi_temporarily_stayed_with_ma_shen",
+	"chen_mi_hunger_unresolved_but_recorded",
+]
 const SIGNATURE_FACT_TYPES: Array[String] = [
 	"lake_town_food_price_rising",
 	"chen_mi_took_spoiled_grain",
@@ -69,6 +84,14 @@ const SIGNATURE_FACT_TYPES: Array[String] = [
 	"ma_shen_early_help_became_household_memory",
 	"old_chen_credit_purchase_raised_debt_pressure",
 	"old_chen_withheld_delay_request",
+	"chen_mi_collapsed_from_hunger",
+	"ma_shen_emergency_food_for_chen_mi",
+	"old_chen_sold_shop_goods_for_food",
+	"old_chen_took_chen_mi_to_seek_help",
+	"lake_town_emergency_credit_food",
+	"chen_mi_health_crashed_from_hunger",
+	"chen_mi_temporarily_stayed_with_ma_shen",
+	"chen_mi_hunger_unresolved_but_recorded",
 ]
 const ALTERNATIVE_PATH_TYPES: Array[String] = [
 	"ma_shen_helped_before_theft",
@@ -111,6 +134,14 @@ const FACT_LABELS := {
 	"ma_shen_early_help_became_household_memory": "玛婶的提前帮助成为家庭记忆",
 	"old_chen_credit_purchase_raised_debt_pressure": "赊账买粮抬高后续债务压力",
 	"old_chen_withheld_delay_request": "老陈没有说出口延期请求",
+	"chen_mi_collapsed_from_hunger": "陈米倒在店门口",
+	"ma_shen_emergency_food_for_chen_mi": "玛婶紧急给陈米送食",
+	"old_chen_sold_shop_goods_for_food": "老陈卖掉店内物品换食物",
+	"old_chen_took_chen_mi_to_seek_help": "老陈带陈米离店求助",
+	"lake_town_emergency_credit_food": "湖湾镇提供临时救济赊食",
+	"chen_mi_health_crashed_from_hunger": "陈米健康因饥饿严重恶化",
+	"chen_mi_temporarily_stayed_with_ma_shen": "陈米暂住玛婶家",
+	"chen_mi_hunger_unresolved_but_recorded": "持续饥饿被记录为坏结果",
 }
 
 var simulator := SimulatorModel.new()
@@ -605,6 +636,14 @@ func export_markdown_report(
 		"- 平均 branch_closure_depth：%.2f"
 		% float(quality.get("average_branch_closure_depth", 0.0))
 	)
+	lines.append(
+		"- bad_hunger_outcome：%d；emergency_food：%d；temporary_relocation：%d"
+		% [
+			int(quality.get("bad_hunger_outcome_count", 0)),
+			int(quality.get("emergency_food_count", 0)),
+			int(quality.get("temporary_relocation_count", 0)),
+		]
+	)
 	lines.append("")
 	lines.append("## 替代路径闭合样例")
 	lines.append("")
@@ -641,6 +680,29 @@ func export_markdown_report(
 				int(signature.get("branch_closure_depth", 0)),
 			]
 		)
+		lines.append("")
+	lines.append("## 极端饥饿闭合样例")
+	lines.append("")
+	for seed_value: int in PRIOR_UNRESOLVED_HUNGER_SEEDS:
+		var run := _find_run_by_seed(
+			batch.get("runs", []) as Array,
+			seed_value
+		)
+		if run.is_empty():
+			continue
+		var signature := run.get("signature", {}) as Dictionary
+		lines.append("### Seed %d" % seed_value)
+		lines.append("")
+		lines.append("- 原问题：极端饥饿未闭合")
+		lines.append("- 新后续：")
+		var hunger_events := _hunger_timeline_events(
+			signature.get("fact_days", {}) as Dictionary
+		)
+		if hunger_events.is_empty():
+			lines.append("  - 未生成极端饥饿闭合事实")
+		else:
+			for event: String in hunger_events:
+				lines.append("  - " + event)
 		lines.append("")
 	lines.append(
 		"本输出来自无头批量模拟。seed 只生成初始状态、性格权重、"
@@ -689,16 +751,47 @@ func _build_final_state(state: WorldSimState) -> Dictionary:
 		state.get_location("abandoned_granary").get("state", {})
 		as Dictionary
 	)
+	var hunger_state := state.micro_state.get(
+		"hunger_closure_state",
+		{}
+	) as Dictionary
 	return {
 		"chen_mi_hunger": _round(float(chen_mi.get("hunger", 0.0))),
 		"chen_mi_fear": _round(float(chen_mi.get("fear", 0.0))),
 		"chen_mi_health": _round(float(chen_mi.get("health", 0.0))),
 		"old_chen_stress": _round(float(old_chen.get("stress", 0.0))),
 		"old_chen_debt": _round(float(old_chen.get("debt", 0.0))),
+		"old_chen_family_food": _round(
+			float(old_chen.get("family_food", 0.0))
+		),
+		"chen_mi_location_id": String(
+			chen_mi.get("location_id", "")
+		),
+		"old_chen_location_id": String(
+			old_chen.get("location_id", "")
+		),
 		"shop_open": bool(shop_state.get("is_open", false)),
 		"shop_partial_open": bool(shop_state.get("partial_open", false)),
 		"granary_stock": int(
 			roundf(float(granary_state.get("spoiled_grain_stock", 0.0)))
+		),
+		"extreme_hunger_days": int(
+			hunger_state.get("extreme_hunger_days", 0)
+		),
+		"chen_mi_temporarily_relocated": bool(
+			hunger_state.get(
+				"chen_mi_temporarily_relocated",
+				false
+			)
+		),
+		"emergency_food_received": bool(
+			hunger_state.get("emergency_food_received", false)
+		),
+		"critical_health_decline_recorded": bool(
+			hunger_state.get(
+				"critical_health_decline_recorded",
+				false
+			)
 		),
 	}
 
@@ -906,6 +999,42 @@ func _timeline_events(fact_days: Dictionary) -> Array[String]:
 			% [int(event.get("day", 0)), event.get("label", "")]
 		)
 	return output
+
+
+func _hunger_timeline_events(
+		fact_days: Dictionary
+	) -> Array[String]:
+	var events: Array[Dictionary] = []
+	for type_name: String in HUNGER_CLOSURE_FACT_TYPES:
+		var day := int(fact_days.get(type_name, -1))
+		if day < 0:
+			continue
+		events.append({
+			"day": day,
+			"type": type_name,
+			"label": FACT_LABELS.get(type_name, type_name),
+		})
+	events.sort_custom(
+		func(a: Dictionary, b: Dictionary) -> bool:
+			if int(a.get("day", 0)) == int(b.get("day", 0)):
+				return String(a.get("type", "")) < String(b.get("type", ""))
+			return int(a.get("day", 0)) < int(b.get("day", 0))
+	)
+	var output: Array[String] = []
+	for event: Dictionary in events:
+		output.append(
+			"Day %d：%s"
+			% [int(event.get("day", 0)), event.get("label", "")]
+		)
+	return output
+
+
+func _find_run_by_seed(runs: Array, seed_value: int) -> Dictionary:
+	for run_value: Variant in runs:
+		var run := run_value as Dictionary
+		if int(run.get("seed", 0)) == seed_value:
+			return run
+	return {}
 
 
 func _round(value: float) -> float:

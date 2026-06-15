@@ -30,22 +30,19 @@ const MAJOR_BRANCH_CLOSURES := {
 		"old_chen_credit_purchase_raised_debt_pressure",
 	],
 }
-const HUNGER_FOLLOWUPS: Array[String] = [
-	"chen_mi_blocked_by_guard_seal",
-	"guard_noticed_child_near_granary",
-	"chen_mi_returned_empty_handed",
-	"old_chen_saw_chen_mi_empty_handed",
-	"chen_mi_weakened_from_enduring_hunger",
-	"neighbor_noticed_silent_hungry_child",
-	"ma_shen_brought_porridge",
-	"ma_shen_helped_before_theft",
-	"chen_mi_stabilized_after_food_help",
-	"chen_mi_took_spoiled_grain",
-	"chen_mi_ate_spoiled_grain",
-	"chen_mi_fell_sick_from_spoiled_grain",
-	"chen_mi_found_empty_granary",
-	"chen_mi_endured_hunger",
-	"chen_mi_found_other_family_tracks",
+const HUNGER_CLOSURE_TYPES: Array[String] = [
+	"chen_mi_collapsed_from_hunger",
+	"ma_shen_emergency_food_for_chen_mi",
+	"old_chen_sold_shop_goods_for_food",
+	"old_chen_took_chen_mi_to_seek_help",
+	"lake_town_emergency_credit_food",
+	"chen_mi_health_crashed_from_hunger",
+	"chen_mi_temporarily_stayed_with_ma_shen",
+	"chen_mi_hunger_unresolved_but_recorded",
+]
+const BAD_HUNGER_OUTCOME_TYPES: Array[String] = [
+	"chen_mi_health_crashed_from_hunger",
+	"chen_mi_hunger_unresolved_but_recorded",
 ]
 
 
@@ -85,6 +82,19 @@ func audit_history_signature(signature: Dictionary) -> Dictionary:
 	)
 	if impossible_shop_state:
 		flags.append("impossible_shop_state")
+	var hunger_closure_types := _signature_hunger_closure_types(fact_days)
+	var bad_outcome := _signature_has_any_fact(
+		fact_days,
+		BAD_HUNGER_OUTCOME_TYPES
+	)
+	if bad_outcome:
+		flags.append("bad_hunger_outcome")
+	var unresolved_hunger := (
+		float(final_state.get("chen_mi_hunger", 0.0)) >= 95.0
+		and hunger_closure_types.is_empty()
+	)
+	if unresolved_hunger:
+		flags.append("unresolved_extreme_hunger")
 	return {
 		"seed": int(signature.get("seed", 0)),
 		"quality_flags": flags,
@@ -99,7 +109,37 @@ func audit_history_signature(signature: Dictionary) -> Dictionary:
 			signature.get("consequence_depth", 0)
 		),
 		"contradiction_flags": [],
-		"unresolved_extreme_hunger": false,
+		"unresolved_extreme_hunger": unresolved_hunger,
+		"extreme_hunger_days": int(
+			final_state.get("extreme_hunger_days", 0)
+		),
+		"hunger_closure_fact_count": hunger_closure_types.size(),
+		"hunger_closure_type": (
+			hunger_closure_types[-1]
+			if not hunger_closure_types.is_empty()
+			else ""
+		),
+		"bad_outcome_recorded": bad_outcome,
+		"bad_hunger_outcome": bad_outcome,
+		"emergency_food": _signature_fact_happened(
+			fact_days,
+			"ma_shen_emergency_food_for_chen_mi"
+		),
+		"temporary_relocation": _signature_has_any_fact(
+			fact_days,
+			[
+				"old_chen_took_chen_mi_to_seek_help",
+				"chen_mi_temporarily_stayed_with_ma_shen",
+			]
+		),
+		"health_crash": _signature_fact_happened(
+			fact_days,
+			"chen_mi_health_crashed_from_hunger"
+		),
+		"hunger_unresolved_but_recorded": _signature_fact_happened(
+			fact_days,
+			"chen_mi_hunger_unresolved_but_recorded"
+		),
 		"notes": [],
 	}
 
@@ -117,6 +157,15 @@ func audit_state(state: Variant) -> Dictionary:
 			"branch_closure_depth": 0,
 			"consequence_depth": 0,
 			"contradiction_flags": [],
+			"extreme_hunger_days": 0,
+			"hunger_closure_fact_count": 0,
+			"hunger_closure_type": "",
+			"bad_outcome_recorded": false,
+			"bad_hunger_outcome": false,
+			"emergency_food": false,
+			"temporary_relocation": false,
+			"health_crash": false,
+			"hunger_unresolved_but_recorded": false,
 			"notes": ["state is not WorldSimState"],
 		}
 	var fact_types := _fact_type_set(state)
@@ -147,9 +196,40 @@ func audit_state(state: Variant) -> Dictionary:
 			and fact_types.has("old_chen_shop_half_open_under_debt")
 		)
 	)
+	var hunger_state := state.micro_state.get(
+		"hunger_closure_state",
+		{}
+	) as Dictionary
+	var hunger_closure_types := _state_hunger_closure_types(state)
+	var emergency_food := fact_types.has(
+		"ma_shen_emergency_food_for_chen_mi"
+	)
+	var temporary_relocation := (
+		bool(
+			hunger_state.get(
+				"chen_mi_temporarily_relocated",
+				false
+			)
+		)
+		or fact_types.has("old_chen_took_chen_mi_to_seek_help")
+		or fact_types.has(
+			"chen_mi_temporarily_stayed_with_ma_shen"
+		)
+	)
+	var health_crash := fact_types.has(
+		"chen_mi_health_crashed_from_hunger"
+	)
+	var unresolved_recorded := fact_types.has(
+		"chen_mi_hunger_unresolved_but_recorded"
+	)
+	var bad_outcome := health_crash or unresolved_recorded
 	var unresolved_extreme_hunger := (
 		float(chen_mi.get("hunger", 0.0)) >= 95.0
-		and not _has_any_fact(fact_types, HUNGER_FOLLOWUPS)
+		and hunger_closure_types.is_empty()
+		and not emergency_food
+		and not temporary_relocation
+		and not health_crash
+		and not bad_outcome
 	)
 	var contradictions: Array[String] = []
 	if (
@@ -171,6 +251,8 @@ func audit_state(state: Variant) -> Dictionary:
 		flags.append("impossible_shop_state")
 	if unresolved_extreme_hunger:
 		flags.append("unresolved_extreme_hunger")
+	if bad_outcome:
+		flags.append("bad_hunger_outcome")
 	if not contradictions.is_empty():
 		flags.append("contradiction_flags")
 	var notes: Array[String] = []
@@ -187,6 +269,21 @@ func audit_state(state: Variant) -> Dictionary:
 		"branch_closure_depth": _branch_closure_depth(state),
 		"consequence_depth": _consequence_depth(state),
 		"contradiction_flags": contradictions,
+		"extreme_hunger_days": int(
+			hunger_state.get("extreme_hunger_days", 0)
+		),
+		"hunger_closure_fact_count": hunger_closure_types.size(),
+		"hunger_closure_type": (
+			hunger_closure_types[-1]
+			if not hunger_closure_types.is_empty()
+			else ""
+		),
+		"bad_outcome_recorded": bad_outcome,
+		"bad_hunger_outcome": bad_outcome,
+		"emergency_food": emergency_food,
+		"temporary_relocation": temporary_relocation,
+		"health_crash": health_crash,
+		"hunger_unresolved_but_recorded": unresolved_recorded,
 		"notes": notes,
 	}
 
@@ -203,6 +300,11 @@ func audit_batch(
 	var unclassified_count := 0
 	var no_warning_count := 0
 	var closure_total := 0
+	var bad_hunger_count := 0
+	var emergency_food_count := 0
+	var temporary_relocation_count := 0
+	var health_crash_count := 0
+	var unresolved_recorded_count := 0
 	for index: int in range(signatures.size()):
 		var signature := signatures[index] as Dictionary
 		var audit := (
@@ -242,6 +344,25 @@ func audit_batch(
 			else 0
 		)
 		closure_total += int(audit.get("branch_closure_depth", 0))
+		bad_hunger_count += (
+			1 if bool(audit.get("bad_hunger_outcome", false)) else 0
+		)
+		emergency_food_count += (
+			1 if bool(audit.get("emergency_food", false)) else 0
+		)
+		temporary_relocation_count += (
+			1 if bool(audit.get("temporary_relocation", false)) else 0
+		)
+		health_crash_count += (
+			1 if bool(audit.get("health_crash", false)) else 0
+		)
+		unresolved_recorded_count += (
+			1
+			if bool(
+				audit.get("hunger_unresolved_but_recorded", false)
+			)
+			else 0
+		)
 		if (audit.get("quality_flags", []) as Array).is_empty():
 			no_warning_count += 1
 	var seed_count := audits.size()
@@ -254,6 +375,13 @@ func audit_batch(
 		"unresolved_extreme_hunger_count": hunger_count,
 		"contradiction_seed_count": contradiction_count,
 		"unclassified_without_reason_count": unclassified_count,
+		"bad_hunger_outcome_count": bad_hunger_count,
+		"emergency_food_count": emergency_food_count,
+		"temporary_relocation_count": temporary_relocation_count,
+		"health_crash_count": health_crash_count,
+		"hunger_unresolved_but_recorded_count": (
+			unresolved_recorded_count
+		),
 		"average_branch_closure_depth": (
 			snappedf(float(closure_total) / float(seed_count), 0.01)
 			if seed_count > 0
@@ -291,6 +419,30 @@ func build_quality_report(batch_result: Dictionary) -> String:
 			batch_result.get("average_branch_closure_depth", 0.0)
 		),
 		"",
+		"## 极端饥饿闭合摘要",
+		"",
+		"- unresolved_extreme_hunger：%d" % int(
+			batch_result.get("unresolved_extreme_hunger_count", 0)
+		),
+		"- bad_hunger_outcome：%d" % int(
+			batch_result.get("bad_hunger_outcome_count", 0)
+		),
+		"- emergency_food：%d" % int(
+			batch_result.get("emergency_food_count", 0)
+		),
+		"- temporary_relocation：%d" % int(
+			batch_result.get("temporary_relocation_count", 0)
+		),
+		"- health_crash：%d" % int(
+			batch_result.get("health_crash_count", 0)
+		),
+		"- hunger_unresolved_but_recorded：%d" % int(
+			batch_result.get(
+				"hunger_unresolved_but_recorded_count",
+				0
+			)
+		),
+		"",
 		"## 每个 seed 的审计结果",
 		"",
 	]
@@ -317,6 +469,20 @@ func build_quality_report(batch_result: Dictionary) -> String:
 		lines.append(
 			"- impossible_shop_state：%s"
 			% str(bool(audit.get("impossible_shop_state", false)))
+		)
+		lines.append(
+			"- extreme_hunger_days：%d；hunger_closure_fact_count：%d"
+			% [
+				int(audit.get("extreme_hunger_days", 0)),
+				int(audit.get("hunger_closure_fact_count", 0)),
+			]
+		)
+		lines.append(
+			"- hunger_closure_type：`%s`；bad_outcome_recorded：%s"
+			% [
+				String(audit.get("hunger_closure_type", "")),
+				str(bool(audit.get("bad_outcome_recorded", false))),
+			]
 		)
 		lines.append("")
 	return "\n".join(lines).strip_edges() + "\n"
@@ -385,5 +551,36 @@ func _has_any_fact(
 	) -> bool:
 	for type_name: String in type_names:
 		if fact_types.has(type_name):
+			return true
+	return false
+
+
+func _state_hunger_closure_types(state: WorldSimState) -> Array[String]:
+	var output: Array[String] = []
+	for fact in state.world_facts:
+		if (
+			fact.type in HUNGER_CLOSURE_TYPES
+			and not fact.type in output
+		):
+			output.append(fact.type)
+	return output
+
+
+func _signature_hunger_closure_types(
+		fact_days: Dictionary
+	) -> Array[String]:
+	var output: Array[String] = []
+	for type_name: String in HUNGER_CLOSURE_TYPES:
+		if _signature_fact_happened(fact_days, type_name):
+			output.append(type_name)
+	return output
+
+
+func _signature_has_any_fact(
+		fact_days: Dictionary,
+		type_names: Array
+	) -> bool:
+	for type_value: Variant in type_names:
+		if _signature_fact_happened(fact_days, String(type_value)):
 			return true
 	return false
