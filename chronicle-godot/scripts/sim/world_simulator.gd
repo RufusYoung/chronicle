@@ -11,6 +11,9 @@ const LakeTownReactionSystemModel = preload(
 const LakeTownRecoverySystemModel = preload(
 	"res://scripts/sim/lake_town_recovery_system.gd"
 )
+const LakeTownSeedProfileModel = preload(
+	"res://scripts/sim/lake_town_seed_profile.gd"
+)
 
 const DYNAMIC_TAGS: Array[String] = [
 	"danger_high",
@@ -27,6 +30,7 @@ var news_digest := NewsDigestModel.new()
 var lake_town_food_chain := LakeTownFoodChainModel.new()
 var lake_town_reaction_system := LakeTownReactionSystemModel.new()
 var lake_town_recovery_system := LakeTownRecoverySystemModel.new()
+var lake_town_seed_profile := LakeTownSeedProfileModel.new()
 
 
 func load_seed(path: String) -> WorldSimState:
@@ -59,6 +63,18 @@ func load_seed(path: String) -> WorldSimState:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = state.seed
 	state.rng_state = rng.state
+	return state
+
+
+func load_seed_with_lake_town_profile(
+		path: String,
+		seed_value: int
+	) -> WorldSimState:
+	var state := load_seed(path)
+	if state == null:
+		return null
+	var profile := lake_town_seed_profile.build_profile(seed_value)
+	lake_town_seed_profile.apply_profile_to_state(state, profile)
 	return state
 
 

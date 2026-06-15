@@ -305,10 +305,7 @@ func _can_apply_reaction(
 				and state.day > int(
 					followup.get("chen_mi_ate_spoiled_grain_day", 0)
 				)
-				and (
-					float(chen_mi.get("health", 100.0)) <= 80.0
-					or _has_status(chen_mi, "disease_risk")
-				)
+				and _sickness_pressure_ready(state, chen_mi)
 			)
 		"old_chen_discovered_spoiled_grain":
 			var scene := _find_scene(state)
@@ -1077,6 +1074,33 @@ func _has_memory_type(state: WorldSimState, type_name: String) -> bool:
 
 func _has_status(npc: Dictionary, tag: String) -> bool:
 	return tag in (npc.get("status_tags", []) as Array)
+
+
+func _sickness_pressure_ready(
+		state: WorldSimState,
+		chen_mi: Dictionary
+	) -> bool:
+	if not state.micro_state.has("seed_profile"):
+		return (
+			float(chen_mi.get("health", 100.0)) <= 80.0
+			or _has_status(chen_mi, "disease_risk")
+		)
+	var granary_state := (
+		state.get_location(GRANARY_ID).get("state", {})
+		as Dictionary
+	)
+	var resistance := float(
+		chen_mi.get("sickness_resistance", 50.0)
+	)
+	var disease_risk := float(
+		granary_state.get("disease_risk", 0.65)
+	)
+	var sickness_pressure := (
+		(100.0 - resistance) * 0.55
+		+ disease_risk * 50.0
+		+ (100.0 - float(chen_mi.get("health", 100.0))) * 0.4
+	)
+	return sickness_pressure >= 68.0
 
 
 func _add_status(npc: Dictionary, tag: String) -> void:
