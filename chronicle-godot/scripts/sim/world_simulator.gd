@@ -11,6 +11,9 @@ const LakeTownReactionSystemModel = preload(
 const LakeTownRecoverySystemModel = preload(
 	"res://scripts/sim/lake_town_recovery_system.gd"
 )
+const LakeTownBranchClosureSystemModel = preload(
+	"res://scripts/sim/lake_town_branch_closure_system.gd"
+)
 const LakeTownSeedProfileModel = preload(
 	"res://scripts/sim/lake_town_seed_profile.gd"
 )
@@ -30,6 +33,9 @@ var news_digest := NewsDigestModel.new()
 var lake_town_food_chain := LakeTownFoodChainModel.new()
 var lake_town_reaction_system := LakeTownReactionSystemModel.new()
 var lake_town_recovery_system := LakeTownRecoverySystemModel.new()
+var lake_town_branch_closure_system := (
+	LakeTownBranchClosureSystemModel.new()
+)
 var lake_town_seed_profile := LakeTownSeedProfileModel.new()
 
 
@@ -102,6 +108,7 @@ func advance_one_day(state: WorldSimState) -> void:
 	lake_town_food_chain.advance_one_day(state)
 	lake_town_reaction_system.tick_reactions(state)
 	lake_town_recovery_system.tick_recovery(state)
+	lake_town_branch_closure_system.tick_branch_closure(state)
 	projector.generate_leads_from_world(state)
 	state.rng_state = rng.state
 

@@ -2,11 +2,18 @@ extends RefCounted
 class_name LakeTownHistoryVariationRunner
 
 const SimulatorModel = preload("res://scripts/sim/world_simulator.gd")
+const QualityAuditorModel = preload(
+	"res://scripts/dev/lake_town_history_quality_auditor.gd"
+)
 
 const SEED_PATH := "res://data/world_seed_mirror_lake.json"
 const DEFAULT_OUTPUT_PATH := (
 	"res://texts/reports/2026/2026-6/2026-6-15/"
 	+ "2026-06-15_lake_town_history_variation_output.md"
+)
+const DEFAULT_QUALITY_OUTPUT_PATH := (
+	"res://texts/reports/2026/2026-6/2026-6-15/"
+	+ "2026-06-15_lake_town_history_quality_output.md"
 )
 const DEFAULT_SEEDS: Array[int] = [
 	2026061501,
@@ -47,6 +54,21 @@ const SIGNATURE_FACT_TYPES: Array[String] = [
 	"creditor_pressed_before_theft",
 	"chen_mi_endured_hunger",
 	"other_family_took_granary_grain",
+	"chen_mi_blocked_by_guard_seal",
+	"guard_noticed_child_near_granary",
+	"chen_mi_returned_empty_handed",
+	"old_chen_saw_chen_mi_empty_handed",
+	"chen_mi_weakened_from_enduring_hunger",
+	"neighbor_noticed_silent_hungry_child",
+	"old_chen_tried_to_delay_debt",
+	"creditor_refused_delay_request",
+	"chen_mi_found_other_family_tracks",
+	"market_rumor_about_other_hungry_family",
+	"old_chen_shop_forced_abnormal_closure",
+	"old_chen_shop_half_open_under_debt",
+	"ma_shen_early_help_became_household_memory",
+	"old_chen_credit_purchase_raised_debt_pressure",
+	"old_chen_withheld_delay_request",
 ]
 const ALTERNATIVE_PATH_TYPES: Array[String] = [
 	"ma_shen_helped_before_theft",
@@ -74,9 +96,25 @@ const FACT_LABELS := {
 	"creditor_pressed_before_theft": "刘账房在取粮前催债",
 	"chen_mi_endured_hunger": "陈米忍耐饥饿",
 	"other_family_took_granary_grain": "另一个饥饿家庭先取粮",
+	"chen_mi_blocked_by_guard_seal": "陈米被守卫封条挡回",
+	"guard_noticed_child_near_granary": "守卫注意到粮仓外的孩子",
+	"chen_mi_returned_empty_handed": "陈米空手回到店门口",
+	"old_chen_saw_chen_mi_empty_handed": "老陈看见陈米空手回来",
+	"chen_mi_weakened_from_enduring_hunger": "陈米因长期饥饿变虚弱",
+	"neighbor_noticed_silent_hungry_child": "邻居注意到沉默的孩子",
+	"old_chen_tried_to_delay_debt": "老陈请求推迟债务",
+	"creditor_refused_delay_request": "刘账房拒绝延期",
+	"chen_mi_found_other_family_tracks": "陈米发现陌生家庭的脚印",
+	"market_rumor_about_other_hungry_family": "集市传出另一户挨饿家庭的传闻",
+	"old_chen_shop_forced_abnormal_closure": "老陈店铺异常关闭",
+	"old_chen_shop_half_open_under_debt": "老陈店铺在债务下半开",
+	"ma_shen_early_help_became_household_memory": "玛婶的提前帮助成为家庭记忆",
+	"old_chen_credit_purchase_raised_debt_pressure": "赊账买粮抬高后续债务压力",
+	"old_chen_withheld_delay_request": "老陈没有说出口延期请求",
 }
 
 var simulator := SimulatorModel.new()
+var quality_auditor := QualityAuditorModel.new()
 
 
 func run_seed(seed_value: int, days: int = 30) -> Dictionary:
@@ -110,12 +148,16 @@ func run_batch(
 	var close_days: Array[int] = []
 	var ma_days: Array[int] = []
 	var creditor_days: Array[int] = []
+	var signatures: Array[Dictionary] = []
+	var states: Array[WorldSimState] = []
 	for seed_value: Variant in seeds:
 		var run := run_seed(int(seed_value), days)
 		if run.is_empty():
 			continue
 		runs.append(run)
 		var signature := run.get("signature", {}) as Dictionary
+		signatures.append(signature)
+		states.append(run.get("state") as WorldSimState)
 		var fact_days := signature.get("fact_days", {}) as Dictionary
 		var outcome := String(signature.get("outcome_class", ""))
 		outcome_counts[outcome] = int(outcome_counts.get(outcome, 0)) + 1
@@ -166,6 +208,7 @@ func run_batch(
 				== repeated.get("signature", {})
 			),
 		})
+	var quality_audit := quality_auditor.audit_batch(signatures, states)
 	return {
 		"days": days,
 		"runs": runs,
@@ -181,6 +224,7 @@ func run_batch(
 		"creditor_day_range": _day_range(creditor_days),
 		"reproducibility": reproducibility,
 		"all_reproducible": _all_reproducible(reproducibility),
+		"quality_audit": quality_audit,
 	}
 
 
@@ -202,12 +246,36 @@ func build_history_signature(state: Variant) -> Dictionary:
 		"trace_types": _dictionary_types(state.traces),
 		"memory_types": _dictionary_types(state.memories),
 		"outcome_class": "",
+		"outcome_reason": "",
+		"quality_flags": [],
+		"branch_closure_depth": 0,
+		"consequence_depth": 0,
 	}
-	signature["outcome_class"] = classify_history_outcome(signature)
+	var classification := classify_history_outcome_details(signature)
+	signature["outcome_class"] = classification.get("class", "")
+	signature["outcome_reason"] = classification.get("reason", "")
+	var quality := quality_auditor.audit_state(state)
+	signature["quality_flags"] = (
+		quality.get("quality_flags", []) as Array
+	).duplicate()
+	signature["branch_closure_depth"] = int(
+		quality.get("branch_closure_depth", 0)
+	)
+	signature["consequence_depth"] = int(
+		quality.get("consequence_depth", 0)
+	)
 	return signature
 
 
 func classify_history_outcome(signature: Dictionary) -> String:
+	return String(
+		classify_history_outcome_details(signature).get("class", "")
+	)
+
+
+func classify_history_outcome_details(
+		signature: Dictionary
+	) -> Dictionary:
 	var fact_days := signature.get("fact_days", {}) as Dictionary
 	var theft := _fact_happened(fact_days, "chen_mi_took_spoiled_grain")
 	var sick := _fact_happened(
@@ -222,26 +290,126 @@ func classify_history_outcome(signature: Dictionary) -> String:
 		_fact_happened(fact_days, "ma_shen_brought_porridge")
 		or _fact_happened(fact_days, "ma_shen_helped_before_theft")
 	)
+	var families: Array[String] = []
+	if _fact_happened(fact_days, "guard_locked_abandoned_granary"):
+		families.append("guard")
+	if _fact_happened(fact_days, "chen_mi_found_empty_granary"):
+		families.append("empty_granary")
+	if _fact_happened(fact_days, "chen_mi_endured_hunger"):
+		families.append("silent_hunger")
+	if _fact_happened(fact_days, "creditor_pressed_before_theft"):
+		families.append("early_debt")
+	if _fact_happened(fact_days, "other_family_took_granary_grain"):
+		families.append("other_family")
+	if theft:
+		families.append("theft")
+	var family_text := ", ".join(families)
 	if theft and sick and debt_notice:
-		return "theft_sickness_debt"
+		return {
+			"class": "theft_sickness_debt",
+			"reason": "取粮、生病与正式催债事实连续出现。",
+		}
 	if theft and helped:
-		return "theft_helped_recovery"
+		return {
+			"class": "theft_helped_recovery",
+			"reason": "取粮后出现邻里食物帮助或恢复事实。",
+		}
 	if not theft:
+		if families.size() >= 3:
+			return {
+				"class": "mixed_interwoven",
+				"reason": "多条结构化路径交织：%s。" % family_text,
+			}
 		if _fact_happened(fact_days, "guard_locked_abandoned_granary"):
-			return "guard_locked_granary"
+			if _fact_happened(
+				fact_days,
+				"guard_noticed_child_near_granary"
+			):
+				return {
+					"class": "guard_locked_guard_attention",
+					"reason": "封仓后陈米被挡回，守卫随后注意到她。",
+				}
+			if _fact_happened(
+				fact_days,
+				"chen_mi_blocked_by_guard_seal"
+			):
+				return {
+					"class": "guard_locked_child_blocked",
+					"reason": "封仓后陈米被封条挡回并留下后续痕迹。",
+				}
+			return {
+				"class": "guard_locked_unresolved",
+				"reason": "守卫封仓已发生，但尚未形成孩子侧后续。",
+			}
 		if _fact_happened(fact_days, "other_family_took_granary_grain"):
-			return "other_family_took_grain"
+			return {
+				"class": "other_family_grain_conflict",
+				"reason": "另一个家庭先取粮，并留下脚印或市场传闻。",
+			}
 		if _fact_happened(fact_days, "chen_mi_found_empty_granary"):
-			return "empty_granary_no_theft"
+			return {
+				"class": "empty_granary_returned_empty",
+				"reason": "陈米发现空粮仓后空手返回。",
+			}
 		if _fact_happened(fact_days, "chen_mi_endured_hunger"):
-			return "endured_hunger_no_theft"
+			return {
+				"class": "silent_hunger_decline",
+				"reason": "陈米忍耐饥饿并出现虚弱或社会注意。",
+			}
+		if _fact_happened(
+			fact_days,
+			"creditor_refused_delay_request"
+		):
+			return {
+				"class": "early_debt_negotiation_failed",
+				"reason": "提前催债后，老陈的延期请求被拒绝。",
+			}
+		if _fact_happened(
+			fact_days,
+			"old_chen_shop_half_open_under_debt"
+		):
+			return {
+				"class": "half_open_under_debt",
+				"reason": "店铺恢复为半开，但高债务仍持续。",
+			}
+		if _fact_happened(
+			fact_days,
+			"old_chen_shop_forced_abnormal_closure"
+		):
+			return {
+				"class": "forced_shop_closure_no_theft",
+				"reason": "未发生取粮，但极端压力与债务迫使店铺异常关闭。",
+			}
 		if _fact_happened(fact_days, "ma_shen_helped_before_theft"):
-			return "early_neighbor_help_no_theft"
+			return {
+				"class": "early_neighbor_help_no_theft",
+				"reason": "玛婶在取粮前提供食物帮助。",
+			}
 		if _fact_happened(fact_days, "creditor_pressed_before_theft"):
-			return "early_debt_pressure"
+			return {
+				"class": "early_debt_pressure",
+				"reason": "取粮前已出现结构化催债压力。",
+			}
 		if _fact_happened(fact_days, "old_chen_bought_food_on_credit"):
-			return "credit_purchase_delayed_crisis"
-	return "mixed_or_unclassified"
+			return {
+				"class": "credit_purchase_delayed_crisis",
+				"reason": "老陈通过赊账补充食物，危机被推迟。",
+			}
+	if _fact_happened(
+		fact_days,
+		"old_chen_shop_half_open_under_debt"
+	):
+		return {
+			"class": "half_open_under_debt",
+			"reason": "取粮路径与店铺带债半开状态同时存在。",
+		}
+	return {
+		"class": "mixed_interwoven",
+		"reason": (
+			"实际事实未落入单一主路径；已发生路径：%s。"
+			% (family_text if family_text != "" else "基础压力演化")
+		),
+	}
 
 
 func build_fact_day_map(state: Variant) -> Dictionary:
@@ -282,6 +450,12 @@ func build_history_hash(signature: Dictionary) -> String:
 		"trace_types": signature.get("trace_types", []),
 		"memory_types": signature.get("memory_types", []),
 		"outcome_class": signature.get("outcome_class", ""),
+		"outcome_reason": signature.get("outcome_reason", ""),
+		"quality_flags": signature.get("quality_flags", []),
+		"branch_closure_depth": signature.get(
+			"branch_closure_depth",
+			0
+		),
 	}
 	return JSON.stringify(history_core).sha256_text().substr(0, 16)
 
@@ -352,6 +526,17 @@ func export_markdown_report(
 			"- 结局分类：`%s`"
 			% signature.get("outcome_class", "")
 		)
+		lines.append(
+			"- 分类原因：%s"
+			% signature.get("outcome_reason", "")
+		)
+		lines.append(
+			"- 质量标记：`%s`；branch_closure_depth：%d"
+			% [
+				JSON.stringify(signature.get("quality_flags", [])),
+				int(signature.get("branch_closure_depth", 0)),
+			]
+		)
 		lines.append("- 历史签名 hash：`%s`" % run.get("signature_hash", ""))
 		lines.append("")
 
@@ -392,6 +577,71 @@ func export_markdown_report(
 			]
 		)
 	lines.append("")
+	var quality := batch.get("quality_audit", {}) as Dictionary
+	lines.append("## 历史质量审计摘要")
+	lines.append("")
+	lines.append("- 批量 seed：%d" % int(quality.get("seed_count", 0)))
+	lines.append(
+		"- 无质量警告 seed：%d"
+		% int(quality.get("no_warning_seed_count", 0))
+	)
+	lines.append(
+		"- 存在悬空替代路径 seed：%d"
+		% int(quality.get("dangling_major_fact_count", 0))
+	)
+	lines.append(
+		"- 存在极端饥饿未闭合 seed：%d"
+		% int(quality.get("unresolved_extreme_hunger_count", 0))
+	)
+	lines.append(
+		"- impossible_shop_state：%d"
+		% int(quality.get("impossible_shop_state_count", 0))
+	)
+	lines.append(
+		"- 存在店铺状态矛盾 seed：%d"
+		% int(quality.get("contradiction_seed_count", 0))
+	)
+	lines.append(
+		"- 平均 branch_closure_depth：%.2f"
+		% float(quality.get("average_branch_closure_depth", 0.0))
+	)
+	lines.append("")
+	lines.append("## 替代路径闭合样例")
+	lines.append("")
+	for run_value: Variant in _select_closure_samples(
+		batch.get("runs", []) as Array,
+		5
+	):
+		var run := run_value as Dictionary
+		var signature := run.get("signature", {}) as Dictionary
+		lines.append(
+			"### Seed %d：%s"
+			% [
+				int(run.get("seed", 0)),
+				signature.get("outcome_class", ""),
+			]
+		)
+		lines.append("")
+		for event: String in _timeline_events(
+			signature.get("fact_days", {}) as Dictionary
+		):
+			lines.append("- " + event)
+		lines.append(
+			"- 质量：%s；闭合深度：%d"
+			% [
+				(
+					"closed"
+					if (
+						signature.get("quality_flags", []) as Array
+					).is_empty()
+					else JSON.stringify(
+						signature.get("quality_flags", [])
+					)
+				),
+				int(signature.get("branch_closure_depth", 0)),
+			]
+		)
+		lines.append("")
 	lines.append(
 		"本输出来自无头批量模拟。seed 只生成初始状态、性格权重、"
 		+ "资源与压力；结局分类由运行后实际 WorldFact 组合推导。"
@@ -408,6 +658,24 @@ func export_markdown_report(
 		)
 		return
 	file.store_string("\n".join(lines))
+
+
+func export_history_quality_report(
+		batch: Dictionary,
+		output_path: String = DEFAULT_QUALITY_OUTPUT_PATH
+	) -> void:
+	var quality := batch.get("quality_audit", {}) as Dictionary
+	var text := quality_auditor.build_quality_report(quality)
+	var absolute_path := ProjectSettings.globalize_path(output_path)
+	DirAccess.make_dir_recursive_absolute(absolute_path.get_base_dir())
+	var file := FileAccess.open(output_path, FileAccess.WRITE)
+	if file == null:
+		push_error(
+			"[LakeTownHistoryVariationRunner] Cannot write %s"
+			% output_path
+		)
+		return
+	file.store_string(text)
 
 
 func _build_final_state(state: WorldSimState) -> Dictionary:
@@ -533,6 +801,80 @@ func _select_history_samples(runs: Array, limit: int) -> Array[Dictionary]:
 	for run_value: Variant in runs:
 		var run := run_value as Dictionary
 		if run in output:
+			continue
+		output.append(run)
+		if output.size() >= limit:
+			break
+	return output
+
+
+func _select_closure_samples(
+		runs: Array,
+		limit: int
+	) -> Array[Dictionary]:
+	var output: Array[Dictionary] = []
+	var required_groups: Array = [
+		[
+			"chen_mi_blocked_by_guard_seal",
+			"guard_noticed_child_near_granary",
+		],
+		[
+			"chen_mi_returned_empty_handed",
+			"old_chen_saw_chen_mi_empty_handed",
+		],
+		[
+			"chen_mi_weakened_from_enduring_hunger",
+			"neighbor_noticed_silent_hungry_child",
+		],
+		[
+			"old_chen_tried_to_delay_debt",
+			"creditor_refused_delay_request",
+			"old_chen_withheld_delay_request",
+		],
+		[
+			"chen_mi_found_other_family_tracks",
+			"market_rumor_about_other_hungry_family",
+		],
+	]
+	for group_value: Variant in required_groups:
+		var group := group_value as Array
+		for run_value: Variant in runs:
+			var run := run_value as Dictionary
+			if run in output:
+				continue
+			var signature := run.get("signature", {}) as Dictionary
+			var fact_days := signature.get("fact_days", {}) as Dictionary
+			if _first_fact_day(fact_days, group) < 0:
+				continue
+			output.append(run)
+			break
+		if output.size() >= limit:
+			return output
+	var seen_outcomes: Dictionary = {}
+	for run: Dictionary in output:
+		var signature := run.get("signature", {}) as Dictionary
+		seen_outcomes[String(signature.get("outcome_class", ""))] = true
+	for run_value: Variant in runs:
+		var run := run_value as Dictionary
+		if run in output:
+			continue
+		var signature := run.get("signature", {}) as Dictionary
+		if int(signature.get("branch_closure_depth", 0)) <= 0:
+			continue
+		var outcome := String(signature.get("outcome_class", ""))
+		if seen_outcomes.has(outcome):
+			continue
+		seen_outcomes[outcome] = true
+		output.append(run)
+		if output.size() >= limit:
+			return output
+	for run_value: Variant in runs:
+		var run := run_value as Dictionary
+		var signature := run.get("signature", {}) as Dictionary
+		if (
+			int(signature.get("branch_closure_depth", 0)) <= 0
+			or run in output
+		):
 			continue
 		output.append(run)
 		if output.size() >= limit:

@@ -356,7 +356,7 @@ func _can_guard_lock_granary(
 		+ float(granary_state.get("visibility", 0.0)) * 0.45
 		+ maxf(0.0, macro_region.scarcity - 60.0) * 0.8
 	)
-	return macro_region.scarcity >= 66.0 and pressure_score >= 145.0
+	return macro_region.scarcity >= 66.0 and pressure_score >= 160.0
 
 
 func _can_creditor_press_early(state: WorldSimState) -> bool:
