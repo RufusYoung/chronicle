@@ -1,0 +1,141 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/lake_town_world_viewer.gd" id="1_viewer"]
+
+[node name="LakeTownWorldViewer" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_viewer")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="RootLayout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Margin/RootLayout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "LakeTownWorldViewer | 湖湾镇开发者世界面板"
+
+[node name="StatusLabel" type="Label" parent="Margin/RootLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "准备模拟..."
+
+[node name="MainSplit" type="HBoxContainer" parent="Margin/RootLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SeedPanel" type="VBoxContainer" parent="Margin/RootLayout/MainSplit"]
+custom_minimum_size = Vector2(270, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="SeedHeading" type="Label" parent="Margin/RootLayout/MainSplit/SeedPanel"]
+layout_mode = 2
+text = "Seed 列表"
+
+[node name="SeedList" type="ItemList" parent="Margin/RootLayout/MainSplit/SeedPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="TimelinePanel" type="VBoxContainer" parent="Margin/RootLayout/MainSplit"]
+custom_minimum_size = Vector2(420, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.2
+
+[node name="TimelineHeading" type="Label" parent="Margin/RootLayout/MainSplit/TimelinePanel"]
+layout_mode = 2
+text = "湖湾镇历史时间线"
+
+[node name="TimelineList" type="ItemList" parent="Margin/RootLayout/MainSplit/TimelinePanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="DetailPanel" type="VBoxContainer" parent="Margin/RootLayout/MainSplit"]
+custom_minimum_size = Vector2(360, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DayTitle" type="Label" parent="Margin/RootLayout/MainSplit/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Day 详情"
+
+[node name="DayDetail" type="RichTextLabel" parent="Margin/RootLayout/MainSplit/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="DataTabs" type="TabContainer" parent="Margin/RootLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WorldFact" type="TextEdit" parent="Margin/RootLayout/DataTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+wrap_mode = 1
+
+[node name="Trace" type="TextEdit" parent="Margin/RootLayout/DataTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+wrap_mode = 1
+
+[node name="Memory" type="TextEdit" parent="Margin/RootLayout/DataTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+wrap_mode = 1
+
+[node name="NarratableState" type="TextEdit" parent="Margin/RootLayout/DataTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+wrap_mode = 1
+
+[node name="QualityAudit" type="TextEdit" parent="Margin/RootLayout/DataTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+wrap_mode = 1
+
+[node name="Profile" type="TextEdit" parent="Margin/RootLayout/DataTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+wrap_mode = 1
+
+[node name="RawSignature" type="TextEdit" parent="Margin/RootLayout/DataTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+wrap_mode = 1
