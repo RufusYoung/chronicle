@@ -1,7 +1,10 @@
 extends SceneTree
 
 const ObserverModel = preload("res://scripts/dev/world_sim_observer.gd")
-const OUTPUT_PATH := "res://texts/reports/2026/2026-06-13_world_sim_observer_output.md"
+const OUTPUT_PATH := (
+	"res://texts/reports/2026/2026-6/2026-6-15/"
+	+ "2026-06-15_world_sim_observer_output.md"
+)
 const PROTECTED_PATHS: Array[String] = [
 	"res://scenes/ui/story_player.gd",
 	"res://scripts/gen/world_generation_v03.gd",
@@ -54,6 +57,14 @@ func _run() -> void:
 	_check(_has_daily_adapted_leads(baseline), "baseline includes adapted v0.3 lead summaries")
 	_check(_has_lake_town_chain(baseline), "baseline includes lake town micro chain summaries")
 	_check(
+		_has_micro_action_candidates(baseline),
+		"baseline includes five state-derived lake town action candidates"
+	)
+	_check(
+		_has_micro_action_results(baseline),
+		"baseline includes isolated micro action result comparisons"
+	)
+	_check(
 		bool(comparison.get("day_10_has_difference", false)),
 		"A/B comparison differs by day 10"
 	)
@@ -70,6 +81,10 @@ func _run() -> void:
 	_check(_markdown_has_news_categories(), "Markdown separates new news and continuous summaries")
 	_check(_markdown_has_lake_town_chain(), "Markdown includes the lake town micro chain section")
 	_check(_markdown_has_traceable_micro_scene(), "Markdown shows the complete micro scene causes")
+	_check(
+		_markdown_has_micro_action_sections(),
+		"Markdown includes micro action candidates and consequence comparisons"
+	)
 	_check(_observer_news_not_repetitive(baseline), "observer output avoids repeated daily news text")
 	_check(_markdown_uses_test_injection_terms(), "Markdown uses test injection terminology")
 	_check(protected_before == protected_after, "protected Demo files were not modified")
@@ -161,6 +176,36 @@ func _has_lake_town_chain(result: Dictionary) -> bool:
 	return false
 
 
+func _has_micro_action_candidates(result: Dictionary) -> bool:
+	var candidates := result.get("micro_action_candidates", []) as Array
+	var ids: Array[String] = []
+	for candidate_value: Variant in candidates:
+		var candidate := candidate_value as Dictionary
+		ids.append(String(candidate.get("id", "")))
+	return ids == [
+		"give_food_to_chen_mi",
+		"ask_grain_origin",
+		"report_to_guard",
+		"ignore_chen_mi",
+		"buy_spoiled_grain_low",
+	]
+
+
+func _has_micro_action_results(result: Dictionary) -> bool:
+	var action_results := result.get("micro_action_results", []) as Array
+	if action_results.size() != 5:
+		return false
+	for result_value: Variant in action_results:
+		var action_result := result_value as Dictionary
+		if not bool(action_result.get("ok", false)):
+			return false
+		if (action_result.get("created_fact_types", []) as Array).is_empty():
+			return false
+		if (action_result.get("state_changes", {}) as Dictionary).is_empty():
+			return false
+	return true
+
+
 func _markdown_has_required_sections() -> bool:
 	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
 	for heading: String in [
@@ -205,6 +250,21 @@ func _markdown_has_traceable_micro_scene() -> bool:
 		and "old_chen_closed_shop_due_to_family_crisis" in text
 		and "child_hiding_bag" in text
 		and "spoiled_grain_bag" in text
+	)
+
+
+func _markdown_has_micro_action_sections() -> bool:
+	var text := FileAccess.get_file_as_string(OUTPUT_PATH)
+	return (
+		"湖湾镇可行动候选：" in text
+		and "## 湖湾镇模拟行动后果对照" in text
+		and "### give_food_to_chen_mi" in text
+		and "### ask_grain_origin" in text
+		and "### report_to_guard" in text
+		and "### ignore_chen_mi" in text
+		and "### buy_spoiled_grain_low" in text
+		and "无头模拟行动" in text
+		and "不是真实 UI 输入" in text
 	)
 
 

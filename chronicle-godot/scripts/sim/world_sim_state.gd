@@ -192,6 +192,7 @@ var npcs: Dictionary = {}
 var locations: Dictionary = {}
 var items: Dictionary = {}
 var traces: Array[Dictionary] = []
+var memories: Array[Dictionary] = []
 var narratable_states: Array[Dictionary] = []
 var rng_state: int = 0
 
@@ -299,9 +300,82 @@ func snapshot() -> Dictionary:
 		"locations": locations.duplicate(true),
 		"items": items.duplicate(true),
 		"traces": traces.duplicate(true),
+		"memories": memories.duplicate(true),
 		"narratable_states": narratable_states.duplicate(true),
 		"world_fact_count": world_facts.size(),
 		"news_count": world_news.size(),
 		"news_history_count": news_history.size(),
 		"lead_count": lead_candidates.size(),
 	}
+
+
+func duplicate_state() -> WorldSimState:
+	var copy := WorldSimState.new()
+	copy.day = day
+	copy.seed = seed
+	copy.rng_state = rng_state
+	for region_id: String in regions:
+		copy.regions[region_id] = RegionState.from_dictionary(
+			get_region(region_id).to_dictionary()
+		)
+	for faction_id: String in factions:
+		copy.factions[faction_id] = FactionState.from_dictionary(
+			get_faction(faction_id).to_dictionary()
+		)
+	for source_fact: WorldFact in world_facts:
+		var fact := WorldFact.new()
+		fact.id = source_fact.id
+		fact.day = source_fact.day
+		fact.type = source_fact.type
+		fact.region_id = source_fact.region_id
+		fact.faction_id = source_fact.faction_id
+		fact.actors = source_fact.actors.duplicate()
+		fact.location_id = source_fact.location_id
+		fact.cause_fact_ids = source_fact.cause_fact_ids.duplicate()
+		fact.effects = source_fact.effects.duplicate(true)
+		fact.tags = source_fact.tags.duplicate()
+		fact.importance = source_fact.importance
+		fact.data = source_fact.data.duplicate(true)
+		copy.world_facts.append(fact)
+	for source_news: WorldNews in world_news:
+		var news := WorldNews.new()
+		news.id = source_news.id
+		news.day = source_news.day
+		news.region_id = source_news.region_id
+		news.source = source_news.source
+		news.summary = source_news.summary
+		news.truth_level = source_news.truth_level
+		news.related_fact_id = source_news.related_fact_id
+		news.news_key = source_news.news_key
+		news.stage = source_news.stage
+		news.occurrence_count = source_news.occurrence_count
+		news.world_cause = source_news.world_cause
+		news.related_fact_ids = source_news.related_fact_ids.duplicate()
+		news.kind = source_news.kind
+		copy.world_news.append(news)
+	for source_lead: LeadCandidate in lead_candidates:
+		var lead := LeadCandidate.new()
+		lead.id = source_lead.id
+		lead.day = source_lead.day
+		lead.type = source_lead.type
+		lead.region_id = source_lead.region_id
+		lead.source_faction_id = source_lead.source_faction_id
+		lead.world_cause = source_lead.world_cause
+		lead.urgency = source_lead.urgency
+		lead.freshness = source_lead.freshness
+		lead.risk = source_lead.risk
+		lead.possible_actions = source_lead.possible_actions.duplicate()
+		lead.projected_consequences = (
+			source_lead.projected_consequences.duplicate(true)
+		)
+		lead.related_fact_id = source_lead.related_fact_id
+		copy.lead_candidates.append(lead)
+	copy.news_history = news_history.duplicate(true)
+	copy.micro_state = micro_state.duplicate(true)
+	copy.npcs = npcs.duplicate(true)
+	copy.locations = locations.duplicate(true)
+	copy.items = items.duplicate(true)
+	copy.traces = traces.duplicate(true)
+	copy.memories = memories.duplicate(true)
+	copy.narratable_states = narratable_states.duplicate(true)
+	return copy

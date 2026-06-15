@@ -5,6 +5,7 @@ const SimulatorModel = preload("res://scripts/sim/world_simulator.gd")
 const PlayerActionsModel = preload("res://scripts/sim/player_world_actions.gd")
 const AdapterModel = preload("res://scripts/sim/world_sim_lead_adapter.gd")
 const NewsDigestModel = preload("res://scripts/sim/world_news_digest.gd")
+const MicroActionResolverModel = preload("res://scripts/sim/micro_action_resolver.gd")
 
 const SEED_PATH := "res://data/world_seed_mirror_lake.json"
 const REGION_METRICS: Array[String] = [
@@ -27,6 +28,7 @@ var simulator := SimulatorModel.new()
 var player_actions := PlayerActionsModel.new()
 var adapter := AdapterModel.new()
 var news_digest := NewsDigestModel.new()
+var micro_action_resolver := MicroActionResolverModel.new()
 
 
 func run_baseline(days: int = 30) -> Dictionary:
@@ -388,6 +390,22 @@ func export_markdown_report(result: Dictionary, output_path: String) -> void:
 		lines,
 		baseline.get("lake_town_final", {}) as Dictionary
 	)
+	_append_micro_action_candidates(
+		lines,
+		baseline.get("micro_action_candidates", []) as Array
+	)
+	lines.append("")
+	lines.append("## 湖湾镇模拟行动后果对照")
+	lines.append("")
+	lines.append(
+		"- 以下结果来自同一基线场景的独立克隆状态，是无头模拟行动，"
+		+ "不是真实 UI 输入。"
+	)
+	lines.append("")
+	_append_micro_action_results(
+		lines,
+		baseline.get("micro_action_results", []) as Array
+	)
 	lines.append("")
 	lines.append("## 3. 每日摘要")
 	lines.append("")
@@ -442,14 +460,23 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 		return {}
 	var initial_regions := build_region_summary(state)
 	var daily_snapshots: Array[Dictionary] = []
+	var micro_action_baseline: WorldSimState = null
 	for _index: int in range(maxi(days, 0)):
 		simulator.advance_one_day(state)
 		if injection_day > 0 and state.day == injection_day:
 			player_actions.help_faction(state, "wardens", "border_town")
+		if (
+			micro_action_baseline == null
+			and _has_open_micro_scene(state)
+		):
+			micro_action_baseline = state.duplicate_state()
 		daily_snapshots.append(build_daily_snapshot(state))
 
 	var all_candidates := _candidate_dictionaries(state.lead_candidates)
 	var all_adapted := adapter.adapt_lead_candidates(all_candidates)
+	var micro_action_observation := _build_micro_action_observation(
+		micro_action_baseline
+	)
 	return {
 		"mode": "baseline" if injection_day < 0 else "test_injection",
 		"seed": state.seed,
@@ -459,6 +486,11 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 		"final_regions": build_region_summary(state),
 		"final_factions": build_faction_summary(state),
 		"lake_town_final": build_lake_town_summary(state, -1),
+		"micro_action_candidates": micro_action_observation.get(
+			"candidates",
+			[]
+		),
+		"micro_action_results": micro_action_observation.get("results", []),
 		"totals": {
 			"world_facts": state.world_facts.size(),
 			"micro_world_facts": _micro_fact_count(state),
@@ -467,6 +499,7 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 			"lead_candidates": state.lead_candidates.size(),
 			"adapted_leads": all_adapted.size(),
 			"traces": state.traces.size(),
+			"memories": state.memories.size(),
 			"narratable_states": state.narratable_states.size(),
 		},
 		"lead_type_distribution": _type_distribution(all_adapted),
@@ -476,6 +509,106 @@ func _run_observation(days: int, injection_day: int) -> Dictionary:
 		),
 		"lead_signatures": _lead_object_signatures(state.lead_candidates),
 		"adapted_lead_signatures": _adapted_object_signatures(all_adapted),
+	}
+
+
+func _build_micro_action_observation(
+		baseline: WorldSimState
+	) -> Dictionary:
+	if baseline == null:
+		return {"candidates": [], "results": []}
+	var actor := _test_actor()
+	var candidates := micro_action_resolver.build_action_candidates(
+		baseline,
+		actor,
+		"chen_mi_hiding_spoiled_grain_scene"
+	)
+	var results: Array[Dictionary] = []
+	for candidate_value: Variant in candidates:
+		var candidate := candidate_value as Dictionary
+		var before := baseline.duplicate_state()
+		var after := baseline.duplicate_state()
+		var action_actor := _test_actor()
+		var result: Dictionary = micro_action_resolver.resolve_micro_action(
+			after,
+			action_actor,
+			String(candidate.get("id", "")),
+			"chen_mi_hiding_spoiled_grain_scene"
+		)
+		var summary: Dictionary = (
+			micro_action_resolver.build_action_result_summary(
+				before,
+				after,
+				result
+			)
+		)
+		results.append({
+			"action_id": String(candidate.get("id", "")),
+			"label": String(candidate.get("label", "")),
+			"ok": bool(summary.get("ok", false)),
+			"created_fact_types": (
+				summary.get("created_fact_types", []) as Array
+			).duplicate(),
+			"created_trace_types": (
+				summary.get("created_trace_types", []) as Array
+			).duplicate(),
+			"created_memory_types": (
+				summary.get("created_memory_types", []) as Array
+			).duplicate(),
+			"state_changes": _compact_micro_action_changes(
+				summary.get("state_changes", {}) as Dictionary
+			),
+		})
+	return {
+		"candidates": candidates,
+		"results": results,
+	}
+
+
+func _compact_micro_action_changes(changes: Dictionary) -> Dictionary:
+	var output: Dictionary = {}
+	var preferred_keys: Array[String] = [
+		"actor.inventory.food",
+		"actor.inventory.spoiled_grain",
+		"actor.money",
+		"chen_mi.hunger",
+		"chen_mi.fear",
+		"chen_mi.inventory",
+		"chen_mi.status_tags",
+		"old_chen.stress",
+		"old_chen.status_tags",
+		"micro_relationships",
+		"guard_attention",
+	]
+	for key: String in preferred_keys:
+		if changes.has(key):
+			output[key] = changes[key]
+	return output
+
+
+func _has_open_micro_scene(state: WorldSimState) -> bool:
+	for scene_value: Variant in state.narratable_states:
+		var scene := scene_value as Dictionary
+		if (
+			String(scene.get("id", ""))
+			== "chen_mi_hiding_spoiled_grain_scene"
+			and not bool(scene.get("action_locked", false))
+		):
+			return true
+	return false
+
+
+func _test_actor() -> Dictionary:
+	return {
+		"id": "test_actor",
+		"inventory": {
+			"food": 1,
+			"spoiled_grain": 0,
+		},
+		"money": 10.0,
+		"traits": [],
+		"perception": 5,
+		"status_tags": [],
 	}
 
 
@@ -904,6 +1037,90 @@ func _append_lake_town_overview(
 	)
 	for scene_value: Variant in summary.get("narratable_states", []):
 		_append_narratable_scene(lines, scene_value as Dictionary)
+
+
+func _append_micro_action_candidates(
+		lines: Array[String],
+		candidates: Array
+	) -> void:
+	lines.append("")
+	lines.append("湖湾镇可行动候选：")
+	if candidates.is_empty():
+		lines.append("- 无")
+		return
+	for candidate_value: Variant in candidates:
+		var candidate := candidate_value as Dictionary
+		lines.append(
+			"- %s：%s"
+			% [
+				candidate.get("label", ""),
+				candidate.get("condition_summary", ""),
+			]
+		)
+
+
+func _append_micro_action_results(
+		lines: Array[String],
+		results: Array
+	) -> void:
+	if results.is_empty():
+		lines.append("- 未生成行动对照。")
+		return
+	for result_value: Variant in results:
+		var result := result_value as Dictionary
+		lines.append("### %s" % result.get("action_id", ""))
+		lines.append("")
+		lines.append(
+			"- 新事实：%s"
+			% _joined_or_none(result.get("created_fact_types", []) as Array)
+		)
+		lines.append(
+			"- 状态变化：%s"
+			% _state_change_text(result.get("state_changes", {}) as Dictionary)
+		)
+		lines.append(
+			"- 新 Trace：%s"
+			% _joined_or_none(result.get("created_trace_types", []) as Array)
+		)
+		lines.append(
+			"- 新 Memory：%s"
+			% _joined_or_none(result.get("created_memory_types", []) as Array)
+		)
+		lines.append("")
+
+
+func _joined_or_none(values: Array) -> String:
+	if values.is_empty():
+		return "无"
+	return ", ".join(values)
+
+
+func _state_change_text(changes: Dictionary) -> String:
+	if changes.is_empty():
+		return "无"
+	var entries: Array[String] = []
+	var keys: Array = changes.keys()
+	keys.sort()
+	for key_value: Variant in keys:
+		var key := String(key_value)
+		var change := changes.get(key, {}) as Dictionary
+		entries.append(
+			"%s: %s -> %s"
+			% [
+				key,
+				_compact_value(change.get("before")),
+				_compact_value(change.get("after")),
+			]
+		)
+	return "；".join(entries)
+
+
+func _compact_value(value: Variant) -> String:
+	if value is float:
+		return "%.2f" % float(value)
+	if value is Dictionary or value is Array:
+		return JSON.stringify(value)
+	return str(value)
 
 
 func _append_narratable_scene(

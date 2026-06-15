@@ -527,12 +527,14 @@ func _maybe_create_narratable_state(
 		"world_cause": "lake_town_food_crisis_chain",
 		"importance": 0.95,
 		"available_actions_hint": [
-			"give_food",
-			"ask_grain_source",
-			"find_old_chen",
+			"give_food_to_chen_mi",
+			"ask_grain_origin",
 			"report_to_guard",
-			"ignore",
+			"ignore_chen_mi",
+			"buy_spoiled_grain_low",
 		],
+		"status": "open",
+		"action_locked": false,
 		"created_day": state.day,
 	})
 
