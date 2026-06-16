@@ -25,7 +25,9 @@ func _run() -> void:
 	var passed := (
 		seed_list.item_count == 20
 		and timeline_list.item_count > 0
-		and not day_detail.text.is_empty()
+		and "今日局面卡" in day_detail.text
+		and "人物状态卡" in day_detail.text
+		and "地点状态卡" in day_detail.text
 		and data_tabs.get_tab_count() == 7
 	)
 	if passed:

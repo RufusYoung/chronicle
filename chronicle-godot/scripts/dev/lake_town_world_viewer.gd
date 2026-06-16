@@ -135,8 +135,26 @@ func _on_timeline_selected(index: int) -> void:
 
 func _refresh_day_detail(run: Dictionary, day: int) -> void:
 	var detail := view_model.build_day_detail(run, day)
-	day_title.text = "Day %d 详情" % day
+	day_title.text = "湖湾镇 · Day %d" % day
 	var sections: Array[String] = [
+		"[b]今日局面卡[/b]\n%s"
+		% _format_surface_card(
+			detail.get("primary_surface_card", {}) as Dictionary
+		),
+		"[b]人物状态卡[/b]\n%s"
+		% _format_cards(detail.get("people_cards", []) as Array),
+		"[b]地点状态卡[/b]\n%s"
+		% _format_cards(detail.get("location_cards", []) as Array),
+		"[b]可见痕迹[/b]\n%s"
+		% _format_primary_list(
+			detail.get("primary_surface_card", {}) as Dictionary,
+			"trace_lines"
+		),
+		"[b]因果来源[/b]\n%s"
+		% _format_primary_list(
+			detail.get("primary_surface_card", {}) as Dictionary,
+			"cause_lines"
+		),
 		"[b]当日新增 WorldFact[/b]\n%s"
 		% _format_rows(detail.get("facts", []) as Array),
 		"[b]当日新增 Trace[/b]\n%s"
@@ -188,6 +206,81 @@ func _format_rows(rows: Array) -> String:
 	var output: Array[String] = []
 	for row_value: Variant in rows:
 		output.append(_pretty(row_value))
+	return "\n".join(output)
+
+
+func _format_surface_card(card: Dictionary) -> String:
+	if card.is_empty():
+		return "今天没有足够来源生成局面卡。"
+	var lines: Array[String] = [
+		"[b]%s[/b]" % String(card.get("title", "")),
+		"%s | %s | %s"
+		% [
+			String(card.get("subtitle", "")),
+			String(card.get("location_name", "")),
+			String(card.get("severity", "")),
+		],
+		String(card.get("scene_summary", "")),
+	]
+	lines.append(
+		"可见细节：\n%s"
+		% _bullet_lines(card.get("visible_details", []) as Array)
+	)
+	lines.append(
+		"相关人物：\n%s"
+		% _bullet_lines(card.get("people_present", []) as Array)
+	)
+	lines.append(
+		"相关地点状态：\n%s"
+		% _bullet_lines(
+			card.get("location_state_lines", []) as Array
+		)
+	)
+	lines.append(
+		"质量标记：\n%s"
+		% _bullet_lines(card.get("quality_lines", []) as Array)
+	)
+	lines.append(
+		"来源：facts=%s traces=%s narratable=%s"
+		% [
+			", ".join(card.get("source_fact_ids", []) as Array),
+			", ".join(card.get("trace_ids", []) as Array),
+			", ".join(
+				card.get("narratable_state_ids", []) as Array
+			),
+		]
+	)
+	return "\n".join(lines)
+
+
+func _format_cards(cards: Array) -> String:
+	if cards.is_empty():
+		return "无"
+	var output: Array[String] = []
+	for card_value: Variant in cards:
+		var card := card_value as Dictionary
+		output.append(
+			"[b]%s[/b]\n%s"
+			% [
+				String(card.get("title", "")),
+				String(card.get("summary", "")),
+			]
+		)
+	return "\n\n".join(output)
+
+
+func _format_primary_list(card: Dictionary, key: String) -> String:
+	if card.is_empty():
+		return "无"
+	return _bullet_lines(card.get(key, []) as Array)
+
+
+func _bullet_lines(rows: Array) -> String:
+	if rows.is_empty():
+		return "- 无"
+	var output: Array[String] = []
+	for row_value: Variant in rows:
+		output.append("- %s" % String(row_value))
 	return "\n".join(output)
 
 

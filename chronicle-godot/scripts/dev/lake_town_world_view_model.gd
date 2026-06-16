@@ -7,6 +7,9 @@ const LocalStoryPipelineModel = preload(
 const LakeTownModuleModel = preload(
 	"res://scripts/sim/modules/lake_town_food_crisis_module.gd"
 )
+const LivingSurfaceBuilderModel = preload(
+	"res://scripts/dev/lake_town_living_surface_builder.gd"
+)
 
 const CORE_NPC_IDS: Array[String] = [
 	"old_chen",
@@ -81,6 +84,7 @@ const FACT_LABELS := {
 
 var pipeline := LocalStoryPipelineModel.new()
 var module := LakeTownModuleModel.new()
+var living_surface_builder := LivingSurfaceBuilderModel.new()
 
 
 func build_view_data(seeds: Array, days: int = 30) -> Dictionary:
@@ -181,10 +185,12 @@ func build_day_detail(
 		run_result.get("day_details", {}) as Dictionary
 	)
 	if day_details.has(str(day)):
-		return (
+		return _with_living_surface(
+			run_result,
+			day,
 			day_details.get(str(day), {}) as Dictionary
-		).duplicate(true)
-	return {
+		)
+	var fallback := {
 		"day": day,
 		"facts": _rows_for_day(
 			run_result.get("fact_rows", []) as Array,
@@ -209,6 +215,7 @@ func build_day_detail(
 		),
 		"quality_flags": [],
 	}
+	return _with_living_surface(run_result, day, fallback)
 
 
 func build_npc_snapshot(
@@ -265,6 +272,50 @@ func build_quality_summary(run_result: Dictionary) -> Dictionary:
 	).duplicate(true)
 
 
+func build_living_surface_cards(
+		run_result: Dictionary,
+		day: int
+	) -> Array:
+	return living_surface_builder.build_living_surface_cards(
+		run_result,
+		day
+	).duplicate(true)
+
+
+func build_primary_surface_card(
+		run_result: Dictionary,
+		day: int
+	) -> Dictionary:
+	return living_surface_builder.build_primary_surface_card(
+		run_result,
+		day
+	).duplicate(true)
+
+
+func build_surface_day_list(run_result: Dictionary) -> Array:
+	if run_result.has("surface_day_list"):
+		return (
+			run_result.get("surface_day_list", []) as Array
+		).duplicate(true)
+	return living_surface_builder.build_surface_day_list(
+		run_result
+	).duplicate(true)
+
+
+func build_people_cards(run_result: Dictionary, day: int) -> Array:
+	return living_surface_builder.build_people_cards(
+		run_result,
+		day
+	).duplicate(true)
+
+
+func build_location_cards(run_result: Dictionary, day: int) -> Array:
+	return living_surface_builder.build_location_cards(
+		run_result,
+		day
+	).duplicate(true)
+
+
 func _simulate_seed(seed_value: int, days: int) -> Dictionary:
 	var state: WorldSimState = module.create_state_for_seed(seed_value)
 	var profile := module.build_profile_for_seed(seed_value)
@@ -309,7 +360,7 @@ func _simulate_seed(seed_value: int, days: int) -> Dictionary:
 		"profile": profile.duplicate(true),
 		"raw_signature": signature.duplicate(true),
 	}
-	return run
+	return _attach_living_surface(run)
 
 
 func _build_tick_detail(
@@ -348,6 +399,42 @@ func _build_tick_detail(
 			tick.get("quality_flags", []) as Array
 		).duplicate(),
 	}
+
+
+func _attach_living_surface(run: Dictionary) -> Dictionary:
+	var output := run.duplicate(true)
+	var day_details := output.get("day_details", {}) as Dictionary
+	for day_key: Variant in day_details.keys():
+		var day := int(String(day_key))
+		day_details[day_key] = _with_living_surface(
+			output,
+			day,
+			day_details[day_key] as Dictionary
+		)
+	output["day_details"] = day_details
+	output["surface_day_list"] = (
+		living_surface_builder.build_surface_day_list(output)
+	)
+	return output
+
+
+func _with_living_surface(
+		run_result: Dictionary,
+		day: int,
+		detail: Dictionary
+	) -> Dictionary:
+	var output := detail.duplicate(true)
+	output["living_surface_cards"] = build_living_surface_cards(
+		run_result,
+		day
+	)
+	output["primary_surface_card"] = build_primary_surface_card(
+		run_result,
+		day
+	)
+	output["people_cards"] = build_people_cards(run_result, day)
+	output["location_cards"] = build_location_cards(run_result, day)
+	return output
 
 
 func _snapshot_npcs(state: WorldSimState) -> Dictionary:
@@ -467,7 +554,11 @@ func _fact_row(fact: WorldSimState.WorldFact) -> Dictionary:
 		"location_id": fact.location_id,
 		"region_id": fact.region_id,
 		"cause_fact_ids": fact.cause_fact_ids.duplicate(),
+		"effects": fact.effects.duplicate(true),
 		"tags": fact.tags.duplicate(),
+		"importance": fact.importance,
+		"world_cause": String(fact.data.get("world_cause", "")),
+		"data": fact.data.duplicate(true),
 	}
 
 
@@ -490,6 +581,7 @@ func _trace_row(trace: Dictionary) -> Dictionary:
 		"day": int(trace.get("created_day", 0)),
 		"type": String(trace.get("type", "")),
 		"location_id": String(trace.get("location_id", "")),
+		"npc_id": String(trace.get("npc_id", "")),
 		"source_fact_id": String(
 			trace.get("source_fact_id", "")
 		),
@@ -509,6 +601,9 @@ func _memory_row(memory: Dictionary) -> Dictionary:
 		"owner_id": String(memory.get("owner_id", "")),
 		"fact_id": source_fact_id,
 		"source_fact_id": source_fact_id,
+		"emotional_weight": float(
+			memory.get("emotional_weight", 0.0)
+		),
 		"tags": (memory.get("tags", []) as Array).duplicate(),
 	}
 
@@ -527,12 +622,21 @@ func _narratable_row(scene: Dictionary) -> Dictionary:
 		"title": String(
 			scene.get("title", scene.get("label", scene_id))
 		),
+		"type": String(scene.get("type", "")),
+		"npc_ids": (
+			scene.get("npc_ids", []) as Array
+		).duplicate(),
 		"source_fact_ids": (
 			scene.get("source_fact_ids", []) as Array
 		).duplicate(),
 		"trace_ids": (
 			scene.get("trace_ids", []) as Array
 		).duplicate(),
+		"memory_ids": (
+			scene.get("memory_ids", []) as Array
+		).duplicate(),
+		"world_cause": String(scene.get("world_cause", "")),
+		"importance": float(scene.get("importance", 0.0)),
 		"status": String(scene.get("status", "")),
 		"location_id": String(scene.get("location_id", "")),
 	}
