@@ -1,0 +1,167 @@
+# Chronicle v5 文档索引
+
+## 1. 当前文档定位
+
+### Chronicle Game Design Document.md
+
+原 v5 GDD。  
+作为历史版本、旧总纲和早期设计参考保留。
+
+用途：
+
+- 查阅旧版系统设想
+- 对比 v5.1 重构前后的方向变化
+- 保留早期设定、职业、装备、战斗、世界观等内容
+
+注意：
+
+- 不作为当前开发的唯一执行依据
+- 其中与 v5.1 冲突的内容，以 v5.1 重构文档为准
+
+---
+
+### CHRONICLE_GDD_v5.1_REBUILD.md
+
+当前主 GDD。  
+用于回答“Chronicle 到底是什么、玩家怎么玩、世界如何与人生结构连接”。
+
+用途：
+
+- 当前设计总纲
+- 前台玩法结构
+- 主界面设计
+- 生涯、线索、地点、状态、成长、长期项目、传记等核心规则
+- 后续所有系统文档的设计依据
+
+---
+
+### CHRONICLE_SYSTEM_MODULES_v5.1.md
+
+当前系统模块拆分文档。  
+用于回答“系统怎么拆、代码怎么搭、模块之间如何分工”。
+
+用途：
+
+- 指导后续重构开发
+- 约束模块边界
+- 防止所有功能混在一起
+- 作为 Codex 执行任务前必须阅读的系统架构入口
+
+---
+
+## 2. 推荐阅读顺序
+
+后续讨论、写规格、让 Codex 执行前，优先按以下顺序阅读：
+
+1. `CHRONICLE_GDD_v5.1_REBUILD.md`
+2. `CHRONICLE_SYSTEM_MODULES_v5.1.md`
+3. `Chronicle Game Design Document.md`
+
+其中前两个是当前主线文档，旧 GDD 只作为参考。
+
+---
+
+## 3. 后续文档扩展规则
+
+不要把所有内容继续塞进一个大 GDD。
+
+后续每细化一个系统，单独新建一个系统规格文档。
+
+建议命名：
+
+```text
+CHRONICLE_REBUILD_ROADMAP_v5.1.md
+CHRONICLE_LOCATION_UI_FLOW_v5.1.md
+CHRONICLE_LIFE_PROJECT_SYSTEM_v5.1.md
+CHRONICLE_RELATIONSHIP_RUMOR_SYSTEM_v5.1.md
+CHRONICLE_ATTRIBUTE_STATE_SYSTEM_v5.1.md
+CHRONICLE_COMBAT_SYSTEM_v5.1.md
+CHRONICLE_EQUIPMENT_SYSTEM_v5.1.md
+CHRONICLE_FOOD_SKILL_SYSTEM_v5.1.md
+CHRONICLE_CHRONICLE_OUTPUT_SYSTEM_v5.1.md
+```
+
+写到哪个系统，再细化哪个系统。
+不要一次性把所有系统文档都写完。
+
+---
+
+## 4. 当前开发原则
+
+当前阶段采用“文档定方向，开发按模块逐步落地”。
+
+开发顺序原则：
+
+```text
+总 GDD 定游戏是什么
+↓
+系统模块文档定系统怎么拆
+↓
+当前阶段规格文档定这一次做什么
+↓
+Codex 只执行这一小块
+↓
+测试
+↓
+写报告
+↓
+进入下一块
+```
+
+不要直接让 Codex 根据整个 GDD 一次性重构游戏。
+
+---
+
+## 5. 当前推荐下一步
+
+第 0 步完成后，下一步应新增：
+
+```text
+texts/v5/CHRONICLE_REBUILD_ROADMAP_v5.1.md
+```
+
+用于明确 v5.1 重构路线、阶段目标、验收标准、旧代码复用边界和禁止修改范围。
+
+再下一步新增：
+
+```text
+texts/v5/CHRONICLE_LOCATION_UI_FLOW_v5.1.md
+```
+
+用于细化第一阶段“地点局面主界面 + 行动流”。
+
+---
+
+## 6. Codex 执行约束
+
+在没有明确指令前，不要修改以下内容：
+
+```text
+chronicle-godot/scenes/ui/story_player.gd
+chronicle-godot/scripts/gen/world_generation_v03.gd
+chronicle-godot/scenes/ui/mainui.tscn
+chronicle-godot/project.godot
+chronicle-godot/素材包/
+```
+
+本次第 0 步只允许新增或修改：
+
+```text
+texts/v5/README.md
+```
+
+---
+
+## 7. 本阶段目标
+
+第 0 步完成后，`texts/v5` 文件夹应具备清晰入口：
+
+```text
+texts/v5/
+├─ README.md
+├─ Chronicle Game Design Document.md
+├─ CHRONICLE_GDD_v5.1_REBUILD.md
+└─ CHRONICLE_SYSTEM_MODULES_v5.1.md
+```
+
+`README.md` 是后续进入 v5 文档体系的第一入口。
