@@ -4,19 +4,21 @@
 
 ### Chronicle Game Design Document.md
 
-原 v5 GDD。  
-作为历史版本、旧总纲和早期设计参考保留。
+当前 v5 主 GDD 的用户保存版。  
+该文件来源于“重构版游戏设计文档：系统架构版”，用户已将版本号调整为 v5，并作为当前 v5 文件夹中的主 GDD 保存。
 
 用途：
 
-- 查阅旧版系统设想
-- 对比 v5.1 重构前后的方向变化
-- 保留早期设定、职业、装备、战斗、世界观等内容
+- 作为当前 v5 主 GDD 的阅读入口之一
+- 保留完整的系统架构版设计文本
+- 便于用户直接查看、编辑和继续扩写总纲
+- 与 `CHRONICLE_GDD_v5.1_REBUILD.md` 共同构成当前 v5.1 重构设计依据
 
 注意：
 
-- 不作为当前开发的唯一执行依据
-- 其中与 v5.1 冲突的内容，以 v5.1 重构文档为准
+- 它不是旧版历史 GDD
+- 不应再标记为“旧总纲”或“历史版本”
+- 若与 `CHRONICLE_GDD_v5.1_REBUILD.md` 存在重复内容，后续可再决定合并、保留或改名
 
 ---
 
@@ -57,7 +59,11 @@
 2. `CHRONICLE_SYSTEM_MODULES_v5.1.md`
 3. `Chronicle Game Design Document.md`
 
-其中前两个是当前主线文档，旧 GDD 只作为参考。
+说明：
+
+- `CHRONICLE_GDD_v5.1_REBUILD.md` 是当前重构讨论后的主执行依据。
+- `CHRONICLE_SYSTEM_MODULES_v5.1.md` 是当前系统拆分与开发架构依据。
+- `Chronicle Game Design Document.md` 是用户保存的 v5 主 GDD 文本，后续可根据需要与 v5.1 重构文档合并或改名。
 
 ---
 
