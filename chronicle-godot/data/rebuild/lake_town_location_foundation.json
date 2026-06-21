@@ -1,0 +1,248 @@
+{
+  "character": {
+    "id": "alvis",
+    "name": "阿尔维斯",
+    "age": 26,
+    "identity": "流浪者",
+    "current_location_id": "lake_town",
+    "current_location_name": "湖湾镇",
+    "stats": {
+      "life": {"current": 32, "max": 32},
+      "health": {"current": 76, "max": 100},
+      "energy": {"current": 48, "max": 60},
+      "sanity": {"current": 67, "max": 100},
+      "hunger": {"current": 28, "max": 100}
+    },
+    "injuries": ["无明显伤势"],
+    "mental_terms": ["夜里睡得不深"],
+    "attributes": {
+      "力量": 7,
+      "敏捷": 8,
+      "智慧": 9,
+      "魅力": 6,
+      "体质": 8,
+      "感知": 10
+    },
+    "traits": ["流浪者", "天生敏锐"]
+  },
+  "region": {
+    "id": "lake_town",
+    "name": "湖湾镇",
+    "statuses": [
+      {
+        "id": "food",
+        "label": "粮食",
+        "state": "紧张",
+        "detail": "老陈铺子已经两天没开门，市场上的干粮涨了一次价。"
+      },
+      {
+        "id": "security",
+        "label": "治安",
+        "state": "不安",
+        "detail": "守卫最近增加了夜巡。"
+      },
+      {
+        "id": "trade_route",
+        "label": "商路",
+        "state": "受阻",
+        "detail": "北路商队迟了三天。"
+      },
+      {
+        "id": "morale",
+        "label": "人心",
+        "state": "压抑",
+        "detail": "市场里很少有人大声说话。"
+      }
+    ]
+  },
+  "locations": [
+    {
+      "id": "lake_town",
+      "name": "湖湾镇",
+      "parent_id": "",
+      "description": "老陈铺子已经两天没有开门。市场上的干粮又涨了一次价。码头边的商船比往常少，守卫却比往常多。\n\n你看见陈米坐在铺子门口。她怀里抱着一个旧布袋，看见你时，把袋口往身后藏了藏。",
+      "visible_people": ["陈米"],
+      "visible_traces": ["老陈铺子没开门", "陈米抱着旧布袋", "市场粮价上涨"],
+      "child_location_ids": [
+        "old_chen_shop",
+        "market",
+        "dock",
+        "guard_post",
+        "abandoned_granary"
+      ]
+    },
+    {
+      "id": "old_chen_shop",
+      "name": "老陈铺子",
+      "parent_id": "lake_town",
+      "description": "铺门半掩着，门口贴着一张被雨水泡皱的告示。台阶边有一点散开的灰白粮粉。\n\n陈米坐在门边，怀里的布袋压得很紧。",
+      "visible_people": ["陈米"],
+      "visible_traces": ["涨价告示", "灰白色粮粉", "半掩的铺门"],
+      "child_location_ids": []
+    },
+    {
+      "id": "market",
+      "name": "市场",
+      "parent_id": "lake_town",
+      "description": "市场上的摊位少了一排，卖干粮的人把布袋口扎得很紧。几个买粮人压低声音，先看守卫，再问价格。",
+      "visible_people": ["买粮人", "摊主"],
+      "visible_traces": ["重新写过的粮价牌", "空出的干粮摊位"],
+      "child_location_ids": []
+    },
+    {
+      "id": "dock",
+      "name": "码头",
+      "parent_id": "lake_town",
+      "description": "码头边的货箱比往常少。几条船系在远处，没有靠岸装粮。",
+      "visible_people": ["码头脚夫"],
+      "visible_traces": ["空货箱", "迟到商队的传闻"],
+      "child_location_ids": []
+    },
+    {
+      "id": "guard_post",
+      "name": "守卫所",
+      "parent_id": "lake_town",
+      "description": "守卫所门前多了一盏夜灯。巡逻表被钉在木板上，仓库方向被划了红线。",
+      "visible_people": ["守卫"],
+      "visible_traces": ["新增夜巡表", "仓库方向的红线"],
+      "child_location_ids": []
+    },
+    {
+      "id": "abandoned_granary",
+      "name": "废弃粮仓",
+      "parent_id": "lake_town",
+      "description": "这里离市场街不远，却很少有人白天过来。门板裂开了一道缝，地上有灰白色的粮粉。\n\n空气里有一股潮湿的霉味。",
+      "visible_people": [],
+      "visible_traces": ["裂开的门板", "灰白色粮粉", "潮湿霉味"],
+      "child_location_ids": []
+    }
+  ],
+  "clues": [
+    {
+      "id": "price_rise_tomorrow",
+      "tag": "线索",
+      "title": "粮价明天再涨一次",
+      "source": "老陈铺子门口的涨价告示。",
+      "credibility": "这是贴在店门口的告示，看起来不像传闻。",
+      "location": "湖湾镇 / 老陈铺子",
+      "location_id": "old_chen_shop",
+      "action_ids": ["ask_market_grain_price", "shelve_clue"],
+      "can_add_to_pursuit": false
+    },
+    {
+      "id": "north_caravan_late",
+      "tag": "线索",
+      "title": "北路商队迟到",
+      "source": "市场摊主压低声音提到，北路商队已经迟了三天。",
+      "credibility": "这话来自多个摊位，但没人亲眼见到商队在哪。",
+      "location": "湖湾镇 / 市场",
+      "location_id": "market",
+      "action_ids": ["go_abandoned_granary", "shelve_clue"],
+      "can_add_to_pursuit": false
+    },
+    {
+      "id": "granary_gray_powder",
+      "tag": "线索",
+      "title": "废弃粮仓的灰白色粮粉",
+      "source": "陈米的布袋口和粮仓门缝附近都有类似的粉末。",
+      "credibility": "它看起来像粮粉，但潮气和霉味让人不太放心。",
+      "location": "湖湾镇 / 废弃粮仓",
+      "location_id": "abandoned_granary",
+      "action_ids": ["go_abandoned_granary", "shelve_clue"],
+      "can_add_to_pursuit": false
+    }
+  ],
+  "actions": [
+    {
+      "id": "approach_chen_mi",
+      "type": "dialogue",
+      "prefix": "对话",
+      "label": "走近陈米",
+      "time_cost": ""
+    },
+    {
+      "id": "inspect_price_notice",
+      "type": "normal",
+      "prefix": "普通",
+      "label": "查看涨价告示",
+      "time_cost": ""
+    },
+    {
+      "id": "ask_market_grain_price",
+      "type": "clue",
+      "prefix": "线索",
+      "label": "去市场打听粮价",
+      "time_cost": "1小时"
+    },
+    {
+      "id": "go_abandoned_granary",
+      "type": "danger",
+      "prefix": "危险",
+      "label": "前往废弃粮仓",
+      "time_cost": "半日"
+    },
+    {
+      "id": "stay_one_month",
+      "type": "long",
+      "prefix": "长期",
+      "label": "在湖湾镇停留一月",
+      "time_cost": ""
+    },
+    {
+      "id": "leave_lake_town",
+      "type": "normal",
+      "prefix": "普通",
+      "label": "离开湖湾镇",
+      "time_cost": ""
+    },
+    {
+      "id": "give_food_to_chen_mi",
+      "type": "normal",
+      "prefix": "普通",
+      "label": "给她食物",
+      "time_cost": ""
+    },
+    {
+      "id": "ask_chen_mi_about_grain",
+      "type": "dialogue",
+      "prefix": "对话",
+      "label": "问粮从哪来的",
+      "time_cost": ""
+    },
+    {
+      "id": "ignore_chen_mi",
+      "type": "normal",
+      "prefix": "普通",
+      "label": "装作没看见",
+      "time_cost": ""
+    },
+    {
+      "id": "return_lake_town",
+      "type": "normal",
+      "prefix": "普通",
+      "label": "回到湖湾镇街口",
+      "time_cost": ""
+    },
+    {
+      "id": "shelve_clue",
+      "type": "normal",
+      "prefix": "普通",
+      "label": "暂时搁置",
+      "time_cost": ""
+    }
+  ],
+  "initial_action_ids": [
+    "approach_chen_mi",
+    "inspect_price_notice",
+    "ask_market_grain_price",
+    "go_abandoned_granary",
+    "stay_one_month",
+    "leave_lake_town"
+  ],
+  "life_panel": {
+    "available_directions": ["漂泊", "定居", "营生", "追寻"],
+    "heard_but_locked": ["北境边境巡逻者", "王都抄书学徒"],
+    "completed_experiences": [],
+    "chronicle": []
+  }
+}
