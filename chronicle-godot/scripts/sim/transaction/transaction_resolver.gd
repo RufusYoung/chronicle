@@ -2,6 +2,7 @@ extends RefCounted
 class_name V5TransactionResolver
 
 const TransactionResultModel = preload("res://scripts/sim/transaction/transaction_result.gd")
+const NarrativeSurfaceAdapterModel = preload("res://scripts/sim/narrative/narrative_surface_adapter.gd")
 
 
 func resolve_action(candidate: Variant, context: Variant) -> Variant:
@@ -12,6 +13,8 @@ func resolve_action(candidate: Variant, context: Variant) -> Variant:
 
 	result.add_fact(_build_fact(fact_type, candidate, context))
 	_add_effects(result, fact_type, candidate, context)
+	var narrative_adapter = NarrativeSurfaceAdapterModel.new()
+	result.set_narrative_result(narrative_adapter.build_transaction_summary(result, context))
 	return result
 
 
@@ -132,6 +135,25 @@ func _add_report_discipline_effects(
 			true
 		))
 
+	result.add_trace({
+		"trace_id": "ration_record_marked_for_review",
+		"trace_type": "institutional_record_mark",
+		"location_id": str(context.location_id),
+		"source_fact_type": fact_type,
+		"display_name": "被折起的口粮记录",
+		"visible": true,
+		"inspectable": true,
+		"freshness": "fresh",
+	})
+	result.add_rumor_seed({
+		"rumor_id": "outpost_discipline_report_seed",
+		"source_fact_type": fact_type,
+		"origin_location": str(context.location_id),
+		"truth_level": "high",
+		"distortion_level": "low",
+		"spread_scope": "squad",
+		"text_hint": "有人说，玩家把私藏口粮的事报告给了罗恩。",
+	})
 	result.add_memory(_build_memory(
 		"%s_remembers_being_reported_by_%s" % [target_id, actor_id],
 		target_id,

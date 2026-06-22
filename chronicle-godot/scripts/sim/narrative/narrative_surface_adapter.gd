@@ -5,7 +5,7 @@ class_name V5NarrativeSurfaceAdapter
 func build_transaction_summary(result: Variant, _context: Variant) -> Dictionary:
 	var fact_types := _fact_types(result)
 	var memory_types := _memory_types(result)
-	var primary_fact := "" if fact_types.is_empty() else fact_types[0]
+	var primary_fact: String = "" if fact_types.is_empty() else str(fact_types[0])
 
 	match primary_fact:
 		"actor_gave_food_to_target":
