@@ -26,9 +26,17 @@ func get_character_summary() -> Dictionary:
 		"current_location": str(character.get("current_location_name", "")),
 		"vitals": [
 			_stat_line("生命", stats.get("life", {}) as Dictionary),
-			_stat_line("健康", stats.get("health", {}) as Dictionary),
 			_stat_line("精力", stats.get("energy", {}) as Dictionary),
-			_stat_line("理智", stats.get("sanity", {}) as Dictionary),
+			_stat_line(
+				"健康",
+				stats.get("health", {}) as Dictionary,
+				_inline_terms(character.get("injuries", []) as Array)
+			),
+			_stat_line(
+				"理智",
+				stats.get("sanity", {}) as Dictionary,
+				_inline_terms(character.get("mental_terms", []) as Array)
+			),
 			_stat_line("饥饿", stats.get("hunger", {}) as Dictionary),
 		],
 		"injuries": (character.get("injuries", []) as Array).duplicate(),
@@ -173,26 +181,44 @@ func _build_character_text(character: Dictionary) -> String:
 	var stats := character.get("stats", {}) as Dictionary
 	for item in [
 		["生命", "life"],
-		["健康", "health"],
 		["精力", "energy"],
-		["理智", "sanity"],
+		["健康", "health", _inline_terms(character.get("injuries", []) as Array)],
+		["理智", "sanity", _inline_terms(character.get("mental_terms", []) as Array)],
 		["饥饿", "hunger"],
 	]:
-		lines.append(_stat_line(str(item[0]), stats.get(str(item[1]), {}) as Dictionary))
-	lines.append("伤势：%s" % "、".join(character.get("injuries", []) as Array))
-	lines.append("精神：%s" % "、".join(character.get("mental_terms", []) as Array))
+		var suffix := ""
+		if item.size() > 2:
+			suffix = str(item[2])
+		lines.append(
+			_stat_line(
+				str(item[0]),
+				stats.get(str(item[1]), {}) as Dictionary,
+				suffix
+			)
+		)
+	lines.append("")
 	lines.append("核心特质：%s" % "、".join(character.get("traits", []) as Array))
+	lines.append("")
 	for key: Variant in (character.get("attributes", {}) as Dictionary):
 		lines.append("%s %d" % [str(key), int(character["attributes"][key])])
 	return "\n".join(lines)
 
 
-func _stat_line(label: String, stat: Dictionary) -> String:
-	return "%s：%d / %d" % [
+func _stat_line(label: String, stat: Dictionary, suffix: String = "") -> String:
+	var line := "%s：%d / %d" % [
 		label,
 		int(stat.get("current", 0)),
 		int(stat.get("max", 0)),
 	]
+	if suffix != "":
+		line += "　" + suffix
+	return line
+
+
+func _inline_terms(values: Array) -> String:
+	if values.is_empty():
+		return ""
+	return "、".join(values)
 
 
 func _clue_row(clue: Dictionary) -> Dictionary:

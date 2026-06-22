@@ -2,6 +2,223 @@ extends RefCounted
 class_name V5LocationFoundationState
 
 const DATA_PATH := "res://data/rebuild/lake_town_location_foundation.json"
+const LOCATION_ACTION_IDS := {
+	"lake_town": [
+		"approach_chen_mi",
+		"inspect_price_notice",
+		"ask_market_grain_price",
+		"go_abandoned_granary",
+		"stay_one_month",
+		"leave_lake_town",
+	],
+	"old_chen_shop": [
+		"approach_chen_mi",
+		"inspect_price_notice",
+		"knock_old_chen",
+		"observe_shop_traces",
+		"return_lake_town",
+	],
+	"market": [
+		"ask_market_grain_price",
+		"observe_grain_buyers",
+		"ask_vendor",
+		"return_lake_town",
+	],
+	"dock": [
+		"inspect_docked_ships",
+		"ask_north_caravan",
+		"observe_guard_patrol",
+		"return_lake_town",
+	],
+	"guard_post": [
+		"ask_night_patrol",
+		"report_abnormal_to_guard",
+		"inspect_guard_notice_board",
+		"return_lake_town",
+	],
+	"abandoned_granary": [
+		"inspect_granary_door_gap",
+		"inspect_gray_grain_powder",
+		"enter_granary",
+		"return_lake_town",
+	],
+}
+const EXTRA_ACTIONS := [
+	{
+		"id": "knock_old_chen",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "敲门找老陈",
+		"time_cost": "",
+	},
+	{
+		"id": "observe_shop_traces",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "观察门口痕迹",
+		"time_cost": "",
+	},
+	{
+		"id": "observe_grain_buyers",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "观察买粮的人",
+		"time_cost": "",
+	},
+	{
+		"id": "ask_vendor",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "询问摊贩",
+		"time_cost": "",
+	},
+	{
+		"id": "inspect_docked_ships",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "查看停靠商船",
+		"time_cost": "",
+	},
+	{
+		"id": "ask_north_caravan",
+		"type": "clue",
+		"prefix": "线索",
+		"label": "打听北路商队",
+		"time_cost": "",
+	},
+	{
+		"id": "observe_guard_patrol",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "观察守卫巡逻",
+		"time_cost": "",
+	},
+	{
+		"id": "ask_night_patrol",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "询问夜巡情况",
+		"time_cost": "",
+	},
+	{
+		"id": "report_abnormal_to_guard",
+		"type": "dialogue",
+		"prefix": "对话",
+		"label": "向守卫报告异常",
+		"time_cost": "",
+	},
+	{
+		"id": "inspect_guard_notice_board",
+		"type": "normal",
+		"prefix": "普通",
+		"label": "查看告示栏",
+		"time_cost": "",
+	},
+	{
+		"id": "inspect_granary_door_gap",
+		"type": "danger",
+		"prefix": "危险",
+		"label": "检查门缝",
+		"time_cost": "",
+	},
+	{
+		"id": "inspect_gray_grain_powder",
+		"type": "clue",
+		"prefix": "线索",
+		"label": "查看灰白粮粉",
+		"time_cost": "",
+	},
+	{
+		"id": "enter_granary",
+		"type": "danger",
+		"prefix": "危险",
+		"label": "进入粮仓",
+		"time_cost": "",
+	},
+]
+const CONTEXT_ACTION_TEXT := {
+	"knock_old_chen": {
+		"title": "敲门找老陈",
+		"text": "你敲了敲半掩的铺门。门后没有人回答，只传来木板轻轻晃动的声音。",
+		"people": [],
+		"traces": ["半掩的铺门", "没有回应的屋内"],
+	},
+	"observe_shop_traces": {
+		"title": "门口痕迹",
+		"text": "门口的雨水把粮粉冲成浅浅的灰线。台阶边有小脚印，又很快被来往的人踩乱。",
+		"people": [],
+		"traces": ["灰白粮粉", "小脚印", "被踩乱的台阶"],
+	},
+	"observe_grain_buyers": {
+		"title": "买粮的人",
+		"text": "买粮的人都把声音压得很低。他们先看价格牌，再看守卫，最后才摸自己的钱袋。",
+		"people": ["买粮人"],
+		"traces": ["压低的声音", "被反复看的价格牌"],
+	},
+	"ask_vendor": {
+		"title": "询问摊贩",
+		"text": "摊贩说今天先不赊账。他没有解释原因，只把袋口重新扎紧。",
+		"people": ["摊贩"],
+		"traces": ["扎紧的干粮袋"],
+	},
+	"inspect_docked_ships": {
+		"title": "停靠商船",
+		"text": "码头边只有几条小船靠着，真正装粮的大船没有出现。脚夫们把空货箱摞在棚下。",
+		"people": ["码头脚夫"],
+		"traces": ["空货箱", "没有靠岸的大船"],
+	},
+	"ask_north_caravan": {
+		"title": "北路商队",
+		"text": "有人说北路商队迟了三天，也有人说他们绕去了更安全的路。没人愿意把话说死。",
+		"people": ["码头脚夫"],
+		"traces": ["北路传闻", "空货箱"],
+		"clue_id": "north_caravan_late",
+	},
+	"observe_guard_patrol": {
+		"title": "守卫巡逻",
+		"text": "两个守卫沿码头走了一圈，在仓库方向停得比别处久一些。",
+		"people": ["守卫"],
+		"traces": ["仓库方向的停留", "夜巡靴印"],
+	},
+	"ask_night_patrol": {
+		"title": "夜巡情况",
+		"text": "守卫说夜巡只是例行安排，但他没有否认仓库方向最近多了脚印。",
+		"people": ["守卫"],
+		"traces": ["夜巡表", "仓库方向脚印"],
+	},
+	"report_abnormal_to_guard": {
+		"title": "报告异常",
+		"text": "守卫把你说的话记在木板背面，只说会让夜巡多看一眼废弃粮仓。",
+		"people": ["守卫"],
+		"traces": ["木板背面的记录"],
+	},
+	"inspect_guard_notice_board": {
+		"title": "告示栏",
+		"text": "告示栏上多是夜巡和市场秩序的旧告示，最新一张把仓库方向划成了重点巡查区。",
+		"people": [],
+		"traces": ["重点巡查区", "夜巡告示"],
+	},
+	"inspect_granary_door_gap": {
+		"title": "粮仓门缝",
+		"text": "门缝比远看时更宽。里面没有灯，只有一股潮湿的霉味从黑处漫出来。",
+		"people": [],
+		"traces": ["裂开的门板", "潮湿霉味"],
+	},
+	"inspect_gray_grain_powder": {
+		"title": "灰白粮粉",
+		"text": "灰白色粮粉黏在门槛和泥里，像是从旧麻袋底部漏出来的。霉味让人不太放心。",
+		"people": [],
+		"traces": ["灰白色粮粉", "旧麻袋痕迹"],
+		"clue_id": "granary_gray_powder",
+	},
+	"enter_granary": {
+		"title": "进入粮仓",
+		"text": "你侧身进了粮仓。里面没有整袋新粮，只有被翻动过的麻袋、潮湿木板和更重的霉味。",
+		"people": [],
+		"traces": ["被翻动过的麻袋", "潮湿木板", "霉味"],
+		"clue_id": "granary_gray_powder",
+	},
+}
 
 var source_data: Dictionary = {}
 var character: Dictionary = {}
@@ -39,11 +256,12 @@ func load_static_data(path: String = DATA_PATH) -> bool:
 	locations = _index_by_id(source_data.get("locations", []) as Array)
 	clues = _index_by_id(source_data.get("clues", []) as Array)
 	actions = _index_by_id(source_data.get("actions", []) as Array)
+	_add_extra_actions()
 	discovered_clue_ids = []
-	available_action_ids = _strings(source_data.get("initial_action_ids", []) as Array)
 	action_history = []
 	life_panel = (source_data.get("life_panel", {}) as Dictionary).duplicate(true)
 	_set_scene_from_location(current_location_id)
+	_set_available_actions_for_location(current_location_id)
 	return true
 
 
@@ -73,11 +291,14 @@ func apply_action(action_id: String) -> Dictionary:
 		"shelve_clue":
 			_apply_shelve_clue()
 		_:
-			return {
-				"ok": false,
-				"action_id": action_id,
-				"message": "未知行动：%s" % action_id,
-			}
+			if actions.has(action_id):
+				_apply_contextual_action(action_id)
+			else:
+				return {
+					"ok": false,
+					"action_id": action_id,
+					"message": "未知行动：%s" % action_id,
+				}
 	_record_action(action_id, before_location)
 	return {
 		"ok": true,
@@ -170,6 +391,7 @@ func set_current_location(location_id: String) -> void:
 	current_location_id = location_id
 	_set_character_location(location_id)
 	_set_scene_from_location(location_id)
+	_set_available_actions_for_location(location_id)
 
 
 func _apply_approach_chen_mi() -> void:
@@ -323,10 +545,7 @@ func _apply_ignore_chen_mi() -> void:
 
 
 func _apply_return_lake_town() -> void:
-	current_location_id = "lake_town"
-	_set_character_location("lake_town")
-	_set_scene_from_location("lake_town")
-	available_action_ids = _strings(source_data.get("initial_action_ids", []) as Array)
+	set_current_location("lake_town")
 
 
 func _apply_shelve_clue() -> void:
@@ -335,6 +554,23 @@ func _apply_shelve_clue() -> void:
 	visible_people = []
 	visible_traces = ["暂时搁置的线索"]
 	scene_hint = "线索搁置"
+
+
+func _apply_contextual_action(action_id: String) -> void:
+	var text_data := CONTEXT_ACTION_TEXT.get(action_id, {}) as Dictionary
+	scene_title = str(
+		text_data.get(
+			"title",
+			(actions.get(action_id, {}) as Dictionary).get("label", action_id)
+		)
+	)
+	scene_text = str(text_data.get("text", "这个入口目前只记录为地点行动占位。"))
+	visible_people = _strings(text_data.get("people", []) as Array)
+	visible_traces = _strings(text_data.get("traces", []) as Array)
+	scene_hint = "地点行动"
+	var clue_id := str(text_data.get("clue_id", ""))
+	if clue_id != "":
+		_discover_clue(clue_id)
 
 
 func _record_action(action_id: String, from_location_id: String) -> void:
@@ -355,6 +591,13 @@ func _set_scene_from_location(location_id: String) -> void:
 	visible_people = _strings(location.get("visible_people", []) as Array)
 	visible_traces = _strings(location.get("visible_traces", []) as Array)
 	scene_hint = "地点局面"
+
+
+func _set_available_actions_for_location(location_id: String) -> void:
+	var ids := LOCATION_ACTION_IDS.get(location_id, []) as Array
+	if ids.is_empty():
+		ids = source_data.get("initial_action_ids", []) as Array
+	available_action_ids = _strings(ids)
 
 
 func _set_character_location(location_id: String) -> void:
@@ -380,6 +623,14 @@ func _discover_clue(clue_id: String) -> void:
 func _ensure_action(action_id: String) -> void:
 	if actions.has(action_id) and action_id not in available_action_ids:
 		available_action_ids.append(action_id)
+
+
+func _add_extra_actions() -> void:
+	for action_value: Variant in EXTRA_ACTIONS:
+		var action := action_value as Dictionary
+		var action_id := str(action.get("id", ""))
+		if action_id != "" and not actions.has(action_id):
+			actions[action_id] = action.duplicate(true)
 
 
 func _adjust_stat(stat_id: String, delta: int) -> void:

@@ -27,6 +27,7 @@ func _run() -> void:
 	var region_status := viewer.get_node("%RegionStatus") as RichTextLabel
 	var action_buttons := viewer.get_node("%ActionButtons") as FlowContainer
 	var location_buttons := viewer.get_node("%LocationButtons") as FlowContainer
+	var modal_body := viewer.get_node("%ModalBody") as RichTextLabel
 
 	_check(
 		"阿尔维斯" in character_summary.text
@@ -91,8 +92,8 @@ func _run() -> void:
 	viewer.open_life_panel()
 	await process_frame
 	_check(
-		"生涯" in scene_title.text
-		and "在湖湾镇停留一月" in scene_text.text,
+		viewer.is_menu_modal_open()
+		and "在湖湾镇停留一月" in modal_body.text,
 		"9. 长期停留后生涯面板写入已完成经历"
 	)
 	_check(

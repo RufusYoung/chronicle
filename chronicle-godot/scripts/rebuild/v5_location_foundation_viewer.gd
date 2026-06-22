@@ -27,6 +27,10 @@ var view_model: Variant
 @onready var location_buttons: FlowContainer = %LocationButtons
 @onready var action_buttons: FlowContainer = %ActionButtons
 @onready var history_text: Label = %HistoryText
+@onready var menu_modal_layer: Control = %MenuModalLayer
+@onready var modal_title: Label = %ModalTitle
+@onready var modal_body: RichTextLabel = %ModalBody
+@onready var modal_close_button: Button = %ModalCloseButton
 
 
 func _ready() -> void:
@@ -34,6 +38,7 @@ func _ready() -> void:
 	view_model = ViewModelModel.new()
 	view_model.bind_state(state)
 	_connect_top_buttons()
+	modal_close_button.pressed.connect(close_menu_modal)
 	refresh_view()
 
 
@@ -87,8 +92,7 @@ func open_clue_card(clue_id: String) -> void:
 
 func open_life_panel() -> void:
 	var summary: Dictionary = view_model.get_life_panel_summary()
-	scene_title.text = "生涯"
-	scene_text.text = "\n".join([
+	_show_menu_modal("生涯", "\n".join([
 		"[b]生涯[/b]",
 		"",
 		"[b]可开始的人生方向：[/b]",
@@ -102,32 +106,71 @@ func open_life_panel() -> void:
 		"",
 		"[b]纪事：[/b]",
 		_bullet_lines(summary.get("chronicle", []) as Array),
-	])
-	visible_people.text = "可见人物：无"
-	visible_traces.text = "可见痕迹：生涯面板占位"
+	]))
 
 
 func open_character_panel() -> void:
 	var summary: Dictionary = view_model.get_character_summary()
-	scene_title.text = "角色详情"
-	scene_text.text = str(summary.get("summary_text", ""))
-	visible_people.text = "可见人物：阿尔维斯"
-	visible_traces.text = "可见痕迹：角色状态摘要"
+	_show_menu_modal(
+		"角色",
+		"\n".join([
+			"[b]角色[/b]",
+			"",
+			"显示角色详情。",
+			"",
+			str(summary.get("summary_text", "")),
+		])
+	)
+
+
+func open_inventory_panel() -> void:
+	_show_menu_modal("背包", "[b]背包[/b]\n\n背包系统尚未接入。")
+
+
+func open_world_panel() -> void:
+	_show_menu_modal("世界", "[b]世界[/b]\n\n世界地图尚未接入。")
+
+
+func open_settings_panel() -> void:
+	_show_menu_modal("设置", "[b]设置[/b]\n\n设置系统尚未接入。")
+
+
+func close_menu_modal() -> void:
+	menu_modal_layer.visible = false
+
+
+func is_menu_modal_open() -> bool:
+	return menu_modal_layer.visible
 
 
 func _connect_top_buttons() -> void:
-	inventory_button.pressed.connect(_show_placeholder.bind("背包系统尚未接入。"))
+	inventory_button.pressed.connect(open_inventory_panel)
 	character_button.pressed.connect(open_character_panel)
-	world_button.pressed.connect(_show_placeholder.bind("世界地图尚未接入。"))
+	world_button.pressed.connect(open_world_panel)
 	life_button.pressed.connect(open_life_panel)
-	settings_button.pressed.connect(_show_placeholder.bind("设置尚未接入。"))
+	settings_button.pressed.connect(open_settings_panel)
 
 
-func _show_placeholder(message: String) -> void:
-	scene_title.text = "尚未接入"
-	scene_text.text = message
-	visible_people.text = "可见人物：无"
-	visible_traces.text = "可见痕迹：入口占位"
+func _unhandled_input(event: InputEvent) -> void:
+	if (
+		menu_modal_layer.visible
+		and (
+			event.is_action_pressed("ui_cancel")
+			or (
+				event is InputEventKey
+				and (event as InputEventKey).pressed
+				and (event as InputEventKey).keycode == KEY_ESCAPE
+			)
+		)
+	):
+		close_menu_modal()
+		get_viewport().set_input_as_handled()
+
+
+func _show_menu_modal(title: String, body: String) -> void:
+	modal_title.text = title
+	modal_body.text = body
+	menu_modal_layer.visible = true
 
 
 func _refresh_character() -> void:
