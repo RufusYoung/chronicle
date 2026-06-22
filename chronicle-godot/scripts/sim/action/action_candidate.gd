@@ -2,28 +2,37 @@ extends RefCounted
 class_name V5ActionCandidate
 
 var action_id: String = ""
+var rule_id: String = ""
 var label: String = ""
 var action_type: String = ""
 var source_rule_id: String = ""
 var target_id: String = ""
+var target_display_name: String = ""
 var priority: int = 0
+var domain: String = ""
 
 
 func _init(data: Dictionary = {}) -> void:
-	action_id = str(data.get("action_id", ""))
+	rule_id = str(data.get("rule_id", data.get("source_rule_id", "")))
+	action_id = str(data.get("action_id", rule_id))
 	label = str(data.get("label", ""))
 	action_type = str(data.get("action_type", ""))
-	source_rule_id = str(data.get("source_rule_id", ""))
+	source_rule_id = rule_id
 	target_id = str(data.get("target_id", ""))
+	target_display_name = str(data.get("target_display_name", ""))
 	priority = int(data.get("priority", 0))
+	domain = str(data.get("domain", ""))
 
 
 func to_dict() -> Dictionary:
 	return {
 		"action_id": action_id,
+		"rule_id": rule_id,
 		"label": label,
 		"action_type": action_type,
 		"source_rule_id": source_rule_id,
 		"target_id": target_id,
+		"target_display_name": target_display_name,
 		"priority": priority,
+		"domain": domain,
 	}
