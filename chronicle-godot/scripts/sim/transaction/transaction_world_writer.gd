@@ -1,0 +1,34 @@
+extends RefCounted
+class_name V5TransactionWorldWriter
+
+
+func apply_result(result: Variant, stores: Dictionary) -> void:
+	var fact_store: Variant = stores.get("fact_store")
+	if fact_store != null:
+		for fact: Dictionary in result.facts_added:
+			fact_store.add_fact(fact)
+
+	var state_store: Variant = stores.get("state_store")
+	if state_store != null:
+		for state_change: Dictionary in result.state_changes:
+			state_store.apply_state_change(state_change)
+
+	var relationship_store: Variant = stores.get("relationship_store")
+	if relationship_store != null:
+		for relationship_change: Dictionary in result.relationship_changes:
+			relationship_store.apply_relationship_change(relationship_change)
+
+	var memory_store: Variant = stores.get("memory_store")
+	if memory_store != null:
+		for memory: Dictionary in result.memories_added:
+			memory_store.add_memory(memory)
+
+	var trace_store: Variant = stores.get("trace_store")
+	if trace_store != null:
+		for trace: Dictionary in result.traces_added:
+			trace_store.add_trace(trace)
+
+	var rumor_store: Variant = stores.get("rumor_store")
+	if rumor_store != null:
+		for rumor: Dictionary in result.rumors_added:
+			rumor_store.add_rumor_seed(rumor)
