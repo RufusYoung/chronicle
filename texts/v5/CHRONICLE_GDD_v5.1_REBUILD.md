@@ -870,3 +870,6 @@ Chronicle 当前的核心结构是：
 玩家选择是刀。
 痕迹、关系、伤势、物品、传闻和传记，是人生留下的形状。
 ```
+
+
+Chronicle 的地点行动不由地点专属按钮表提供，而由 Raw 对象、状态组件与通用规则生成。具体定义见 CHRONICLE_RAW_OBJECT_RULE_SYSTEM_v5.1.md。
