@@ -1,0 +1,155 @@
+{
+  "axes": [
+    {
+      "axis_id": "trust",
+      "display_name": "信任",
+      "range_min": -100,
+      "range_max": 100,
+      "default_value": 0,
+      "axis_type": "signed",
+      "description": "是否相信对方不会害自己，是否相信对方会守约。",
+      "behavior_effects": [
+        "透露秘密",
+        "跟随",
+        "接受建议",
+        "开放私人空间"
+      ],
+      "tier_thresholds": {
+        "hostile": [-100, -50],
+        "negative": [-49, -1],
+        "neutral": [0, 0],
+        "positive": [1, 49],
+        "strong": [50, 100]
+      }
+    },
+    {
+      "axis_id": "gratitude",
+      "display_name": "感激",
+      "range_min": 0,
+      "range_max": 100,
+      "default_value": 0,
+      "axis_type": "positive",
+      "description": "是否记得对方给过帮助。",
+      "behavior_effects": [
+        "回报",
+        "替对方说好话",
+        "危机时帮忙"
+      ],
+      "tier_thresholds": {
+        "none": [0, 0],
+        "low": [1, 24],
+        "medium": [25, 49],
+        "high": [50, 74],
+        "extreme": [75, 100]
+      }
+    },
+    {
+      "axis_id": "fear",
+      "display_name": "恐惧",
+      "range_min": 0,
+      "range_max": 100,
+      "default_value": 0,
+      "axis_type": "positive",
+      "description": "是否觉得对方具有威胁。",
+      "behavior_effects": [
+        "回避",
+        "服从",
+        "隐瞒",
+        "撒谎",
+        "求助权力者"
+      ],
+      "tier_thresholds": {
+        "none": [0, 0],
+        "low": [1, 24],
+        "medium": [25, 49],
+        "high": [50, 74],
+        "extreme": [75, 100]
+      }
+    },
+    {
+      "axis_id": "resentment",
+      "display_name": "怨恨",
+      "range_min": 0,
+      "range_max": 100,
+      "default_value": 0,
+      "axis_type": "positive",
+      "description": "是否怨恨对方。",
+      "behavior_effects": [
+        "拒绝帮助",
+        "传播负面传闻",
+        "报复"
+      ],
+      "tier_thresholds": {
+        "none": [0, 0],
+        "low": [1, 24],
+        "medium": [25, 49],
+        "high": [50, 74],
+        "extreme": [75, 100]
+      }
+    },
+    {
+      "axis_id": "discipline_respect",
+      "display_name": "军纪认可",
+      "range_min": -100,
+      "range_max": 100,
+      "default_value": 0,
+      "axis_type": "signed",
+      "description": "在制度 / 军纪场景中是否认可对方维护秩序。",
+      "behavior_effects": [
+        "上级评价",
+        "军事组织信任",
+        "军纪相关事件"
+      ],
+      "tier_thresholds": {
+        "hostile": [-100, -50],
+        "negative": [-49, -1],
+        "neutral": [0, 0],
+        "positive": [1, 49],
+        "strong": [50, 100]
+      }
+    },
+    {
+      "axis_id": "familiarity",
+      "display_name": "熟悉",
+      "range_min": 0,
+      "range_max": 100,
+      "default_value": 0,
+      "axis_type": "positive",
+      "description": "熟悉程度。",
+      "behavior_effects": [
+        "称呼",
+        "闲谈",
+        "基础对话开放度"
+      ],
+      "tier_thresholds": {
+        "none": [0, 0],
+        "low": [1, 24],
+        "medium": [25, 49],
+        "high": [50, 74],
+        "extreme": [75, 100]
+      }
+    },
+    {
+      "axis_id": "debt",
+      "display_name": "亏欠",
+      "range_min": 0,
+      "range_max": 100,
+      "default_value": 0,
+      "axis_type": "positive",
+      "description": "人情债或实际亏欠。",
+      "behavior_effects": [
+        "还债",
+        "交换",
+        "后续请求",
+        "被要求回报"
+      ],
+      "tier_thresholds": {
+        "none": [0, 0],
+        "low": [1, 24],
+        "medium": [25, 49],
+        "high": [50, 74],
+        "extreme": [75, 100]
+      }
+    }
+  ]
+}

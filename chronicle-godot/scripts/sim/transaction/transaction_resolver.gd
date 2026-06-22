@@ -94,9 +94,9 @@ func _add_give_food_effects(result: Variant, candidate: Variant, context: Varian
 		"to": max(from_food_count - 1, 0),
 		"reason": str(candidate.rule_id),
 	})
-	result.add_relationship_change(_relationship_delta(target_id, actor_id, "gratitude", 1, candidate))
-	result.add_relationship_change(_relationship_delta(target_id, actor_id, "trust", 1, candidate))
-	result.add_relationship_change(_relationship_delta(target_id, actor_id, "fear", -1, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "gratitude", 15, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "trust", 5, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "fear", -5, candidate))
 	result.add_memory(_build_memory(
 		"%s_received_food_from_%s" % [target_id, actor_id],
 		target_id,
@@ -117,10 +117,11 @@ func _add_report_discipline_effects(
 	var actor_id := str(context.get_player_value("id", "player"))
 	var superior_id := _find_visible_entity_id_by_tags(context, ["captain", "superior"])
 
-	result.add_relationship_change(_relationship_delta(target_id, actor_id, "resentment", 1, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "resentment", 25, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "trust", -20, candidate))
 	if superior_id != "":
 		result.add_relationship_change(
-			_relationship_delta(superior_id, actor_id, "discipline_respect", 1, candidate)
+			_relationship_delta(superior_id, actor_id, "discipline_respect", 15, candidate)
 		)
 		result.add_memory(_build_memory(
 			"%s_remembers_discipline_report_from_%s" % [superior_id, actor_id],
@@ -150,8 +151,9 @@ func _add_conceal_discipline_effects(
 	var target_id := str(candidate.target_id)
 	var actor_id := str(context.get_player_value("id", "player"))
 
-	result.add_relationship_change(_relationship_delta(target_id, actor_id, "trust", 1, candidate))
-	result.add_relationship_change(_relationship_delta(target_id, actor_id, "gratitude", 1, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "trust", 15, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "gratitude", 15, candidate))
+	result.add_relationship_change(_relationship_delta(target_id, actor_id, "debt", 10, candidate))
 	result.add_memory(_build_memory(
 		"%s_remembers_being_protected_by_%s" % [target_id, actor_id],
 		target_id,
