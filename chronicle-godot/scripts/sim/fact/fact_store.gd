@@ -12,5 +12,13 @@ func list_facts() -> Array:
 	return facts.duplicate(true)
 
 
+func find_facts_by_type(fact_type: String) -> Array:
+	var rows: Array = []
+	for fact: Dictionary in facts:
+		if str(fact.get("fact_type", fact.get("type", ""))) == fact_type:
+			rows.append(fact.duplicate(true))
+	return rows
+
+
 func clear() -> void:
 	facts.clear()
