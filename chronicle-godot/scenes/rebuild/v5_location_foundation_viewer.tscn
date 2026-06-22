@@ -1,0 +1,185 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/rebuild/v5_location_foundation_viewer.gd" id="1_viewer"]
+
+[node name="V5LocationFoundationViewer" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_viewer")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="RootLayout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TopBar" type="HBoxContainer" parent="Margin/RootLayout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Margin/RootLayout/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "Chronicle v5.1 | 地点局面主界面原型"
+
+[node name="InventoryButton" type="Button" parent="Margin/RootLayout/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "背包"
+
+[node name="CharacterButton" type="Button" parent="Margin/RootLayout/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "角色"
+
+[node name="WorldButton" type="Button" parent="Margin/RootLayout/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "世界"
+
+[node name="LifeButton" type="Button" parent="Margin/RootLayout/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "生涯"
+
+[node name="SettingsButton" type="Button" parent="Margin/RootLayout/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "设置"
+
+[node name="MainArea" type="HBoxContainer" parent="Margin/RootLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="CharacterPanel" type="VBoxContainer" parent="Margin/RootLayout/MainArea"]
+custom_minimum_size = Vector2(260, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="CharacterHeading" type="Label" parent="Margin/RootLayout/MainArea/CharacterPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "角色状态"
+
+[node name="CharacterSummary" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CharacterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="CenterPanel" type="VBoxContainer" parent="Margin/RootLayout/MainArea"]
+custom_minimum_size = Vector2(520, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.55
+theme_override_constants/separation = 8
+
+[node name="SceneTitle" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "湖湾镇"
+
+[node name="SceneText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="VisiblePeople" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+text = "可见人物："
+
+[node name="VisibleTraces" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+text = "可见痕迹："
+
+[node name="ChildLocationHeading" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel"]
+layout_mode = 2
+text = "子地点"
+
+[node name="ChildLocationButtons" type="FlowContainer" parent="Margin/RootLayout/MainArea/CenterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RightPanel" type="VBoxContainer" parent="Margin/RootLayout/MainArea"]
+custom_minimum_size = Vector2(320, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.95
+theme_override_constants/separation = 8
+
+[node name="RegionHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "地区状态"
+
+[node name="RegionStatus" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="ClueHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "线索"
+
+[node name="ClueButtons" type="VBoxContainer" parent="Margin/RootLayout/MainArea/RightPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LocationHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "地点"
+
+[node name="LocationButtons" type="FlowContainer" parent="Margin/RootLayout/MainArea/RightPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BottomPanel" type="VBoxContainer" parent="Margin/RootLayout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ActionHeading" type="Label" parent="Margin/RootLayout/BottomPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "当前行动选项"
+
+[node name="ActionButtons" type="FlowContainer" parent="Margin/RootLayout/BottomPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HistoryText" type="Label" parent="Margin/RootLayout/BottomPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+text = "行动历史：暂无"
