@@ -1,0 +1,105 @@
+{
+  "state_defs": [
+    {
+      "key": "visible",
+      "type": "bool",
+      "description": "对象是否可被当前上下文看见。"
+    },
+    {
+      "key": "readable",
+      "type": "bool",
+      "description": "对象是否可被阅读。"
+    },
+    {
+      "key": "inspectable",
+      "type": "bool",
+      "description": "对象是否可被检查。"
+    },
+    {
+      "key": "hunger",
+      "type": "scale",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "饥饿需求压力。"
+    },
+    {
+      "key": "fear",
+      "type": "scale",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "恐惧或紧张程度。"
+    },
+    {
+      "key": "concealment",
+      "type": "string",
+      "description": "隐藏或遮掩的对象标识。"
+    },
+    {
+      "key": "owned",
+      "type": "string",
+      "description": "对象所有权。"
+    },
+    {
+      "key": "spoiled",
+      "type": "scale",
+      "values": [
+        "none",
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "腐败程度。"
+    },
+    {
+      "key": "risk",
+      "type": "scale",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "行为、地点或对象风险。"
+    },
+    {
+      "key": "institution_role",
+      "type": "string",
+      "description": "实体在组织或制度中的角色。"
+    },
+    {
+      "key": "discipline_level",
+      "type": "scale",
+      "values": [
+        "loose",
+        "normal",
+        "strict"
+      ],
+      "description": "制度纪律严格程度。"
+    },
+    {
+      "key": "ration_pressure",
+      "type": "scale",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "口粮压力。"
+    },
+    {
+      "key": "food_pressure",
+      "type": "scale",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "地区粮食压力。"
+    }
+  ]
+}

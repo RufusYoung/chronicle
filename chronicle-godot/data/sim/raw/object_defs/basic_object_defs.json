@@ -1,0 +1,65 @@
+{
+  "object_defs": [
+    {
+      "type": "person",
+      "description": "可参与关系、状态、记忆和行动候选的人物实体。",
+      "default_tags": [
+        "person"
+      ]
+    },
+    {
+      "type": "readable_notice",
+      "description": "公开可读的告示或公告。",
+      "default_tags": [
+        "readable_notice",
+        "readable"
+      ]
+    },
+    {
+      "type": "readable_record",
+      "description": "账册、口粮记录、巡逻记录等可读结构化记录。",
+      "default_tags": [
+        "readable_record",
+        "readable"
+      ]
+    },
+    {
+      "type": "trace",
+      "description": "行动或环境留下的可检查痕迹。",
+      "default_tags": [
+        "trace",
+        "inspectable"
+      ]
+    },
+    {
+      "type": "food",
+      "description": "可食用或可交易的食物对象。",
+      "default_tags": [
+        "food"
+      ]
+    },
+    {
+      "type": "concealed_item",
+      "description": "被某个实体藏起或遮掩的对象。",
+      "default_tags": [
+        "concealed_item"
+      ]
+    },
+    {
+      "type": "door_or_entry",
+      "description": "门、入口、缝隙和可进入点。",
+      "default_tags": [
+        "door_or_entry"
+      ]
+    },
+    {
+      "type": "ration_record",
+      "description": "军营、哨站或组织配给相关记录。",
+      "default_tags": [
+        "ration_record",
+        "readable_record",
+        "military"
+      ]
+    }
+  ]
+}

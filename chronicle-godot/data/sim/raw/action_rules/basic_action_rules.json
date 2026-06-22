@@ -1,0 +1,81 @@
+{
+  "rules": [
+    {
+      "rule_id": "approach_visible_person",
+      "domain": "basic",
+      "action_type": "dialogue",
+      "label_template": "[对话] 走近{target_display_name}",
+      "priority": 10,
+      "target": {
+        "type": "person",
+        "state_equals": {
+          "visible": true
+        }
+      }
+    },
+    {
+      "rule_id": "give_food_to_hungry_person",
+      "domain": "basic",
+      "action_type": "normal",
+      "label_template": "[普通] 给{target_display_name}食物",
+      "priority": 20,
+      "target": {
+        "type": "person",
+        "state_equals": {
+          "visible": true,
+          "hunger": "high"
+        }
+      },
+      "player_min": {
+        "food_count": 1
+      }
+    },
+    {
+      "rule_id": "ask_about_concealed_item",
+      "domain": "basic",
+      "action_type": "dialogue",
+      "label_template": "[对话] 问{target_display_name}藏着什么",
+      "priority": 30,
+      "target": {
+        "type": "person",
+        "state_equals": {
+          "visible": true
+        },
+        "state_has": [
+          "concealment"
+        ]
+      }
+    },
+    {
+      "rule_id": "read_visible_readable_object",
+      "domain": "basic",
+      "action_type": "normal",
+      "label_template": "[普通] 阅读{target_display_name}",
+      "priority": 40,
+      "target": {
+        "state_equals": {
+          "visible": true,
+          "readable": true
+        },
+        "tags_any": [
+          "readable_notice",
+          "readable_record"
+        ]
+      }
+    },
+    {
+      "rule_id": "inspect_visible_trace",
+      "domain": "basic",
+      "action_type": "clue",
+      "label_template": "[线索] 查看{target_display_name}",
+      "priority": 50,
+      "target": {
+        "type": "trace",
+        "state_equals": {
+          "visible": true,
+          "inspectable": true
+        }
+      }
+    }
+  ]
+}
