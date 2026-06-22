@@ -1,0 +1,134 @@
+{
+  "fixture_id": "seventh_outpost_ration",
+  "location": {
+    "id": "outpost_kitchen",
+    "display_name": "第七哨站厨房",
+    "tags": [
+      "military_outpost",
+      "kitchen",
+      "ration_storage",
+      "military"
+    ]
+  },
+  "region_state": {
+    "ration_pressure": "high",
+    "border_threat": "present"
+  },
+  "institution": {
+    "chain_of_command": "active",
+    "discipline_level": "strict",
+    "ration_pressure": "high",
+    "fog_patrol_tonight": true
+  },
+  "entities": [
+    {
+      "id": "recruit_elai",
+      "display_name": "伊莱",
+      "type": "person",
+      "tags": [
+        "person",
+        "recruit",
+        "squadmate"
+      ],
+      "states": {
+        "visible": true,
+        "hunger": "high",
+        "fear": "low",
+        "suspected_ration_theft": true,
+        "concealment": "stolen_ration"
+      }
+    },
+    {
+      "id": "captain_ron",
+      "display_name": "罗恩",
+      "type": "person",
+      "tags": [
+        "person",
+        "captain",
+        "superior"
+      ],
+      "states": {
+        "visible": true,
+        "institution_role": "captain"
+      }
+    },
+    {
+      "id": "cook_marta",
+      "display_name": "玛塔",
+      "type": "person",
+      "tags": [
+        "person",
+        "cook",
+        "ration_keeper"
+      ],
+      "states": {
+        "visible": true,
+        "institution_role": "cook"
+      }
+    },
+    {
+      "id": "stolen_ration",
+      "display_name": "私藏口粮",
+      "type": "concealed_item",
+      "tags": [
+        "concealed_item",
+        "food",
+        "ration",
+        "military"
+      ],
+      "states": {
+        "visible": false,
+        "owned": "seventh_outpost",
+        "risk": "high"
+      }
+    },
+    {
+      "id": "missing_ration_record",
+      "display_name": "缺失口粮记录",
+      "type": "readable_record",
+      "tags": [
+        "readable_record",
+        "ration_record",
+        "military"
+      ],
+      "states": {
+        "visible": true,
+        "readable": true
+      }
+    },
+    {
+      "id": "muddy_boot_trace",
+      "display_name": "泥脚印",
+      "type": "trace",
+      "tags": [
+        "trace",
+        "inspectable",
+        "patrol_related",
+        "military"
+      ],
+      "states": {
+        "visible": true,
+        "inspectable": true
+      }
+    }
+  ],
+  "player": {
+    "id": "player",
+    "role": "squadmate",
+    "food_count": 1,
+    "perception": 8
+  },
+  "known_facts": [],
+  "expected_generated_actions": [
+    "approach_visible_person",
+    "give_food_to_hungry_person",
+    "ask_about_concealed_item",
+    "read_visible_readable_object",
+    "inspect_visible_trace",
+    "report_discipline_violation_to_superior",
+    "conceal_discipline_violation_once",
+    "confirm_ration_record_with_cook",
+    "trade_watch_duty_for_silence",
+    "delay_military_issue_until_after_patrol"
+  ]
+}

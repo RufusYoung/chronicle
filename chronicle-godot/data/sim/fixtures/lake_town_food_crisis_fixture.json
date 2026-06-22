@@ -1,0 +1,98 @@
+{
+  "fixture_id": "lake_town_food_crisis",
+  "location": {
+    "id": "old_chen_shop",
+    "display_name": "老陈铺子",
+    "tags": [
+      "town",
+      "shop",
+      "food_related",
+      "local_family_business"
+    ]
+  },
+  "region_state": {
+    "food_pressure": "high",
+    "public_order": "tense"
+  },
+  "institution": {
+    "market_order": "tense",
+    "local_guard_attention": "medium"
+  },
+  "entities": [
+    {
+      "id": "chen_mi",
+      "display_name": "陈米",
+      "type": "person",
+      "tags": [
+        "person",
+        "child",
+        "local_family"
+      ],
+      "states": {
+        "visible": true,
+        "hunger": "high",
+        "fear": "medium",
+        "concealment": "spoiled_grain_bag"
+      }
+    },
+    {
+      "id": "spoiled_grain_bag",
+      "display_name": "发霉麦子袋",
+      "type": "concealed_item",
+      "tags": [
+        "concealed_item",
+        "food",
+        "spoiled_grain"
+      ],
+      "states": {
+        "visible": false,
+        "spoiled": "high",
+        "owned": "old_chen_family"
+      }
+    },
+    {
+      "id": "old_chen_shop_price_notice",
+      "display_name": "涨价告示",
+      "type": "readable_notice",
+      "tags": [
+        "readable_notice",
+        "readable",
+        "market_price"
+      ],
+      "states": {
+        "visible": true,
+        "readable": true
+      }
+    },
+    {
+      "id": "gray_grain_powder",
+      "display_name": "灰白粮粉",
+      "type": "trace",
+      "tags": [
+        "trace",
+        "inspectable",
+        "spoiled_grain"
+      ],
+      "states": {
+        "visible": true,
+        "inspectable": true,
+        "substance": "spoiled_grain"
+      }
+    }
+  ],
+  "player": {
+    "id": "player",
+    "role": "traveler",
+    "food_count": 2,
+    "perception": 10
+  },
+  "known_facts": [],
+  "expected_generated_actions": [
+    "approach_visible_person",
+    "give_food_to_hungry_person",
+    "ask_about_concealed_item",
+    "read_visible_readable_object",
+    "inspect_visible_trace",
+    "ask_about_food_pressure_at_market"
+  ]
+}
