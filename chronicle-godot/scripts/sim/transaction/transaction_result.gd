@@ -38,6 +38,20 @@ func add_fact(fact: Dictionary) -> void:
 	facts_added.append(fact_copy)
 
 
+func add_state_change(change: Dictionary) -> void:
+	state_changes.append(change.duplicate(true))
+
+
+func add_relationship_change(change: Dictionary) -> void:
+	relationship_changes.append(change.duplicate(true))
+
+
+func add_memory(memory: Dictionary) -> void:
+	var memory_copy := memory.duplicate(true)
+	memories.append(memory_copy)
+	memories_added.append(memory_copy)
+
+
 func to_dict() -> Dictionary:
 	return {
 		"facts": facts.duplicate(true),
