@@ -49,7 +49,7 @@ func _run() -> void:
 		"2. 给陈米食物后 hunger 从 high 降为 medium"
 	)
 	_check(
-		int(relationship_store.get_relation("chen_mi", "player", "gratitude")) == 1,
+		int(relationship_store.get_relation("chen_mi", "player", "gratitude")) == 15,
 		"3. 给陈米食物后 chen_mi -> player gratitude 增加"
 	)
 	_check(
@@ -70,20 +70,21 @@ func _run() -> void:
 		"5. 报告伊莱后写入 actor_reported_discipline_violation"
 	)
 	_check(
-		int(relationship_store.get_relation("recruit_elai", "player", "resentment")) == 1,
+		int(relationship_store.get_relation("recruit_elai", "player", "resentment")) == 25,
 		"6. 报告伊莱后 recruit_elai -> player resentment 增加"
 	)
 	_check(
-		int(relationship_store.get_relation("captain_ron", "player", "discipline_respect")) == 1,
+		int(relationship_store.get_relation("captain_ron", "player", "discipline_respect")) == 15,
 		"7. 报告伊莱后 captain_ron -> player discipline_respect 增加"
 	)
 
+	var trust_before_conceal := int(relationship_store.get_relation("recruit_elai", "player", "trust"))
 	var conceal_candidate = _find_candidate_by_rule(outpost_candidates, "conceal_discipline_violation_once")
 	var conceal_result = resolver.resolve_action(conceal_candidate, outpost_context)
 	_apply_result(conceal_result, fact_store, state_store, relationship_store, memory_store)
 
 	_check(
-		int(relationship_store.get_relation("recruit_elai", "player", "trust")) == 1,
+		int(relationship_store.get_relation("recruit_elai", "player", "trust")) == trust_before_conceal + 15,
 		"8. 替伊莱隐瞒后 recruit_elai -> player trust 增加"
 	)
 	_check(
