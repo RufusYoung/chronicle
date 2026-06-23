@@ -15,50 +15,49 @@ func _init() -> void:
 
 
 func resolve_action(candidate: Variant, context_or_snapshot: Variant) -> Variant:
-	var empty_result = TransactionResultModel.new()
-	if candidate == null or context_or_snapshot == null:
-		return empty_result
+	if candidate == null:
+		return TransactionResultModel.invalid_contract(candidate, "missing_candidate")
+	if context_or_snapshot == null:
+		return TransactionResultModel.invalid_contract(candidate, "missing_context")
 
-	var template_id := _candidate_effect_template_id(candidate)
-	if template_id == "":
-		template_id = _legacy_effect_template_for_rule(_candidate_rule_id(candidate))
-	if template_id == "":
-		return empty_result
+	var transaction_mode := _candidate_transaction_mode(candidate)
+	match transaction_mode:
+		"effect_template":
+			var template_id := _candidate_effect_template_id(candidate)
+			if template_id == "":
+				return TransactionResultModel.invalid_contract(candidate, "missing_effect_template_id")
+			if effect_template_resolver.get_template(template_id).is_empty():
+				return TransactionResultModel.invalid_contract(candidate, "unknown_effect_template_id:%s" % template_id)
 
-	return effect_template_resolver.resolve_template(template_id, candidate, context_or_snapshot)
+			var result = effect_template_resolver.resolve_template(template_id, candidate, context_or_snapshot)
+			result.mark_resolved(transaction_mode)
+			return result
+		"candidate_only":
+			if _candidate_effect_template_id(candidate) != "":
+				return TransactionResultModel.invalid_contract(candidate, "candidate_only_has_effect_template_id")
+			return TransactionResultModel.empty_candidate_only(candidate)
+		_:
+			if transaction_mode == "":
+				return TransactionResultModel.invalid_contract(candidate, "missing_transaction_mode")
+			return TransactionResultModel.invalid_contract(candidate, "invalid_transaction_mode:%s" % transaction_mode)
+
+
+func _candidate_transaction_mode(candidate: Variant) -> String:
+	return _candidate_string(candidate, "transaction_mode")
 
 
 func _candidate_effect_template_id(candidate: Variant) -> String:
+	return _candidate_string(candidate, "effect_template_id")
+
+
+func _candidate_string(candidate: Variant, key: String) -> String:
 	var value: Variant = null
+	if candidate == null:
+		return ""
 	if candidate is Dictionary:
-		value = (candidate as Dictionary).get("effect_template_id")
+		value = (candidate as Dictionary).get(key)
 	else:
-		value = candidate.get("effect_template_id")
+		value = candidate.get(key)
 	if value == null:
 		return ""
 	return str(value)
-
-
-func _candidate_rule_id(candidate: Variant) -> String:
-	if candidate is Dictionary:
-		return str((candidate as Dictionary).get("rule_id", ""))
-	return str(candidate.rule_id)
-
-
-# Transitional compatibility for older candidates that do not carry effect_template_id yet.
-func _legacy_effect_template_for_rule(rule_id: String) -> String:
-	match rule_id:
-		"give_food_to_hungry_person":
-			return "give_food_help_effect"
-		"ask_about_concealed_item":
-			return "inquiry_concealed_item_effect"
-		"report_discipline_violation_to_superior":
-			return "discipline_report_effect"
-		"conceal_discipline_violation_once":
-			return "discipline_conceal_effect"
-		"read_visible_readable_object":
-			return "read_object_effect"
-		"inspect_visible_trace":
-			return "inspect_trace_effect"
-		_:
-			return ""

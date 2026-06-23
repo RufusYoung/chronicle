@@ -14,6 +14,10 @@ var rumors_added: Array = []
 var item_changes: Array = []
 var region_changes: Array = []
 var narrative_result: Dictionary = {}
+var transaction_mode: String = ""
+var contract_status: String = ""
+var skip_reason: String = ""
+var error_reason: String = ""
 
 
 func is_empty() -> bool:
@@ -70,6 +74,27 @@ func set_narrative_result(result: Dictionary) -> void:
 	narrative_result = result.duplicate(true)
 
 
+func mark_resolved(mode: String) -> void:
+	transaction_mode = mode
+	contract_status = "resolved"
+	skip_reason = ""
+	error_reason = ""
+
+
+func mark_candidate_only(mode: String, reason: String = "candidate_only_rule") -> void:
+	transaction_mode = mode
+	contract_status = "candidate_only"
+	skip_reason = reason
+	error_reason = ""
+
+
+func mark_invalid_contract(mode: String, reason: String) -> void:
+	transaction_mode = mode
+	contract_status = "invalid_contract"
+	skip_reason = ""
+	error_reason = reason
+
+
 func to_dict() -> Dictionary:
 	return {
 		"facts": facts.duplicate(true),
@@ -85,4 +110,30 @@ func to_dict() -> Dictionary:
 		"item_changes": item_changes.duplicate(true),
 		"region_changes": region_changes.duplicate(true),
 		"narrative_result": narrative_result.duplicate(true),
+		"transaction_mode": transaction_mode,
+		"contract_status": contract_status,
+		"skip_reason": skip_reason,
+		"error_reason": error_reason,
 	}
+
+
+static func empty_candidate_only(candidate: Variant) -> Variant:
+	var result = V5TransactionResult.new()
+	result.mark_candidate_only(_candidate_string(candidate, "transaction_mode"), "candidate_only_rule")
+	return result
+
+
+static func invalid_contract(candidate: Variant, reason: String) -> Variant:
+	var result = V5TransactionResult.new()
+	result.mark_invalid_contract(_candidate_string(candidate, "transaction_mode"), reason)
+	return result
+
+
+static func _candidate_string(candidate: Variant, key: String) -> String:
+	if candidate == null:
+		return ""
+	if candidate is Dictionary:
+		var dictionary_value: Variant = (candidate as Dictionary).get(key)
+		return "" if dictionary_value == null else str(dictionary_value)
+	var object_value: Variant = candidate.get(key)
+	return "" if object_value == null else str(object_value)
