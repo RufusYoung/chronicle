@@ -1,0 +1,28 @@
+{
+  "scenario_id": "seventh_outpost_report_sequence",
+  "fixture_id": "seventh_outpost_ration",
+  "description": "Test-only sequence for reading, inspecting, and reporting the seventh outpost ration issue.",
+  "steps": [
+    {
+      "step_id": "read_missing_ration_record",
+      "select": {
+        "rule_id": "read_visible_readable_object",
+        "target_id": "missing_ration_record"
+      }
+    },
+    {
+      "step_id": "inspect_muddy_boot_trace",
+      "select": {
+        "rule_id": "inspect_visible_trace",
+        "target_id": "muddy_boot_trace"
+      }
+    },
+    {
+      "step_id": "report_elai_to_ron",
+      "select": {
+        "rule_id": "report_discipline_violation_to_superior",
+        "target_id": "recruit_elai"
+      }
+    }
+  ]
+}

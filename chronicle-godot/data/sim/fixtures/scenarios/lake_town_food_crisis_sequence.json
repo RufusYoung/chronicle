@@ -1,0 +1,28 @@
+{
+  "scenario_id": "lake_town_food_crisis_sequence",
+  "fixture_id": "lake_town_food_crisis",
+  "description": "Test-only sequence for running several lake town food crisis actions through Sim Core.",
+  "steps": [
+    {
+      "step_id": "give_food_to_chen_mi",
+      "select": {
+        "rule_id": "give_food_to_hungry_person",
+        "target_id": "chen_mi"
+      }
+    },
+    {
+      "step_id": "read_price_notice",
+      "select": {
+        "rule_id": "read_visible_readable_object",
+        "target_id": "old_chen_shop_price_notice"
+      }
+    },
+    {
+      "step_id": "inspect_gray_grain_powder",
+      "select": {
+        "rule_id": "inspect_visible_trace",
+        "target_id": "gray_grain_powder"
+      }
+    }
+  ]
+}

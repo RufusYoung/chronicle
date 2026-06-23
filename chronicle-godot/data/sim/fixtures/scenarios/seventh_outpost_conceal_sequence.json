@@ -1,0 +1,21 @@
+{
+  "scenario_id": "seventh_outpost_conceal_sequence",
+  "fixture_id": "seventh_outpost_ration",
+  "description": "Test-only sequence for asking Elai about the concealed ration and concealing the violation.",
+  "steps": [
+    {
+      "step_id": "ask_elai_about_concealed_ration",
+      "select": {
+        "rule_id": "ask_about_concealed_item",
+        "target_id": "recruit_elai"
+      }
+    },
+    {
+      "step_id": "conceal_elai_violation",
+      "select": {
+        "rule_id": "conceal_discipline_violation_once",
+        "target_id": "recruit_elai"
+      }
+    }
+  ]
+}
