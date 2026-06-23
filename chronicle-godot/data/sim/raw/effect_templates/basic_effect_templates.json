@@ -1,0 +1,344 @@
+{
+  "effect_templates": [
+    {
+      "effect_template_id": "give_food_help_effect",
+      "description": "A generic help effect for giving food to a hungry visible person.",
+      "facts": [
+        {
+          "fact_id": "actor_gave_food_to_target:{target_id}",
+          "fact_type": "actor_gave_food_to_target",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [
+        {
+          "entity_id": "{target_id}",
+          "key": "hunger",
+          "operation": "decrease_tier",
+          "reason": "give_food_help_effect"
+        },
+        {
+          "entity_id": "{actor_id}",
+          "key": "food_count",
+          "delta": -1,
+          "reason": "give_food_help_effect"
+        }
+      ],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "gratitude",
+          "delta": 15,
+          "reason": "give_food_help_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "trust",
+          "delta": 5,
+          "reason": "give_food_help_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "fear",
+          "delta": -5,
+          "reason": "give_food_help_effect"
+        }
+      ],
+      "memories": [
+        {
+          "memory_id": "{target_id}_received_food_from_{actor_id}",
+          "owner_id": "{target_id}",
+          "source_fact_type": "actor_gave_food_to_target",
+          "memory_type": "received_help",
+          "emotional_tone": "gratitude",
+          "clarity": "high",
+          "can_be_told_as_rumor": true
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "给食物",
+        "summary": "对方接过食物，饥饿缓和了一些。感激和信任有所上升。",
+        "tone": "quiet"
+      }
+    },
+    {
+      "effect_template_id": "inquiry_concealed_item_effect",
+      "description": "A generic inquiry effect for asking a visible person about a concealed item.",
+      "facts": [
+        {
+          "fact_id": "actor_asked_about_concealed_item:{target_id}",
+          "fact_type": "actor_asked_about_concealed_item",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "fear",
+          "delta": 5,
+          "reason": "being_questioned_about_concealed_item"
+        }
+      ],
+      "memories": [
+        {
+          "memory_id": "{target_id}_questioned_about_hidden_item_by_{actor_id}",
+          "owner_id": "{target_id}",
+          "source_fact_type": "actor_asked_about_concealed_item",
+          "memory_type": "being_questioned_about_hidden_item",
+          "emotional_tone": "uneasy",
+          "clarity": "medium",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "询问隐藏物",
+        "summary": "对方意识到你注意到了他藏着的东西。",
+        "tone": "uneasy"
+      }
+    },
+    {
+      "effect_template_id": "discipline_report_effect",
+      "description": "A military discipline report effect with relationship, memory, trace, and rumor atoms.",
+      "facts": [
+        {
+          "fact_id": "actor_reported_discipline_violation:{target_id}",
+          "fact_type": "actor_reported_discipline_violation",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "resentment",
+          "delta": 25,
+          "reason": "discipline_report_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "trust",
+          "delta": -20,
+          "reason": "discipline_report_effect"
+        },
+        {
+          "source_id": "{superior_id}",
+          "target_id": "{actor_id}",
+          "axis": "discipline_respect",
+          "delta": 15,
+          "reason": "discipline_report_effect"
+        }
+      ],
+      "memories": [
+        {
+          "memory_id": "{target_id}_remembers_being_reported_by_{actor_id}",
+          "owner_id": "{target_id}",
+          "source_fact_type": "actor_reported_discipline_violation",
+          "memory_type": "being_reported",
+          "emotional_tone": "resentment",
+          "clarity": "high",
+          "can_be_told_as_rumor": true
+        },
+        {
+          "memory_id": "{superior_id}_remembers_discipline_report_from_{actor_id}",
+          "owner_id": "{superior_id}",
+          "source_fact_type": "actor_reported_discipline_violation",
+          "memory_type": "discipline_report",
+          "emotional_tone": "approval",
+          "clarity": "high",
+          "can_be_told_as_rumor": true
+        }
+      ],
+      "traces": [
+        {
+          "trace_id": "ration_record_marked_for_review",
+          "trace_type": "institutional_record_mark",
+          "location_id": "{location_id}",
+          "source_fact_type": "actor_reported_discipline_violation",
+          "display_name": "被折起的口粮记录",
+          "visible": true,
+          "inspectable": true,
+          "freshness": "fresh"
+        }
+      ],
+      "rumors": [
+        {
+          "rumor_id": "outpost_discipline_report_seed",
+          "source_fact_type": "actor_reported_discipline_violation",
+          "origin_location": "{location_id}",
+          "truth_level": "high",
+          "distortion_level": "low",
+          "spread_scope": "squad",
+          "visible": true,
+          "text_hint": "有人说，玩家把私藏口粮的事报告给了罗恩。"
+        }
+      ],
+      "narrative": {
+        "title": "报告军纪问题",
+        "summary": "罗恩听完报告，把口粮记录折了起来。小队里可能会有人听说这件事。",
+        "tone": "tense"
+      }
+    },
+    {
+      "effect_template_id": "discipline_conceal_effect",
+      "description": "A generic discipline conceal effect that creates relationship and memory atoms without rumor.",
+      "facts": [
+        {
+          "fact_id": "actor_concealed_discipline_violation:{target_id}",
+          "fact_type": "actor_concealed_discipline_violation",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "gratitude",
+          "delta": 15,
+          "reason": "discipline_conceal_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "trust",
+          "delta": 15,
+          "reason": "discipline_conceal_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "debt",
+          "delta": 10,
+          "reason": "discipline_conceal_effect"
+        }
+      ],
+      "memories": [
+        {
+          "memory_id": "{target_id}_remembers_being_protected_by_{actor_id}",
+          "owner_id": "{target_id}",
+          "source_fact_type": "actor_concealed_discipline_violation",
+          "memory_type": "being_protected",
+          "emotional_tone": "gratitude",
+          "clarity": "high",
+          "can_be_told_as_rumor": true
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "隐瞒军纪问题",
+        "summary": "对方意识到你没有把事情说出去。他欠下了一个不轻的人情。",
+        "tone": "low_voice"
+      }
+    },
+    {
+      "effect_template_id": "read_object_effect",
+      "description": "A generic effect for reading a visible readable object.",
+      "facts": [
+        {
+          "fact_id": "actor_read_object:{target_id}",
+          "fact_type": "actor_read_object",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [
+        {
+          "memory_id": "{actor_id}_remembers_read_object:{target_id}",
+          "owner_id": "{actor_id}",
+          "source_fact_type": "actor_read_object",
+          "memory_type": "remembers_read_object",
+          "emotional_tone": "attention",
+          "clarity": "high",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "阅读记录",
+        "summary": "你读完了眼前的文字，并记住了其中的关键信息。",
+        "tone": "focused"
+      }
+    },
+    {
+      "effect_template_id": "inspect_trace_effect",
+      "description": "A generic effect for inspecting a visible trace.",
+      "facts": [
+        {
+          "fact_id": "actor_inspected_trace:{target_id}",
+          "fact_type": "actor_inspected_trace",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [
+        {
+          "memory_id": "{actor_id}_remembers_inspected_trace:{target_id}",
+          "owner_id": "{actor_id}",
+          "source_fact_type": "actor_inspected_trace",
+          "memory_type": "remembers_inspected_trace",
+          "emotional_tone": "attention",
+          "clarity": "high",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "检查痕迹",
+        "summary": "你检查了痕迹，它指向刚刚发生过的事情。",
+        "tone": "observant"
+      }
+    }
+  ]
+}
