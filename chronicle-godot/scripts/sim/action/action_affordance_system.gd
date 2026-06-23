@@ -38,6 +38,7 @@ func _build_candidate(rule: Dictionary, target: Dictionary) -> Variant:
 		"action_id": _make_action_id(rule_id, target_id),
 		"rule_id": rule_id,
 		"action_type": str(rule.get("action_type", "")),
+		"transaction_mode": _string_or_empty(rule.get("transaction_mode", "")),
 		"effect_template_id": _string_or_empty(rule.get("effect_template_id", "")),
 		"label": label,
 		"target_id": target_id,
