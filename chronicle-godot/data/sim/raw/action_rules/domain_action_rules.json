@@ -4,8 +4,8 @@
       "rule_id": "ask_about_food_pressure_at_market",
       "domain": "food_crisis",
       "action_type": "clue",
-      "transaction_mode": "candidate_only",
-      "effect_template_id": null,
+      "transaction_mode": "effect_template",
+      "effect_template_id": "ask_market_pressure_effect",
       "label_template": "[线索] 打听粮食压力",
       "priority": 100,
       "location_tags_all": [
@@ -146,8 +146,8 @@
       "rule_id": "hear_rumor_seed",
       "domain": "rumor",
       "action_type": "rumor",
-      "transaction_mode": "candidate_only",
-      "effect_template_id": null,
+      "transaction_mode": "effect_template",
+      "effect_template_id": "hear_rumor_effect",
       "label_template": "[传闻] 听见小队议论",
       "priority": 200,
       "target": {
@@ -161,8 +161,8 @@
       "rule_id": "request_favor_from_indebted_person",
       "domain": "relationship",
       "action_type": "relationship",
-      "transaction_mode": "candidate_only",
-      "effect_template_id": null,
+      "transaction_mode": "effect_template",
+      "effect_template_id": "request_favor_effect",
       "label_template": "[关系] 请{target_display_name}帮忙",
       "priority": 210,
       "target": {
