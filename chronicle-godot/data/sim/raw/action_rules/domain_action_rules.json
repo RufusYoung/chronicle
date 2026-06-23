@@ -97,7 +97,15 @@
       ],
       "institution_equals": {
         "ration_pressure": "high"
-      }
+      },
+      "pressure_priority": [
+        {
+          "scope_id": "{location_id}",
+          "pressure_type": "unresolved_issue",
+          "threshold": 10,
+          "priority_delta": 20
+        }
+      ]
     },
     {
       "rule_id": "trade_watch_duty_for_silence",

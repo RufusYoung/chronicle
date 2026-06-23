@@ -12,6 +12,7 @@ var target_id: String = ""
 var target_display_name: String = ""
 var priority: int = 0
 var domain: String = ""
+var extra: Dictionary = {}
 
 
 func _init(data: Dictionary = {}) -> void:
@@ -26,6 +27,7 @@ func _init(data: Dictionary = {}) -> void:
 	target_display_name = str(data.get("target_display_name", ""))
 	priority = int(data.get("priority", 0))
 	domain = str(data.get("domain", ""))
+	extra = (data.get("extra", {}) as Dictionary).duplicate(true)
 
 
 func to_dict() -> Dictionary:
@@ -41,6 +43,7 @@ func to_dict() -> Dictionary:
 		"target_display_name": target_display_name,
 		"priority": priority,
 		"domain": domain,
+		"extra": extra.duplicate(true),
 	}
 
 

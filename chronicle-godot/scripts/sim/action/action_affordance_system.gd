@@ -17,9 +17,9 @@ func generate_candidates(context: Variant, rules: Array) -> Array:
 		if rule.has("target"):
 			for entity: Dictionary in _candidate_targets(context, rule):
 				if _context_matches_rule(context, rule) and _target_matches_rule(context, entity, rule.get("target", {}), rule):
-					candidates.append(_build_candidate(rule, entity))
+					candidates.append(_build_candidate(context, rule, entity))
 		elif _context_matches_rule(context, rule):
-			candidates.append(_build_candidate(rule, {}))
+			candidates.append(_build_candidate(context, rule, {}))
 
 	candidates.sort_custom(func(left: Variant, right: Variant) -> bool:
 		return left.priority < right.priority
@@ -27,14 +27,14 @@ func generate_candidates(context: Variant, rules: Array) -> Array:
 	return candidates
 
 
-func _build_candidate(rule: Dictionary, target: Dictionary) -> Variant:
+func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) -> Variant:
 	var rule_id := str(rule.get("rule_id", ""))
 	var target_id := str(target.get("id", ""))
 	var target_display_name := str(target.get("display_name", target_id))
 	var label := str(rule.get("label_template", rule_id))
 	label = label.replace("{target_display_name}", target_display_name)
 
-	return ActionCandidateModel.new({
+	var candidate_data := {
 		"action_id": _make_action_id(rule_id, target_id),
 		"rule_id": rule_id,
 		"action_type": str(rule.get("action_type", "")),
@@ -45,7 +45,10 @@ func _build_candidate(rule: Dictionary, target: Dictionary) -> Variant:
 		"target_display_name": target_display_name,
 		"priority": int(rule.get("priority", 0)),
 		"domain": str(rule.get("domain", "")),
-	})
+		"extra": {},
+	}
+	_apply_pressure_priority(context, rule, candidate_data)
+	return ActionCandidateModel.new(candidate_data)
 
 
 func _make_action_id(rule_id: String, target_id: String) -> String:
@@ -204,6 +207,62 @@ func _context_visible_traces(context: Variant) -> Array:
 func _context_rumor_seeds(context: Variant) -> Array:
 	if context.has_method("get_rumor_seeds"):
 		return context.get_rumor_seeds()
+	return []
+
+
+func _apply_pressure_priority(context: Variant, rule: Dictionary, candidate_data: Dictionary) -> void:
+	var priority_rules: Array = rule.get("pressure_priority", [])
+	if priority_rules.is_empty():
+		return
+
+	for priority_rule: Dictionary in priority_rules:
+		var scope_id := _resolve_pressure_scope_id(context, str(priority_rule.get("scope_id", "")))
+		var pressure_type := str(priority_rule.get("pressure_type", ""))
+		var threshold := int(priority_rule.get("threshold", 0))
+		var priority_delta := int(priority_rule.get("priority_delta", 0))
+		if scope_id == "" or pressure_type == "":
+			continue
+
+		var pressure_value := _pressure_value(context, scope_id, pressure_type)
+		if pressure_value < threshold:
+			continue
+
+		candidate_data["priority"] = int(candidate_data.get("priority", 0)) + priority_delta
+		var extra: Dictionary = candidate_data.get("extra", {})
+		extra["pressure_priority_applied"] = true
+		extra["pressure_priority_scope_id"] = scope_id
+		extra["pressure_priority_type"] = pressure_type
+		extra["pressure_priority_value"] = pressure_value
+		extra["pressure_priority_delta"] = priority_delta
+		candidate_data["extra"] = extra
+		return
+
+
+func _resolve_pressure_scope_id(context: Variant, scope_id: String) -> String:
+	if scope_id == "{location_id}":
+		var location: Dictionary = context.location if context != null else {}
+		return str(location.get("id", ""))
+	return scope_id
+
+
+func _pressure_value(context: Variant, scope_id: String, pressure_type: String) -> int:
+	var total := 0
+	for pressure: Dictionary in _context_pressures(context):
+		if (
+			str(pressure.get("scope_id", "")) == scope_id
+			and str(pressure.get("pressure_type", "")) == pressure_type
+		):
+			total += int(pressure.get("value", 0))
+	return total
+
+
+func _context_pressures(context: Variant) -> Array:
+	if context != null and context.has_method("get_pressures"):
+		return context.get_pressures()
+	if context != null:
+		var value: Variant = context.get("pressures")
+		if value is Array:
+			return (value as Array).duplicate(true)
 	return []
 
 
