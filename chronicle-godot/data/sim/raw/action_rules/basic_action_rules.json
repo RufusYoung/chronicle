@@ -17,6 +17,7 @@
       "rule_id": "give_food_to_hungry_person",
       "domain": "basic",
       "action_type": "normal",
+      "effect_template_id": "give_food_help_effect",
       "label_template": "[普通] 给{target_display_name}食物",
       "priority": 20,
       "target": {
@@ -39,6 +40,7 @@
       "rule_id": "ask_about_concealed_item",
       "domain": "basic",
       "action_type": "dialogue",
+      "effect_template_id": "inquiry_concealed_item_effect",
       "label_template": "[对话] 问{target_display_name}藏着什么",
       "priority": 30,
       "target": {
@@ -55,6 +57,7 @@
       "rule_id": "read_visible_readable_object",
       "domain": "basic",
       "action_type": "normal",
+      "effect_template_id": "read_object_effect",
       "label_template": "[普通] 阅读{target_display_name}",
       "priority": 40,
       "target": {
@@ -72,6 +75,7 @@
       "rule_id": "inspect_visible_trace",
       "domain": "basic",
       "action_type": "clue",
+      "effect_template_id": "inspect_trace_effect",
       "label_template": "[线索] 查看{target_display_name}",
       "priority": 50,
       "target": {
