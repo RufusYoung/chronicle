@@ -5,6 +5,7 @@ var action_id: String = ""
 var rule_id: String = ""
 var label: String = ""
 var action_type: String = ""
+var effect_template_id: String = ""
 var source_rule_id: String = ""
 var target_id: String = ""
 var target_display_name: String = ""
@@ -17,6 +18,7 @@ func _init(data: Dictionary = {}) -> void:
 	action_id = str(data.get("action_id", rule_id))
 	label = str(data.get("label", ""))
 	action_type = str(data.get("action_type", ""))
+	effect_template_id = _string_or_empty(data.get("effect_template_id", ""))
 	source_rule_id = rule_id
 	target_id = str(data.get("target_id", ""))
 	target_display_name = str(data.get("target_display_name", ""))
@@ -30,9 +32,16 @@ func to_dict() -> Dictionary:
 		"rule_id": rule_id,
 		"label": label,
 		"action_type": action_type,
+		"effect_template_id": effect_template_id,
 		"source_rule_id": source_rule_id,
 		"target_id": target_id,
 		"target_display_name": target_display_name,
 		"priority": priority,
 		"domain": domain,
 	}
+
+
+func _string_or_empty(value: Variant) -> String:
+	if value == null:
+		return ""
+	return str(value)

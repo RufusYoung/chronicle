@@ -38,6 +38,7 @@ func _build_candidate(rule: Dictionary, target: Dictionary) -> Variant:
 		"action_id": _make_action_id(rule_id, target_id),
 		"rule_id": rule_id,
 		"action_type": str(rule.get("action_type", "")),
+		"effect_template_id": _string_or_empty(rule.get("effect_template_id", "")),
 		"label": label,
 		"target_id": target_id,
 		"target_display_name": target_display_name,
@@ -50,6 +51,12 @@ func _make_action_id(rule_id: String, target_id: String) -> String:
 	if target_id == "":
 		return rule_id
 	return "%s:%s" % [rule_id, target_id]
+
+
+func _string_or_empty(value: Variant) -> String:
+	if value == null:
+		return ""
+	return str(value)
 
 
 func _context_matches_rule(context: Variant, rule: Dictionary) -> bool:
