@@ -15,6 +15,9 @@ var pressure_changes: Array = []
 var obligations_added: Array = []
 var exchanges_added: Array = []
 var deferred_consequences_added: Array = []
+var obligation_updates: Array = []
+var exchange_updates: Array = []
+var deferred_consequence_updates: Array = []
 var item_changes: Array = []
 var region_changes: Array = []
 var narrative_result: Dictionary = {}
@@ -40,6 +43,9 @@ func is_empty() -> bool:
 		and obligations_added.is_empty()
 		and exchanges_added.is_empty()
 		and deferred_consequences_added.is_empty()
+		and obligation_updates.is_empty()
+		and exchange_updates.is_empty()
+		and deferred_consequence_updates.is_empty()
 		and item_changes.is_empty()
 		and region_changes.is_empty()
 		and narrative_result.is_empty()
@@ -94,6 +100,18 @@ func add_deferred_consequence(consequence: Dictionary) -> void:
 	deferred_consequences_added.append(consequence.duplicate(true))
 
 
+func add_obligation_update(update: Dictionary) -> void:
+	obligation_updates.append(update.duplicate(true))
+
+
+func add_exchange_update(update: Dictionary) -> void:
+	exchange_updates.append(update.duplicate(true))
+
+
+func add_deferred_consequence_update(update: Dictionary) -> void:
+	deferred_consequence_updates.append(update.duplicate(true))
+
+
 func set_narrative_result(result: Dictionary) -> void:
 	narrative_result = result.duplicate(true)
 
@@ -135,6 +153,9 @@ func to_dict() -> Dictionary:
 		"obligations_added": obligations_added.duplicate(true),
 		"exchanges_added": exchanges_added.duplicate(true),
 		"deferred_consequences_added": deferred_consequences_added.duplicate(true),
+		"obligation_updates": obligation_updates.duplicate(true),
+		"exchange_updates": exchange_updates.duplicate(true),
+		"deferred_consequence_updates": deferred_consequence_updates.duplicate(true),
 		"item_changes": item_changes.duplicate(true),
 		"region_changes": region_changes.duplicate(true),
 		"narrative_result": narrative_result.duplicate(true),
@@ -142,6 +163,24 @@ func to_dict() -> Dictionary:
 		"contract_status": contract_status,
 		"skip_reason": skip_reason,
 		"error_reason": error_reason,
+	}
+
+
+func summary() -> Dictionary:
+	return {
+		"fact_count": facts_added.size(),
+		"state_change_count": state_changes.size(),
+		"relationship_change_count": relationship_changes.size(),
+		"memory_count": memories_added.size(),
+		"trace_count": traces_added.size(),
+		"rumor_seed_count": rumors_added.size(),
+		"pressure_change_count": pressure_changes.size(),
+		"obligation_count": obligations_added.size(),
+		"exchange_count": exchanges_added.size(),
+		"deferred_consequence_count": deferred_consequences_added.size(),
+		"obligation_update_count": obligation_updates.size(),
+		"exchange_update_count": exchange_updates.size(),
+		"deferred_consequence_update_count": deferred_consequence_updates.size(),
 	}
 
 

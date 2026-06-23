@@ -42,13 +42,19 @@ func apply_result(result: Variant, stores: Dictionary) -> void:
 	if obligation_store != null:
 		for obligation: Dictionary in result.obligations_added:
 			obligation_store.add_obligation(obligation)
+		for obligation_update: Dictionary in result.obligation_updates:
+			obligation_store.apply_obligation_update(obligation_update)
 
 	var exchange_store: Variant = stores.get("exchange_store")
 	if exchange_store != null:
 		for exchange: Dictionary in result.exchanges_added:
 			exchange_store.add_exchange(exchange)
+		for exchange_update: Dictionary in result.exchange_updates:
+			exchange_store.apply_exchange_update(exchange_update)
 
 	var deferred_consequence_store: Variant = stores.get("deferred_consequence_store")
 	if deferred_consequence_store != null:
 		for consequence: Dictionary in result.deferred_consequences_added:
 			deferred_consequence_store.add_deferred_consequence(consequence)
+		for consequence_update: Dictionary in result.deferred_consequence_updates:
+			deferred_consequence_store.apply_deferred_consequence_update(consequence_update)

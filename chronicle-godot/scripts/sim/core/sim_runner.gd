@@ -225,6 +225,12 @@ func _build_world_log_entry(
 		"exchange_count": result.exchanges_added.size(),
 		"deferred_consequences_added": result.deferred_consequences_added.duplicate(true),
 		"deferred_consequence_count": result.deferred_consequences_added.size(),
+		"obligation_updates": result.obligation_updates.duplicate(true),
+		"obligation_update_count": result.obligation_updates.size(),
+		"exchange_updates": result.exchange_updates.duplicate(true),
+		"exchange_update_count": result.exchange_updates.size(),
+		"deferred_consequence_updates": result.deferred_consequence_updates.duplicate(true),
+		"deferred_consequence_update_count": result.deferred_consequence_updates.size(),
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
