@@ -339,6 +339,125 @@
         "summary": "你检查了痕迹，它指向刚刚发生过的事情。",
         "tone": "observant"
       }
+    },
+    {
+      "effect_template_id": "hear_rumor_effect",
+      "description": "A minimal transaction result for hearing an existing rumor seed.",
+      "facts": [
+        {
+          "fact_id": "actor_heard_rumor_seed:{target_id}",
+          "fact_type": "actor_heard_rumor_seed",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [
+        {
+          "memory_id": "{actor_id}_remembers_heard_rumor:{target_id}",
+          "owner_id": "{actor_id}",
+          "source_fact_type": "actor_heard_rumor_seed",
+          "memory_type": "remembers_heard_rumor",
+          "target_id": "{target_id}",
+          "emotional_tone": "curious",
+          "clarity": "medium",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "Heard Rumor",
+        "summary": "You heard a message already moving through the place.",
+        "tone": "curious"
+      }
+    },
+    {
+      "effect_template_id": "request_favor_effect",
+      "description": "A minimal transaction result for requesting a favor from an indebted or grateful person.",
+      "facts": [
+        {
+          "fact_id": "actor_requested_favor_from_target:{target_id}",
+          "fact_type": "actor_requested_favor_from_target",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "debt",
+          "delta": -5,
+          "reason": "favor_requested"
+        }
+      ],
+      "memories": [
+        {
+          "memory_id": "{target_id}_remembers_favor_requested_by_{actor_id}",
+          "owner_id": "{target_id}",
+          "source_fact_type": "actor_requested_favor_from_target",
+          "memory_type": "remembers_favor_requested",
+          "emotional_tone": "obligated",
+          "clarity": "medium",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "Favor Requested",
+        "summary": "You asked the other person for help, spending a little of what they owed you.",
+        "tone": "practical"
+      }
+    },
+    {
+      "effect_template_id": "ask_market_pressure_effect",
+      "description": "A minimal transaction result for asking about food pressure in a market context.",
+      "facts": [
+        {
+          "fact_id": "actor_asked_about_market_pressure:{location_id}",
+          "fact_type": "actor_asked_about_market_pressure",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [
+        {
+          "memory_id": "{actor_id}_learned_market_pressure:{location_id}",
+          "owner_id": "{actor_id}",
+          "source_fact_type": "actor_asked_about_market_pressure",
+          "memory_type": "learned_market_pressure",
+          "target_id": "{target_id}",
+          "emotional_tone": "concerned",
+          "clarity": "medium",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "Market Pressure",
+        "summary": "You learned that the market is under food pressure.",
+        "tone": "concerned"
+      }
     }
   ]
 }
