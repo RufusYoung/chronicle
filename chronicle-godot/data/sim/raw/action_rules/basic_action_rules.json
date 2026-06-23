@@ -22,8 +22,13 @@
       "target": {
         "type": "person",
         "state_equals": {
-          "visible": true,
-          "hunger": "high"
+          "visible": true
+        },
+        "state_in": {
+          "hunger": [
+            "extreme",
+            "high"
+          ]
         }
       },
       "player_min": {

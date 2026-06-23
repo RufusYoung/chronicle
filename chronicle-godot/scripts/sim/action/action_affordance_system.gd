@@ -15,8 +15,8 @@ func generate_candidates(context: Variant, rules: Array) -> Array:
 
 	for rule: Dictionary in rules:
 		if rule.has("target"):
-			for entity: Dictionary in context.entities:
-				if _context_matches_rule(context, rule) and _target_matches_rule(entity, rule.get("target", {})):
+			for entity: Dictionary in _candidate_targets(context, rule):
+				if _context_matches_rule(context, rule) and _target_matches_rule(context, entity, rule.get("target", {}), rule):
 					candidates.append(_build_candidate(rule, entity))
 		elif _context_matches_rule(context, rule):
 			candidates.append(_build_candidate(rule, {}))
@@ -55,13 +55,13 @@ func _make_action_id(rule_id: String, target_id: String) -> String:
 func _context_matches_rule(context: Variant, rule: Dictionary) -> bool:
 	if not _tags_include_all(context.get_location_tags(), rule.get("location_tags_all", [])):
 		return false
-	if not _dictionary_matches(context.region_state, rule.get("region_state_equals", {})):
+	if not _dictionary_matches(_context_region_state(context), rule.get("region_state_equals", {})):
 		return false
-	if not _dictionary_matches(context.institution, rule.get("institution_equals", {})):
+	if not _dictionary_matches(_context_institution(context), rule.get("institution_equals", {})):
 		return false
-	if not _dictionary_matches(context.player, rule.get("player_equals", {})):
+	if not _dictionary_matches(_context_player(context), rule.get("player_equals", {})):
 		return false
-	if not _dictionary_min_matches(context.player, rule.get("player_min", {})):
+	if not _dictionary_min_matches(_context_player(context), rule.get("player_min", {})):
 		return false
 	if not _has_visible_entity_with_tags(context, rule.get("required_visible_entity_tags", [])):
 		return false
@@ -70,7 +70,7 @@ func _context_matches_rule(context: Variant, rule: Dictionary) -> bool:
 	return true
 
 
-func _target_matches_rule(target: Dictionary, target_rule: Dictionary) -> bool:
+func _target_matches_rule(context: Variant, target: Dictionary, target_rule: Dictionary, rule: Dictionary) -> bool:
 	if target_rule.has("type") and str(target.get("type", "")) != str(target_rule.get("type", "")):
 		return false
 
@@ -80,10 +80,13 @@ func _target_matches_rule(target: Dictionary, target_rule: Dictionary) -> bool:
 	if not _tags_include_any(tags, target_rule.get("tags_any", [])):
 		return false
 
-	var states: Dictionary = target.get("states", {})
-	if not _dictionary_matches(states, target_rule.get("state_equals", {})):
+	if not _target_dictionary_matches(context, target, target_rule.get("state_equals", {})):
 		return false
-	if not _dictionary_has_keys(states, target_rule.get("state_has", [])):
+	if not _target_dictionary_in(context, target, target_rule.get("state_in", {})):
+		return false
+	if not _target_has_keys(context, target, target_rule.get("state_has", [])):
+		return false
+	if not _relationship_any_matches(context, target, rule.get("relationship_any", [])):
 		return false
 
 	return true
@@ -136,3 +139,175 @@ func _has_visible_entity_with_tags(context: Variant, expected_tags: Array) -> bo
 		if _tags_include_all(entity.get("tags", []), expected_tags):
 			return true
 	return false
+
+
+func _candidate_targets(context: Variant, rule: Dictionary) -> Array:
+	var targets: Array = []
+	var seen_ids: Dictionary = {}
+	for entity: Dictionary in _context_entities(context):
+		_add_candidate_target(targets, seen_ids, entity)
+
+	var target_rule: Dictionary = rule.get("target", {})
+	var target_type := str(target_rule.get("type", ""))
+	if target_type == "trace":
+		for trace: Dictionary in _context_visible_traces(context):
+			_add_candidate_target(targets, seen_ids, _trace_to_target(trace))
+	elif target_type == "rumor_seed":
+		for rumor: Dictionary in _context_rumor_seeds(context):
+			_add_candidate_target(targets, seen_ids, _rumor_to_target(rumor))
+
+	return targets
+
+
+func _add_candidate_target(targets: Array, seen_ids: Dictionary, target: Dictionary) -> void:
+	var target_id := str(target.get("id", ""))
+	if target_id == "":
+		return
+	if seen_ids.has(target_id):
+		return
+	seen_ids[target_id] = true
+	targets.append(target)
+
+
+func _context_entities(context: Variant) -> Array:
+	if context.has_method("get_entities"):
+		return context.get_entities()
+	return context.entities
+
+
+func _context_region_state(context: Variant) -> Dictionary:
+	return context.region_state
+
+
+func _context_institution(context: Variant) -> Dictionary:
+	return context.institution
+
+
+func _context_player(context: Variant) -> Dictionary:
+	return context.player
+
+
+func _context_visible_traces(context: Variant) -> Array:
+	if context.has_method("get_visible_traces"):
+		return context.get_visible_traces()
+	return []
+
+
+func _context_rumor_seeds(context: Variant) -> Array:
+	if context.has_method("get_rumor_seeds"):
+		return context.get_rumor_seeds()
+	return []
+
+
+func _trace_to_target(trace: Dictionary) -> Dictionary:
+	var trace_id := str(trace.get("id", trace.get("trace_id", "")))
+	return {
+		"id": trace_id,
+		"display_name": str(trace.get("display_name", trace_id)),
+		"type": "trace",
+		"tags": _merge_tags(["trace"], trace.get("tags", [])),
+		"states": {
+			"visible": bool(trace.get("visible", true)),
+			"inspectable": bool(trace.get("inspectable", true)),
+			"trace_type": str(trace.get("trace_type", "")),
+		},
+	}
+
+
+func _rumor_to_target(rumor: Dictionary) -> Dictionary:
+	var rumor_id := str(rumor.get("id", rumor.get("rumor_id", "")))
+	return {
+		"id": rumor_id,
+		"display_name": str(rumor.get("display_name", rumor.get("text_hint", rumor_id))),
+		"type": "rumor_seed",
+		"tags": _merge_tags(["rumor", "rumor_seed"], rumor.get("tags", [])),
+		"states": {
+			"visible": bool(rumor.get("visible", true)),
+			"hearable": bool(rumor.get("hearable", true)),
+			"spread_scope": str(rumor.get("spread_scope", "")),
+		},
+	}
+
+
+func _merge_tags(base_tags: Array, extra_tags: Array) -> Array:
+	var rows := base_tags.duplicate()
+	for tag: Variant in extra_tags:
+		if tag not in rows:
+			rows.append(tag)
+	return rows
+
+
+func _target_dictionary_matches(context: Variant, target: Dictionary, expected: Dictionary) -> bool:
+	for key: String in expected.keys():
+		if _target_state(context, target, key, null) != expected.get(key):
+			return false
+	return true
+
+
+func _target_dictionary_in(context: Variant, target: Dictionary, expected: Dictionary) -> bool:
+	for key: String in expected.keys():
+		var allowed_values: Array = expected.get(key, [])
+		if _target_state(context, target, key, null) not in allowed_values:
+			return false
+	return true
+
+
+func _target_has_keys(context: Variant, target: Dictionary, keys: Array) -> bool:
+	for key: String in keys:
+		if _target_state(context, target, key, null) == null:
+			return false
+	return true
+
+
+func _target_state(context: Variant, target: Dictionary, key: String, default_value: Variant = null) -> Variant:
+	var states: Dictionary = target.get("states", {})
+	if states.has(key):
+		return states.get(key)
+
+	var target_id := str(target.get("id", ""))
+	if target_id != "" and context.has_method("get_entity_state"):
+		return context.get_entity_state(target_id, key, default_value)
+
+	return default_value
+
+
+func _relationship_any_matches(context: Variant, target: Dictionary, groups: Array) -> bool:
+	if groups.is_empty():
+		return true
+	if not context.has_method("get_relation"):
+		return false
+
+	for group: Array in groups:
+		var group_matches := true
+		for condition: Dictionary in group:
+			if not _relationship_condition_matches(context, target, condition):
+				group_matches = false
+				break
+		if group_matches:
+			return true
+	return false
+
+
+func _relationship_condition_matches(context: Variant, target: Dictionary, condition: Dictionary) -> bool:
+	var source_id := _resolve_relationship_side(context, target, str(condition.get("source", "")))
+	var target_id := _resolve_relationship_side(context, target, str(condition.get("target", "")))
+	var axis := str(condition.get("axis", ""))
+	if source_id == "" or target_id == "" or axis == "":
+		return false
+
+	var value := float(context.get_relation(source_id, target_id, axis, 0))
+	if condition.has("min") and value < float(condition.get("min", 0)):
+		return false
+	if condition.has("max") and value > float(condition.get("max", 0)):
+		return false
+	return true
+
+
+func _resolve_relationship_side(context: Variant, target: Dictionary, value: String) -> String:
+	match value:
+		"target":
+			return str(target.get("id", ""))
+		"player", "actor":
+			return str(context.get_player_value("id", "player"))
+		_:
+			return value

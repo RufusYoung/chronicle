@@ -129,6 +129,56 @@
         "fog_patrol_tonight": true,
         "discipline_level": "strict"
       }
+    },
+    {
+      "rule_id": "hear_rumor_seed",
+      "domain": "rumor",
+      "action_type": "rumor",
+      "label_template": "[传闻] 听见小队议论",
+      "priority": 200,
+      "target": {
+        "type": "rumor_seed",
+        "state_equals": {
+          "visible": true
+        }
+      }
+    },
+    {
+      "rule_id": "request_favor_from_indebted_person",
+      "domain": "relationship",
+      "action_type": "relationship",
+      "label_template": "[关系] 请{target_display_name}帮忙",
+      "priority": 210,
+      "target": {
+        "type": "person",
+        "state_equals": {
+          "visible": true
+        }
+      },
+      "relationship_any": [
+        [
+          {
+            "source": "target",
+            "target": "player",
+            "axis": "debt",
+            "min": 10
+          }
+        ],
+        [
+          {
+            "source": "target",
+            "target": "player",
+            "axis": "gratitude",
+            "min": 15
+          },
+          {
+            "source": "target",
+            "target": "player",
+            "axis": "trust",
+            "min": 15
+          }
+        ]
+      ]
     }
   ]
 }
