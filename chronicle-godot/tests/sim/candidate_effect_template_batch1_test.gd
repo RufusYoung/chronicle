@@ -116,10 +116,9 @@ func _run() -> void:
 	)
 	_check(_transaction_resolver_has_no_batch_one_rule_ids(), "16. batch one does not add TransactionResolver rule branches")
 	_check(
-		_rule_mode(rules, "confirm_ration_record_with_cook") == "candidate_only"
-		and _rule_mode(rules, "trade_watch_duty_for_silence") == "candidate_only"
-		and _rule_mode(rules, "delay_military_issue_until_after_patrol") == "candidate_only",
-		"17. remaining military placeholder rules stay candidate_only"
+		_rule_mode(rules, "approach_visible_person") == "candidate_only"
+		and _rule_effect_template_id(rules, "approach_visible_person") == "",
+		"17. basic approach_visible_person remains candidate_only"
 	)
 
 	_finish()

@@ -85,12 +85,12 @@ func _run() -> void:
 		"9. TransactionResolver returns resolved for effect_template mode"
 	)
 
-	var candidate_only_candidate = _find_candidate(candidates, "confirm_ration_record_with_cook")
+	var candidate_only_candidate = _find_candidate(candidates, "approach_visible_person", "recruit_elai")
 	var candidate_only_result = resolver.resolve_action(candidate_only_candidate, outpost_context)
 	_check(
 		str(candidate_only_result.contract_status) == "candidate_only"
 		and str(candidate_only_result.skip_reason) == "candidate_only_rule",
-		"10. TransactionResolver returns candidate_only for candidate_only mode"
+		"10. TransactionResolver returns candidate_only for approach_visible_person"
 	)
 	_check(
 		candidate_only_result.is_empty()
