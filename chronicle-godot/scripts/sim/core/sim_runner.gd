@@ -88,7 +88,7 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 				"SimSnapshot"
 			)
 
-		var transaction_result = resolver.resolve_action(candidate, context)
+		var transaction_result = resolver.resolve_action(candidate, snapshot)
 		writer.apply_result(transaction_result, stores)
 		_sync_context_after_result(context, transaction_result, state_store)
 		world_log.append_entry(_build_world_log_entry(
@@ -97,6 +97,7 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 			candidate,
 			transaction_result,
 			candidates.size(),
+			"SimSnapshot",
 			"SimSnapshot"
 		))
 
@@ -110,6 +111,7 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 		"steps_executed": steps.size(),
 		"candidate_selection_source": "ActionAffordanceSystem",
 		"candidate_context_source": "SimSnapshot",
+		"resolver_context_source": "SimSnapshot",
 		"candidate_generation_count": candidate_generation_count,
 		"world_log": world_log.list_entries(),
 		"world_log_summary": world_log.summary(),
@@ -151,7 +153,8 @@ func _build_world_log_entry(
 	candidate: Variant,
 	result: Variant,
 	candidate_count: int,
-	candidate_context_source: String
+	candidate_context_source: String,
+	resolver_context_source: String
 ) -> Dictionary:
 	return {
 		"step_index": step_index,
@@ -162,6 +165,7 @@ func _build_world_log_entry(
 		"target_display_name": str(candidate.target_display_name),
 		"selected_from_candidates": true,
 		"candidate_context_source": candidate_context_source,
+		"resolver_context_source": resolver_context_source,
 		"candidate_count": candidate_count,
 		"facts_added": _fact_types(result.facts_added),
 		"fact_ids": _fact_ids(result.facts_added),
