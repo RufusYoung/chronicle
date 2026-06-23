@@ -4,6 +4,7 @@ class_name V5SimRunner
 const SimRegistryModel = preload("res://scripts/sim/core/sim_registry.gd")
 const SimContextModel = preload("res://scripts/sim/core/sim_context.gd")
 const SimWorldLogModel = preload("res://scripts/sim/core/sim_world_log.gd")
+const SimSnapshotBuilderModel = preload("res://scripts/sim/core/sim_snapshot_builder.gd")
 const ActionAffordanceModel = preload("res://scripts/sim/action/action_affordance_system.gd")
 const TransactionResolverModel = preload("res://scripts/sim/transaction/transaction_resolver.gd")
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
@@ -47,6 +48,7 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 	var resolver = TransactionResolverModel.new()
 	var writer = TransactionWorldWriterModel.new()
 	var world_log = SimWorldLogModel.new()
+	var snapshot_builder = SimSnapshotBuilderModel.new()
 
 	var fact_store = FactStoreModel.new()
 	var state_store = StateStoreModel.new()
@@ -69,7 +71,8 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 	var candidate_generation_count := 0
 	for step_index: int in range(steps.size()):
 		var step: Dictionary = steps[step_index]
-		var candidates: Array = affordance_system.generate_candidates(context, rules)
+		var snapshot = snapshot_builder.build_snapshot(context, stores)
+		var candidates: Array = affordance_system.generate_candidates(snapshot, rules)
 		candidate_generation_count += 1
 		var candidate: Variant = _select_candidate(candidates, step.get("select", {}))
 		if candidate == null:
@@ -81,13 +84,24 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 				step,
 				_store_summary(fact_store, state_store, relationship_store, memory_store, trace_store, rumor_store),
 				world_log,
-				candidate_generation_count
+				candidate_generation_count,
+				"SimSnapshot"
 			)
 
 		var transaction_result = resolver.resolve_action(candidate, context)
 		writer.apply_result(transaction_result, stores)
 		_sync_context_after_result(context, transaction_result, state_store)
-		world_log.append_entry(_build_world_log_entry(step_index, step, candidate, transaction_result, candidates.size()))
+		world_log.append_entry(_build_world_log_entry(
+			step_index,
+			step,
+			candidate,
+			transaction_result,
+			candidates.size(),
+			"SimSnapshot"
+		))
+
+	var final_snapshot = snapshot_builder.build_snapshot(context, stores)
+	var final_candidates: Array = affordance_system.generate_candidates(final_snapshot, rules)
 
 	return {
 		"fixture_id": fixture_id,
@@ -95,9 +109,11 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 		"success": true,
 		"steps_executed": steps.size(),
 		"candidate_selection_source": "ActionAffordanceSystem",
+		"candidate_context_source": "SimSnapshot",
 		"candidate_generation_count": candidate_generation_count,
 		"world_log": world_log.list_entries(),
 		"world_log_summary": world_log.summary(),
+		"snapshot_summary": _snapshot_summary(final_snapshot, final_candidates),
 		"store_summary": _store_summary(
 			fact_store,
 			state_store,
@@ -134,7 +150,8 @@ func _build_world_log_entry(
 	step: Dictionary,
 	candidate: Variant,
 	result: Variant,
-	candidate_count: int
+	candidate_count: int,
+	candidate_context_source: String
 ) -> Dictionary:
 	return {
 		"step_index": step_index,
@@ -144,6 +161,7 @@ func _build_world_log_entry(
 		"target_id": str(candidate.target_id),
 		"target_display_name": str(candidate.target_display_name),
 		"selected_from_candidates": true,
+		"candidate_context_source": candidate_context_source,
 		"candidate_count": candidate_count,
 		"facts_added": _fact_types(result.facts_added),
 		"fact_ids": _fact_ids(result.facts_added),
@@ -259,6 +277,44 @@ func _store_summary(
 	}
 
 
+func _snapshot_summary(snapshot: Variant, candidates: Array) -> Dictionary:
+	return {
+		"final_fact_count": snapshot.get_facts().size(),
+		"final_trace_count": snapshot.get_visible_traces().size(),
+		"final_rumor_count": snapshot.get_rumor_seeds().size(),
+		"final_relationship_count": _count_snapshot_relationship_axes(snapshot),
+		"final_memory_count": snapshot.memories.size(),
+		"final_candidate_probe": {
+			"rule_ids": _candidate_rule_ids(candidates),
+			"action_ids": _candidate_action_ids(candidates),
+		},
+	}
+
+
+func _count_snapshot_relationship_axes(snapshot: Variant) -> int:
+	var count := 0
+	for source_id: String in snapshot.relationships.keys():
+		var source_relations: Dictionary = snapshot.relationships[source_id]
+		for target_id: String in source_relations.keys():
+			var target_relations: Dictionary = source_relations[target_id]
+			count += target_relations.size()
+	return count
+
+
+func _candidate_rule_ids(candidates: Array) -> Array:
+	var rows: Array = []
+	for candidate: Variant in candidates:
+		rows.append(str(candidate.rule_id))
+	return rows
+
+
+func _candidate_action_ids(candidates: Array) -> Array:
+	var rows: Array = []
+	for candidate: Variant in candidates:
+		rows.append(str(candidate.action_id))
+	return rows
+
+
 func _store_snapshots(
 	fact_store: Variant,
 	state_store: Variant,
@@ -314,7 +370,8 @@ func _failure_result(
 	failed_step: Dictionary,
 	store_summary: Dictionary,
 	world_log: Variant = null,
-	candidate_generation_count: int = 0
+	candidate_generation_count: int = 0,
+	candidate_context_source: String = ""
 ) -> Dictionary:
 	return {
 		"fixture_id": fixture_id,
@@ -325,6 +382,7 @@ func _failure_result(
 		"failed_step": failed_step.duplicate(true),
 		"steps_executed": failed_step_index,
 		"candidate_selection_source": "ActionAffordanceSystem",
+		"candidate_context_source": candidate_context_source,
 		"candidate_generation_count": candidate_generation_count,
 		"world_log": [] if world_log == null else world_log.list_entries(),
 		"store_summary": store_summary.duplicate(true),
