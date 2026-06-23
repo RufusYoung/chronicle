@@ -653,6 +653,183 @@
         "summary": "You pushed the discipline issue past the patrol, but it now waits as a pending consequence.",
         "tone": "uneasy"
       }
+    },
+    {
+      "effect_template_id": "obligation_fulfilled_effect",
+      "description": "A generic settlement effect for fulfilling an obligation.",
+      "facts": [
+        {
+          "fact_id": "obligation_fulfilled:{obligation_id}",
+          "fact_type": "obligation_fulfilled",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "obligation_id": "{obligation_id}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [
+        {
+          "memory_id": "{actor_id}_remembers_obligation_fulfilled:{obligation_id}",
+          "owner_id": "{actor_id}",
+          "memory_type": "remembers_obligation_fulfilled",
+          "source_fact_type": "obligation_fulfilled",
+          "target_id": "{target_id}",
+          "emotional_tone": "settled",
+          "clarity": "medium",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [],
+      "obligation_updates": [
+        {
+          "obligation_id": "{obligation_id}",
+          "status": "fulfilled",
+          "reason": "obligation_fulfilled_effect"
+        }
+      ],
+      "exchange_updates": [],
+      "deferred_consequence_updates": [],
+      "narrative": {
+        "title": "Obligation Fulfilled",
+        "summary": "An obligation has been fulfilled.",
+        "tone": "settled"
+      }
+    },
+    {
+      "effect_template_id": "obligation_breached_effect",
+      "description": "A generic settlement effect for breaching an obligation.",
+      "facts": [
+        {
+          "fact_id": "obligation_breached:{obligation_id}",
+          "fact_type": "obligation_breached",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "obligation_id": "{obligation_id}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "trust",
+          "delta": -10,
+          "reason": "obligation_breached_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "resentment",
+          "delta": 10,
+          "reason": "obligation_breached_effect"
+        }
+      ],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [],
+      "obligation_updates": [
+        {
+          "obligation_id": "{obligation_id}",
+          "status": "breached",
+          "reason": "obligation_breached_effect"
+        }
+      ],
+      "exchange_updates": [],
+      "deferred_consequence_updates": [],
+      "narrative": {
+        "title": "Obligation Breached",
+        "summary": "An obligation has been breached.",
+        "tone": "strained"
+      }
+    },
+    {
+      "effect_template_id": "exchange_settled_effect",
+      "description": "A generic settlement effect for closing an exchange.",
+      "facts": [
+        {
+          "fact_id": "exchange_settled:{exchange_id}",
+          "fact_type": "exchange_settled",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "exchange_id": "{exchange_id}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [],
+      "obligation_updates": [],
+      "exchange_updates": [
+        {
+          "exchange_id": "{exchange_id}",
+          "status": "settled",
+          "reason": "exchange_settled_effect"
+        }
+      ],
+      "deferred_consequence_updates": [],
+      "narrative": {
+        "title": "Exchange Settled",
+        "summary": "An exchange has been settled.",
+        "tone": "practical"
+      }
+    },
+    {
+      "effect_template_id": "deferred_consequence_triggered_effect",
+      "description": "A generic effect for manually triggering a pending deferred consequence.",
+      "facts": [
+        {
+          "fact_id": "deferred_consequence_triggered:{deferred_id}",
+          "fact_type": "deferred_consequence_triggered",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "deferred_id": "{deferred_id}",
+          "trigger_key": "{trigger_key}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [
+        {
+          "pressure_id": "triggered_unresolved_issue:{deferred_id}",
+          "scope_id": "{location_id}",
+          "scope_type": "location",
+          "domain": "military_discipline",
+          "pressure_type": "unresolved_issue",
+          "value": 5,
+          "source_fact_type": "deferred_consequence_triggered"
+        }
+      ],
+      "obligation_updates": [],
+      "exchange_updates": [],
+      "deferred_consequence_updates": [
+        {
+          "deferred_id": "{deferred_id}",
+          "status": "triggered",
+          "reason": "deferred_consequence_triggered_effect"
+        }
+      ],
+      "narrative": {
+        "title": "Deferred Consequence Triggered",
+        "summary": "A deferred consequence has been triggered.",
+        "tone": "uneasy"
+      }
     }
   ]
 }
