@@ -19,14 +19,34 @@ func resolve_action(candidate: Variant, context_or_snapshot: Variant) -> Variant
 	if candidate == null or context_or_snapshot == null:
 		return empty_result
 
-	var template_id := _effect_template_for_rule(str(candidate.rule_id))
+	var template_id := _candidate_effect_template_id(candidate)
+	if template_id == "":
+		template_id = _legacy_effect_template_for_rule(_candidate_rule_id(candidate))
 	if template_id == "":
 		return empty_result
 
 	return effect_template_resolver.resolve_template(template_id, candidate, context_or_snapshot)
 
 
-func _effect_template_for_rule(rule_id: String) -> String:
+func _candidate_effect_template_id(candidate: Variant) -> String:
+	var value: Variant = null
+	if candidate is Dictionary:
+		value = (candidate as Dictionary).get("effect_template_id")
+	else:
+		value = candidate.get("effect_template_id")
+	if value == null:
+		return ""
+	return str(value)
+
+
+func _candidate_rule_id(candidate: Variant) -> String:
+	if candidate is Dictionary:
+		return str((candidate as Dictionary).get("rule_id", ""))
+	return str(candidate.rule_id)
+
+
+# Transitional compatibility for older candidates that do not carry effect_template_id yet.
+func _legacy_effect_template_for_rule(rule_id: String) -> String:
 	match rule_id:
 		"give_food_to_hungry_person":
 			return "give_food_help_effect"
