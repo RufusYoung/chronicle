@@ -1,0 +1,21 @@
+{
+  "rules": [
+    {
+      "rule_id": "test_inquiry_concealed_item_alias",
+      "domain": "test",
+      "action_type": "dialogue",
+      "effect_template_id": "inquiry_concealed_item_effect",
+      "label_template": "[测试] 问{target_display_name}藏着什么",
+      "priority": 999,
+      "target": {
+        "type": "person",
+        "state_equals": {
+          "visible": true
+        },
+        "state_has": [
+          "concealment"
+        ]
+      }
+    }
+  ]
+}
