@@ -13,6 +13,10 @@ var memories: Array = []
 var traces: Array = []
 var rumors: Array = []
 var facts: Array = []
+var pressures: Array = []
+var obligations: Array = []
+var exchanges: Array = []
+var deferred_consequences: Array = []
 
 
 func _init(data: Dictionary = {}) -> void:
@@ -28,6 +32,10 @@ func _init(data: Dictionary = {}) -> void:
 	traces = (data.get("traces", []) as Array).duplicate(true)
 	rumors = (data.get("rumors", []) as Array).duplicate(true)
 	facts = (data.get("facts", []) as Array).duplicate(true)
+	pressures = (data.get("pressures", []) as Array).duplicate(true)
+	obligations = (data.get("obligations", []) as Array).duplicate(true)
+	exchanges = (data.get("exchanges", []) as Array).duplicate(true)
+	deferred_consequences = (data.get("deferred_consequences", []) as Array).duplicate(true)
 
 
 func get_entity(entity_id: String) -> Dictionary:
@@ -109,6 +117,34 @@ func get_facts() -> Array:
 	return facts.duplicate(true)
 
 
+func get_pressures() -> Array:
+	return pressures.duplicate(true)
+
+
+func get_open_obligations() -> Array:
+	var rows: Array = []
+	for obligation: Dictionary in obligations:
+		if str(obligation.get("status", "open")) == "open":
+			rows.append(obligation.duplicate(true))
+	return rows
+
+
+func get_open_exchanges() -> Array:
+	var rows: Array = []
+	for exchange: Dictionary in exchanges:
+		if str(exchange.get("status", "open")) == "open":
+			rows.append(exchange.duplicate(true))
+	return rows
+
+
+func get_pending_deferred_consequences() -> Array:
+	var rows: Array = []
+	for consequence: Dictionary in deferred_consequences:
+		if str(consequence.get("status", "pending")) == "pending":
+			rows.append(consequence.duplicate(true))
+	return rows
+
+
 func get_location_tags() -> Array:
 	return (location.get("tags", []) as Array).duplicate(true)
 
@@ -139,4 +175,8 @@ func to_dict() -> Dictionary:
 		"traces": traces.duplicate(true),
 		"rumors": rumors.duplicate(true),
 		"facts": facts.duplicate(true),
+		"pressures": pressures.duplicate(true),
+		"obligations": obligations.duplicate(true),
+		"exchanges": exchanges.duplicate(true),
+		"deferred_consequences": deferred_consequences.duplicate(true),
 	}

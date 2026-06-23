@@ -11,6 +11,10 @@ func build_snapshot(context: Variant, stores: Dictionary) -> Variant:
 	var trace_store: Variant = stores.get("trace_store")
 	var rumor_store: Variant = stores.get("rumor_store")
 	var fact_store: Variant = stores.get("fact_store")
+	var pressure_store: Variant = stores.get("pressure_store")
+	var obligation_store: Variant = stores.get("obligation_store")
+	var exchange_store: Variant = stores.get("exchange_store")
+	var deferred_consequence_store: Variant = stores.get("deferred_consequence_store")
 
 	var states := _states_from_context(context)
 	if state_store != null:
@@ -37,6 +41,10 @@ func build_snapshot(context: Variant, stores: Dictionary) -> Variant:
 		"traces": [] if trace_store == null else trace_store.list_traces(),
 		"rumors": [] if rumor_store == null else rumor_store.list_rumors(),
 		"facts": [] if fact_store == null else fact_store.list_facts(),
+		"pressures": [] if pressure_store == null else pressure_store.list_pressures(),
+		"obligations": [] if obligation_store == null else obligation_store.list_obligations(),
+		"exchanges": [] if exchange_store == null else exchange_store.list_exchanges(),
+		"deferred_consequences": [] if deferred_consequence_store == null else deferred_consequence_store.list_deferred_consequences(),
 	})
 
 

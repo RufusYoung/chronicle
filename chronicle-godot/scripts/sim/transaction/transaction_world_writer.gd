@@ -32,3 +32,23 @@ func apply_result(result: Variant, stores: Dictionary) -> void:
 	if rumor_store != null:
 		for rumor: Dictionary in result.rumors_added:
 			rumor_store.add_rumor_seed(rumor)
+
+	var pressure_store: Variant = stores.get("pressure_store")
+	if pressure_store != null:
+		for pressure_change: Dictionary in result.pressure_changes:
+			pressure_store.add_pressure_change(pressure_change)
+
+	var obligation_store: Variant = stores.get("obligation_store")
+	if obligation_store != null:
+		for obligation: Dictionary in result.obligations_added:
+			obligation_store.add_obligation(obligation)
+
+	var exchange_store: Variant = stores.get("exchange_store")
+	if exchange_store != null:
+		for exchange: Dictionary in result.exchanges_added:
+			exchange_store.add_exchange(exchange)
+
+	var deferred_consequence_store: Variant = stores.get("deferred_consequence_store")
+	if deferred_consequence_store != null:
+		for consequence: Dictionary in result.deferred_consequences_added:
+			deferred_consequence_store.add_deferred_consequence(consequence)

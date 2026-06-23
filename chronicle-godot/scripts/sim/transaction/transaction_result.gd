@@ -11,6 +11,10 @@ var traces: Array = []
 var traces_added: Array = []
 var rumors: Array = []
 var rumors_added: Array = []
+var pressure_changes: Array = []
+var obligations_added: Array = []
+var exchanges_added: Array = []
+var deferred_consequences_added: Array = []
 var item_changes: Array = []
 var region_changes: Array = []
 var narrative_result: Dictionary = {}
@@ -32,6 +36,10 @@ func is_empty() -> bool:
 		and traces_added.is_empty()
 		and rumors.is_empty()
 		and rumors_added.is_empty()
+		and pressure_changes.is_empty()
+		and obligations_added.is_empty()
+		and exchanges_added.is_empty()
+		and deferred_consequences_added.is_empty()
 		and item_changes.is_empty()
 		and region_changes.is_empty()
 		and narrative_result.is_empty()
@@ -68,6 +76,22 @@ func add_rumor_seed(rumor: Dictionary) -> void:
 	var rumor_copy := rumor.duplicate(true)
 	rumors.append(rumor_copy)
 	rumors_added.append(rumor_copy)
+
+
+func add_pressure_change(change: Dictionary) -> void:
+	pressure_changes.append(change.duplicate(true))
+
+
+func add_obligation(obligation: Dictionary) -> void:
+	obligations_added.append(obligation.duplicate(true))
+
+
+func add_exchange(exchange: Dictionary) -> void:
+	exchanges_added.append(exchange.duplicate(true))
+
+
+func add_deferred_consequence(consequence: Dictionary) -> void:
+	deferred_consequences_added.append(consequence.duplicate(true))
 
 
 func set_narrative_result(result: Dictionary) -> void:
@@ -107,6 +131,10 @@ func to_dict() -> Dictionary:
 		"traces_added": traces_added.duplicate(true),
 		"rumors": rumors.duplicate(true),
 		"rumors_added": rumors_added.duplicate(true),
+		"pressure_changes": pressure_changes.duplicate(true),
+		"obligations_added": obligations_added.duplicate(true),
+		"exchanges_added": exchanges_added.duplicate(true),
+		"deferred_consequences_added": deferred_consequences_added.duplicate(true),
 		"item_changes": item_changes.duplicate(true),
 		"region_changes": region_changes.duplicate(true),
 		"narrative_result": narrative_result.duplicate(true),

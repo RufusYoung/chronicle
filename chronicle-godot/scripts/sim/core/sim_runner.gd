@@ -14,6 +14,10 @@ const RelationshipStoreModel = preload("res://scripts/sim/relationship/relations
 const MemoryStoreModel = preload("res://scripts/sim/memory/memory_store.gd")
 const TraceStoreModel = preload("res://scripts/sim/trace/trace_store.gd")
 const RumorStoreModel = preload("res://scripts/sim/rumor/rumor_store.gd")
+const PressureStoreModel = preload("res://scripts/sim/pressure/pressure_store.gd")
+const ObligationStoreModel = preload("res://scripts/sim/obligation/obligation_store.gd")
+const ExchangeStoreModel = preload("res://scripts/sim/exchange/exchange_store.gd")
+const DeferredConsequenceStoreModel = preload("res://scripts/sim/deferred/deferred_consequence_store.gd")
 
 const RELATIONSHIP_AXIS_DEFS_PATH := "res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
 
@@ -58,6 +62,10 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 	var memory_store = MemoryStoreModel.new()
 	var trace_store = TraceStoreModel.new()
 	var rumor_store = RumorStoreModel.new()
+	var pressure_store = PressureStoreModel.new()
+	var obligation_store = ObligationStoreModel.new()
+	var exchange_store = ExchangeStoreModel.new()
+	var deferred_consequence_store = DeferredConsequenceStoreModel.new()
 	var stores := {
 		"fact_store": fact_store,
 		"state_store": state_store,
@@ -65,6 +73,10 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 		"memory_store": memory_store,
 		"trace_store": trace_store,
 		"rumor_store": rumor_store,
+		"pressure_store": pressure_store,
+		"obligation_store": obligation_store,
+		"exchange_store": exchange_store,
+		"deferred_consequence_store": deferred_consequence_store,
 	}
 
 	var steps: Array = scenario.get("steps", [])
@@ -82,7 +94,18 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 				"candidate_not_found",
 				step_index,
 				step,
-				_store_summary(fact_store, state_store, relationship_store, memory_store, trace_store, rumor_store),
+				_store_summary(
+					fact_store,
+					state_store,
+					relationship_store,
+					memory_store,
+					trace_store,
+					rumor_store,
+					pressure_store,
+					obligation_store,
+					exchange_store,
+					deferred_consequence_store
+				),
 				world_log,
 				candidate_generation_count,
 				"SimSnapshot"
@@ -122,7 +145,11 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 			relationship_store,
 			memory_store,
 			trace_store,
-			rumor_store
+			rumor_store,
+			pressure_store,
+			obligation_store,
+			exchange_store,
+			deferred_consequence_store
 		),
 		"store_snapshots": _store_snapshots(
 			fact_store,
@@ -130,7 +157,11 @@ func run_sequence(fixture_path: String, scenario_path: String, raw_rule_paths: A
 			relationship_store,
 			memory_store,
 			trace_store,
-			rumor_store
+			rumor_store,
+			pressure_store,
+			obligation_store,
+			exchange_store,
+			deferred_consequence_store
 		),
 	}
 
@@ -186,6 +217,14 @@ func _build_world_log_entry(
 		"rumors_added": result.rumors_added.duplicate(true),
 		"rumor_seed_ids": _rumor_seed_ids(result.rumors_added),
 		"rumor_seed_count": result.rumors_added.size(),
+		"pressure_changes": result.pressure_changes.duplicate(true),
+		"pressure_change_count": result.pressure_changes.size(),
+		"obligations_added": result.obligations_added.duplicate(true),
+		"obligation_count": result.obligations_added.size(),
+		"exchanges_added": result.exchanges_added.duplicate(true),
+		"exchange_count": result.exchanges_added.size(),
+		"deferred_consequences_added": result.deferred_consequences_added.duplicate(true),
+		"deferred_consequence_count": result.deferred_consequences_added.size(),
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
@@ -273,7 +312,11 @@ func _store_summary(
 	relationship_store: Variant,
 	memory_store: Variant,
 	trace_store: Variant,
-	rumor_store: Variant
+	rumor_store: Variant,
+	pressure_store: Variant,
+	obligation_store: Variant,
+	exchange_store: Variant,
+	deferred_consequence_store: Variant
 ) -> Dictionary:
 	return {
 		"facts": fact_store.list_facts().size(),
@@ -282,6 +325,10 @@ func _store_summary(
 		"memories": memory_store.memories.size(),
 		"traces": trace_store.list_traces().size(),
 		"rumors": rumor_store.list_rumors().size(),
+		"pressures": pressure_store.list_pressures().size(),
+		"obligations": obligation_store.list_obligations().size(),
+		"exchanges": exchange_store.list_exchanges().size(),
+		"deferred_consequences": deferred_consequence_store.list_deferred_consequences().size(),
 	}
 
 
@@ -292,6 +339,10 @@ func _snapshot_summary(snapshot: Variant, candidates: Array) -> Dictionary:
 		"final_rumor_count": snapshot.get_rumor_seeds().size(),
 		"final_relationship_count": _count_snapshot_relationship_axes(snapshot),
 		"final_memory_count": snapshot.memories.size(),
+		"final_pressure_count": snapshot.get_pressures().size(),
+		"final_obligation_count": snapshot.obligations.size(),
+		"final_exchange_count": snapshot.exchanges.size(),
+		"final_deferred_consequence_count": snapshot.deferred_consequences.size(),
 		"final_candidate_probe": {
 			"rule_ids": _candidate_rule_ids(candidates),
 			"action_ids": _candidate_action_ids(candidates),
@@ -329,7 +380,11 @@ func _store_snapshots(
 	relationship_store: Variant,
 	memory_store: Variant,
 	trace_store: Variant,
-	rumor_store: Variant
+	rumor_store: Variant,
+	pressure_store: Variant,
+	obligation_store: Variant,
+	exchange_store: Variant,
+	deferred_consequence_store: Variant
 ) -> Dictionary:
 	return {
 		"facts": fact_store.list_facts(),
@@ -338,6 +393,10 @@ func _store_snapshots(
 		"memories": memory_store.memories.duplicate(true),
 		"traces": trace_store.list_traces(),
 		"rumors": rumor_store.list_rumors(),
+		"pressures": pressure_store.list_pressures(),
+		"obligations": obligation_store.list_obligations(),
+		"exchanges": exchange_store.list_exchanges(),
+		"deferred_consequences": deferred_consequence_store.list_deferred_consequences(),
 	}
 
 
@@ -367,6 +426,10 @@ func _empty_store_summary() -> Dictionary:
 		"memories": 0,
 		"traces": 0,
 		"rumors": 0,
+		"pressures": 0,
+		"obligations": 0,
+		"exchanges": 0,
+		"deferred_consequences": 0,
 	}
 
 
