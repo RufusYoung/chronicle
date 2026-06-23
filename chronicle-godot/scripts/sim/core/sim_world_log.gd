@@ -37,6 +37,9 @@ func summary() -> Dictionary:
 	var memory_count := 0
 	var trace_count := 0
 	var rumor_seed_count := 0
+	var resolved_count := 0
+	var candidate_only_count := 0
+	var invalid_contract_count := 0
 
 	for entry: Dictionary in entries:
 		var entry_rule_id := str(entry.get("rule_id", ""))
@@ -54,6 +57,14 @@ func summary() -> Dictionary:
 		trace_count += int(entry.get("trace_count", 0))
 		rumor_seed_count += int(entry.get("rumor_seed_count", 0))
 
+		match str(entry.get("contract_status", "")):
+			"resolved":
+				resolved_count += 1
+			"candidate_only":
+				candidate_only_count += 1
+			"invalid_contract":
+				invalid_contract_count += 1
+
 	return {
 		"entry_count": entries.size(),
 		"rule_ids": rule_ids,
@@ -63,6 +74,9 @@ func summary() -> Dictionary:
 		"memory_count": memory_count,
 		"trace_count": trace_count,
 		"rumor_seed_count": rumor_seed_count,
+		"resolved_count": resolved_count,
+		"candidate_only_count": candidate_only_count,
+		"invalid_contract_count": invalid_contract_count,
 	}
 
 
