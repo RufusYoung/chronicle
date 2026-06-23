@@ -44,6 +44,8 @@ func summary() -> Dictionary:
 	var obligation_update_count := 0
 	var exchange_update_count := 0
 	var deferred_consequence_update_count := 0
+	var tick_event_count := 0
+	var triggered_deferred_count := 0
 	var resolved_count := 0
 	var candidate_only_count := 0
 	var invalid_contract_count := 0
@@ -70,6 +72,9 @@ func summary() -> Dictionary:
 		obligation_update_count += int(entry.get("obligation_update_count", 0))
 		exchange_update_count += int(entry.get("exchange_update_count", 0))
 		deferred_consequence_update_count += int(entry.get("deferred_consequence_update_count", 0))
+		if str(entry.get("entry_type", "")) == "tick_event":
+			tick_event_count += 1
+			triggered_deferred_count += int(entry.get("deferred_consequence_update_count", 0))
 
 		match str(entry.get("contract_status", "")):
 			"resolved":
@@ -95,6 +100,8 @@ func summary() -> Dictionary:
 		"obligation_update_count": obligation_update_count,
 		"exchange_update_count": exchange_update_count,
 		"deferred_consequence_update_count": deferred_consequence_update_count,
+		"tick_event_count": tick_event_count,
+		"triggered_deferred_count": triggered_deferred_count,
 		"resolved_count": resolved_count,
 		"candidate_only_count": candidate_only_count,
 		"invalid_contract_count": invalid_contract_count,
