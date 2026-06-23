@@ -80,8 +80,8 @@
       "rule_id": "confirm_ration_record_with_cook",
       "domain": "military_discipline",
       "action_type": "military",
-      "transaction_mode": "candidate_only",
-      "effect_template_id": null,
+      "transaction_mode": "effect_template",
+      "effect_template_id": "confirm_ration_record_effect",
       "label_template": "[军纪] 找厨子玛塔确认分发记录",
       "priority": 130,
       "required_visible_entity_tags": [
@@ -103,8 +103,8 @@
       "rule_id": "trade_watch_duty_for_silence",
       "domain": "military_discipline",
       "action_type": "military",
-      "transaction_mode": "candidate_only",
-      "effect_template_id": null,
+      "transaction_mode": "effect_template",
+      "effect_template_id": "trade_watch_duty_for_silence_effect",
       "label_template": "[军纪] 让{target_display_name}今晚替你站岗作为交换",
       "priority": 140,
       "target": {
@@ -130,8 +130,8 @@
       "rule_id": "delay_military_issue_until_after_patrol",
       "domain": "military_discipline",
       "action_type": "military",
-      "transaction_mode": "candidate_only",
-      "effect_template_id": null,
+      "transaction_mode": "effect_template",
+      "effect_template_id": "delay_issue_until_after_patrol_effect",
       "label_template": "[军纪] 把事情压到巡逻结束后再处理",
       "priority": 150,
       "location_tags_all": [
