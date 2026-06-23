@@ -458,6 +458,201 @@
         "summary": "You learned that the market is under food pressure.",
         "tone": "concerned"
       }
+    },
+    {
+      "effect_template_id": "confirm_ration_record_effect",
+      "description": "Confirm a ration record with the cook and increase local discipline attention.",
+      "facts": [
+        {
+          "fact_id": "actor_confirmed_ration_record:{location_id}",
+          "fact_type": "actor_confirmed_ration_record",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [
+        {
+          "memory_id": "{actor_id}_remembers_confirmed_ration_record:{location_id}",
+          "owner_id": "{actor_id}",
+          "source_fact_type": "actor_confirmed_ration_record",
+          "memory_type": "remembers_confirmed_ration_record",
+          "emotional_tone": "attention",
+          "clarity": "high",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [
+        {
+          "trace_id": "ration_record_reviewed:{location_id}",
+          "trace_type": "institutional_record_review",
+          "location_id": "{location_id}",
+          "source_fact_type": "actor_confirmed_ration_record",
+          "display_name": "Reviewed ration record",
+          "visible": true,
+          "inspectable": true,
+          "freshness": "fresh"
+        }
+      ],
+      "rumors": [],
+      "pressure_changes": [
+        {
+          "pressure_id": "ration_record_attention:{location_id}",
+          "scope_id": "{location_id}",
+          "scope_type": "location",
+          "domain": "military_discipline",
+          "pressure_type": "ration_record_attention",
+          "value": 5,
+          "source_fact_type": "actor_confirmed_ration_record"
+        }
+      ],
+      "obligations": [],
+      "exchanges": [],
+      "deferred_consequences": [],
+      "narrative": {
+        "title": "Ration Record Confirmed",
+        "summary": "You confirmed the ration record and left a clear point of attention in the outpost.",
+        "tone": "focused"
+      }
+    },
+    {
+      "effect_template_id": "trade_watch_duty_for_silence_effect",
+      "description": "Trade silence over a discipline issue for a watch duty obligation.",
+      "facts": [
+        {
+          "fact_id": "actor_traded_watch_duty_for_silence:{target_id}",
+          "fact_type": "actor_traded_watch_duty_for_silence",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "debt",
+          "delta": 10,
+          "reason": "trade_watch_duty_for_silence_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "trust",
+          "delta": 5,
+          "reason": "trade_watch_duty_for_silence_effect"
+        }
+      ],
+      "memories": [
+        {
+          "memory_id": "{target_id}_remembers_silence_trade_with_{actor_id}",
+          "owner_id": "{target_id}",
+          "source_fact_type": "actor_traded_watch_duty_for_silence",
+          "memory_type": "remembers_silence_trade",
+          "emotional_tone": "obligated",
+          "clarity": "high",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [],
+      "obligations": [
+        {
+          "obligation_id": "{target_id}_watch_duty_for_{actor_id}",
+          "owner_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "obligation_type": "watch_duty",
+          "status": "open",
+          "source_fact_type": "actor_traded_watch_duty_for_silence",
+          "deadline_key": "tonight_watch"
+        }
+      ],
+      "exchanges": [
+        {
+          "exchange_id": "{actor_id}_{target_id}_silence_for_watch_duty",
+          "party_a": "{actor_id}",
+          "party_b": "{target_id}",
+          "give": "silence",
+          "receive": "watch_duty",
+          "status": "open",
+          "source_fact_type": "actor_traded_watch_duty_for_silence"
+        }
+      ],
+      "deferred_consequences": [],
+      "narrative": {
+        "title": "Watch Duty Traded For Silence",
+        "summary": "You kept the issue quiet for now, and the other person owes a night of watch duty.",
+        "tone": "low_voice"
+      }
+    },
+    {
+      "effect_template_id": "delay_issue_until_after_patrol_effect",
+      "description": "Defer a military discipline issue until after patrol and leave a pending consequence.",
+      "facts": [
+        {
+          "fact_id": "actor_deferred_issue_until_after_patrol:{location_id}",
+          "fact_type": "actor_deferred_issue_until_after_patrol",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [
+        {
+          "memory_id": "{actor_id}_remembers_deferred_issue:{location_id}",
+          "owner_id": "{actor_id}",
+          "source_fact_type": "actor_deferred_issue_until_after_patrol",
+          "memory_type": "remembers_deferred_issue",
+          "emotional_tone": "uneasy",
+          "clarity": "high",
+          "can_be_told_as_rumor": false
+        }
+      ],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [
+        {
+          "pressure_id": "unresolved_issue:{location_id}",
+          "scope_id": "{location_id}",
+          "scope_type": "location",
+          "domain": "military_discipline",
+          "pressure_type": "unresolved_issue",
+          "value": 10,
+          "source_fact_type": "actor_deferred_issue_until_after_patrol"
+        }
+      ],
+      "obligations": [],
+      "exchanges": [],
+      "deferred_consequences": [
+        {
+          "deferred_id": "discipline_issue_after_patrol:{location_id}",
+          "trigger_key": "after_patrol",
+          "status": "pending",
+          "source_fact_type": "actor_deferred_issue_until_after_patrol",
+          "expected_effect_hint": "discipline_issue_must_be_revisited"
+        }
+      ],
+      "narrative": {
+        "title": "Issue Deferred Until After Patrol",
+        "summary": "You pushed the discipline issue past the patrol, but it now waits as a pending consequence.",
+        "tone": "uneasy"
+      }
     }
   ]
 }
