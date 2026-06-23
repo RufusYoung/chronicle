@@ -72,6 +72,26 @@ func resolve_template(template_id: String, candidate: Variant, snapshot: Variant
 		if _valid_rumor(rumor):
 			result.add_rumor_seed(rumor)
 
+	for pressure_template: Dictionary in template.get("pressure_changes", []):
+		var pressure_change := _resolve_dictionary(pressure_template, bindings)
+		if _valid_pressure_change(pressure_change):
+			result.add_pressure_change(pressure_change)
+
+	for obligation_template: Dictionary in template.get("obligations", []):
+		var obligation := _resolve_dictionary(obligation_template, bindings)
+		if _valid_obligation(obligation):
+			result.add_obligation(obligation)
+
+	for exchange_template: Dictionary in template.get("exchanges", []):
+		var exchange := _resolve_dictionary(exchange_template, bindings)
+		if _valid_exchange(exchange):
+			result.add_exchange(exchange)
+
+	for deferred_template: Dictionary in template.get("deferred_consequences", []):
+		var consequence := _resolve_dictionary(deferred_template, bindings)
+		if _valid_deferred_consequence(consequence):
+			result.add_deferred_consequence(consequence)
+
 	var narrative := _resolve_dictionary(template.get("narrative", {}), bindings)
 	if not narrative.is_empty():
 		result.set_narrative_result(_build_narrative_result(narrative, result, template_id))
@@ -179,6 +199,10 @@ func _build_narrative_result(narrative: Dictionary, result: Variant, template_id
 		"memory_count": result.memories_added.size(),
 		"trace_count": result.traces_added.size(),
 		"rumor_seed_count": result.rumors_added.size(),
+		"pressure_change_count": result.pressure_changes.size(),
+		"obligation_count": result.obligations_added.size(),
+		"exchange_count": result.exchanges_added.size(),
+		"deferred_consequence_count": result.deferred_consequences_added.size(),
 	}
 
 
@@ -226,6 +250,22 @@ func _valid_trace(trace: Dictionary) -> bool:
 
 func _valid_rumor(rumor: Dictionary) -> bool:
 	return str(rumor.get("rumor_id", "")) != ""
+
+
+func _valid_pressure_change(change: Dictionary) -> bool:
+	return str(change.get("scope_id", "")) != "" and str(change.get("pressure_type", "")) != ""
+
+
+func _valid_obligation(obligation: Dictionary) -> bool:
+	return str(obligation.get("owner_id", "")) != "" and str(obligation.get("obligation_type", "")) != ""
+
+
+func _valid_exchange(exchange: Dictionary) -> bool:
+	return str(exchange.get("party_a", "")) != "" and str(exchange.get("party_b", "")) != ""
+
+
+func _valid_deferred_consequence(consequence: Dictionary) -> bool:
+	return str(consequence.get("trigger_key", "")) != ""
 
 
 func _player_id(snapshot: Variant) -> String:
