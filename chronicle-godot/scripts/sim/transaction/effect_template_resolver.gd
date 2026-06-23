@@ -34,65 +34,89 @@ func get_template(template_id: String) -> Dictionary:
 
 
 func resolve_template(template_id: String, candidate: Variant, snapshot: Variant) -> Variant:
+	var bindings := _build_bindings(candidate, snapshot)
+	return resolve_template_with_bindings(template_id, bindings, snapshot)
+
+
+func resolve_template_with_bindings(
+	template_id: String,
+	bindings: Dictionary,
+	snapshot: Variant = null
+) -> Variant:
 	var result = TransactionResultModel.new()
 	var template := get_template(template_id)
 	if template.is_empty():
 		return result
 
-	var bindings := _build_bindings(candidate, snapshot)
+	var resolved_bindings := _normalize_bindings(bindings, snapshot)
 
 	for fact_template: Dictionary in template.get("facts", []):
-		var fact := _resolve_dictionary(fact_template, bindings)
+		var fact := _resolve_dictionary(fact_template, resolved_bindings)
 		if _valid_fact(fact):
-			result.add_fact(_normalize_fact(fact, bindings))
+			result.add_fact(_normalize_fact(fact, resolved_bindings))
 
 	for state_template: Dictionary in template.get("state_changes", []):
-		var state_change := _resolve_dictionary(state_template, bindings)
+		var state_change := _resolve_dictionary(state_template, resolved_bindings)
 		state_change = _normalize_state_change(state_change)
 		if _valid_state_change(state_change):
 			result.add_state_change(state_change)
 
 	for relationship_template: Dictionary in template.get("relationship_changes", []):
-		var relationship_change := _resolve_dictionary(relationship_template, bindings)
+		var relationship_change := _resolve_dictionary(relationship_template, resolved_bindings)
 		if _valid_relationship_change(relationship_change):
 			result.add_relationship_change(relationship_change)
 
 	for memory_template: Dictionary in template.get("memories", []):
-		var memory := _resolve_dictionary(memory_template, bindings)
+		var memory := _resolve_dictionary(memory_template, resolved_bindings)
 		if _valid_memory(memory):
 			result.add_memory(memory)
 
 	for trace_template: Dictionary in template.get("traces", []):
-		var trace := _resolve_dictionary(trace_template, bindings)
+		var trace := _resolve_dictionary(trace_template, resolved_bindings)
 		if _valid_trace(trace):
 			result.add_trace(trace)
 
 	for rumor_template: Dictionary in template.get("rumors", []):
-		var rumor := _resolve_dictionary(rumor_template, bindings)
+		var rumor := _resolve_dictionary(rumor_template, resolved_bindings)
 		if _valid_rumor(rumor):
 			result.add_rumor_seed(rumor)
 
 	for pressure_template: Dictionary in template.get("pressure_changes", []):
-		var pressure_change := _resolve_dictionary(pressure_template, bindings)
+		var pressure_change := _resolve_dictionary(pressure_template, resolved_bindings)
 		if _valid_pressure_change(pressure_change):
 			result.add_pressure_change(pressure_change)
 
 	for obligation_template: Dictionary in template.get("obligations", []):
-		var obligation := _resolve_dictionary(obligation_template, bindings)
+		var obligation := _resolve_dictionary(obligation_template, resolved_bindings)
 		if _valid_obligation(obligation):
 			result.add_obligation(obligation)
 
 	for exchange_template: Dictionary in template.get("exchanges", []):
-		var exchange := _resolve_dictionary(exchange_template, bindings)
+		var exchange := _resolve_dictionary(exchange_template, resolved_bindings)
 		if _valid_exchange(exchange):
 			result.add_exchange(exchange)
 
 	for deferred_template: Dictionary in template.get("deferred_consequences", []):
-		var consequence := _resolve_dictionary(deferred_template, bindings)
+		var consequence := _resolve_dictionary(deferred_template, resolved_bindings)
 		if _valid_deferred_consequence(consequence):
 			result.add_deferred_consequence(consequence)
 
-	var narrative := _resolve_dictionary(template.get("narrative", {}), bindings)
+	for obligation_update_template: Dictionary in template.get("obligation_updates", []):
+		var obligation_update := _resolve_dictionary(obligation_update_template, resolved_bindings)
+		if _valid_obligation_update(obligation_update):
+			result.add_obligation_update(obligation_update)
+
+	for exchange_update_template: Dictionary in template.get("exchange_updates", []):
+		var exchange_update := _resolve_dictionary(exchange_update_template, resolved_bindings)
+		if _valid_exchange_update(exchange_update):
+			result.add_exchange_update(exchange_update)
+
+	for deferred_update_template: Dictionary in template.get("deferred_consequence_updates", []):
+		var deferred_update := _resolve_dictionary(deferred_update_template, resolved_bindings)
+		if _valid_deferred_consequence_update(deferred_update):
+			result.add_deferred_consequence_update(deferred_update)
+
+	var narrative := _resolve_dictionary(template.get("narrative", {}), resolved_bindings)
 	if not narrative.is_empty():
 		result.set_narrative_result(_build_narrative_result(narrative, result, template_id))
 
@@ -127,7 +151,34 @@ func _build_bindings(candidate: Variant, snapshot: Variant) -> Dictionary:
 		"location_id": _location_id(snapshot),
 		"superior_id": superior_id,
 		"superior_display_name": superior_display_name,
+		"obligation_id": _candidate_extra_value(candidate, "obligation_id"),
+		"exchange_id": _candidate_extra_value(candidate, "exchange_id"),
+		"deferred_id": _candidate_extra_value(candidate, "deferred_id"),
+		"trigger_key": _candidate_extra_value(candidate, "trigger_key"),
 	}
+
+
+func _normalize_bindings(bindings: Dictionary, snapshot: Variant = null) -> Dictionary:
+	var normalized := bindings.duplicate(true)
+	if str(normalized.get("actor_id", "")) == "":
+		normalized["actor_id"] = _player_id(snapshot)
+	if str(normalized.get("target_id", "")) == "":
+		normalized["target_id"] = ""
+	if str(normalized.get("location_id", "")) == "":
+		normalized["location_id"] = _location_id(snapshot)
+	if str(normalized.get("rule_id", "")) == "":
+		normalized["rule_id"] = ""
+	if str(normalized.get("obligation_id", "")) == "":
+		normalized["obligation_id"] = ""
+	if str(normalized.get("exchange_id", "")) == "":
+		normalized["exchange_id"] = ""
+	if str(normalized.get("deferred_id", "")) == "":
+		normalized["deferred_id"] = ""
+	if str(normalized.get("trigger_key", "")) == "":
+		normalized["trigger_key"] = ""
+	if str(normalized.get("fixture_id", "")) == "":
+		normalized["fixture_id"] = _fixture_id(snapshot)
+	return normalized
 
 
 func _resolve_dictionary(source: Dictionary, bindings: Dictionary) -> Dictionary:
@@ -203,6 +254,9 @@ func _build_narrative_result(narrative: Dictionary, result: Variant, template_id
 		"obligation_count": result.obligations_added.size(),
 		"exchange_count": result.exchanges_added.size(),
 		"deferred_consequence_count": result.deferred_consequences_added.size(),
+		"obligation_update_count": result.obligation_updates.size(),
+		"exchange_update_count": result.exchange_updates.size(),
+		"deferred_consequence_update_count": result.deferred_consequence_updates.size(),
 	}
 
 
@@ -266,6 +320,18 @@ func _valid_exchange(exchange: Dictionary) -> bool:
 
 func _valid_deferred_consequence(consequence: Dictionary) -> bool:
 	return str(consequence.get("trigger_key", "")) != ""
+
+
+func _valid_obligation_update(update: Dictionary) -> bool:
+	return str(update.get("obligation_id", "")) != "" and str(update.get("status", "")) != ""
+
+
+func _valid_exchange_update(update: Dictionary) -> bool:
+	return str(update.get("exchange_id", "")) != "" and str(update.get("status", "")) != ""
+
+
+func _valid_deferred_consequence_update(update: Dictionary) -> bool:
+	return str(update.get("deferred_id", "")) != "" and str(update.get("status", "")) != ""
 
 
 func _player_id(snapshot: Variant) -> String:
