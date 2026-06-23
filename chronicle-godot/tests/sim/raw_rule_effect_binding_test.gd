@@ -52,6 +52,7 @@ func _run() -> void:
 		"action_id": "prefer_candidate_effect_template_probe:recruit_elai",
 		"rule_id": "give_food_to_hungry_person",
 		"action_type": "dialogue",
+		"transaction_mode": "effect_template",
 		"effect_template_id": "inquiry_concealed_item_effect",
 		"target_id": "recruit_elai",
 		"target_display_name": "recruit_elai",
@@ -60,7 +61,7 @@ func _run() -> void:
 	_check(
 		_result_has_fact(prefer_result, "actor_asked_about_concealed_item")
 		and not _result_has_fact(prefer_result, "actor_gave_food_to_target"),
-		"5. TransactionResolver prefers candidate.effect_template_id over legacy rule mapping"
+		"5. TransactionResolver resolves candidate.effect_template_id instead of guessing from rule_id"
 	)
 
 	var alias_candidate = _find_candidate(candidates, "test_inquiry_concealed_item_alias", "recruit_elai")
@@ -84,14 +85,17 @@ func _run() -> void:
 		"action_id": "raw_rule_no_effect_probe:recruit_elai",
 		"rule_id": "raw_rule_no_effect_probe",
 		"action_type": "test",
+		"transaction_mode": "candidate_only",
 		"effect_template_id": "",
 		"target_id": "recruit_elai",
 		"target_display_name": "recruit_elai",
 	})
 	var no_effect_result = resolver.resolve_action(no_effect_candidate, outpost_context)
 	_check(
-		no_effect_result != null and no_effect_result.is_empty(),
-		"9. empty candidate.effect_template_id returns an empty transaction result safely"
+		no_effect_result != null
+		and no_effect_result.is_empty()
+		and str(no_effect_result.contract_status) == "candidate_only",
+		"9. candidate_only returns an empty transaction result safely"
 	)
 
 	_finish()
