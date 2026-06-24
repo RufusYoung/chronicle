@@ -75,6 +75,12 @@ func summary() -> Dictionary:
 	var obligation_due_count := 0
 	var exchange_due_count := 0
 	var due_result_count := 0
+	var due_resolution_count := 0
+	var obligation_fulfilled_count := 0
+	var obligation_breached_count := 0
+	var exchange_settled_count := 0
+	var exchange_failed_count := 0
+	var keep_due_count := 0
 	var resolved_count := 0
 	var candidate_only_count := 0
 	var invalid_contract_count := 0
@@ -115,6 +121,20 @@ func summary() -> Dictionary:
 			obligation_due_count += int(entry.get("obligation_due_count", 0))
 			exchange_due_count += int(entry.get("exchange_due_count", 0))
 			due_result_count += int(entry.get("due_result_count", 0))
+		if str(entry.get("entry_type", "")) == "due_resolution":
+			due_resolution_count += 1
+			var resolution := str(entry.get("resolution", entry.get("resolution_status", "")))
+			var target_kind := str(entry.get("target_kind", ""))
+			if resolution == "keep_due":
+				keep_due_count += 1
+			elif target_kind == "obligation" and resolution == "fulfilled":
+				obligation_fulfilled_count += 1
+			elif target_kind == "obligation" and resolution == "breached":
+				obligation_breached_count += 1
+			elif target_kind == "exchange" and resolution == "settled":
+				exchange_settled_count += 1
+			elif target_kind == "exchange" and resolution == "failed":
+				exchange_failed_count += 1
 
 		match str(entry.get("contract_status", "")):
 			"resolved":
@@ -148,6 +168,12 @@ func summary() -> Dictionary:
 		"obligation_due_count": obligation_due_count,
 		"exchange_due_count": exchange_due_count,
 		"due_result_count": due_result_count,
+		"due_resolution_count": due_resolution_count,
+		"obligation_fulfilled_count": obligation_fulfilled_count,
+		"obligation_breached_count": obligation_breached_count,
+		"exchange_settled_count": exchange_settled_count,
+		"exchange_failed_count": exchange_failed_count,
+		"keep_due_count": keep_due_count,
 		"resolved_count": resolved_count,
 		"candidate_only_count": candidate_only_count,
 		"invalid_contract_count": invalid_contract_count,
