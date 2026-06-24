@@ -644,6 +644,8 @@
           "deferred_id": "discipline_issue_after_patrol:{location_id}",
           "trigger_key": "after_patrol",
           "status": "pending",
+          "scope_id": "{location_id}",
+          "scope_type": "location",
           "source_fact_type": "actor_deferred_issue_until_after_patrol",
           "expected_effect_hint": "discipline_issue_must_be_revisited"
         }

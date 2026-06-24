@@ -28,6 +28,23 @@ func find_by_trigger_key(trigger_key: String) -> Array:
 	return rows
 
 
+func find_pending_by_trigger_and_scope(
+	trigger_key: String,
+	scope_type: String,
+	scope_id: String
+) -> Array:
+	var rows: Array = []
+	for consequence: Dictionary in deferred_consequences:
+		if str(consequence.get("status", "pending")) != "pending":
+			continue
+		if str(consequence.get("trigger_key", "")) != trigger_key:
+			continue
+		if not _scope_matches(consequence, scope_type, scope_id):
+			continue
+		rows.append(consequence.duplicate(true))
+	return rows
+
+
 func find_deferred_consequence(deferred_id: String) -> Dictionary:
 	for consequence: Dictionary in deferred_consequences:
 		if str(consequence.get("deferred_id", "")) == deferred_id:
@@ -68,3 +85,12 @@ func mark_resolved(deferred_id: String, reason: String = "") -> bool:
 		"status": "resolved",
 		"reason": reason,
 	})
+
+
+func _scope_matches(consequence: Dictionary, scope_type: String, scope_id: String) -> bool:
+	if scope_type == "global":
+		return true
+	return (
+		str(consequence.get("scope_type", "")) == scope_type
+		and str(consequence.get("scope_id", "")) == scope_id
+	)
