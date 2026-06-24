@@ -575,7 +575,12 @@
           "obligation_type": "watch_duty",
           "status": "open",
           "source_fact_type": "actor_traded_watch_duty_for_silence",
-          "deadline_key": "tonight_watch"
+          "deadline_key": "tonight_watch",
+          "location_id": "{location_id}",
+          "scope_type": "location",
+          "scope_id": "{location_id}",
+          "due_status": "not_due",
+          "due_count": 0
         }
       ],
       "exchanges": [
@@ -586,7 +591,13 @@
           "give": "silence",
           "receive": "watch_duty",
           "status": "open",
-          "source_fact_type": "actor_traded_watch_duty_for_silence"
+          "source_fact_type": "actor_traded_watch_duty_for_silence",
+          "deadline_key": "tonight_watch",
+          "location_id": "{location_id}",
+          "scope_type": "location",
+          "scope_id": "{location_id}",
+          "due_status": "not_due",
+          "due_count": 0
         }
       ],
       "deferred_consequences": [],
