@@ -36,6 +36,25 @@ func find_open_obligations() -> Array:
 	return rows
 
 
+func find_open_due_by_deadline_and_scope(
+	deadline_key: String,
+	scope_type: String,
+	scope_id: String
+) -> Array:
+	var rows: Array = []
+	for obligation: Dictionary in obligations:
+		if str(obligation.get("status", "open")) != "open":
+			continue
+		if str(obligation.get("deadline_key", "")) != deadline_key:
+			continue
+		if not _scope_matches(obligation, scope_type, scope_id):
+			continue
+		if _already_due_for_trigger(obligation, deadline_key):
+			continue
+		rows.append(obligation.duplicate(true))
+	return rows
+
+
 func find_obligation(obligation_id: String) -> Dictionary:
 	for obligation: Dictionary in obligations:
 		if str(obligation.get("obligation_id", "")) == obligation_id:
@@ -54,8 +73,7 @@ func apply_obligation_update(update: Dictionary) -> bool:
 			continue
 
 		var updated := obligation.duplicate(true)
-		for key: String in update.keys():
-			updated[key] = update[key]
+		_apply_update_fields(updated, update)
 		obligations[index] = updated
 		return true
 
@@ -76,3 +94,40 @@ func mark_breached(obligation_id: String, reason: String = "") -> bool:
 		"status": "breached",
 		"reason": reason,
 	})
+
+
+func mark_due(obligation_id: String, tick_event: Dictionary) -> bool:
+	return apply_obligation_update({
+		"obligation_id": obligation_id,
+		"due_status": "due",
+		"last_due_tick_event_id": str(tick_event.get("tick_event_id", "")),
+		"last_due_trigger_key": str(tick_event.get("trigger_key", "")),
+		"due_count_delta": 1,
+		"reason": "mark_due",
+	})
+
+
+func _apply_update_fields(target: Dictionary, update: Dictionary) -> void:
+	var due_count_delta := int(update.get("due_count_delta", 0))
+	for key: String in update.keys():
+		if key == "due_count_delta":
+			continue
+		target[key] = update[key]
+	if due_count_delta != 0:
+		target["due_count"] = int(target.get("due_count", 0)) + due_count_delta
+
+
+func _already_due_for_trigger(obligation: Dictionary, trigger_key: String) -> bool:
+	return (
+		str(obligation.get("due_status", "not_due")) == "due"
+		and str(obligation.get("last_due_trigger_key", "")) == trigger_key
+	)
+
+
+func _scope_matches(obligation: Dictionary, scope_type: String, scope_id: String) -> bool:
+	if scope_type == "global":
+		return true
+	return (
+		str(obligation.get("scope_type", "")) == scope_type
+		and str(obligation.get("scope_id", "")) == scope_id
+	)
