@@ -323,11 +323,17 @@ func _valid_deferred_consequence(consequence: Dictionary) -> bool:
 
 
 func _valid_obligation_update(update: Dictionary) -> bool:
-	return str(update.get("obligation_id", "")) != "" and str(update.get("status", "")) != ""
+	return (
+		str(update.get("obligation_id", "")) != ""
+		and (str(update.get("status", "")) != "" or str(update.get("due_status", "")) != "")
+	)
 
 
 func _valid_exchange_update(update: Dictionary) -> bool:
-	return str(update.get("exchange_id", "")) != "" and str(update.get("status", "")) != ""
+	return (
+		str(update.get("exchange_id", "")) != ""
+		and (str(update.get("status", "")) != "" or str(update.get("due_status", "")) != "")
+	)
 
 
 func _valid_deferred_consequence_update(update: Dictionary) -> bool:
