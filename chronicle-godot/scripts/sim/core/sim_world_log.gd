@@ -29,6 +29,29 @@ func find_entries_by_rule_id(rule_id: String) -> Array:
 	return rows
 
 
+func find_entries_by_tick_event_id(tick_event_id: String) -> Array:
+	var rows: Array = []
+	for entry: Dictionary in entries:
+		if str(entry.get("entry_type", "")) != "tick_event":
+			continue
+		if str(entry.get("tick_event_id", "")) == tick_event_id:
+			rows.append(entry.duplicate(true))
+	return rows
+
+
+func find_tick_entries_by_scope(scope_type: String, scope_id: String) -> Array:
+	var rows: Array = []
+	for entry: Dictionary in entries:
+		if str(entry.get("entry_type", "")) != "tick_event":
+			continue
+		if str(entry.get("scope_type", "")) != scope_type:
+			continue
+		if scope_type != "global" and str(entry.get("scope_id", "")) != scope_id:
+			continue
+		rows.append(entry.duplicate(true))
+	return rows
+
+
 func summary() -> Dictionary:
 	var fact_types: Array = []
 	var rule_ids: Array = []
@@ -45,7 +68,10 @@ func summary() -> Dictionary:
 	var exchange_update_count := 0
 	var deferred_consequence_update_count := 0
 	var tick_event_count := 0
+	var scoped_tick_event_count := 0
+	var failed_tick_event_count := 0
 	var triggered_deferred_count := 0
+	var skipped_deferred_count := 0
 	var resolved_count := 0
 	var candidate_only_count := 0
 	var invalid_contract_count := 0
@@ -74,7 +100,15 @@ func summary() -> Dictionary:
 		deferred_consequence_update_count += int(entry.get("deferred_consequence_update_count", 0))
 		if str(entry.get("entry_type", "")) == "tick_event":
 			tick_event_count += 1
-			triggered_deferred_count += int(entry.get("deferred_consequence_update_count", 0))
+			if str(entry.get("scope_type", "")) != "":
+				scoped_tick_event_count += 1
+			if str(entry.get("error_reason", "")) != "":
+				failed_tick_event_count += 1
+			if entry.has("triggered_count"):
+				triggered_deferred_count += int(entry.get("triggered_count", 0))
+			else:
+				triggered_deferred_count += int(entry.get("deferred_consequence_update_count", 0))
+			skipped_deferred_count += int(entry.get("skipped_count", 0))
 
 		match str(entry.get("contract_status", "")):
 			"resolved":
@@ -101,7 +135,10 @@ func summary() -> Dictionary:
 		"exchange_update_count": exchange_update_count,
 		"deferred_consequence_update_count": deferred_consequence_update_count,
 		"tick_event_count": tick_event_count,
+		"scoped_tick_event_count": scoped_tick_event_count,
+		"failed_tick_event_count": failed_tick_event_count,
 		"triggered_deferred_count": triggered_deferred_count,
+		"skipped_deferred_count": skipped_deferred_count,
 		"resolved_count": resolved_count,
 		"candidate_only_count": candidate_only_count,
 		"invalid_contract_count": invalid_contract_count,
