@@ -158,9 +158,12 @@ func _run_delay_action(context: Variant, stores: Dictionary) -> void:
 func _tick_event(trigger_key: String) -> Dictionary:
 	return {
 		"tick_event_id": "%s_event" % trigger_key,
+		"tick_type": "test_event",
 		"trigger_key": trigger_key,
-		"scope_id": "seventh_outpost",
+		"scope_type": "location",
+		"scope_id": "outpost_kitchen",
 		"day": 1,
+		"source": "test",
 		"label": "tick event",
 	}
 
