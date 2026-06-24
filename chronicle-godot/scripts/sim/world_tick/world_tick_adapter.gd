@@ -4,6 +4,7 @@ class_name V5WorldTickAdapter
 const SimSnapshotBuilderModel = preload("res://scripts/sim/core/sim_snapshot_builder.gd")
 const SimWorldLogModel = preload("res://scripts/sim/core/sim_world_log.gd")
 const ConsequenceTriggerSystemModel = preload("res://scripts/sim/consequence/consequence_trigger_system.gd")
+const DueTriggerSystemModel = preload("res://scripts/sim/consequence/due_trigger_system.gd")
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -37,6 +38,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var scope_id := str(event.get("scope_id", ""))
 	var source := str(event.get("source", ""))
 	var max_triggers := int(event.get("max_triggers", 0))
+	var include_due_checks := bool(event.get("include_due_checks", false))
+	var due_kinds: Array = event.get("due_kinds", [])
 	var deferred_store: Variant = stores.get("deferred_consequence_store")
 	var all_for_trigger: Array = _find_by_trigger_key(deferred_store, trigger_key)
 	var matched_consequences: Array = _find_pending_by_trigger_and_scope(
@@ -60,6 +63,9 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var world_log = SimWorldLogModel.new()
 	var snapshot = snapshot_builder.build_snapshot(context, stores)
 	var transaction_results: Array = []
+	var due_results: Array = []
+	var obligation_due_count := 0
+	var exchange_due_count := 0
 
 	for consequence: Dictionary in selected_consequences:
 		var deferred_id := str(consequence.get("deferred_id", ""))
@@ -69,21 +75,41 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		writer.apply_result(result, stores)
 		transaction_results.append(result)
 
+	if include_due_checks:
+		var due_snapshot = snapshot_builder.build_snapshot(context, stores)
+		var due_trigger_system = DueTriggerSystemModel.new()
+		var due_result_data: Dictionary = due_trigger_system.trigger_due_for_tick(due_snapshot, event)
+		var obligation_results: Array = due_result_data.get("obligation_results", [])
+		var exchange_results: Array = due_result_data.get("exchange_results", [])
+		obligation_due_count = int(due_result_data.get("obligation_due_count", obligation_results.size()))
+		exchange_due_count = int(due_result_data.get("exchange_due_count", exchange_results.size()))
+		due_results.append_array(obligation_results)
+		due_results.append_array(exchange_results)
+		for due_result: Variant in due_results:
+			writer.apply_result(due_result, stores)
+
 	var skipped_count := (
 		skipped_due_to_scope_count
 		+ skipped_due_to_status_count
 		+ skipped_due_to_limit_count
 	)
+	var tick_log_results := transaction_results.duplicate()
+	tick_log_results.append_array(due_results)
 	world_log.append_entry(_build_tick_log_entry(
 		event,
-		transaction_results,
+		tick_log_results,
 		matched_consequences.size(),
 		transaction_results.size(),
 		skipped_count,
 		skipped_due_to_scope_count,
 		skipped_due_to_status_count,
 		skipped_due_to_limit_count,
-		""
+		"",
+		[],
+		[],
+		obligation_due_count,
+		exchange_due_count,
+		due_results
 	))
 
 	return {
@@ -95,14 +121,20 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"scope_id": scope_id,
 		"source": source,
 		"max_triggers": max_triggers,
+		"include_due_checks": include_due_checks,
+		"due_kinds": due_kinds.duplicate(true),
 		"matched_count": matched_consequences.size(),
 		"triggered_count": transaction_results.size(),
 		"skipped_count": skipped_count,
 		"skipped_due_to_scope_count": skipped_due_to_scope_count,
 		"skipped_due_to_status_count": skipped_due_to_status_count,
 		"skipped_due_to_limit_count": skipped_due_to_limit_count,
+		"obligation_due_count": obligation_due_count,
+		"exchange_due_count": exchange_due_count,
+		"due_result_count": due_results.size(),
 		"error_reason": "",
 		"results": _result_rows(transaction_results),
+		"due_results": _result_rows(due_results),
 		"world_log_entries": world_log.list_entries(),
 		"world_log_summary": world_log.summary(),
 		"store_summary": _store_summary(stores),
@@ -139,16 +171,22 @@ func _failure_result(
 		"scope_id": str(tick_event.get("scope_id", "")),
 		"source": str(tick_event.get("source", "")),
 		"max_triggers": int(tick_event.get("max_triggers", 0)),
+		"include_due_checks": bool(tick_event.get("include_due_checks", false)),
+		"due_kinds": (tick_event.get("due_kinds", []) as Array).duplicate(true) if tick_event.get("due_kinds", []) is Array else [],
 		"matched_count": 0,
 		"triggered_count": 0,
 		"skipped_count": 0,
 		"skipped_due_to_scope_count": 0,
 		"skipped_due_to_status_count": 0,
 		"skipped_due_to_limit_count": 0,
+		"obligation_due_count": 0,
+		"exchange_due_count": 0,
+		"due_result_count": 0,
 		"error_reason": error_reason,
 		"validation_errors": validation_errors.duplicate(true),
 		"validation_warnings": validation_warnings.duplicate(true),
 		"results": [],
+		"due_results": [],
 		"world_log_entries": world_log.list_entries(),
 		"world_log_summary": world_log.summary(),
 		"store_summary": _store_summary(stores),
@@ -166,7 +204,10 @@ func _build_tick_log_entry(
 	skipped_due_to_limit_count: int,
 	error_reason: String,
 	validation_errors: Array = [],
-	validation_warnings: Array = []
+	validation_warnings: Array = [],
+	obligation_due_count: int = 0,
+	exchange_due_count: int = 0,
+	due_results: Array = []
 ) -> Dictionary:
 	var aggregate := _aggregate_results(results)
 	var pressure_changes: Array = aggregate.get("pressure_changes", [])
@@ -188,6 +229,8 @@ func _build_tick_log_entry(
 		"day": int(tick_event.get("day", 0)),
 		"time_key": str(tick_event.get("time_key", "")),
 		"source": _entry_source(tick_event),
+		"include_due_checks": bool(tick_event.get("include_due_checks", false)),
+		"due_kinds": (tick_event.get("due_kinds", []) as Array).duplicate(true) if tick_event.get("due_kinds", []) is Array else [],
 		"rule_id": "world_tick_adapter",
 		"action_id": str(tick_event.get("tick_event_id", "")),
 		"transaction_mode": "world_tick_adapter",
@@ -202,6 +245,10 @@ func _build_tick_log_entry(
 		"skipped_due_to_scope_count": skipped_due_to_scope_count,
 		"skipped_due_to_status_count": skipped_due_to_status_count,
 		"skipped_due_to_limit_count": skipped_due_to_limit_count,
+		"obligation_due_count": obligation_due_count,
+		"exchange_due_count": exchange_due_count,
+		"due_result_count": due_results.size(),
+		"due_results": _result_rows(due_results),
 		"facts_added": _fact_types(aggregate.get("facts", [])),
 		"fact_ids": _fact_ids(aggregate.get("facts", [])),
 		"pressure_changes": pressure_changes.duplicate(true),

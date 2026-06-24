@@ -3,6 +3,7 @@ class_name V5TickEventSchema
 
 const ALLOWED_TICK_TYPES := ["time_event", "manual_event", "test_event"]
 const ALLOWED_SCOPE_TYPES := ["location", "institution", "region", "global"]
+const ALLOWED_DUE_KINDS := ["obligation", "exchange"]
 
 
 func normalize(event: Dictionary) -> Dictionary:
@@ -15,6 +16,8 @@ func normalize(event: Dictionary) -> Dictionary:
 		"source": _string_value(event, "source"),
 		"label": _string_value(event, "label"),
 		"max_triggers": _int_value(event, "max_triggers", 0),
+		"include_due_checks": _bool_value(event, "include_due_checks", false),
+		"due_kinds": _due_kinds_value(event),
 	}
 
 	if event.has("day"):
@@ -35,6 +38,7 @@ func validate(event: Dictionary) -> Dictionary:
 	var scope_type := str(normalized.get("scope_type", ""))
 	var scope_id := str(normalized.get("scope_id", ""))
 	var max_triggers := int(normalized.get("max_triggers", 0))
+	var due_kinds: Array = normalized.get("due_kinds", [])
 
 	if tick_event_id == "":
 		errors.append("missing_tick_event_id")
@@ -52,6 +56,14 @@ func validate(event: Dictionary) -> Dictionary:
 		errors.append("missing_scope_id")
 	if max_triggers < 0:
 		errors.append("invalid_max_triggers")
+	if event.has("include_due_checks") and not (event.get("include_due_checks") is bool):
+		errors.append("invalid_include_due_checks")
+	if event.has("due_kinds") and not (event.get("due_kinds") is Array):
+		errors.append("invalid_due_kinds")
+	for due_kind: Variant in due_kinds:
+		var due_kind_text := str(due_kind)
+		if not (due_kind_text in ALLOWED_DUE_KINDS):
+			errors.append("invalid_due_kind:%s" % due_kind_text)
 
 	return {
 		"ok": errors.is_empty(),
@@ -73,3 +85,17 @@ func _int_value(event: Dictionary, key: String, default_value: int) -> int:
 	if value == null or str(value) == "":
 		return default_value
 	return int(value)
+
+
+func _bool_value(event: Dictionary, key: String, default_value: bool) -> bool:
+	if not event.has(key):
+		return default_value
+	var value: Variant = event.get(key)
+	return value if value is bool else default_value
+
+
+func _due_kinds_value(event: Dictionary) -> Array:
+	if not event.has("due_kinds"):
+		return ["obligation", "exchange"]
+	var value: Variant = event.get("due_kinds")
+	return (value as Array).duplicate(true) if value is Array else []
