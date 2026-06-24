@@ -178,6 +178,24 @@ func _normalize_bindings(bindings: Dictionary, snapshot: Variant = null) -> Dict
 		normalized["trigger_key"] = ""
 	if str(normalized.get("fixture_id", "")) == "":
 		normalized["fixture_id"] = _fixture_id(snapshot)
+	if str(normalized.get("target_kind", "")) == "":
+		normalized["target_kind"] = ""
+	if str(normalized.get("resolution", "")) == "":
+		normalized["resolution"] = ""
+	if str(normalized.get("resolution_id", "")) == "":
+		normalized["resolution_id"] = ""
+	if str(normalized.get("resolution_reason", "")) == "":
+		normalized["resolution_reason"] = ""
+	if str(normalized.get("resolved_by", "")) == "":
+		normalized["resolved_by"] = ""
+	if str(normalized.get("resolved_tick_event_id", "")) == "":
+		normalized["resolved_tick_event_id"] = ""
+	if str(normalized.get("tick_event_id", "")) == "":
+		normalized["tick_event_id"] = ""
+	if str(normalized.get("scope_type", "")) == "":
+		normalized["scope_type"] = ""
+	if str(normalized.get("scope_id", "")) == "":
+		normalized["scope_id"] = ""
 	return normalized
 
 
@@ -325,14 +343,22 @@ func _valid_deferred_consequence(consequence: Dictionary) -> bool:
 func _valid_obligation_update(update: Dictionary) -> bool:
 	return (
 		str(update.get("obligation_id", "")) != ""
-		and (str(update.get("status", "")) != "" or str(update.get("due_status", "")) != "")
+		and (
+			str(update.get("status", "")) != ""
+			or str(update.get("due_status", "")) != ""
+			or str(update.get("resolution_status", "")) != ""
+		)
 	)
 
 
 func _valid_exchange_update(update: Dictionary) -> bool:
 	return (
 		str(update.get("exchange_id", "")) != ""
-		and (str(update.get("status", "")) != "" or str(update.get("due_status", "")) != "")
+		and (
+			str(update.get("status", "")) != ""
+			or str(update.get("due_status", "")) != ""
+			or str(update.get("resolution_status", "")) != ""
+		)
 	)
 
 

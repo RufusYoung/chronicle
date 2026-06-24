@@ -778,7 +778,10 @@
           "target_id": "{target_id}",
           "obligation_id": "{obligation_id}",
           "location_id": "{location_id}",
-          "source_rule_id": "{rule_id}"
+          "source_rule_id": "{rule_id}",
+          "resolution_id": "{resolution_id}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}"
         }
       ],
       "state_changes": [],
@@ -802,6 +805,12 @@
         {
           "obligation_id": "{obligation_id}",
           "status": "fulfilled",
+          "due_status": "resolved",
+          "resolution_status": "fulfilled",
+          "resolution_reason": "{resolution_reason}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}",
+          "resolution_count_delta": 1,
           "reason": "obligation_fulfilled_effect"
         }
       ],
@@ -824,7 +833,10 @@
           "target_id": "{target_id}",
           "obligation_id": "{obligation_id}",
           "location_id": "{location_id}",
-          "source_rule_id": "{rule_id}"
+          "source_rule_id": "{rule_id}",
+          "resolution_id": "{resolution_id}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}"
         }
       ],
       "state_changes": [],
@@ -852,6 +864,12 @@
         {
           "obligation_id": "{obligation_id}",
           "status": "breached",
+          "due_status": "resolved",
+          "resolution_status": "breached",
+          "resolution_reason": "{resolution_reason}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}",
+          "resolution_count_delta": 1,
           "reason": "obligation_breached_effect"
         }
       ],
@@ -874,7 +892,10 @@
           "target_id": "{target_id}",
           "exchange_id": "{exchange_id}",
           "location_id": "{location_id}",
-          "source_rule_id": "{rule_id}"
+          "source_rule_id": "{rule_id}",
+          "resolution_id": "{resolution_id}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}"
         }
       ],
       "state_changes": [],
@@ -888,6 +909,12 @@
         {
           "exchange_id": "{exchange_id}",
           "status": "settled",
+          "due_status": "resolved",
+          "resolution_status": "settled",
+          "resolution_reason": "{resolution_reason}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}",
+          "resolution_count_delta": 1,
           "reason": "exchange_settled_effect"
         }
       ],
@@ -896,6 +923,118 @@
         "title": "Exchange Settled",
         "summary": "An exchange has been settled.",
         "tone": "practical"
+      }
+    },
+    {
+      "effect_template_id": "exchange_failed_effect",
+      "description": "A generic resolution effect for a failed exchange.",
+      "facts": [
+        {
+          "fact_id": "exchange_failed:{exchange_id}",
+          "fact_type": "exchange_failed",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "exchange_id": "{exchange_id}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}",
+          "resolution_id": "{resolution_id}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "trust",
+          "delta": -5,
+          "reason": "exchange_failed_effect"
+        },
+        {
+          "source_id": "{target_id}",
+          "target_id": "{actor_id}",
+          "axis": "resentment",
+          "delta": 5,
+          "reason": "exchange_failed_effect"
+        }
+      ],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [],
+      "obligation_updates": [],
+      "exchange_updates": [
+        {
+          "exchange_id": "{exchange_id}",
+          "status": "failed",
+          "due_status": "resolved",
+          "resolution_status": "failed",
+          "resolution_reason": "{resolution_reason}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}",
+          "resolution_count_delta": 1,
+          "reason": "exchange_failed_effect"
+        }
+      ],
+      "deferred_consequence_updates": [],
+      "narrative": {
+        "title": "Exchange Failed",
+        "summary": "An exchange has failed.",
+        "tone": "strained"
+      }
+    },
+    {
+      "effect_template_id": "due_resolution_keep_due_effect",
+      "description": "A generic resolution effect that records a due target as still pending.",
+      "facts": [
+        {
+          "fact_id": "due_resolution_kept_pending:{target_kind}:{target_id}:{resolution_id}",
+          "fact_type": "due_resolution_kept_pending",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_kind": "{target_kind}",
+          "resolution": "keep_due",
+          "resolution_id": "{resolution_id}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [],
+      "obligation_updates": [
+        {
+          "obligation_id": "{obligation_id}",
+          "resolution_status": "keep_due",
+          "resolution_reason": "{resolution_reason}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}",
+          "resolution_count_delta": 1,
+          "reason": "due_resolution_keep_due_effect"
+        }
+      ],
+      "exchange_updates": [
+        {
+          "exchange_id": "{exchange_id}",
+          "resolution_status": "keep_due",
+          "resolution_reason": "{resolution_reason}",
+          "resolved_by": "{resolved_by}",
+          "resolved_tick_event_id": "{resolved_tick_event_id}",
+          "resolution_count_delta": 1,
+          "reason": "due_resolution_keep_due_effect"
+        }
+      ],
+      "deferred_consequence_updates": [],
+      "narrative": {
+        "title": "Due Resolution Kept Pending",
+        "summary": "A due target remains pending.",
+        "tone": "attention"
       }
     },
     {
