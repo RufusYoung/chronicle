@@ -668,6 +668,106 @@
       }
     },
     {
+      "effect_template_id": "obligation_due_effect",
+      "description": "A generic due effect for an obligation. It does not fulfill or breach the obligation.",
+      "facts": [
+        {
+          "fact_id": "obligation_due:{obligation_id}",
+          "fact_type": "obligation_due",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "obligation_id": "{obligation_id}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}",
+          "tick_event_id": "{tick_event_id}",
+          "trigger_key": "{trigger_key}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [
+        {
+          "pressure_id": "obligation_attention:{obligation_id}",
+          "scope_id": "{scope_id}",
+          "scope_type": "{scope_type}",
+          "domain": "obligation",
+          "pressure_type": "obligation_attention",
+          "value": 5,
+          "source_fact_type": "obligation_due"
+        }
+      ],
+      "obligation_updates": [
+        {
+          "obligation_id": "{obligation_id}",
+          "due_status": "due",
+          "last_due_tick_event_id": "{tick_event_id}",
+          "last_due_trigger_key": "{trigger_key}",
+          "due_count_delta": 1,
+          "reason": "obligation_due_effect"
+        }
+      ],
+      "exchange_updates": [],
+      "deferred_consequence_updates": [],
+      "narrative": {
+        "title": "Obligation Due",
+        "summary": "An obligation is now due.",
+        "tone": "attention"
+      }
+    },
+    {
+      "effect_template_id": "exchange_due_effect",
+      "description": "A generic due effect for an exchange. It does not settle or fail the exchange.",
+      "facts": [
+        {
+          "fact_id": "exchange_due:{exchange_id}",
+          "fact_type": "exchange_due",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "exchange_id": "{exchange_id}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}",
+          "tick_event_id": "{tick_event_id}",
+          "trigger_key": "{trigger_key}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [
+        {
+          "pressure_id": "exchange_attention:{exchange_id}",
+          "scope_id": "{scope_id}",
+          "scope_type": "{scope_type}",
+          "domain": "exchange",
+          "pressure_type": "exchange_attention",
+          "value": 5,
+          "source_fact_type": "exchange_due"
+        }
+      ],
+      "obligation_updates": [],
+      "exchange_updates": [
+        {
+          "exchange_id": "{exchange_id}",
+          "due_status": "due",
+          "last_due_tick_event_id": "{tick_event_id}",
+          "last_due_trigger_key": "{trigger_key}",
+          "due_count_delta": 1,
+          "reason": "exchange_due_effect"
+        }
+      ],
+      "deferred_consequence_updates": [],
+      "narrative": {
+        "title": "Exchange Due",
+        "summary": "An exchange is now due.",
+        "tone": "attention"
+      }
+    },
+    {
       "effect_template_id": "obligation_fulfilled_effect",
       "description": "A generic settlement effect for fulfilling an obligation.",
       "facts": [
