@@ -109,12 +109,15 @@ func mark_due(obligation_id: String, tick_event: Dictionary) -> bool:
 
 func _apply_update_fields(target: Dictionary, update: Dictionary) -> void:
 	var due_count_delta := int(update.get("due_count_delta", 0))
+	var resolution_count_delta := int(update.get("resolution_count_delta", 0))
 	for key: String in update.keys():
-		if key == "due_count_delta":
+		if key == "due_count_delta" or key == "resolution_count_delta":
 			continue
 		target[key] = update[key]
 	if due_count_delta != 0:
 		target["due_count"] = int(target.get("due_count", 0)) + due_count_delta
+	if resolution_count_delta != 0:
+		target["resolution_count"] = int(target.get("resolution_count", 0)) + resolution_count_delta
 
 
 func _already_due_for_trigger(obligation: Dictionary, trigger_key: String) -> bool:
