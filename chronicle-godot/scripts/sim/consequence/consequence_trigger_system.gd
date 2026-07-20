@@ -119,13 +119,17 @@ func _exchange_bindings(snapshot: Variant, exchange: Dictionary) -> Dictionary:
 
 
 func _deferred_bindings(snapshot: Variant, consequence: Dictionary) -> Dictionary:
-	return _base_bindings(snapshot, {
+	var bindings := _base_bindings(snapshot, {
 		"actor_id": str(consequence.get("source_actor_id", _player_id(snapshot))),
 		"target_id": str(consequence.get("target_id", "")),
 		"deferred_id": str(consequence.get("deferred_id", "")),
 		"trigger_key": str(consequence.get("trigger_key", "")),
 		"location_id": str(consequence.get("location_id", _location_id(snapshot))),
 	})
+	for key: String in consequence.keys():
+		if not bindings.has(key):
+			bindings[key] = consequence[key]
+	return bindings
 
 
 func _base_bindings(snapshot: Variant, values: Dictionary) -> Dictionary:

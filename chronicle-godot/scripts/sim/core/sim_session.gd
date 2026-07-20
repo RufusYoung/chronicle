@@ -8,6 +8,9 @@ const SimSnapshotBuilderModel = preload("res://scripts/sim/core/sim_snapshot_bui
 const ActionAffordanceModel = preload("res://scripts/sim/action/action_affordance_system.gd")
 const TransactionResolverModel = preload("res://scripts/sim/transaction/transaction_resolver.gd")
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
+const WorldTickAdapterModel = preload(
+	"res://scripts/sim/world_tick/world_tick_adapter.gd"
+)
 const FactStoreModel = preload("res://scripts/sim/fact/fact_store.gd")
 const StateStoreModel = preload("res://scripts/sim/state/state_store.gd")
 const RelationshipStoreModel = preload("res://scripts/sim/relationship/relationship_store.gd")
@@ -34,11 +37,16 @@ var snapshot_builder: Variant = null
 var affordance_system: Variant = null
 var resolver: Variant = null
 var writer: Variant = null
+var world_tick_adapter: Variant = null
 
 var fixture_id: String = ""
 var initialized: bool = false
 var action_count: int = 0
 var candidate_generation_count: int = 0
+var world_tick_count: int = 0
+var current_day: int = 1
+var current_hour: int = 8
+var elapsed_hours_since_start: int = 0
 
 
 func start_from_fixture_path(fixture_path: String, raw_rule_paths: Array) -> Dictionary:
@@ -62,13 +70,15 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if fixture_id == "":
 		return _start_failure("missing_fixture_id")
 
-	_create_stores()
+	_configure_world_time(fixture)
+	_create_stores(fixture)
 	initialized = true
 	return {
 		"success": true,
 		"fixture_id": fixture_id,
 		"rule_count": rules.size(),
 		"candidate_count": get_action_candidates().size(),
+		"time": get_time_summary(),
 	}
 
 
@@ -124,6 +134,79 @@ func execute_selection(
 	if candidate == null:
 		return _candidate_not_found("", rule_id, target_id, candidates)
 	return _execute_candidate(snapshot, candidate, candidates.size(), metadata)
+
+
+func advance_time(
+		hours: int,
+		trigger_key: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
+	if not initialized:
+		return _tick_failure("session_not_initialized")
+	if hours <= 0:
+		return _tick_failure("invalid_elapsed_hours")
+
+	var scope_type := str(metadata.get("scope_type", "location"))
+	var scope_id := str(metadata.get("scope_id", context.location_id))
+	var next_time := _projected_time(hours)
+	var due_kinds_value: Variant = metadata.get(
+		"due_kinds",
+		["obligation", "exchange"]
+	)
+	if not (due_kinds_value is Array):
+		return _tick_failure("invalid_due_kinds")
+	var due_kinds: Array = (due_kinds_value as Array).duplicate(true)
+	var tick_event := {
+		"tick_event_id": str(metadata.get(
+			"tick_event_id",
+			"%s_time_%d" % [fixture_id, world_tick_count + 1]
+		)),
+		"tick_type": "time_event",
+		"trigger_key": trigger_key,
+		"scope_type": scope_type,
+		"scope_id": scope_id,
+		"day": int(next_time.get("day", current_day)),
+		"time_key": str(metadata.get("time_key", trigger_key)),
+		"source": str(metadata.get("source", "SimSession.advance_time")),
+		"label": str(metadata.get("label", "advance time")),
+		"max_triggers": int(metadata.get("max_triggers", 0)),
+		"include_due_checks": bool(metadata.get("include_due_checks", true)),
+		"due_kinds": due_kinds,
+	}
+	return advance_world(tick_event, hours)
+
+
+func advance_world(tick_event: Dictionary, elapsed_hours_delta: int = 0) -> Dictionary:
+	if not initialized:
+		return _tick_failure("session_not_initialized")
+
+	var result: Dictionary = world_tick_adapter.apply_tick_event(
+		context,
+		stores,
+		tick_event
+	)
+	for entry: Dictionary in result.get("world_log_entries", []):
+		world_log.append_entry(entry)
+
+	if bool(result.get("success", false)):
+		_sync_context_after_tick_result(result)
+		_advance_clock(maxi(elapsed_hours_delta, 0))
+		world_tick_count += 1
+
+	result["fixture_id"] = fixture_id
+	result["time"] = get_time_summary()
+	result["world_tick_count"] = world_tick_count
+	result["session_world_log_summary"] = get_world_log_summary()
+	return result
+
+
+func get_time_summary() -> Dictionary:
+	return {
+		"day": current_day,
+		"hour": current_hour,
+		"world_tick_count": world_tick_count,
+		"elapsed_hours": elapsed_hours_since_start,
+	}
 
 
 func get_world_log_entries() -> Array:
@@ -197,6 +280,8 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"fixture_id": fixture_id,
 		"success": true,
 		"steps_executed": action_count,
+		"world_ticks_executed": world_tick_count,
+		"time": get_time_summary(),
 		"candidate_selection_source": "ActionAffordanceSystem",
 		"candidate_context_source": "SimSnapshot",
 		"resolver_context_source": "SimSnapshot",
@@ -221,17 +306,23 @@ func _reset_runtime() -> void:
 	affordance_system = ActionAffordanceModel.new()
 	resolver = TransactionResolverModel.new()
 	writer = TransactionWorldWriterModel.new()
+	world_tick_adapter = WorldTickAdapterModel.new()
 	fixture_id = ""
 	initialized = false
 	action_count = 0
 	candidate_generation_count = 0
+	world_tick_count = 0
+	current_day = 1
+	current_hour = 8
+	elapsed_hours_since_start = 0
 
 
-func _create_stores() -> void:
+func _create_stores(fixture: Dictionary) -> void:
 	var state_store = StateStoreModel.new()
 	state_store.load_from_context(context)
 	var relationship_store = RelationshipStoreModel.new()
 	relationship_store.load_axis_defs(RELATIONSHIP_AXIS_DEFS_PATH)
+	var deferred_store = DeferredConsequenceStoreModel.new()
 	stores = {
 		"fact_store": FactStoreModel.new(),
 		"state_store": state_store,
@@ -242,8 +333,13 @@ func _create_stores() -> void:
 		"pressure_store": PressureStoreModel.new(),
 		"obligation_store": ObligationStoreModel.new(),
 		"exchange_store": ExchangeStoreModel.new(),
-		"deferred_consequence_store": DeferredConsequenceStoreModel.new(),
+		"deferred_consequence_store": deferred_store,
 	}
+	for consequence: Dictionary in fixture.get(
+		"initial_deferred_consequences",
+		[]
+	):
+		deferred_store.add_deferred_consequence(consequence)
 
 
 func _execute_candidate(
@@ -302,6 +398,51 @@ func _sync_context_after_result(result: Variant) -> void:
 		if fact_id != "" and fact_id not in context.known_fact_ids:
 			context.known_fact_ids.append(fact_id)
 			context.known_facts.append(fact.duplicate(true))
+
+
+func _sync_context_after_tick_result(result: Dictionary) -> void:
+	for result_data: Dictionary in result.get("results", []):
+		_sync_context_after_result_data(result_data)
+	for result_data: Dictionary in result.get("due_results", []):
+		_sync_context_after_result_data(result_data)
+
+
+func _sync_context_after_result_data(result_data: Dictionary) -> void:
+	var state_store: Variant = stores.get("state_store")
+	for change: Dictionary in result_data.get("state_changes", []):
+		var entity_id := str(change.get("entity_id", ""))
+		var state_key := str(change.get("key", ""))
+		if entity_id == "" or state_key == "":
+			continue
+		var value: Variant = state_store.get_state(entity_id, state_key, null)
+		_set_context_state(entity_id, state_key, value)
+
+	for fact: Dictionary in result_data.get("facts_added", []):
+		var fact_id := str(fact.get("fact_id", ""))
+		if fact_id != "" and fact_id not in context.known_fact_ids:
+			context.known_fact_ids.append(fact_id)
+			context.known_facts.append(fact.duplicate(true))
+
+
+func _configure_world_time(fixture: Dictionary) -> void:
+	var time_data: Dictionary = fixture.get("world_time", {})
+	current_day = maxi(int(time_data.get("day", 1)), 1)
+	current_hour = posmod(int(time_data.get("hour", 8)), 24)
+
+
+func _projected_time(hours: int) -> Dictionary:
+	var absolute_hour := current_hour + maxi(hours, 0)
+	return {
+		"day": current_day + int(absolute_hour / 24),
+		"hour": posmod(absolute_hour, 24),
+	}
+
+
+func _advance_clock(hours: int) -> void:
+	var projected := _projected_time(hours)
+	current_day = int(projected.get("day", current_day))
+	current_hour = int(projected.get("hour", current_hour))
+	elapsed_hours_since_start += maxi(hours, 0)
 
 
 func _set_context_state(entity_id: String, state_key: String, value: Variant) -> void:
@@ -363,6 +504,17 @@ func _execution_failure(error: String, action_id: String) -> Dictionary:
 		"error": error,
 		"fixture_id": fixture_id,
 		"action_id": action_id,
+		"store_summary": get_store_summary(),
+	}
+
+
+func _tick_failure(error: String) -> Dictionary:
+	return {
+		"success": false,
+		"error_reason": error,
+		"fixture_id": fixture_id,
+		"time": get_time_summary(),
+		"world_tick_count": world_tick_count,
 		"store_summary": get_store_summary(),
 	}
 

@@ -1,5 +1,9 @@
 {
   "fixture_id": "lake_town_food_crisis",
+  "world_time": {
+    "day": 1,
+    "hour": 10
+  },
   "location": {
     "id": "old_chen_shop",
     "display_name": "老陈铺子",
@@ -83,6 +87,20 @@
         "inspectable": true,
         "substance": "spoiled_grain"
       }
+    },
+    {
+      "id": "old_chen_shop_closing_shutters",
+      "display_name": "半掩的门板",
+      "description": "老陈把门板拖了出来，只给迟来的客人留下一道窄缝。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "shop_closing",
+        "food_pressure"
+      ],
+      "states": {
+        "visible": false
+      }
     }
   ],
   "player": {
@@ -92,6 +110,23 @@
     "perception": 10
   },
   "known_facts": [],
+  "initial_deferred_consequences": [
+    {
+      "deferred_id": "old_chen_shop_closes_after_wait",
+      "trigger_key": "after_short_wait",
+      "status": "pending",
+      "source_actor_id": "world",
+      "target_id": "old_chen_shop_price_notice",
+      "location_id": "old_chen_shop",
+      "scope_type": "location",
+      "scope_id": "old_chen_shop",
+      "trigger_template_id": "lake_town_shop_closes_after_wait_effect",
+      "notice_id": "old_chen_shop_price_notice",
+      "shop_detail_id": "old_chen_shop_closing_shutters",
+      "source_fact_type": "lake_town_food_pressure",
+      "expected_effect_hint": "shop_closes_and_price_rises"
+    }
+  ],
   "expected_generated_actions": [
     "approach_visible_person",
     "give_food_to_hungry_person",

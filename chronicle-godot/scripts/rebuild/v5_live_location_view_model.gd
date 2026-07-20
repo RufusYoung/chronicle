@@ -13,6 +13,7 @@ var session: Variant = null
 var start_result: Dictionary = {}
 var latest_result: Dictionary = {}
 var action_history: Array[Dictionary] = []
+var latest_event_type: String = ""
 
 
 func _init(source_session: Variant = null) -> void:
@@ -24,6 +25,7 @@ func start() -> Dictionary:
 		session = SimSessionModel.new()
 	action_history.clear()
 	latest_result = {}
+	latest_event_type = ""
 	start_result = session.start_from_fixture_path(FIXTURE_PATH, RULE_PATHS)
 	return start_result.duplicate(true)
 
@@ -33,6 +35,7 @@ func is_ready() -> bool:
 
 
 func perform_action(action_id: String) -> Dictionary:
+	latest_event_type = "player_action"
 	if not is_ready():
 		latest_result = {
 			"success": false,
@@ -52,6 +55,30 @@ func perform_action(action_id: String) -> Dictionary:
 			"label": str(option.get("label", "采取行动")),
 			"contract_status": str(latest_result.get("contract_status", "")),
 			"narrative": _result_narrative(latest_result),
+		})
+	return latest_result.duplicate(true)
+
+
+func advance_time(hours: int = 1) -> Dictionary:
+	latest_event_type = "world_tick"
+	if not is_ready():
+		latest_result = {
+			"success": false,
+			"error_reason": "session_not_initialized",
+		}
+		return latest_result.duplicate(true)
+
+	latest_result = session.advance_time(hours, "after_short_wait", {
+		"label": "在老陈铺子等待一小时",
+		"source": "v5_live_location_surface",
+	})
+	if bool(latest_result.get("success", false)):
+		action_history.append({
+			"index": action_history.size() + 1,
+			"event_type": "world_tick",
+			"label": "等待一小时",
+			"triggered_count": int(latest_result.get("triggered_count", 0)),
+			"narrative": _tick_narrative(latest_result),
 		})
 	return latest_result.duplicate(true)
 
@@ -86,6 +113,7 @@ func build_view_data() -> Dictionary:
 			"context": _location_context(location, snapshot),
 		},
 		"player": _player_view(snapshot),
+		"time": _time_view(),
 		"region_status": _region_status_rows(snapshot),
 		"visible_people": visible_people,
 		"visible_observations": visible_observations,
@@ -160,6 +188,21 @@ func _region_status_rows(snapshot: Variant) -> Array:
 			"value": _state_value_label(str(values.get(key, ""))),
 			"detail": _status_detail(key, str(values.get(key, ""))),
 		})
+	var shortage_pressure := 0
+	var location_id := str(snapshot.location.get("id", ""))
+	for pressure: Dictionary in snapshot.get_pressures():
+		if (
+			str(pressure.get("scope_id", "")) == location_id
+			and str(pressure.get("pressure_type", "")) == "market_shortage"
+		):
+			shortage_pressure += int(pressure.get("value", 0))
+	if shortage_pressure > 0:
+		rows.append({
+			"key": "market_shortage",
+			"label": "收铺迹象",
+			"value": "加剧",
+			"detail": "商铺开始提前关门，能买到粮食的时间正在缩短。",
+		})
 	return rows
 
 
@@ -184,6 +227,9 @@ func _feedback_view() -> Dictionary:
 			"body": "先看清这里的人和痕迹，再决定把手伸向哪里。",
 			"details": [],
 		}
+
+	if latest_event_type == "world_tick":
+		return _tick_feedback_view()
 
 	if not bool(latest_result.get("success", false)):
 		var error := str(latest_result.get("error", ""))
@@ -220,6 +266,62 @@ func _feedback_view() -> Dictionary:
 	}
 
 
+func _tick_feedback_view() -> Dictionary:
+	if not bool(latest_result.get("success", false)):
+		return {
+			"status": "error",
+			"title": "时间没有推进",
+			"body": "这个时间变化无法作用于当前世界。",
+			"details": [],
+		}
+
+	var triggered_count := int(latest_result.get("triggered_count", 0))
+	if triggered_count == 0:
+		return {
+			"status": "world_tick",
+			"title": "一小时过去",
+			"body": "这里没有立刻显现出新的变化，但世界时钟仍在向前。",
+			"details": [],
+		}
+
+	var results: Array = latest_result.get("results", [])
+	var result_data: Dictionary = results[0] if not results.is_empty() else {}
+	var narrative: Dictionary = result_data.get("narrative_result", {})
+	return {
+		"status": "world_tick",
+		"title": str(narrative.get("title", "时间带来了变化")),
+		"body": _tick_narrative(latest_result),
+		"details": _tick_detail_lines(result_data),
+	}
+
+
+func _tick_narrative(result: Dictionary) -> String:
+	var entries: Array = result.get("world_log_entries", [])
+	if not entries.is_empty():
+		var entry := entries[0] as Dictionary
+		var summary := str(entry.get("narrative_summary", ""))
+		if summary != "":
+			return summary
+	var results: Array = result.get("results", [])
+	if not results.is_empty():
+		var result_data := results[0] as Dictionary
+		var narrative: Dictionary = result_data.get("narrative_result", {})
+		return str(narrative.get("summary", ""))
+	return ""
+
+
+func _tick_detail_lines(result_data: Dictionary) -> Array:
+	var rows: Array[String] = []
+	for change: Dictionary in result_data.get("state_changes", []):
+		rows.append(_state_change_text(change))
+	for pressure: Dictionary in result_data.get("pressure_changes", []):
+		if str(pressure.get("pressure_type", "")) == "market_shortage":
+			rows.append("老陈铺子周围的粮食压力继续上升")
+	if not (result_data.get("facts_added", []) as Array).is_empty():
+		rows.append("这次变化已经成为可追溯的世界事实")
+	return rows
+
+
 func _result_narrative(result: Dictionary) -> String:
 	var world_log_entry: Dictionary = result.get("world_log_entry", {})
 	var summary := str(world_log_entry.get("narrative_summary", ""))
@@ -245,6 +347,10 @@ func _result_detail_lines(transaction: Dictionary) -> Array:
 func _state_change_text(change: Dictionary) -> String:
 	var entity_id := str(change.get("entity_id", ""))
 	var key := str(change.get("key", ""))
+	if key == "visible" and bool(change.get("to", false)):
+		return "%s出现在现场" % _entity_name(entity_id)
+	if key == "price_level" and str(change.get("to", "")) == "raised_again":
+		return "%s上的价格又被改高" % _entity_name(entity_id)
 	if entity_id == "player" and key == "food_count":
 		return "随身食物 %s" % _signed_number(int(change.get("delta", 0)))
 	if key == "hunger" and str(change.get("operation", "")) == "decrease_tier":
@@ -298,11 +404,35 @@ func _person_state_text(states: Dictionary) -> String:
 
 
 func _object_state_text(entity_type: String, states: Dictionary) -> String:
+	if str(states.get("price_level", "")) == "raised_again":
+		return "刚被再次改高　可以阅读"
 	if entity_type == "readable_notice" and bool(states.get("readable", false)):
 		return "可以阅读"
 	if entity_type == "trace" and bool(states.get("inspectable", false)):
 		return "可以检查"
 	return "就在眼前"
+
+
+func _time_view() -> Dictionary:
+	var summary: Dictionary = session.get_time_summary()
+	var day := int(summary.get("day", 1))
+	var hour := int(summary.get("hour", 0))
+	return {
+		"day": day,
+		"hour": hour,
+		"label": "第 %d 天　%02d:00" % [day, hour],
+		"period": _time_period(hour),
+	}
+
+
+func _time_period(hour: int) -> String:
+	if hour < 6:
+		return "深夜"
+	if hour < 12:
+		return "上午"
+	if hour < 18:
+		return "下午"
+	return "夜晚"
 
 
 func _action_kind(action_type: String) -> String:
@@ -392,6 +522,7 @@ func _fact_text(fact_type: String, target_name: String) -> String:
 		"actor_read_object": "你读过%s。" % target_name,
 		"actor_inspected_trace": "你检查过%s。" % target_name,
 		"actor_asked_about_market_pressure": "你确认湖湾镇正承受粮食压力。",
+		"old_chen_shop_closed_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
 	}.get(fact_type, "你确认了一条与此地有关的事实。")
 
 

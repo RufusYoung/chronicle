@@ -1038,6 +1038,65 @@
       }
     },
     {
+      "effect_template_id": "lake_town_shop_closes_after_wait_effect",
+      "description": "Lake Town food pressure visibly worsens after the player waits in Old Chen's shop.",
+      "facts": [
+        {
+          "fact_id": "old_chen_shop_closed_early:{deferred_id}",
+          "fact_type": "old_chen_shop_closed_early",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "deferred_id": "{deferred_id}",
+          "trigger_key": "{trigger_key}",
+          "location_id": "{location_id}",
+          "source_rule_id": "{rule_id}"
+        }
+      ],
+      "state_changes": [
+        {
+          "entity_id": "{notice_id}",
+          "key": "price_level",
+          "to": "raised_again",
+          "reason": "lake_town_food_pressure_worsened"
+        },
+        {
+          "entity_id": "{shop_detail_id}",
+          "key": "visible",
+          "to": true,
+          "reason": "old_chen_shop_closing_early"
+        }
+      ],
+      "relationship_changes": [],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "pressure_changes": [
+        {
+          "pressure_id": "old_chen_shop_early_closing:{deferred_id}",
+          "scope_id": "{location_id}",
+          "scope_type": "location",
+          "domain": "food_crisis",
+          "pressure_type": "market_shortage",
+          "value": 10,
+          "source_fact_type": "old_chen_shop_closed_early"
+        }
+      ],
+      "obligation_updates": [],
+      "exchange_updates": [],
+      "deferred_consequence_updates": [
+        {
+          "deferred_id": "{deferred_id}",
+          "status": "triggered",
+          "reason": "lake_town_shop_closes_after_wait_effect"
+        }
+      ],
+      "narrative": {
+        "title": "铺子提前收门",
+        "summary": "一小时过去，街上的议论越来越响。老陈从后屋拖出门板，准备提前收铺；涨价告示上又添了一笔。",
+        "tone": "uneasy"
+      }
+    },
+    {
       "effect_template_id": "deferred_consequence_triggered_effect",
       "description": "A generic effect for manually triggering a pending deferred consequence.",
       "facts": [

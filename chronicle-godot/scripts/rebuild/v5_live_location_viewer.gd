@@ -21,11 +21,14 @@ var current_view_data: Dictionary = {}
 @onready var history_text: RichTextLabel = %HistoryText
 @onready var action_heading: Label = %ActionHeading
 @onready var action_buttons: FlowContainer = %ActionButtons
+@onready var time_label: Label = %TimeLabel
+@onready var wait_button: Button = %WaitButton
 @onready var restart_button: Button = %RestartButton
 
 
 func _ready() -> void:
 	view_model = ViewModelModel.new()
+	wait_button.pressed.connect(advance_time)
 	restart_button.pressed.connect(restart_session)
 	restart_session()
 
@@ -37,6 +40,12 @@ func restart_session() -> void:
 
 func perform_action(action_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_action(action_id)
+	refresh_view()
+	return result
+
+
+func advance_time() -> Dictionary:
+	var result: Dictionary = view_model.advance_time(1)
 	refresh_view()
 	return result
 
@@ -54,6 +63,11 @@ func refresh_view() -> void:
 
 	var player: Dictionary = current_view_data.get("player", {})
 	player_summary.text = str(player.get("summary", ""))
+	var time_data: Dictionary = current_view_data.get("time", {})
+	time_label.text = "%s　%s" % [
+		str(time_data.get("label", "")),
+		str(time_data.get("period", "")),
+	]
 	region_status.text = _format_status_rows(
 		current_view_data.get("region_status", []) as Array
 	)
@@ -199,6 +213,7 @@ func _show_load_error(message: String) -> void:
 	history_text.text = ""
 	_clear_children(action_buttons)
 	action_heading.text = "此刻没有可用行动"
+	time_label.text = ""
 
 
 func _clear_children(container: Node) -> void:
