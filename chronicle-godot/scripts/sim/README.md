@@ -49,4 +49,31 @@
 
 ## 当前状态
 
-骨架阶段，暂未实现正式逻辑。
+世界模拟骨架已经具备可连续执行的最小运行生命周期：
+
+```text
+SimSession
+↓
+SimSnapshot
+↓
+ActionAffordanceSystem
+↓
+TransactionResolver
+↓
+TransactionWorldWriter
+↓
+Stores + SimWorldLog
+```
+
+当前已经实现并有测试覆盖的部分包括：
+
+- Action Candidate / Raw Rule
+- Transaction / Effect Template
+- Fact / State / Relationship / Memory
+- Trace / Rumor / Pressure
+- Obligation / Exchange / Deferred Consequence
+- Scoped Tick Event
+- Due Trigger / Due Resolution
+- 持久 SimSession 与脚本 Runner 兼容入口
+
+Location、Region、Item、Equipment、Life Project 和 Chronicle Output 仍处于骨架阶段。正式 Godot UI 尚未接入 `SimSession`。
