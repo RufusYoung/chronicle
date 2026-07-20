@@ -136,6 +136,31 @@ func perform_challenge(option_id: String) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func perform_return_echo(option_id: String) -> Dictionary:
+	latest_event_type = "return_echo"
+	if not is_ready():
+		latest_result = {
+			"success": false,
+			"error": "session_not_initialized",
+			"option_id": option_id,
+		}
+		return latest_result.duplicate(true)
+
+	var option := _find_return_echo_option(option_id)
+	latest_result = session.execute_return_echo_option(option_id, {
+		"source": "v5_live_location_surface",
+	})
+	if bool(latest_result.get("success", false)):
+		action_history.append({
+			"index": action_history.size() + 1,
+			"event_type": "return_echo",
+			"option_id": option_id,
+			"label": str(option.get("label", "请人辨认旧物")),
+			"narrative": _result_narrative(latest_result),
+		})
+	return latest_result.duplicate(true)
+
+
 func build_view_data() -> Dictionary:
 	if not is_ready():
 		return {
@@ -174,6 +199,7 @@ func build_view_data() -> Dictionary:
 		"risk": _risk_view(),
 		"travel_options": _travel_rows(),
 		"knowledge": _knowledge_rows(snapshot),
+		"chronicle": _chronicle_view(snapshot),
 		"feedback": _feedback_view(),
 		"history": action_history.duplicate(true),
 		"world_log_count": session.get_world_log_entries().size(),
@@ -203,6 +229,19 @@ func _action_rows() -> Array:
 			"action_type": action_type,
 			"kind": _action_kind(action_type),
 			"hint": _challenge_action_hint(option),
+			"can_execute": bool(option.get("can_execute", false)),
+		})
+	for option: Dictionary in session.get_return_echo_options():
+		rows.append({
+			"action_id": str(option.get("option_id", "")),
+			"return_echo_option_id": str(
+				option.get("option_id", "")
+			),
+			"event_type": "return_echo",
+			"label": str(option.get("label", "请人辨认旧物")),
+			"action_type": "relic",
+			"kind": _action_kind("relic"),
+			"hint": str(option.get("hint", "")),
 			"can_execute": bool(option.get("can_execute", false)),
 		})
 	return rows
@@ -360,6 +399,24 @@ func _knowledge_rows(snapshot: Variant) -> Array:
 	return rows
 
 
+func _chronicle_view(snapshot: Variant) -> Dictionary:
+	var entries: Array = snapshot.get_player_chronicle_entries()
+	if entries.is_empty():
+		return {"active": false}
+	var entry: Dictionary = entries[entries.size() - 1]
+	return {
+		"active": true,
+		"title": str(entry.get("title", "个人纪事")),
+		"body": str(entry.get("body", "")),
+		"source_fact_count": (
+			(entry.get("source_fact_ids", []) as Array).size()
+		),
+		"source_item_count": (
+			(entry.get("source_item_ids", []) as Array).size()
+		),
+	}
+
+
 func _feedback_view() -> Dictionary:
 	if latest_result.is_empty():
 		return {
@@ -375,6 +432,8 @@ func _feedback_view() -> Dictionary:
 		return _travel_feedback_view()
 	if latest_event_type == "challenge":
 		return _challenge_feedback_view()
+	if latest_event_type == "return_echo":
+		return _return_echo_feedback_view()
 
 	if not bool(latest_result.get("success", false)):
 		var error := str(latest_result.get("error", ""))
@@ -408,6 +467,62 @@ func _feedback_view() -> Dictionary:
 		"title": title,
 		"body": body,
 		"details": _result_detail_lines(transaction),
+	}
+
+
+func _return_echo_feedback_view() -> Dictionary:
+	if not bool(latest_result.get("success", false)):
+		return {
+			"status": "error",
+			"title": "这段旧事已经说过",
+			"body": "眼前已经没有可重复结算的旧物回响。",
+			"details": [],
+		}
+
+	var transaction: Dictionary = latest_result.get(
+		"transaction_result",
+		{}
+	)
+	var narrative: Dictionary = transaction.get("narrative_result", {})
+	var details: Array[String] = []
+	for change: Dictionary in transaction.get(
+		"relationship_changes",
+		[]
+	):
+		details.append(_relationship_change_text(change))
+	for fact: Dictionary in transaction.get("facts_added", []):
+		if (
+			str(fact.get("fact_type", ""))
+			== "lake_town_public_granary_sealed_after_spoiled_grain"
+		):
+			details.append(
+				"新线索：%s" % str(fact.get("summary", ""))
+			)
+	var chronicle_entries: Array = transaction.get(
+		"chronicle_entries_added",
+		[]
+	)
+	if not chronicle_entries.is_empty():
+		details.append(
+			"个人纪事新增：%s"
+			% str(
+				(chronicle_entries[0] as Dictionary).get(
+					"title",
+					"被认出的旧物"
+				)
+			)
+		)
+	details.append("验粮铜牌新增了一段可追溯的物品履历")
+	return {
+		"status": "return_echo",
+		"title": str(narrative.get("title", "旧物被认了出来")),
+		"body": str(
+			narrative.get(
+				"summary",
+				"眼前的人认出了你带回的旧物。"
+			)
+		),
+		"details": details,
 	}
 
 
@@ -624,6 +739,13 @@ func _find_challenge_option(option_id: String) -> Dictionary:
 	return {}
 
 
+func _find_return_echo_option(option_id: String) -> Dictionary:
+	for option: Dictionary in session.get_return_echo_options():
+		if str(option.get("option_id", "")) == option_id:
+			return option.duplicate(true)
+	return {}
+
+
 func _entity_name(entity_id: String) -> String:
 	if entity_id == "player":
 		return "你"
@@ -696,6 +818,7 @@ func _action_kind(action_type: String) -> String:
 		"rumor": "传闻",
 		"preparation": "准备",
 		"danger": "危险",
+		"relic": "旧物",
 	}.get(action_type, "行动")
 
 
@@ -805,6 +928,8 @@ func _fact_text(
 		),
 		"actor_injured_during_challenge": "你在废弃粮仓扭伤了脚踝。",
 		"actor_discovered_item": "你在废弃粮仓找到了%s。" % target_name,
+		"chen_mi_recognized_granary_measure_token": "陈米认出了你带回的旧粮仓验粮铜牌。",
+		"lake_town_public_granary_sealed_after_spoiled_grain": "陈米确认，湖湾镇公仓曾在霉粮被查出后封闭。",
 		"old_chen_shop_closed_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
 	}.get(fact_type, "你确认了一条与此地有关的事实。")
 
@@ -832,6 +957,7 @@ func _relationship_axis_label(axis: String) -> String:
 		"trust": "信任",
 		"fear": "畏惧",
 		"debt": "亏欠",
+		"familiarity": "熟悉",
 	}.get(axis, axis)
 
 

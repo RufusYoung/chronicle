@@ -11,11 +11,13 @@ func load_initial_items(source_items: Array) -> void:
 
 
 func apply_item_change(change: Dictionary) -> void:
-	if str(change.get("operation", "")) != "create":
-		return
-	var item: Variant = change.get("item", {})
-	if item is Dictionary:
-		_create_item(item)
+	match str(change.get("operation", "")):
+		"create":
+			var item: Variant = change.get("item", {})
+			if item is Dictionary:
+				_create_item(item)
+		"append_history":
+			_append_history(change)
 
 
 func get_item(item_id: String) -> Dictionary:
@@ -45,4 +47,20 @@ func _create_item(item: Dictionary) -> void:
 		return
 	var stored_item := item.duplicate(true)
 	stored_item["item_id"] = item_id
+	items[item_id] = stored_item
+
+
+func _append_history(change: Dictionary) -> void:
+	var item_id := str(change.get("item_id", ""))
+	if item_id == "" or not items.has(item_id):
+		return
+	var history_entry: Variant = change.get("history_entry", {})
+	if not history_entry is Dictionary:
+		return
+	var stored_item: Dictionary = items[item_id]
+	var history: Array = (
+		stored_item.get("history", []) as Array
+	).duplicate(true)
+	history.append((history_entry as Dictionary).duplicate(true))
+	stored_item["history"] = history
 	items[item_id] = stored_item

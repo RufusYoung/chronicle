@@ -12,6 +12,9 @@ const TravelResolverModel = preload("res://scripts/sim/travel/travel_resolver.gd
 const ChallengeResolverModel = preload(
 	"res://scripts/sim/challenge/challenge_resolver.gd"
 )
+const ReturnEchoResolverModel = preload(
+	"res://scripts/sim/echo/return_echo_resolver.gd"
+)
 const WorldTickAdapterModel = preload(
 	"res://scripts/sim/world_tick/world_tick_adapter.gd"
 )
@@ -25,6 +28,9 @@ const PressureStoreModel = preload("res://scripts/sim/pressure/pressure_store.gd
 const ObligationStoreModel = preload("res://scripts/sim/obligation/obligation_store.gd")
 const ExchangeStoreModel = preload("res://scripts/sim/exchange/exchange_store.gd")
 const ItemStoreModel = preload("res://scripts/sim/item/item_store.gd")
+const ChronicleStoreModel = preload(
+	"res://scripts/sim/chronicle/chronicle_store.gd"
+)
 const DeferredConsequenceStoreModel = preload(
 	"res://scripts/sim/deferred/deferred_consequence_store.gd"
 )
@@ -44,9 +50,11 @@ var resolver: Variant = null
 var writer: Variant = null
 var travel_resolver: Variant = null
 var challenge_resolver: Variant = null
+var return_echo_resolver: Variant = null
 var world_tick_adapter: Variant = null
 var travel_routes: Array = []
 var challenge_definitions: Array = []
+var return_echo_definitions: Array = []
 var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 var fixture_id: String = ""
@@ -55,6 +63,7 @@ var action_count: int = 0
 var travel_count: int = 0
 var challenge_count: int = 0
 var challenge_preparation_count: int = 0
+var return_echo_count: int = 0
 var candidate_generation_count: int = 0
 var world_tick_count: int = 0
 var current_day: int = 1
@@ -88,6 +97,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	challenge_definitions = (
 		fixture.get("challenges", []) as Array
 	).duplicate(true)
+	return_echo_definitions = (
+		fixture.get("return_echoes", []) as Array
+	).duplicate(true)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	_create_stores(fixture)
 	initialized = true
@@ -96,6 +108,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"fixture_id": fixture_id,
 		"rule_count": rules.size(),
 		"challenge_definition_count": challenge_definitions.size(),
+		"return_echo_definition_count": return_echo_definitions.size(),
 		"candidate_count": get_action_candidates().size(),
 		"time": get_time_summary(),
 	}
@@ -261,6 +274,142 @@ func get_challenge_options() -> Array:
 			"blocked_reason": "",
 		})
 	return rows
+
+
+func get_return_echo_options() -> Array:
+	if not initialized:
+		return []
+	var snapshot: Variant = get_snapshot()
+	var rows: Array = []
+	for definition: Dictionary in return_echo_definitions:
+		if not _return_echo_is_available(definition, snapshot):
+			continue
+		var target_id := str(definition.get("target_entity_id", ""))
+		var target: Dictionary = snapshot.get_entity(target_id)
+		var item_id := str(definition.get("required_item_id", ""))
+		var item: Dictionary = snapshot.get_item(item_id)
+		rows.append({
+			"option_id": str(
+				definition.get(
+					"option_id",
+					"return_echo:%s"
+					% str(definition.get("echo_id", ""))
+				)
+			),
+			"echo_id": str(definition.get("echo_id", "")),
+			"target_entity_id": target_id,
+			"target_display_name": str(
+				target.get("display_name", target_id)
+			),
+			"item_id": item_id,
+			"item_display_name": str(
+				item.get("display_name", item_id)
+			),
+			"label": str(
+				definition.get("label", "[旧物] 请对方辨认")
+			),
+			"hours": int(definition.get("hours", 1)),
+			"action_type": "relic",
+			"hint": str(
+				definition.get(
+					"hint",
+					"让眼前的人辨认你从旅途中带回的旧物。"
+				)
+			),
+			"can_execute": true,
+			"blocked_reason": "",
+		})
+	return rows
+
+
+func execute_return_echo_option(
+		option_id: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
+	if not initialized:
+		return _return_echo_failure(
+			"session_not_initialized",
+			option_id
+		)
+	var option := _find_return_echo_option(option_id)
+	if option.is_empty():
+		return _return_echo_failure(
+			"return_echo_option_not_found",
+			option_id
+		)
+	var definition := _find_return_echo_definition(
+		str(option.get("echo_id", ""))
+	)
+	if definition.is_empty():
+		return _return_echo_failure(
+			"return_echo_definition_not_found",
+			option_id
+		)
+	var hours := int(option.get("hours", 1))
+	if hours <= 0:
+		return _return_echo_failure(
+			"invalid_return_echo_hours",
+			option_id
+		)
+
+	var tick_result := advance_time(
+		hours,
+		"after_return_echo",
+		{
+			"scope_type": "location",
+			"scope_id": context.location_id,
+			"source": str(
+				metadata.get(
+					"source",
+					"SimSession.execute_return_echo_option"
+				)
+			),
+			"label": str(option.get("label", "辨认旧物")),
+		}
+	)
+	if not bool(tick_result.get("success", false)):
+		return _return_echo_failure(
+			str(tick_result.get("error_reason", "world_tick_failed")),
+			option_id
+		)
+
+	var transaction_result: Variant = return_echo_resolver.resolve(
+		definition,
+		get_snapshot(),
+		return_echo_count + 1,
+		get_time_summary()
+	)
+	if str(transaction_result.contract_status) == "invalid_contract":
+		return _return_echo_failure(
+			str(transaction_result.error_reason),
+			option_id
+		)
+	writer.apply_result(transaction_result, stores)
+	_sync_context_after_result(transaction_result)
+
+	var event_id := return_echo_count + 1
+	var log_entry := _build_return_echo_log_entry(
+		option,
+		transaction_result,
+		event_id
+	)
+	world_log.append_entry(log_entry)
+	return_echo_count += 1
+	return {
+		"success": true,
+		"error": "",
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"echo_id": str(option.get("echo_id", "")),
+		"item_id": str(option.get("item_id", "")),
+		"target_id": str(option.get("target_entity_id", "")),
+		"transaction_result": transaction_result.to_dict(),
+		"tick_result": tick_result,
+		"world_log_entry": log_entry.duplicate(true),
+		"time": get_time_summary(),
+		"return_echo_count": return_echo_count,
+		"store_summary": get_store_summary(),
+	}
 
 
 func execute_challenge_option(
@@ -581,6 +730,9 @@ func get_store_summary() -> Dictionary:
 		"obligations": stores["obligation_store"].list_obligations().size(),
 		"exchanges": stores["exchange_store"].list_exchanges().size(),
 		"items": stores["item_store"].list_items().size(),
+		"chronicle_entries": (
+			stores["chronicle_store"].list_entries().size()
+		),
 		"deferred_consequences": (
 			stores["deferred_consequence_store"]
 			.list_deferred_consequences()
@@ -603,6 +755,7 @@ func get_store_snapshots() -> Dictionary:
 		"obligations": stores["obligation_store"].list_obligations(),
 		"exchanges": stores["exchange_store"].list_exchanges(),
 		"items": stores["item_store"].list_items(),
+		"chronicle_entries": stores["chronicle_store"].list_entries(),
 		"deferred_consequences": (
 			stores["deferred_consequence_store"].list_deferred_consequences()
 		),
@@ -631,6 +784,7 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"journeys_completed": travel_count,
 		"challenges_resolved": challenge_count,
 		"challenge_preparations": challenge_preparation_count,
+		"return_echoes_resolved": return_echo_count,
 		"world_ticks_executed": world_tick_count,
 		"time": get_time_summary(),
 		"candidate_selection_source": "ActionAffordanceSystem",
@@ -659,9 +813,11 @@ func _reset_runtime() -> void:
 	writer = TransactionWorldWriterModel.new()
 	travel_resolver = TravelResolverModel.new()
 	challenge_resolver = ChallengeResolverModel.new()
+	return_echo_resolver = ReturnEchoResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
 	travel_routes = []
 	challenge_definitions = []
+	return_echo_definitions = []
 	challenge_rng = RandomNumberGenerator.new()
 	fixture_id = ""
 	initialized = false
@@ -669,6 +825,7 @@ func _reset_runtime() -> void:
 	travel_count = 0
 	challenge_count = 0
 	challenge_preparation_count = 0
+	return_echo_count = 0
 	candidate_generation_count = 0
 	world_tick_count = 0
 	current_day = 1
@@ -697,6 +854,7 @@ func _create_stores(fixture: Dictionary) -> void:
 		"obligation_store": ObligationStoreModel.new(),
 		"exchange_store": ExchangeStoreModel.new(),
 		"item_store": item_store,
+		"chronicle_store": ChronicleStoreModel.new(),
 		"deferred_consequence_store": deferred_store,
 	}
 	for consequence: Dictionary in fixture.get(
@@ -857,6 +1015,139 @@ func _find_challenge_definition(challenge_id: String) -> Dictionary:
 	return {}
 
 
+func _find_return_echo_option(option_id: String) -> Dictionary:
+	for option: Dictionary in get_return_echo_options():
+		if str(option.get("option_id", "")) == option_id:
+			return option.duplicate(true)
+	return {}
+
+
+func _find_return_echo_definition(echo_id: String) -> Dictionary:
+	for definition: Dictionary in return_echo_definitions:
+		if str(definition.get("echo_id", "")) == echo_id:
+			return definition.duplicate(true)
+	return {}
+
+
+func _return_echo_is_available(
+		definition: Dictionary,
+		snapshot: Variant
+) -> bool:
+	if (
+		str(definition.get("location_id", ""))
+		!= str(snapshot.location.get("id", ""))
+	):
+		return false
+	var target_id := str(definition.get("target_entity_id", ""))
+	if target_id == "" or snapshot.get_entity(target_id).is_empty():
+		return false
+	if not bool(snapshot.get_entity_state(target_id, "visible", false)):
+		return false
+	var completion_state_key := str(
+		definition.get("completion_state_key", "return_echo_completed")
+	)
+	if bool(snapshot.get_entity_state(
+		target_id,
+		completion_state_key,
+		false
+	)):
+		return false
+
+	var item_id := str(definition.get("required_item_id", ""))
+	var item: Dictionary = snapshot.get_item(item_id)
+	var actor_id := str(snapshot.get_player_value("id", "player"))
+	if item.is_empty() or str(item.get("owner_id", "")) != actor_id:
+		return false
+	var inventory_ids: Array = snapshot.get_player_value(
+		"inventory_item_ids",
+		[]
+	)
+	if item_id not in inventory_ids:
+		return false
+	for required_tag: Variant in definition.get(
+		"required_item_tags",
+		[]
+	):
+		if str(required_tag) not in (item.get("tags", []) as Array):
+			return false
+	var provenance: Dictionary = item.get("provenance", {})
+	var required_provenance: Dictionary = definition.get(
+		"required_item_provenance",
+		{}
+	)
+	for key: String in required_provenance.keys():
+		if provenance.get(key) != required_provenance.get(key):
+			return false
+
+	var facts: Array = snapshot.get_facts()
+	for fact_type: Variant in definition.get(
+		"required_fact_types",
+		[]
+	):
+		if not _facts_include_type(facts, str(fact_type)):
+			return false
+	for route_id: Variant in definition.get("required_route_ids", []):
+		if not _facts_include_route(facts, str(route_id)):
+			return false
+	var challenge_id := str(
+		definition.get("required_challenge_id", "")
+	)
+	if (
+		challenge_id != ""
+		and not _facts_include_successful_challenge(
+			facts,
+			challenge_id
+		)
+	):
+		return false
+	return _facts_include_item_discovery(facts, item_id)
+
+
+func _facts_include_type(facts: Array, fact_type: String) -> bool:
+	for fact: Dictionary in facts:
+		if str(fact.get("fact_type", "")) == fact_type:
+			return true
+	return false
+
+
+func _facts_include_route(facts: Array, route_id: String) -> bool:
+	for fact: Dictionary in facts:
+		if (
+			str(fact.get("fact_type", "")) == "actor_traveled_route"
+			and str(fact.get("route_id", "")) == route_id
+		):
+			return true
+	return false
+
+
+func _facts_include_successful_challenge(
+		facts: Array,
+		challenge_id: String
+) -> bool:
+	for fact: Dictionary in facts:
+		if (
+			str(fact.get("fact_type", ""))
+				== "actor_attempted_challenge"
+			and str(fact.get("challenge_id", "")) == challenge_id
+			and str(fact.get("outcome", "")) == "success"
+		):
+			return true
+	return false
+
+
+func _facts_include_item_discovery(
+		facts: Array,
+		item_id: String
+) -> bool:
+	for fact: Dictionary in facts:
+		if (
+			str(fact.get("fact_type", "")) == "actor_discovered_item"
+			and str(fact.get("target_id", "")) == item_id
+		):
+			return true
+	return false
+
+
 func _find_candidate(candidates: Array, rule_id: String, target_id: String) -> Variant:
 	for candidate: Variant in candidates:
 		if str(candidate.rule_id) != rule_id:
@@ -917,6 +1208,19 @@ func _challenge_failure(error: String, option_id: String) -> Dictionary:
 		"option_id": option_id,
 		"challenge_count": challenge_count,
 		"challenge_preparation_count": challenge_preparation_count,
+		"time": get_time_summary(),
+		"world_tick_count": world_tick_count,
+		"store_summary": get_store_summary(),
+	}
+
+
+func _return_echo_failure(error: String, option_id: String) -> Dictionary:
+	return {
+		"success": false,
+		"error": error,
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"return_echo_count": return_echo_count,
 		"time": get_time_summary(),
 		"world_tick_count": world_tick_count,
 		"store_summary": get_store_summary(),
@@ -1101,6 +1405,56 @@ func _build_challenge_log_entry(
 	}
 
 
+func _build_return_echo_log_entry(
+		option: Dictionary,
+		result: Variant,
+		event_id: int
+) -> Dictionary:
+	return {
+		"entry_type": "return_echo",
+		"step_index": event_id - 1,
+		"step_id": "return_echo_%d" % event_id,
+		"echo_id": str(option.get("echo_id", "")),
+		"option_id": str(option.get("option_id", "")),
+		"target_id": str(option.get("target_entity_id", "")),
+		"item_id": str(option.get("item_id", "")),
+		"transaction_mode": str(result.transaction_mode),
+		"contract_status": str(result.contract_status),
+		"skip_reason": str(result.skip_reason),
+		"error_reason": str(result.error_reason),
+		"facts_added": _fact_types(result.facts_added),
+		"fact_ids": _fact_ids(result.facts_added),
+		"state_changes": result.state_changes.duplicate(true),
+		"state_change_count": result.state_changes.size(),
+		"relationship_changes": result.relationship_changes.duplicate(true),
+		"relationship_change_count": result.relationship_changes.size(),
+		"memories_added": result.memories_added.duplicate(true),
+		"memory_types": _memory_types(result.memories_added),
+		"memory_count": result.memories_added.size(),
+		"trace_count": 0,
+		"rumor_seed_count": 0,
+		"pressure_change_count": 0,
+		"obligation_count": 0,
+		"exchange_count": 0,
+		"deferred_consequence_count": 0,
+		"obligation_update_count": 0,
+		"exchange_update_count": 0,
+		"deferred_consequence_update_count": 0,
+		"item_changes": result.item_changes.duplicate(true),
+		"item_change_count": result.item_changes.size(),
+		"chronicle_entries_added": (
+			result.chronicle_entries_added.duplicate(true)
+		),
+		"chronicle_entry_count": (
+			result.chronicle_entries_added.size()
+		),
+		"narrative_summary": _narrative_summary(
+			result.narrative_result
+		),
+		"narrative_result": result.narrative_result.duplicate(true),
+	}
+
+
 func _snapshot_summary(snapshot: Variant, candidates: Array) -> Dictionary:
 	return {
 		"final_fact_count": snapshot.get_facts().size(),
@@ -1113,6 +1467,9 @@ func _snapshot_summary(snapshot: Variant, candidates: Array) -> Dictionary:
 		"final_exchange_count": snapshot.exchanges.size(),
 		"final_deferred_consequence_count": snapshot.deferred_consequences.size(),
 		"final_item_count": snapshot.get_items().size(),
+		"final_chronicle_entry_count": (
+			snapshot.get_chronicle_entries().size()
+		),
 		"final_candidate_probe": {
 			"rule_ids": _candidate_rule_ids(candidates),
 			"action_ids": _candidate_action_ids(candidates),
@@ -1216,4 +1573,5 @@ func _empty_store_summary() -> Dictionary:
 		"exchanges": 0,
 		"deferred_consequences": 0,
 		"items": 0,
+		"chronicle_entries": 0,
 	}

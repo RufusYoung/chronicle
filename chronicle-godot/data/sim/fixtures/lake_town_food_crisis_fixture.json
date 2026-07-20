@@ -128,6 +128,63 @@
       }
     }
   ],
+  "return_echoes": [
+    {
+      "echo_id": "chen_mi_recognizes_granary_measure_token",
+      "option_id": "show_granary_measure_token_to_chen_mi",
+      "location_id": "old_chen_shop",
+      "target_entity_id": "chen_mi",
+      "required_item_id": "lake_town_granary_measure_token",
+      "required_item_tags": [
+        "granary_history",
+        "lake_town"
+      ],
+      "required_item_provenance": {
+        "created_for": "lake_town_public_granary",
+        "original_use": "grain_quality_inspection",
+        "discovered_at": "abandoned_granary",
+        "source_challenge_id": "granary_rotten_floor_entry"
+      },
+      "required_fact_types": [
+        "actor_traveled_route",
+        "actor_attempted_challenge",
+        "actor_discovered_item"
+      ],
+      "required_route_ids": [
+        "old_chen_shop_to_abandoned_granary",
+        "abandoned_granary_to_old_chen_shop"
+      ],
+      "required_challenge_id": "granary_rotten_floor_entry",
+      "completion_state_key": "recognized_granary_measure_token",
+      "hours": 1,
+      "label": "[旧物] 把验粮铜牌拿给陈米看　1小时",
+      "hint": "陈米是本地粮铺家的孩子，也许认得铜牌上的公仓旧字。",
+      "recognition_fact_type": "chen_mi_recognized_granary_measure_token",
+      "recognized_origin_name": "湖湾镇公仓",
+      "relationship_changes": [
+        {
+          "axis": "trust",
+          "delta": 12
+        },
+        {
+          "axis": "familiarity",
+          "delta": 15
+        }
+      ],
+      "memory_type": "remembers_traveler_returned_granary_token",
+      "memory_summary": "那个途经镇子的旅人从废弃粮仓带回了旧公仓的验粮铜牌。",
+      "local_history_clue": {
+        "fact_type": "lake_town_public_granary_sealed_after_spoiled_grain",
+        "subject_id": "lake_town_public_granary",
+        "summary": "陈米确认，湖湾镇公仓曾在一批霉粮被查出后封闭；铜牌属于当时负责验粮的人。",
+        "chronicle_summary": "陈米认出它属于湖湾镇公仓，并确认公仓曾在霉粮被查出后封闭。"
+      },
+      "narrative_title": "铜牌背后的旧粮仓",
+      "narrative": "陈米接过铜牌，只看了一眼背面的旧字就认出了它。那是湖湾镇公仓停用前的验粮牌；公仓并非自然荒废，而是在一批霉粮被查出后封了门。",
+      "chronicle_title": "被认出的验粮铜牌",
+      "discovery_location_name": "废弃粮仓"
+    }
+  ],
   "region_state": {
     "food_pressure": "high",
     "public_order": "tense"

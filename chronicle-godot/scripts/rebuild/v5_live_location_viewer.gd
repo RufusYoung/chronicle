@@ -16,6 +16,8 @@ var current_view_data: Dictionary = {}
 @onready var visible_people: RichTextLabel = %VisiblePeople
 @onready var visible_observations: RichTextLabel = %VisibleObservations
 @onready var knowledge_text: RichTextLabel = %KnowledgeText
+@onready var chronicle_heading: Label = %ChronicleHeading
+@onready var chronicle_text: RichTextLabel = %ChronicleText
 @onready var risk_heading: Label = %RiskHeading
 @onready var risk_text: RichTextLabel = %RiskText
 @onready var travel_heading: Label = %TravelHeading
@@ -60,6 +62,12 @@ func perform_challenge(option_id: String) -> Dictionary:
 	return result
 
 
+func perform_return_echo(option_id: String) -> Dictionary:
+	var result: Dictionary = view_model.perform_return_echo(option_id)
+	refresh_view()
+	return result
+
+
 func advance_time() -> Dictionary:
 	var result: Dictionary = view_model.advance_time(1)
 	refresh_view()
@@ -98,6 +106,9 @@ func refresh_view() -> void:
 	knowledge_text.text = _format_bullets(
 		current_view_data.get("knowledge", []) as Array
 	)
+	_refresh_chronicle(
+		current_view_data.get("chronicle", {}) as Dictionary
+	)
 	_refresh_risk(current_view_data.get("risk", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []) as Array)
@@ -126,21 +137,51 @@ func _refresh_actions(actions: Array) -> void:
 		button.disabled = not bool(action.get("can_execute", true))
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
-		if str(action.get("event_type", "player_action")) == "challenge":
-			button.set_meta(
-				"challenge_option_id",
-				str(action.get("challenge_option_id", ""))
-			)
-			button.pressed.connect(
-				perform_challenge.bind(
+		match str(action.get("event_type", "player_action")):
+			"challenge":
+				button.set_meta(
+					"challenge_option_id",
 					str(action.get("challenge_option_id", ""))
 				)
-			)
-		else:
-			button.pressed.connect(
-				perform_action.bind(str(action.get("action_id", "")))
-			)
+				button.pressed.connect(
+					perform_challenge.bind(
+						str(action.get("challenge_option_id", ""))
+					)
+				)
+			"return_echo":
+				button.set_meta(
+					"return_echo_option_id",
+					str(action.get("return_echo_option_id", ""))
+				)
+				button.pressed.connect(
+					perform_return_echo.bind(
+						str(action.get("return_echo_option_id", ""))
+					)
+				)
+			_:
+				button.pressed.connect(
+					perform_action.bind(
+						str(action.get("action_id", ""))
+					)
+				)
 		action_buttons.add_child(button)
+
+
+func _refresh_chronicle(chronicle: Dictionary) -> void:
+	var active := bool(chronicle.get("active", false))
+	chronicle_heading.visible = active
+	chronicle_text.visible = active
+	if not active:
+		chronicle_text.text = ""
+		return
+	chronicle_heading.text = "个人纪事　%s" % str(
+		chronicle.get("title", "")
+	)
+	chronicle_text.text = "%s\n\n[color=#8f9c98]依据 %d 条事实、%d 件物品[/color]" % [
+		str(chronicle.get("body", "")),
+		int(chronicle.get("source_fact_count", 0)),
+		int(chronicle.get("source_item_count", 0)),
+	]
 
 
 func _refresh_risk(risk: Dictionary) -> void:
@@ -253,6 +294,8 @@ func _apply_action_button_style(button: Button, action_type: String) -> void:
 		accent = Color("#6e8392")
 	elif action_type == "danger":
 		accent = Color("#9b5d4f")
+	elif action_type == "relic":
+		accent = Color("#a57b4d")
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color("#222a2b")
 	normal.border_color = accent
@@ -280,6 +323,8 @@ func _show_load_error(message: String) -> void:
 	visible_people.text = ""
 	visible_observations.text = ""
 	knowledge_text.text = ""
+	chronicle_heading.visible = false
+	chronicle_text.visible = false
 	risk_heading.visible = false
 	risk_text.visible = false
 	_clear_children(travel_buttons)

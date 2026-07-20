@@ -18,6 +18,7 @@ var obligations: Array = []
 var exchanges: Array = []
 var deferred_consequences: Array = []
 var items: Array = []
+var chronicle_entries: Array = []
 
 
 func _init(data: Dictionary = {}) -> void:
@@ -38,6 +39,7 @@ func _init(data: Dictionary = {}) -> void:
 	exchanges = (data.get("exchanges", []) as Array).duplicate(true)
 	deferred_consequences = (data.get("deferred_consequences", []) as Array).duplicate(true)
 	items = (data.get("items", []) as Array).duplicate(true)
+	chronicle_entries = (data.get("chronicle_entries", []) as Array).duplicate(true)
 
 
 func get_entity(entity_id: String) -> Dictionary:
@@ -172,6 +174,19 @@ func get_player_items() -> Array:
 	return rows
 
 
+func get_chronicle_entries() -> Array:
+	return chronicle_entries.duplicate(true)
+
+
+func get_player_chronicle_entries() -> Array:
+	var subject_id := str(get_player_value("id", "player"))
+	var rows: Array = []
+	for entry: Dictionary in chronicle_entries:
+		if str(entry.get("subject_id", "")) == subject_id:
+			rows.append(entry.duplicate(true))
+	return rows
+
+
 func get_location_tags() -> Array:
 	return (location.get("tags", []) as Array).duplicate(true)
 
@@ -207,4 +222,5 @@ func to_dict() -> Dictionary:
 		"exchanges": exchanges.duplicate(true),
 		"deferred_consequences": deferred_consequences.duplicate(true),
 		"items": items.duplicate(true),
+		"chronicle_entries": chronicle_entries.duplicate(true),
 	}
