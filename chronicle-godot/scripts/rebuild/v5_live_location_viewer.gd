@@ -16,6 +16,8 @@ var current_view_data: Dictionary = {}
 @onready var visible_people: RichTextLabel = %VisiblePeople
 @onready var visible_observations: RichTextLabel = %VisibleObservations
 @onready var knowledge_text: RichTextLabel = %KnowledgeText
+@onready var travel_heading: Label = %TravelHeading
+@onready var travel_buttons: VBoxContainer = %TravelButtons
 @onready var feedback_title: Label = %FeedbackTitle
 @onready var feedback_body: RichTextLabel = %FeedbackBody
 @onready var history_text: RichTextLabel = %HistoryText
@@ -40,6 +42,12 @@ func restart_session() -> void:
 
 func perform_action(action_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_action(action_id)
+	refresh_view()
+	return result
+
+
+func perform_travel(route_id: String) -> Dictionary:
+	var result: Dictionary = view_model.perform_travel(route_id)
 	refresh_view()
 	return result
 
@@ -85,6 +93,9 @@ func refresh_view() -> void:
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []) as Array)
 	_refresh_actions(current_view_data.get("actions", []) as Array)
+	_refresh_travel_options(
+		current_view_data.get("travel_options", []) as Array
+	)
 
 
 func get_current_view_data() -> Dictionary:
@@ -109,6 +120,24 @@ func _refresh_actions(actions: Array) -> void:
 			perform_action.bind(str(action.get("action_id", "")))
 		)
 		action_buttons.add_child(button)
+
+
+func _refresh_travel_options(options: Array) -> void:
+	_clear_children(travel_buttons)
+	travel_heading.text = "可以前往　%d 处" % options.size()
+	for option_value: Variant in options:
+		var option := option_value as Dictionary
+		var button := Button.new()
+		button.custom_minimum_size = Vector2(0, 42)
+		button.text = str(option.get("label", "前往新的地点"))
+		button.tooltip_text = str(option.get("hint", ""))
+		button.disabled = not bool(option.get("can_travel", false))
+		button.set_meta("route_id", str(option.get("route_id", "")))
+		_apply_action_button_style(button, "travel")
+		button.pressed.connect(
+			perform_travel.bind(str(option.get("route_id", "")))
+		)
+		travel_buttons.add_child(button)
 
 
 func _refresh_feedback(feedback: Dictionary) -> void:
@@ -181,6 +210,8 @@ func _apply_action_button_style(button: Button, action_type: String) -> void:
 		accent = Color("#8a7450")
 	elif action_type == "relationship":
 		accent = Color("#8c6477")
+	elif action_type == "travel":
+		accent = Color("#6f8264")
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color("#222a2b")
 	normal.border_color = accent
@@ -208,6 +239,8 @@ func _show_load_error(message: String) -> void:
 	visible_people.text = ""
 	visible_observations.text = ""
 	knowledge_text.text = ""
+	_clear_children(travel_buttons)
+	travel_heading.text = "当前没有可用路线"
 	feedback_title.text = "无法开始"
 	feedback_body.text = message
 	history_text.text = ""

@@ -103,8 +103,13 @@ func get_memories(owner_id: String) -> Array:
 
 func get_visible_traces() -> Array:
 	var rows: Array = []
+	var current_location_id := str(location.get("id", ""))
 	for trace: Dictionary in traces:
-		if bool(trace.get("visible", true)):
+		var trace_location_id := str(trace.get("location_id", ""))
+		if (
+			bool(trace.get("visible", true))
+			and (trace_location_id == "" or trace_location_id == current_location_id)
+		):
 			rows.append(trace.duplicate(true))
 	return rows
 

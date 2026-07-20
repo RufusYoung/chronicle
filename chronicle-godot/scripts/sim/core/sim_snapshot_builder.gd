@@ -20,7 +20,10 @@ func build_snapshot(context: Variant, stores: Dictionary) -> Variant:
 	if state_store != null:
 		states = state_store.states.duplicate(true)
 
-	var entities := _entities_with_states(context.entities, states)
+	var source_entities: Array = context.entities
+	if context.has_method("get_entities_at_location"):
+		source_entities = context.get_entities_at_location(context.location_id)
+	var entities := _entities_with_states(source_entities, states)
 	var player: Dictionary = context.player.duplicate(true)
 	var player_id := str(context.get_player_value("id", "player"))
 	if states.has(player_id):

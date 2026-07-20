@@ -8,6 +8,7 @@ const SimSnapshotBuilderModel = preload("res://scripts/sim/core/sim_snapshot_bui
 const ActionAffordanceModel = preload("res://scripts/sim/action/action_affordance_system.gd")
 const TransactionResolverModel = preload("res://scripts/sim/transaction/transaction_resolver.gd")
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
+const TravelResolverModel = preload("res://scripts/sim/travel/travel_resolver.gd")
 const WorldTickAdapterModel = preload(
 	"res://scripts/sim/world_tick/world_tick_adapter.gd"
 )
@@ -37,11 +38,14 @@ var snapshot_builder: Variant = null
 var affordance_system: Variant = null
 var resolver: Variant = null
 var writer: Variant = null
+var travel_resolver: Variant = null
 var world_tick_adapter: Variant = null
+var travel_routes: Array = []
 
 var fixture_id: String = ""
 var initialized: bool = false
 var action_count: int = 0
+var travel_count: int = 0
 var candidate_generation_count: int = 0
 var world_tick_count: int = 0
 var current_day: int = 1
@@ -71,6 +75,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		return _start_failure("missing_fixture_id")
 
 	_configure_world_time(fixture)
+	travel_routes = (fixture.get("travel_routes", []) as Array).duplicate(true)
 	_create_stores(fixture)
 	initialized = true
 	return {
@@ -104,6 +109,132 @@ func get_action_options() -> Array:
 	for candidate: Variant in get_action_candidates():
 		rows.append(candidate.to_dict())
 	return rows
+
+
+func get_travel_options() -> Array:
+	if not initialized:
+		return []
+	var rows: Array = []
+	var food_count := int(context.get_player_value("food_count", 0))
+	for route: Dictionary in travel_routes:
+		if str(route.get("from_location_id", "")) != context.location_id:
+			continue
+		var to_location_id := str(route.get("to_location_id", ""))
+		var destination: Dictionary = context.get_location(to_location_id)
+		var route_food_cost := int(route.get("food_cost", 0))
+		var food_cost := maxi(route_food_cost, 0)
+		var can_travel := (
+			not destination.is_empty()
+			and int(route.get("hours", 0)) > 0
+			and route_food_cost >= 0
+			and food_count >= food_cost
+		)
+		rows.append({
+			"route_id": str(route.get("route_id", "")),
+			"from_location_id": context.location_id,
+			"to_location_id": to_location_id,
+			"destination_name": str(
+				destination.get("display_name", to_location_id)
+			),
+			"label": str(route.get("label", "前往新的地点")),
+			"hours": int(route.get("hours", 0)),
+			"food_cost": food_cost,
+			"can_travel": can_travel,
+			"blocked_reason": (
+				"" if can_travel else _travel_blocked_reason(
+					destination,
+					int(route.get("hours", 0)),
+					food_count,
+					route_food_cost
+				)
+			),
+		})
+	return rows
+
+
+func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
+	if not initialized:
+		return _travel_failure("session_not_initialized", route_id)
+
+	var route := _find_travel_route(route_id, context.location_id)
+	if route.is_empty():
+		return _travel_failure("route_not_found", route_id)
+
+	var to_location_id := str(route.get("to_location_id", ""))
+	var destination: Dictionary = context.get_location(to_location_id)
+	var hours := int(route.get("hours", 0))
+	var food_cost := int(route.get("food_cost", 0))
+	if destination.is_empty():
+		return _travel_failure("destination_not_found", route_id)
+	if hours <= 0 or food_cost < 0:
+		return _travel_failure("invalid_route_contract", route_id)
+	if int(context.get_player_value("food_count", 0)) < food_cost:
+		return _travel_failure("insufficient_food", route_id)
+
+	var from_location_id: String = str(context.location_id)
+	var tick_metadata := {
+		"scope_type": "location",
+		"scope_id": from_location_id,
+		"source": "SimSession.travel",
+		"label": str(route.get("label", "travel")),
+		"time_key": str(route.get("time_key", "after_route_travel")),
+		"include_due_checks": true,
+	}
+	var raw_tick_metadata: Variant = metadata.get("tick_metadata", {})
+	if not raw_tick_metadata is Dictionary:
+		return _travel_failure("invalid_tick_metadata", route_id)
+	tick_metadata.merge(
+		(raw_tick_metadata as Dictionary),
+		true
+	)
+	tick_metadata["scope_type"] = "location"
+	tick_metadata["scope_id"] = from_location_id
+	var tick_result := advance_time(
+		hours,
+		str(route.get("trigger_key", "after_route_travel")),
+		tick_metadata
+	)
+	if not bool(tick_result.get("success", false)):
+		return _travel_failure(
+			str(tick_result.get("error_reason", "world_tick_failed")),
+			route_id
+		)
+
+	var snapshot: Variant = get_snapshot()
+	var transaction_result: Variant = travel_resolver.resolve(
+		route,
+		snapshot,
+		travel_count + 1
+	)
+	writer.apply_result(transaction_result, stores)
+	_sync_context_after_result(transaction_result)
+	if not context.set_current_location(to_location_id):
+		return _travel_failure("destination_switch_failed", route_id)
+
+	var log_entry := _build_travel_log_entry(
+		route,
+		transaction_result,
+		travel_count
+	)
+	world_log.append_entry(log_entry)
+	travel_count += 1
+	return {
+		"success": true,
+		"error": "",
+		"fixture_id": fixture_id,
+		"route_id": route_id,
+		"from_location_id": from_location_id,
+		"to_location_id": to_location_id,
+		"destination": destination.duplicate(true),
+		"hours": hours,
+		"food_cost": food_cost,
+		"transaction_result": transaction_result.to_dict(),
+		"tick_result": tick_result,
+		"world_log_entry": log_entry.duplicate(true),
+		"time": get_time_summary(),
+		"travel_count": travel_count,
+		"store_summary": get_store_summary(),
+	}
 
 
 func execute_action(action_id: String, metadata: Dictionary = {}) -> Dictionary:
@@ -280,6 +411,7 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"fixture_id": fixture_id,
 		"success": true,
 		"steps_executed": action_count,
+		"journeys_completed": travel_count,
 		"world_ticks_executed": world_tick_count,
 		"time": get_time_summary(),
 		"candidate_selection_source": "ActionAffordanceSystem",
@@ -306,10 +438,13 @@ func _reset_runtime() -> void:
 	affordance_system = ActionAffordanceModel.new()
 	resolver = TransactionResolverModel.new()
 	writer = TransactionWorldWriterModel.new()
+	travel_resolver = TravelResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
+	travel_routes = []
 	fixture_id = ""
 	initialized = false
 	action_count = 0
+	travel_count = 0
 	candidate_generation_count = 0
 	world_tick_count = 0
 	current_day = 1
@@ -469,6 +604,16 @@ func _find_candidate_by_action_id(candidates: Array, action_id: String) -> Varia
 	return null
 
 
+func _find_travel_route(route_id: String, from_location_id: String) -> Dictionary:
+	for route: Dictionary in travel_routes:
+		if str(route.get("route_id", "")) != route_id:
+			continue
+		if str(route.get("from_location_id", "")) != from_location_id:
+			continue
+		return route.duplicate(true)
+	return {}
+
+
 func _find_candidate(candidates: Array, rule_id: String, target_id: String) -> Variant:
 	for candidate: Variant in candidates:
 		if str(candidate.rule_id) != rule_id:
@@ -506,6 +651,36 @@ func _execution_failure(error: String, action_id: String) -> Dictionary:
 		"action_id": action_id,
 		"store_summary": get_store_summary(),
 	}
+
+
+func _travel_failure(error: String, route_id: String) -> Dictionary:
+	return {
+		"success": false,
+		"error": error,
+		"fixture_id": fixture_id,
+		"route_id": route_id,
+		"travel_count": travel_count,
+		"time": get_time_summary(),
+		"world_tick_count": world_tick_count,
+		"store_summary": get_store_summary(),
+	}
+
+
+func _travel_blocked_reason(
+		destination: Dictionary,
+		hours: int,
+		food_count: int,
+		food_cost: int
+) -> String:
+	if destination.is_empty():
+		return "destination_not_found"
+	if hours <= 0:
+		return "invalid_route_contract"
+	if food_cost < 0:
+		return "invalid_route_contract"
+	if food_count < food_cost:
+		return "insufficient_food"
+	return ""
 
 
 func _tick_failure(error: String) -> Dictionary:
@@ -581,6 +756,44 @@ func _build_world_log_entry(
 		"exchange_update_count": result.exchange_updates.size(),
 		"deferred_consequence_updates": result.deferred_consequence_updates.duplicate(true),
 		"deferred_consequence_update_count": result.deferred_consequence_updates.size(),
+		"narrative_summary": _narrative_summary(result.narrative_result),
+		"narrative_result": result.narrative_result.duplicate(true),
+	}
+
+
+func _build_travel_log_entry(
+		route: Dictionary,
+		result: Variant,
+		journey_index: int
+) -> Dictionary:
+	return {
+		"entry_type": "travel",
+		"step_index": journey_index,
+		"step_id": "travel_%d" % journey_index,
+		"route_id": str(route.get("route_id", "")),
+		"from_location_id": str(route.get("from_location_id", "")),
+		"to_location_id": str(route.get("to_location_id", "")),
+		"hours": int(route.get("hours", 0)),
+		"food_cost": int(route.get("food_cost", 0)),
+		"transaction_mode": str(result.transaction_mode),
+		"contract_status": str(result.contract_status),
+		"skip_reason": str(result.skip_reason),
+		"error_reason": str(result.error_reason),
+		"facts_added": _fact_types(result.facts_added),
+		"fact_ids": _fact_ids(result.facts_added),
+		"state_changes": result.state_changes.duplicate(true),
+		"state_change_count": result.state_changes.size(),
+		"relationship_change_count": 0,
+		"memory_count": 0,
+		"trace_count": 0,
+		"rumor_seed_count": 0,
+		"pressure_change_count": 0,
+		"obligation_count": 0,
+		"exchange_count": 0,
+		"deferred_consequence_count": 0,
+		"obligation_update_count": 0,
+		"exchange_update_count": 0,
+		"deferred_consequence_update_count": 0,
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}

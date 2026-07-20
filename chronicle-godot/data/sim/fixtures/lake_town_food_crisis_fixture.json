@@ -15,6 +15,57 @@
       "local_family_business"
     ]
   },
+  "locations": [
+    {
+      "id": "old_chen_shop",
+      "display_name": "老陈铺子",
+      "description": "铺子里浮着一层旧粮和潮木头的气味。柜台后的粮罐大多见了底，门外有人压低声音谈论明天的粮价。",
+      "tags": [
+        "town",
+        "shop",
+        "food_related",
+        "local_family_business"
+      ]
+    },
+    {
+      "id": "abandoned_granary",
+      "display_name": "废弃粮仓",
+      "description": "这里离市场街不远，却很少有人白天过来。门板裂开一道缝，风从黑暗里带出潮湿谷物的气味。",
+      "tags": [
+        "town_outskirts",
+        "abandoned",
+        "granary",
+        "dangerous",
+        "food_related"
+      ]
+    }
+  ],
+  "travel_routes": [
+    {
+      "route_id": "old_chen_shop_to_abandoned_granary",
+      "from_location_id": "old_chen_shop",
+      "to_location_id": "abandoned_granary",
+      "label": "前往废弃粮仓",
+      "hours": 4,
+      "food_cost": 1,
+      "trigger_key": "after_short_wait",
+      "time_key": "after_half_day_walk",
+      "narrative_title": "镇外小路",
+      "narrative": "你沿着镇外少有人走的小路离开市场街。等废弃粮仓的屋脊从荒草后露出来，铺子那边已经过去了半日。"
+    },
+    {
+      "route_id": "abandoned_granary_to_old_chen_shop",
+      "from_location_id": "abandoned_granary",
+      "to_location_id": "old_chen_shop",
+      "label": "返回老陈铺子",
+      "hours": 4,
+      "food_cost": 1,
+      "trigger_key": "after_route_travel",
+      "time_key": "after_half_day_walk",
+      "narrative_title": "返回市场街",
+      "narrative": "你顺着来路穿过荒草和低坡。重新看见市场街时，铺子的门板仍保持着你离开后留下的样子。"
+    }
+  ],
   "region_state": {
     "food_pressure": "high",
     "public_order": "tense"
@@ -26,6 +77,7 @@
   "entities": [
     {
       "id": "chen_mi",
+      "location_id": "old_chen_shop",
       "display_name": "陈米",
       "description": "一个守在柜台边的孩子，衣袖沾着面粉，目光总往后屋飘。",
       "type": "person",
@@ -43,6 +95,7 @@
     },
     {
       "id": "spoiled_grain_bag",
+      "location_id": "old_chen_shop",
       "display_name": "发霉麦子袋",
       "description": "被匆忙塞进后屋的旧粮袋，潮气已经侵进袋口。",
       "type": "concealed_item",
@@ -59,6 +112,7 @@
     },
     {
       "id": "old_chen_shop_price_notice",
+      "location_id": "old_chen_shop",
       "display_name": "涨价告示",
       "description": "新写的墨迹还没有干透，粮价被改得比昨天更高。",
       "type": "readable_notice",
@@ -74,6 +128,7 @@
     },
     {
       "id": "gray_grain_powder",
+      "location_id": "old_chen_shop",
       "display_name": "灰白粮粉",
       "description": "柜脚旁散着一点颜色不对的粮粉，像是从某只破袋里漏出来的。",
       "type": "trace",
@@ -90,6 +145,7 @@
     },
     {
       "id": "old_chen_shop_closing_shutters",
+      "location_id": "old_chen_shop",
       "display_name": "半掩的门板",
       "description": "老陈把门板拖了出来，只给迟来的客人留下一道窄缝。",
       "type": "environment_detail",
@@ -100,6 +156,39 @@
       ],
       "states": {
         "visible": false
+      }
+    },
+    {
+      "id": "abandoned_granary_broken_door",
+      "location_id": "abandoned_granary",
+      "display_name": "裂开的粮仓门",
+      "description": "门板从中间裂开，锈钉旁留着几道新鲜的撬痕。里面没有灯，只有风推着霉味往外涌。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "granary_entrance",
+        "dangerous"
+      ],
+      "states": {
+        "visible": true
+      }
+    },
+    {
+      "id": "abandoned_granary_mold_trace",
+      "location_id": "abandoned_granary",
+      "display_name": "门槛上的霉斑",
+      "description": "灰绿色的粉末沿门槛拖出一道断续痕迹，像是有破粮袋最近被人从里面搬了出来。",
+      "type": "trace",
+      "tags": [
+        "trace",
+        "inspectable",
+        "spoiled_grain",
+        "granary"
+      ],
+      "states": {
+        "visible": true,
+        "inspectable": true,
+        "substance": "spoiled_grain"
       }
     }
   ],

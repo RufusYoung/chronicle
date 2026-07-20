@@ -83,6 +83,33 @@ func advance_time(hours: int = 1) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func perform_travel(route_id: String) -> Dictionary:
+	latest_event_type = "travel"
+	if not is_ready():
+		latest_result = {
+			"success": false,
+			"error": "session_not_initialized",
+			"route_id": route_id,
+		}
+		return latest_result.duplicate(true)
+
+	var option := _find_travel_option(route_id)
+	latest_result = session.travel(route_id, {
+		"tick_metadata": {
+			"source": "v5_live_location_surface",
+		},
+	})
+	if bool(latest_result.get("success", false)):
+		action_history.append({
+			"index": action_history.size() + 1,
+			"event_type": "travel",
+			"route_id": route_id,
+			"label": str(option.get("label", "前往新的地点")),
+			"narrative": _result_narrative(latest_result),
+		})
+	return latest_result.duplicate(true)
+
+
 func build_view_data() -> Dictionary:
 	if not is_ready():
 		return {
@@ -118,6 +145,7 @@ func build_view_data() -> Dictionary:
 		"visible_people": visible_people,
 		"visible_observations": visible_observations,
 		"actions": _action_rows(),
+		"travel_options": _travel_rows(),
 		"knowledge": _knowledge_rows(snapshot),
 		"feedback": _feedback_view(),
 		"history": action_history.duplicate(true),
@@ -135,6 +163,32 @@ func _action_rows() -> Array:
 			"action_type": action_type,
 			"kind": _action_kind(action_type),
 			"hint": _action_hint(option),
+		})
+	return rows
+
+
+func _travel_rows() -> Array:
+	var rows: Array[Dictionary] = []
+	for option: Dictionary in session.get_travel_options():
+		var hours := int(option.get("hours", 0))
+		var food_cost := int(option.get("food_cost", 0))
+		var can_travel := bool(option.get("can_travel", false))
+		rows.append({
+			"route_id": str(option.get("route_id", "")),
+			"destination_name": str(option.get("destination_name", "未知地点")),
+			"label": "%s　%d 小时 / %d 食物" % [
+				str(option.get("label", "前往新的地点")),
+				hours,
+				food_cost,
+			],
+			"hours": hours,
+			"food_cost": food_cost,
+			"can_travel": can_travel,
+			"hint": (
+				"随身食物不足，暂时无法走这条路。"
+				if str(option.get("blocked_reason", "")) == "insufficient_food"
+				else "旅行会推进世界时间，沿途的事情也会继续发展。"
+			),
 		})
 	return rows
 
@@ -230,6 +284,8 @@ func _feedback_view() -> Dictionary:
 
 	if latest_event_type == "world_tick":
 		return _tick_feedback_view()
+	if latest_event_type == "travel":
+		return _travel_feedback_view()
 
 	if not bool(latest_result.get("success", false)):
 		var error := str(latest_result.get("error", ""))
@@ -263,6 +319,43 @@ func _feedback_view() -> Dictionary:
 		"title": title,
 		"body": body,
 		"details": _result_detail_lines(transaction),
+	}
+
+
+func _travel_feedback_view() -> Dictionary:
+	if not bool(latest_result.get("success", false)):
+		var error := str(latest_result.get("error", ""))
+		return {
+			"status": "error",
+			"title": "没有动身",
+			"body": (
+				"你带的食物不够走完这段路。"
+				if error == "insufficient_food"
+				else "当前无法沿这条路线出发。"
+			),
+			"details": [],
+		}
+
+	var transaction: Dictionary = latest_result.get("transaction_result", {})
+	var narrative: Dictionary = transaction.get("narrative_result", {})
+	var destination: Dictionary = latest_result.get("destination", {})
+	var details: Array[String] = [
+		"经过 %d 小时，消耗 %d 份食物。" % [
+			int(latest_result.get("hours", 0)),
+			int(latest_result.get("food_cost", 0)),
+		],
+		"现在位于%s。" % str(destination.get("display_name", "新的地点")),
+	]
+	var tick_result: Dictionary = latest_result.get("tick_result", {})
+	if int(tick_result.get("triggered_count", 0)) > 0:
+		var tick_summary := _tick_narrative(tick_result)
+		if tick_summary != "":
+			details.append("你在路上时，原来的地方也发生了变化：%s" % tick_summary)
+	return {
+		"status": "travel",
+		"title": str(narrative.get("title", "抵达新的地点")),
+		"body": str(narrative.get("summary", "你抵达了新的地点。")),
+		"details": details,
 	}
 
 
@@ -369,6 +462,13 @@ func _relationship_change_text(change: Dictionary) -> String:
 func _find_action_option(action_id: String) -> Dictionary:
 	for option: Dictionary in session.get_action_options():
 		if str(option.get("action_id", "")) == action_id:
+			return option.duplicate(true)
+	return {}
+
+
+func _find_travel_option(route_id: String) -> Dictionary:
+	for option: Dictionary in session.get_travel_options():
+		if str(option.get("route_id", "")) == route_id:
 			return option.duplicate(true)
 	return {}
 
@@ -512,6 +612,10 @@ func _location_tag_label(tag: String) -> String:
 		"shop": "旧粮铺",
 		"food_related": "粮食相关",
 		"local_family_business": "本地人经营",
+		"town_outskirts": "镇外",
+		"abandoned": "废弃建筑",
+		"granary": "旧粮仓",
+		"dangerous": "不安地带",
 	}.get(tag, "")
 
 
@@ -522,6 +626,7 @@ func _fact_text(fact_type: String, target_name: String) -> String:
 		"actor_read_object": "你读过%s。" % target_name,
 		"actor_inspected_trace": "你检查过%s。" % target_name,
 		"actor_asked_about_market_pressure": "你确认湖湾镇正承受粮食压力。",
+		"actor_traveled_route": "你完成过一段需要时间和食物的旅程。",
 		"old_chen_shop_closed_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
 	}.get(fact_type, "你确认了一条与此地有关的事实。")
 

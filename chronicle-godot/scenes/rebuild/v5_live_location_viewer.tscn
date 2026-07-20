@@ -341,6 +341,22 @@ bbcode_enabled = true
 fit_content = false
 scroll_active = true
 
+[node name="TravelDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+layout_mode = 2
+
+[node name="TravelHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.69, 0.76, 0.58, 1)
+theme_override_font_sizes/font_size = 16
+text = "可以前往"
+
+[node name="TravelButtons" type="VBoxContainer" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_constants/separation = 6
+
 [node name="DividerB" type="HSeparator" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 layout_mode = 2
 
