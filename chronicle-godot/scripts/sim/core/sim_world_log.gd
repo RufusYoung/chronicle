@@ -69,6 +69,7 @@ func summary() -> Dictionary:
 	var deferred_consequence_update_count := 0
 	var item_change_count := 0
 	var chronicle_entry_count := 0
+	var investigation_change_count := 0
 	var tick_event_count := 0
 	var scoped_tick_event_count := 0
 	var failed_tick_event_count := 0
@@ -112,6 +113,9 @@ func summary() -> Dictionary:
 		item_change_count += int(entry.get("item_change_count", 0))
 		chronicle_entry_count += int(
 			entry.get("chronicle_entry_count", 0)
+		)
+		investigation_change_count += int(
+			entry.get("investigation_change_count", 0)
 		)
 		if str(entry.get("entry_type", "")) == "tick_event":
 			tick_event_count += 1
@@ -168,6 +172,7 @@ func summary() -> Dictionary:
 		"deferred_consequence_update_count": deferred_consequence_update_count,
 		"item_change_count": item_change_count,
 		"chronicle_entry_count": chronicle_entry_count,
+		"investigation_change_count": investigation_change_count,
 		"tick_event_count": tick_event_count,
 		"scoped_tick_event_count": scoped_tick_event_count,
 		"failed_tick_event_count": failed_tick_event_count,

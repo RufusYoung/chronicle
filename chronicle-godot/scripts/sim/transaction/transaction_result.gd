@@ -20,6 +20,7 @@ var exchange_updates: Array = []
 var deferred_consequence_updates: Array = []
 var item_changes: Array = []
 var chronicle_entries_added: Array = []
+var investigation_changes: Array = []
 var region_changes: Array = []
 var narrative_result: Dictionary = {}
 var transaction_mode: String = ""
@@ -49,6 +50,7 @@ func is_empty() -> bool:
 		and deferred_consequence_updates.is_empty()
 		and item_changes.is_empty()
 		and chronicle_entries_added.is_empty()
+		and investigation_changes.is_empty()
 		and region_changes.is_empty()
 		and narrative_result.is_empty()
 	)
@@ -122,6 +124,10 @@ func add_chronicle_entry(entry: Dictionary) -> void:
 	chronicle_entries_added.append(entry.duplicate(true))
 
 
+func add_investigation_change(change: Dictionary) -> void:
+	investigation_changes.append(change.duplicate(true))
+
+
 func set_narrative_result(result: Dictionary) -> void:
 	narrative_result = result.duplicate(true)
 
@@ -168,6 +174,7 @@ func to_dict() -> Dictionary:
 		"deferred_consequence_updates": deferred_consequence_updates.duplicate(true),
 		"item_changes": item_changes.duplicate(true),
 		"chronicle_entries_added": chronicle_entries_added.duplicate(true),
+		"investigation_changes": investigation_changes.duplicate(true),
 		"region_changes": region_changes.duplicate(true),
 		"narrative_result": narrative_result.duplicate(true),
 		"transaction_mode": transaction_mode,
@@ -194,6 +201,7 @@ func summary() -> Dictionary:
 		"deferred_consequence_update_count": deferred_consequence_updates.size(),
 		"item_change_count": item_changes.size(),
 		"chronicle_entry_count": chronicle_entries_added.size(),
+		"investigation_change_count": investigation_changes.size(),
 	}
 
 

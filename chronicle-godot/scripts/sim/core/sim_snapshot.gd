@@ -19,6 +19,7 @@ var exchanges: Array = []
 var deferred_consequences: Array = []
 var items: Array = []
 var chronicle_entries: Array = []
+var investigation_leads: Array = []
 
 
 func _init(data: Dictionary = {}) -> void:
@@ -40,6 +41,7 @@ func _init(data: Dictionary = {}) -> void:
 	deferred_consequences = (data.get("deferred_consequences", []) as Array).duplicate(true)
 	items = (data.get("items", []) as Array).duplicate(true)
 	chronicle_entries = (data.get("chronicle_entries", []) as Array).duplicate(true)
+	investigation_leads = (data.get("investigation_leads", []) as Array).duplicate(true)
 
 
 func get_entity(entity_id: String) -> Dictionary:
@@ -187,6 +189,25 @@ func get_player_chronicle_entries() -> Array:
 	return rows
 
 
+func get_investigation_leads() -> Array:
+	return investigation_leads.duplicate(true)
+
+
+func get_open_investigation_leads() -> Array:
+	var rows: Array = []
+	for lead: Dictionary in investigation_leads:
+		if str(lead.get("status", "open")) == "open":
+			rows.append(lead.duplicate(true))
+	return rows
+
+
+func get_investigation_lead(lead_id: String) -> Dictionary:
+	for lead: Dictionary in investigation_leads:
+		if str(lead.get("lead_id", "")) == lead_id:
+			return lead.duplicate(true)
+	return {}
+
+
 func get_location_tags() -> Array:
 	return (location.get("tags", []) as Array).duplicate(true)
 
@@ -223,4 +244,5 @@ func to_dict() -> Dictionary:
 		"deferred_consequences": deferred_consequences.duplicate(true),
 		"items": items.duplicate(true),
 		"chronicle_entries": chronicle_entries.duplicate(true),
+		"investigation_leads": investigation_leads.duplicate(true),
 	}

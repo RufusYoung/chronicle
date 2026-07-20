@@ -90,6 +90,45 @@ func resolve(
 	}
 	result.add_fact(recognition_fact)
 	result.add_fact(clue_fact)
+	var lead_data: Dictionary = definition.get("investigation_lead", {})
+	if not lead_data.is_empty():
+		var lead_opened_fact_id := "investigation_lead_opened:%d" % event_id
+		var lead_opened_fact := {
+			"fact_id": lead_opened_fact_id,
+			"fact_type": "investigation_lead_opened",
+			"source_id": target_id,
+			"target_id": str(lead_data.get("lead_id", "")),
+			"item_id": item_id,
+			"location_id": str(snapshot.location.get("id", "")),
+			"cause_fact_ids": [recognition_fact_id, clue_fact_id],
+			"summary": str(lead_data.get("opened_fact_summary", "")),
+			"day": day,
+			"hour": hour,
+			"visibility": "known",
+			"source_action": "return_echo",
+		}
+		result.add_fact(lead_opened_fact)
+		var lead := lead_data.duplicate(true)
+		lead["status"] = "open"
+		lead["disposition"] = "fresh"
+		lead["opened_day"] = day
+		lead["opened_hour"] = hour
+		lead["source_fact_ids"] = [
+			recognition_fact_id,
+			clue_fact_id,
+			lead_opened_fact_id,
+		]
+		lead["source_item_ids"] = [item_id]
+		lead["history"] = [{
+			"event_type": "opened",
+			"source_fact_id": lead_opened_fact_id,
+			"day": day,
+			"hour": hour,
+		}]
+		result.add_investigation_change({
+			"operation": "create",
+			"lead": lead,
+		})
 
 	var completion_state_key := str(
 		definition.get("completion_state_key", "return_echo_completed")

@@ -17,6 +17,7 @@ func build_snapshot(context: Variant, stores: Dictionary) -> Variant:
 	var deferred_consequence_store: Variant = stores.get("deferred_consequence_store")
 	var item_store: Variant = stores.get("item_store")
 	var chronicle_store: Variant = stores.get("chronicle_store")
+	var investigation_store: Variant = stores.get("investigation_store")
 
 	var states := _states_from_context(context)
 	if state_store != null:
@@ -52,6 +53,7 @@ func build_snapshot(context: Variant, stores: Dictionary) -> Variant:
 		"deferred_consequences": [] if deferred_consequence_store == null else deferred_consequence_store.list_deferred_consequences(),
 		"items": [] if item_store == null else item_store.list_items(),
 		"chronicle_entries": [] if chronicle_store == null else chronicle_store.list_entries(),
+		"investigation_leads": [] if investigation_store == null else investigation_store.list_leads(),
 	})
 
 

@@ -161,6 +161,34 @@ func perform_return_echo(option_id: String) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func perform_investigation(option_id: String) -> Dictionary:
+	latest_event_type = "investigation"
+	if not is_ready():
+		latest_result = {
+			"success": false,
+			"error": "session_not_initialized",
+			"option_id": option_id,
+		}
+		return latest_result.duplicate(true)
+
+	var option := _find_investigation_option(option_id)
+	latest_result = session.execute_investigation_option(option_id, {
+		"source": "v5_live_location_surface",
+	})
+	if bool(latest_result.get("success", false)):
+		action_history.append({
+			"index": action_history.size() + 1,
+			"event_type": "investigation",
+			"option_id": option_id,
+			"option_type": str(
+				latest_result.get("option_type", "")
+			),
+			"label": str(option.get("label", "处理调查方向")),
+			"narrative": _result_narrative(latest_result),
+		})
+	return latest_result.duplicate(true)
+
+
 func build_view_data() -> Dictionary:
 	if not is_ready():
 		return {
@@ -199,6 +227,7 @@ func build_view_data() -> Dictionary:
 		"risk": _risk_view(),
 		"travel_options": _travel_rows(),
 		"knowledge": _knowledge_rows(snapshot),
+		"investigation": _investigation_view(snapshot),
 		"chronicle": _chronicle_view(snapshot),
 		"feedback": _feedback_view(),
 		"history": action_history.duplicate(true),
@@ -208,6 +237,22 @@ func build_view_data() -> Dictionary:
 
 func _action_rows() -> Array:
 	var rows: Array[Dictionary] = []
+	for option: Dictionary in session.get_investigation_options():
+		var action_type := str(
+			option.get("action_type", "investigation")
+		)
+		rows.append({
+			"action_id": str(option.get("option_id", "")),
+			"investigation_option_id": str(
+				option.get("option_id", "")
+			),
+			"event_type": "investigation",
+			"label": str(option.get("label", "处理调查方向")),
+			"action_type": action_type,
+			"kind": _action_kind(action_type),
+			"hint": str(option.get("hint", "")),
+			"can_execute": bool(option.get("can_execute", false)),
+		})
 	for option: Dictionary in session.get_action_options():
 		var action_type := str(option.get("action_type", "normal"))
 		rows.append({
@@ -399,6 +444,36 @@ func _knowledge_rows(snapshot: Variant) -> Array:
 	return rows
 
 
+func _investigation_view(snapshot: Variant) -> Dictionary:
+	var location_id := str(snapshot.location.get("id", ""))
+	for lead: Dictionary in snapshot.get_open_investigation_leads():
+		if str(lead.get("location_id", "")) != location_id:
+			continue
+		var deferred := (
+			str(lead.get("disposition", "fresh")) == "deferred"
+		)
+		return {
+			"active": true,
+			"lead_id": str(lead.get("lead_id", "")),
+			"title": str(lead.get("title", "调查方向")),
+			"summary": str(
+				lead.get(
+					"deferred_summary" if deferred else "summary",
+					""
+				)
+			),
+			"status": "已搁置，仍可追查" if deferred else "等待决定",
+			"deferred": deferred,
+			"source_fact_count": (
+				(lead.get("source_fact_ids", []) as Array).size()
+			),
+			"source_item_count": (
+				(lead.get("source_item_ids", []) as Array).size()
+			),
+		}
+	return {"active": false}
+
+
 func _chronicle_view(snapshot: Variant) -> Dictionary:
 	var entries: Array = snapshot.get_player_chronicle_entries()
 	if entries.is_empty():
@@ -434,6 +509,8 @@ func _feedback_view() -> Dictionary:
 		return _challenge_feedback_view()
 	if latest_event_type == "return_echo":
 		return _return_echo_feedback_view()
+	if latest_event_type == "investigation":
+		return _investigation_feedback_view()
 
 	if not bool(latest_result.get("success", false)):
 		var error := str(latest_result.get("error", ""))
@@ -467,6 +544,68 @@ func _feedback_view() -> Dictionary:
 		"title": title,
 		"body": body,
 		"details": _result_detail_lines(transaction),
+	}
+
+
+func _investigation_feedback_view() -> Dictionary:
+	if not bool(latest_result.get("success", false)):
+		return {
+			"status": "error",
+			"title": "这条调查方向已经变化",
+			"body": "当前局面不再允许重复执行这个选择。",
+			"details": [],
+		}
+
+	var transaction: Dictionary = latest_result.get(
+		"transaction_result",
+		{}
+	)
+	var narrative: Dictionary = transaction.get("narrative_result", {})
+	var option_type := str(latest_result.get("option_type", ""))
+	var details: Array[String] = []
+	if option_type == "defer":
+		details.append("调查方向仍然保留，之后可以继续生活或回来追查")
+		details.append("陈米会把税契匣留在柜台下")
+	else:
+		for change: Dictionary in transaction.get(
+			"relationship_changes",
+			[]
+		):
+			details.append(_relationship_change_text(change))
+		for fact: Dictionary in transaction.get("facts_added", []):
+			if (
+				str(fact.get("fact_type", ""))
+				== "actor_found_public_granary_archive_reference"
+			):
+				details.append(
+					"新方向：%s"
+					% str(fact.get("summary", ""))
+				)
+		details.append("验粮铜牌新增了用于比对公仓封印的物品履历")
+	var entries: Array = transaction.get(
+		"chronicle_entries_added",
+		[]
+	)
+	if not entries.is_empty():
+		details.append(
+			"个人纪事新增：%s"
+			% str(
+				(entries[0] as Dictionary).get(
+					"title",
+					"调查方向"
+				)
+			)
+		)
+	return {
+		"status": "investigation",
+		"title": str(narrative.get("title", "调查方向")),
+		"body": str(
+			narrative.get(
+				"summary",
+				"你对这条调查方向作出了选择。"
+			)
+		),
+		"details": details,
 	}
 
 
@@ -511,6 +650,18 @@ func _return_echo_feedback_view() -> Dictionary:
 					"被认出的旧物"
 				)
 			)
+		)
+	var investigation_changes: Array = transaction.get(
+		"investigation_changes",
+		[]
+	)
+	if not investigation_changes.is_empty():
+		var lead: Dictionary = (
+			(investigation_changes[0] as Dictionary).get("lead", {})
+		)
+		details.append(
+			"新的调查方向：%s"
+			% str(lead.get("title", "公仓封存记录"))
 		)
 	details.append("验粮铜牌新增了一段可追溯的物品履历")
 	return {
@@ -746,6 +897,13 @@ func _find_return_echo_option(option_id: String) -> Dictionary:
 	return {}
 
 
+func _find_investigation_option(option_id: String) -> Dictionary:
+	for option: Dictionary in session.get_investigation_options():
+		if str(option.get("option_id", "")) == option_id:
+			return option.duplicate(true)
+	return {}
+
+
 func _entity_name(entity_id: String) -> String:
 	if entity_id == "player":
 		return "你"
@@ -773,6 +931,13 @@ func _person_state_text(states: Dictionary) -> String:
 		rows.append("饥饿：%s" % _hunger_label(str(states.get("hunger", ""))))
 	if states.has("fear"):
 		rows.append("戒备：%s" % _fear_label(str(states.get("fear", ""))))
+	if states.has("granary_record_stance"):
+		rows.append(
+			"旧事：%s"
+			% _granary_record_stance_label(
+				str(states.get("granary_record_stance", ""))
+			)
+		)
 	return "　".join(rows)
 
 
@@ -819,6 +984,8 @@ func _action_kind(action_type: String) -> String:
 		"preparation": "准备",
 		"danger": "危险",
 		"relic": "旧物",
+		"investigation": "追查",
+		"life": "生活",
 	}.get(action_type, "行动")
 
 
@@ -930,6 +1097,10 @@ func _fact_text(
 		"actor_discovered_item": "你在废弃粮仓找到了%s。" % target_name,
 		"chen_mi_recognized_granary_measure_token": "陈米认出了你带回的旧粮仓验粮铜牌。",
 		"lake_town_public_granary_sealed_after_spoiled_grain": "陈米确认，湖湾镇公仓曾在霉粮被查出后封闭。",
+		"investigation_lead_opened": "陈米说，陈家旧税契里也许夹着公仓封印抄件。",
+		"actor_deferred_public_granary_investigation": "你暂时搁置了公仓封存记录，但仍可以回来追查。",
+		"actor_investigated_public_granary_records": "你和陈米翻查过陈家保存的旧税契。",
+		"actor_found_public_granary_archive_reference": "你查到验粮吏陆槐与北埠旧档房的记录。",
 		"old_chen_shop_closed_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
 	}.get(fact_type, "你确认了一条与此地有关的事实。")
 
@@ -963,3 +1134,10 @@ func _relationship_axis_label(axis: String) -> String:
 
 func _signed_number(value: int) -> String:
 	return "+%d" % value if value > 0 else str(value)
+
+
+func _granary_record_stance_label(stance: String) -> String:
+	return {
+		"waiting_for_return": "替你留着税契匣",
+		"helped_search": "和你查到深夜",
+	}.get(stance, stance)

@@ -182,7 +182,83 @@
       "narrative_title": "铜牌背后的旧粮仓",
       "narrative": "陈米接过铜牌，只看了一眼背面的旧字就认出了它。那是湖湾镇公仓停用前的验粮牌；公仓并非自然荒废，而是在一批霉粮被查出后封了门。",
       "chronicle_title": "被认出的验粮铜牌",
-      "discovery_location_name": "废弃粮仓"
+      "discovery_location_name": "废弃粮仓",
+      "investigation_lead": {
+        "lead_id": "public_granary_seal_records",
+        "title": "公仓封存记录",
+        "summary": "陈米说，陈家保存的旧税契里也许夹着公仓封印的抄件。今晚可以花时间翻查，也可以先把这件事搁置。",
+        "deferred_summary": "陈米仍把旧税契匣留在柜台下。无论过了今晚多久，只要你回到铺子，就可以花时间继续追查。",
+        "location_id": "old_chen_shop",
+        "target_entity_id": "chen_mi",
+        "target_hint": "陈家旧税契与公仓封印抄件",
+        "opened_fact_summary": "陈米提出，陈家的旧税契中也许留有公仓封存记录。"
+      }
+    }
+  ],
+  "investigations": [
+    {
+      "lead_id": "public_granary_seal_records",
+      "location_id": "old_chen_shop",
+      "target_entity_id": "chen_mi",
+      "required_item_id": "lake_town_granary_measure_token",
+      "required_fact_type": "investigation_lead_opened",
+      "target_stance_state_key": "granary_record_stance",
+      "investigate": {
+        "option_id": "investigate_public_granary_seal_records",
+        "option_type": "investigate",
+        "action_type": "investigation",
+        "label": "[追查] 翻查陈家旧税契　3小时",
+        "hint": "会一直查到深夜；铜牌上的纹样可以用来比对夹页里的旧封印。",
+        "hours": 3,
+        "search_fact_type": "actor_investigated_public_granary_records",
+        "search_fact_summary": "你和陈米翻查了陈家保存的旧税契。",
+        "discovery_fact_type": "actor_found_public_granary_archive_reference",
+        "discovery_fact_summary": "税契夹页记录了旧公仓验粮吏陆槐，并指向北埠旧档房。",
+        "discovery_display_name": "夹在税契里的公仓封印抄件",
+        "visible_entity_id": "old_chen_public_granary_tax_deed",
+        "former_clerk_id": "lu_huai",
+        "former_clerk_name": "陆槐",
+        "archive_location_id": "north_quay_record_house",
+        "archive_location_name": "北埠旧档房",
+        "target_stance": "helped_search",
+        "relationship_changes": [
+          {
+            "axis": "trust",
+            "delta": 4
+          },
+          {
+            "axis": "familiarity",
+            "delta": 5
+          }
+        ],
+        "memory_type": "remembers_searching_granary_records_together",
+        "memory_summary": "那个旅人和陈米一起查到深夜，用验粮铜牌对出了税契夹页上的旧封印。",
+        "chronicle_title": "税契夹页上的名字",
+        "chronicle_summary": "你和陈米花了三个小时翻查陈家保存的旧税契。",
+        "chronicle_summary_after_defer": "你在搁置线索后，仍和陈米花了三个小时翻查陈家的旧税契。",
+        "discovery_chronicle_summary": "铜牌上的秤纹对上了一张公仓封印抄件，夹页留下验粮吏陆槐的名字，并指向北埠旧档房。",
+        "narrative_title": "税契匣最底下的夹页",
+        "narrative": "陈米把税契匣搬到灯下。你们逐张比对铜牌上的秤纹，直到深夜才在一张薄夹页上找到相同的公仓封印；旁边写着验粮吏陆槐，以及“北埠档房移存”几个小字。",
+        "resumed_narrative_title": "重新翻开的税契匣",
+        "resumed_narrative": "陈米把一直留在柜台下的税契匣重新搬出来。你们逐张比对铜牌上的秤纹，终于在夹页上找到验粮吏陆槐和北埠旧档房的记录。"
+      },
+      "defer": {
+        "option_id": "defer_public_granary_seal_records",
+        "option_type": "defer",
+        "action_type": "life",
+        "label": "[生活] 今晚先不翻税契　1小时",
+        "hint": "世界时间仍会前进；调查方向保留，之后仍可回来追查。",
+        "hours": 1,
+        "fact_type": "actor_deferred_public_granary_investigation",
+        "fact_summary": "你决定暂时不翻查陈家的旧税契，但保留了公仓封存记录的调查方向。",
+        "target_stance": "waiting_for_return",
+        "memory_type": "remembers_traveler_deferred_granary_records",
+        "memory_summary": "那个旅人没有在当夜继续追查，但让陈米把税契匣留在柜台下。",
+        "chronicle_title": "留到以后追查的旧事",
+        "chronicle_summary": "你没有继续翻查陈家的旧税契，而是把公仓封闭的线索留到以后。陈米把税契匣留在柜台下，等你改变主意。",
+        "narrative_title": "把旧事留到以后",
+        "narrative": "你没有让陈米在深夜立刻搬出税契。陈米点点头，把那只旧木匣留在柜台下；这条线索没有消失，只是暂时回到了日常生活的后面。"
+      }
     }
   ],
   "region_state": {
@@ -242,6 +318,23 @@
       ],
       "states": {
         "visible": true,
+        "readable": true
+      }
+    },
+    {
+      "id": "old_chen_public_granary_tax_deed",
+      "location_id": "old_chen_shop",
+      "display_name": "夹在税契里的公仓封印抄件",
+      "description": "薄纸上压着褪色的公仓封印，秤纹与铜牌完全相同。边角写着“验粮吏陆槐”，下面还有一行“北埠档房移存”。",
+      "type": "readable_notice",
+      "tags": [
+        "readable_notice",
+        "readable",
+        "public_granary_record",
+        "archive_reference"
+      ],
+      "states": {
+        "visible": false,
         "readable": true
       }
     },

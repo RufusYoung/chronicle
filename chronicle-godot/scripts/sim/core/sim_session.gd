@@ -15,6 +15,9 @@ const ChallengeResolverModel = preload(
 const ReturnEchoResolverModel = preload(
 	"res://scripts/sim/echo/return_echo_resolver.gd"
 )
+const InvestigationResolverModel = preload(
+	"res://scripts/sim/investigation/investigation_resolver.gd"
+)
 const WorldTickAdapterModel = preload(
 	"res://scripts/sim/world_tick/world_tick_adapter.gd"
 )
@@ -30,6 +33,9 @@ const ExchangeStoreModel = preload("res://scripts/sim/exchange/exchange_store.gd
 const ItemStoreModel = preload("res://scripts/sim/item/item_store.gd")
 const ChronicleStoreModel = preload(
 	"res://scripts/sim/chronicle/chronicle_store.gd"
+)
+const InvestigationLeadStoreModel = preload(
+	"res://scripts/sim/investigation/investigation_lead_store.gd"
 )
 const DeferredConsequenceStoreModel = preload(
 	"res://scripts/sim/deferred/deferred_consequence_store.gd"
@@ -51,10 +57,12 @@ var writer: Variant = null
 var travel_resolver: Variant = null
 var challenge_resolver: Variant = null
 var return_echo_resolver: Variant = null
+var investigation_resolver: Variant = null
 var world_tick_adapter: Variant = null
 var travel_routes: Array = []
 var challenge_definitions: Array = []
 var return_echo_definitions: Array = []
+var investigation_definitions: Array = []
 var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 var fixture_id: String = ""
@@ -64,6 +72,8 @@ var travel_count: int = 0
 var challenge_count: int = 0
 var challenge_preparation_count: int = 0
 var return_echo_count: int = 0
+var investigation_count: int = 0
+var investigation_defer_count: int = 0
 var candidate_generation_count: int = 0
 var world_tick_count: int = 0
 var current_day: int = 1
@@ -100,6 +110,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	return_echo_definitions = (
 		fixture.get("return_echoes", []) as Array
 	).duplicate(true)
+	investigation_definitions = (
+		fixture.get("investigations", []) as Array
+	).duplicate(true)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	_create_stores(fixture)
 	initialized = true
@@ -109,6 +122,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"rule_count": rules.size(),
 		"challenge_definition_count": challenge_definitions.size(),
 		"return_echo_definition_count": return_echo_definitions.size(),
+		"investigation_definition_count": investigation_definitions.size(),
 		"candidate_count": get_action_candidates().size(),
 		"time": get_time_summary(),
 	}
@@ -408,6 +422,141 @@ func execute_return_echo_option(
 		"world_log_entry": log_entry.duplicate(true),
 		"time": get_time_summary(),
 		"return_echo_count": return_echo_count,
+		"store_summary": get_store_summary(),
+	}
+
+
+func get_investigation_options() -> Array:
+	if not initialized:
+		return []
+	var snapshot: Variant = get_snapshot()
+	var rows: Array = []
+	for lead: Dictionary in snapshot.get_open_investigation_leads():
+		var definition := _find_investigation_definition(
+			str(lead.get("lead_id", ""))
+		)
+		if (
+			definition.is_empty()
+			or not _investigation_lead_is_available(
+				definition,
+				lead,
+				snapshot
+			)
+		):
+			continue
+		var investigate: Dictionary = definition.get("investigate", {})
+		if not investigate.is_empty():
+			rows.append(_investigation_option_row(
+				investigate,
+				lead
+			))
+		var defer: Dictionary = definition.get("defer", {})
+		if (
+			str(lead.get("disposition", "fresh")) == "fresh"
+			and not defer.is_empty()
+		):
+			rows.append(_investigation_option_row(defer, lead))
+	return rows
+
+
+func execute_investigation_option(
+		option_id: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
+	if not initialized:
+		return _investigation_failure(
+			"session_not_initialized",
+			option_id
+		)
+	var option := _find_investigation_option(option_id)
+	if option.is_empty():
+		return _investigation_failure(
+			"investigation_option_not_found",
+			option_id
+		)
+	var lead_id := str(option.get("lead_id", ""))
+	var lead: Dictionary = get_snapshot().get_investigation_lead(
+		lead_id
+	)
+	var definition := _find_investigation_definition(lead_id)
+	if lead.is_empty() or definition.is_empty():
+		return _investigation_failure(
+			"investigation_definition_not_found",
+			option_id
+		)
+	var hours := int(option.get("hours", 0))
+	if hours <= 0:
+		return _investigation_failure(
+			"invalid_investigation_hours",
+			option_id
+		)
+
+	var option_type := str(option.get("option_type", ""))
+	var tick_result := advance_time(
+		hours,
+		"after_investigation_%s" % option_type,
+		{
+			"scope_type": "location",
+			"scope_id": context.location_id,
+			"source": str(
+				metadata.get(
+					"source",
+					"SimSession.execute_investigation_option"
+				)
+			),
+			"label": str(option.get("label", "处理调查方向")),
+		}
+	)
+	if not bool(tick_result.get("success", false)):
+		return _investigation_failure(
+			str(tick_result.get("error_reason", "world_tick_failed")),
+			option_id
+		)
+
+	var event_id := (
+		investigation_count
+		+ investigation_defer_count
+		+ 1
+	)
+	var transaction_result: Variant = investigation_resolver.resolve(
+		definition,
+		lead,
+		option_type,
+		get_snapshot(),
+		event_id,
+		get_time_summary()
+	)
+	if str(transaction_result.contract_status) == "invalid_contract":
+		return _investigation_failure(
+			str(transaction_result.error_reason),
+			option_id
+		)
+	writer.apply_result(transaction_result, stores)
+	_sync_context_after_result(transaction_result)
+
+	var log_entry := _build_investigation_log_entry(
+		option,
+		transaction_result,
+		event_id
+	)
+	world_log.append_entry(log_entry)
+	if option_type == "defer":
+		investigation_defer_count += 1
+	else:
+		investigation_count += 1
+	return {
+		"success": true,
+		"error": "",
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"option_type": option_type,
+		"lead_id": lead_id,
+		"transaction_result": transaction_result.to_dict(),
+		"tick_result": tick_result,
+		"world_log_entry": log_entry.duplicate(true),
+		"time": get_time_summary(),
+		"investigation_count": investigation_count,
+		"investigation_defer_count": investigation_defer_count,
 		"store_summary": get_store_summary(),
 	}
 
@@ -733,6 +882,9 @@ func get_store_summary() -> Dictionary:
 		"chronicle_entries": (
 			stores["chronicle_store"].list_entries().size()
 		),
+		"investigation_leads": (
+			stores["investigation_store"].list_leads().size()
+		),
 		"deferred_consequences": (
 			stores["deferred_consequence_store"]
 			.list_deferred_consequences()
@@ -756,6 +908,7 @@ func get_store_snapshots() -> Dictionary:
 		"exchanges": stores["exchange_store"].list_exchanges(),
 		"items": stores["item_store"].list_items(),
 		"chronicle_entries": stores["chronicle_store"].list_entries(),
+		"investigation_leads": stores["investigation_store"].list_leads(),
 		"deferred_consequences": (
 			stores["deferred_consequence_store"].list_deferred_consequences()
 		),
@@ -785,6 +938,8 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"challenges_resolved": challenge_count,
 		"challenge_preparations": challenge_preparation_count,
 		"return_echoes_resolved": return_echo_count,
+		"investigations_resolved": investigation_count,
+		"investigations_deferred": investigation_defer_count,
 		"world_ticks_executed": world_tick_count,
 		"time": get_time_summary(),
 		"candidate_selection_source": "ActionAffordanceSystem",
@@ -814,10 +969,12 @@ func _reset_runtime() -> void:
 	travel_resolver = TravelResolverModel.new()
 	challenge_resolver = ChallengeResolverModel.new()
 	return_echo_resolver = ReturnEchoResolverModel.new()
+	investigation_resolver = InvestigationResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
 	travel_routes = []
 	challenge_definitions = []
 	return_echo_definitions = []
+	investigation_definitions = []
 	challenge_rng = RandomNumberGenerator.new()
 	fixture_id = ""
 	initialized = false
@@ -826,6 +983,8 @@ func _reset_runtime() -> void:
 	challenge_count = 0
 	challenge_preparation_count = 0
 	return_echo_count = 0
+	investigation_count = 0
+	investigation_defer_count = 0
 	candidate_generation_count = 0
 	world_tick_count = 0
 	current_day = 1
@@ -855,6 +1014,7 @@ func _create_stores(fixture: Dictionary) -> void:
 		"exchange_store": ExchangeStoreModel.new(),
 		"item_store": item_store,
 		"chronicle_store": ChronicleStoreModel.new(),
+		"investigation_store": InvestigationLeadStoreModel.new(),
 		"deferred_consequence_store": deferred_store,
 	}
 	for consequence: Dictionary in fixture.get(
@@ -1148,6 +1308,110 @@ func _facts_include_item_discovery(
 	return false
 
 
+func _find_investigation_option(option_id: String) -> Dictionary:
+	for option: Dictionary in get_investigation_options():
+		if str(option.get("option_id", "")) == option_id:
+			return option.duplicate(true)
+	return {}
+
+
+func _find_investigation_definition(lead_id: String) -> Dictionary:
+	for definition: Dictionary in investigation_definitions:
+		if str(definition.get("lead_id", "")) == lead_id:
+			return definition.duplicate(true)
+	return {}
+
+
+func _investigation_option_row(
+		option: Dictionary,
+		lead: Dictionary
+) -> Dictionary:
+	return {
+		"option_id": str(option.get("option_id", "")),
+		"option_type": str(option.get("option_type", "")),
+		"lead_id": str(lead.get("lead_id", "")),
+		"lead_title": str(lead.get("title", "调查方向")),
+		"label": str(option.get("label", "处理调查方向")),
+		"hours": int(option.get("hours", 0)),
+		"action_type": str(
+			option.get("action_type", "investigation")
+		),
+		"hint": str(option.get("hint", "")),
+		"can_execute": true,
+		"blocked_reason": "",
+	}
+
+
+func _investigation_lead_is_available(
+		definition: Dictionary,
+		lead: Dictionary,
+		snapshot: Variant
+) -> bool:
+	var location_id := str(snapshot.location.get("id", ""))
+	if (
+		str(definition.get("location_id", "")) != location_id
+		or str(lead.get("location_id", "")) != location_id
+	):
+		return false
+	var target_id := str(definition.get("target_entity_id", ""))
+	if (
+		snapshot.get_entity(target_id).is_empty()
+		or not bool(snapshot.get_entity_state(
+			target_id,
+			"visible",
+			false
+		))
+	):
+		return false
+
+	var facts: Array = snapshot.get_facts()
+	for source_fact_id: Variant in lead.get("source_fact_ids", []):
+		if not _facts_include_id(facts, str(source_fact_id)):
+			return false
+	var required_fact_type := str(
+		definition.get("required_fact_type", "")
+	)
+	if (
+		required_fact_type != ""
+		and not _facts_include_type_for_target(
+			facts,
+			required_fact_type,
+			str(lead.get("lead_id", ""))
+		)
+	):
+		return false
+
+	var item_id := str(definition.get("required_item_id", ""))
+	var item: Dictionary = snapshot.get_item(item_id)
+	var actor_id := str(snapshot.get_player_value("id", "player"))
+	if item.is_empty() or str(item.get("owner_id", "")) != actor_id:
+		return false
+	return item_id in (
+		snapshot.get_player_value("inventory_item_ids", []) as Array
+	)
+
+
+func _facts_include_id(facts: Array, fact_id: String) -> bool:
+	for fact: Dictionary in facts:
+		if str(fact.get("fact_id", "")) == fact_id:
+			return true
+	return false
+
+
+func _facts_include_type_for_target(
+		facts: Array,
+		fact_type: String,
+		target_id: String
+) -> bool:
+	for fact: Dictionary in facts:
+		if (
+			str(fact.get("fact_type", "")) == fact_type
+			and str(fact.get("target_id", "")) == target_id
+		):
+			return true
+	return false
+
+
 func _find_candidate(candidates: Array, rule_id: String, target_id: String) -> Variant:
 	for candidate: Variant in candidates:
 		if str(candidate.rule_id) != rule_id:
@@ -1221,6 +1485,20 @@ func _return_echo_failure(error: String, option_id: String) -> Dictionary:
 		"fixture_id": fixture_id,
 		"option_id": option_id,
 		"return_echo_count": return_echo_count,
+		"time": get_time_summary(),
+		"world_tick_count": world_tick_count,
+		"store_summary": get_store_summary(),
+	}
+
+
+func _investigation_failure(error: String, option_id: String) -> Dictionary:
+	return {
+		"success": false,
+		"error": error,
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"investigation_count": investigation_count,
+		"investigation_defer_count": investigation_defer_count,
 		"time": get_time_summary(),
 		"world_tick_count": world_tick_count,
 		"store_summary": get_store_summary(),
@@ -1448,6 +1726,68 @@ func _build_return_echo_log_entry(
 		"chronicle_entry_count": (
 			result.chronicle_entries_added.size()
 		),
+		"investigation_changes": (
+			result.investigation_changes.duplicate(true)
+		),
+		"investigation_change_count": (
+			result.investigation_changes.size()
+		),
+		"narrative_summary": _narrative_summary(
+			result.narrative_result
+		),
+		"narrative_result": result.narrative_result.duplicate(true),
+	}
+
+
+func _build_investigation_log_entry(
+		option: Dictionary,
+		result: Variant,
+		event_id: int
+) -> Dictionary:
+	return {
+		"entry_type": "investigation_choice",
+		"step_index": event_id - 1,
+		"step_id": "investigation_%d" % event_id,
+		"lead_id": str(option.get("lead_id", "")),
+		"option_id": str(option.get("option_id", "")),
+		"option_type": str(option.get("option_type", "")),
+		"hours": int(option.get("hours", 0)),
+		"transaction_mode": str(result.transaction_mode),
+		"contract_status": str(result.contract_status),
+		"skip_reason": str(result.skip_reason),
+		"error_reason": str(result.error_reason),
+		"facts_added": _fact_types(result.facts_added),
+		"fact_ids": _fact_ids(result.facts_added),
+		"state_changes": result.state_changes.duplicate(true),
+		"state_change_count": result.state_changes.size(),
+		"relationship_changes": result.relationship_changes.duplicate(true),
+		"relationship_change_count": result.relationship_changes.size(),
+		"memories_added": result.memories_added.duplicate(true),
+		"memory_types": _memory_types(result.memories_added),
+		"memory_count": result.memories_added.size(),
+		"trace_count": 0,
+		"rumor_seed_count": 0,
+		"pressure_change_count": 0,
+		"obligation_count": 0,
+		"exchange_count": 0,
+		"deferred_consequence_count": 0,
+		"obligation_update_count": 0,
+		"exchange_update_count": 0,
+		"deferred_consequence_update_count": 0,
+		"item_changes": result.item_changes.duplicate(true),
+		"item_change_count": result.item_changes.size(),
+		"chronicle_entries_added": (
+			result.chronicle_entries_added.duplicate(true)
+		),
+		"chronicle_entry_count": (
+			result.chronicle_entries_added.size()
+		),
+		"investigation_changes": (
+			result.investigation_changes.duplicate(true)
+		),
+		"investigation_change_count": (
+			result.investigation_changes.size()
+		),
 		"narrative_summary": _narrative_summary(
 			result.narrative_result
 		),
@@ -1469,6 +1809,12 @@ func _snapshot_summary(snapshot: Variant, candidates: Array) -> Dictionary:
 		"final_item_count": snapshot.get_items().size(),
 		"final_chronicle_entry_count": (
 			snapshot.get_chronicle_entries().size()
+		),
+		"final_investigation_lead_count": (
+			snapshot.get_investigation_leads().size()
+		),
+		"final_open_investigation_lead_count": (
+			snapshot.get_open_investigation_leads().size()
 		),
 		"final_candidate_probe": {
 			"rule_ids": _candidate_rule_ids(candidates),
@@ -1574,4 +1920,5 @@ func _empty_store_summary() -> Dictionary:
 		"deferred_consequences": 0,
 		"items": 0,
 		"chronicle_entries": 0,
+		"investigation_leads": 0,
 	}

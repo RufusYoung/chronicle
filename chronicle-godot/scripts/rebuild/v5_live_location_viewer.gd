@@ -26,6 +26,8 @@ var current_view_data: Dictionary = {}
 @onready var feedback_body: RichTextLabel = %FeedbackBody
 @onready var history_text: RichTextLabel = %HistoryText
 @onready var action_heading: Label = %ActionHeading
+@onready var action_hint: Label = %ActionHint
+@onready var investigation_bar: RichTextLabel = %InvestigationBar
 @onready var action_buttons: FlowContainer = %ActionButtons
 @onready var time_label: Label = %TimeLabel
 @onready var wait_button: Button = %WaitButton
@@ -64,6 +66,12 @@ func perform_challenge(option_id: String) -> Dictionary:
 
 func perform_return_echo(option_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_return_echo(option_id)
+	refresh_view()
+	return result
+
+
+func perform_investigation(option_id: String) -> Dictionary:
+	var result: Dictionary = view_model.perform_investigation(option_id)
 	refresh_view()
 	return result
 
@@ -108,6 +116,9 @@ func refresh_view() -> void:
 	)
 	_refresh_chronicle(
 		current_view_data.get("chronicle", {}) as Dictionary
+	)
+	_refresh_investigation(
+		current_view_data.get("investigation", {}) as Dictionary
 	)
 	_refresh_risk(current_view_data.get("risk", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
@@ -158,6 +169,16 @@ func _refresh_actions(actions: Array) -> void:
 						str(action.get("return_echo_option_id", ""))
 					)
 				)
+			"investigation":
+				button.set_meta(
+					"investigation_option_id",
+					str(action.get("investigation_option_id", ""))
+				)
+				button.pressed.connect(
+					perform_investigation.bind(
+						str(action.get("investigation_option_id", ""))
+					)
+				)
 			_:
 				button.pressed.connect(
 					perform_action.bind(
@@ -165,6 +186,20 @@ func _refresh_actions(actions: Array) -> void:
 					)
 				)
 		action_buttons.add_child(button)
+
+
+func _refresh_investigation(investigation: Dictionary) -> void:
+	var active := bool(investigation.get("active", false))
+	action_hint.visible = not active
+	investigation_bar.visible = active
+	if not active:
+		investigation_bar.text = ""
+		return
+	investigation_bar.text = "[color=#d6b66e][b]调查方向　%s[/b][/color]　%s\n[color=#8f9c98]%s[/color]" % [
+		str(investigation.get("title", "")),
+		str(investigation.get("status", "")),
+		str(investigation.get("summary", "")),
+	]
 
 
 func _refresh_chronicle(chronicle: Dictionary) -> void:
@@ -296,6 +331,10 @@ func _apply_action_button_style(button: Button, action_type: String) -> void:
 		accent = Color("#9b5d4f")
 	elif action_type == "relic":
 		accent = Color("#a57b4d")
+	elif action_type == "investigation":
+		accent = Color("#b18146")
+	elif action_type == "life":
+		accent = Color("#71836d")
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color("#222a2b")
 	normal.border_color = accent
@@ -325,6 +364,7 @@ func _show_load_error(message: String) -> void:
 	knowledge_text.text = ""
 	chronicle_heading.visible = false
 	chronicle_text.visible = false
+	investigation_bar.visible = false
 	risk_heading.visible = false
 	risk_text.visible = false
 	_clear_children(travel_buttons)

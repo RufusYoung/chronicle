@@ -68,3 +68,8 @@ func apply_result(result: Variant, stores: Dictionary) -> void:
 	if chronicle_store != null:
 		for entry: Dictionary in result.chronicle_entries_added:
 			chronicle_store.add_entry(entry)
+
+	var investigation_store: Variant = stores.get("investigation_store")
+	if investigation_store != null:
+		for change: Dictionary in result.investigation_changes:
+			investigation_store.apply_change(change)
