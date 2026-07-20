@@ -110,6 +110,32 @@ func perform_travel(route_id: String) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func perform_challenge(option_id: String) -> Dictionary:
+	latest_event_type = "challenge"
+	if not is_ready():
+		latest_result = {
+			"success": false,
+			"error": "session_not_initialized",
+			"option_id": option_id,
+		}
+		return latest_result.duplicate(true)
+
+	var option := _find_challenge_option(option_id)
+	latest_result = session.execute_challenge_option(option_id, {
+		"source": "v5_live_location_surface",
+	})
+	if bool(latest_result.get("success", false)):
+		action_history.append({
+			"index": action_history.size() + 1,
+			"event_type": "challenge",
+			"option_id": option_id,
+			"label": str(option.get("label", "面对眼前的危险")),
+			"outcome": str(latest_result.get("outcome", "")),
+			"narrative": _result_narrative(latest_result),
+		})
+	return latest_result.duplicate(true)
+
+
 func build_view_data() -> Dictionary:
 	if not is_ready():
 		return {
@@ -145,6 +171,7 @@ func build_view_data() -> Dictionary:
 		"visible_people": visible_people,
 		"visible_observations": visible_observations,
 		"actions": _action_rows(),
+		"risk": _risk_view(),
 		"travel_options": _travel_rows(),
 		"knowledge": _knowledge_rows(snapshot),
 		"feedback": _feedback_view(),
@@ -159,12 +186,61 @@ func _action_rows() -> Array:
 		var action_type := str(option.get("action_type", "normal"))
 		rows.append({
 			"action_id": str(option.get("action_id", "")),
+			"event_type": "player_action",
 			"label": str(option.get("label", "采取行动")),
 			"action_type": action_type,
 			"kind": _action_kind(action_type),
 			"hint": _action_hint(option),
+			"can_execute": true,
+		})
+	for option: Dictionary in session.get_challenge_options():
+		var action_type := str(option.get("action_type", "danger"))
+		rows.append({
+			"action_id": str(option.get("option_id", "")),
+			"challenge_option_id": str(option.get("option_id", "")),
+			"event_type": "challenge",
+			"label": str(option.get("label", "面对眼前的危险")),
+			"action_type": action_type,
+			"kind": _action_kind(action_type),
+			"hint": _challenge_action_hint(option),
+			"can_execute": bool(option.get("can_execute", false)),
 		})
 	return rows
+
+
+func _risk_view() -> Dictionary:
+	var options: Array = session.get_challenge_options()
+	if options.is_empty():
+		return {"active": false}
+	var attempt: Dictionary = {}
+	var preparation: Dictionary = {}
+	for option: Dictionary in options:
+		if str(option.get("option_type", "")) == "attempt":
+			attempt = option
+		elif str(option.get("option_type", "")) == "prepare":
+			preparation = option
+	if attempt.is_empty():
+		return {"active": false}
+	var prepared := bool(attempt.get("preparation_applied", false))
+	return {
+		"active": true,
+		"title": "眼前的风险　%s" % str(attempt.get("risk_label", "未知")),
+		"description": str(attempt.get("risk_description", "")),
+		"check_text": str(attempt.get("check_text", "")),
+		"prepared": prepared,
+		"preparation_text": (
+			"准备已经完成，检定将获得 +%d。"
+			% int(attempt.get("preparation_bonus", 0))
+			if prepared
+			else (
+				"可先准备：检定 +%d；也可返回。"
+				% int(preparation.get("preparation_bonus", 0))
+				if not preparation.is_empty()
+				else "可以直接尝试，也可以返回。"
+			)
+		),
+		"failure_hint": str(attempt.get("failure_hint", "")),
+	}
 
 
 func _travel_rows() -> Array:
@@ -210,15 +286,26 @@ func _entity_row(entity: Dictionary) -> Dictionary:
 
 func _player_view(snapshot: Variant) -> Dictionary:
 	var role := str(snapshot.get_player_value("role", "traveler"))
+	var health := int(snapshot.get_player_value("health", 100))
+	var injury := str(snapshot.get_player_value("injury", "none"))
+	var item_names: Array[String] = []
+	for item: Dictionary in snapshot.get_player_items():
+		item_names.append(str(item.get("display_name", "未命名物品")))
 	return {
 		"title": "无名旅人",
 		"role": _role_label(role),
 		"food_count": int(snapshot.get_player_value("food_count", 0)),
 		"perception": int(snapshot.get_player_value("perception", 0)),
-		"summary": "身份　%s\n食物　%d 份\n感知　%d" % [
+		"health": health,
+		"injury": injury,
+		"items": item_names,
+		"summary": "身份　%s\n食物　%d 份　感知　%d\n健康　%d　伤势　%s\n发现物　%s" % [
 			_role_label(role),
 			int(snapshot.get_player_value("food_count", 0)),
 			int(snapshot.get_player_value("perception", 0)),
+			health,
+			_injury_label(injury),
+			"、".join(item_names) if not item_names.is_empty() else "无",
 		],
 	}
 
@@ -267,7 +354,7 @@ func _knowledge_rows(snapshot: Variant) -> Array:
 		var target_name := str(fact.get("target_display_name", ""))
 		if target_name == "":
 			target_name = _entity_name(str(fact.get("target_id", "")))
-		rows.append(_fact_text(fact_type, target_name))
+		rows.append(_fact_text(fact_type, target_name, fact))
 	if rows.is_empty():
 		rows.append("你还没有确认任何值得记下的事实。")
 	return rows
@@ -286,6 +373,8 @@ func _feedback_view() -> Dictionary:
 		return _tick_feedback_view()
 	if latest_event_type == "travel":
 		return _travel_feedback_view()
+	if latest_event_type == "challenge":
+		return _challenge_feedback_view()
 
 	if not bool(latest_result.get("success", false)):
 		var error := str(latest_result.get("error", ""))
@@ -319,6 +408,55 @@ func _feedback_view() -> Dictionary:
 		"title": title,
 		"body": body,
 		"details": _result_detail_lines(transaction),
+	}
+
+
+func _challenge_feedback_view() -> Dictionary:
+	if not bool(latest_result.get("success", false)):
+		return {
+			"status": "error",
+			"title": "这个选择已经失效",
+			"body": "眼前的危险已经有了结果，不能重复结算。",
+			"details": [],
+		}
+
+	var transaction: Dictionary = latest_result.get("transaction_result", {})
+	var narrative: Dictionary = transaction.get("narrative_result", {})
+	var option_type := str(latest_result.get("option_type", ""))
+	var details: Array[String] = []
+	if option_type == "prepare":
+		details.append("准备耗时 1 小时，并写入当前世界状态。")
+	else:
+		var preparation_bonus := int(narrative.get("preparation_bonus", 0))
+		var formula := "掷骰 %d + %s %d" % [
+			int(narrative.get("roll", 0)),
+			_state_key_label(str(narrative.get("stat_key", "perception"))),
+			int(narrative.get("stat_value", 0)),
+		]
+		if preparation_bonus > 0:
+			formula += " + 准备 %d" % preparation_bonus
+		formula += " = %d / 难度 %d" % [
+			int(narrative.get("total", 0)),
+			int(narrative.get("difficulty", 0)),
+		]
+		details.append(formula)
+		if str(narrative.get("outcome", "")) == "success":
+			var item_changes: Array = transaction.get("item_changes", [])
+			if not item_changes.is_empty():
+				var item: Dictionary = (
+					(item_changes[0] as Dictionary).get("item", {})
+				)
+				details.append(
+					"发现物进入随身物品：%s"
+					% str(item.get("display_name", "未知物品"))
+				)
+		else:
+			details.append("你受了伤，但仍然活着并退回了门外。")
+	return {
+		"status": str(narrative.get("outcome", "challenge")),
+		"title": str(narrative.get("title", "冒险结果")),
+		"body": str(narrative.get("summary", "局面已经产生结果。")),
+		"details": details,
 	}
 
 
@@ -446,6 +584,12 @@ func _state_change_text(change: Dictionary) -> String:
 		return "%s上的价格又被改高" % _entity_name(entity_id)
 	if entity_id == "player" and key == "food_count":
 		return "随身食物 %s" % _signed_number(int(change.get("delta", 0)))
+	if entity_id == "player" and key == "health":
+		return "健康降至 %d" % int(change.get("to", 0))
+	if entity_id == "player" and key == "injury":
+		return "伤势：%s" % _injury_label(str(change.get("to", "")))
+	if entity_id == "player" and key == "inventory_item_ids":
+		return "随身物品发生变化"
 	if key == "hunger" and str(change.get("operation", "")) == "decrease_tier":
 		return "%s的饥饿有所缓和" % _entity_name(entity_id)
 	return "%s的%s发生变化" % [_entity_name(entity_id), _state_key_label(key)]
@@ -469,6 +613,13 @@ func _find_action_option(action_id: String) -> Dictionary:
 func _find_travel_option(route_id: String) -> Dictionary:
 	for option: Dictionary in session.get_travel_options():
 		if str(option.get("route_id", "")) == route_id:
+			return option.duplicate(true)
+	return {}
+
+
+func _find_challenge_option(option_id: String) -> Dictionary:
+	for option: Dictionary in session.get_challenge_options():
+		if str(option.get("option_id", "")) == option_id:
 			return option.duplicate(true)
 	return {}
 
@@ -543,6 +694,8 @@ func _action_kind(action_type: String) -> String:
 		"relationship": "关系",
 		"military": "职责",
 		"rumor": "传闻",
+		"preparation": "准备",
+		"danger": "危险",
 	}.get(action_type, "行动")
 
 
@@ -551,6 +704,19 @@ func _action_hint(option: Dictionary) -> String:
 	if mode == "candidate_only":
 		return "记录选择，等待后续对话系统承接"
 	return "由当前世界状态即时结算"
+
+
+func _challenge_action_hint(option: Dictionary) -> String:
+	if str(option.get("option_type", "")) == "prepare":
+		return "%s；花费 %d 小时后改变检定条件。" % [
+			str(option.get("risk_description", "")),
+			int(option.get("hours", 1)),
+		]
+	return "%s；%s；%s" % [
+		str(option.get("check_text", "")),
+		str(option.get("success_hint", "")),
+		str(option.get("failure_hint", "")),
+	]
 
 
 func _role_label(role: String) -> String:
@@ -619,7 +785,11 @@ func _location_tag_label(tag: String) -> String:
 	}.get(tag, "")
 
 
-func _fact_text(fact_type: String, target_name: String) -> String:
+func _fact_text(
+		fact_type: String,
+		target_name: String,
+		fact: Dictionary = {}
+) -> String:
 	return {
 		"actor_gave_food_to_target": "你给%s递过食物。" % target_name,
 		"actor_asked_about_concealed_item": "你问过%s藏起来的东西。" % target_name,
@@ -627,6 +797,14 @@ func _fact_text(fact_type: String, target_name: String) -> String:
 		"actor_inspected_trace": "你检查过%s。" % target_name,
 		"actor_asked_about_market_pressure": "你确认湖湾镇正承受粮食压力。",
 		"actor_traveled_route": "你完成过一段需要时间和食物的旅程。",
+		"actor_prepared_for_challenge": "你在进入废弃粮仓前检查了朽木地板。",
+		"actor_attempted_challenge": (
+			"你通过了废弃粮仓的危险检定。"
+			if str(fact.get("outcome", "")) == "success"
+			else "你没能通过废弃粮仓的危险检定。"
+		),
+		"actor_injured_during_challenge": "你在废弃粮仓扭伤了脚踝。",
+		"actor_discovered_item": "你在废弃粮仓找到了%s。" % target_name,
 		"old_chen_shop_closed_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
 	}.get(fact_type, "你确认了一条与此地有关的事实。")
 
@@ -635,7 +813,17 @@ func _state_key_label(key: String) -> String:
 	return {
 		"hunger": "饥饿状态",
 		"food_count": "食物数量",
+		"perception": "感知",
+		"health": "健康",
+		"injury": "伤势",
 	}.get(key, key)
+
+
+func _injury_label(injury: String) -> String:
+	return {
+		"none": "无",
+		"twisted_ankle": "脚踝扭伤",
+	}.get(injury, injury)
 
 
 func _relationship_axis_label(axis: String) -> String:

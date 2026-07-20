@@ -112,6 +112,10 @@ func add_deferred_consequence_update(update: Dictionary) -> void:
 	deferred_consequence_updates.append(update.duplicate(true))
 
 
+func add_item_change(change: Dictionary) -> void:
+	item_changes.append(change.duplicate(true))
+
+
 func set_narrative_result(result: Dictionary) -> void:
 	narrative_result = result.duplicate(true)
 
@@ -181,6 +185,7 @@ func summary() -> Dictionary:
 		"obligation_update_count": obligation_updates.size(),
 		"exchange_update_count": exchange_updates.size(),
 		"deferred_consequence_update_count": deferred_consequence_updates.size(),
+		"item_change_count": item_changes.size(),
 	}
 
 

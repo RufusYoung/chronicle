@@ -66,6 +66,68 @@
       "narrative": "你顺着来路穿过荒草和低坡。重新看见市场街时，铺子的门板仍保持着你离开后留下的样子。"
     }
   ],
+  "challenge_seed": 516,
+  "challenges": [
+    {
+      "challenge_id": "granary_rotten_floor_entry",
+      "location_id": "abandoned_granary",
+      "target_entity_id": "abandoned_granary_broken_door",
+      "status_state_key": "challenge_status",
+      "available_status": "available",
+      "stat_key": "perception",
+      "stat_label": "感知",
+      "die_sides": 20,
+      "difficulty": 21,
+      "risk_label": "高",
+      "risk_description": "黑暗里有被霉尘盖住的朽木地板。踩错位置会跌进浅坑，但不会立即致命。",
+      "preparation": {
+        "option_id": "prepare_granary_entry",
+        "label": "[准备] 遮住口鼻，试探地板　1小时",
+        "hours": 1,
+        "state_key": "entry_prepared",
+        "bonus": 10,
+        "narrative_title": "在门外做好准备",
+        "narrative": "你撕下一截干净布条掩住口鼻，又用断木逐块敲过门后的地板。几块声音发空的木板被你用白灰圈了出来。"
+      },
+      "attempt": {
+        "option_id": "enter_abandoned_granary",
+        "label": "[危险] 踏进粮仓深处　1小时",
+        "hours": 1
+      },
+      "success": {
+        "hint": "可能找到旧粮仓留下的物件与记录。",
+        "visible_entity_id": "abandoned_granary_hidden_niche",
+        "narrative_title": "梁柱后的旧物",
+        "narrative": "你避开几块发空的地板，在塌下来的粮架后发现一个贴着墙根的小龛。霉烂账页已经粘成一团，只有一枚刻着谷穗和秤纹的铜牌还能辨认。",
+        "item": {
+          "item_id": "lake_town_granary_measure_token",
+          "display_name": "旧粮仓验粮铜牌",
+          "description": "一枚掌心大小的铜牌，正面刻着谷穗和秤纹，背面残留“公仓验粮”四个字。",
+          "item_type": "historical_token",
+          "material": "copper",
+          "tags": [
+            "granary_history",
+            "lake_town",
+            "discovery",
+            "portable"
+          ],
+          "provenance": {
+            "created_for": "lake_town_public_granary",
+            "original_use": "grain_quality_inspection",
+            "last_known_location": "abandoned_granary"
+          }
+        }
+      },
+      "failure": {
+        "hint": "失败：健康下降并扭伤，不会死亡。",
+        "health_loss": 12,
+        "injury_key": "injury",
+        "injury_value": "twisted_ankle",
+        "narrative_title": "朽板在脚下折断",
+        "narrative": "霉尘遮住了木板上的裂纹。你刚把重心压上去，朽板便向下折断。浅坑没有吞没你，但脚踝在坑沿狠狠扭了一下；你只能带着伤退回门外。"
+      }
+    }
+  ],
   "region_state": {
     "food_pressure": "high",
     "public_order": "tense"
@@ -170,7 +232,9 @@
         "dangerous"
       ],
       "states": {
-        "visible": true
+        "visible": true,
+        "challenge_status": "available",
+        "entry_prepared": false
       }
     },
     {
@@ -190,13 +254,31 @@
         "inspectable": true,
         "substance": "spoiled_grain"
       }
+    },
+    {
+      "id": "abandoned_granary_hidden_niche",
+      "location_id": "abandoned_granary",
+      "display_name": "塌粮架后的墙龛",
+      "description": "粮架后露出一个贴着墙根的小龛，里面的账页已经霉烂，只剩铜绿和模糊的秤纹。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "granary_interior",
+        "discovery_site"
+      ],
+      "states": {
+        "visible": false
+      }
     }
   ],
   "player": {
     "id": "player",
     "role": "traveler",
     "food_count": 2,
-    "perception": 10
+    "perception": 10,
+    "health": 100,
+    "injury": "none",
+    "inventory_item_ids": []
   },
   "known_facts": [],
   "initial_deferred_consequences": [

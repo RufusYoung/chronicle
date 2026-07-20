@@ -341,6 +341,25 @@ bbcode_enabled = true
 fit_content = false
 scroll_active = true
 
+[node name="RiskHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.53, 0.43, 1)
+theme_override_font_sizes/font_size = 16
+text = "眼前的风险"
+
+[node name="RiskText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 108)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.75, 0.73, 0.67, 1)
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
 [node name="TravelDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 layout_mode = 2
 
@@ -368,7 +387,7 @@ text = "刚刚发生"
 
 [node name="HistoryText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = false

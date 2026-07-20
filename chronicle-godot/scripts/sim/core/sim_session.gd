@@ -9,6 +9,9 @@ const ActionAffordanceModel = preload("res://scripts/sim/action/action_affordanc
 const TransactionResolverModel = preload("res://scripts/sim/transaction/transaction_resolver.gd")
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TravelResolverModel = preload("res://scripts/sim/travel/travel_resolver.gd")
+const ChallengeResolverModel = preload(
+	"res://scripts/sim/challenge/challenge_resolver.gd"
+)
 const WorldTickAdapterModel = preload(
 	"res://scripts/sim/world_tick/world_tick_adapter.gd"
 )
@@ -21,6 +24,7 @@ const RumorStoreModel = preload("res://scripts/sim/rumor/rumor_store.gd")
 const PressureStoreModel = preload("res://scripts/sim/pressure/pressure_store.gd")
 const ObligationStoreModel = preload("res://scripts/sim/obligation/obligation_store.gd")
 const ExchangeStoreModel = preload("res://scripts/sim/exchange/exchange_store.gd")
+const ItemStoreModel = preload("res://scripts/sim/item/item_store.gd")
 const DeferredConsequenceStoreModel = preload(
 	"res://scripts/sim/deferred/deferred_consequence_store.gd"
 )
@@ -39,13 +43,18 @@ var affordance_system: Variant = null
 var resolver: Variant = null
 var writer: Variant = null
 var travel_resolver: Variant = null
+var challenge_resolver: Variant = null
 var world_tick_adapter: Variant = null
 var travel_routes: Array = []
+var challenge_definitions: Array = []
+var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 var fixture_id: String = ""
 var initialized: bool = false
 var action_count: int = 0
 var travel_count: int = 0
+var challenge_count: int = 0
+var challenge_preparation_count: int = 0
 var candidate_generation_count: int = 0
 var world_tick_count: int = 0
 var current_day: int = 1
@@ -76,12 +85,17 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 
 	_configure_world_time(fixture)
 	travel_routes = (fixture.get("travel_routes", []) as Array).duplicate(true)
+	challenge_definitions = (
+		fixture.get("challenges", []) as Array
+	).duplicate(true)
+	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	_create_stores(fixture)
 	initialized = true
 	return {
 		"success": true,
 		"fixture_id": fixture_id,
 		"rule_count": rules.size(),
+		"challenge_definition_count": challenge_definitions.size(),
 		"candidate_count": get_action_candidates().size(),
 		"time": get_time_summary(),
 	}
@@ -150,6 +164,207 @@ func get_travel_options() -> Array:
 			),
 		})
 	return rows
+
+
+func get_challenge_options() -> Array:
+	if not initialized:
+		return []
+	var snapshot: Variant = get_snapshot()
+	var rows: Array = []
+	for challenge: Dictionary in challenge_definitions:
+		if str(challenge.get("location_id", "")) != context.location_id:
+			continue
+		var target_id := str(challenge.get("target_entity_id", ""))
+		if snapshot.get_entity(target_id).is_empty():
+			continue
+		var status_key := str(
+			challenge.get("status_state_key", "challenge_status")
+		)
+		var available_status := str(
+			challenge.get("available_status", "available")
+		)
+		if str(snapshot.get_entity_state(
+			target_id,
+			status_key,
+			available_status
+		)) != available_status:
+			continue
+
+		var preparation: Dictionary = challenge.get("preparation", {})
+		var preparation_state_key := str(
+			preparation.get("state_key", "prepared")
+		)
+		var prepared := bool(snapshot.get_entity_state(
+			target_id,
+			preparation_state_key,
+			false
+		))
+		var stat_key := str(challenge.get("stat_key", "perception"))
+		var stat_value := int(snapshot.get_player_value(stat_key, 0))
+		var preparation_bonus := int(preparation.get("bonus", 0))
+		var check_text := "d%d + %s %d%s / 难度 %d" % [
+			int(challenge.get("die_sides", 20)),
+			str(challenge.get("stat_label", stat_key)),
+			stat_value,
+			(
+				" + 准备 %d" % preparation_bonus
+				if prepared
+				else ""
+			),
+			int(challenge.get("difficulty", 10)),
+		]
+		if not prepared and not preparation.is_empty():
+			rows.append({
+				"option_id": str(preparation.get(
+					"option_id",
+					"prepare:%s" % str(challenge.get("challenge_id", ""))
+				)),
+				"challenge_id": str(challenge.get("challenge_id", "")),
+				"option_type": "prepare",
+				"action_type": "preparation",
+				"label": str(preparation.get("label", "[准备] 检查危险")),
+				"hours": int(preparation.get("hours", 1)),
+				"risk_label": str(challenge.get("risk_label", "未知")),
+				"risk_description": str(
+					challenge.get("risk_description", "")
+				),
+				"check_text": check_text,
+				"preparation_applied": false,
+				"preparation_bonus": preparation_bonus,
+				"can_execute": true,
+				"blocked_reason": "",
+			})
+
+		var attempt: Dictionary = challenge.get("attempt", {})
+		rows.append({
+			"option_id": str(attempt.get(
+				"option_id",
+				"attempt:%s" % str(challenge.get("challenge_id", ""))
+			)),
+			"challenge_id": str(challenge.get("challenge_id", "")),
+			"option_type": "attempt",
+			"action_type": "danger",
+			"label": str(attempt.get("label", "[危险] 尝试进入")),
+			"hours": int(attempt.get("hours", challenge.get("hours", 1))),
+			"risk_label": str(challenge.get("risk_label", "未知")),
+			"risk_description": str(challenge.get("risk_description", "")),
+			"check_text": check_text,
+			"preparation_applied": prepared,
+			"preparation_bonus": preparation_bonus if prepared else 0,
+			"success_hint": str(
+				(challenge.get("success", {}) as Dictionary).get("hint", "")
+			),
+			"failure_hint": str(
+				(challenge.get("failure", {}) as Dictionary).get("hint", "")
+			),
+			"can_execute": true,
+			"blocked_reason": "",
+		})
+	return rows
+
+
+func execute_challenge_option(
+		option_id: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
+	if not initialized:
+		return _challenge_failure("session_not_initialized", option_id)
+	var option := _find_challenge_option(option_id)
+	if option.is_empty():
+		return _challenge_failure("challenge_option_not_found", option_id)
+	var challenge := _find_challenge_definition(
+		str(option.get("challenge_id", ""))
+	)
+	if challenge.is_empty():
+		return _challenge_failure("challenge_not_found", option_id)
+
+	var option_type := str(option.get("option_type", ""))
+	var die_sides := int(challenge.get("die_sides", 20))
+	var roll := 0
+	if option_type == "attempt":
+		if metadata.has("roll_override"):
+			if str(metadata.get("source", "")) != "test_injection":
+				return _challenge_failure(
+					"roll_override_requires_test_injection",
+					option_id
+				)
+			roll = int(metadata.get("roll_override", 0))
+			if roll < 1 or roll > die_sides:
+				return _challenge_failure("invalid_roll_override", option_id)
+		else:
+			roll = challenge_rng.randi_range(1, die_sides)
+	elif option_type != "prepare":
+		return _challenge_failure("invalid_challenge_option", option_id)
+
+	var hours := int(option.get("hours", 1))
+	if hours <= 0:
+		return _challenge_failure("invalid_challenge_hours", option_id)
+	var tick_result := advance_time(
+		hours,
+		"after_challenge_%s" % option_type,
+		{
+			"scope_type": "location",
+			"scope_id": context.location_id,
+			"source": "SimSession.execute_challenge_option",
+			"label": str(option.get("label", "challenge")),
+		}
+	)
+	if not bool(tick_result.get("success", false)):
+		return _challenge_failure(
+			str(tick_result.get("error_reason", "world_tick_failed")),
+			option_id
+		)
+
+	var snapshot: Variant = get_snapshot()
+	var event_id := challenge_count + challenge_preparation_count + 1
+	var transaction_result: Variant
+	if option_type == "prepare":
+		transaction_result = challenge_resolver.resolve_preparation(
+			challenge,
+			snapshot,
+			event_id
+		)
+	else:
+		transaction_result = challenge_resolver.resolve_attempt(
+			challenge,
+			snapshot,
+			roll,
+			event_id,
+			get_time_summary()
+		)
+	writer.apply_result(transaction_result, stores)
+	_sync_context_after_result(transaction_result)
+
+	var log_entry := _build_challenge_log_entry(
+		option,
+		transaction_result,
+		event_id
+	)
+	world_log.append_entry(log_entry)
+	if option_type == "prepare":
+		challenge_preparation_count += 1
+	else:
+		challenge_count += 1
+
+	var narrative: Dictionary = transaction_result.narrative_result
+	return {
+		"success": str(transaction_result.contract_status)
+			!= "invalid_contract",
+		"error": str(transaction_result.error_reason),
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"challenge_id": str(option.get("challenge_id", "")),
+		"option_type": option_type,
+		"outcome": str(narrative.get("outcome", "")),
+		"roll": roll,
+		"transaction_result": transaction_result.to_dict(),
+		"tick_result": tick_result,
+		"world_log_entry": log_entry.duplicate(true),
+		"time": get_time_summary(),
+		"challenge_count": challenge_count,
+		"challenge_preparation_count": challenge_preparation_count,
+		"store_summary": get_store_summary(),
+	}
 
 
 func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
@@ -365,6 +580,7 @@ func get_store_summary() -> Dictionary:
 		"pressures": stores["pressure_store"].list_pressures().size(),
 		"obligations": stores["obligation_store"].list_obligations().size(),
 		"exchanges": stores["exchange_store"].list_exchanges().size(),
+		"items": stores["item_store"].list_items().size(),
 		"deferred_consequences": (
 			stores["deferred_consequence_store"]
 			.list_deferred_consequences()
@@ -386,6 +602,7 @@ func get_store_snapshots() -> Dictionary:
 		"pressures": stores["pressure_store"].list_pressures(),
 		"obligations": stores["obligation_store"].list_obligations(),
 		"exchanges": stores["exchange_store"].list_exchanges(),
+		"items": stores["item_store"].list_items(),
 		"deferred_consequences": (
 			stores["deferred_consequence_store"].list_deferred_consequences()
 		),
@@ -412,6 +629,8 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"success": true,
 		"steps_executed": action_count,
 		"journeys_completed": travel_count,
+		"challenges_resolved": challenge_count,
+		"challenge_preparations": challenge_preparation_count,
 		"world_ticks_executed": world_tick_count,
 		"time": get_time_summary(),
 		"candidate_selection_source": "ActionAffordanceSystem",
@@ -439,12 +658,17 @@ func _reset_runtime() -> void:
 	resolver = TransactionResolverModel.new()
 	writer = TransactionWorldWriterModel.new()
 	travel_resolver = TravelResolverModel.new()
+	challenge_resolver = ChallengeResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
 	travel_routes = []
+	challenge_definitions = []
+	challenge_rng = RandomNumberGenerator.new()
 	fixture_id = ""
 	initialized = false
 	action_count = 0
 	travel_count = 0
+	challenge_count = 0
+	challenge_preparation_count = 0
 	candidate_generation_count = 0
 	world_tick_count = 0
 	current_day = 1
@@ -458,6 +682,10 @@ func _create_stores(fixture: Dictionary) -> void:
 	var relationship_store = RelationshipStoreModel.new()
 	relationship_store.load_axis_defs(RELATIONSHIP_AXIS_DEFS_PATH)
 	var deferred_store = DeferredConsequenceStoreModel.new()
+	var item_store = ItemStoreModel.new()
+	item_store.load_initial_items(
+		(fixture.get("initial_items", []) as Array).duplicate(true)
+	)
 	stores = {
 		"fact_store": FactStoreModel.new(),
 		"state_store": state_store,
@@ -468,6 +696,7 @@ func _create_stores(fixture: Dictionary) -> void:
 		"pressure_store": PressureStoreModel.new(),
 		"obligation_store": ObligationStoreModel.new(),
 		"exchange_store": ExchangeStoreModel.new(),
+		"item_store": item_store,
 		"deferred_consequence_store": deferred_store,
 	}
 	for consequence: Dictionary in fixture.get(
@@ -614,6 +843,20 @@ func _find_travel_route(route_id: String, from_location_id: String) -> Dictionar
 	return {}
 
 
+func _find_challenge_option(option_id: String) -> Dictionary:
+	for option: Dictionary in get_challenge_options():
+		if str(option.get("option_id", "")) == option_id:
+			return option.duplicate(true)
+	return {}
+
+
+func _find_challenge_definition(challenge_id: String) -> Dictionary:
+	for challenge: Dictionary in challenge_definitions:
+		if str(challenge.get("challenge_id", "")) == challenge_id:
+			return challenge.duplicate(true)
+	return {}
+
+
 func _find_candidate(candidates: Array, rule_id: String, target_id: String) -> Variant:
 	for candidate: Variant in candidates:
 		if str(candidate.rule_id) != rule_id:
@@ -660,6 +903,20 @@ func _travel_failure(error: String, route_id: String) -> Dictionary:
 		"fixture_id": fixture_id,
 		"route_id": route_id,
 		"travel_count": travel_count,
+		"time": get_time_summary(),
+		"world_tick_count": world_tick_count,
+		"store_summary": get_store_summary(),
+	}
+
+
+func _challenge_failure(error: String, option_id: String) -> Dictionary:
+	return {
+		"success": false,
+		"error": error,
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"challenge_count": challenge_count,
+		"challenge_preparation_count": challenge_preparation_count,
 		"time": get_time_summary(),
 		"world_tick_count": world_tick_count,
 		"store_summary": get_store_summary(),
@@ -756,6 +1013,8 @@ func _build_world_log_entry(
 		"exchange_update_count": result.exchange_updates.size(),
 		"deferred_consequence_updates": result.deferred_consequence_updates.duplicate(true),
 		"deferred_consequence_update_count": result.deferred_consequence_updates.size(),
+		"item_changes": result.item_changes.duplicate(true),
+		"item_change_count": result.item_changes.size(),
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
@@ -794,6 +1053,49 @@ func _build_travel_log_entry(
 		"obligation_update_count": 0,
 		"exchange_update_count": 0,
 		"deferred_consequence_update_count": 0,
+		"item_change_count": 0,
+		"narrative_summary": _narrative_summary(result.narrative_result),
+		"narrative_result": result.narrative_result.duplicate(true),
+	}
+
+
+func _build_challenge_log_entry(
+		option: Dictionary,
+		result: Variant,
+		event_id: int
+) -> Dictionary:
+	return {
+		"entry_type": (
+			"challenge_preparation"
+			if str(option.get("option_type", "")) == "prepare"
+			else "challenge_check"
+		),
+		"step_index": event_id - 1,
+		"step_id": "challenge_%d" % event_id,
+		"challenge_id": str(option.get("challenge_id", "")),
+		"option_id": str(option.get("option_id", "")),
+		"option_type": str(option.get("option_type", "")),
+		"transaction_mode": str(result.transaction_mode),
+		"contract_status": str(result.contract_status),
+		"skip_reason": str(result.skip_reason),
+		"error_reason": str(result.error_reason),
+		"facts_added": _fact_types(result.facts_added),
+		"fact_ids": _fact_ids(result.facts_added),
+		"state_changes": result.state_changes.duplicate(true),
+		"state_change_count": result.state_changes.size(),
+		"relationship_change_count": 0,
+		"memory_count": 0,
+		"trace_count": 0,
+		"rumor_seed_count": 0,
+		"pressure_change_count": 0,
+		"obligation_count": 0,
+		"exchange_count": 0,
+		"deferred_consequence_count": 0,
+		"obligation_update_count": 0,
+		"exchange_update_count": 0,
+		"deferred_consequence_update_count": 0,
+		"item_changes": result.item_changes.duplicate(true),
+		"item_change_count": result.item_changes.size(),
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
@@ -810,6 +1112,7 @@ func _snapshot_summary(snapshot: Variant, candidates: Array) -> Dictionary:
 		"final_obligation_count": snapshot.obligations.size(),
 		"final_exchange_count": snapshot.exchanges.size(),
 		"final_deferred_consequence_count": snapshot.deferred_consequences.size(),
+		"final_item_count": snapshot.get_items().size(),
 		"final_candidate_probe": {
 			"rule_ids": _candidate_rule_ids(candidates),
 			"action_ids": _candidate_action_ids(candidates),
@@ -912,4 +1215,5 @@ func _empty_store_summary() -> Dictionary:
 		"obligations": 0,
 		"exchanges": 0,
 		"deferred_consequences": 0,
+		"items": 0,
 	}

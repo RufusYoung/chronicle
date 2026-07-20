@@ -16,6 +16,8 @@ var current_view_data: Dictionary = {}
 @onready var visible_people: RichTextLabel = %VisiblePeople
 @onready var visible_observations: RichTextLabel = %VisibleObservations
 @onready var knowledge_text: RichTextLabel = %KnowledgeText
+@onready var risk_heading: Label = %RiskHeading
+@onready var risk_text: RichTextLabel = %RiskText
 @onready var travel_heading: Label = %TravelHeading
 @onready var travel_buttons: VBoxContainer = %TravelButtons
 @onready var feedback_title: Label = %FeedbackTitle
@@ -48,6 +50,12 @@ func perform_action(action_id: String) -> Dictionary:
 
 func perform_travel(route_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_travel(route_id)
+	refresh_view()
+	return result
+
+
+func perform_challenge(option_id: String) -> Dictionary:
+	var result: Dictionary = view_model.perform_challenge(option_id)
 	refresh_view()
 	return result
 
@@ -90,6 +98,7 @@ func refresh_view() -> void:
 	knowledge_text.text = _format_bullets(
 		current_view_data.get("knowledge", []) as Array
 	)
+	_refresh_risk(current_view_data.get("risk", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []) as Array)
 	_refresh_actions(current_view_data.get("actions", []) as Array)
@@ -114,12 +123,40 @@ func _refresh_actions(actions: Array) -> void:
 			str(action.get("kind", "行动")),
 			str(action.get("hint", "")),
 		]
+		button.disabled = not bool(action.get("can_execute", true))
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
-		button.pressed.connect(
-			perform_action.bind(str(action.get("action_id", "")))
-		)
+		if str(action.get("event_type", "player_action")) == "challenge":
+			button.set_meta(
+				"challenge_option_id",
+				str(action.get("challenge_option_id", ""))
+			)
+			button.pressed.connect(
+				perform_challenge.bind(
+					str(action.get("challenge_option_id", ""))
+				)
+			)
+		else:
+			button.pressed.connect(
+				perform_action.bind(str(action.get("action_id", "")))
+			)
 		action_buttons.add_child(button)
+
+
+func _refresh_risk(risk: Dictionary) -> void:
+	var active := bool(risk.get("active", false))
+	risk_heading.visible = active
+	risk_text.visible = active
+	if not active:
+		risk_text.text = ""
+		return
+	risk_heading.text = str(risk.get("title", "眼前的风险"))
+	risk_text.text = "%s\n[color=#d1b76f]%s[/color]\n%s\n[color=#b8a8a0]%s[/color]" % [
+		str(risk.get("description", "")),
+		str(risk.get("check_text", "")),
+		str(risk.get("preparation_text", "")),
+		str(risk.get("failure_hint", "")),
+	]
 
 
 func _refresh_travel_options(options: Array) -> void:
@@ -212,6 +249,10 @@ func _apply_action_button_style(button: Button, action_type: String) -> void:
 		accent = Color("#8c6477")
 	elif action_type == "travel":
 		accent = Color("#6f8264")
+	elif action_type == "preparation":
+		accent = Color("#6e8392")
+	elif action_type == "danger":
+		accent = Color("#9b5d4f")
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color("#222a2b")
 	normal.border_color = accent
@@ -239,6 +280,8 @@ func _show_load_error(message: String) -> void:
 	visible_people.text = ""
 	visible_observations.text = ""
 	knowledge_text.text = ""
+	risk_heading.visible = false
+	risk_text.visible = false
 	_clear_children(travel_buttons)
 	travel_heading.text = "当前没有可用路线"
 	feedback_title.text = "无法开始"

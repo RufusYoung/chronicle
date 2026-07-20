@@ -58,3 +58,8 @@ func apply_result(result: Variant, stores: Dictionary) -> void:
 			deferred_consequence_store.add_deferred_consequence(consequence)
 		for consequence_update: Dictionary in result.deferred_consequence_updates:
 			deferred_consequence_store.apply_deferred_consequence_update(consequence_update)
+
+	var item_store: Variant = stores.get("item_store")
+	if item_store != null:
+		for item_change: Dictionary in result.item_changes:
+			item_store.apply_item_change(item_change)
