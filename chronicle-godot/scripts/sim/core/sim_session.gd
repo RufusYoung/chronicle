@@ -157,18 +157,25 @@ func get_travel_options() -> Array:
 		return []
 	var rows: Array = []
 	var food_count := int(context.get_player_value("food_count", 0))
+	var snapshot: Variant = get_snapshot()
 	for route: Dictionary in travel_routes:
 		if str(route.get("from_location_id", "")) != context.location_id:
+			continue
+		if not _route_discovery_requirements_met(route, snapshot):
 			continue
 		var to_location_id := str(route.get("to_location_id", ""))
 		var destination: Dictionary = context.get_location(to_location_id)
 		var route_food_cost := int(route.get("food_cost", 0))
 		var food_cost := maxi(route_food_cost, 0)
+		var access_contract_valid := _route_access_contract_valid(route)
+		var access_allowed := _route_access_time_allows(route)
 		var can_travel := (
 			not destination.is_empty()
 			and int(route.get("hours", 0)) > 0
 			and route_food_cost >= 0
 			and food_count >= food_cost
+			and access_contract_valid
+			and access_allowed
 		)
 		rows.append({
 			"route_id": str(route.get("route_id", "")),
@@ -180,9 +187,11 @@ func get_travel_options() -> Array:
 			"label": str(route.get("label", "前往新的地点")),
 			"hours": int(route.get("hours", 0)),
 			"food_cost": food_cost,
+			"access_hint": str(route.get("access_hint", "")),
 			"can_travel": can_travel,
 			"blocked_reason": (
 				"" if can_travel else _travel_blocked_reason(
+					route,
 					destination,
 					int(route.get("hours", 0)),
 					food_count,
@@ -672,6 +681,8 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 	var route := _find_travel_route(route_id, context.location_id)
 	if route.is_empty():
 		return _travel_failure("route_not_found", route_id)
+	if not _route_discovery_requirements_met(route, get_snapshot()):
+		return _travel_failure("route_not_discovered", route_id)
 
 	var to_location_id := str(route.get("to_location_id", ""))
 	var destination: Dictionary = context.get_location(to_location_id)
@@ -679,8 +690,14 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 	var food_cost := int(route.get("food_cost", 0))
 	if destination.is_empty():
 		return _travel_failure("destination_not_found", route_id)
-	if hours <= 0 or food_cost < 0:
+	if (
+		hours <= 0
+		or food_cost < 0
+		or not _route_access_contract_valid(route)
+	):
 		return _travel_failure("invalid_route_contract", route_id)
+	if not _route_access_time_allows(route):
+		return _travel_failure("outside_access_window", route_id)
 	if int(context.get_player_value("food_count", 0)) < food_cost:
 		return _travel_failure("insufficient_food", route_id)
 
@@ -1506,6 +1523,7 @@ func _investigation_failure(error: String, option_id: String) -> Dictionary:
 
 
 func _travel_blocked_reason(
+		route: Dictionary,
 		destination: Dictionary,
 		hours: int,
 		food_count: int,
@@ -1517,9 +1535,69 @@ func _travel_blocked_reason(
 		return "invalid_route_contract"
 	if food_cost < 0:
 		return "invalid_route_contract"
+	if not _route_access_contract_valid(route):
+		return "invalid_route_contract"
+	if not _route_access_time_allows(route):
+		return "outside_access_window"
 	if food_count < food_cost:
 		return "insufficient_food"
 	return ""
+
+
+func _route_discovery_requirements_met(
+		route: Dictionary,
+		snapshot: Variant
+) -> bool:
+	var required_fact_type := str(
+		route.get("required_fact_type", "")
+	)
+	if required_fact_type == "":
+		return true
+	var required_target_id := str(
+		route.get("required_fact_target_id", "")
+	)
+	for fact: Dictionary in snapshot.get_facts():
+		if str(fact.get("fact_type", "")) != required_fact_type:
+			continue
+		if (
+			required_target_id == ""
+			or str(fact.get("target_id", "")) == required_target_id
+		):
+			return true
+	return false
+
+
+func _route_access_time_allows(route: Dictionary) -> bool:
+	if (
+		not route.has("available_hour_start")
+		and not route.has("available_hour_end")
+	):
+		return true
+	if not _route_access_contract_valid(route):
+		return false
+	var start_hour := int(route.get("available_hour_start", -1))
+	var end_hour := int(route.get("available_hour_end", -1))
+	if start_hour < end_hour:
+		return current_hour >= start_hour and current_hour < end_hour
+	return current_hour >= start_hour or current_hour < end_hour
+
+
+func _route_access_contract_valid(route: Dictionary) -> bool:
+	var has_start := route.has("available_hour_start")
+	var has_end := route.has("available_hour_end")
+	if not has_start and not has_end:
+		return true
+	if has_start != has_end:
+		return false
+	var start_hour := int(route.get("available_hour_start", -1))
+	var end_hour := int(route.get("available_hour_end", -1))
+	return (
+		start_hour >= 0
+		and start_hour <= 23
+		and end_hour >= 1
+		and end_hour <= 24
+		and start_hour != end_hour
+	)
 
 
 func _tick_failure(error: String) -> Dictionary:

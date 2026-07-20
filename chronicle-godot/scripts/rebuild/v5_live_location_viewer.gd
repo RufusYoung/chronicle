@@ -221,18 +221,34 @@ func _refresh_chronicle(chronicle: Dictionary) -> void:
 
 func _refresh_risk(risk: Dictionary) -> void:
 	var active := bool(risk.get("active", false))
+	var compact := active and chronicle_heading.visible
 	risk_heading.visible = active
 	risk_text.visible = active
+	_refresh_right_panel_density(compact)
 	if not active:
 		risk_text.text = ""
 		return
 	risk_heading.text = str(risk.get("title", "眼前的风险"))
-	risk_text.text = "%s\n[color=#d1b76f]%s[/color]\n%s\n[color=#b8a8a0]%s[/color]" % [
-		str(risk.get("description", "")),
-		str(risk.get("check_text", "")),
-		str(risk.get("preparation_text", "")),
-		str(risk.get("failure_hint", "")),
-	]
+	if compact:
+		risk_text.text = "[color=#d1b76f]%s[/color]\n%s\n%s\n[color=#b8a8a0]%s[/color]" % [
+			str(risk.get("check_text", "")),
+			str(risk.get("description", "")),
+			str(risk.get("preparation_text", "")),
+			str(risk.get("failure_hint", "")),
+		]
+	else:
+		risk_text.text = "%s\n[color=#d1b76f]%s[/color]\n%s\n[color=#b8a8a0]%s[/color]" % [
+			str(risk.get("description", "")),
+			str(risk.get("check_text", "")),
+			str(risk.get("preparation_text", "")),
+			str(risk.get("failure_hint", "")),
+		]
+
+
+func _refresh_right_panel_density(compact: bool) -> void:
+	chronicle_text.custom_minimum_size.y = 58.0 if compact else 112.0
+	risk_text.custom_minimum_size.y = 64.0 if compact else 108.0
+	history_text.custom_minimum_size.y = 52.0 if compact else 90.0
 
 
 func _refresh_travel_options(options: Array) -> void:

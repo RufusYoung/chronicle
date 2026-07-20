@@ -4,6 +4,11 @@ class_name V5ChallengeResolver
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
+const ChallengeChronicleBuilderModel = preload(
+	"res://scripts/sim/chronicle/challenge_chronicle_builder.gd"
+)
+
+var chronicle_builder: Variant = ChallengeChronicleBuilderModel.new()
 
 
 func resolve_preparation(
@@ -103,6 +108,15 @@ func resolve_attempt(
 			event_id,
 			time_summary
 		)
+		var chronicle_entry: Dictionary = chronicle_builder.build_entry(
+			challenge,
+			snapshot,
+			result.facts_added,
+			time_summary,
+			event_id
+		)
+		if not chronicle_entry.is_empty():
+			result.add_chronicle_entry(chronicle_entry)
 	else:
 		_apply_failure(result, challenge, snapshot, event_id)
 
@@ -135,7 +149,6 @@ func _apply_success(
 		time_summary: Dictionary
 ) -> void:
 	var success: Dictionary = challenge.get("success", {})
-	var actor_id := str(snapshot.get_player_value("id", "player"))
 	var visible_entity_id := str(success.get("visible_entity_id", ""))
 	if visible_entity_id != "":
 		result.add_state_change({
@@ -146,8 +159,36 @@ func _apply_success(
 
 	var item: Dictionary = (success.get("item", {}) as Dictionary).duplicate(true)
 	var item_id := str(item.get("item_id", item.get("id", "")))
-	if item_id == "":
-		return
+	if item_id != "":
+		_apply_success_item(
+			result,
+			challenge,
+			snapshot,
+			time_summary,
+			event_id,
+			item,
+			item_id
+		)
+	_apply_additional_success_facts(
+		result,
+		challenge,
+		snapshot,
+		event_id,
+		time_summary,
+		item_id
+	)
+
+
+func _apply_success_item(
+		result: Variant,
+		challenge: Dictionary,
+		snapshot: Variant,
+		time_summary: Dictionary,
+		event_id: int,
+		item: Dictionary,
+		item_id: String
+) -> void:
+	var actor_id := str(snapshot.get_player_value("id", "player"))
 	item["item_id"] = item_id
 	item["owner_id"] = actor_id
 	var provenance: Dictionary = (
@@ -184,6 +225,56 @@ func _apply_success(
 		"visibility": "known",
 		"source_action": "challenge_check",
 	})
+
+
+func _apply_additional_success_facts(
+		result: Variant,
+		challenge: Dictionary,
+		snapshot: Variant,
+		event_id: int,
+		time_summary: Dictionary,
+		item_id: String
+) -> void:
+	var success: Dictionary = challenge.get("success", {})
+	var actor_id := str(snapshot.get_player_value("id", "player"))
+	var challenge_id := str(challenge.get("challenge_id", ""))
+	var cause_fact_ids: Array[String] = [
+		"actor_attempted_challenge:%d" % event_id,
+	]
+	if item_id != "":
+		cause_fact_ids.append("actor_discovered_item:%d" % event_id)
+	var fact_index := 0
+	for fact_value: Variant in success.get("additional_facts", []):
+		if not fact_value is Dictionary:
+			continue
+		fact_index += 1
+		var definition := fact_value as Dictionary
+		var fact_type := str(definition.get("fact_type", ""))
+		if fact_type == "":
+			continue
+		var fact := definition.duplicate(true)
+		fact["fact_id"] = "%s:%d:%d" % [
+			str(definition.get("fact_id_prefix", fact_type)),
+			event_id,
+			fact_index,
+		]
+		fact["source_id"] = str(
+			definition.get("source_id", actor_id)
+		)
+		fact["target_id"] = str(
+			definition.get("target_id", item_id)
+		)
+		fact["challenge_id"] = challenge_id
+		fact["location_id"] = str(snapshot.location.get("id", ""))
+		fact["cause_fact_ids"] = cause_fact_ids.duplicate()
+		fact["day"] = int(time_summary.get("day", 1))
+		fact["hour"] = int(time_summary.get("hour", 0))
+		fact["visibility"] = str(
+			definition.get("visibility", "known")
+		)
+		fact["source_action"] = "challenge_check"
+		fact.erase("fact_id_prefix")
+		result.add_fact(fact)
 
 
 func _apply_failure(

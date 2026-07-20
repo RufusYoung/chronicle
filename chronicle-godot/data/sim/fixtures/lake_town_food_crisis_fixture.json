@@ -38,6 +38,18 @@
         "dangerous",
         "food_related"
       ]
+    },
+    {
+      "id": "north_quay_record_house",
+      "display_name": "北埠旧档房",
+      "description": "旧档房架在北埠发黑的潮桩上，下面就是缓慢涨落的湖水。晒卷绳横过窄廊，纸页和水草的气味混在一起；更低一层的封存间只露出半扇起泡的木门。",
+      "tags": [
+        "town",
+        "waterfront",
+        "archive",
+        "tidal",
+        "old_records"
+      ]
     }
   ],
   "travel_routes": [
@@ -64,6 +76,35 @@
       "time_key": "after_half_day_walk",
       "narrative_title": "返回市场街",
       "narrative": "你顺着来路穿过荒草和低坡。重新看见市场街时，铺子的门板仍保持着你离开后留下的样子。"
+    },
+    {
+      "route_id": "old_chen_shop_to_north_quay_record_house",
+      "from_location_id": "old_chen_shop",
+      "to_location_id": "north_quay_record_house",
+      "label": "乘早船去北埠旧档房",
+      "hours": 2,
+      "food_cost": 0,
+      "required_fact_type": "actor_found_public_granary_archive_reference",
+      "required_fact_target_id": "old_chen_public_granary_tax_deed",
+      "available_hour_start": 6,
+      "available_hour_end": 18,
+      "access_hint": "去北埠的摆渡只在 06:00 至 18:00 开船。",
+      "trigger_key": "after_route_travel",
+      "time_key": "after_north_quay_ferry",
+      "narrative_title": "雾里的北埠早船",
+      "narrative": "摆渡船贴着湖湾的灰水向北。越过最后一排粮栈后，岸边只剩晒网架、潮桩和一座向水面倾斜的旧档房；它比税契夹页上的名字更潮湿，也更像一件仍未结束的旧事。"
+    },
+    {
+      "route_id": "north_quay_record_house_to_old_chen_shop",
+      "from_location_id": "north_quay_record_house",
+      "to_location_id": "old_chen_shop",
+      "label": "沿北岸返回老陈铺子",
+      "hours": 2,
+      "food_cost": 0,
+      "trigger_key": "after_route_travel",
+      "time_key": "after_north_quay_return",
+      "narrative_title": "带着潮气返回",
+      "narrative": "你沿北岸木道往回走。档房的潮纸气味还留在衣袖上，市场街的叫卖声已经隔着薄雾传了过来。"
     }
   ],
   "challenge_seed": 516,
@@ -125,6 +166,139 @@
         "injury_value": "twisted_ankle",
         "narrative_title": "朽板在脚下折断",
         "narrative": "霉尘遮住了木板上的裂纹。你刚把重心压上去，朽板便向下折断。浅坑没有吞没你，但脚踝在坑沿狠狠扭了一下；你只能带着伤退回门外。"
+      }
+    },
+    {
+      "challenge_id": "north_quay_flooded_stack_search",
+      "location_id": "north_quay_record_house",
+      "target_entity_id": "north_quay_flooded_stack_door",
+      "status_state_key": "challenge_status",
+      "available_status": "available",
+      "stat_key": "perception",
+      "stat_label": "感知",
+      "die_sides": 20,
+      "difficulty": 19,
+      "risk_label": "中",
+      "risk_description": "封存层的窄廊被潮水反复泡过。发黑木板下面是齐腰深的湖水，断钉和纸浆藏在浑水里；走错一步不会立刻致命，但会受伤并失去这次翻找机会。",
+      "preparation": {
+        "option_id": "prepare_flooded_archive_search",
+        "label": "[准备] 借灯笼和油布探路　1小时",
+        "hours": 1,
+        "state_key": "stack_search_prepared",
+        "bonus": 8,
+        "narrative_title": "等潮线退到旧刻痕下",
+        "narrative": "闻简借给你一盏罩灯和一卷旧油布。你没有立刻下去，而是沿廊柱记下潮线，等水面退过第二道刻痕，再把能落脚的横梁逐一照出来。"
+      },
+      "attempt": {
+        "option_id": "search_flooded_archive_stack",
+        "label": "[危险] 进入水浸封存层　1小时",
+        "hours": 1
+      },
+      "success": {
+        "hint": "可能找到陆槐留下的最后一份验粮记录。",
+        "visible_entity_id": "north_quay_open_record_case",
+        "narrative_title": "没有归档的最后一页",
+        "narrative": "最下层木匣已经泡成纸浆。你借着罩灯拆开夹层，从两片蜡布之间抽出一页没有归档的验粮簿。陆槐在页边写着：那批粮“不是霉”；末尾则记下他将沿北岸去雾盐旧井查粮袋的来路，此后再没有回档记录。",
+        "item": {
+          "item_id": "lu_huai_last_inspection_leaf",
+          "display_name": "陆槐最后一页验粮簿",
+          "description": "一页被蜡布护住的旧验粮簿。陆槐写道，公仓粮袋里的白丝会朝井水方向弯曲，“不是霉”；最后一行是他准备前往雾盐旧井的日期。",
+          "item_type": "historical_record",
+          "material": "waxed_paper",
+          "tags": [
+            "lake_town",
+            "public_granary_record",
+            "lu_huai",
+            "mist_salt_well",
+            "document_claim",
+            "portable"
+          ],
+          "provenance": {
+            "author_id": "lu_huai",
+            "written_for": "lake_town_public_granary",
+            "protected_in": "north_quay_record_house",
+            "epistemic_status": "document_claim"
+          }
+        },
+        "additional_facts": [
+          {
+            "fact_type": "actor_found_lu_huai_last_inspection_record",
+            "target_id": "lu_huai_last_inspection_leaf",
+            "target_display_name": "陆槐最后一页验粮簿",
+            "summary": "你在北埠旧档房找到陆槐没有归档的最后一页验粮簿。",
+            "show_in_feedback": true,
+            "record_author_id": "lu_huai"
+          },
+          {
+            "fact_type": "lu_huai_record_claimed_spoilage_was_not_mold",
+            "source_id": "lu_huai_last_inspection_leaf",
+            "target_id": "lake_town_public_granary",
+            "summary": "陆槐的验粮簿声称，公仓粮袋里的白丝会朝井水方向弯曲，那批粮“不是霉”。",
+            "show_in_feedback": true,
+            "epistemic_status": "document_claim"
+          },
+          {
+            "fact_type": "lu_huai_recorded_departure_for_mist_salt_well",
+            "source_id": "lu_huai_last_inspection_leaf",
+            "target_id": "mist_salt_well",
+            "target_display_name": "雾盐旧井",
+            "summary": "验粮簿最后记着陆槐将去雾盐旧井追查粮袋来路，此后没有回档记录。",
+            "show_in_feedback": true,
+            "epistemic_status": "document_record",
+            "destination_name": "雾盐旧井"
+          }
+        ],
+        "chronicle": {
+          "title": "潮水下没有归档的一页",
+          "body": "你从北埠旧档房被潮水泡坏的封存层里取出陆槐最后一页验粮簿。纸上说公仓那批粮“不是霉”，并记下陆槐随后去了雾盐旧井；这只是旧文书留下的说法，却把旅途指向了镇外。",
+          "required_route_id": "old_chen_shop_to_north_quay_record_house",
+          "required_fact_types": [
+            "actor_attempted_challenge",
+            "actor_discovered_item",
+            "actor_found_lu_huai_last_inspection_record",
+            "lu_huai_record_claimed_spoilage_was_not_mold",
+            "lu_huai_recorded_departure_for_mist_salt_well"
+          ],
+          "claims": [
+            {
+              "text": "你乘船抵达北埠旧档房，并从水浸封存层找到了陆槐最后一页验粮簿。",
+              "fact_types": [
+                "actor_traveled_route",
+                "actor_attempted_challenge",
+                "actor_discovered_item",
+                "actor_found_lu_huai_last_inspection_record"
+              ]
+            },
+            {
+              "text": "验粮簿声称那批粮“不是霉”。",
+              "fact_types": [
+                "lu_huai_record_claimed_spoilage_was_not_mold"
+              ]
+            },
+            {
+              "text": "陆槐在记录末尾写下了雾盐旧井，此后没有回档记录。",
+              "fact_types": [
+                "lu_huai_recorded_departure_for_mist_salt_well"
+              ]
+            }
+          ],
+          "tags": [
+            "lake_town",
+            "north_quay",
+            "archive",
+            "lu_huai",
+            "mist_salt_well",
+            "document_claim"
+          ]
+        }
+      },
+      "failure": {
+        "hint": "失败：健康下降并割伤手掌，不会死亡，但封存层会被重新封闭。",
+        "health_loss": 8,
+        "injury_key": "injury",
+        "injury_value": "archive_splinter_cut",
+        "narrative_title": "潮板在手下散开",
+        "narrative": "你扶住的廊板突然散成几片。手掌被藏在纸浆里的断钉划开，罩灯也跌进水里；闻简把你拖回上层，随后用木栓封死了入口。"
       }
     }
   ],
@@ -415,6 +589,89 @@
         "environment_detail",
         "granary_interior",
         "discovery_site"
+      ],
+      "states": {
+        "visible": false
+      }
+    },
+    {
+      "id": "north_quay_record_keeper",
+      "location_id": "north_quay_record_house",
+      "display_name": "闻简",
+      "description": "守档人坐在晒卷绳下修补纸页，指甲缝里全是浆糊和黑色水垢。他记得陆槐这个名字，却只肯让你自己去找那只从未归档的木匣。",
+      "type": "person",
+      "tags": [
+        "person",
+        "record_keeper",
+        "north_quay_local"
+      ],
+      "states": {
+        "visible": true
+      }
+    },
+    {
+      "id": "north_quay_visiting_rules",
+      "location_id": "north_quay_record_house",
+      "display_name": "受潮的查档规条",
+      "description": "木牌写着“日出开卷，日落封门”。最下面另补了一行：下层封存间水涨时不得进入。",
+      "type": "readable_notice",
+      "tags": [
+        "readable_notice",
+        "readable",
+        "archive_rule",
+        "tide_warning"
+      ],
+      "states": {
+        "visible": true,
+        "readable": true
+      }
+    },
+    {
+      "id": "north_quay_tide_marks",
+      "location_id": "north_quay_record_house",
+      "display_name": "廊柱上的旧潮线",
+      "description": "三道深浅不同的刻痕绕着廊柱。最新的水印停在第二道上方，几片泡烂的账纸粘在木刺间。",
+      "type": "trace",
+      "tags": [
+        "trace",
+        "inspectable",
+        "tidal",
+        "archive_damage"
+      ],
+      "states": {
+        "visible": true,
+        "inspectable": true,
+        "substance": "lake_silt_and_paper_pulp"
+      }
+    },
+    {
+      "id": "north_quay_flooded_stack_door",
+      "location_id": "north_quay_record_house",
+      "display_name": "通往水浸封存层的窄门",
+      "description": "木门下半截泡得发白，后面是一条贴着水面延伸的窄廊。最深处还挂着一块“公仓旧卷”的小木签。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "archive_stack",
+        "tidal",
+        "dangerous"
+      ],
+      "states": {
+        "visible": true,
+        "challenge_status": "available",
+        "stack_search_prepared": false
+      }
+    },
+    {
+      "id": "north_quay_open_record_case",
+      "location_id": "north_quay_record_house",
+      "display_name": "拆开的蜡布夹层",
+      "description": "泡坏的木匣已经散开，两片粘连的蜡布之间留下了一页颜色更浅的空痕。那页记录现在由你带在身上。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "archive_discovery_site",
+        "lu_huai"
       ],
       "states": {
         "visible": false

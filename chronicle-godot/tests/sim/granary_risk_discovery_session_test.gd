@@ -28,9 +28,9 @@ func _run() -> void:
 	)
 	_check(
 		bool(start_result.get("success", false))
-		and int(start_result.get("challenge_definition_count", 0)) == 1
+		and int(start_result.get("challenge_definition_count", 0)) == 2
 		and session.get_challenge_options().is_empty(),
-		"1. Challenge definition loads but stays hidden outside its location"
+		"1. Challenge definitions load but stay hidden outside their locations"
 	)
 
 	session.travel(OUTBOUND_ROUTE)

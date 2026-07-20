@@ -333,22 +333,31 @@ func _travel_rows() -> Array:
 		var hours := int(option.get("hours", 0))
 		var food_cost := int(option.get("food_cost", 0))
 		var can_travel := bool(option.get("can_travel", false))
+		var cost_text := "%d 小时" % hours
+		if food_cost > 0:
+			cost_text += " / %d 食物" % food_cost
+		var blocked_reason := str(option.get("blocked_reason", ""))
+		var hint := "旅行会推进世界时间，沿途的事情也会继续发展。"
+		if blocked_reason == "insufficient_food":
+			hint = "随身食物不足，暂时无法走这条路。"
+		elif blocked_reason == "outside_access_window":
+			hint = str(
+				option.get(
+					"access_hint",
+					"这条路线当前还没有开放。"
+				)
+			)
 		rows.append({
 			"route_id": str(option.get("route_id", "")),
 			"destination_name": str(option.get("destination_name", "未知地点")),
-			"label": "%s　%d 小时 / %d 食物" % [
+			"label": "%s　%s" % [
 				str(option.get("label", "前往新的地点")),
-				hours,
-				food_cost,
+				cost_text,
 			],
 			"hours": hours,
 			"food_cost": food_cost,
 			"can_travel": can_travel,
-			"hint": (
-				"随身食物不足，暂时无法走这条路。"
-				if str(option.get("blocked_reason", "")) == "insufficient_food"
-				else "旅行会推进世界时间，沿途的事情也会继续发展。"
-			),
+			"hint": hint,
 		})
 	return rows
 
@@ -716,6 +725,23 @@ func _challenge_feedback_view() -> Dictionary:
 					"发现物进入随身物品：%s"
 					% str(item.get("display_name", "未知物品"))
 				)
+			for fact: Dictionary in transaction.get("facts_added", []):
+				if bool(fact.get("show_in_feedback", false)):
+					details.append(str(fact.get("summary", "")))
+			var chronicle_entries: Array = transaction.get(
+				"chronicle_entries_added",
+				[]
+			)
+			if not chronicle_entries.is_empty():
+				details.append(
+					"个人纪事新增：%s"
+					% str(
+						(chronicle_entries[0] as Dictionary).get(
+							"title",
+							"一次现场发现"
+						)
+					)
+				)
 		else:
 			details.append("你受了伤，但仍然活着并退回了门外。")
 	return {
@@ -729,25 +755,33 @@ func _challenge_feedback_view() -> Dictionary:
 func _travel_feedback_view() -> Dictionary:
 	if not bool(latest_result.get("success", false)):
 		var error := str(latest_result.get("error", ""))
+		var body := "当前无法沿这条路线出发。"
+		if error == "insufficient_food":
+			body = "你带的食物不够走完这段路。"
+		elif error == "outside_access_window":
+			body = "北埠摆渡已经停船；等到白天才能沿这条路线出发。"
+		elif error == "route_not_discovered":
+			body = "你还不知道该从哪里前往这个地点。"
 		return {
 			"status": "error",
 			"title": "没有动身",
-			"body": (
-				"你带的食物不够走完这段路。"
-				if error == "insufficient_food"
-				else "当前无法沿这条路线出发。"
-			),
+			"body": body,
 			"details": [],
 		}
 
 	var transaction: Dictionary = latest_result.get("transaction_result", {})
 	var narrative: Dictionary = transaction.get("narrative_result", {})
 	var destination: Dictionary = latest_result.get("destination", {})
+	var hours := int(latest_result.get("hours", 0))
+	var food_cost := int(latest_result.get("food_cost", 0))
+	var travel_cost_text := "经过 %d 小时。" % hours
+	if food_cost > 0:
+		travel_cost_text = "经过 %d 小时，消耗 %d 份食物。" % [
+			hours,
+			food_cost,
+		]
 	var details: Array[String] = [
-		"经过 %d 小时，消耗 %d 份食物。" % [
-			int(latest_result.get("hours", 0)),
-			int(latest_result.get("food_cost", 0)),
-		],
+		travel_cost_text,
 		"现在位于%s。" % str(destination.get("display_name", "新的地点")),
 	]
 	var tick_result: Dictionary = latest_result.get("tick_result", {})
@@ -1072,6 +1106,10 @@ func _location_tag_label(tag: String) -> String:
 		"abandoned": "废弃建筑",
 		"granary": "旧粮仓",
 		"dangerous": "不安地带",
+		"waterfront": "北埠水岸",
+		"archive": "旧档房",
+		"tidal": "潮水侵蚀",
+		"old_records": "旧卷封存",
 	}.get(tag, "")
 
 
@@ -1086,23 +1124,77 @@ func _fact_text(
 		"actor_read_object": "你读过%s。" % target_name,
 		"actor_inspected_trace": "你检查过%s。" % target_name,
 		"actor_asked_about_market_pressure": "你确认湖湾镇正承受粮食压力。",
-		"actor_traveled_route": "你完成过一段需要时间和食物的旅程。",
-		"actor_prepared_for_challenge": "你在进入废弃粮仓前检查了朽木地板。",
-		"actor_attempted_challenge": (
-			"你通过了废弃粮仓的危险检定。"
-			if str(fact.get("outcome", "")) == "success"
-			else "你没能通过废弃粮仓的危险检定。"
-		),
-		"actor_injured_during_challenge": "你在废弃粮仓扭伤了脚踝。",
-		"actor_discovered_item": "你在废弃粮仓找到了%s。" % target_name,
+		"actor_traveled_route": _travel_fact_text(fact),
+		"actor_prepared_for_challenge": _challenge_preparation_fact_text(fact),
+		"actor_attempted_challenge": _challenge_attempt_fact_text(fact),
+		"actor_injured_during_challenge": _challenge_injury_fact_text(fact),
+		"actor_discovered_item": _item_discovery_fact_text(target_name, fact),
 		"chen_mi_recognized_granary_measure_token": "陈米认出了你带回的旧粮仓验粮铜牌。",
 		"lake_town_public_granary_sealed_after_spoiled_grain": "陈米确认，湖湾镇公仓曾在霉粮被查出后封闭。",
 		"investigation_lead_opened": "陈米说，陈家旧税契里也许夹着公仓封印抄件。",
 		"actor_deferred_public_granary_investigation": "你暂时搁置了公仓封存记录，但仍可以回来追查。",
 		"actor_investigated_public_granary_records": "你和陈米翻查过陈家保存的旧税契。",
 		"actor_found_public_granary_archive_reference": "你查到验粮吏陆槐与北埠旧档房的记录。",
+		"actor_found_lu_huai_last_inspection_record": "你在北埠旧档房找到了陆槐最后一页验粮簿。",
+		"lu_huai_record_claimed_spoilage_was_not_mold": "陆槐的旧记录声称，那批粮里的白丝“不是霉”。",
+		"lu_huai_recorded_departure_for_mist_salt_well": "陆槐留下前往雾盐旧井的日期，此后没有回档记录。",
 		"old_chen_shop_closed_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
 	}.get(fact_type, "你确认了一条与此地有关的事实。")
+
+
+func _travel_fact_text(fact: Dictionary) -> String:
+	match str(fact.get("route_id", "")):
+		"old_chen_shop_to_north_quay_record_house":
+			return "你乘白天的摆渡抵达过北埠旧档房。"
+		"north_quay_record_house_to_old_chen_shop":
+			return "你从北埠旧档房沿北岸返回了老陈铺子。"
+		_:
+			return "你完成过一段需要时间和食物的旅程。"
+
+
+func _challenge_preparation_fact_text(fact: Dictionary) -> String:
+	if (
+		str(fact.get("challenge_id", ""))
+		== "north_quay_flooded_stack_search"
+	):
+		return "你借来罩灯和油布，等潮水退过刻痕后再进入封存层。"
+	return "你在进入废弃粮仓前检查了朽木地板。"
+
+
+func _challenge_attempt_fact_text(fact: Dictionary) -> String:
+	var succeeded := str(fact.get("outcome", "")) == "success"
+	if (
+		str(fact.get("challenge_id", ""))
+		== "north_quay_flooded_stack_search"
+	):
+		return (
+			"你通过了北埠旧档房水浸封存层的风险检定。"
+			if succeeded
+			else "你没能通过北埠旧档房水浸封存层的风险检定。"
+		)
+	return (
+		"你通过了废弃粮仓的危险检定。"
+		if succeeded
+		else "你没能通过废弃粮仓的危险检定。"
+	)
+
+
+func _challenge_injury_fact_text(fact: Dictionary) -> String:
+	if (
+		str(fact.get("challenge_id", ""))
+		== "north_quay_flooded_stack_search"
+	):
+		return "你在水浸封存层被断钉割伤了手掌。"
+	return "你在废弃粮仓扭伤了脚踝。"
+
+
+func _item_discovery_fact_text(
+		target_name: String,
+		fact: Dictionary
+) -> String:
+	if str(fact.get("location_id", "")) == "north_quay_record_house":
+		return "你在北埠旧档房找到了%s。" % target_name
+	return "你在废弃粮仓找到了%s。" % target_name
 
 
 func _state_key_label(key: String) -> String:
@@ -1119,6 +1211,7 @@ func _injury_label(injury: String) -> String:
 	return {
 		"none": "无",
 		"twisted_ankle": "脚踝扭伤",
+		"archive_splinter_cut": "手掌割伤",
 	}.get(injury, injury)
 
 
