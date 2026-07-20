@@ -1,0 +1,387 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/rebuild/v5_live_location_viewer.gd" id="1_viewer"]
+
+[sub_resource type="StyleBoxFlat" id="StyleHeader"]
+bg_color = Color(0.075, 0.09, 0.09, 0.96)
+border_width_bottom = 1
+border_color = Color(0.52, 0.42, 0.27, 0.75)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StylePanel"]
+bg_color = Color(0.071, 0.084, 0.084, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 0.26, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleCenter"]
+bg_color = Color(0.085, 0.095, 0.09, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.34, 0.24, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleFeedback"]
+bg_color = Color(0.055, 0.068, 0.067, 1)
+border_width_left = 3
+border_color = Color(0.64, 0.47, 0.25, 1)
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleActionDock"]
+bg_color = Color(0.055, 0.067, 0.068, 0.98)
+border_width_top = 1
+border_color = Color(0.38, 0.31, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleRestart"]
+bg_color = Color(0.12, 0.14, 0.14, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.37, 0.34, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="V5LiveLocationViewer" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_viewer")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.031, 0.032, 1)
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="RootLayout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="PanelContainer" parent="Margin/RootLayout"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleHeader")
+
+[node name="HeaderMargin" type="MarginContainer" parent="Margin/RootLayout/Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HeaderRow" type="HBoxContainer" parent="Margin/RootLayout/Header/HeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Brand" type="VBoxContainer" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="BrandTitle" type="Label" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow/Brand"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.89, 0.82, 0.67, 1)
+theme_override_font_sizes/font_size = 20
+text = "CHRONICLE"
+
+[node name="BrandSubtitle" type="Label" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow/Brand"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.51, 0.57, 0.56, 1)
+theme_override_font_sizes/font_size = 12
+text = "活世界地点局面 / SIM SESSION"
+
+[node name="SessionLabel" type="Label" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.68, 0.62, 1)
+text = "● 世界正在持续"
+
+[node name="RestartButton" type="Button" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 36)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleRestart")
+text = "重新载入局面"
+
+[node name="MainArea" type="HBoxContainer" parent="Margin/RootLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LeftPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea"]
+custom_minimum_size = Vector2(244, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.72
+theme_override_styles/panel = SubResource("StylePanel")
+
+[node name="LeftMargin" type="MarginContainer" parent="Margin/RootLayout/MainArea/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="LeftLayout" type="VBoxContainer" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlayerHeading" type="Label" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
+theme_override_font_sizes/font_size = 16
+text = "旅人"
+
+[node name="PlayerSummary" type="RichTextLabel" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 82)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = false
+
+[node name="DividerA" type="HSeparator" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
+layout_mode = 2
+
+[node name="RegionHeading" type="Label" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
+theme_override_font_sizes/font_size = 16
+text = "此地的压力"
+
+[node name="RegionStatus" type="RichTextLabel" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="CenterPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea"]
+custom_minimum_size = Vector2(492, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.52
+theme_override_styles/panel = SubResource("StyleCenter")
+
+[node name="CenterMargin" type="MarginContainer" parent="Margin/RootLayout/MainArea/CenterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 12
+
+[node name="CenterLayout" type="VBoxContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="LocationTitle" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.88, 0.76, 1)
+theme_override_font_sizes/font_size = 24
+text = "老陈铺子"
+
+[node name="LocationContext" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.62, 0.59, 1)
+theme_override_font_sizes/font_size = 12
+text = "湖湾镇 · 旧粮铺"
+
+[node name="LocationDescription" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.78, 0.79, 0.74, 1)
+bbcode_enabled = true
+fit_content = false
+
+[node name="SceneDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+layout_mode = 2
+
+[node name="PeopleHeading" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.67, 0.51, 1)
+text = "在场的人"
+
+[node name="VisiblePeople" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = false
+
+[node name="ObservationHeading" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.67, 0.51, 1)
+text = "进入视线的东西"
+
+[node name="VisibleObservations" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="FeedbackPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleFeedback")
+
+[node name="FeedbackMargin" type="MarginContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="FeedbackLayout" type="VBoxContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="FeedbackTitle" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.77, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+text = "局面刚刚展开"
+
+[node name="FeedbackBody" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="RightPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.8
+theme_override_styles/panel = SubResource("StylePanel")
+
+[node name="RightMargin" type="MarginContainer" parent="Margin/RootLayout/MainArea/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="RightLayout" type="VBoxContainer" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="KnowledgeHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
+theme_override_font_sizes/font_size = 16
+text = "已经确认的事"
+
+[node name="KnowledgeText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="DividerB" type="HSeparator" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+layout_mode = 2
+
+[node name="HistoryHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
+theme_override_font_sizes/font_size = 16
+text = "刚刚发生"
+
+[node name="HistoryText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="ActionDock" type="PanelContainer" parent="Margin/RootLayout"]
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleActionDock")
+
+[node name="ActionMargin" type="MarginContainer" parent="Margin/RootLayout/ActionDock"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="ActionLayout" type="VBoxContainer" parent="Margin/RootLayout/ActionDock/ActionMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ActionHeading" type="Label" parent="Margin/RootLayout/ActionDock/ActionMargin/ActionLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.89, 0.81, 0.64, 1)
+theme_override_font_sizes/font_size = 16
+text = "此刻你能做什么"
+
+[node name="ActionHint" type="Label" parent="Margin/RootLayout/ActionDock/ActionMargin/ActionLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.54, 0.53, 1)
+theme_override_font_sizes/font_size = 12
+text = "行动来自当前世界状态；局面变化后，可用选择也会变化。"
+
+[node name="ActionScroll" type="ScrollContainer" parent="Margin/RootLayout/ActionDock/ActionMargin/ActionLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ActionButtons" type="FlowContainer" parent="Margin/RootLayout/ActionDock/ActionMargin/ActionLayout/ActionScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6

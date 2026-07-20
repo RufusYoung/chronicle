@@ -3,6 +3,7 @@
   "location": {
     "id": "old_chen_shop",
     "display_name": "老陈铺子",
+    "description": "铺子里浮着一层旧粮和潮木头的气味。柜台后的粮罐大多见了底，门外有人压低声音谈论明天的粮价。",
     "tags": [
       "town",
       "shop",
@@ -22,6 +23,7 @@
     {
       "id": "chen_mi",
       "display_name": "陈米",
+      "description": "一个守在柜台边的孩子，衣袖沾着面粉，目光总往后屋飘。",
       "type": "person",
       "tags": [
         "person",
@@ -38,6 +40,7 @@
     {
       "id": "spoiled_grain_bag",
       "display_name": "发霉麦子袋",
+      "description": "被匆忙塞进后屋的旧粮袋，潮气已经侵进袋口。",
       "type": "concealed_item",
       "tags": [
         "concealed_item",
@@ -53,6 +56,7 @@
     {
       "id": "old_chen_shop_price_notice",
       "display_name": "涨价告示",
+      "description": "新写的墨迹还没有干透，粮价被改得比昨天更高。",
       "type": "readable_notice",
       "tags": [
         "readable_notice",
@@ -67,6 +71,7 @@
     {
       "id": "gray_grain_powder",
       "display_name": "灰白粮粉",
+      "description": "柜脚旁散着一点颜色不对的粮粉，像是从某只破袋里漏出来的。",
       "type": "trace",
       "tags": [
         "trace",
