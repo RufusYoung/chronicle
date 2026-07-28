@@ -110,7 +110,10 @@ func perform_travel(route_id: String) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
-func perform_challenge(option_id: String) -> Dictionary:
+func perform_challenge(
+		option_id: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
 	latest_event_type = "challenge"
 	if not is_ready():
 		latest_result = {
@@ -121,9 +124,14 @@ func perform_challenge(option_id: String) -> Dictionary:
 		return latest_result.duplicate(true)
 
 	var option := _find_challenge_option(option_id)
-	latest_result = session.execute_challenge_option(option_id, {
+	var execution_metadata := {
 		"source": "v5_live_location_surface",
-	})
+	}
+	execution_metadata.merge(metadata, true)
+	latest_result = session.execute_challenge_option(
+		option_id,
+		execution_metadata
+	)
 	if bool(latest_result.get("success", false)):
 		action_history.append({
 			"index": action_history.size() + 1,
@@ -340,6 +348,13 @@ func _travel_rows() -> Array:
 		var hint := "旅行会推进世界时间，沿途的事情也会继续发展。"
 		if blocked_reason == "insufficient_food":
 			hint = "随身食物不足，暂时无法走这条路。"
+		elif blocked_reason == "missing_required_item":
+			hint = str(
+				option.get(
+					"access_hint",
+					"缺少这段远行要求的防护装备。"
+				)
+			)
 		elif blocked_reason == "outside_access_window":
 			hint = str(
 				option.get(
@@ -381,9 +396,17 @@ func _player_view(snapshot: Variant) -> Dictionary:
 	var role := str(snapshot.get_player_value("role", "traveler"))
 	var health := int(snapshot.get_player_value("health", 100))
 	var injury := str(snapshot.get_player_value("injury", "none"))
+	var mist_salt_echo := str(
+		snapshot.get_player_value("mist_salt_echo", "none")
+	)
 	var item_names: Array[String] = []
 	for item: Dictionary in snapshot.get_player_items():
 		item_names.append(str(item.get("display_name", "未命名物品")))
+	var long_term_line := ""
+	if mist_salt_echo != "none":
+		long_term_line = "\n长期痕迹　%s" % _mist_salt_echo_label(
+			mist_salt_echo
+		)
 	return {
 		"title": "无名旅人",
 		"role": _role_label(role),
@@ -391,9 +414,11 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		"perception": int(snapshot.get_player_value("perception", 0)),
 		"health": health,
 		"injury": injury,
+		"mist_salt_echo": mist_salt_echo,
 		"items": item_names,
-		"summary": "身份　%s\n食物　%d 份　感知　%d\n健康　%d　伤势　%s\n发现物　%s" % [
+		"summary": "身份　%s%s\n食物　%d 份　感知　%d\n健康　%d　伤势　%s\n发现物　%s" % [
 			_role_label(role),
+			long_term_line,
 			int(snapshot.get_player_value("food_count", 0)),
 			int(snapshot.get_player_value("perception", 0)),
 			health,
@@ -700,7 +725,19 @@ func _challenge_feedback_view() -> Dictionary:
 	var option_type := str(latest_result.get("option_type", ""))
 	var details: Array[String] = []
 	if option_type == "prepare":
-		details.append("准备耗时 1 小时，并写入当前世界状态。")
+		details.append(
+			"准备耗时 %d 小时，并写入当前世界状态。"
+			% int(latest_result.get("hours", 1))
+		)
+		for change: Dictionary in transaction.get("state_changes", []):
+			if str(change.get("entity_id", "")) == "player":
+				details.append(_state_change_text(change))
+		for item_change: Dictionary in transaction.get("item_changes", []):
+			var prepared_item: Dictionary = item_change.get("item", {})
+			details.append(
+				"远行装备进入随身物品：%s"
+				% str(prepared_item.get("display_name", "未命名装备"))
+			)
 	else:
 		var preparation_bonus := int(narrative.get("preparation_bonus", 0))
 		var formula := "掷骰 %d + %s %d" % [
@@ -725,9 +762,6 @@ func _challenge_feedback_view() -> Dictionary:
 					"发现物进入随身物品：%s"
 					% str(item.get("display_name", "未知物品"))
 				)
-			for fact: Dictionary in transaction.get("facts_added", []):
-				if bool(fact.get("show_in_feedback", false)):
-					details.append(str(fact.get("summary", "")))
 			var chronicle_entries: Array = transaction.get(
 				"chronicle_entries_added",
 				[]
@@ -743,7 +777,18 @@ func _challenge_feedback_view() -> Dictionary:
 					)
 				)
 		else:
-			details.append("你受了伤，但仍然活着并退回了门外。")
+			details.append("身体受到伤害，但这次行动没有夺走你的性命。")
+	for fact: Dictionary in transaction.get("facts_added", []):
+		if bool(fact.get("show_in_feedback", false)):
+			details.append(str(fact.get("summary", "")))
+	for change: Dictionary in transaction.get("state_changes", []):
+		if (
+			str(change.get("entity_id", "")) == "player"
+			and str(change.get("key", "")) == "mist_salt_echo"
+		):
+			var consequence_text := _state_change_text(change)
+			if consequence_text not in details:
+				details.append(consequence_text)
 	return {
 		"status": str(narrative.get("outcome", "challenge")),
 		"title": str(narrative.get("title", "冒险结果")),
@@ -758,6 +803,8 @@ func _travel_feedback_view() -> Dictionary:
 		var body := "当前无法沿这条路线出发。"
 		if error == "insufficient_food":
 			body = "你带的食物不够走完这段路。"
+		elif error == "missing_required_item":
+			body = "这段路不能空手出发；你还缺少防盐面罩等必要防护。"
 		elif error == "outside_access_window":
 			body = "北埠摆渡已经停船；等到白天才能沿这条路线出发。"
 		elif error == "route_not_discovered":
@@ -888,6 +935,12 @@ func _state_change_text(change: Dictionary) -> String:
 		return "健康降至 %d" % int(change.get("to", 0))
 	if entity_id == "player" and key == "injury":
 		return "伤势：%s" % _injury_label(str(change.get("to", "")))
+	if entity_id == "player" and key == "mist_salt_echo":
+		return "长期痕迹：%s" % _mist_salt_echo_label(
+			str(change.get("to", "faint"))
+		)
+	if entity_id == "player" and key == "mist_salt_expedition_prepared":
+		return "雾盐旧井远行准备已经完成"
 	if entity_id == "player" and key == "inventory_item_ids":
 		return "随身物品发生变化"
 	if key == "hunger" and str(change.get("operation", "")) == "decrease_tier":
@@ -1032,6 +1085,11 @@ func _action_hint(option: Dictionary) -> String:
 
 func _challenge_action_hint(option: Dictionary) -> String:
 	if str(option.get("option_type", "")) == "prepare":
+		if bool(option.get("preparation_only", false)):
+			return "%s；花费 %d 小时完成远行准备。" % [
+				str(option.get("risk_description", "")),
+				int(option.get("hours", 1)),
+			]
 		return "%s；花费 %d 小时后改变检定条件。" % [
 			str(option.get("risk_description", "")),
 			int(option.get("hours", 1)),
@@ -1110,6 +1168,10 @@ func _location_tag_label(tag: String) -> String:
 		"archive": "旧档房",
 		"tidal": "潮水侵蚀",
 		"old_records": "旧卷封存",
+		"wilderness": "城外荒野",
+		"subterranean": "地下遗构",
+		"anomalous": "异象区域",
+		"ancient": "年代不明",
 	}.get(tag, "")
 
 
@@ -1129,6 +1191,11 @@ func _fact_text(
 		"actor_attempted_challenge": _challenge_attempt_fact_text(fact),
 		"actor_injured_during_challenge": _challenge_injury_fact_text(fact),
 		"actor_discovered_item": _item_discovery_fact_text(target_name, fact),
+		"actor_acquired_preparation_item": "你为远行备好了%s。" % target_name,
+		"actor_prepared_mist_salt_expedition": "你在北埠用两小时劳动换得了往返口粮与防盐面罩。",
+		"actor_acquired_mist_salt_echo": "你从雾盐旧井第二环回来后，呼吸里留下了不会随普通伤势消失的盐冷回响。",
+		"actor_observed_mist_salt_filaments_follow_water": "你亲眼看见井下白丝逆着石壁渗水的方向弯曲。",
+		"actor_found_lu_huai_second_ring_marker": "你在第二环发现了陆槐留下的验粮刻记，但仍不知道他后来去了哪里。",
 		"chen_mi_recognized_granary_measure_token": "陈米认出了你带回的旧粮仓验粮铜牌。",
 		"lake_town_public_granary_sealed_after_spoiled_grain": "陈米确认，湖湾镇公仓曾在霉粮被查出后封闭。",
 		"investigation_lead_opened": "陈米说，陈家旧税契里也许夹着公仓封印抄件。",
@@ -1148,6 +1215,10 @@ func _travel_fact_text(fact: Dictionary) -> String:
 			return "你乘白天的摆渡抵达过北埠旧档房。"
 		"north_quay_record_house_to_old_chen_shop":
 			return "你从北埠旧档房沿北岸返回了老陈铺子。"
+		"north_quay_record_house_to_mist_salt_well":
+			return "你带着防盐面罩和往返口粮抵达了雾盐旧井。"
+		"mist_salt_well_to_north_quay_record_house":
+			return "你从雾盐旧井沿北岸荒路返回了北埠旧档房。"
 		_:
 			return "你完成过一段需要时间和食物的旅程。"
 
@@ -1158,6 +1229,11 @@ func _challenge_preparation_fact_text(fact: Dictionary) -> String:
 		== "north_quay_flooded_stack_search"
 	):
 		return "你借来罩灯和油布，等潮水退过刻痕后再进入封存层。"
+	if (
+		str(fact.get("challenge_id", ""))
+		== "mist_salt_well_expedition_supply"
+	):
+		return "你帮闻简晒卷两小时，换得四份船饼和一只蜡布防盐面罩。"
 	return "你在进入废弃粮仓前检查了朽木地板。"
 
 
@@ -1172,6 +1248,15 @@ func _challenge_attempt_fact_text(fact: Dictionary) -> String:
 			if succeeded
 			else "你没能通过北埠旧档房水浸封存层的风险检定。"
 		)
+	if (
+		str(fact.get("challenge_id", ""))
+		== "mist_salt_well_second_ring_descent"
+	):
+		return (
+			"你深入了雾盐旧井第二环，并带回一份井下样本。"
+			if succeeded
+			else "你深入雾盐旧井第二环后被迫退回井口。"
+		)
 	return (
 		"你通过了废弃粮仓的危险检定。"
 		if succeeded
@@ -1185,6 +1270,11 @@ func _challenge_injury_fact_text(fact: Dictionary) -> String:
 		== "north_quay_flooded_stack_search"
 	):
 		return "你在水浸封存层被断钉割伤了手掌。"
+	if (
+		str(fact.get("challenge_id", ""))
+		== "mist_salt_well_second_ring_descent"
+	):
+		return "你在雾盐旧井第二环吸入盐雾并灼伤了喉咙。"
 	return "你在废弃粮仓扭伤了脚踝。"
 
 
@@ -1194,6 +1284,8 @@ func _item_discovery_fact_text(
 ) -> String:
 	if str(fact.get("location_id", "")) == "north_quay_record_house":
 		return "你在北埠旧档房找到了%s。" % target_name
+	if str(fact.get("location_id", "")) == "mist_salt_well":
+		return "你在雾盐旧井第二环带回了%s。" % target_name
 	return "你在废弃粮仓找到了%s。" % target_name
 
 
@@ -1204,6 +1296,7 @@ func _state_key_label(key: String) -> String:
 		"perception": "感知",
 		"health": "健康",
 		"injury": "伤势",
+		"mist_salt_echo": "雾盐回响",
 	}.get(key, key)
 
 
@@ -1212,7 +1305,15 @@ func _injury_label(injury: String) -> String:
 		"none": "无",
 		"twisted_ankle": "脚踝扭伤",
 		"archive_splinter_cut": "手掌割伤",
+		"mist_salt_throat_burn": "盐雾灼伤",
 	}.get(injury, injury)
+
+
+func _mist_salt_echo_label(value: String) -> String:
+	return {
+		"none": "无",
+		"faint": "雾盐回响·微弱",
+	}.get(value, value)
 
 
 func _relationship_axis_label(axis: String) -> String:

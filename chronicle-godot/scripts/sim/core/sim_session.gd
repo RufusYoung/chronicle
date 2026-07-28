@@ -169,6 +169,10 @@ func get_travel_options() -> Array:
 		var food_cost := maxi(route_food_cost, 0)
 		var access_contract_valid := _route_access_contract_valid(route)
 		var access_allowed := _route_access_time_allows(route)
+		var required_items_ready := _route_required_items_met(
+			route,
+			snapshot
+		)
 		var can_travel := (
 			not destination.is_empty()
 			and int(route.get("hours", 0)) > 0
@@ -176,6 +180,7 @@ func get_travel_options() -> Array:
 			and food_count >= food_cost
 			and access_contract_valid
 			and access_allowed
+			and required_items_ready
 		)
 		rows.append({
 			"route_id": str(route.get("route_id", "")),
@@ -195,7 +200,8 @@ func get_travel_options() -> Array:
 					destination,
 					int(route.get("hours", 0)),
 					food_count,
-					route_food_cost
+					route_food_cost,
+					snapshot
 				)
 			),
 		})
@@ -209,6 +215,8 @@ func get_challenge_options() -> Array:
 	var rows: Array = []
 	for challenge: Dictionary in challenge_definitions:
 		if str(challenge.get("location_id", "")) != context.location_id:
+			continue
+		if not _challenge_requirements_met(challenge, snapshot):
 			continue
 		var target_id := str(challenge.get("target_entity_id", ""))
 		if snapshot.get_entity(target_id).is_empty():
@@ -265,37 +273,51 @@ func get_challenge_options() -> Array:
 					challenge.get("risk_description", "")
 				),
 				"check_text": check_text,
+				"preparation_only": bool(
+					challenge.get("preparation_only", false)
+				),
 				"preparation_applied": false,
 				"preparation_bonus": preparation_bonus,
 				"can_execute": true,
 				"blocked_reason": "",
 			})
 
-		var attempt: Dictionary = challenge.get("attempt", {})
-		rows.append({
-			"option_id": str(attempt.get(
-				"option_id",
-				"attempt:%s" % str(challenge.get("challenge_id", ""))
-			)),
-			"challenge_id": str(challenge.get("challenge_id", "")),
-			"option_type": "attempt",
-			"action_type": "danger",
-			"label": str(attempt.get("label", "[危险] 尝试进入")),
-			"hours": int(attempt.get("hours", challenge.get("hours", 1))),
-			"risk_label": str(challenge.get("risk_label", "未知")),
-			"risk_description": str(challenge.get("risk_description", "")),
-			"check_text": check_text,
-			"preparation_applied": prepared,
-			"preparation_bonus": preparation_bonus if prepared else 0,
-			"success_hint": str(
-				(challenge.get("success", {}) as Dictionary).get("hint", "")
-			),
-			"failure_hint": str(
-				(challenge.get("failure", {}) as Dictionary).get("hint", "")
-			),
-			"can_execute": true,
-			"blocked_reason": "",
-		})
+		if not bool(challenge.get("preparation_only", false)):
+			var attempt: Dictionary = challenge.get("attempt", {})
+			rows.append({
+				"option_id": str(attempt.get(
+					"option_id",
+					"attempt:%s" % str(challenge.get("challenge_id", ""))
+				)),
+				"challenge_id": str(challenge.get("challenge_id", "")),
+				"option_type": "attempt",
+				"action_type": "danger",
+				"label": str(attempt.get("label", "[危险] 尝试进入")),
+				"hours": int(
+					attempt.get("hours", challenge.get("hours", 1))
+				),
+				"risk_label": str(challenge.get("risk_label", "未知")),
+				"risk_description": str(
+					challenge.get("risk_description", "")
+				),
+				"check_text": check_text,
+				"preparation_applied": prepared,
+				"preparation_bonus": preparation_bonus if prepared else 0,
+				"success_hint": str(
+					(challenge.get("success", {}) as Dictionary).get(
+						"hint",
+						""
+					)
+				),
+				"failure_hint": str(
+					(challenge.get("failure", {}) as Dictionary).get(
+						"hint",
+						""
+					)
+				),
+				"can_execute": true,
+				"blocked_reason": "",
+			})
 	return rows
 
 
@@ -663,6 +685,7 @@ func execute_challenge_option(
 		"challenge_id": str(option.get("challenge_id", "")),
 		"option_type": option_type,
 		"outcome": str(narrative.get("outcome", "")),
+		"hours": hours,
 		"roll": roll,
 		"transaction_result": transaction_result.to_dict(),
 		"tick_result": tick_result,
@@ -698,6 +721,8 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 		return _travel_failure("invalid_route_contract", route_id)
 	if not _route_access_time_allows(route):
 		return _travel_failure("outside_access_window", route_id)
+	if not _route_required_items_met(route, get_snapshot()):
+		return _travel_failure("missing_required_item", route_id)
 	if int(context.get_player_value("food_count", 0)) < food_cost:
 		return _travel_failure("insufficient_food", route_id)
 
@@ -1192,6 +1217,38 @@ func _find_challenge_definition(challenge_id: String) -> Dictionary:
 	return {}
 
 
+func _challenge_requirements_met(
+		challenge: Dictionary,
+		snapshot: Variant
+) -> bool:
+	var facts: Array = snapshot.get_facts()
+	for fact_type_value: Variant in challenge.get(
+		"required_fact_types",
+		[]
+	):
+		if not _facts_include_type(facts, str(fact_type_value)):
+			return false
+	var actor_id := str(snapshot.get_player_value("id", "player"))
+	var inventory_item_ids: Array = snapshot.get_player_value(
+		"inventory_item_ids",
+		[]
+	)
+	for item_id_value: Variant in challenge.get(
+		"required_item_ids",
+		[]
+	):
+		var item_id := str(item_id_value)
+		var item: Dictionary = snapshot.get_item(item_id)
+		if (
+			item_id == ""
+			or item.is_empty()
+			or str(item.get("owner_id", "")) != actor_id
+			or item_id not in inventory_item_ids
+		):
+			return false
+	return true
+
+
 func _find_return_echo_option(option_id: String) -> Dictionary:
 	for option: Dictionary in get_return_echo_options():
 		if str(option.get("option_id", "")) == option_id:
@@ -1527,7 +1584,8 @@ func _travel_blocked_reason(
 		destination: Dictionary,
 		hours: int,
 		food_count: int,
-		food_cost: int
+		food_cost: int,
+		snapshot: Variant
 ) -> String:
 	if destination.is_empty():
 		return "destination_not_found"
@@ -1539,6 +1597,8 @@ func _travel_blocked_reason(
 		return "invalid_route_contract"
 	if not _route_access_time_allows(route):
 		return "outside_access_window"
+	if not _route_required_items_met(route, snapshot):
+		return "missing_required_item"
 	if food_count < food_cost:
 		return "insufficient_food"
 	return ""
@@ -1565,6 +1625,31 @@ func _route_discovery_requirements_met(
 		):
 			return true
 	return false
+
+
+func _route_required_items_met(
+		route: Dictionary,
+		snapshot: Variant
+) -> bool:
+	var required_item_values: Variant = route.get("required_item_ids", [])
+	if not required_item_values is Array:
+		return false
+	var actor_id := str(snapshot.get_player_value("id", "player"))
+	var inventory_item_ids: Array = snapshot.get_player_value(
+		"inventory_item_ids",
+		[]
+	)
+	for item_value: Variant in required_item_values:
+		var item_id := str(item_value)
+		var item: Dictionary = snapshot.get_item(item_id)
+		if (
+			item_id == ""
+			or item.is_empty()
+			or str(item.get("owner_id", "")) != actor_id
+			or item_id not in inventory_item_ids
+		):
+			return false
+	return true
 
 
 func _route_access_time_allows(route: Dictionary) -> bool:

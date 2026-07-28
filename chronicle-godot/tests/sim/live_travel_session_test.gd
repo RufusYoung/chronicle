@@ -29,9 +29,9 @@ func _run() -> void:
 	)
 	_check(
 		bool(start_result.get("success", false))
-		and session.context.get_locations().size() == 3
+		and session.context.get_locations().size() == 4
 		and session.get_travel_options().size() == 1,
-		"1. Session loads three locations but exposes only discovered routes"
+		"1. Session loads four locations but exposes only discovered routes"
 	)
 
 	var initial_snapshot: Variant = session.get_snapshot()

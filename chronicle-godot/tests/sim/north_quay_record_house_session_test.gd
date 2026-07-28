@@ -21,6 +21,7 @@ const NORTH_QUAY_RETURN := "north_quay_record_house_to_old_chen_shop"
 const ARCHIVE_PREPARE := "prepare_flooded_archive_search"
 const ARCHIVE_SEARCH := "search_flooded_archive_stack"
 const ARCHIVE_ITEM := "lu_huai_last_inspection_leaf"
+const EXPEDITION_PREPARE := "prepare_mist_salt_well_expedition"
 
 var failures: Array[String] = []
 
@@ -37,7 +38,7 @@ func _run() -> void:
 	)
 	_check(
 		bool(start_result.get("success", false))
-		and session.context.get_locations().size() == 3
+		and session.context.get_locations().size() == 4
 		and not _has_route(
 			session.get_travel_options(),
 			NORTH_QUAY_OUTBOUND
@@ -256,9 +257,20 @@ func _run() -> void:
 		"16. Archive chronicle cites journey, preparation, check, item, and record"
 	)
 	_check(
-		session.get_challenge_options().is_empty()
+		not _has_option(
+			session.get_challenge_options(),
+			ARCHIVE_PREPARE
+		)
+		and not _has_option(
+			session.get_challenge_options(),
+			ARCHIVE_SEARCH
+		)
+		and _has_option(
+			session.get_challenge_options(),
+			EXPEDITION_PREPARE
+		)
 		and _has_route(session.get_travel_options(), NORTH_QUAY_RETURN),
-		"17. Resolved search cannot duplicate but leaves a route home"
+		"17. Resolved search closes the archive danger and reveals the expedition preparation"
 	)
 
 	var stale_time := session.get_time_summary()

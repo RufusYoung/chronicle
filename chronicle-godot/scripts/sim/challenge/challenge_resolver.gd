@@ -39,6 +39,29 @@ func resolve_preparation(
 		"visibility": "known",
 		"source_action": "challenge_preparation",
 	})
+	_apply_configured_state_changes(
+		result,
+		preparation.get("state_changes", []),
+		actor_id,
+		target_id
+	)
+	_apply_preparation_items(
+		result,
+		challenge,
+		preparation,
+		snapshot,
+		event_id
+	)
+	_apply_configured_facts(
+		result,
+		preparation.get("additional_facts", []),
+		challenge_id,
+		snapshot,
+		event_id,
+		"challenge_preparation",
+		["actor_prepared_for_challenge:%d" % event_id],
+		{}
+	)
 	result.set_narrative_result({
 		"title": str(preparation.get("narrative_title", "做好准备")),
 		"summary": str(
@@ -99,6 +122,26 @@ func resolve_attempt(
 		"visibility": "known",
 		"source_action": "challenge_check",
 	})
+	var attempt_consequences: Dictionary = challenge.get(
+		"attempt_consequences",
+		{}
+	)
+	_apply_configured_state_changes(
+		result,
+		attempt_consequences.get("state_changes", []),
+		actor_id,
+		target_id
+	)
+	_apply_configured_facts(
+		result,
+		attempt_consequences.get("additional_facts", []),
+		challenge_id,
+		snapshot,
+		event_id,
+		"challenge_check",
+		["actor_attempted_challenge:%d" % event_id],
+		time_summary
+	)
 
 	if succeeded:
 		_apply_success(
@@ -139,6 +182,148 @@ func resolve_attempt(
 	})
 	result.mark_resolved("challenge_check")
 	return result
+
+
+func _apply_configured_state_changes(
+		result: Variant,
+		change_values: Variant,
+		actor_id: String,
+		target_id: String
+) -> void:
+	if not change_values is Array:
+		return
+	for change_value: Variant in change_values:
+		if not change_value is Dictionary:
+			continue
+		var change := (change_value as Dictionary).duplicate(true)
+		var entity_id := str(change.get("entity_id", "actor"))
+		if entity_id == "actor":
+			entity_id = actor_id
+		elif entity_id == "target":
+			entity_id = target_id
+		if (
+			entity_id == ""
+			or str(change.get("key", "")) == ""
+			or (
+				not change.has("to")
+				and not change.has("delta")
+				and not change.has("degrade")
+			)
+		):
+			continue
+		change["entity_id"] = entity_id
+		result.add_state_change(change)
+
+
+func _apply_preparation_items(
+		result: Variant,
+		challenge: Dictionary,
+		preparation: Dictionary,
+		snapshot: Variant,
+		event_id: int
+) -> void:
+	var item_values: Variant = preparation.get("items", [])
+	if not item_values is Array:
+		return
+	var actor_id := str(snapshot.get_player_value("id", "player"))
+	var inventory_item_ids: Array = (
+		snapshot.get_player_value("inventory_item_ids", []) as Array
+	).duplicate(true)
+	var inventory_changed := false
+	for item_value: Variant in item_values:
+		if not item_value is Dictionary:
+			continue
+		var item := (item_value as Dictionary).duplicate(true)
+		var item_id := str(item.get("item_id", item.get("id", "")))
+		if item_id == "":
+			continue
+		item["item_id"] = item_id
+		item["owner_id"] = actor_id
+		var provenance: Dictionary = (
+			item.get("provenance", {}) as Dictionary
+		).duplicate(true)
+		provenance["acquired_at"] = str(snapshot.location.get("id", ""))
+		provenance["source_preparation_id"] = str(
+			challenge.get("challenge_id", "")
+		)
+		item["provenance"] = provenance
+		result.add_item_change({
+			"operation": "create",
+			"item": item,
+		})
+		if item_id not in inventory_item_ids:
+			inventory_item_ids.append(item_id)
+			inventory_changed = true
+		result.add_fact({
+			"fact_id": "actor_acquired_preparation_item:%d:%s"
+				% [event_id, item_id],
+			"fact_type": "actor_acquired_preparation_item",
+			"source_id": actor_id,
+			"target_id": item_id,
+			"target_display_name": str(
+				item.get("display_name", "远行装备")
+			),
+			"challenge_id": str(challenge.get("challenge_id", "")),
+			"location_id": str(snapshot.location.get("id", "")),
+			"cause_fact_ids": [
+				"actor_prepared_for_challenge:%d" % event_id
+			],
+			"visibility": "known",
+			"source_action": "challenge_preparation",
+		})
+	if inventory_changed:
+		result.add_state_change({
+			"entity_id": actor_id,
+			"key": "inventory_item_ids",
+			"to": inventory_item_ids,
+		})
+
+
+func _apply_configured_facts(
+		result: Variant,
+		fact_values: Variant,
+		challenge_id: String,
+		snapshot: Variant,
+		event_id: int,
+		source_action: String,
+		cause_fact_ids: Array,
+		time_summary: Dictionary
+) -> void:
+	if not fact_values is Array:
+		return
+	var actor_id := str(snapshot.get_player_value("id", "player"))
+	var fact_index := 0
+	for fact_value: Variant in fact_values:
+		if not fact_value is Dictionary:
+			continue
+		var definition := fact_value as Dictionary
+		var fact_type := str(definition.get("fact_type", ""))
+		if fact_type == "":
+			continue
+		fact_index += 1
+		var fact := definition.duplicate(true)
+		fact["fact_id"] = "%s:%d:%d" % [
+			str(definition.get("fact_id_prefix", fact_type)),
+			event_id,
+			fact_index,
+		]
+		fact["source_id"] = str(definition.get("source_id", actor_id))
+		fact["target_id"] = str(
+			definition.get(
+				"target_id",
+				challenge_id
+			)
+		)
+		fact["challenge_id"] = challenge_id
+		fact["location_id"] = str(snapshot.location.get("id", ""))
+		fact["cause_fact_ids"] = cause_fact_ids.duplicate()
+		if not time_summary.is_empty():
+			fact["day"] = int(time_summary.get("day", 1))
+			fact["hour"] = int(time_summary.get("hour", 0))
+		fact["visibility"] = str(definition.get("visibility", "known"))
+		fact["source_action"] = source_action
+		fact.erase("fact_id_prefix")
+		result.add_fact(fact)
 
 
 func _apply_success(

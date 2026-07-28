@@ -50,6 +50,19 @@
         "tidal",
         "old_records"
       ]
+    },
+    {
+      "id": "mist_salt_well",
+      "display_name": "雾盐旧井",
+      "description": "北岸荒路在一圈塌陷石墙前断掉。井口没有辘轳，只有向地下盘绕的盐白石阶；雾从阶缝里慢慢上浮，井壁白丝不向下垂，而是一齐弯向渗水的石缝。",
+      "tags": [
+        "town_outskirts",
+        "wilderness",
+        "subterranean",
+        "anomalous",
+        "dangerous",
+        "ancient"
+      ]
     }
   ],
   "travel_routes": [
@@ -105,6 +118,36 @@
       "time_key": "after_north_quay_return",
       "narrative_title": "带着潮气返回",
       "narrative": "你沿北岸木道往回走。档房的潮纸气味还留在衣袖上，市场街的叫卖声已经隔着薄雾传了过来。"
+    },
+    {
+      "route_id": "north_quay_record_house_to_mist_salt_well",
+      "from_location_id": "north_quay_record_house",
+      "to_location_id": "mist_salt_well",
+      "label": "[远行] 沿北岸荒路前往雾盐旧井",
+      "hours": 6,
+      "food_cost": 2,
+      "required_fact_type": "lu_huai_recorded_departure_for_mist_salt_well",
+      "required_fact_target_id": "mist_salt_well",
+      "required_item_ids": [
+        "waxed_mist_salt_breathing_veil"
+      ],
+      "access_hint": "先在旧档房帮闻简晒卷，备齐蜡布防盐面罩和四份往返船饼。",
+      "trigger_key": "after_route_travel",
+      "time_key": "after_mist_salt_outbound",
+      "narrative_title": "北岸尽头的下行石阶",
+      "narrative": "你离开最后一段木栈道，沿着陆槐记录里的方位走过盐碱滩和低矮石坡。六小时后，荒草在一圈塌陷石墙外停住；雾盐旧井的石阶从那里盘向地下。"
+    },
+    {
+      "route_id": "mist_salt_well_to_north_quay_record_house",
+      "from_location_id": "mist_salt_well",
+      "to_location_id": "north_quay_record_house",
+      "label": "[返回] 带着现有发现回北埠旧档房",
+      "hours": 6,
+      "food_cost": 2,
+      "trigger_key": "after_route_travel",
+      "time_key": "after_mist_salt_return",
+      "narrative_title": "把井雾留在身后",
+      "narrative": "你没有再沿盐白石阶向下，而是带着已经看见的井口痕迹折回北岸。档房的潮桩重新出现时，旧井仍在身后起雾；你没有因此失去已经确认的事实。"
     }
   ],
   "challenge_seed": 516,
@@ -299,6 +342,200 @@
         "injury_value": "archive_splinter_cut",
         "narrative_title": "潮板在手下散开",
         "narrative": "你扶住的廊板突然散成几片。手掌被藏在纸浆里的断钉划开，罩灯也跌进水里；闻简把你拖回上层，随后用木栓封死了入口。"
+      }
+    },
+    {
+      "challenge_id": "mist_salt_well_expedition_supply",
+      "location_id": "north_quay_record_house",
+      "target_entity_id": "north_quay_expedition_bench",
+      "status_state_key": "challenge_status",
+      "available_status": "available",
+      "required_fact_types": [
+        "lu_huai_recorded_departure_for_mist_salt_well"
+      ],
+      "preparation_only": true,
+      "risk_label": "远行",
+      "risk_description": "雾盐旧井离北埠有六小时荒路，空手出发既缺往返口粮，也没有能压住井雾的面罩。",
+      "preparation": {
+        "option_id": "prepare_mist_salt_well_expedition",
+        "label": "[准备] 帮闻简晒卷，换取面罩和船饼　2小时",
+        "hours": 2,
+        "state_key": "expedition_supply_prepared",
+        "bonus": 0,
+        "state_changes": [
+          {
+            "entity_id": "actor",
+            "key": "food_count",
+            "delta": 4
+          },
+          {
+            "entity_id": "actor",
+            "key": "mist_salt_expedition_prepared",
+            "to": true
+          }
+        ],
+        "items": [
+          {
+            "item_id": "waxed_mist_salt_breathing_veil",
+            "display_name": "蜡布防盐面罩",
+            "description": "闻简从旧船具里翻出的双层蜡布面罩，边缘缝着细铜丝。它不能隔绝井雾，只能让盐尘少一些进入口鼻。",
+            "item_type": "expedition_gear",
+            "material": "waxed_cloth_and_copper",
+            "tags": [
+              "mist_salt_well",
+              "breathing_protection",
+              "expedition_gear",
+              "portable"
+            ],
+            "provenance": {
+              "provided_by": "north_quay_record_keeper",
+              "former_use": "salt_fog_route_protection"
+            }
+          }
+        ],
+        "additional_facts": [
+          {
+            "fact_type": "actor_prepared_mist_salt_expedition",
+            "target_id": "mist_salt_well",
+            "summary": "你帮闻简晒卷两小时，换得四份船饼和一只蜡布防盐面罩。",
+            "show_in_feedback": true
+          }
+        ],
+        "narrative_title": "用两小时换一段远路",
+        "narrative": "闻简不肯白送档房的旧船具。你帮他把两捆受潮卷册拆开、压平、挂上晒绳；作为交换，他给了你四份硬船饼和一只缝着铜丝的蜡布面罩，并提醒你：那东西只能少吸一点井雾，不能保证平安回来。"
+      }
+    },
+    {
+      "challenge_id": "mist_salt_well_second_ring_descent",
+      "location_id": "mist_salt_well",
+      "target_entity_id": "mist_salt_second_ring_stairs",
+      "status_state_key": "challenge_status",
+      "available_status": "available",
+      "stat_key": "perception",
+      "stat_label": "感知",
+      "die_sides": 20,
+      "difficulty": 23,
+      "risk_label": "不可逆",
+      "risk_description": "第二环的盐雾会穿过蜡布。无论找到什么，只要继续向下，呼吸都会留下不能按普通伤势处理的长期雾盐回响；你也可以检查井口盐壳后立刻返回。",
+      "attempt": {
+        "option_id": "descend_mist_salt_well_second_ring",
+        "label": "[深入] 沿盐梯下降到第二环　2小时",
+        "hours": 2
+      },
+      "attempt_consequences": {
+        "state_changes": [
+          {
+            "entity_id": "actor",
+            "key": "mist_salt_echo",
+            "to": "faint"
+          }
+        ],
+        "additional_facts": [
+          {
+            "fact_type": "actor_acquired_mist_salt_echo",
+            "target_id": "player",
+            "summary": "从第二环退回时，你每次深呼吸都听见一声很轻的盐粒摩擦声；它没有随休息消失。",
+            "show_in_feedback": true,
+            "epistemic_status": "experienced"
+          }
+        ]
+      },
+      "success": {
+        "hint": "成功：带回第二环的白丝样本与陆槐刻记，但雾盐回响仍会留下。",
+        "visible_entity_id": "mist_salt_lu_huai_marker",
+        "narrative_title": "逆着渗水弯曲的白丝",
+        "narrative": "第二环没有井底，只有一圈没入雾中的石台。你把水囊靠近石壁，成片白丝便缓慢转向囊中的水；移开水囊，它们又弯回渗水缝。陆槐的秤纹刻在更下一段扶壁上，旁边只有一道向下的箭头，没有返程记号。你割下一小束封进蜡管，随后在呼吸变冷前退回井口。",
+        "item": {
+          "item_id": "mist_salt_reverse_flow_filament_sample",
+          "display_name": "逆水白丝样本",
+          "description": "一小束从雾盐旧井第二环取下的白丝，封在蜡管里。它在现场会缓慢弯向渗水与敞开的水囊；离开旧井后是否仍会如此，还没有得到验证。",
+          "item_type": "anomalous_field_sample",
+          "material": "unknown_filament",
+          "tags": [
+            "mist_salt_well",
+            "field_sample",
+            "white_filament",
+            "unidentified",
+            "portable"
+          ],
+          "provenance": {
+            "source_depth": "second_ring",
+            "epistemic_status": "direct_observation",
+            "container": "waxed_sample_tube"
+          }
+        },
+        "additional_facts": [
+          {
+            "fact_type": "actor_observed_mist_salt_filaments_follow_water",
+            "target_id": "mist_salt_reverse_flow_filament_sample",
+            "summary": "你在第二环亲眼看见白丝随水囊移动而转向，又在水囊移开后弯回渗水缝。",
+            "show_in_feedback": true,
+            "epistemic_status": "direct_observation"
+          },
+          {
+            "fact_type": "actor_found_lu_huai_second_ring_marker",
+            "target_id": "mist_salt_lu_huai_marker",
+            "summary": "第二环扶壁上刻着陆槐使用过的秤纹与向下箭头，但没有返程记号。",
+            "show_in_feedback": true,
+            "epistemic_status": "direct_observation"
+          }
+        ],
+        "chronicle": {
+          "title": "井下白丝朝水而生",
+          "body": "你下到雾盐旧井第二环，亲眼看见白丝会随水囊转向，并在更深处的扶壁上发现陆槐的秤纹。你带回了一束样本，也带回了不会随普通伤势消失的雾盐回响；白丝是什么、陆槐后来去了哪里，仍然没有答案。",
+          "required_route_id": "north_quay_record_house_to_mist_salt_well",
+          "required_fact_types": [
+            "actor_attempted_challenge",
+            "actor_acquired_mist_salt_echo",
+            "actor_discovered_item",
+            "actor_observed_mist_salt_filaments_follow_water",
+            "actor_found_lu_huai_second_ring_marker"
+          ],
+          "claims": [
+            {
+              "text": "你带着远行装备抵达雾盐旧井，并下到第二环。",
+              "fact_types": [
+                "actor_traveled_route",
+                "actor_attempted_challenge"
+              ]
+            },
+            {
+              "text": "第二环白丝在现场会随水囊移动而转向。",
+              "fact_types": [
+                "actor_observed_mist_salt_filaments_follow_water",
+                "actor_discovered_item"
+              ]
+            },
+            {
+              "text": "陆槐的秤纹出现在继续向下的扶壁旁，但这不能证明他的结局。",
+              "fact_types": [
+                "actor_found_lu_huai_second_ring_marker"
+              ]
+            },
+            {
+              "text": "这次深入留下了不会随普通休息消失的雾盐回响。",
+              "fact_types": [
+                "actor_acquired_mist_salt_echo"
+              ]
+            }
+          ],
+          "tags": [
+            "mist_salt_well",
+            "second_ring",
+            "field_observation",
+            "lu_huai",
+            "lasting_cost",
+            "unresolved"
+          ]
+        }
+      },
+      "failure": {
+        "hint": "失败：健康下降并灼伤喉咙；即使退回井口，雾盐回响也不会消失。",
+        "health_loss": 10,
+        "injury_key": "injury",
+        "injury_value": "mist_salt_throat_burn",
+        "narrative_title": "面罩里的第一口冷雾",
+        "narrative": "石阶在雾里像是多出了一段。你误把盐壳当成落脚石，蜡布面罩也在急促呼吸里贴住口鼻。喉咙被冷雾灼得发紧，你只能摸着扶壁退回井口；普通伤势可以休养，那声随呼吸出现的轻响却没有停。"
       }
     }
   ],
@@ -610,6 +847,23 @@
       }
     },
     {
+      "id": "north_quay_expedition_bench",
+      "location_id": "north_quay_record_house",
+      "display_name": "晒卷架下的旧船具",
+      "description": "几只硬船饼、蜡布面罩和装样本的空管压在晒卷架下。闻简把它们留给肯花时间帮忙抢救受潮卷册的人。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "expedition_supply",
+        "north_quay_work"
+      ],
+      "states": {
+        "visible": true,
+        "challenge_status": "available",
+        "expedition_supply_prepared": false
+      }
+    },
+    {
       "id": "north_quay_visiting_rules",
       "location_id": "north_quay_record_house",
       "display_name": "受潮的查档规条",
@@ -676,6 +930,76 @@
       "states": {
         "visible": false
       }
+    },
+    {
+      "id": "mist_salt_well_warning_stone",
+      "location_id": "mist_salt_well",
+      "display_name": "井口断裂的旧警石",
+      "description": "石面上只剩三行能辨认的刻字：“封水，慢息，不追回声。”末尾没有署名，年代也无法从风化程度判断。",
+      "type": "readable_notice",
+      "tags": [
+        "readable_notice",
+        "readable",
+        "mist_salt_warning",
+        "unknown_origin"
+      ],
+      "states": {
+        "visible": true,
+        "readable": true
+      }
+    },
+    {
+      "id": "mist_salt_well_mouth_crust",
+      "location_id": "mist_salt_well",
+      "display_name": "井口朝水弯曲的盐壳白丝",
+      "description": "薄白丝从盐壳里伸出，全都弯向你没有封紧的水囊。拧紧囊口后，它们在几分钟内缓慢伏回石面；这只能证明它们在现场会响应暴露的水，不能说明它们是什么。",
+      "type": "trace",
+      "tags": [
+        "trace",
+        "inspectable",
+        "mist_salt_well",
+        "white_filament",
+        "water_response"
+      ],
+      "states": {
+        "visible": true,
+        "inspectable": true,
+        "substance": "unidentified_white_filament"
+      }
+    },
+    {
+      "id": "mist_salt_second_ring_stairs",
+      "location_id": "mist_salt_well",
+      "display_name": "通往第二环的盐白石阶",
+      "description": "石阶沿井壁绕过第一道雾层，下面的扶壁时隐时现。蜡布面罩已经开始发潮；继续向下会留下长期痕迹，井口和返程路则仍在身后。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "subterranean_descent",
+        "mist_salt_well",
+        "dangerous",
+        "lasting_cost"
+      ],
+      "states": {
+        "visible": true,
+        "challenge_status": "available"
+      }
+    },
+    {
+      "id": "mist_salt_lu_huai_marker",
+      "location_id": "mist_salt_well",
+      "display_name": "第二环扶壁上的秤纹",
+      "description": "一道和验粮簿页角相同的秤纹刻在石上，旁边箭头指向更深处。没有返程记号，也没有足以证明陆槐结局的东西。",
+      "type": "environment_detail",
+      "tags": [
+        "environment_detail",
+        "lu_huai",
+        "field_marker",
+        "unresolved"
+      ],
+      "states": {
+        "visible": false
+      }
     }
   ],
   "player": {
@@ -685,6 +1009,7 @@
     "perception": 10,
     "health": 100,
     "injury": "none",
+    "mist_salt_echo": "none",
     "inventory_item_ids": []
   },
   "known_facts": [],
