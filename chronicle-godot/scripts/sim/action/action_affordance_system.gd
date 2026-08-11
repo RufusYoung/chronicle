@@ -49,11 +49,11 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 		"result_title": _format_target_text(interaction.get(
 			"result_title",
 			rule.get("result_title", "")
-		), target_display_name),
+		), target_display_name, target),
 		"result_summary": _format_target_text(interaction.get(
 			"result_summary",
 			rule.get("result_summary", "")
-		), target_display_name),
+		), target_display_name, target),
 		"hint": str(interaction.get("hint", rule.get("hint", ""))),
 	}
 
@@ -82,11 +82,15 @@ func _target_interaction(target: Dictionary, rule_id: String) -> Dictionary:
 	return {}
 
 
-func _format_target_text(value: Variant, target_display_name: String) -> String:
+func _format_target_text(
+	value: Variant,
+	target_display_name: String,
+	target: Dictionary
+) -> String:
 	return str(value).replace(
 		"{target_display_name}",
 		target_display_name
-	)
+	).replace("{target_description}", str(target.get("description", "")))
 
 
 func _candidate_can_repeat(

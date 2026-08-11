@@ -303,6 +303,7 @@
           "actor_id": "{actor_id}",
           "target_id": "{target_id}",
           "target_display_name": "{target_display_name}",
+          "summary": "{result_summary}",
           "action_id": "{action_id}",
           "rule_id": "{rule_id}",
           "fixture_id": "{fixture_id}",
@@ -340,6 +341,7 @@
           "actor_id": "{actor_id}",
           "target_id": "{target_id}",
           "target_display_name": "{target_display_name}",
+          "summary": "{result_summary}",
           "action_id": "{action_id}",
           "rule_id": "{rule_id}",
           "fixture_id": "{fixture_id}",
@@ -414,6 +416,7 @@
           "actor_id": "{actor_id}",
           "target_id": "{target_id}",
           "target_display_name": "{target_display_name}",
+          "summary": "{result_summary}",
           "action_id": "{action_id}",
           "rule_id": "{rule_id}",
           "fixture_id": "{fixture_id}",
@@ -444,8 +447,8 @@
       "traces": [],
       "rumors": [],
       "narrative": {
-        "title": "Favor Requested",
-        "summary": "You asked the other person for help, spending a little of what they owed you.",
+        "title": "{result_title}",
+        "summary": "{result_summary}",
         "tone": "practical"
       }
     },

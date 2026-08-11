@@ -78,7 +78,7 @@
       "label_template": "[普通] 阅读{target_display_name}",
       "repeat_policy": "once_per_action",
       "result_title": "读完{target_display_name}",
-      "result_summary": "你读完眼前的文字，记住了其中的关键信息。",
+      "result_summary": "{target_description}",
       "hint": "阅读后，这条信息会进入已经确认的事实。",
       "priority": 40,
       "target": {
@@ -101,7 +101,7 @@
       "label_template": "[线索] 查看{target_display_name}",
       "repeat_policy": "once_per_action",
       "result_title": "检查{target_display_name}",
-      "result_summary": "你仔细检查这处痕迹，确认了它能说明的事情。",
+      "result_summary": "{target_description}",
       "hint": "检查后，这处痕迹会转化为可追溯的事实。",
       "priority": 50,
       "target": {

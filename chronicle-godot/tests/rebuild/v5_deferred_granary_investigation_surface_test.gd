@@ -1,6 +1,9 @@
 extends SceneTree
 
 const VIEWER_SCENE := "res://scenes/rebuild/v5_live_location_viewer.tscn"
+const READ_NOTICE := "read_visible_readable_object:old_chen_shop_price_notice"
+const SHOP_TRACE := "inspect_visible_trace:gray_grain_powder"
+const GRANARY_TRACE := "inspect_visible_trace:abandoned_granary_mold_trace"
 const OUTBOUND_ROUTE := "old_chen_shop_to_abandoned_granary"
 const RETURN_ROUTE := "abandoned_granary_to_old_chen_shop"
 const PREPARE_OPTION := "prepare_granary_entry"
@@ -36,7 +39,6 @@ func _run() -> void:
 	var knowledge := viewer.get_node("%KnowledgeText") as RichTextLabel
 	var feedback_title := viewer.get_node("%FeedbackTitle") as Label
 	var feedback_body := viewer.get_node("%FeedbackBody") as RichTextLabel
-	var history := viewer.get_node("%HistoryText") as RichTextLabel
 	var chronicle_heading := viewer.get_node("%ChronicleHeading") as Label
 	var chronicle_text := viewer.get_node("%ChronicleText") as RichTextLabel
 	var action_dock := viewer.get_node("%ActionDock") as PanelContainer
@@ -70,7 +72,7 @@ func _run() -> void:
 	)
 	_check(
 		investigation_bar.visible
-		and action_dock.custom_minimum_size.y == 156.0
+		and action_dock.custom_minimum_size.y == 174.0
 		and "调查方向　公仓封存记录" in investigation_bar.text
 		and "等待决定" in investigation_bar.text,
 		"3. Token recognition opens a visible investigation direction"
@@ -170,7 +172,7 @@ func _run() -> void:
 	)
 	_check(
 		not investigation_bar.visible
-		and action_dock.custom_minimum_size.y == 156.0
+		and action_dock.custom_minimum_size.y == 174.0
 		and _find_investigation_button(
 			action_buttons,
 			INVESTIGATE_OPTION
@@ -182,8 +184,14 @@ func _run() -> void:
 	)
 	_check(
 		"旧粮仓验粮铜牌" in player_summary.text
-		and "今晚先不翻税契" in history.text
-		and "翻查陈家旧税契" in history.text,
+		and _history_has_label(
+			viewer.view_model.action_history,
+			"今晚先不翻税契"
+		)
+		and _history_has_label(
+			viewer.view_model.action_history,
+			"翻查陈家旧税契"
+		),
 		"15. Item and action history preserve both choices"
 	)
 
@@ -219,12 +227,29 @@ func _run() -> void:
 
 
 func _complete_return_echo(
-		action_buttons: Node,
-		travel_buttons: Node
+	action_buttons: Node,
+	travel_buttons: Node
 ) -> void:
+	_find_action_button(
+		action_buttons,
+		READ_NOTICE
+	).pressed.emit()
+	await process_frame
+	_find_action_button(
+		action_buttons,
+		SHOP_TRACE
+	).pressed.emit()
+	await process_frame
+	await process_frame
 	_find_travel_button(
 		travel_buttons,
 		OUTBOUND_ROUTE
+	).pressed.emit()
+	await process_frame
+	await process_frame
+	_find_action_button(
+		action_buttons,
+		GRANARY_TRACE
 	).pressed.emit()
 	await process_frame
 	await process_frame
@@ -251,6 +276,13 @@ func _complete_return_echo(
 		ECHO_OPTION
 	).pressed.emit()
 	await process_frame
+
+
+func _find_action_button(container: Node, action_id: String) -> Button:
+	for child: Node in container.get_children():
+		if child is Button and str(child.get_meta("action_id", "")) == action_id:
+			return child as Button
+	return null
 
 
 func _find_travel_button(container: Node, route_id: String) -> Button:
@@ -296,6 +328,13 @@ func _find_investigation_button(
 		):
 			return child as Button
 	return null
+
+
+func _history_has_label(entries: Array, text: String) -> bool:
+	for entry: Dictionary in entries:
+		if text in str(entry.get("label", "")):
+			return true
+	return false
 
 
 func _finish() -> void:

@@ -176,6 +176,10 @@
       "transaction_mode": "effect_template",
       "effect_template_id": "request_favor_effect",
       "label_template": "[关系] 请{target_display_name}帮忙",
+      "repeat_policy": "once_per_action",
+      "result_title": "请{target_display_name}帮忙",
+      "result_summary": "你请对方兑现一份人情；这次请求已经被记下。",
+      "hint": "消耗一部分人情；同一对象只能请求一次。",
       "priority": 210,
       "target": {
         "type": "person",

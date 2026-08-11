@@ -97,7 +97,7 @@
       "label": "乘早船去北埠旧档房",
       "hours": 2,
       "food_cost": 0,
-      "required_fact_type": "actor_found_public_granary_archive_reference",
+      "required_fact_type": "actor_read_object",
       "required_fact_target_id": "old_chen_public_granary_tax_deed",
       "available_hour_start": 6,
       "available_hour_end": 18,
@@ -716,6 +716,12 @@
           "result_title": "藏在柜台后的旧粮袋",
           "result_summary": "陈米只把袋口拉开一线。麦粒结成灰白硬块，陈家不敢卖，也舍不得扔；最近几袋同样的货都从镇外废弃粮仓转来。",
           "hint": "直接问起陈米藏在柜台后的旧粮袋。"
+        },
+        "request_favor_from_indebted_person": {
+          "label_template": "请陈米帮你确认北埠早船",
+          "result_title": "去北埠的早船",
+          "result_summary": "陈米说，去北埠旧档房的摆渡只在 06:00 至 18:00 开船。夜里没有船；你可以在铺里歇到天亮，再去码头。",
+          "hint": "用掉一份人情，确认摆渡时辰；执行后不会重复出现。"
         }
       }
     },

@@ -1,6 +1,9 @@
 extends SceneTree
 
 const VIEWER_SCENE := "res://scenes/rebuild/v5_live_location_viewer.tscn"
+const READ_NOTICE := "read_visible_readable_object:old_chen_shop_price_notice"
+const SHOP_TRACE := "inspect_visible_trace:gray_grain_powder"
+const GRANARY_TRACE := "inspect_visible_trace:abandoned_granary_mold_trace"
 const OUTBOUND_ROUTE := "old_chen_shop_to_abandoned_granary"
 const RETURN_ROUTE := "abandoned_granary_to_old_chen_shop"
 const PREPARE_OPTION := "prepare_granary_entry"
@@ -48,10 +51,18 @@ func _run() -> void:
 		"2. Chronicle and recognition choice stay hidden at the initial shop"
 	)
 
+	_find_action_button(action_buttons, READ_NOTICE).pressed.emit()
+	await process_frame
+	_find_action_button(action_buttons, SHOP_TRACE).pressed.emit()
+	await process_frame
+	await process_frame
 	_find_travel_button(
 		travel_buttons,
 		OUTBOUND_ROUTE
 	).pressed.emit()
+	await process_frame
+	await process_frame
+	_find_action_button(action_buttons, GRANARY_TRACE).pressed.emit()
 	await process_frame
 	await process_frame
 	_find_challenge_button(
@@ -177,6 +188,13 @@ func _run() -> void:
 func _find_travel_button(container: Node, route_id: String) -> Button:
 	for child: Node in container.get_children():
 		if child is Button and str(child.get_meta("route_id", "")) == route_id:
+			return child as Button
+	return null
+
+
+func _find_action_button(container: Node, action_id: String) -> Button:
+	for child: Node in container.get_children():
+		if child is Button and str(child.get_meta("action_id", "")) == action_id:
 			return child as Button
 	return null
 

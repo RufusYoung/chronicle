@@ -103,6 +103,39 @@ func advance_time(hours: int = 1) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func wait_until_north_quay_ferry() -> Dictionary:
+	latest_event_type = "ferry_wait"
+	if not is_ready():
+		latest_result = {
+			"success": false,
+			"error_reason": "session_not_initialized",
+		}
+		return latest_result.duplicate(true)
+
+	if not _should_offer_north_quay_ferry_wait(session.get_snapshot()):
+		latest_result = {
+			"success": false,
+			"error_reason": "ferry_wait_not_available",
+		}
+		return latest_result.duplicate(true)
+
+	var hours := _hours_until_north_quay_ferry()
+	latest_result = session.advance_time(hours, "wait_for_north_quay_ferry", {
+		"label": "在铺里歇到北埠早船",
+		"source": "v5_live_location_surface",
+	})
+	latest_result["waited_hours"] = hours
+	if bool(latest_result.get("success", false)):
+		action_history.append({
+			"index": action_history.size() + 1,
+			"event_type": "ferry_wait",
+			"label": "在铺里歇到北埠早船",
+			"triggered_count": int(latest_result.get("triggered_count", 0)),
+			"narrative": _ferry_wait_narrative(),
+		})
+	return latest_result.duplicate(true)
+
+
 func perform_travel(route_id: String) -> Dictionary:
 	latest_event_type = "travel"
 	if not is_ready():
@@ -230,7 +263,7 @@ func build_view_data() -> Dictionary:
 	var visible_people: Array[Dictionary] = []
 	var visible_observations: Array[Dictionary] = []
 	for entity: Dictionary in snapshot.get_visible_entities():
-		var row := _entity_row(entity)
+		var row := _entity_row(entity, snapshot)
 		if str(entity.get("type", "")) == "person":
 			visible_people.append(row)
 		else:
@@ -553,7 +586,38 @@ func _action_rows() -> Array:
 			"hint": str(option.get("hint", "")),
 			"can_execute": bool(option.get("can_execute", false)),
 		})
+	if _should_offer_north_quay_ferry_wait(snapshot):
+		rows.append({
+			"action_id": "wait_until_north_quay_ferry",
+			"event_type": "ferry_wait",
+			"label": "在铺里歇到北埠早船",
+			"action_type": "life",
+			"kind": _action_kind("life"),
+			"hint": "一次推进到下一个 06:00；期间世界状态照常变化。",
+			"can_execute": true,
+		})
 	return rows
+
+
+func _should_offer_north_quay_ferry_wait(snapshot: Variant) -> bool:
+	if str(snapshot.location.get("id", "")) != "old_chen_shop":
+		return false
+	if not _has_fact(
+		snapshot,
+		"actor_read_object",
+		"target_id",
+		"old_chen_public_granary_tax_deed"
+	):
+		return false
+	var hour := int(session.get_time_summary().get("hour", 0))
+	return hour < 6 or hour >= 18
+
+
+func _hours_until_north_quay_ferry() -> int:
+	var hour := int(session.get_time_summary().get("hour", 0))
+	if hour < 6:
+		return 6 - hour
+	return 24 - hour + 6
 
 
 func _risk_view() -> Dictionary:
@@ -658,7 +722,7 @@ func _surface_requirements_met(key: String, snapshot: Variant) -> bool:
 	return true
 
 
-func _entity_row(entity: Dictionary) -> Dictionary:
+func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 	var states: Dictionary = entity.get("states", {})
 	var entity_type := str(entity.get("type", ""))
 	return {
@@ -668,7 +732,7 @@ func _entity_row(entity: Dictionary) -> Dictionary:
 		"state_text": (
 			_person_state_text(states)
 			if entity_type == "person"
-			else _object_state_text(entity_type, states)
+			else _object_state_text(entity, snapshot)
 		),
 	}
 
@@ -820,6 +884,8 @@ func _feedback_view() -> Dictionary:
 
 	if latest_event_type == "world_tick":
 		return _tick_feedback_view()
+	if latest_event_type == "ferry_wait":
+		return _ferry_wait_feedback_view()
 	if latest_event_type == "travel":
 		return _travel_feedback_view()
 	if latest_event_type == "challenge":
@@ -1156,6 +1222,33 @@ func _tick_feedback_view() -> Dictionary:
 	}
 
 
+func _ferry_wait_feedback_view() -> Dictionary:
+	if not bool(latest_result.get("success", false)):
+		return {
+			"status": "error",
+			"title": "没能等到早船",
+			"body": "当前世界时间无法推进到摆渡开船。",
+			"details": [],
+		}
+	var details: Array[String] = [
+		"时间推进了 %d 小时" % int(latest_result.get("waited_hours", 0)),
+		"北埠摆渡现已开船（06:00 至 18:00）",
+	]
+	var triggered_count := int(latest_result.get("triggered_count", 0))
+	if triggered_count > 0:
+		details.append("等待期间发生了 %d 次世界变化" % triggered_count)
+	return {
+		"status": "ferry_wait",
+		"title": "天亮前的短歇",
+		"body": _ferry_wait_narrative(),
+		"details": details,
+	}
+
+
+func _ferry_wait_narrative() -> String:
+	return "你在铺子里歇到天亮。陈米叫醒你时，去北埠的第一班摆渡已经开始载客。"
+
+
 func _tick_narrative(result: Dictionary) -> String:
 	var entries: Array = result.get("world_log_entries", [])
 	if not entries.is_empty():
@@ -1311,13 +1404,24 @@ func _person_state_text(states: Dictionary) -> String:
 	return "　".join(rows)
 
 
-func _object_state_text(entity_type: String, states: Dictionary) -> String:
-	if str(states.get("price_level", "")) == "raised_again":
-		return "刚被再次改高　可以阅读"
+func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
+	var entity_id := str(entity.get("id", ""))
+	var entity_type := str(entity.get("type", ""))
+	var states: Dictionary = entity.get("states", {})
+	var price_changed := str(states.get("price_level", "")) == "raised_again"
 	if entity_type == "readable_notice" and bool(states.get("readable", false)):
-		return "可以阅读"
+		var read_state := (
+			"已经读过"
+			if _has_fact(snapshot, "actor_read_object", "target_id", entity_id)
+			else "可以阅读"
+		)
+		return "刚被再次改高　%s" % read_state if price_changed else read_state
 	if entity_type == "trace" and bool(states.get("inspectable", false)):
-		return "可以检查"
+		return (
+			"已经检查"
+			if _has_fact(snapshot, "actor_inspected_trace", "target_id", entity_id)
+			else "可以检查"
+		)
 	return "就在眼前"
 
 
@@ -1467,11 +1571,20 @@ func _fact_text(
 		target_name: String,
 		fact: Dictionary = {}
 ) -> String:
+	var summary := str(fact.get("summary", ""))
+	if summary != "":
+		if fact_type == "actor_read_object":
+			return "你读过%s：%s" % [target_name, summary]
+		if fact_type == "actor_inspected_trace":
+			return "你检查过%s：%s" % [target_name, summary]
+		if fact_type == "actor_requested_favor_from_target":
+			return "你请%s帮过忙：%s" % [target_name, summary]
 	return {
 		"actor_gave_food_to_target": "你给%s递过食物。" % target_name,
 		"actor_asked_about_concealed_item": "你问过%s藏起来的东西。" % target_name,
 		"actor_read_object": "你读过%s。" % target_name,
 		"actor_inspected_trace": "你检查过%s。" % target_name,
+		"actor_requested_favor_from_target": "你请%s帮过一次忙。" % target_name,
 		"actor_asked_about_market_pressure": "你确认湖湾镇正承受粮食压力。",
 		"actor_traveled_route": _travel_fact_text(fact),
 		"actor_prepared_for_challenge": _challenge_preparation_fact_text(fact),

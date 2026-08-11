@@ -1,6 +1,9 @@
 extends SceneTree
 
 const VIEWER_SCENE := "res://scenes/rebuild/v5_live_location_viewer.tscn"
+const GIVE_FOOD := "give_food_to_hungry_person:chen_mi"
+const READ_NOTICE := "read_visible_readable_object:old_chen_shop_price_notice"
+const SHOP_TRACE := "inspect_visible_trace:gray_grain_powder"
 const OUTBOUND_ROUTE := "old_chen_shop_to_abandoned_granary"
 const RETURN_ROUTE := "abandoned_granary_to_old_chen_shop"
 const GRANARY_INSPECT_ACTION := (
@@ -44,12 +47,23 @@ func _run() -> void:
 	)
 	_check(
 		location_title.text == "老陈铺子"
-		and outbound_button != null
-		and not outbound_button.disabled
+		and outbound_button == null
 		and "废弃粮仓" not in observations.text,
-		"2. Shop view exposes a usable granary route without leaking entities"
+		"2. Shop hides the granary route until local evidence is read"
 	)
 
+	_find_action_button(action_buttons, GIVE_FOOD).pressed.emit()
+	await process_frame
+	_find_action_button(action_buttons, READ_NOTICE).pressed.emit()
+	await process_frame
+	_find_action_button(action_buttons, SHOP_TRACE).pressed.emit()
+	await process_frame
+	await process_frame
+	outbound_button = _find_travel_button(travel_buttons, OUTBOUND_ROUTE)
+	_check(
+		outbound_button != null and not outbound_button.disabled,
+		"3. Reading the notice and grain trace exposes a usable route"
+	)
 	outbound_button.pressed.emit()
 	await process_frame
 	await process_frame
@@ -57,24 +71,24 @@ func _run() -> void:
 		location_title.text == "废弃粮仓"
 		and "14:00" in time_label.text
 		and "食物　1 份" in player_summary.text,
-		"3. Outbound travel switches location and refreshes time and food"
+		"4. Outbound travel switches location and refreshes time and food"
 	)
 	_check(
 		"裂开的粮仓门" in observations.text
 		and "门槛上的霉斑" in observations.text
 		and "陈米" not in people.text,
-		"4. Granary view contains only local people and observations"
+		"5. Granary view contains only local people and observations"
 	)
 	_check(
 		feedback_title.text == "镇外小路"
 		and "原来的地方也发生了变化" in feedback_body.text
 		and "准备提前收铺" in feedback_body.text,
-		"5. Travel feedback includes the world change that happened en route"
+		"6. Travel feedback includes the world change that happened en route"
 	)
 	_check(
 		"完成过一段需要时间和食物的旅程" in knowledge.text
 		and "老陈铺子提前收门" in knowledge.text,
-		"6. Travel and source-location consequences enter player knowledge"
+		"7. Travel and source-location consequences enter player knowledge"
 	)
 	_check(
 		_find_action_button(
@@ -82,7 +96,7 @@ func _run() -> void:
 			GRANARY_INSPECT_ACTION
 		) != null
 		and _find_travel_button(travel_buttons, RETURN_ROUTE) != null,
-		"7. Arrival regenerates local investigation and return controls"
+		"8. Arrival regenerates local investigation and return controls"
 	)
 
 	var inspect_button := _find_action_button(
@@ -92,9 +106,9 @@ func _run() -> void:
 	inspect_button.pressed.emit()
 	await process_frame
 	_check(
-		"查看" in history.text
+		"检查" in history.text
 		and "门槛上的霉斑" in knowledge.text,
-		"8. Granary investigation uses the existing live action pipeline"
+		"9. Granary investigation uses the existing live action pipeline"
 	)
 
 	var return_button := _find_travel_button(travel_buttons, RETURN_ROUTE)
@@ -105,13 +119,13 @@ func _run() -> void:
 		location_title.text == "老陈铺子"
 		and "18:00" in time_label.text
 		and "食物　0 份" in player_summary.text,
-		"9. Return trip restores the shop projection and consumes resources"
+		"10. Return trip restores the shop projection and consumes resources"
 	)
 	_check(
 		"半掩的门板" in observations.text
 		and "刚被再次改高" in observations.text
 		and "裂开的粮仓门" not in observations.text,
-		"10. Shop changes persist after a complete round trip"
+		"11. Shop changes persist after a complete round trip"
 	)
 
 	outbound_button = _find_travel_button(travel_buttons, OUTBOUND_ROUTE)
@@ -119,13 +133,13 @@ func _run() -> void:
 		outbound_button != null
 		and outbound_button.disabled
 		and "食物不足" in outbound_button.tooltip_text,
-		"11. Travel control communicates insufficient resources"
+		"12. Travel control communicates insufficient resources"
 	)
 	_check(
 		viewer.view_model.session.travel_count == 2
 		and viewer.view_model.session.world_tick_count == 2
-		and viewer.view_model.session.action_count == 1,
-		"12. UI keeps journeys, world ticks, and actions as separate events"
+		and viewer.view_model.session.action_count == 4,
+		"13. UI keeps journeys, world ticks, and actions as separate events"
 	)
 
 	viewer.restart_session()
@@ -133,9 +147,9 @@ func _run() -> void:
 	_check(
 		location_title.text == "老陈铺子"
 		and "10:00" in time_label.text
-		and "食物　2 份" in player_summary.text
+		and "食物　3 份" in player_summary.text
 		and "半掩的门板" not in observations.text,
-		"13. Restart resets the complete travel loop"
+		"14. Restart resets the complete travel loop"
 	)
 
 	viewer.queue_free()

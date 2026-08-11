@@ -7,6 +7,7 @@ const GRANARY_PREPARE := "prepare_granary_entry"
 const GRANARY_ENTER := "enter_abandoned_granary"
 const ECHO_OPTION := "show_granary_measure_token_to_chen_mi"
 const INVESTIGATE_OPTION := "investigate_public_granary_seal_records"
+const READ_TAX_DEED := "read_visible_readable_object:old_chen_public_granary_tax_deed"
 const NORTH_QUAY_OUTBOUND := "old_chen_shop_to_north_quay_record_house"
 const ARCHIVE_PREPARE := "prepare_flooded_archive_search"
 const ARCHIVE_SEARCH := "search_flooded_archive_stack"
@@ -172,6 +173,7 @@ func _complete_archive_record(session: Variant) -> void:
 	session.travel(GRANARY_RETURN)
 	session.execute_return_echo_option(ECHO_OPTION)
 	session.execute_investigation_option(INVESTIGATE_OPTION)
+	session.execute_action(READ_TAX_DEED)
 	session.advance_time(6, "wait_for_north_quay_ferry")
 	session.travel(NORTH_QUAY_OUTBOUND)
 	session.execute_challenge_option(ARCHIVE_PREPARE)

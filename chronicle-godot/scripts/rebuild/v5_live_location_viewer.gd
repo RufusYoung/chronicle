@@ -98,6 +98,12 @@ func advance_time() -> Dictionary:
 	return result
 
 
+func wait_until_north_quay_ferry() -> Dictionary:
+	var result: Dictionary = view_model.wait_until_north_quay_ferry()
+	refresh_view()
+	return result
+
+
 func refresh_view() -> void:
 	current_view_data = view_model.build_view_data()
 	if not bool(current_view_data.get("ready", false)):
@@ -238,6 +244,8 @@ func _refresh_actions(actions: Array) -> void:
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
 		match str(action.get("event_type", "player_action")):
+			"ferry_wait":
+				button.pressed.connect(wait_until_north_quay_ferry)
 			"challenge":
 				button.set_meta(
 					"challenge_option_id",

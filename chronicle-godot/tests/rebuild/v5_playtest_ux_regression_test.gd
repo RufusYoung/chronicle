@@ -12,6 +12,9 @@ const GRANARY_PREPARE := "prepare_granary_entry"
 const GRANARY_ENTER := "enter_abandoned_granary"
 const ECHO_OPTION := "show_granary_measure_token_to_chen_mi"
 const INVESTIGATE_OPTION := "investigate_public_granary_seal_records"
+const READ_TAX_DEED := "read_visible_readable_object:old_chen_public_granary_tax_deed"
+const REQUEST_CHEN_FAVOR := "request_favor_from_indebted_person:chen_mi"
+const WAIT_FOR_FERRY := "wait_until_north_quay_ferry"
 const NORTH_QUAY_OUTBOUND := "old_chen_shop_to_north_quay_record_house"
 const ARCHIVE_RULES := "read_visible_readable_object:north_quay_visiting_rules"
 const ARCHIVE_TIDE := "inspect_visible_trace:north_quay_tide_marks"
@@ -81,7 +84,9 @@ func _run() -> void:
 		granary_button != null
 		and not granary_button.disabled
 		and _find_button("%ActionButtons", "action_id", READ_NOTICE) == null
-		and _find_button("%ActionButtons", "action_id", SHOP_TRACE) == null,
+		and _find_button("%ActionButtons", "action_id", SHOP_TRACE) == null
+		and "已经读过" in _text("%VisibleObservations")
+		and "已经检查" in _text("%VisibleObservations"),
 		"5. Two specific observations unlock travel and then disappear"
 	)
 
@@ -116,6 +121,7 @@ func _run() -> void:
 	viewer.restart_session()
 	await process_frame
 	await process_frame
+	await _press_action(GIVE_FOOD)
 	await _press_action(READ_NOTICE)
 	await _press_action(SHOP_TRACE)
 	await _press_travel(GRANARY_OUTBOUND)
@@ -125,7 +131,59 @@ func _run() -> void:
 	await _press_travel(GRANARY_RETURN)
 	await _press_echo(ECHO_OPTION)
 	await _press_investigation(INVESTIGATE_OPTION)
-	await _wait_for_route(NORTH_QUAY_OUTBOUND, 12)
+
+	_check(
+		_find_button("%ActionButtons", "action_id", READ_TAX_DEED) != null,
+		"9. The revealed tax deed is offered as a readable clue"
+	)
+	await _press_action(READ_TAX_DEED)
+	_check(
+		"验粮吏陆槐" in _text("%FeedbackBody")
+		and "北埠档房移存" in _text("%FeedbackBody")
+		and "验粮吏陆槐" in _text("%KnowledgeText")
+		and "已经读过" in _text("%VisibleObservations")
+		and _find_button("%ActionButtons", "action_id", READ_TAX_DEED) == null,
+		"10. Reading exposes the actual clue, records it, and removes the choice"
+	)
+
+	await _press_action(REQUEST_CHEN_FAVOR)
+	var log_count_after_favor: int = (
+		viewer.view_model.session.get_world_log_entries().size()
+	)
+	_check(
+		"去北埠的早船" in _text("%FeedbackTitle")
+		and "06:00 至 18:00" in _text("%FeedbackBody")
+		and _find_button("%ActionButtons", "action_id", REQUEST_CHEN_FAVOR) == null,
+		"11. Chen Mi gives contextual Chinese help and the favor disappears"
+	)
+	var stale_favor: Dictionary = viewer.perform_action(REQUEST_CHEN_FAVOR)
+	_check(
+		not bool(stale_favor.get("success", true))
+		and viewer.view_model.session.get_world_log_entries().size()
+			== log_count_after_favor,
+		"12. Re-clicking the spent favor cannot duplicate facts or history"
+	)
+
+	await _press_action(WAIT_FOR_FERRY)
+	var ferry_button := _find_button(
+		"%TravelButtons",
+		"route_id",
+		NORTH_QUAY_OUTBOUND
+	)
+	_check(
+		int(viewer.view_model.session.get_time_summary().get("hour", -1)) == 6
+		and "第一班摆渡已经开始载客" in _text("%FeedbackBody")
+		and ferry_button != null
+		and not ferry_button.disabled
+		and _find_button("%ActionButtons", "action_id", WAIT_FOR_FERRY) == null,
+		"13. One rest action advances to 06:00 and opens the ferry"
+	)
+	var stale_wait: Dictionary = viewer.wait_until_north_quay_ferry()
+	_check(
+		not bool(stale_wait.get("success", true))
+		and int(viewer.view_model.session.get_time_summary().get("hour", -1)) == 6,
+		"14. Reusing the completed rest action cannot skip another day"
+	)
 	await _press_travel(NORTH_QUAY_OUTBOUND)
 
 	_check(
@@ -134,7 +192,7 @@ func _run() -> void:
 			"challenge_option_id",
 			ARCHIVE_SEARCH
 		) == null,
-		"9. The archive danger is hidden before its rules and tide are read"
+		"15. The archive danger is hidden before its rules and tide are read"
 	)
 	await _press_action(ARCHIVE_RULES)
 	await _press_action(ARCHIVE_TIDE)
@@ -144,7 +202,7 @@ func _run() -> void:
 			"challenge_option_id",
 			ARCHIVE_SEARCH
 		) != null,
-		"10. Archive evidence unlocks the preparation and danger choices"
+		"16. Archive evidence unlocks the preparation and danger choices"
 	)
 	await _press_challenge(ARCHIVE_PREPARE)
 	await _press_challenge(ARCHIVE_SEARCH)
@@ -158,7 +216,7 @@ func _run() -> void:
 			"challenge_option_id",
 			WELL_DESCENT
 		) == null,
-		"11. The well does not reveal consequences before the evidence"
+		"17. The well does not reveal consequences before the evidence"
 	)
 	await _press_action(WELL_TRACE)
 	_check(
@@ -169,7 +227,7 @@ func _run() -> void:
 			"challenge_option_id",
 			WELL_DESCENT
 		) == null,
-		"12. Testing the filaments gives information and unlocks return"
+		"18. Testing the filaments gives information and unlocks return"
 	)
 	await _press_action(WELL_WARNING)
 	_check(
@@ -179,16 +237,16 @@ func _run() -> void:
 			WELL_DESCENT
 		) != null
 		and (viewer.get_node("%RiskHeading") as Label).visible,
-		"13. Reading the warning reveals the irreversible descent choice"
+		"19. Reading the warning reveals the irreversible descent choice"
 	)
 	await _press_travel(WELL_RETURN)
 
 	var history_count: int = viewer.view_model.action_history.size()
 	_check(
 		bool(viewer.current_view_data.get("playtest", {}).get("completed", false))
-		and history_count >= 24
+		and history_count >= 23
 		and "档房的潮桩重新出现" in _text("%HistoryText"),
-		"14. A UI-only successful run has a readable ending and at least 24 steps"
+		"20. A UI-only successful run has a readable ending and at least 23 steps"
 	)
 
 	viewer.queue_free()
@@ -227,17 +285,6 @@ func _press(container_path: String, meta_key: String, meta_value: String) -> voi
 	button.pressed.emit()
 	await process_frame
 	await process_frame
-
-
-func _wait_for_route(route_id: String, max_hours: int) -> void:
-	for _hour: int in max_hours:
-		var button := _find_button("%TravelButtons", "route_id", route_id)
-		if button != null and not button.disabled:
-			return
-		(viewer.get_node("%WaitButton") as Button).pressed.emit()
-		await process_frame
-		await process_frame
-	_check(false, "Route opens within %d hours: %s" % [max_hours, route_id])
 
 
 func _find_button(

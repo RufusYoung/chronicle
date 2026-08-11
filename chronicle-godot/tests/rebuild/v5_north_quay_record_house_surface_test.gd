@@ -1,14 +1,21 @@
 extends SceneTree
 
 const VIEWER_SCENE := "res://scenes/rebuild/v5_live_location_viewer.tscn"
+const READ_NOTICE := "read_visible_readable_object:old_chen_shop_price_notice"
+const SHOP_TRACE := "inspect_visible_trace:gray_grain_powder"
+const GRANARY_TRACE := "inspect_visible_trace:abandoned_granary_mold_trace"
 const GRANARY_OUTBOUND := "old_chen_shop_to_abandoned_granary"
 const GRANARY_RETURN := "abandoned_granary_to_old_chen_shop"
 const GRANARY_PREPARE := "prepare_granary_entry"
 const GRANARY_ENTER := "enter_abandoned_granary"
 const ECHO_OPTION := "show_granary_measure_token_to_chen_mi"
 const INVESTIGATE_OPTION := "investigate_public_granary_seal_records"
+const READ_TAX_DEED := "read_visible_readable_object:old_chen_public_granary_tax_deed"
+const WAIT_FOR_FERRY := "wait_until_north_quay_ferry"
 const NORTH_QUAY_OUTBOUND := "old_chen_shop_to_north_quay_record_house"
 const NORTH_QUAY_RETURN := "north_quay_record_house_to_old_chen_shop"
+const ARCHIVE_RULES := "read_visible_readable_object:north_quay_visiting_rules"
+const ARCHIVE_TIDE := "inspect_visible_trace:north_quay_tide_marks"
 const ARCHIVE_PREPARE := "prepare_flooded_archive_search"
 const ARCHIVE_SEARCH := "search_flooded_archive_stack"
 const ARCHIVE_ITEM := "lu_huai_last_inspection_leaf"
@@ -51,7 +58,6 @@ func _run() -> void:
 	var risk_text := viewer.get_node("%RiskText") as RichTextLabel
 	var travel_buttons := viewer.get_node("%TravelButtons") as VBoxContainer
 	var action_buttons := viewer.get_node("%ActionButtons") as FlowContainer
-	var wait_button := viewer.get_node("%WaitButton") as Button
 
 	_check(
 		_find_travel_button(
@@ -91,9 +97,8 @@ func _run() -> void:
 		"4. Trying the closed route explains the time gate without advancing time"
 	)
 
-	for hour: int in range(6):
-		wait_button.pressed.emit()
-		await process_frame
+	_find_action_button(action_buttons, WAIT_FOR_FERRY).pressed.emit()
+	await process_frame
 	await process_frame
 	var morning_ferry := _find_travel_button(
 		travel_buttons,
@@ -103,7 +108,7 @@ func _run() -> void:
 		"第 2 天　06:00" in time_label.text
 		and morning_ferry != null
 		and not morning_ferry.disabled,
-		"5. Ordinary waiting opens the ferry at six in the morning"
+		"5. One rest action opens the ferry at six in the morning"
 	)
 
 	morning_ferry.pressed.emit()
@@ -124,6 +129,11 @@ func _run() -> void:
 		and "通往水浸封存层的窄门" in observations.text,
 		"7. North quay presents a person, rules, tide trace, and dangerous entrance"
 	)
+	_find_action_button(action_buttons, ARCHIVE_RULES).pressed.emit()
+	await process_frame
+	_find_action_button(action_buttons, ARCHIVE_TIDE).pressed.emit()
+	await process_frame
+	await process_frame
 	_check(
 		risk_heading.visible
 		and "眼前的风险　中" in risk_heading.text
@@ -132,7 +142,7 @@ func _run() -> void:
 		and "不会死亡" in risk_text.text
 		and chronicle_text.custom_minimum_size.y == 58.0
 		and risk_text.custom_minimum_size.y == 64.0
-		and history.custom_minimum_size.y == 52.0,
+		and history.custom_minimum_size.y == 96.0,
 		"8. Flooded stacks explain their formula and concrete failure cost"
 	)
 
@@ -188,7 +198,7 @@ func _run() -> void:
 		and "旧粮仓验粮铜牌" in player_summary.text
 		and not risk_heading.visible
 		and chronicle_text.custom_minimum_size.y == 112.0
-		and history.custom_minimum_size.y == 90.0,
+		and history.custom_minimum_size.y == 132.0,
 		"12. Discovery changes the scene, inventory, and resolved danger"
 	)
 	_check(
@@ -266,10 +276,18 @@ func _complete_granary_investigation(
 		action_buttons: Node,
 		travel_buttons: Node
 ) -> void:
+	_find_action_button(action_buttons, READ_NOTICE).pressed.emit()
+	await process_frame
+	_find_action_button(action_buttons, SHOP_TRACE).pressed.emit()
+	await process_frame
+	await process_frame
 	_find_travel_button(
 		travel_buttons,
 		GRANARY_OUTBOUND
 	).pressed.emit()
+	await process_frame
+	await process_frame
+	_find_action_button(action_buttons, GRANARY_TRACE).pressed.emit()
 	await process_frame
 	await process_frame
 	_find_challenge_button(
@@ -301,6 +319,17 @@ func _complete_granary_investigation(
 		INVESTIGATE_OPTION
 	).pressed.emit()
 	await process_frame
+	await process_frame
+	_find_action_button(action_buttons, READ_TAX_DEED).pressed.emit()
+	await process_frame
+	await process_frame
+
+
+func _find_action_button(container: Node, action_id: String) -> Button:
+	for child: Node in container.get_children():
+		if child is Button and str(child.get_meta("action_id", "")) == action_id:
+			return child as Button
+	return null
 
 
 func _find_travel_button(container: Node, route_id: String) -> Button:
