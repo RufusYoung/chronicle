@@ -1,0 +1,34 @@
+{
+  "profiles": [
+    {
+      "profile_id": "living_person_hunger",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "living_needs"
+        ]
+      },
+      "needs": [
+        {
+          "key": "hunger",
+          "clock_key": "hunger_elapsed_hours",
+          "interval_hours": 6,
+          "interval_state_key": "hunger_interval_hours",
+          "direction": "increase",
+          "scale": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "extreme"
+          ],
+          "narrative": {
+            "title": "{actor_display_name}显得更饿了",
+            "summary": "时间继续往前，{actor_display_name}的饥饿从{from}加深到了{to}。这会改变接下来愿意采取的行动。",
+            "tone": "uneasy"
+          }
+        }
+      ]
+    }
+  ]
+}

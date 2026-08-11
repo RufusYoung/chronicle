@@ -47,6 +47,9 @@ const RELATIONSHIP_AXIS_DEFS_PATH := (
 const AUTONOMOUS_ACTION_RULES_PATH := (
 	"res://data/sim/raw/npc_action_rules/basic_npc_action_rules.json"
 )
+const NPC_NEED_PROFILES_PATH := (
+	"res://data/sim/raw/npc_need_profiles/basic_npc_need_profiles.json"
+)
 
 var registry: Variant = null
 var context: Variant = null
@@ -63,6 +66,7 @@ var return_echo_resolver: Variant = null
 var investigation_resolver: Variant = null
 var world_tick_adapter: Variant = null
 var autonomous_action_rules: Array = []
+var npc_need_profiles: Array = []
 var travel_routes: Array = []
 var challenge_definitions: Array = []
 var return_echo_definitions: Array = []
@@ -126,9 +130,19 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	autonomous_action_rules.append_array(
 		(fixture.get("autonomous_action_rules", []) as Array).duplicate(true)
 	)
+	var need_profile_data: Dictionary = registry.load_json(
+		NPC_NEED_PROFILES_PATH
+	)
+	npc_need_profiles = (
+		need_profile_data.get("profiles", []) as Array
+	).duplicate(true)
+	npc_need_profiles.append_array(
+		(fixture.get("npc_need_profiles", []) as Array).duplicate(true)
+	)
 	world_tick_adapter.configure_autonomous_actions(
 		autonomous_action_rules
 	)
+	world_tick_adapter.configure_need_profiles(npc_need_profiles)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	_create_stores(fixture)
 	initialized = true
@@ -140,6 +154,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"return_echo_definition_count": return_echo_definitions.size(),
 		"investigation_definition_count": investigation_definitions.size(),
 		"autonomous_action_rule_count": autonomous_action_rules.size(),
+		"npc_need_profile_count": npc_need_profiles.size(),
 		"candidate_count": get_action_candidates().size(),
 		"time": get_time_summary(),
 	}
@@ -872,6 +887,7 @@ func advance_time(
 		"time_key": str(metadata.get("time_key", trigger_key)),
 		"source": str(metadata.get("source", "SimSession.advance_time")),
 		"label": str(metadata.get("label", "advance time")),
+		"elapsed_hours": hours,
 		"max_triggers": int(metadata.get("max_triggers", 0)),
 		"include_due_checks": bool(metadata.get("include_due_checks", true)),
 		"due_kinds": due_kinds,
@@ -1031,6 +1047,7 @@ func _reset_runtime() -> void:
 	investigation_resolver = InvestigationResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
 	autonomous_action_rules = []
+	npc_need_profiles = []
 	travel_routes = []
 	challenge_definitions = []
 	return_echo_definitions = []
@@ -1146,6 +1163,10 @@ func _sync_context_after_tick_result(result: Dictionary) -> void:
 	for result_data: Dictionary in result.get("results", []):
 		_sync_context_after_result_data(result_data)
 	for result_data: Dictionary in result.get("due_results", []):
+		_sync_context_after_result_data(result_data)
+	for result_data: Dictionary in result.get("need_results", []):
+		_sync_context_after_result_data(result_data)
+	for result_data: Dictionary in result.get("autonomous_results", []):
 		_sync_context_after_result_data(result_data)
 
 

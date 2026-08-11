@@ -12,6 +12,9 @@ func load_from_context(context: Variant) -> void:
 		var entity_states: Dictionary = entity.get("states", {})
 		for state_key: String in entity_states.keys():
 			set_state(entity_id, state_key, entity_states[state_key])
+		var location_id := str(entity.get("location_id", ""))
+		if location_id != "" and not entity_states.has("location_id"):
+			set_state(entity_id, "location_id", location_id)
 
 	var player_id := str(context.get_player_value("id", "player"))
 	for state_key: String in context.player.keys():

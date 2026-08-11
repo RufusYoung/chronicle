@@ -8,6 +8,9 @@ const DueTriggerSystemModel = preload("res://scripts/sim/consequence/due_trigger
 const NpcDecisionSystemModel = preload(
 	"res://scripts/sim/npc/npc_decision_system.gd"
 )
+const NpcNeedSystemModel = preload(
+	"res://scripts/sim/npc/npc_need_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -15,10 +18,15 @@ const ENTRY_TYPE_TICK_EVENT := "tick_event"
 const SOURCE := "WorldTickAdapter"
 
 var autonomous_action_rules: Array = []
+var npc_need_profiles: Array = []
 
 
 func configure_autonomous_actions(rules: Array) -> void:
 	autonomous_action_rules = rules.duplicate(true)
+
+
+func configure_need_profiles(profiles: Array) -> void:
+	npc_need_profiles = profiles.duplicate(true)
 
 
 func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictionary) -> Dictionary:
@@ -77,6 +85,11 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var autonomous_decisions: Array = []
 	var observed_autonomous_results: Array = []
 	var observed_autonomous_decisions: Array = []
+	var need_results: Array = []
+	var need_changes: Array = []
+	var observed_need_results: Array = []
+	var observed_need_changes: Array = []
+	var autonomous_actor_ids: Dictionary = {}
 	var autonomous_actor_count := 0
 	var obligation_due_count := 0
 	var exchange_due_count := 0
@@ -102,35 +115,73 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		for due_result: Variant in due_results:
 			writer.apply_result(due_result, stores)
 
-	if not autonomous_action_rules.is_empty():
-		var decision_snapshot = snapshot_builder.build_snapshot(
-			context,
-			stores,
-			true
-		)
-		var decision_system = NpcDecisionSystemModel.new()
-		var decision_data: Dictionary = decision_system.resolve_tick(
-			decision_snapshot,
-			autonomous_action_rules,
-			event
-		)
-		autonomous_results = decision_data.get("results", [])
-		autonomous_decisions = decision_data.get("decisions", [])
-		autonomous_actor_count = int(decision_data.get("actor_count", 0))
-		for index: int in range(autonomous_results.size()):
-			var autonomous_result: Variant = autonomous_results[index]
-			writer.apply_result(autonomous_result, stores)
-			if (
-				index < autonomous_decisions.size()
-				and bool((autonomous_decisions[index] as Dictionary).get(
-					"observed_by_player",
-					false
-				))
-			):
-				observed_autonomous_results.append(autonomous_result)
-				observed_autonomous_decisions.append(
-					autonomous_decisions[index]
-				)
+	var elapsed_hours := int(event.get("elapsed_hours", 0))
+	var simulation_round_count := maxi(elapsed_hours, 1)
+	for round_index: int in range(simulation_round_count):
+		var round_event := event.duplicate(true)
+		round_event["elapsed_hours"] = 1 if elapsed_hours > 0 else 0
+		if simulation_round_count > 1:
+			round_event["tick_event_id"] = "%s:hour_%d" % [
+				tick_event_id,
+				round_index + 1,
+			]
+
+		if not npc_need_profiles.is_empty():
+			var need_snapshot = snapshot_builder.build_snapshot(
+				context,
+				stores,
+				true
+			)
+			var need_system = NpcNeedSystemModel.new()
+			var need_data: Dictionary = need_system.resolve_tick(
+				need_snapshot,
+				npc_need_profiles,
+				round_event
+			)
+			var round_need_results: Array = need_data.get("results", [])
+			var round_need_changes: Array = need_data.get("changes", [])
+			var observed_result_indexes: Array = need_data.get(
+				"observed_result_indexes",
+				[]
+			)
+			for index: int in range(round_need_results.size()):
+				var need_result: Variant = round_need_results[index]
+				writer.apply_result(need_result, stores)
+				if index in observed_result_indexes:
+					observed_need_results.append(need_result)
+			for change: Dictionary in round_need_changes:
+				if bool(change.get("observed_by_player", false)):
+					observed_need_changes.append(change.duplicate(true))
+			need_results.append_array(round_need_results)
+			need_changes.append_array(round_need_changes)
+
+		if not autonomous_action_rules.is_empty():
+			var decision_snapshot = snapshot_builder.build_snapshot(
+				context,
+				stores,
+				true
+			)
+			var decision_system = NpcDecisionSystemModel.new()
+			var decision_data: Dictionary = decision_system.resolve_tick(
+				decision_snapshot,
+				autonomous_action_rules,
+				round_event
+			)
+			var round_results: Array = decision_data.get("results", [])
+			var round_decisions: Array = decision_data.get("decisions", [])
+			for index: int in range(round_results.size()):
+				var autonomous_result: Variant = round_results[index]
+				writer.apply_result(autonomous_result, stores)
+				if index < round_decisions.size():
+					var decision := round_decisions[index] as Dictionary
+					autonomous_actor_ids[str(decision.get("actor_id", ""))] = true
+					if bool(decision.get("observed_by_player", false)):
+						observed_autonomous_results.append(autonomous_result)
+						observed_autonomous_decisions.append(decision)
+			autonomous_results.append_array(round_results)
+			autonomous_decisions.append_array(round_decisions)
+	autonomous_actor_ids.erase("")
+	autonomous_actor_count = autonomous_actor_ids.size()
 
 	var skipped_count := (
 		skipped_due_to_scope_count
@@ -139,6 +190,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	)
 	var tick_log_results := transaction_results.duplicate()
 	tick_log_results.append_array(due_results)
+	tick_log_results.append_array(need_results)
 	tick_log_results.append_array(autonomous_results)
 	world_log.append_entry(_build_tick_log_entry(
 		event,
@@ -155,6 +207,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		obligation_due_count,
 		exchange_due_count,
 		due_results,
+		need_changes,
 		autonomous_actor_count,
 		autonomous_decisions
 	))
@@ -179,6 +232,11 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"obligation_due_count": obligation_due_count,
 		"exchange_due_count": exchange_due_count,
 		"due_result_count": due_results.size(),
+		"simulation_round_count": simulation_round_count,
+		"need_change_count": need_changes.size(),
+		"need_changes": need_changes.duplicate(true),
+		"observed_need_change_count": observed_need_changes.size(),
+		"observed_need_changes": observed_need_changes.duplicate(true),
 		"autonomous_actor_count": autonomous_actor_count,
 		"autonomous_decision_count": autonomous_decisions.size(),
 		"autonomous_decisions": autonomous_decisions.duplicate(true),
@@ -191,6 +249,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"error_reason": "",
 		"results": _result_rows(transaction_results),
 		"due_results": _result_rows(due_results),
+		"need_results": _result_rows(need_results),
+		"observed_need_results": _result_rows(observed_need_results),
 		"autonomous_results": _result_rows(autonomous_results),
 		"observed_autonomous_results": _result_rows(
 			observed_autonomous_results
@@ -242,6 +302,10 @@ func _failure_result(
 		"obligation_due_count": 0,
 		"exchange_due_count": 0,
 		"due_result_count": 0,
+		"need_change_count": 0,
+		"need_changes": [],
+		"observed_need_change_count": 0,
+		"observed_need_changes": [],
 		"autonomous_actor_count": 0,
 		"autonomous_decision_count": 0,
 		"autonomous_decisions": [],
@@ -252,6 +316,8 @@ func _failure_result(
 		"validation_warnings": validation_warnings.duplicate(true),
 		"results": [],
 		"due_results": [],
+		"need_results": [],
+		"observed_need_results": [],
 		"autonomous_results": [],
 		"observed_autonomous_results": [],
 		"world_log_entries": world_log.list_entries(),
@@ -275,11 +341,23 @@ func _build_tick_log_entry(
 	obligation_due_count: int = 0,
 	exchange_due_count: int = 0,
 	due_results: Array = [],
+	need_changes: Array = [],
 	autonomous_actor_count: int = 0,
 	autonomous_decisions: Array = []
 ) -> Dictionary:
 	var aggregate := _aggregate_results(results)
 	var pressure_changes: Array = aggregate.get("pressure_changes", [])
+	var state_changes: Array = aggregate.get("state_changes", [])
+	var relationship_changes: Array = aggregate.get("relationship_changes", [])
+	var memories: Array = aggregate.get("memories", [])
+	var traces: Array = aggregate.get("traces", [])
+	var rumors: Array = aggregate.get("rumors", [])
+	var obligations: Array = aggregate.get("obligations", [])
+	var exchanges: Array = aggregate.get("exchanges", [])
+	var deferred_consequences: Array = aggregate.get("deferred_consequences", [])
+	var item_changes: Array = aggregate.get("item_changes", [])
+	var chronicle_entries: Array = aggregate.get("chronicle_entries", [])
+	var investigation_changes: Array = aggregate.get("investigation_changes", [])
 	var obligation_updates: Array = aggregate.get("obligation_updates", [])
 	var exchange_updates: Array = aggregate.get("exchange_updates", [])
 	var deferred_updates: Array = aggregate.get("deferred_consequence_updates", [])
@@ -297,6 +375,7 @@ func _build_tick_log_entry(
 		"scope_id": str(tick_event.get("scope_id", "")),
 		"day": int(tick_event.get("day", 0)),
 		"time_key": str(tick_event.get("time_key", "")),
+		"elapsed_hours": int(tick_event.get("elapsed_hours", 0)),
 		"source": _entry_source(tick_event),
 		"include_due_checks": bool(tick_event.get("include_due_checks", false)),
 		"due_kinds": (tick_event.get("due_kinds", []) as Array).duplicate(true) if tick_event.get("due_kinds", []) is Array else [],
@@ -318,6 +397,11 @@ func _build_tick_log_entry(
 		"exchange_due_count": exchange_due_count,
 		"due_result_count": due_results.size(),
 		"due_results": _result_rows(due_results),
+		"need_change_count": need_changes.size(),
+		"need_changes": need_changes.duplicate(true),
+		"observed_need_change_count": _observed_need_change_count(
+			need_changes
+		),
 		"autonomous_actor_count": autonomous_actor_count,
 		"autonomous_decision_count": autonomous_decisions.size(),
 		"autonomous_decisions": autonomous_decisions.duplicate(true),
@@ -326,12 +410,23 @@ func _build_tick_log_entry(
 		),
 		"facts_added": _fact_types(aggregate.get("facts", [])),
 		"fact_ids": _fact_ids(aggregate.get("facts", [])),
+		"state_change_count": state_changes.size(),
+		"relationship_change_count": relationship_changes.size(),
+		"memory_count": memories.size(),
+		"trace_count": traces.size(),
+		"rumor_seed_count": rumors.size(),
 		"pressure_changes": pressure_changes.duplicate(true),
 		"pressure_change_count": pressure_changes.size(),
+		"obligation_count": obligations.size(),
+		"exchange_count": exchanges.size(),
+		"deferred_consequence_count": deferred_consequences.size(),
 		"deferred_consequence_updates": deferred_updates.duplicate(true),
 		"deferred_consequence_update_count": deferred_updates.size(),
 		"obligation_update_count": obligation_updates.size(),
 		"exchange_update_count": exchange_updates.size(),
+		"item_change_count": item_changes.size(),
+		"chronicle_entry_count": chronicle_entries.size(),
+		"investigation_change_count": investigation_changes.size(),
 		"narrative_summary": _narrative_summaries(narrative_results),
 		"narrative_result": narrative_results.duplicate(true),
 	}
@@ -426,29 +521,70 @@ func _result_rows(results: Array) -> Array:
 
 func _aggregate_results(results: Array) -> Dictionary:
 	var facts: Array = []
+	var state_changes: Array = []
+	var relationship_changes: Array = []
+	var memories: Array = []
+	var traces: Array = []
+	var rumors: Array = []
 	var pressure_changes: Array = []
+	var obligations: Array = []
+	var exchanges: Array = []
+	var deferred_consequences: Array = []
 	var obligation_updates: Array = []
 	var exchange_updates: Array = []
 	var deferred_updates: Array = []
+	var item_changes: Array = []
+	var chronicle_entries: Array = []
+	var investigation_changes: Array = []
 	var narrative_results: Array = []
 
 	for result: Variant in results:
 		if result == null:
 			continue
 		facts.append_array(result.facts_added.duplicate(true))
+		state_changes.append_array(result.state_changes.duplicate(true))
+		relationship_changes.append_array(
+			result.relationship_changes.duplicate(true)
+		)
+		memories.append_array(result.memories_added.duplicate(true))
+		traces.append_array(result.traces_added.duplicate(true))
+		rumors.append_array(result.rumors_added.duplicate(true))
 		pressure_changes.append_array(result.pressure_changes.duplicate(true))
+		obligations.append_array(result.obligations_added.duplicate(true))
+		exchanges.append_array(result.exchanges_added.duplicate(true))
+		deferred_consequences.append_array(
+			result.deferred_consequences_added.duplicate(true)
+		)
 		obligation_updates.append_array(result.obligation_updates.duplicate(true))
 		exchange_updates.append_array(result.exchange_updates.duplicate(true))
 		deferred_updates.append_array(result.deferred_consequence_updates.duplicate(true))
+		item_changes.append_array(result.item_changes.duplicate(true))
+		chronicle_entries.append_array(
+			result.chronicle_entries_added.duplicate(true)
+		)
+		investigation_changes.append_array(
+			result.investigation_changes.duplicate(true)
+		)
 		if not result.narrative_result.is_empty():
 			narrative_results.append(result.narrative_result.duplicate(true))
 
 	return {
 		"facts": facts,
+		"state_changes": state_changes,
+		"relationship_changes": relationship_changes,
+		"memories": memories,
+		"traces": traces,
+		"rumors": rumors,
 		"pressure_changes": pressure_changes,
+		"obligations": obligations,
+		"exchanges": exchanges,
+		"deferred_consequences": deferred_consequences,
 		"obligation_updates": obligation_updates,
 		"exchange_updates": exchange_updates,
 		"deferred_consequence_updates": deferred_updates,
+		"item_changes": item_changes,
+		"chronicle_entries": chronicle_entries,
+		"investigation_changes": investigation_changes,
 		"narrative_results": narrative_results,
 	}
 
@@ -494,6 +630,14 @@ func _observed_decision_count(decisions: Array) -> int:
 	var count := 0
 	for decision: Dictionary in decisions:
 		if bool(decision.get("observed_by_player", false)):
+			count += 1
+	return count
+
+
+func _observed_need_change_count(changes: Array) -> int:
+	var count := 0
+	for change: Dictionary in changes:
+		if bool(change.get("observed_by_player", false)):
 			count += 1
 	return count
 

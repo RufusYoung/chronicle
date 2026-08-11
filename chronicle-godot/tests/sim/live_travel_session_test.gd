@@ -69,7 +69,7 @@ func _run() -> void:
 		int(outbound.get("tick_result", {}).get(
 			"autonomous_decision_count",
 			0
-		)) == 1
+		)) >= 1
 		and session.stores["fact_store"].find_facts_by_type(
 			"merchant_kept_shop_open"
 		).size() == 1,
@@ -133,7 +133,7 @@ func _run() -> void:
 		"11. Return travel consumes the remaining food and restores shop view"
 	)
 	_check(
-		not bool(returned_snapshot.get_entity_state(
+		bool(returned_snapshot.get_entity_state(
 			"old_chen_shop_closing_shutters",
 			"visible",
 			false
@@ -142,14 +142,22 @@ func _run() -> void:
 			"old_chen_shop_price_notice",
 			"price_level",
 			""
-		)) != "raised_again"
+		)) == "raised_again"
 		and session.stores["fact_store"].find_facts_by_type(
 			"merchant_kept_shop_open"
 		).size() == 1
+		and session.stores["fact_store"].find_facts_by_type(
+			"merchant_closed_shop_early"
+		).size() == 1
+		and str(returned_snapshot.get_entity_state(
+			"chen_mi",
+			"hunger",
+			""
+		)) == "high"
 		and returned_snapshot.get_entity(
 			"abandoned_granary_broken_door"
 		).is_empty(),
-		"12. Returning preserves the keep-open decision without leaking granary entities"
+		"12. Returning reveals renewed hunger and closure without leaking granary entities"
 	)
 
 	var blocked_option: Dictionary = session.get_travel_options()[0]

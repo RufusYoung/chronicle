@@ -235,6 +235,720 @@
           "tone": "cautious_relief"
         }
       }
+    },
+    {
+      "rule_id": "hungry_resident_walks_to_food_supplier",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "living_needs",
+          "food_buyer"
+        ]
+      },
+      "bindings": {
+        "home_location_id": {
+          "source": "actor_state",
+          "key": "home_location_id"
+        },
+        "home_location_name": {
+          "source": "actor_state",
+          "key": "home_location_name",
+          "default": "原来的岗位"
+        },
+        "supplier_id": {
+          "source": "actor_state",
+          "key": "food_supplier_id"
+        },
+        "supplier_location_id": {
+          "source": "actor_state",
+          "key": "food_supplier_location_id"
+        },
+        "supplier_display_name": {
+          "source": "entity_display_name",
+          "entity_id": "{supplier_id}"
+        },
+        "duty_label": {
+          "source": "actor_state",
+          "key": "duty_label",
+          "default": "手头的活"
+        }
+      },
+      "minimum_utility": 60,
+      "priority": 30,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "location_id",
+          "equals": "{home_location_id}"
+        },
+        {
+          "source": "entity_state",
+          "key": "hunger",
+          "in": [
+            "high",
+            "extreme"
+          ]
+        },
+        {
+          "source": "entity_state",
+          "key": "food_stock",
+          "max": 0
+        },
+        {
+          "source": "entity_state",
+          "key": "food_search_blocked",
+          "not_equals": true
+        }
+      ],
+      "base_utility": 70,
+      "utility_factors": [
+        {
+          "factor_id": "no_food_left",
+          "label": "身边已经没有食物",
+          "weight": 25,
+          "condition": {
+            "source": "entity_state",
+            "key": "food_stock",
+            "max": 0
+          }
+        },
+        {
+          "factor_id": "hunger_is_extreme",
+          "label": "饥饿已经难以忍受",
+          "weight": 30,
+          "condition": {
+            "source": "entity_state",
+            "key": "hunger",
+            "equals": "extreme"
+          }
+        }
+      ],
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "npc_traveled_for_food:{actor_id}:{tick_event_id}",
+            "fact_type": "npc_traveled_for_food",
+            "actor_id": "{actor_id}",
+            "target_id": "{supplier_id}",
+            "from_location_id": "{home_location_id}",
+            "location_id": "{supplier_location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "{actor_display_name}放下{duty_label}，去找{supplier_display_name}买吃的。"
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "location_id",
+            "to": "{supplier_location_id}",
+            "reason": "seek_food_supplier"
+          }
+        ],
+        "memories": [
+          {
+            "memory_id": "{actor_id}_left_work_hungry:{tick_event_id}",
+            "owner_id": "{actor_id}",
+            "source_fact_type": "npc_traveled_for_food",
+            "memory_type": "left_duty_because_hungry",
+            "emotional_tone": "embarrassed_urgency",
+            "clarity": "high",
+            "can_be_told_as_rumor": true
+          }
+        ],
+        "traces": [
+          {
+            "trace_id": "abandoned_workplace:{actor_id}:{tick_event_id}",
+            "trace_type": "abandoned_workplace",
+            "location_id": "{home_location_id}",
+            "source_fact_type": "npc_traveled_for_food",
+            "actor_id": "{actor_id}",
+            "display_name": "匆忙搁下的工作",
+            "description": "{actor_display_name}把{duty_label}做到一半便离开了，桌面还保持着刚才的样子。",
+            "visible": true,
+            "inspectable": true,
+            "freshness": "fresh"
+          }
+        ],
+        "narrative": {
+          "title": "{actor_display_name}来找吃的",
+          "summary": "饥饿终于压过了职责。{actor_display_name}放下{duty_label}，从{home_location_name}赶到这里，想向{supplier_display_name}买一份食物。",
+          "tone": "urgent"
+        }
+      }
+    },
+    {
+      "rule_id": "hungry_resident_buys_food",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "living_needs",
+          "food_buyer"
+        ]
+      },
+      "bindings": {
+        "home_location_id": {
+          "source": "actor_state",
+          "key": "home_location_id"
+        },
+        "home_location_name": {
+          "source": "actor_state",
+          "key": "home_location_name",
+          "default": "原来的岗位"
+        },
+        "supplier_id": {
+          "source": "actor_state",
+          "key": "food_supplier_id"
+        },
+        "supplier_location_id": {
+          "source": "actor_state",
+          "key": "food_supplier_location_id"
+        },
+        "supplier_display_name": {
+          "source": "entity_display_name",
+          "entity_id": "{supplier_id}"
+        }
+      },
+      "minimum_utility": 60,
+      "priority": 40,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "location_id",
+          "equals": "{supplier_location_id}"
+        },
+        {
+          "source": "entity_state",
+          "key": "hunger",
+          "in": [
+            "high",
+            "extreme"
+          ]
+        },
+        {
+          "source": "entity_state",
+          "key": "food_stock",
+          "max": 0
+        },
+        {
+          "source": "entity_state",
+          "key": "coin_count",
+          "min": 1
+        },
+        {
+          "source": "entity_state",
+          "entity_id": "{supplier_id}",
+          "key": "shop_policy",
+          "equals": "open"
+        },
+        {
+          "source": "entity_state",
+          "entity_id": "{supplier_id}",
+          "key": "food_stock",
+          "min": 1
+        }
+      ],
+      "base_utility": 100,
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "npc_completed_food_trade:{actor_id}:{tick_event_id}",
+            "fact_type": "npc_completed_food_trade",
+            "actor_id": "{actor_id}",
+            "target_id": "{supplier_id}",
+            "location_id": "{supplier_location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "{actor_display_name}用仅剩的零钱向{supplier_display_name}买到一份食物。"
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "food_stock",
+            "delta": 1,
+            "reason": "bought_food"
+          },
+          {
+            "entity_id": "{actor_id}",
+            "key": "coin_count",
+            "delta": -1,
+            "reason": "paid_for_food"
+          },
+          {
+            "entity_id": "{actor_id}",
+            "key": "hunger",
+            "degrade": 1,
+            "reason": "ate_part_of_purchase"
+          },
+          {
+            "entity_id": "{supplier_id}",
+            "key": "food_stock",
+            "delta": -1,
+            "reason": "sold_food"
+          },
+          {
+            "entity_id": "{actor_id}",
+            "key": "food_search_blocked",
+            "to": false,
+            "reason": "food_search_succeeded"
+          }
+        ],
+        "memories": [
+          {
+            "memory_id": "{actor_id}_bought_food_from_{supplier_id}:{tick_event_id}",
+            "owner_id": "{actor_id}",
+            "source_fact_type": "npc_completed_food_trade",
+            "memory_type": "bought_food_while_hungry",
+            "emotional_tone": "relief",
+            "clarity": "high",
+            "can_be_told_as_rumor": true
+          }
+        ],
+        "traces": [
+          {
+            "trace_id": "food_trade:{actor_id}:{tick_event_id}",
+            "trace_type": "food_trade",
+            "location_id": "{supplier_location_id}",
+            "source_fact_type": "npc_completed_food_trade",
+            "actor_id": "{actor_id}",
+            "display_name": "刚动过的粮秤",
+            "description": "秤盘上还粘着新落的碎屑，账板多了一笔只够买一份食物的小额交易。",
+            "visible": true,
+            "inspectable": true,
+            "freshness": "fresh"
+          }
+        ],
+        "rumors": [
+          {
+            "rumor_id": "resident_bought_food:{actor_id}:{tick_event_id}",
+            "rumor_key": "resident_bought_food",
+            "source_fact_type": "npc_completed_food_trade",
+            "origin_location": "{supplier_location_id}",
+            "current_location": "{supplier_location_id}",
+            "truth_level": "high",
+            "distortion_level": "low",
+            "spread_scope": "location",
+            "visible": true,
+            "title": "有人饿得放下了手里的活",
+            "text_hint": "{actor_display_name}刚来买过一份食物，买到后就惦记着回去继续做事。"
+          }
+        ],
+        "exchanges": [
+          {
+            "exchange_id": "food_trade:{actor_id}:{supplier_id}:{tick_event_id}",
+            "party_a": "{actor_id}",
+            "party_b": "{supplier_id}",
+            "give": "1_coin",
+            "receive": "1_food",
+            "status": "settled",
+            "source_fact_type": "npc_completed_food_trade",
+            "location_id": "{supplier_location_id}",
+            "scope_type": "location",
+            "scope_id": "{supplier_location_id}"
+          }
+        ],
+        "narrative": {
+          "title": "买到一份口粮",
+          "summary": "{supplier_display_name}从见底的存粮里称出一份，{actor_display_name}交出零钱，当场吃下几口，总算缓过气来。",
+          "tone": "relief"
+        }
+      }
+    },
+    {
+      "rule_id": "blocked_resident_requests_food_help",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "living_needs",
+          "food_buyer"
+        ]
+      },
+      "bindings": {
+        "supplier_id": {
+          "source": "actor_state",
+          "key": "food_supplier_id"
+        },
+        "supplier_location_id": {
+          "source": "actor_state",
+          "key": "food_supplier_location_id"
+        },
+        "supplier_display_name": {
+          "source": "entity_display_name",
+          "entity_id": "{supplier_id}"
+        }
+      },
+      "once_fact_type": "resident_requested_food_help",
+      "minimum_utility": 60,
+      "priority": 35,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "location_id",
+          "equals": "{supplier_location_id}"
+        },
+        {
+          "source": "entity_state",
+          "key": "hunger",
+          "in": [
+            "high",
+            "extreme"
+          ]
+        },
+        {
+          "source": "entity_state",
+          "key": "food_stock",
+          "max": 0
+        },
+        {
+          "source": "entity_state",
+          "entity_id": "{supplier_id}",
+          "key": "shop_policy",
+          "not_equals": "open"
+        }
+      ],
+      "base_utility": 90,
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "resident_requested_food_help:{actor_id}:{tick_event_id}",
+            "fact_type": "resident_requested_food_help",
+            "actor_id": "{actor_id}",
+            "target_id": "{supplier_id}",
+            "location_id": "{supplier_location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "粮铺已经收门，{actor_display_name}只能开口向附近的人求一份吃的。"
+          }
+        ],
+        "memories": [
+          {
+            "memory_id": "{actor_id}_asked_for_food:{tick_event_id}",
+            "owner_id": "{actor_id}",
+            "source_fact_type": "resident_requested_food_help",
+            "memory_type": "asked_strangers_for_food",
+            "emotional_tone": "shame",
+            "clarity": "high",
+            "can_be_told_as_rumor": true
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "food_search_blocked",
+            "to": true,
+            "reason": "supplier_could_not_sell_food"
+          }
+        ],
+        "traces": [
+          {
+            "trace_id": "empty_food_bag:{actor_id}:{tick_event_id}",
+            "trace_type": "empty_food_bag",
+            "location_id": "{supplier_location_id}",
+            "source_fact_type": "resident_requested_food_help",
+            "actor_id": "{actor_id}",
+            "display_name": "翻空的食物袋",
+            "description": "一只布袋被反复翻过，里面连一小块干饼都没有。",
+            "visible": true,
+            "inspectable": true,
+            "freshness": "fresh"
+          }
+        ],
+        "rumors": [
+          {
+            "rumor_id": "resident_requested_food_help:{actor_id}:{tick_event_id}",
+            "rumor_key": "resident_requested_food_help",
+            "source_fact_type": "resident_requested_food_help",
+            "origin_location": "{supplier_location_id}",
+            "current_location": "{supplier_location_id}",
+            "truth_level": "high",
+            "distortion_level": "low",
+            "spread_scope": "location",
+            "visible": true,
+            "title": "收门之后还有人在求食",
+            "text_hint": "有人看见{actor_display_name}在粮铺门前翻空了食物袋，只能请附近的人帮忙。"
+          }
+        ],
+        "narrative": {
+          "title": "粮铺门前的求助",
+          "summary": "{supplier_display_name}已经收紧口粮。{actor_display_name}没有买到吃的，迟疑了很久，终于向在场的人开口求助。",
+          "tone": "strained"
+        }
+      }
+    },
+    {
+      "rule_id": "fed_resident_returns_home",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "living_needs",
+          "food_buyer"
+        ]
+      },
+      "bindings": {
+        "home_location_id": {
+          "source": "actor_state",
+          "key": "home_location_id"
+        },
+        "home_location_name": {
+          "source": "actor_state",
+          "key": "home_location_name",
+          "default": "原来的岗位"
+        },
+        "supplier_location_id": {
+          "source": "actor_state",
+          "key": "food_supplier_location_id"
+        },
+        "duty_label": {
+          "source": "actor_state",
+          "key": "duty_label",
+          "default": "手头的活"
+        }
+      },
+      "minimum_utility": 60,
+      "priority": 25,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "location_id",
+          "equals": "{supplier_location_id}"
+        },
+        {
+          "source": "entity_state",
+          "key": "hunger",
+          "in": [
+            "none",
+            "low",
+            "medium"
+          ]
+        }
+      ],
+      "base_utility": 80,
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "resident_returned_to_duty:{actor_id}:{tick_event_id}",
+            "fact_type": "resident_returned_to_duty",
+            "actor_id": "{actor_id}",
+            "from_location_id": "{supplier_location_id}",
+            "location_id": "{home_location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "饥饿缓和后，{actor_display_name}回去继续{duty_label}。"
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "location_id",
+            "to": "{home_location_id}",
+            "reason": "return_to_duty_after_eating"
+          },
+          {
+            "entity_id": "{actor_id}",
+            "key": "food_search_blocked",
+            "to": false,
+            "reason": "food_need_was_eased"
+          }
+        ],
+        "traces": [
+          {
+            "trace_id": "resident_departed_shop:{actor_id}:{tick_event_id}",
+            "trace_type": "resident_departed_after_eating",
+            "location_id": "{supplier_location_id}",
+            "source_fact_type": "resident_returned_to_duty",
+            "actor_id": "{actor_id}",
+            "display_name": "收起的空食物袋",
+            "description": "食物袋已经被仔细叠好，脚印从铺门转向码头。",
+            "visible": true,
+            "inspectable": true,
+            "freshness": "fresh"
+          }
+        ],
+        "narrative": {
+          "title": "{actor_display_name}赶回去做事",
+          "summary": "腹中的空痛缓下来后，{actor_display_name}没有继续停留，收好食物袋，赶回{home_location_name}继续{duty_label}。",
+          "tone": "purposeful"
+        }
+      }
+    },
+    {
+      "rule_id": "blocked_resident_returns_home_empty_handed",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "living_needs",
+          "food_buyer"
+        ]
+      },
+      "bindings": {
+        "home_location_id": {
+          "source": "actor_state",
+          "key": "home_location_id"
+        },
+        "home_location_name": {
+          "source": "actor_state",
+          "key": "home_location_name",
+          "default": "原来的岗位"
+        },
+        "supplier_location_id": {
+          "source": "actor_state",
+          "key": "food_supplier_location_id"
+        },
+        "duty_label": {
+          "source": "actor_state",
+          "key": "duty_label",
+          "default": "手头的活"
+        }
+      },
+      "minimum_utility": 60,
+      "priority": 20,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "location_id",
+          "equals": "{supplier_location_id}"
+        },
+        {
+          "source": "entity_state",
+          "key": "hunger",
+          "in": [
+            "high",
+            "extreme"
+          ]
+        },
+        {
+          "source": "entity_state",
+          "key": "food_stock",
+          "max": 0
+        },
+        {
+          "source": "entity_state",
+          "key": "food_search_blocked",
+          "equals": true
+        }
+      ],
+      "base_utility": 75,
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "resident_returned_empty_handed:{actor_id}:{tick_event_id}",
+            "fact_type": "resident_returned_empty_handed",
+            "actor_id": "{actor_id}",
+            "from_location_id": "{supplier_location_id}",
+            "location_id": "{home_location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "没有找到食物，{actor_display_name}仍然回去继续{duty_label}。"
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "location_id",
+            "to": "{home_location_id}",
+            "reason": "return_to_duty_empty_handed"
+          }
+        ],
+        "memories": [
+          {
+            "memory_id": "{actor_id}_returned_hungry:{tick_event_id}",
+            "owner_id": "{actor_id}",
+            "source_fact_type": "resident_returned_empty_handed",
+            "memory_type": "food_search_failed",
+            "emotional_tone": "resigned",
+            "clarity": "high",
+            "can_be_told_as_rumor": true
+          }
+        ],
+        "traces": [
+          {
+            "trace_id": "resident_left_without_food:{actor_id}:{tick_event_id}",
+            "trace_type": "resident_left_without_food",
+            "location_id": "{supplier_location_id}",
+            "source_fact_type": "resident_returned_empty_handed",
+            "actor_id": "{actor_id}",
+            "display_name": "没有装进食物的布袋",
+            "description": "布袋被重新系紧，却仍然瘪着。脚印离开粮铺，转向码头。",
+            "visible": true,
+            "inspectable": true,
+            "freshness": "fresh"
+          }
+        ],
+        "narrative": {
+          "title": "空着手赶回去",
+          "summary": "求助没有立刻换来食物。{actor_display_name}把空布袋重新系好，忍着饥饿回去继续{duty_label}。",
+          "tone": "resigned"
+        }
+      }
+    },
+    {
+      "rule_id": "resident_eats_carried_food",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "living_needs",
+          "food_buyer"
+        ]
+      },
+      "minimum_utility": 60,
+      "priority": 50,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "hunger",
+          "in": [
+            "high",
+            "extreme"
+          ]
+        },
+        {
+          "source": "entity_state",
+          "key": "food_stock",
+          "min": 1
+        }
+      ],
+      "base_utility": 110,
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "resident_ate_carried_food:{actor_id}:{tick_event_id}",
+            "fact_type": "resident_ate_carried_food",
+            "actor_id": "{actor_id}",
+            "location_id": "{location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "{actor_display_name}停下手里的事，吃掉一份随身食物。"
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "food_stock",
+            "delta": -1,
+            "reason": "ate_carried_food"
+          },
+          {
+            "entity_id": "{actor_id}",
+            "key": "hunger",
+            "degrade": 1,
+            "reason": "ate_carried_food"
+          }
+        ],
+        "traces": [
+          {
+            "trace_id": "food_wrapper:{actor_id}:{tick_event_id}",
+            "trace_type": "food_wrapper",
+            "location_id": "{location_id}",
+            "source_fact_type": "resident_ate_carried_food",
+            "actor_id": "{actor_id}",
+            "display_name": "折过的食物包布",
+            "description": "包布上的碎屑还很新，说明有人刚在这里匆匆吃过东西。",
+            "visible": true,
+            "inspectable": true,
+            "freshness": "fresh"
+          }
+        ],
+        "narrative": {
+          "title": "先垫一垫肚子",
+          "summary": "{actor_display_name}从随身食物里取出一份，匆匆吃下，让饥饿暂时缓和。",
+          "tone": "relief"
+        }
+      }
     }
   ]
 }

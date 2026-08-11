@@ -124,6 +124,23 @@ func get_rumor_seeds() -> Array:
 	return rumors.duplicate(true)
 
 
+func get_visible_rumors() -> Array:
+	var rows: Array = []
+	var current_location_id := str(location.get("id", ""))
+	for rumor: Dictionary in rumors:
+		var rumor_locations := [
+			str(rumor.get("location_id", "")),
+			str(rumor.get("current_location", "")),
+			str(rumor.get("origin_location", "")),
+		]
+		if (
+			bool(rumor.get("visible", true))
+			and current_location_id in rumor_locations
+		):
+			rows.append(rumor.duplicate(true))
+	return rows
+
+
 func get_facts() -> Array:
 	return facts.duplicate(true)
 

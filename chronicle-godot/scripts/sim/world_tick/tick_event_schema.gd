@@ -15,6 +15,7 @@ func normalize(event: Dictionary) -> Dictionary:
 		"scope_id": _string_value(event, "scope_id"),
 		"source": _string_value(event, "source"),
 		"label": _string_value(event, "label"),
+		"elapsed_hours": _int_value(event, "elapsed_hours", 0),
 		"max_triggers": _int_value(event, "max_triggers", 0),
 		"include_due_checks": _bool_value(event, "include_due_checks", false),
 		"due_kinds": _due_kinds_value(event),
@@ -38,6 +39,7 @@ func validate(event: Dictionary) -> Dictionary:
 	var scope_type := str(normalized.get("scope_type", ""))
 	var scope_id := str(normalized.get("scope_id", ""))
 	var max_triggers := int(normalized.get("max_triggers", 0))
+	var elapsed_hours := int(normalized.get("elapsed_hours", 0))
 	var due_kinds: Array = normalized.get("due_kinds", [])
 
 	if tick_event_id == "":
@@ -56,6 +58,8 @@ func validate(event: Dictionary) -> Dictionary:
 		errors.append("missing_scope_id")
 	if max_triggers < 0:
 		errors.append("invalid_max_triggers")
+	if elapsed_hours < 0:
+		errors.append("invalid_elapsed_hours")
 	if event.has("include_due_checks") and not (event.get("include_due_checks") is bool):
 		errors.append("invalid_include_due_checks")
 	if event.has("due_kinds") and not (event.get("due_kinds") is Array):

@@ -39,7 +39,7 @@ func resolve_tick(
 		var rule: Dictionary = chosen.get("rule", {})
 		var result: Variant = _build_result(rule, chosen, snapshot, tick_event)
 		results.append(result)
-		decisions.append(_decision_row(chosen, tick_event))
+		decisions.append(_decision_row(chosen, tick_event, snapshot))
 
 	return {
 		"actor_count": actor_ids.size(),
@@ -333,8 +333,10 @@ func _build_result(
 	).duplicate(true)
 	bindings["rule_id"] = str(evaluation.get("rule_id", ""))
 	bindings["tick_event_id"] = str(tick_event.get("tick_event_id", ""))
-	var observed_by_player: bool = bindings["location_id"] == str(
-		snapshot.location.get("id", "")
+	var observed_by_player := _is_decision_observed(
+		rule,
+		bindings,
+		snapshot
 	)
 	result.add_fact({
 		"fact_id": "npc_autonomous_action:%s:%s" % [
@@ -371,6 +373,18 @@ func _build_result(
 	for change_value: Variant in effects.get("pressure_changes", []):
 		if change_value is Dictionary:
 			result.add_pressure_change(_resolve_dictionary(change_value, bindings))
+	for memory_value: Variant in effects.get("memories", []):
+		if memory_value is Dictionary:
+			result.add_memory(_resolve_dictionary(memory_value, bindings))
+	for trace_value: Variant in effects.get("traces", []):
+		if trace_value is Dictionary:
+			result.add_trace(_resolve_dictionary(trace_value, bindings))
+	for rumor_value: Variant in effects.get("rumors", []):
+		if rumor_value is Dictionary:
+			result.add_rumor_seed(_resolve_dictionary(rumor_value, bindings))
+	for exchange_value: Variant in effects.get("exchanges", []):
+		if exchange_value is Dictionary:
+			result.add_exchange(_resolve_dictionary(exchange_value, bindings))
 
 	var narrative: Dictionary = effects.get("narrative", {})
 	if not narrative.is_empty():
@@ -413,8 +427,11 @@ func _resolve_value(value: Variant, bindings: Dictionary) -> Variant:
 
 func _decision_row(
 		evaluation: Dictionary,
-		tick_event: Dictionary
+		tick_event: Dictionary,
+		snapshot: Variant
 ) -> Dictionary:
+	var rule: Dictionary = evaluation.get("rule", {})
+	var bindings: Dictionary = evaluation.get("bindings", {})
 	return {
 		"actor_id": str(evaluation.get("actor_id", "")),
 		"rule_id": str(evaluation.get("rule_id", "")),
@@ -424,15 +441,30 @@ func _decision_row(
 			evaluation.get("matched_factors", []) as Array
 		).duplicate(true),
 		"tick_event_id": str(tick_event.get("tick_event_id", "")),
-		"observed_by_player": str(
-			(evaluation.get("bindings", {}) as Dictionary).get("location_id", "")
-		) == str(
-			(evaluation.get("bindings", {}) as Dictionary).get(
-				"player_location_id",
-				""
-			)
-		),
+		"observed_by_player": _is_decision_observed(rule, bindings, snapshot),
 	}
+
+
+func _is_decision_observed(
+		rule: Dictionary,
+		bindings: Dictionary,
+		snapshot: Variant
+) -> bool:
+	var player_location_id := str(snapshot.location.get("id", ""))
+	if str(bindings.get("location_id", "")) == player_location_id:
+		return true
+	var effects: Dictionary = rule.get("effects", {})
+	for change_value: Variant in effects.get("state_changes", []):
+		if not (change_value is Dictionary):
+			continue
+		var change := _resolve_dictionary(change_value, bindings)
+		if (
+			str(change.get("entity_id", "")) == str(bindings.get("actor_id", ""))
+			and str(change.get("key", "")) == "location_id"
+			and str(change.get("to", "")) == player_location_id
+		):
+			return true
+	return false
 
 
 func _public_evaluations(evaluations: Array) -> Array:

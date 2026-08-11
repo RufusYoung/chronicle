@@ -122,10 +122,10 @@ func _run() -> void:
 		"10. Return trip restores the shop projection and consumes resources"
 	)
 	_check(
-		"半掩的门板" not in observations.text
-		and "刚被再次改高" not in observations.text
+		"半掩的门板" in observations.text
+		and "刚被再次改高" in observations.text
 		and "裂开的粮仓门" not in observations.text,
-		"11. The shop remains open after the helped-family round trip"
+		"11. Renewed hunger closes the shop during the long round trip"
 	)
 
 	outbound_button = _find_travel_button(travel_buttons, OUTBOUND_ROUTE)

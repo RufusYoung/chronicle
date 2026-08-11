@@ -268,6 +268,21 @@ func build_view_data() -> Dictionary:
 			visible_people.append(row)
 		else:
 			visible_observations.append(row)
+	var observation_ids: Array[String] = []
+	for observation: Dictionary in visible_observations:
+		observation_ids.append(str(observation.get("id", "")))
+	for trace: Dictionary in snapshot.get_visible_traces():
+		var trace_id := str(trace.get("trace_id", ""))
+		if trace_id == "" or trace_id in observation_ids:
+			continue
+		visible_observations.append(_trace_row(trace))
+		observation_ids.append(trace_id)
+	for rumor: Dictionary in snapshot.get_visible_rumors():
+		var rumor_id := str(rumor.get("rumor_id", ""))
+		if rumor_id == "" or rumor_id in observation_ids:
+			continue
+		visible_observations.append(_rumor_row(rumor))
+		observation_ids.append(rumor_id)
 
 	return {
 		"ready": true,
@@ -734,6 +749,27 @@ func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 			if entity_type == "person"
 			else _object_state_text(entity, snapshot)
 		),
+	}
+
+
+func _trace_row(trace: Dictionary) -> Dictionary:
+	return {
+		"id": str(trace.get("trace_id", "")),
+		"name": str(trace.get("display_name", trace.get("title", "现场痕迹"))),
+		"description": str(trace.get("description", "这里留下了此前行动的痕迹。")),
+		"state_text": "此前行动留下的现场痕迹",
+	}
+
+
+func _rumor_row(rumor: Dictionary) -> Dictionary:
+	return {
+		"id": str(rumor.get("rumor_id", "")),
+		"name": "传闻：%s" % str(rumor.get("title", "附近发生过一件事")),
+		"description": str(rumor.get(
+			"text_hint",
+			rumor.get("summary", "这句话正在此地流传。")
+		)),
+		"state_text": "在此地流传",
 	}
 
 
@@ -1219,10 +1255,13 @@ func _tick_feedback_view() -> Dictionary:
 		[]
 	)
 	if results.is_empty():
+		results = latest_result.get("observed_need_results", [])
+	if results.is_empty():
 		results = latest_result.get("results", [])
 	var result_data: Dictionary = results[0] if not results.is_empty() else {}
 	var narrative: Dictionary = result_data.get("narrative_result", {})
 	var details := _tick_detail_lines(result_data)
+	details.append_array(_need_detail_lines(latest_result))
 	details.append_array(_decision_detail_lines(latest_result))
 	return {
 		"status": "world_tick",
@@ -1264,6 +1303,7 @@ func _tick_narrative(result: Dictionary) -> String:
 	var results: Array = (
 		result.get("results", []) as Array
 	).duplicate(true)
+	results.append_array(result.get("observed_need_results", []))
 	results.append_array(result.get("observed_autonomous_results", []))
 	for result_value: Variant in results:
 		if not (result_value is Dictionary):
@@ -1295,25 +1335,39 @@ func _tick_detail_lines(result_data: Dictionary) -> Array:
 
 func _decision_detail_lines(result: Dictionary) -> Array:
 	var rows: Array[String] = []
-	var decisions: Array = result.get("autonomous_decisions", [])
-	if decisions.is_empty():
-		return rows
-	var decision := decisions[0] as Dictionary
-	var actor_name := _entity_name(str(decision.get("actor_id", "")))
-	rows.append("这是%s根据当前处境自行作出的决定" % actor_name)
-	var factors: Array = decision.get("matched_factors", [])
-	for factor_value: Variant in factors:
-		if not (factor_value is Dictionary):
+	var decisions: Array = result.get("observed_autonomous_decisions", [])
+	for decision_value: Variant in decisions:
+		if not (decision_value is Dictionary):
 			continue
-		var label := str((factor_value as Dictionary).get("label", ""))
-		if label != "":
-			rows.append("促成决定：%s" % label)
+		var decision := decision_value as Dictionary
+		var actor_name := _entity_name(str(decision.get("actor_id", "")))
+		rows.append("这是%s根据当前处境自行作出的决定" % actor_name)
+		var factors: Array = decision.get("matched_factors", [])
+		for factor_value: Variant in factors:
+			if not (factor_value is Dictionary):
+				continue
+			var label := str((factor_value as Dictionary).get("label", ""))
+			if label != "":
+				rows.append("促成决定：%s" % label)
+	return rows
+
+
+func _need_detail_lines(result: Dictionary) -> Array:
+	var rows: Array[String] = []
+	for change: Dictionary in result.get("observed_need_changes", []):
+		rows.append("%s的%s从%s变为%s" % [
+			_entity_name(str(change.get("actor_id", ""))),
+			_state_key_label(str(change.get("need_key", ""))),
+			_hunger_label(str(change.get("from", ""))),
+			_hunger_label(str(change.get("to", ""))),
+		])
 	return rows
 
 
 func _world_change_count(result: Dictionary) -> int:
 	return (
 		int(result.get("triggered_count", 0))
+		+ int(result.get("observed_need_change_count", 0))
 		+ int(result.get(
 			"observed_autonomous_decision_count",
 			0

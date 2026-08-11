@@ -6,6 +6,9 @@ const READ_NOTICE_ACTION := (
 	"read_visible_readable_object:old_chen_shop_price_notice"
 )
 const INSPECT_TRACE_ACTION := "inspect_visible_trace:gray_grain_powder"
+const GIVE_WEN_JIAN_FOOD := (
+	"give_food_to_hungry_person:north_quay_record_keeper"
+)
 
 var failures: Array[String] = []
 
@@ -32,6 +35,7 @@ func _run() -> void:
 	var region_status := viewer.get_node("%RegionStatus") as RichTextLabel
 	var visible_people := viewer.get_node("%VisiblePeople") as RichTextLabel
 	var visible_observations := viewer.get_node("%VisibleObservations") as RichTextLabel
+	var feedback_title := viewer.get_node("%FeedbackTitle") as Label
 	var feedback_body := viewer.get_node("%FeedbackBody") as RichTextLabel
 	var knowledge_text := viewer.get_node("%KnowledgeText") as RichTextLabel
 	var history_text := viewer.get_node("%HistoryText") as RichTextLabel
@@ -131,6 +135,45 @@ func _run() -> void:
 		and "还没有发生行动" in history_text.text
 		and _find_action_button(action_buttons, GIVE_FOOD_ACTION) != null,
 		"13. 独立场景可以重新载入初始局面"
+	)
+
+	viewer.advance_time()
+	viewer.advance_time()
+	viewer.advance_time()
+	await process_frame
+	_check(
+		"闻简" in visible_people.text
+		and "饥饿：严重" in visible_people.text
+		and "闻简来找吃的" in feedback_title.text
+		and "北埠旧档房" in feedback_body.text
+		and "north_quay_record_house" not in feedback_body.text
+		and "自行作出的决定" in feedback_body.text,
+		"14. 需求变化会让异地 NPC 走进当前地点，并说明来意与自主原因"
+	)
+	viewer.advance_time()
+	await process_frame
+	_check(
+		_find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) != null
+		and "粮铺门前的求助" in feedback_title.text
+		and "传闻：收门之后还有人在求食" in visible_observations.text
+		and "翻空的食物袋" in visible_observations.text,
+		"15. 交易受阻后出现可介入的求助、传闻和现场痕迹"
+	)
+	(_find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) as Button).pressed.emit()
+	await process_frame
+	_check(
+		"饥饿：缓和" in visible_people.text
+		and _find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) == null,
+		"16. 玩家介入会缓解闻简的饥饿，并立即移除过期选项"
+	)
+	viewer.advance_time()
+	await process_frame
+	_check(
+		"闻简赶回去做事" in feedback_title.text
+		and "北埠旧档房" in feedback_body.text
+		and "north_quay_record_house" not in feedback_body.text
+		and "闻简" not in visible_people.text,
+		"17. 闻简返岗后离开本地投影，反馈只使用玩家可读地点名"
 	)
 
 	viewer.queue_free()

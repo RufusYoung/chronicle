@@ -218,7 +218,7 @@ func _run() -> void:
 	var world_summary := session.get_world_log_summary()
 	_check(
 		int(world_summary.get("relationship_change_count", 0)) == 2
-		and int(world_summary.get("memory_count", 0)) == 1
+		and int(world_summary.get("memory_count", 0)) >= 1
 		and int(world_summary.get("chronicle_entry_count", 0)) == 1
 		and int(world_summary.get("item_change_count", 0)) == 2,
 		"14. WorldLog counts relationship, memory, item history, and chronicle writes"

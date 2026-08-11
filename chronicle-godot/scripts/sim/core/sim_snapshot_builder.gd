@@ -27,13 +27,9 @@ func build_snapshot(
 	if state_store != null:
 		states = state_store.states.duplicate(true)
 
-	var source_entities: Array = context.entities
-	if (
-		not include_all_entities
-		and context.has_method("get_entities_at_location")
-	):
-		source_entities = context.get_entities_at_location(context.location_id)
-	var entities := _entities_with_states(source_entities, states)
+	var entities := _entities_with_states(context.entities, states)
+	if not include_all_entities:
+		entities = _entities_at_location(entities, context.location_id)
 	var player: Dictionary = context.player.duplicate(true)
 	var player_id := str(context.get_player_value("id", "player"))
 	if states.has(player_id):
@@ -83,6 +79,21 @@ func _entities_with_states(source_entities: Array, states: Dictionary) -> Array:
 		var entity_copy := entity.duplicate(true)
 		var entity_id := str(entity_copy.get("id", ""))
 		if states.has(entity_id):
-			entity_copy["states"] = (states[entity_id] as Dictionary).duplicate(true)
+			var entity_states := (
+				states[entity_id] as Dictionary
+			).duplicate(true)
+			entity_copy["states"] = entity_states
+			if entity_states.has("location_id"):
+				entity_copy["location_id"] = str(
+					entity_states.get("location_id", "")
+				)
 		rows.append(entity_copy)
+	return rows
+
+
+func _entities_at_location(entities: Array, location_id: String) -> Array:
+	var rows: Array = []
+	for entity: Dictionary in entities:
+		if str(entity.get("location_id", "")) == location_id:
+			rows.append(entity.duplicate(true))
 	return rows

@@ -690,10 +690,15 @@
       "tags": [
         "person",
         "merchant",
-        "local_family"
+        "local_family",
+        "living_needs"
       ],
       "states": {
         "visible": false,
+        "hunger": "low",
+        "hunger_elapsed_hours": 0,
+        "hunger_interval_hours": 8,
+        "food_stock": 3,
         "shop_policy": "open",
         "decision_enabled": true,
         "dependent_id": "chen_mi",
@@ -711,11 +716,14 @@
       "tags": [
         "person",
         "child",
-        "local_family"
+        "local_family",
+        "living_needs"
       ],
       "states": {
         "visible": true,
         "hunger": "high",
+        "hunger_elapsed_hours": 0,
+        "hunger_interval_hours": 6,
         "fear": "medium",
         "concealment": "spoiled_grain_bag"
       },
@@ -911,10 +919,22 @@
       "tags": [
         "person",
         "record_keeper",
-        "north_quay_local"
+        "north_quay_local",
+        "living_needs",
+        "food_buyer"
       ],
       "states": {
-        "visible": true
+        "visible": true,
+        "hunger": "medium",
+        "hunger_elapsed_hours": 0,
+        "hunger_interval_hours": 3,
+        "food_stock": 0,
+        "coin_count": 1,
+        "home_location_id": "north_quay_record_house",
+        "home_location_name": "北埠旧档房",
+        "food_supplier_id": "old_chen",
+        "food_supplier_location_id": "old_chen_shop",
+        "duty_label": "守档"
       },
       "interactions": {
         "approach_visible_person": {
