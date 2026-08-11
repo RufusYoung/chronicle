@@ -1,6 +1,33 @@
 {
   "effect_templates": [
     {
+      "effect_template_id": "approach_person_effect",
+      "description": "Record the first close observation of a visible person.",
+      "facts": [
+        {
+          "fact_id": "actor_approached_person:{target_id}",
+          "fact_type": "actor_approached_person",
+          "actor_id": "{actor_id}",
+          "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "action_id": "{action_id}",
+          "rule_id": "{rule_id}",
+          "fixture_id": "{fixture_id}",
+          "location_id": "{location_id}"
+        }
+      ],
+      "state_changes": [],
+      "relationship_changes": [],
+      "memories": [],
+      "traces": [],
+      "rumors": [],
+      "narrative": {
+        "title": "{result_title}",
+        "summary": "{result_summary}",
+        "tone": "observant"
+      }
+    },
+    {
       "effect_template_id": "give_food_help_effect",
       "description": "A generic help effect for giving food to a hungry visible person.",
       "facts": [
@@ -67,8 +94,8 @@
       "traces": [],
       "rumors": [],
       "narrative": {
-        "title": "给食物",
-        "summary": "对方接过食物，饥饿缓和了一些。感激和信任有所上升。",
+        "title": "{result_title}",
+        "summary": "{result_summary}",
         "tone": "quiet"
       }
     },
@@ -112,8 +139,8 @@
       "traces": [],
       "rumors": [],
       "narrative": {
-        "title": "询问隐藏物",
-        "summary": "对方意识到你注意到了他藏着的东西。",
+        "title": "{result_title}",
+        "summary": "{result_summary}",
         "tone": "uneasy"
       }
     },
@@ -298,8 +325,8 @@
       "traces": [],
       "rumors": [],
       "narrative": {
-        "title": "阅读记录",
-        "summary": "你读完了眼前的文字，并记住了其中的关键信息。",
+        "title": "{result_title}",
+        "summary": "{result_summary}",
         "tone": "focused"
       }
     },
@@ -335,8 +362,8 @@
       "traces": [],
       "rumors": [],
       "narrative": {
-        "title": "检查痕迹",
-        "summary": "你检查了痕迹，它指向刚刚发生过的事情。",
+        "title": "{result_title}",
+        "summary": "{result_summary}",
         "tone": "observant"
       }
     },
@@ -454,8 +481,8 @@
       "traces": [],
       "rumors": [],
       "narrative": {
-        "title": "Market Pressure",
-        "summary": "You learned that the market is under food pressure.",
+        "title": "{result_title}",
+        "summary": "{result_summary}",
         "tone": "concerned"
       }
     },

@@ -116,9 +116,10 @@ func _run() -> void:
 	)
 	_check(_transaction_resolver_has_no_batch_one_rule_ids(), "16. batch one does not add TransactionResolver rule branches")
 	_check(
-		_rule_mode(rules, "approach_visible_person") == "candidate_only"
-		and _rule_effect_template_id(rules, "approach_visible_person") == "",
-		"17. basic approach_visible_person remains candidate_only"
+		_rule_mode(rules, "approach_visible_person") == "effect_template"
+		and _rule_effect_template_id(rules, "approach_visible_person")
+			== "approach_person_effect",
+		"17. approaching a person now resolves a visible one-shot result"
 	)
 
 	_finish()

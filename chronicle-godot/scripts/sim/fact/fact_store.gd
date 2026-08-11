@@ -5,6 +5,11 @@ var facts: Array = []
 
 
 func add_fact(fact: Dictionary) -> void:
+	var fact_id := str(fact.get("fact_id", ""))
+	if fact_id != "":
+		for existing: Dictionary in facts:
+			if str(existing.get("fact_id", "")) == fact_id:
+				return
 	facts.append(fact.duplicate(true))
 
 

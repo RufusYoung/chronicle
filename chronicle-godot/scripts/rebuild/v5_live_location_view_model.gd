@@ -8,6 +8,26 @@ const RULE_PATHS := [
 	"res://data/sim/raw/action_rules/basic_action_rules.json",
 	"res://data/sim/raw/action_rules/domain_action_rules.json",
 ]
+const SURFACE_FACT_REQUIREMENTS := {
+	"old_chen_shop_to_abandoned_granary": [
+		{"fact_type": "actor_read_object", "target_id": "old_chen_shop_price_notice"},
+		{"fact_type": "actor_inspected_trace", "target_id": "gray_grain_powder"},
+	],
+	"granary_rotten_floor_entry": [
+		{"fact_type": "actor_inspected_trace", "target_id": "abandoned_granary_mold_trace"},
+	],
+	"north_quay_flooded_stack_search": [
+		{"fact_type": "actor_read_object", "target_id": "north_quay_visiting_rules"},
+		{"fact_type": "actor_inspected_trace", "target_id": "north_quay_tide_marks"},
+	],
+	"mist_salt_well_second_ring_descent": [
+		{"fact_type": "actor_read_object", "target_id": "mist_salt_well_warning_stone"},
+		{"fact_type": "actor_inspected_trace", "target_id": "mist_salt_well_mouth_crust"},
+	],
+	"mist_salt_well_to_north_quay_record_house": [
+		{"fact_type": "actor_inspected_trace", "target_id": "mist_salt_well_mouth_crust"},
+	],
+}
 
 var session: Variant = null
 var start_result: Dictionary = {}
@@ -262,13 +282,33 @@ func _playtest_view(snapshot: Variant) -> Dictionary:
 			"hint": "可继续观察，也可重新开始。",
 		}
 	if location_id == "mist_salt_well":
+		var inspected_well_mouth := _has_fact(
+			snapshot,
+			"actor_inspected_trace",
+			"target_id",
+			"mist_salt_well_mouth_crust"
+		)
+		var read_warning := _has_fact(
+			snapshot,
+			"actor_read_object",
+			"target_id",
+			"mist_salt_well_warning_stone"
+		)
 		return {
 			"stage": 5,
 			"stage_count": 5,
 			"completed": false,
 			"title": "从旧井带回一次亲历",
-			"summary": "检查井口异象，决定是否深入第二环，然后沿北岸荒路返回北埠。",
-			"hint": "可以安全返回，不必深入。",
+			"summary": (
+				"先试探盐壳白丝对水的反应，确认怎样安全封存水囊。"
+				if not inspected_well_mouth
+				else (
+					"返程已经开放。读过旧警石后，你也可以承担不可逆后果，深入第二环。"
+					if not read_warning
+					else "带着现有发现返回北埠，或承担不可逆后果深入第二环。"
+				)
+			),
+			"hint": "返回不会抹掉发现；深入可能留下长期雾盐回响。",
 		}
 	if _has_challenge_outcome(
 			snapshot,
@@ -324,13 +364,37 @@ func _playtest_view(snapshot: Variant) -> Dictionary:
 			"actor_found_public_granary_archive_reference"
 		)
 	):
+		var read_archive_rules := _has_fact(
+			snapshot,
+			"actor_read_object",
+			"target_id",
+			"north_quay_visiting_rules"
+		)
+		var inspected_tide_marks := _has_fact(
+			snapshot,
+			"actor_inspected_trace",
+			"target_id",
+			"north_quay_tide_marks"
+		)
 		return {
 			"stage": 3,
 			"stage_count": 5,
 			"completed": false,
 			"title": "追查陆槐最后的记录",
 			"summary": (
-				"在水浸封存层找到陆槐留下的最后一页验粮簿。"
+				(
+					"先读查档规条，再检查廊柱潮线；两条信息都确认后，封存层入口才会开放。"
+					if not read_archive_rules and not inspected_tide_marks
+					else (
+						"再检查廊柱上的旧潮线，确认水位和落脚处。"
+						if not inspected_tide_marks
+						else (
+							"再读受潮的查档规条，确认封存层的禁令和时辰。"
+							if not read_archive_rules
+							else "封存层入口已经开放。可以先借罩灯和油布，也可以直接冒险进入。"
+						)
+					)
+				)
 				if location_id == "north_quay_record_house"
 				else "等到白天乘摆渡前往北埠旧档房。"
 			),
@@ -360,13 +424,44 @@ func _playtest_view(snapshot: Variant) -> Dictionary:
 		"stage_count": 5,
 		"completed": false,
 		"title": "调查废弃粮仓的异常",
-		"summary": (
-			"检查粮仓里的灰白粮粉，并设法带回一件能追查来历的旧物。"
+		"summary": _stage_one_summary(snapshot, location_id),
+		"hint": (
+			"确认门槛痕迹后，粮仓入口和准备选择会开放。"
 			if location_id == "abandoned_granary"
-			else "从老陈铺子前往镇外废弃粮仓，寻找粮食异样的来源。"
+			else "读完告示并检查粮粉后，镇外路线会开放。"
 		),
-		"hint": "时间会持续推进。",
 	}
+
+
+func _stage_one_summary(snapshot: Variant, location_id: String) -> String:
+	if location_id == "abandoned_granary":
+		if not _has_fact(
+			snapshot,
+			"actor_inspected_trace",
+			"target_id",
+			"abandoned_granary_mold_trace"
+		):
+			return "先检查门槛上的霉斑，判断最近搬运粮袋的人如何避开朽木地板。"
+		return "入口已经开放。先试探地板会降低风险，也可以直接踏进粮仓深处。"
+	var read_notice := _has_fact(
+		snapshot,
+		"actor_read_object",
+		"target_id",
+		"old_chen_shop_price_notice"
+	)
+	var inspected_powder := _has_fact(
+		snapshot,
+		"actor_inspected_trace",
+		"target_id",
+		"gray_grain_powder"
+	)
+	if not read_notice and not inspected_powder:
+		return "先读涨价告示，再检查柜脚旁的灰白粮粉，判断缺粮和异常粮袋是否来自同一条路。"
+	if not read_notice:
+		return "粮粉指向铺外；再读涨价告示，确认哪条运粮路线出了问题。"
+	if not inspected_powder:
+		return "告示说明北路断粮；再检查柜脚旁的灰白粮粉，确认异常粮袋的去向。"
+	return "两条现场信息都指向镇外。前往废弃粮仓的路线已经开放。"
 
 
 func _has_fact(
@@ -400,6 +495,7 @@ func _has_challenge_outcome(
 
 func _action_rows() -> Array:
 	var rows: Array[Dictionary] = []
+	var snapshot: Variant = session.get_snapshot()
 	for option: Dictionary in session.get_investigation_options():
 		var action_type := str(
 			option.get("action_type", "investigation")
@@ -428,6 +524,11 @@ func _action_rows() -> Array:
 			"can_execute": true,
 		})
 	for option: Dictionary in session.get_challenge_options():
+		if not _surface_requirements_met(
+			str(option.get("challenge_id", "")),
+			snapshot
+		):
+			continue
 		var action_type := str(option.get("action_type", "danger"))
 		rows.append({
 			"action_id": str(option.get("option_id", "")),
@@ -457,11 +558,17 @@ func _action_rows() -> Array:
 
 func _risk_view() -> Dictionary:
 	var options: Array = session.get_challenge_options()
+	var snapshot: Variant = session.get_snapshot()
 	if options.is_empty():
 		return {"active": false}
 	var attempt: Dictionary = {}
 	var preparation: Dictionary = {}
 	for option: Dictionary in options:
+		if not _surface_requirements_met(
+			str(option.get("challenge_id", "")),
+			snapshot
+		):
+			continue
 		if str(option.get("option_type", "")) == "attempt":
 			attempt = option
 		elif str(option.get("option_type", "")) == "prepare":
@@ -492,7 +599,13 @@ func _risk_view() -> Dictionary:
 
 func _travel_rows() -> Array:
 	var rows: Array[Dictionary] = []
+	var snapshot: Variant = session.get_snapshot()
 	for option: Dictionary in session.get_travel_options():
+		if not _surface_requirements_met(
+			str(option.get("route_id", "")),
+			snapshot
+		):
+			continue
 		var hours := int(option.get("hours", 0))
 		var food_cost := int(option.get("food_cost", 0))
 		var can_travel := bool(option.get("can_travel", false))
@@ -530,6 +643,19 @@ func _travel_rows() -> Array:
 			"hint": hint,
 		})
 	return rows
+
+
+func _surface_requirements_met(key: String, snapshot: Variant) -> bool:
+	var requirements: Array = SURFACE_FACT_REQUIREMENTS.get(key, [])
+	for requirement: Dictionary in requirements:
+		if not _has_fact(
+			snapshot,
+			str(requirement.get("fact_type", "")),
+			"target_id",
+			str(requirement.get("target_id", ""))
+		):
+			return false
+	return true
 
 
 func _entity_row(entity: Dictionary) -> Dictionary:
@@ -627,7 +753,9 @@ func _knowledge_rows(snapshot: Variant) -> Array:
 		var target_name := str(fact.get("target_display_name", ""))
 		if target_name == "":
 			target_name = _entity_name(str(fact.get("target_id", "")))
-		rows.append(_fact_text(fact_type, target_name, fact))
+		var text := _fact_text(fact_type, target_name, fact)
+		if text not in rows:
+			rows.append(text)
 	if rows.is_empty():
 		rows.append("你还没有确认任何值得记下的事实。")
 	return rows
@@ -1232,6 +1360,10 @@ func _action_kind(action_type: String) -> String:
 
 
 func _action_hint(option: Dictionary) -> String:
+	var extra: Dictionary = option.get("extra", {})
+	var contextual_hint := str(extra.get("hint", ""))
+	if contextual_hint != "":
+		return contextual_hint
 	var mode := str(option.get("transaction_mode", ""))
 	if mode == "candidate_only":
 		return "记录选择，等待后续对话系统承接"

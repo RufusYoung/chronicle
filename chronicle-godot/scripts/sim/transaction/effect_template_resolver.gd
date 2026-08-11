@@ -155,6 +155,8 @@ func _build_bindings(candidate: Variant, snapshot: Variant) -> Dictionary:
 		"exchange_id": _candidate_extra_value(candidate, "exchange_id"),
 		"deferred_id": _candidate_extra_value(candidate, "deferred_id"),
 		"trigger_key": _candidate_extra_value(candidate, "trigger_key"),
+		"result_title": _candidate_extra_value(candidate, "result_title"),
+		"result_summary": _candidate_extra_value(candidate, "result_summary"),
 	}
 
 

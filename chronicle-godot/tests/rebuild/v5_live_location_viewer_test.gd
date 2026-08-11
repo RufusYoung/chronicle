@@ -40,7 +40,7 @@ func _run() -> void:
 	_check(
 		location_title.text == "老陈铺子"
 		and "旧粮" in location_description.text
-		and "食物　2 份" in player_summary.text,
+		and "食物　3 份" in player_summary.text,
 		"2. 初始画面来自湖湾镇模拟 fixture，而不是静态演示状态"
 	)
 	_check(
@@ -66,12 +66,12 @@ func _run() -> void:
 	(give_button as Button).pressed.emit()
 	await process_frame
 	_check(
-		"食物　1 份" in player_summary.text
+		"食物　2 份" in player_summary.text
 		and "饥饿：缓和" in visible_people.text,
 		"6. 点击给食物后，玩家和陈米的持续状态立即刷新"
 	)
 	_check(
-		"饥饿缓和" in feedback_body.text
+		"戒备已经没有先前那么重" in feedback_body.text
 		and "随身食物 -1" in feedback_body.text
 		and "感激 +15" in feedback_body.text,
 		"7. 结算叙事与关键状态、关系变化一起反馈"
@@ -99,9 +99,10 @@ func _run() -> void:
 		"10. 连续调查会把已确认事实投影到认知栏"
 	)
 	_check(
-		"给陈米食物" in history_text.text
-		and "阅读涨价告示" in history_text.text
-		and "查看灰白粮粉" in history_text.text,
+		"递给陈米 1 份食物" in history_text.text
+		and "读涨价告示" in history_text.text
+		and "检查柜脚旁的灰白粮粉" in history_text.text
+		and "来源不在这间铺子里" in history_text.text,
 		"11. 玩家看到的是连续行动历史，不是一次性测试输出"
 	)
 
@@ -125,7 +126,7 @@ func _run() -> void:
 	viewer.restart_session()
 	await process_frame
 	_check(
-		"食物　2 份" in player_summary.text
+		"食物　3 份" in player_summary.text
 		and "饥饿：严重" in visible_people.text
 		and "还没有发生行动" in history_text.text
 		and _find_action_button(action_buttons, GIVE_FOOD_ACTION) != null,

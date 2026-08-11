@@ -85,22 +85,21 @@ func _run() -> void:
 		"9. TransactionResolver returns resolved for effect_template mode"
 	)
 
-	var candidate_only_candidate = _find_candidate(candidates, "approach_visible_person", "recruit_elai")
-	var candidate_only_result = resolver.resolve_action(candidate_only_candidate, outpost_context)
+	var approach_candidate = _find_candidate(candidates, "approach_visible_person", "recruit_elai")
+	var approach_result = resolver.resolve_action(approach_candidate, outpost_context)
 	_check(
-		str(candidate_only_result.contract_status) == "candidate_only"
-		and str(candidate_only_result.skip_reason) == "candidate_only_rule",
-		"10. TransactionResolver returns candidate_only for approach_visible_person"
+		str(approach_result.contract_status) == "resolved"
+		and str(approach_result.transaction_mode) == "effect_template",
+		"10. TransactionResolver resolves approach_visible_person"
 	)
 	_check(
-		candidate_only_result.is_empty()
-		and candidate_only_result.facts_added.is_empty()
-		and candidate_only_result.state_changes.is_empty()
-		and candidate_only_result.relationship_changes.is_empty()
-		and candidate_only_result.memories_added.is_empty()
-		and candidate_only_result.traces_added.is_empty()
-		and candidate_only_result.rumors_added.is_empty(),
-		"11. candidate_only does not write facts / state / relationship / memory / trace / rumor"
+		_result_has_fact(approach_result, "actor_approached_person")
+		and approach_result.state_changes.is_empty()
+		and approach_result.relationship_changes.is_empty()
+		and approach_result.memories_added.is_empty()
+		and approach_result.traces_added.is_empty()
+		and approach_result.rumors_added.is_empty(),
+		"11. Approach writes one fact without unrelated side effects"
 	)
 
 	var invalid_candidate = ActionCandidateModel.new({

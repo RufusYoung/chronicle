@@ -303,6 +303,43 @@ theme_override_colors/default_color = Color(0.78, 0.79, 0.74, 1)
 bbcode_enabled = true
 fit_content = false
 
+[node name="FeedbackPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleFeedback")
+
+[node name="FeedbackMargin" type="MarginContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="FeedbackLayout" type="VBoxContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="FeedbackEyebrow" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.57, 0.54, 1)
+theme_override_font_sizes/font_size = 11
+text = "刚刚发生"
+
+[node name="FeedbackTitle" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.77, 0.52, 1)
+theme_override_font_sizes/font_size = 16
+text = "局面刚刚展开"
+
+[node name="FeedbackBody" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
 [node name="SceneDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
 layout_mode = 2
 
@@ -325,38 +362,7 @@ text = "进入视线的东西"
 
 [node name="VisibleObservations" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 70)
-layout_mode = 2
-size_flags_vertical = 3
-bbcode_enabled = true
-fit_content = false
-scroll_active = true
-
-[node name="FeedbackPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
-custom_minimum_size = Vector2(0, 90)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleFeedback")
-
-[node name="FeedbackMargin" type="MarginContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 8
-
-[node name="FeedbackLayout" type="VBoxContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin"]
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="FeedbackTitle" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.77, 0.52, 1)
-theme_override_font_sizes/font_size = 15
-text = "局面刚刚展开"
-
-[node name="FeedbackBody" type="RichTextLabel" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
-unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
@@ -460,7 +466,7 @@ text = "刚刚发生"
 
 [node name="HistoryText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 90)
+custom_minimum_size = Vector2(0, 132)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = false
@@ -468,7 +474,7 @@ scroll_active = true
 
 [node name="ActionDock" type="PanelContainer" parent="Margin/RootLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 156)
+custom_minimum_size = Vector2(0, 174)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleActionDock")
 
@@ -495,7 +501,8 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.48, 0.54, 0.53, 1)
 theme_override_font_sizes/font_size = 12
-text = "行动来自当前世界状态；局面变化后，可用选择也会变化。"
+text = "把鼠标移到选择上，先看清它会做什么。"
+autowrap_mode = 2
 
 [node name="InvestigationBar" type="RichTextLabel" parent="Margin/RootLayout/ActionDock/ActionMargin/ActionLayout"]
 unique_name_in_owner = true

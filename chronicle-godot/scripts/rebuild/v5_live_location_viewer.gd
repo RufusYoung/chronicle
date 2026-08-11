@@ -215,15 +215,25 @@ func _show_playtest_end(end_state: String) -> void:
 func _refresh_actions(actions: Array) -> void:
 	_clear_children(action_buttons)
 	action_heading.text = "此刻你能做什么　%d 项" % actions.size()
+	action_hint.text = (
+		"把鼠标移到选择上，先看清它会做什么。执行后，完成的调查会从这里消失。"
+		if not actions.is_empty()
+		else "这里暂时没有可执行的现场行动。查看当前目标或可前往的地点。"
+	)
 	for action_value: Variant in actions:
 		var action := action_value as Dictionary
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(190, 44)
+		button.custom_minimum_size = Vector2(210, 48)
 		button.text = str(action.get("label", "采取行动"))
+		var kind := str(action.get("kind", "行动"))
+		var hint := str(action.get("hint", ""))
 		button.tooltip_text = "%s：%s" % [
-			str(action.get("kind", "行动")),
-			str(action.get("hint", "")),
+			kind,
+			hint,
 		]
+		button.mouse_entered.connect(_show_action_hint.bind(kind, hint))
+		button.focus_entered.connect(_show_action_hint.bind(kind, hint))
+		button.mouse_exited.connect(_restore_action_hint)
 		button.disabled = not bool(action.get("can_execute", true))
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
@@ -265,6 +275,14 @@ func _refresh_actions(actions: Array) -> void:
 					)
 				)
 		action_buttons.add_child(button)
+
+
+func _show_action_hint(kind: String, hint: String) -> void:
+	action_hint.text = "%s　%s" % [kind, hint]
+
+
+func _restore_action_hint() -> void:
+	action_hint.text = "选择一个行动查看说明；完成的调查不会继续占着选项栏。"
 
 
 func _refresh_investigation(investigation: Dictionary) -> void:
@@ -327,7 +345,7 @@ func _refresh_risk(risk: Dictionary) -> void:
 func _refresh_right_panel_density(compact: bool) -> void:
 	chronicle_text.custom_minimum_size.y = 58.0 if compact else 112.0
 	risk_text.custom_minimum_size.y = 64.0 if compact else 108.0
-	history_text.custom_minimum_size.y = 52.0 if compact else 90.0
+	history_text.custom_minimum_size.y = 96.0 if compact else 132.0
 
 
 func _refresh_travel_options(options: Array) -> void:
@@ -357,6 +375,7 @@ func _refresh_feedback(feedback: Dictionary) -> void:
 		for detail: Variant in details:
 			lines.append("• %s" % str(detail))
 	feedback_body.text = "\n".join(lines)
+	feedback_body.scroll_to_line(0)
 
 
 func _refresh_history(history: Array) -> void:
@@ -364,14 +383,18 @@ func _refresh_history(history: Array) -> void:
 		history_text.text = "还没有发生行动。"
 		return
 	var rows: Array[String] = []
-	var first_index := maxi(history.size() - 5, 0)
+	var first_index := maxi(history.size() - 3, 0)
 	for item_value: Variant in history.slice(first_index):
 		var item := item_value as Dictionary
-		rows.append("%02d　%s" % [
+		var narrative := str(item.get("narrative", ""))
+		if narrative == "":
+			narrative = "局面已经更新。"
+		rows.append("[b]%02d　%s[/b]\n[color=#8f9c98]%s[/color]" % [
 			int(item.get("index", 0)),
 			str(item.get("label", "行动")),
+			narrative,
 		])
-	history_text.text = "\n".join(rows)
+	history_text.text = "\n\n".join(rows)
 
 
 func _format_status_rows(rows: Array) -> String:

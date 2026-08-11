@@ -54,7 +54,8 @@ func _run() -> void:
 	_check(
 		goal_progress.text == "内部试玩　目标 1 / 5"
 		and goal_title.text == "调查废弃粮仓的异常"
-		and "镇外废弃粮仓" in goal_summary.text
+		and "涨价告示" in goal_summary.text
+		and "灰白粮粉" in goal_summary.text
 		and session_label.text == "● 试玩进行中",
 		"3. The first screen gives a specific objective and progress"
 	)
@@ -125,12 +126,15 @@ func _run() -> void:
 
 	session.execute_challenge_option(EXPEDITION_PREPARE)
 	session.travel(WELL_OUTBOUND)
+	session.execute_action(
+		"inspect_visible_trace:mist_salt_well_mouth_crust"
+	)
 	viewer.refresh_view()
 	await process_frame
 	_check(
 		goal_progress.text == "内部试玩　目标 5 / 5"
 		and goal_title.text == "从旧井带回一次亲历"
-		and "返回北埠" in goal_summary.text,
+		and "返程已经开放" in goal_summary.text,
 		"9. Reaching the well explains the final choice and return"
 	)
 

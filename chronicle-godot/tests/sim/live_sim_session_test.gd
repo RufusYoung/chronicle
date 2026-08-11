@@ -52,7 +52,7 @@ func _run() -> void:
 	)
 	_check(
 		session.stores["state_store"].get_state("chen_mi", "hunger") == "medium"
-		and int(session.stores["state_store"].get_state("player", "food_count", -1)) == 1,
+		and int(session.stores["state_store"].get_state("player", "food_count", -1)) == 2,
 		"4. 行动结果持续写回同一个 StateStore"
 	)
 	_check(
@@ -91,13 +91,13 @@ func _run() -> void:
 	)
 	_check(
 		bool(approach_result.get("success", false))
-		and str(approach_result.get("contract_status", "")) == "candidate_only",
-		"8. candidate_only 行动也能作为合法前台交互被记录"
+		and str(approach_result.get("contract_status", "")) == "resolved",
+		"8. 接近人物会产生可读结果并成为一次性事实"
 	)
 
 	var snapshot: Variant = session.get_snapshot()
 	_check(
-		snapshot.get_facts().size() == 3
+		snapshot.get_facts().size() == 4
 		and snapshot.get_memories("chen_mi").size() == 1
 		and snapshot.get_memories("player").size() == 2
 		and int(snapshot.get_relation("chen_mi", "player", "gratitude", 0)) >= 10,
@@ -105,15 +105,15 @@ func _run() -> void:
 	)
 	_check(
 		session.get_world_log_entries().size() == 4
-		and int(session.get_world_log_summary().get("resolved_count", 0)) == 3
-		and int(session.get_world_log_summary().get("candidate_only_count", 0)) == 1,
-		"10. WorldLog 持续记录 resolved 与 candidate_only 玩家行动"
+		and int(session.get_world_log_summary().get("resolved_count", 0)) == 4
+		and int(session.get_world_log_summary().get("candidate_only_count", 0)) == 0,
+		"10. WorldLog 持续记录四次已结算玩家行动"
 	)
 
 	var summary: Dictionary = session.build_result_summary()
 	_check(
 		int(summary.get("steps_executed", 0)) == 4
-		and int(summary.get("store_summary", {}).get("facts", 0)) == 3
+		and int(summary.get("store_summary", {}).get("facts", 0)) == 4
 		and str(summary.get("candidate_context_source", "")) == "SimSnapshot",
 		"11. Session 能输出供 UI、存档和测试使用的运行摘要"
 	)

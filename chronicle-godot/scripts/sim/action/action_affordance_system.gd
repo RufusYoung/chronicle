@@ -17,9 +17,13 @@ func generate_candidates(context: Variant, rules: Array) -> Array:
 		if rule.has("target"):
 			for entity: Dictionary in _candidate_targets(context, rule):
 				if _context_matches_rule(context, rule) and _target_matches_rule(context, entity, rule.get("target", {}), rule):
-					candidates.append(_build_candidate(context, rule, entity))
+					var candidate: Variant = _build_candidate(context, rule, entity)
+					if _candidate_can_repeat(context, rule, candidate):
+						candidates.append(candidate)
 		elif _context_matches_rule(context, rule):
-			candidates.append(_build_candidate(context, rule, {}))
+			var candidate: Variant = _build_candidate(context, rule, {})
+			if _candidate_can_repeat(context, rule, candidate):
+				candidates.append(candidate)
 
 	candidates.sort_custom(func(left: Variant, right: Variant) -> bool:
 		return left.priority < right.priority
@@ -31,8 +35,27 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 	var rule_id := str(rule.get("rule_id", ""))
 	var target_id := str(target.get("id", ""))
 	var target_display_name := str(target.get("display_name", target_id))
-	var label := str(rule.get("label_template", rule_id))
+	var interaction := _target_interaction(target, rule_id)
+	var label := str(interaction.get(
+		"label_template",
+		rule.get("label_template", rule_id)
+	))
 	label = label.replace("{target_display_name}", target_display_name)
+	var extra := {
+		"repeat_policy": str(interaction.get(
+			"repeat_policy",
+			rule.get("repeat_policy", "repeatable")
+		)),
+		"result_title": _format_target_text(interaction.get(
+			"result_title",
+			rule.get("result_title", "")
+		), target_display_name),
+		"result_summary": _format_target_text(interaction.get(
+			"result_summary",
+			rule.get("result_summary", "")
+		), target_display_name),
+		"hint": str(interaction.get("hint", rule.get("hint", ""))),
+	}
 
 	var candidate_data := {
 		"action_id": _make_action_id(rule_id, target_id),
@@ -45,10 +68,44 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 		"target_display_name": target_display_name,
 		"priority": int(rule.get("priority", 0)),
 		"domain": str(rule.get("domain", "")),
-		"extra": {},
+		"extra": extra,
 	}
 	_apply_pressure_priority(context, rule, candidate_data)
 	return ActionCandidateModel.new(candidate_data)
+
+
+func _target_interaction(target: Dictionary, rule_id: String) -> Dictionary:
+	var interactions: Dictionary = target.get("interactions", {})
+	var interaction: Variant = interactions.get(rule_id, {})
+	if interaction is Dictionary:
+		return (interaction as Dictionary).duplicate(true)
+	return {}
+
+
+func _format_target_text(value: Variant, target_display_name: String) -> String:
+	return str(value).replace(
+		"{target_display_name}",
+		target_display_name
+	)
+
+
+func _candidate_can_repeat(
+		context: Variant,
+		rule: Dictionary,
+		candidate: Variant
+) -> bool:
+	var policy := str(candidate.extra.get(
+		"repeat_policy",
+		rule.get("repeat_policy", "repeatable")
+	))
+	if policy != "once_per_action":
+		return true
+	if not context.has_method("get_facts"):
+		return true
+	for fact: Dictionary in context.get_facts():
+		if str(fact.get("action_id", "")) == str(candidate.action_id):
+			return false
+	return true
 
 
 func _make_action_id(rule_id: String, target_id: String) -> String:

@@ -60,7 +60,7 @@ func _run() -> void:
 		and int(session.get_snapshot().get_player_value(
 			"food_count",
 			-1
-		)) == 0
+		)) == 1
 		and _has_option(
 			session.get_challenge_options(),
 			EXPEDITION_PREPARE
@@ -88,7 +88,7 @@ func _run() -> void:
 		and str(prepared.get("outcome", "")) == "prepared"
 		and int(prepared.get("hours", 0)) == 2
 		and int(session.get_time_summary().get("hour", -1)) == 12
-		and int(prepared_snapshot.get_player_value("food_count", -1)) == 4,
+		and int(prepared_snapshot.get_player_value("food_count", -1)) == 5,
 		"4. Two hours of archive work grant exactly four return rations"
 	)
 	_check(
@@ -137,7 +137,7 @@ func _run() -> void:
 		and int(session.get_snapshot().get_player_value(
 			"food_count",
 			-1
-		)) == 4,
+		)) == 5,
 		"7. Stale preparation cannot duplicate time, gear, or food"
 	)
 
@@ -158,7 +158,7 @@ func _run() -> void:
 		bool(outbound.get("success", false))
 		and str(session.context.location_id) == "mist_salt_well"
 		and int(session.get_time_summary().get("hour", -1)) == 18
-		and int(well_snapshot.get_player_value("food_count", -1)) == 2,
+		and int(well_snapshot.get_player_value("food_count", -1)) == 3,
 		"9. Outbound travel reaches the well and reserves food for the return"
 	)
 	_check(
@@ -210,7 +210,7 @@ func _run() -> void:
 			"actor_inspected_trace",
 			"mist_salt_well_mouth_crust"
 		).is_empty()
-		and int(shallow_snapshot.get_player_value("food_count", -1)) == 0
+		and int(shallow_snapshot.get_player_value("food_count", -1)) == 1
 		and int(session.get_time_summary().get("day", -1)) == 3
 		and int(session.get_time_summary().get("hour", -1)) == 0,
 		"13. A cautious return preserves the surface observation and pays the route"

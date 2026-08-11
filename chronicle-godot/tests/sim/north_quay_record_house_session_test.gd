@@ -101,7 +101,7 @@ func _run() -> void:
 		bool(outbound.get("success", false))
 		and str(session.context.location_id) == "north_quay_record_house"
 		and int(session.get_time_summary().get("hour", -1)) == 8
-		and int(archive_snapshot.get_player_value("food_count", -1)) == 0,
+		and int(archive_snapshot.get_player_value("food_count", -1)) == 1,
 		"6. Ferry travel advances time and arrives at the real archive location"
 	)
 	_check(

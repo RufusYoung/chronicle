@@ -17,6 +17,9 @@ const WELL_DESCENT := "descend_mist_salt_well_second_ring"
 const WELL_TRACE_ACTION := (
 	"inspect_visible_trace:mist_salt_well_mouth_crust"
 )
+const WELL_WARNING_ACTION := (
+	"read_visible_readable_object:mist_salt_well_warning_stone"
+)
 
 var failures: Array[String] = []
 
@@ -103,7 +106,7 @@ func _run() -> void:
 		"4. Preparation feedback explains labor, supplies, gear, and time"
 	)
 	_check(
-		"食物　4 份" in player_summary.text
+		"食物　5 份" in player_summary.text
 		and "蜡布防盐面罩" in player_summary.text
 		and blocked_route != null
 		and not blocked_route.disabled
@@ -133,12 +136,8 @@ func _run() -> void:
 		"7. The well shows a warning, a testable rule, and a deeper route"
 	)
 	_check(
-		risk_heading.visible
-		and "眼前的风险　不可逆" in risk_heading.text
-		and "不能按普通伤势处理" in risk_text.text
-		and "d20 + 感知 10 / 难度 23" in risk_text.text
-		and "可以直接尝试，也可以返回" in risk_text.text,
-		"8. Risk panel names the formula, lasting cost, and right to return"
+		not risk_heading.visible,
+		"8. Deeper risk stays hidden until the player reads the evidence"
 	)
 
 	var trace_button := _find_action_button(
@@ -155,22 +154,51 @@ func _run() -> void:
 	)
 	_check(
 		trace_button != null
-		and descend_button != null
-		and return_button != null
-		and "查看" in trace_button.text
-		and "沿盐梯下降到第二环" in descend_button.text
-		and "带着现有发现" in return_button.text
-		and not return_button.disabled,
-		"9. Surface evidence, deeper descent, and cautious return coexist"
+		and descend_button == null
+		and return_button == null
+		and "试探盐壳白丝" in trace_button.text,
+		"9. Arrival presents the evidence before the consequential choices"
 	)
 
 	trace_button.pressed.emit()
 	await process_frame
 	await process_frame
+	var warning_button := _find_action_button(
+		action_buttons,
+		WELL_WARNING_ACTION
+	)
+	descend_button = _find_challenge_button(
+		action_buttons,
+		WELL_DESCENT
+	)
+	return_button = _find_travel_button(
+		travel_buttons,
+		WELL_RETURN
+	)
 	_check(
-		"你检查了痕迹" in feedback_body.text
-		and "你检查过井口朝水弯曲的盐壳白丝" in knowledge.text,
-		"10. Inspecting the mouth turns the environmental rule into knowledge"
+		"白丝便一根根朝囊口抬起" in feedback_body.text
+		and "你检查过井口朝水弯曲的盐壳白丝" in knowledge.text
+		and return_button != null
+		and not return_button.disabled
+		and descend_button == null
+		and warning_button != null,
+		"10. Inspecting the mouth gives information and unlocks cautious return"
+	)
+
+	warning_button.pressed.emit()
+	await process_frame
+	await process_frame
+	descend_button = _find_challenge_button(
+		action_buttons,
+		WELL_DESCENT
+	)
+	_check(
+		risk_heading.visible
+		and "眼前的风险　不可逆" in risk_heading.text
+		and "不能按普通伤势处理" in risk_text.text
+		and "d20 + 感知 10 / 难度 23" in risk_text.text
+		and descend_button != null,
+		"10a. Reading the warning reveals the irreversible descent risk"
 	)
 
 	var deep_result: Dictionary = viewer.view_model.perform_challenge(

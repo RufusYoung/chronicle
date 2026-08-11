@@ -48,6 +48,14 @@ func _run() -> void:
 		and bool(session.get_travel_options()[0].get("can_travel", false)),
 		"3. Outbound route is generated from current world state"
 	)
+	var shared_food: Dictionary = session.execute_action(
+		"give_food_to_hungry_person:chen_mi"
+	)
+	_check(
+		bool(shared_food.get("success", false))
+		and int(session.get_snapshot().get_player_value("food_count", -1)) == 2,
+		"3a. A generous first-screen choice still leaves round-trip food"
+	)
 
 	var outbound: Dictionary = session.travel(OUTBOUND_ROUTE)
 	_check(
@@ -68,7 +76,7 @@ func _run() -> void:
 		session.stores["fact_store"].find_facts_by_type(
 			"actor_traveled_route"
 		).size() == 1
-		and session.get_world_log_entries().size() == 2,
+		and session.get_world_log_entries().size() == 3,
 		"6. Journey becomes a fact and a durable world-log entry"
 	)
 
@@ -157,7 +165,7 @@ func _run() -> void:
 	var summary: Dictionary = session.build_result_summary()
 	_check(
 		int(summary.get("journeys_completed", 0)) == 2
-		and int(summary.get("steps_executed", 0)) == 1
+		and int(summary.get("steps_executed", 0)) == 2
 		and int(summary.get("world_ticks_executed", 0)) == 2,
 		"15. Summary separates journeys, actions, and world ticks"
 	)
@@ -177,7 +185,7 @@ func _run() -> void:
 	session.start_from_fixture_path(FIXTURE_PATH, RULE_PATHS)
 	_check(
 		str(session.context.location_id) == "old_chen_shop"
-		and int(session.get_snapshot().get_player_value("food_count", -1)) == 2
+		and int(session.get_snapshot().get_player_value("food_count", -1)) == 3
 		and session.travel_count == 0,
 		"17. Restart restores location, resources, and journey count"
 	)

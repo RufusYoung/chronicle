@@ -697,6 +697,26 @@
         "hunger": "high",
         "fear": "medium",
         "concealment": "spoiled_grain_bag"
+      },
+      "interactions": {
+        "approach_visible_person": {
+          "label_template": "走近陈米",
+          "result_title": "柜台后的孩子",
+          "result_summary": "你走近柜台。陈米先把怀里的布袋往身后推，才抬头问你要买什么；袋口漏出的麦粒发灰，和柜脚旁的粉末是一个颜色。",
+          "hint": "观察陈米对陌生旅人的第一反应。"
+        },
+        "give_food_to_hungry_person": {
+          "label_template": "递给陈米 1 份食物",
+          "result_title": "一份没有问价的食物",
+          "result_summary": "陈米接过食物，只吃下一小块，剩下的重新裹好。再提到那只旧粮袋时，戒备已经没有先前那么重。",
+          "hint": "消耗 1 份食物；之后仍保留完成粮仓往返所需的口粮。"
+        },
+        "ask_about_concealed_item": {
+          "label_template": "问陈米藏着什么",
+          "result_title": "藏在柜台后的旧粮袋",
+          "result_summary": "陈米只把袋口拉开一线。麦粒结成灰白硬块，陈家不敢卖，也舍不得扔；最近几袋同样的货都从镇外废弃粮仓转来。",
+          "hint": "直接问起陈米藏在柜台后的旧粮袋。"
+        }
       }
     },
     {
@@ -730,6 +750,14 @@
       "states": {
         "visible": true,
         "readable": true
+      },
+      "interactions": {
+        "read_visible_readable_object": {
+          "label_template": "读涨价告示",
+          "result_title": "改过三次的粮价",
+          "result_summary": "旧价被墨线划掉两次，今天的数字又压在最上面。落款仍是老陈，字迹却更急，旁边还写着“北路车未到”。",
+          "hint": "读清告示上的改价痕迹和旁注。"
+        }
       }
     },
     {
@@ -764,6 +792,14 @@
         "visible": true,
         "inspectable": true,
         "substance": "spoiled_grain"
+      },
+      "interactions": {
+        "inspect_visible_trace": {
+          "label_template": "检查柜脚旁的灰白粮粉",
+          "result_title": "柜脚旁的灰白粮粉",
+          "result_summary": "粮粉里混着细白丝，受潮后朝水桶方向黏成一束。鞋印把同样的粉末带向门外，来源不在这间铺子里。",
+          "hint": "判断灰白粮粉和镇外粮仓是否有关。"
+        }
       }
     },
     {
@@ -814,6 +850,14 @@
         "visible": true,
         "inspectable": true,
         "substance": "spoiled_grain"
+      },
+      "interactions": {
+        "inspect_visible_trace": {
+          "label_template": "检查门槛上的霉斑",
+          "result_title": "有人不久前搬过粮袋",
+          "result_summary": "霉粉被粗麻袋拖成断线，最上面压着一枚未干的鞋印。搬运的人进去过，也从朽木地板上安全出来过。",
+          "hint": "先看清搬运痕迹，再决定怎样踏进黑暗。"
+        }
       }
     },
     {
@@ -844,6 +888,14 @@
       ],
       "states": {
         "visible": true
+      },
+      "interactions": {
+        "approach_visible_person": {
+          "label_template": "走近守档人闻简",
+          "result_title": "晒卷绳下的守档人",
+          "result_summary": "闻简没有停下补纸，只把一只空木匣推给你。陆槐最后一页不在目录里，要找，只能等潮线退下去后亲自进封存层。",
+          "hint": "先听守档人说明那页失踪记录的去向。"
+        }
       }
     },
     {
@@ -878,6 +930,14 @@
       "states": {
         "visible": true,
         "readable": true
+      },
+      "interactions": {
+        "read_visible_readable_object": {
+          "label_template": "读受潮的查档规条",
+          "result_title": "水涨时不得进入",
+          "result_summary": "规条把开卷时辰写得很清楚，唯独下层封存间多了一句后补的禁令。墨迹比木牌新，旁边记着三次进水日期。",
+          "hint": "确认封存层的开放时辰和水患记录。"
+        }
       }
     },
     {
@@ -896,6 +956,14 @@
         "visible": true,
         "inspectable": true,
         "substance": "lake_silt_and_paper_pulp"
+      },
+      "interactions": {
+        "inspect_visible_trace": {
+          "label_template": "检查廊柱上的旧潮线",
+          "result_title": "第二道潮线仍是湿的",
+          "result_summary": "最新水印停在第二道刻痕上方，边缘还挂着湿纸浆。带罩灯和油布沿旧钉孔探路，能避开最深的积水。",
+          "hint": "从潮线判断封存层里最危险的水位。"
+        }
       }
     },
     {
@@ -946,6 +1014,14 @@
       "states": {
         "visible": true,
         "readable": true
+      },
+      "interactions": {
+        "read_visible_readable_object": {
+          "label_template": "辨认井口旧警石",
+          "result_title": "封水，慢息，不追回声",
+          "result_summary": "警石只剩这三句。“封水”与井口白丝朝水囊弯曲的现象相符；另外两句没有解释，也没有落款。",
+          "hint": "读清深入第二环前留下的唯一警告。"
+        }
       }
     },
     {
@@ -965,6 +1041,14 @@
         "visible": true,
         "inspectable": true,
         "substance": "unidentified_white_filament"
+      },
+      "interactions": {
+        "inspect_visible_trace": {
+          "label_template": "试探盐壳白丝对水的反应",
+          "result_title": "白丝会追逐暴露的水",
+          "result_summary": "你松开水囊，白丝便一根根朝囊口抬起；拧紧以后，它们又伏回盐壳。反应可以重复，但它们究竟是什么，仍没有答案。",
+          "hint": "确认井口异象后，返程路线才会开放。"
+        }
       }
     },
     {
@@ -1005,7 +1089,7 @@
   "player": {
     "id": "player",
     "role": "traveler",
-    "food_count": 2,
+    "food_count": 3,
     "perception": 10,
     "health": 100,
     "injury": "none",
