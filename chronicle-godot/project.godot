@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="CHRONICLE_GODOT"
-run/main_scene="uid://cdvbwwryyo5rb"
+run/main_scene="res://scenes/rebuild/v5_live_location_viewer.tscn"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
 

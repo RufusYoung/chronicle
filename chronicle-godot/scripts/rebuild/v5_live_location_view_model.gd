@@ -226,6 +226,7 @@ func build_view_data() -> Dictionary:
 			),
 			"context": _location_context(location, snapshot),
 		},
+		"playtest": _playtest_view(snapshot),
 		"player": _player_view(snapshot),
 		"time": _time_view(),
 		"region_status": _region_status_rows(snapshot),
@@ -241,6 +242,160 @@ func build_view_data() -> Dictionary:
 		"history": action_history.duplicate(true),
 		"world_log_count": session.get_world_log_entries().size(),
 	}
+
+
+func _playtest_view(snapshot: Variant) -> Dictionary:
+	var location_id := str(snapshot.location.get("id", ""))
+	if _has_fact(
+			snapshot,
+			"actor_traveled_route",
+			"route_id",
+			"mist_salt_well_to_north_quay_record_house"
+	):
+		return {
+			"stage": 5,
+			"stage_count": 5,
+			"completed": true,
+			"failed": false,
+			"title": "试玩目标完成",
+			"summary": "你从湖湾镇的粮仓旧事追到了雾盐旧井，并带着这段亲历返回北埠。",
+			"hint": "可继续观察，也可重新开始。",
+		}
+	if location_id == "mist_salt_well":
+		return {
+			"stage": 5,
+			"stage_count": 5,
+			"completed": false,
+			"title": "从旧井带回一次亲历",
+			"summary": "检查井口异象，决定是否深入第二环，然后沿北岸荒路返回北埠。",
+			"hint": "可以安全返回，不必深入。",
+		}
+	if _has_challenge_outcome(
+			snapshot,
+			"north_quay_flooded_stack_search",
+			"failure"
+	):
+		return {
+			"stage": 3,
+			"stage_count": 5,
+			"completed": false,
+			"failed": true,
+			"title": "水浸档案没能取出",
+			"summary": "这次追查停在北埠封存层。可以继续观察后果，或重新开始试玩。",
+			"hint": "下次先借罩灯和油布。",
+		}
+	if _has_challenge_outcome(
+			snapshot,
+			"granary_rotten_floor_entry",
+			"failure"
+	):
+		return {
+			"stage": 1,
+			"stage_count": 5,
+			"completed": false,
+			"failed": true,
+			"title": "粮仓里的线索断了",
+			"summary": "这次探索留下了伤势，却没带出铜牌。可以返回老陈铺观察后果。",
+			"hint": "下次先检查朽木地板。",
+		}
+	if _has_fact(
+			snapshot,
+			"lu_huai_recorded_departure_for_mist_salt_well"
+	):
+		return {
+			"stage": 4,
+			"stage_count": 5,
+			"completed": false,
+			"title": "准备前往雾盐旧井",
+			"summary": (
+				"带上防盐面罩与往返口粮，沿北岸前往雾盐旧井。"
+				if _has_fact(
+					snapshot,
+					"actor_prepared_mist_salt_expedition"
+				)
+				else "在北埠帮闻简晒卷，换取防盐面罩与往返口粮。"
+			),
+			"hint": "远行会推进世界时间。",
+		}
+	if (
+		location_id == "north_quay_record_house"
+		or _has_fact(
+			snapshot,
+			"actor_found_public_granary_archive_reference"
+		)
+	):
+		return {
+			"stage": 3,
+			"stage_count": 5,
+			"completed": false,
+			"title": "追查陆槐最后的记录",
+			"summary": (
+				"在水浸封存层找到陆槐留下的最后一页验粮簿。"
+				if location_id == "north_quay_record_house"
+				else "等到白天乘摆渡前往北埠旧档房。"
+			),
+			"hint": "危险行动可以先准备。",
+		}
+	if (
+		_has_fact(snapshot, "actor_discovered_item")
+		or _has_fact(
+			snapshot,
+			"lake_town_public_granary_sealed_after_spoiled_grain"
+		)
+	):
+		return {
+			"stage": 2,
+			"stage_count": 5,
+			"completed": false,
+			"title": "让旧铜牌开口",
+			"summary": (
+				"和陈米翻查陈家旧税契，确认公仓封存记录。"
+				if location_id == "old_chen_shop"
+				else "把验粮铜牌带回老陈铺子，请陈米辨认。"
+			),
+			"hint": "事实与物品会打开后续。",
+		}
+	return {
+		"stage": 1,
+		"stage_count": 5,
+		"completed": false,
+		"title": "调查废弃粮仓的异常",
+		"summary": (
+			"检查粮仓里的灰白粮粉，并设法带回一件能追查来历的旧物。"
+			if location_id == "abandoned_granary"
+			else "从老陈铺子前往镇外废弃粮仓，寻找粮食异样的来源。"
+		),
+		"hint": "时间会持续推进。",
+	}
+
+
+func _has_fact(
+		snapshot: Variant,
+		fact_type: String,
+		field: String = "",
+		value: String = ""
+) -> bool:
+	for fact: Dictionary in snapshot.get_facts():
+		if str(fact.get("fact_type", "")) != fact_type:
+			continue
+		if field == "" or str(fact.get(field, "")) == value:
+			return true
+	return false
+
+
+func _has_challenge_outcome(
+		snapshot: Variant,
+		challenge_id: String,
+		outcome: String
+) -> bool:
+	for fact: Dictionary in snapshot.get_facts():
+		if (
+			str(fact.get("fact_type", "")) == "actor_attempted_challenge"
+			and str(fact.get("challenge_id", "")) == challenge_id
+			and str(fact.get("outcome", "")) == outcome
+		):
+			return true
+	return false
 
 
 func _action_rows() -> Array:

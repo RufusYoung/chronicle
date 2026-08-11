@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/rebuild/v5_live_location_viewer.gd" id="1_viewer"]
 
@@ -62,6 +62,16 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleGoal"]
+bg_color = Color(0.09, 0.105, 0.1, 1)
+border_width_left = 3
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.42, 0.27, 0.85)
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
 
 [node name="V5LiveLocationViewer" type="Control"]
 layout_mode = 3
@@ -129,12 +139,13 @@ text = "CHRONICLE"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.51, 0.57, 0.56, 1)
 theme_override_font_sizes/font_size = 12
-text = "活世界地点局面 / SIM SESSION"
+text = "湖湾镇垂直切片 / INTERNAL PLAYTEST"
 
 [node name="SessionLabel" type="Label" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.68, 0.62, 1)
-text = "● 世界正在持续"
+text = "● 试玩进行中"
 
 [node name="TimeLabel" type="Label" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow"]
 unique_name_in_owner = true
@@ -151,10 +162,10 @@ text = "等待一小时"
 
 [node name="RestartButton" type="Button" parent="Margin/RootLayout/Header/HeaderMargin/HeaderRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(112, 36)
+custom_minimum_size = Vector2(132, 36)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleRestart")
-text = "重新载入局面"
+text = "重新开始试玩"
 
 [node name="MainArea" type="HBoxContainer" parent="Margin/RootLayout"]
 layout_mode = 2
@@ -193,6 +204,49 @@ bbcode_enabled = true
 fit_content = false
 
 [node name="DividerA" type="HSeparator" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
+layout_mode = 2
+
+[node name="GoalPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleGoal")
+
+[node name="GoalMargin" type="MarginContainer" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout/GoalPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 11
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="GoalLayout" type="VBoxContainer" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout/GoalPanel/GoalMargin"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="GoalProgress" type="Label" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout/GoalPanel/GoalMargin/GoalLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.72, 0.44, 1)
+theme_override_font_sizes/font_size = 12
+text = "内部试玩　目标 1 / 5"
+
+[node name="GoalTitle" type="Label" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout/GoalPanel/GoalMargin/GoalLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.85, 0.69, 1)
+theme_override_font_sizes/font_size = 15
+text = "调查废弃粮仓的异常"
+
+[node name="GoalSummary" type="RichTextLabel" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout/GoalPanel/GoalMargin/GoalLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.76, 0.77, 0.71, 1)
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="GoalDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
 layout_mode = 2
 
 [node name="RegionHeading" type="Label" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
@@ -464,3 +518,32 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 6
+
+[node name="IntroDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "CHRONICLE 内部试玩"
+dialog_text = "你是一名途经湖湾镇的旅人。\n\n这次试玩的目标，是从废弃粮仓的异样一路追到雾盐旧井，并带着一次亲历返回北埠。旅行、等待和准备都会推进世界时间，失败也可能留下伤势与长期后果。\n\n当前版本尚未接入正式存档。左侧会持续显示当前目标。"
+dialog_autowrap = true
+ok_button_text = "开始试玩"
+
+[node name="CompletionDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "这次旅程已经抵达终点"
+dialog_text = "你已经从湖湾镇的粮仓旧事追到雾盐旧井，并带着这段亲历返回北埠。\n\n内部试玩目标已经完成。你可以留在当前世界继续观察，也可以使用右上角的“重新开始试玩”体验另一条选择。"
+dialog_autowrap = true
+ok_button_text = "继续留在世界"
+
+[node name="FailureDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "这次追查在这里受挫"
+dialog_text = "你承担了失败的后果，但当前内部试玩没有另一条路线能继续抵达雾盐旧井。\n\n可以留在世界里查看伤势与局面变化，也可以重新开始，并在危险行动前先完成准备。"
+dialog_autowrap = true
+ok_button_text = "查看这次后果"
+
+[node name="RestartDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "重新开始这次试玩？"
+dialog_text = "当前行动、发现、物品、伤势和世界时间都会被清空，并回到第 1 天的老陈铺子。"
+dialog_autowrap = true
+ok_button_text = "重新开始"
+cancel_button_text = "保留当前局面"

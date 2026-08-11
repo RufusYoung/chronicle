@@ -7,11 +7,15 @@ const ViewModelModel = preload(
 
 var view_model: Variant = null
 var current_view_data: Dictionary = {}
+var _playtest_end_state := ""
 
 @onready var location_title: Label = %LocationTitle
 @onready var location_context: Label = %LocationContext
 @onready var location_description: RichTextLabel = %LocationDescription
 @onready var player_summary: RichTextLabel = %PlayerSummary
+@onready var goal_progress: Label = %GoalProgress
+@onready var goal_title: Label = %GoalTitle
+@onready var goal_summary: RichTextLabel = %GoalSummary
 @onready var region_status: RichTextLabel = %RegionStatus
 @onready var visible_people: RichTextLabel = %VisiblePeople
 @onready var visible_observations: RichTextLabel = %VisibleObservations
@@ -30,18 +34,30 @@ var current_view_data: Dictionary = {}
 @onready var investigation_bar: RichTextLabel = %InvestigationBar
 @onready var action_buttons: FlowContainer = %ActionButtons
 @onready var time_label: Label = %TimeLabel
+@onready var session_label: Label = %SessionLabel
 @onready var wait_button: Button = %WaitButton
 @onready var restart_button: Button = %RestartButton
+@onready var intro_dialog: AcceptDialog = %IntroDialog
+@onready var completion_dialog: AcceptDialog = %CompletionDialog
+@onready var failure_dialog: AcceptDialog = %FailureDialog
+@onready var restart_dialog: ConfirmationDialog = %RestartDialog
 
 
 func _ready() -> void:
 	view_model = ViewModelModel.new()
 	wait_button.pressed.connect(advance_time)
-	restart_button.pressed.connect(restart_session)
+	restart_button.pressed.connect(_request_restart)
+	restart_dialog.confirmed.connect(restart_session)
 	restart_session()
+	if DisplayServer.get_name() != "headless":
+		call_deferred("_show_intro")
 
 
 func restart_session() -> void:
+	_playtest_end_state = ""
+	completion_dialog.hide()
+	failure_dialog.hide()
+	restart_dialog.hide()
 	view_model.start()
 	refresh_view()
 
@@ -92,6 +108,7 @@ func refresh_view() -> void:
 	location_title.text = str(location.get("title", "未知地点"))
 	location_context.text = str(location.get("context", ""))
 	location_description.text = str(location.get("description", ""))
+	_refresh_playtest(current_view_data.get("playtest", {}) as Dictionary)
 
 	var player: Dictionary = current_view_data.get("player", {})
 	player_summary.text = str(player.get("summary", ""))
@@ -131,6 +148,68 @@ func refresh_view() -> void:
 
 func get_current_view_data() -> Dictionary:
 	return current_view_data.duplicate(true)
+
+
+func _refresh_playtest(playtest: Dictionary) -> void:
+	var stage := int(playtest.get("stage", 1))
+	var stage_count := int(playtest.get("stage_count", 5))
+	var completed := bool(playtest.get("completed", false))
+	var failed := bool(playtest.get("failed", false))
+	var accent_color := Color("#d1b76f")
+	var title_color := Color("#ead9ad")
+	var end_state := ""
+	if completed:
+		goal_progress.text = "内部试玩　已完成"
+		session_label.text = "● 试玩完成"
+		accent_color = Color("#8db08e")
+		title_color = Color("#b9d2b5")
+		end_state = "completed"
+	elif failed:
+		goal_progress.text = "内部试玩　本次受挫"
+		session_label.text = "● 试玩受挫"
+		accent_color = Color("#c78a6b")
+		title_color = Color("#e1b29b")
+		end_state = "failed"
+	else:
+		goal_progress.text = "内部试玩　目标 %d / %d" % [
+			stage,
+			stage_count,
+		]
+		session_label.text = "● 试玩进行中"
+	goal_title.text = str(playtest.get("title", "当前目标"))
+	goal_summary.text = "%s\n[color=#8f9c98]%s[/color]" % [
+		str(playtest.get("summary", "")),
+		str(playtest.get("hint", "")),
+	]
+	goal_progress.add_theme_color_override(
+		"font_color",
+		accent_color
+	)
+	goal_title.add_theme_color_override(
+		"font_color",
+		title_color
+	)
+	if end_state != "" and end_state != _playtest_end_state:
+		call_deferred("_show_playtest_end", end_state)
+	_playtest_end_state = end_state
+
+
+func _request_restart() -> void:
+	restart_dialog.popup_centered(Vector2i(500, 210))
+	restart_dialog.get_cancel_button().grab_focus()
+
+
+func _show_intro() -> void:
+	intro_dialog.popup_centered(Vector2i(560, 260))
+
+
+func _show_playtest_end(end_state: String) -> void:
+	if end_state != _playtest_end_state:
+		return
+	if end_state == "completed":
+		completion_dialog.popup_centered(Vector2i(560, 250))
+	elif end_state == "failed":
+		failure_dialog.popup_centered(Vector2i(560, 250))
 
 
 func _refresh_actions(actions: Array) -> void:
@@ -374,6 +453,10 @@ func _show_load_error(message: String) -> void:
 	location_context.text = ""
 	location_description.text = message
 	player_summary.text = ""
+	goal_progress.text = "内部试玩　载入失败"
+	goal_title.text = "当前无法开始"
+	goal_summary.text = message
+	session_label.text = "● 需要检查"
 	region_status.text = ""
 	visible_people.text = ""
 	visible_observations.text = ""
