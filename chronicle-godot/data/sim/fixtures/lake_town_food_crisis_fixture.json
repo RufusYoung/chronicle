@@ -682,6 +682,27 @@
   },
   "entities": [
     {
+      "id": "old_chen",
+      "location_id": "old_chen_shop",
+      "display_name": "老陈",
+      "description": "粮铺主人，既要维持生意，也要保住家里仅剩的口粮。",
+      "type": "person",
+      "tags": [
+        "person",
+        "merchant",
+        "local_family"
+      ],
+      "states": {
+        "visible": false,
+        "shop_policy": "open",
+        "decision_enabled": true,
+        "dependent_id": "chen_mi",
+        "workplace_id": "old_chen_shop",
+        "price_notice_id": "old_chen_shop_price_notice",
+        "closing_detail_id": "old_chen_shop_closing_shutters"
+      }
+    },
+    {
       "id": "chen_mi",
       "location_id": "old_chen_shop",
       "display_name": "陈米",
@@ -1103,23 +1124,7 @@
     "inventory_item_ids": []
   },
   "known_facts": [],
-  "initial_deferred_consequences": [
-    {
-      "deferred_id": "old_chen_shop_closes_after_wait",
-      "trigger_key": "after_short_wait",
-      "status": "pending",
-      "source_actor_id": "world",
-      "target_id": "old_chen_shop_price_notice",
-      "location_id": "old_chen_shop",
-      "scope_type": "location",
-      "scope_id": "old_chen_shop",
-      "trigger_template_id": "lake_town_shop_closes_after_wait_effect",
-      "notice_id": "old_chen_shop_price_notice",
-      "shop_detail_id": "old_chen_shop_closing_shutters",
-      "source_fact_type": "lake_town_food_pressure",
-      "expected_effect_hint": "shop_closes_and_price_rises"
-    }
-  ],
+  "initial_deferred_consequences": [],
   "expected_generated_actions": [
     "approach_visible_person",
     "give_food_to_hungry_person",

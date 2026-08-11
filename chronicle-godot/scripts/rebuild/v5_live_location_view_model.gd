@@ -97,7 +97,7 @@ func advance_time(hours: int = 1) -> Dictionary:
 			"index": action_history.size() + 1,
 			"event_type": "world_tick",
 			"label": "等待一小时",
-			"triggered_count": int(latest_result.get("triggered_count", 0)),
+			"triggered_count": _world_change_count(latest_result),
 			"narrative": _tick_narrative(latest_result),
 		})
 	return latest_result.duplicate(true)
@@ -130,7 +130,7 @@ func wait_until_north_quay_ferry() -> Dictionary:
 			"index": action_history.size() + 1,
 			"event_type": "ferry_wait",
 			"label": "在铺里歇到北埠早船",
-			"triggered_count": int(latest_result.get("triggered_count", 0)),
+			"triggered_count": _world_change_count(latest_result),
 			"narrative": _ferry_wait_narrative(),
 		})
 	return latest_result.duplicate(true)
@@ -813,6 +813,10 @@ func _region_status_rows(snapshot: Variant) -> Array:
 func _knowledge_rows(snapshot: Variant) -> Array:
 	var rows: Array[String] = []
 	for fact: Dictionary in snapshot.get_facts():
+		if fact.has("observed_by_player") and not bool(
+			fact.get("observed_by_player", false)
+		):
+			continue
 		var fact_type := str(fact.get("fact_type", ""))
 		var target_name := str(fact.get("target_display_name", ""))
 		if target_name == "":
@@ -1181,7 +1185,7 @@ func _travel_feedback_view() -> Dictionary:
 		"现在位于%s。" % str(destination.get("display_name", "新的地点")),
 	]
 	var tick_result: Dictionary = latest_result.get("tick_result", {})
-	if int(tick_result.get("triggered_count", 0)) > 0:
+	if _world_change_count(tick_result) > 0:
 		var tick_summary := _tick_narrative(tick_result)
 		if tick_summary != "":
 			details.append("你在路上时，原来的地方也发生了变化：%s" % tick_summary)
@@ -1202,8 +1206,7 @@ func _tick_feedback_view() -> Dictionary:
 			"details": [],
 		}
 
-	var triggered_count := int(latest_result.get("triggered_count", 0))
-	if triggered_count == 0:
+	if _world_change_count(latest_result) == 0:
 		return {
 			"status": "world_tick",
 			"title": "一小时过去",
@@ -1211,14 +1214,21 @@ func _tick_feedback_view() -> Dictionary:
 			"details": [],
 		}
 
-	var results: Array = latest_result.get("results", [])
+	var results: Array = latest_result.get(
+		"observed_autonomous_results",
+		[]
+	)
+	if results.is_empty():
+		results = latest_result.get("results", [])
 	var result_data: Dictionary = results[0] if not results.is_empty() else {}
 	var narrative: Dictionary = result_data.get("narrative_result", {})
+	var details := _tick_detail_lines(result_data)
+	details.append_array(_decision_detail_lines(latest_result))
 	return {
 		"status": "world_tick",
 		"title": str(narrative.get("title", "时间带来了变化")),
 		"body": _tick_narrative(latest_result),
-		"details": _tick_detail_lines(result_data),
+		"details": details,
 	}
 
 
@@ -1234,9 +1244,9 @@ func _ferry_wait_feedback_view() -> Dictionary:
 		"时间推进了 %d 小时" % int(latest_result.get("waited_hours", 0)),
 		"北埠摆渡现已开船（06:00 至 18:00）",
 	]
-	var triggered_count := int(latest_result.get("triggered_count", 0))
-	if triggered_count > 0:
-		details.append("等待期间发生了 %d 次世界变化" % triggered_count)
+	var world_change_count := _world_change_count(latest_result)
+	if world_change_count > 0:
+		details.append("等待期间发生了 %d 次世界变化" % world_change_count)
 	return {
 		"status": "ferry_wait",
 		"title": "天亮前的短歇",
@@ -1250,17 +1260,24 @@ func _ferry_wait_narrative() -> String:
 
 
 func _tick_narrative(result: Dictionary) -> String:
-	var entries: Array = result.get("world_log_entries", [])
-	if not entries.is_empty():
-		var entry := entries[0] as Dictionary
-		var summary := str(entry.get("narrative_summary", ""))
-		if summary != "":
-			return summary
-	var results: Array = result.get("results", [])
-	if not results.is_empty():
-		var result_data := results[0] as Dictionary
+	var summaries: Array[String] = []
+	var results: Array = (
+		result.get("results", []) as Array
+	).duplicate(true)
+	results.append_array(result.get("observed_autonomous_results", []))
+	for result_value: Variant in results:
+		if not (result_value is Dictionary):
+			continue
+		var result_data := result_value as Dictionary
 		var narrative: Dictionary = result_data.get("narrative_result", {})
-		return str(narrative.get("summary", ""))
+		var summary := str(narrative.get("summary", ""))
+		if summary != "":
+			summaries.append(summary)
+	if not summaries.is_empty():
+		return " | ".join(summaries)
+	var entries: Array = result.get("world_log_entries", [])
+	if not entries.is_empty() and int(result.get("triggered_count", 0)) > 0:
+		return str((entries[0] as Dictionary).get("narrative_summary", ""))
 	return ""
 
 
@@ -1274,6 +1291,34 @@ func _tick_detail_lines(result_data: Dictionary) -> Array:
 	if not (result_data.get("facts_added", []) as Array).is_empty():
 		rows.append("这次变化已经成为可追溯的世界事实")
 	return rows
+
+
+func _decision_detail_lines(result: Dictionary) -> Array:
+	var rows: Array[String] = []
+	var decisions: Array = result.get("autonomous_decisions", [])
+	if decisions.is_empty():
+		return rows
+	var decision := decisions[0] as Dictionary
+	var actor_name := _entity_name(str(decision.get("actor_id", "")))
+	rows.append("这是%s根据当前处境自行作出的决定" % actor_name)
+	var factors: Array = decision.get("matched_factors", [])
+	for factor_value: Variant in factors:
+		if not (factor_value is Dictionary):
+			continue
+		var label := str((factor_value as Dictionary).get("label", ""))
+		if label != "":
+			rows.append("促成决定：%s" % label)
+	return rows
+
+
+func _world_change_count(result: Dictionary) -> int:
+	return (
+		int(result.get("triggered_count", 0))
+		+ int(result.get(
+			"observed_autonomous_decision_count",
+			0
+		))
+	)
 
 
 func _result_narrative(result: Dictionary) -> String:
@@ -1605,7 +1650,8 @@ func _fact_text(
 		"actor_found_lu_huai_last_inspection_record": "你在北埠旧档房找到了陆槐最后一页验粮簿。",
 		"lu_huai_record_claimed_spoilage_was_not_mold": "陆槐的旧记录声称，那批粮里的白丝“不是霉”。",
 		"lu_huai_recorded_departure_for_mist_salt_well": "陆槐留下前往雾盐旧井的日期，此后没有回档记录。",
-		"old_chen_shop_closed_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
+		"merchant_closed_shop_early": "你亲眼看到老陈铺子提前收门，涨价告示也被再次改高。",
+		"merchant_kept_shop_open": "陈米的饥饿缓和后，老陈决定暂时不收铺。",
 	}.get(fact_type, "你确认了一条与此地有关的事实。")
 
 

@@ -4,7 +4,11 @@ class_name V5SimSnapshotBuilder
 const SimSnapshotModel = preload("res://scripts/sim/core/sim_snapshot.gd")
 
 
-func build_snapshot(context: Variant, stores: Dictionary) -> Variant:
+func build_snapshot(
+		context: Variant,
+		stores: Dictionary,
+		include_all_entities: bool = false
+) -> Variant:
 	var state_store: Variant = stores.get("state_store")
 	var relationship_store: Variant = stores.get("relationship_store")
 	var memory_store: Variant = stores.get("memory_store")
@@ -24,7 +28,10 @@ func build_snapshot(context: Variant, stores: Dictionary) -> Variant:
 		states = state_store.states.duplicate(true)
 
 	var source_entities: Array = context.entities
-	if context.has_method("get_entities_at_location"):
+	if (
+		not include_all_entities
+		and context.has_method("get_entities_at_location")
+	):
 		source_entities = context.get_entities_at_location(context.location_id)
 	var entities := _entities_with_states(source_entities, states)
 	var player: Dictionary = context.player.duplicate(true)

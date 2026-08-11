@@ -82,12 +82,12 @@ func _run() -> void:
 	_check(
 		feedback_title.text == "镇外小路"
 		and "原来的地方也发生了变化" in feedback_body.text
-		and "准备提前收铺" in feedback_body.text,
+		and "决定再做一阵生意" in feedback_body.text,
 		"6. Travel feedback includes the world change that happened en route"
 	)
 	_check(
 		"完成过一段需要时间和食物的旅程" in knowledge.text
-		and "老陈铺子提前收门" in knowledge.text,
+		and "老陈决定暂时不收铺" in knowledge.text,
 		"7. Travel and source-location consequences enter player knowledge"
 	)
 	_check(
@@ -122,10 +122,10 @@ func _run() -> void:
 		"10. Return trip restores the shop projection and consumes resources"
 	)
 	_check(
-		"半掩的门板" in observations.text
-		and "刚被再次改高" in observations.text
+		"半掩的门板" not in observations.text
+		and "刚被再次改高" not in observations.text
 		and "裂开的粮仓门" not in observations.text,
-		"11. Shop changes persist after a complete round trip"
+		"11. The shop remains open after the helped-family round trip"
 	)
 
 	outbound_button = _find_travel_button(travel_buttons, OUTBOUND_ROUTE)

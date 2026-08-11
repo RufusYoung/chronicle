@@ -5,11 +5,20 @@ const SimSnapshotBuilderModel = preload("res://scripts/sim/core/sim_snapshot_bui
 const SimWorldLogModel = preload("res://scripts/sim/core/sim_world_log.gd")
 const ConsequenceTriggerSystemModel = preload("res://scripts/sim/consequence/consequence_trigger_system.gd")
 const DueTriggerSystemModel = preload("res://scripts/sim/consequence/due_trigger_system.gd")
+const NpcDecisionSystemModel = preload(
+	"res://scripts/sim/npc/npc_decision_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
 const SOURCE := "WorldTickAdapter"
+
+var autonomous_action_rules: Array = []
+
+
+func configure_autonomous_actions(rules: Array) -> void:
+	autonomous_action_rules = rules.duplicate(true)
 
 
 func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictionary) -> Dictionary:
@@ -64,6 +73,11 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var snapshot = snapshot_builder.build_snapshot(context, stores)
 	var transaction_results: Array = []
 	var due_results: Array = []
+	var autonomous_results: Array = []
+	var autonomous_decisions: Array = []
+	var observed_autonomous_results: Array = []
+	var observed_autonomous_decisions: Array = []
+	var autonomous_actor_count := 0
 	var obligation_due_count := 0
 	var exchange_due_count := 0
 
@@ -88,6 +102,36 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		for due_result: Variant in due_results:
 			writer.apply_result(due_result, stores)
 
+	if not autonomous_action_rules.is_empty():
+		var decision_snapshot = snapshot_builder.build_snapshot(
+			context,
+			stores,
+			true
+		)
+		var decision_system = NpcDecisionSystemModel.new()
+		var decision_data: Dictionary = decision_system.resolve_tick(
+			decision_snapshot,
+			autonomous_action_rules,
+			event
+		)
+		autonomous_results = decision_data.get("results", [])
+		autonomous_decisions = decision_data.get("decisions", [])
+		autonomous_actor_count = int(decision_data.get("actor_count", 0))
+		for index: int in range(autonomous_results.size()):
+			var autonomous_result: Variant = autonomous_results[index]
+			writer.apply_result(autonomous_result, stores)
+			if (
+				index < autonomous_decisions.size()
+				and bool((autonomous_decisions[index] as Dictionary).get(
+					"observed_by_player",
+					false
+				))
+			):
+				observed_autonomous_results.append(autonomous_result)
+				observed_autonomous_decisions.append(
+					autonomous_decisions[index]
+				)
+
 	var skipped_count := (
 		skipped_due_to_scope_count
 		+ skipped_due_to_status_count
@@ -95,6 +139,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	)
 	var tick_log_results := transaction_results.duplicate()
 	tick_log_results.append_array(due_results)
+	tick_log_results.append_array(autonomous_results)
 	world_log.append_entry(_build_tick_log_entry(
 		event,
 		tick_log_results,
@@ -109,7 +154,9 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		[],
 		obligation_due_count,
 		exchange_due_count,
-		due_results
+		due_results,
+		autonomous_actor_count,
+		autonomous_decisions
 	))
 
 	return {
@@ -132,9 +179,22 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"obligation_due_count": obligation_due_count,
 		"exchange_due_count": exchange_due_count,
 		"due_result_count": due_results.size(),
+		"autonomous_actor_count": autonomous_actor_count,
+		"autonomous_decision_count": autonomous_decisions.size(),
+		"autonomous_decisions": autonomous_decisions.duplicate(true),
+		"observed_autonomous_decision_count": (
+			observed_autonomous_decisions.size()
+		),
+		"observed_autonomous_decisions": (
+			observed_autonomous_decisions.duplicate(true)
+		),
 		"error_reason": "",
 		"results": _result_rows(transaction_results),
 		"due_results": _result_rows(due_results),
+		"autonomous_results": _result_rows(autonomous_results),
+		"observed_autonomous_results": _result_rows(
+			observed_autonomous_results
+		),
 		"world_log_entries": world_log.list_entries(),
 		"world_log_summary": world_log.summary(),
 		"store_summary": _store_summary(stores),
@@ -182,11 +242,18 @@ func _failure_result(
 		"obligation_due_count": 0,
 		"exchange_due_count": 0,
 		"due_result_count": 0,
+		"autonomous_actor_count": 0,
+		"autonomous_decision_count": 0,
+		"autonomous_decisions": [],
+		"observed_autonomous_decision_count": 0,
+		"observed_autonomous_decisions": [],
 		"error_reason": error_reason,
 		"validation_errors": validation_errors.duplicate(true),
 		"validation_warnings": validation_warnings.duplicate(true),
 		"results": [],
 		"due_results": [],
+		"autonomous_results": [],
+		"observed_autonomous_results": [],
 		"world_log_entries": world_log.list_entries(),
 		"world_log_summary": world_log.summary(),
 		"store_summary": _store_summary(stores),
@@ -207,7 +274,9 @@ func _build_tick_log_entry(
 	validation_warnings: Array = [],
 	obligation_due_count: int = 0,
 	exchange_due_count: int = 0,
-	due_results: Array = []
+	due_results: Array = [],
+	autonomous_actor_count: int = 0,
+	autonomous_decisions: Array = []
 ) -> Dictionary:
 	var aggregate := _aggregate_results(results)
 	var pressure_changes: Array = aggregate.get("pressure_changes", [])
@@ -249,6 +318,12 @@ func _build_tick_log_entry(
 		"exchange_due_count": exchange_due_count,
 		"due_result_count": due_results.size(),
 		"due_results": _result_rows(due_results),
+		"autonomous_actor_count": autonomous_actor_count,
+		"autonomous_decision_count": autonomous_decisions.size(),
+		"autonomous_decisions": autonomous_decisions.duplicate(true),
+		"observed_autonomous_decision_count": _observed_decision_count(
+			autonomous_decisions
+		),
 		"facts_added": _fact_types(aggregate.get("facts", [])),
 		"fact_ids": _fact_ids(aggregate.get("facts", [])),
 		"pressure_changes": pressure_changes.duplicate(true),
@@ -413,6 +488,14 @@ func _narrative_summary(narrative_result: Dictionary) -> String:
 	if narrative_result.has("summary"):
 		return str(narrative_result.get("summary", ""))
 	return str(narrative_result.get("body", ""))
+
+
+func _observed_decision_count(decisions: Array) -> int:
+	var count := 0
+	for decision: Dictionary in decisions:
+		if bool(decision.get("observed_by_player", false)):
+			count += 1
+	return count
 
 
 func _store_summary(stores: Dictionary) -> Dictionary:

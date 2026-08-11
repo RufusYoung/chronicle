@@ -44,6 +44,9 @@ const DeferredConsequenceStoreModel = preload(
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
 )
+const AUTONOMOUS_ACTION_RULES_PATH := (
+	"res://data/sim/raw/npc_action_rules/basic_npc_action_rules.json"
+)
 
 var registry: Variant = null
 var context: Variant = null
@@ -59,6 +62,7 @@ var challenge_resolver: Variant = null
 var return_echo_resolver: Variant = null
 var investigation_resolver: Variant = null
 var world_tick_adapter: Variant = null
+var autonomous_action_rules: Array = []
 var travel_routes: Array = []
 var challenge_definitions: Array = []
 var return_echo_definitions: Array = []
@@ -113,6 +117,18 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	investigation_definitions = (
 		fixture.get("investigations", []) as Array
 	).duplicate(true)
+	var autonomous_rule_data: Dictionary = registry.load_json(
+		AUTONOMOUS_ACTION_RULES_PATH
+	)
+	autonomous_action_rules = (
+		autonomous_rule_data.get("rules", []) as Array
+	).duplicate(true)
+	autonomous_action_rules.append_array(
+		(fixture.get("autonomous_action_rules", []) as Array).duplicate(true)
+	)
+	world_tick_adapter.configure_autonomous_actions(
+		autonomous_action_rules
+	)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	_create_stores(fixture)
 	initialized = true
@@ -123,6 +139,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"challenge_definition_count": challenge_definitions.size(),
 		"return_echo_definition_count": return_echo_definitions.size(),
 		"investigation_definition_count": investigation_definitions.size(),
+		"autonomous_action_rule_count": autonomous_action_rules.size(),
 		"candidate_count": get_action_candidates().size(),
 		"time": get_time_summary(),
 	}
@@ -1013,6 +1030,7 @@ func _reset_runtime() -> void:
 	return_echo_resolver = ReturnEchoResolverModel.new()
 	investigation_resolver = InvestigationResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
+	autonomous_action_rules = []
 	travel_routes = []
 	challenge_definitions = []
 	return_echo_definitions = []

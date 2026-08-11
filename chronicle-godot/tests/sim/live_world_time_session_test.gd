@@ -27,14 +27,15 @@ func _run() -> void:
 	_check(
 		bool(start_result.get("success", false))
 		and int(session.get_time_summary().get("day", 0)) == 1
-		and int(session.get_time_summary().get("hour", -1)) == 10,
+		and int(session.get_time_summary().get("hour", -1)) == 10
+		and int(start_result.get("autonomous_action_rule_count", 0)) == 2,
 		"1. SimSession 从 fixture 载入世界时间"
 	)
 	_check(
 		session.stores["deferred_consequence_store"]
 			.find_pending_consequences()
-			.size() == 1,
-		"2. fixture 可以为持续世界声明初始延迟后果"
+			.is_empty(),
+		"2. 粮铺变化不再声明为固定延迟后果"
 	)
 	_check(
 		not bool(session.get_snapshot().get_entity_state(
@@ -52,9 +53,14 @@ func _run() -> void:
 	)
 	_check(
 		bool(tick_result.get("success", false))
-		and int(tick_result.get("matched_count", 0)) == 1
-		and int(tick_result.get("triggered_count", 0)) == 1,
-		"4. advance_time 通过 WorldTickAdapter 触发匹配后果"
+		and int(tick_result.get("matched_count", -1)) == 0
+		and int(tick_result.get("triggered_count", -1)) == 0
+		and int(tick_result.get("autonomous_decision_count", 0)) == 1
+		and str((tick_result.get("autonomous_decisions", [])[0] as Dictionary).get(
+			"rule_id",
+			""
+		)) == "merchant_rations_stock_for_hungry_dependent",
+		"4. advance_time 让老陈根据共享状态自主选择保粮收铺"
 	)
 	_check(
 		int(session.get_time_summary().get("hour", -1)) == 11
@@ -82,7 +88,7 @@ func _run() -> void:
 			"market_shortage"
 		) == 10
 		and not session.stores["fact_store"].find_facts_by_type(
-			"old_chen_shop_closed_early"
+			"merchant_closed_shop_early"
 		).is_empty(),
 		"7. 世界 Tick 写入粮食压力和可追溯事实"
 	)
@@ -92,6 +98,10 @@ func _run() -> void:
 		and int(session.get_world_log_summary().get(
 			"triggered_deferred_count",
 			0
+		)) == 0
+		and int(session.get_world_log_summary().get(
+			"autonomous_decision_count",
+			0
 		)) == 1,
 		"8. Tick 日志并入持久 Session WorldLog"
 	)
@@ -100,6 +110,7 @@ func _run() -> void:
 	_check(
 		bool(second_tick.get("success", false))
 		and int(second_tick.get("triggered_count", -1)) == 0
+		and int(second_tick.get("autonomous_decision_count", -1)) == 0
 		and int(session.get_time_summary().get("hour", -1)) == 12
 		and int(session.get_time_summary().get("elapsed_hours", -1)) == 2,
 		"9. 后果只触发一次，但世界时间可以继续前进"
@@ -110,7 +121,7 @@ func _run() -> void:
 			"market_shortage"
 		) == 10
 		and session.stores["fact_store"].find_facts_by_type(
-			"old_chen_shop_closed_early"
+			"merchant_closed_shop_early"
 		).size() == 1,
 		"10. 重复等待不会复制已触发的事实和压力"
 	)
@@ -159,8 +170,9 @@ func _run() -> void:
 		and int(session.get_time_summary().get("world_tick_count", -1)) == 0
 		and session.stores["deferred_consequence_store"]
 			.find_pending_consequences()
-			.size() == 1,
-		"14. 重载 fixture 会重置时钟并恢复初始延迟后果"
+			.is_empty()
+		and session.autonomous_action_rules.size() == 2,
+		"14. 重载 fixture 会重置时钟并恢复 NPC 行动规则"
 	)
 
 	_finish()

@@ -1,0 +1,240 @@
+{
+  "rules": [
+    {
+      "rule_id": "merchant_rations_stock_for_hungry_dependent",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "merchant",
+          "local_family"
+        ],
+        "state_equals": {
+          "decision_enabled": true
+        }
+      },
+      "bindings": {
+        "dependent_id": {
+          "source": "actor_state",
+          "key": "dependent_id"
+        },
+        "workplace_id": {
+          "source": "actor_state",
+          "key": "workplace_id"
+        },
+        "price_notice_id": {
+          "source": "actor_state",
+          "key": "price_notice_id"
+        },
+        "closing_detail_id": {
+          "source": "actor_state",
+          "key": "closing_detail_id"
+        },
+        "dependent_display_name": {
+          "source": "entity_display_name",
+          "entity_id": "{dependent_id}"
+        }
+      },
+      "once_fact_type": "merchant_closed_shop_early",
+      "minimum_utility": 60,
+      "priority": 20,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "shop_policy",
+          "not_equals": "closed"
+        }
+      ],
+      "utility_factors": [
+        {
+          "factor_id": "regional_food_pressure",
+          "label": "镇上的粮食压力很高",
+          "weight": 35,
+          "condition": {
+            "source": "region_state",
+            "key": "food_pressure",
+            "in": [
+              "high",
+              "extreme"
+            ]
+          }
+        },
+        {
+          "factor_id": "dependent_is_hungry",
+          "label": "{dependent_display_name}仍在挨饿",
+          "weight": 40,
+          "condition": {
+            "source": "entity_state",
+            "entity_id": "{dependent_id}",
+            "key": "hunger",
+            "in": [
+              "high",
+              "extreme"
+            ]
+          }
+        },
+        {
+          "factor_id": "market_order_is_tense",
+          "label": "市场秩序紧张",
+          "weight": 5,
+          "condition": {
+            "source": "institution",
+            "key": "market_order",
+            "equals": "tense"
+          }
+        }
+      ],
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "merchant_closed_shop_early:{actor_id}:{tick_event_id}",
+            "fact_type": "merchant_closed_shop_early",
+            "actor_id": "{actor_id}",
+            "target_id": "{workplace_id}",
+            "location_id": "{location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "{actor_display_name}在缺粮和家人挨饿的压力下提前收铺。"
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "shop_policy",
+            "to": "rationing",
+            "reason": "protect_household_food"
+          },
+          {
+            "entity_id": "{price_notice_id}",
+            "key": "price_level",
+            "to": "raised_again",
+            "reason": "merchant_rations_scarce_stock"
+          },
+          {
+            "entity_id": "{closing_detail_id}",
+            "key": "visible",
+            "to": true,
+            "reason": "merchant_closes_shop_early"
+          }
+        ],
+        "pressure_changes": [
+          {
+            "pressure_id": "merchant_early_closing:{actor_id}:{tick_event_id}",
+            "scope_id": "{workplace_id}",
+            "scope_type": "location",
+            "domain": "food_crisis",
+            "pressure_type": "market_shortage",
+            "value": 10,
+            "source_fact_type": "merchant_closed_shop_early"
+          }
+        ],
+        "narrative": {
+          "title": "铺子提前收门",
+          "summary": "{dependent_display_name}还饿着，街上的粮价也在往上窜。{actor_display_name}从后屋拖出门板，准备提前收铺；他要把今天能卖的份额留给家里。",
+          "tone": "uneasy"
+        }
+      }
+    },
+    {
+      "rule_id": "merchant_keeps_trading_after_dependent_hunger_eases",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "merchant",
+          "local_family"
+        ],
+        "state_equals": {
+          "decision_enabled": true
+        }
+      },
+      "bindings": {
+        "dependent_id": {
+          "source": "actor_state",
+          "key": "dependent_id"
+        },
+        "workplace_id": {
+          "source": "actor_state",
+          "key": "workplace_id"
+        },
+        "dependent_display_name": {
+          "source": "entity_display_name",
+          "entity_id": "{dependent_id}"
+        }
+      },
+      "once_fact_type": "merchant_kept_shop_open",
+      "minimum_utility": 50,
+      "priority": 10,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "key": "shop_policy",
+          "equals": "open"
+        }
+      ],
+      "utility_factors": [
+        {
+          "factor_id": "dependent_hunger_eased",
+          "label": "{dependent_display_name}的饥饿已经缓和",
+          "weight": 40,
+          "condition": {
+            "source": "entity_state",
+            "entity_id": "{dependent_id}",
+            "key": "hunger",
+            "in": [
+              "medium",
+              "low",
+              "none"
+            ]
+          }
+        },
+        {
+          "factor_id": "shop_income_matters",
+          "label": "继续营业能换回下一批粮",
+          "weight": 15,
+          "condition": {
+            "source": "entity_state",
+            "key": "shop_policy",
+            "equals": "open"
+          }
+        },
+        {
+          "factor_id": "customers_still_need_food",
+          "label": "镇上仍有人等着买粮",
+          "weight": 10,
+          "condition": {
+            "source": "region_state",
+            "key": "food_pressure",
+            "in": [
+              "high",
+              "extreme"
+            ]
+          }
+        }
+      ],
+      "effects": {
+        "facts": [
+          {
+            "fact_id": "merchant_kept_shop_open:{actor_id}:{tick_event_id}",
+            "fact_type": "merchant_kept_shop_open",
+            "actor_id": "{actor_id}",
+            "target_id": "{workplace_id}",
+            "location_id": "{location_id}",
+            "source_rule_id": "{rule_id}",
+            "summary": "家里的饥饿缓和后，{actor_display_name}决定继续营业。"
+          }
+        ],
+        "state_changes": [
+          {
+            "entity_id": "{actor_id}",
+            "key": "shop_policy",
+            "to": "open",
+            "reason": "family_hunger_eased"
+          }
+        ],
+        "narrative": {
+          "title": "门板留在后屋",
+          "summary": "{dependent_display_name}的饥色缓下来，包好的食物也还留着一半。{actor_display_name}看了看见底的粮罐，没有去拖门板，决定再做一阵生意。",
+          "tone": "cautious_relief"
+        }
+      }
+    }
+  ]
+}

@@ -55,7 +55,9 @@ func _run() -> void:
 	_check(
 		feedback_title.text == "铺子提前收门"
 		and "老陈从后屋拖出门板" in feedback_body.text
-		and "粮食压力继续上升" in feedback_body.text,
+		and "粮食压力继续上升" in feedback_body.text
+		and "老陈根据当前处境自行作出的决定" in feedback_body.text
+		and "陈米仍在挨饿" in feedback_body.text,
 		"5. 玩家在现场收到世界自主变化的叙事和原因"
 	)
 	_check(
@@ -80,7 +82,7 @@ func _run() -> void:
 		"12:00" in time_label.text
 		and "这里没有立刻显现出新的变化" in feedback_body.text
 		and viewer.view_model.session.stores["fact_store"]
-			.find_facts_by_type("old_chen_shop_closed_early")
+			.find_facts_by_type("merchant_closed_shop_early")
 			.size() == 1,
 		"9. 再次等待继续走时钟，但不会复制一次性后果"
 	)
@@ -94,6 +96,35 @@ func _run() -> void:
 		and "还没有发生行动" in history_text.text,
 		"10. 重载局面会恢复初始时间和待触发世界状态"
 	)
+
+	var give_food_button := _find_action_button(
+		action_buttons,
+		GIVE_FOOD_ACTION
+	)
+	_check(give_food_button != null, "11. 重载后仍可先改变陈米的饥饿状态")
+	if give_food_button != null:
+		give_food_button.pressed.emit()
+		await process_frame
+		wait_button.pressed.emit()
+		await process_frame
+		_check(
+			"11:00" in time_label.text
+			and feedback_title.text == "门板留在后屋"
+			and "决定再做一阵生意" in feedback_body.text
+			and "陈米的饥饿已经缓和" in feedback_body.text
+			and "半掩的门板" not in observations.text,
+			"12. 同一次等待会因共享状态不同而呈现继续营业"
+		)
+		_check(
+			viewer.view_model.session.stores["fact_store"]
+				.find_facts_by_type("merchant_kept_shop_open")
+				.size() == 1
+			and viewer.view_model.session.stores["fact_store"]
+				.find_facts_by_type("merchant_closed_shop_early")
+				.is_empty()
+			and "老陈决定暂时不收铺" in knowledge_text.text,
+			"13. UI 展示的是另一条世界事实，不是替换措辞后的同一结局"
+		)
 
 	viewer.queue_free()
 	await process_frame

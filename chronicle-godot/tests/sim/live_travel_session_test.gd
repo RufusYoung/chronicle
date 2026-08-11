@@ -66,11 +66,14 @@ func _run() -> void:
 		"4. Travel consumes four hours and one food before switching location"
 	)
 	_check(
-		int(outbound.get("tick_result", {}).get("triggered_count", 0)) == 1
+		int(outbound.get("tick_result", {}).get(
+			"autonomous_decision_count",
+			0
+		)) == 1
 		and session.stores["fact_store"].find_facts_by_type(
-			"old_chen_shop_closed_early"
+			"merchant_kept_shop_open"
 		).size() == 1,
-		"5. Travel triggers due source-location world changes"
+		"5. Travel gives the helped family time to choose continued trade"
 	)
 	_check(
 		session.stores["fact_store"].find_facts_by_type(
@@ -130,7 +133,7 @@ func _run() -> void:
 		"11. Return travel consumes the remaining food and restores shop view"
 	)
 	_check(
-		bool(returned_snapshot.get_entity_state(
+		not bool(returned_snapshot.get_entity_state(
 			"old_chen_shop_closing_shutters",
 			"visible",
 			false
@@ -139,11 +142,14 @@ func _run() -> void:
 			"old_chen_shop_price_notice",
 			"price_level",
 			""
-		)) == "raised_again"
+		)) != "raised_again"
+		and session.stores["fact_store"].find_facts_by_type(
+			"merchant_kept_shop_open"
+		).size() == 1
 		and returned_snapshot.get_entity(
 			"abandoned_granary_broken_door"
 		).is_empty(),
-		"12. Returning preserves prior shop changes without leaking granary entities"
+		"12. Returning preserves the keep-open decision without leaking granary entities"
 	)
 
 	var blocked_option: Dictionary = session.get_travel_options()[0]

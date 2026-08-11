@@ -78,6 +78,8 @@ func summary() -> Dictionary:
 	var obligation_due_count := 0
 	var exchange_due_count := 0
 	var due_result_count := 0
+	var autonomous_decision_count := 0
+	var observed_autonomous_decision_count := 0
 	var due_resolution_count := 0
 	var obligation_fulfilled_count := 0
 	var obligation_breached_count := 0
@@ -131,6 +133,12 @@ func summary() -> Dictionary:
 			obligation_due_count += int(entry.get("obligation_due_count", 0))
 			exchange_due_count += int(entry.get("exchange_due_count", 0))
 			due_result_count += int(entry.get("due_result_count", 0))
+			autonomous_decision_count += int(
+				entry.get("autonomous_decision_count", 0)
+			)
+			observed_autonomous_decision_count += int(
+				entry.get("observed_autonomous_decision_count", 0)
+			)
 		if str(entry.get("entry_type", "")) == "due_resolution":
 			due_resolution_count += 1
 			var resolution := str(entry.get("resolution", entry.get("resolution_status", "")))
@@ -181,6 +189,10 @@ func summary() -> Dictionary:
 		"obligation_due_count": obligation_due_count,
 		"exchange_due_count": exchange_due_count,
 		"due_result_count": due_result_count,
+		"autonomous_decision_count": autonomous_decision_count,
+		"observed_autonomous_decision_count": (
+			observed_autonomous_decision_count
+		),
 		"due_resolution_count": due_resolution_count,
 		"obligation_fulfilled_count": obligation_fulfilled_count,
 		"obligation_breached_count": obligation_breached_count,
