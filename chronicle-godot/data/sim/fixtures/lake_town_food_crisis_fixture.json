@@ -690,6 +690,7 @@
       "tags": [
         "person",
         "merchant",
+        "food_supplier",
         "local_family",
         "living_needs"
       ],
@@ -769,6 +770,49 @@
         "visible": false,
         "spoiled": "high",
         "owned": "old_chen_family"
+      }
+    },
+    {
+      "id": "market_porter",
+      "location_id": "old_chen_shop",
+      "display_name": "周拓",
+      "description": "替市场搬货的脚夫，肩头常搭着一截旧麻绳。他按船期找活，哪里还有便宜吃食，也往往比旁人早知道半天。",
+      "type": "person",
+      "tags": [
+        "person",
+        "market_worker",
+        "livelihood_worker",
+        "living_needs",
+        "food_buyer"
+      ],
+      "states": {
+        "visible": true,
+        "hunger": "low",
+        "hunger_elapsed_hours": 0,
+        "hunger_interval_hours": 4,
+        "food_stock": 0,
+        "coin_count": 1,
+        "away_from_home": false,
+        "work_readiness": "resting",
+        "work_elapsed_hours": 0,
+        "work_interval_hours": 6,
+        "home_location_id": "old_chen_shop",
+        "home_location_name": "市场街",
+        "food_supplier_id": "north_quay_net_mender",
+        "food_supplier_location_id": "north_quay_record_house",
+        "food_supplier_is_home": false,
+        "alternate_food_supplier_id": "old_chen",
+        "alternate_food_supplier_location_id": "old_chen_shop",
+        "alternate_supplier_is_home": true,
+        "duty_label": "搬运粮袋"
+      },
+      "interactions": {
+        "approach_visible_person": {
+          "label_template": "和脚夫周拓说话",
+          "result_title": "等下一批船货的脚夫",
+          "result_summary": "周拓把麻绳在掌心绕了一圈。他说北埠的石苇偶尔会把鲜鱼留给熟客，但潮水、粮价和人的肚子从不按同一张表走。",
+          "hint": "打听市场和北埠之间的食物来路。"
+        }
       }
     },
     {
@@ -920,6 +964,7 @@
         "person",
         "record_keeper",
         "north_quay_local",
+        "livelihood_worker",
         "living_needs",
         "food_buyer"
       ],
@@ -930,10 +975,18 @@
         "hunger_interval_hours": 3,
         "food_stock": 0,
         "coin_count": 1,
+        "away_from_home": false,
+        "work_readiness": "resting",
+        "work_elapsed_hours": 0,
+        "work_interval_hours": 8,
         "home_location_id": "north_quay_record_house",
         "home_location_name": "北埠旧档房",
         "food_supplier_id": "old_chen",
         "food_supplier_location_id": "old_chen_shop",
+        "food_supplier_is_home": false,
+        "alternate_food_supplier_id": "north_quay_net_mender",
+        "alternate_food_supplier_location_id": "north_quay_record_house",
+        "alternate_supplier_is_home": true,
         "duty_label": "守档"
       },
       "interactions": {
@@ -942,6 +995,35 @@
           "result_title": "晒卷绳下的守档人",
           "result_summary": "闻简没有停下补纸，只把一只空木匣推给你。陆槐最后一页不在目录里，要找，只能等潮线退下去后亲自进封存层。",
           "hint": "先听守档人说明那页失踪记录的去向。"
+        }
+      }
+    },
+    {
+      "id": "north_quay_net_mender",
+      "location_id": "north_quay_record_house",
+      "display_name": "石苇",
+      "description": "住在北埠的渔妇，常把补好的细网晾在档房外廊。她不保证每天有鱼，只在潮水合适、鱼篓装得下时留出几份。",
+      "type": "person",
+      "tags": [
+        "person",
+        "north_quay_local",
+        "food_supplier",
+        "food_producer"
+      ],
+      "states": {
+        "visible": true,
+        "food_stock": 0,
+        "shop_policy": "open",
+        "production_readiness": "resting",
+        "production_elapsed_hours": 0,
+        "production_interval_hours": 4
+      },
+      "interactions": {
+        "approach_visible_person": {
+          "label_template": "问石苇今天有没有鱼",
+          "result_title": "靠潮水吃饭的人",
+          "result_summary": "石苇没有先回答，只用拇指按了按湿网结。潮水合适时鱼篓会有收获，空手回来时，再多零钱也买不到湖里没有的东西。",
+          "hint": "了解北埠这处不稳定的食物来源。"
         }
       }
     },

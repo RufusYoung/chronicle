@@ -40,6 +40,7 @@ func _run() -> void:
 	var knowledge_text := viewer.get_node("%KnowledgeText") as RichTextLabel
 	var history_text := viewer.get_node("%HistoryText") as RichTextLabel
 	var action_buttons := viewer.get_node("%ActionButtons") as FlowContainer
+	var intro_dialog := viewer.get_node("%IntroDialog") as AcceptDialog
 
 	_check(
 		location_title.text == "老陈铺子"
@@ -65,6 +66,10 @@ func _run() -> void:
 		and _find_action_button(action_buttons, INSPECT_TRACE_ACTION) != null,
 		"5. 底部按钮由 SimSession 当前候选动态生成"
 	)
+	_check(
+		not intro_dialog.visible,
+		"6. 开场不再用模态说明阻塞首次行动"
+	)
 
 	var give_button := _find_action_button(action_buttons, GIVE_FOOD_ACTION)
 	(give_button as Button).pressed.emit()
@@ -72,17 +77,17 @@ func _run() -> void:
 	_check(
 		"食物　2 份" in player_summary.text
 		and "饥饿：缓和" in visible_people.text,
-		"6. 点击给食物后，玩家和陈米的持续状态立即刷新"
+		"7. 点击给食物后，玩家和陈米的持续状态立即刷新"
 	)
 	_check(
 		"戒备已经没有先前那么重" in feedback_body.text
 		and "随身食物 -1" in feedback_body.text
 		and "感激 +15" in feedback_body.text,
-		"7. 结算叙事与关键状态、关系变化一起反馈"
+		"8. 结算叙事与关键状态、关系变化一起反馈"
 	)
 	_check(
 		_find_action_button(action_buttons, GIVE_FOOD_ACTION) == null,
-		"8. 陈米不再严重饥饿后，过期的给食物按钮消失"
+		"9. 陈米不再严重饥饿后，过期的给食物按钮消失"
 	)
 
 	var stale_result: Dictionary = viewer.perform_action(GIVE_FOOD_ACTION)
@@ -91,7 +96,7 @@ func _run() -> void:
 		not bool(stale_result.get("success", true))
 		and "局面已经变化" in feedback_body.text
 		and viewer.view_model.session.get_world_log_entries().size() == 1,
-		"9. 旧行动即使被外部重复调用也不会污染世界日志"
+		"10. 旧行动即使被外部重复调用也不会污染世界日志"
 	)
 
 	viewer.perform_action(READ_NOTICE_ACTION)
@@ -100,14 +105,14 @@ func _run() -> void:
 	_check(
 		"你读过涨价告示" in knowledge_text.text
 		and "你检查过灰白粮粉" in knowledge_text.text,
-		"10. 连续调查会把已确认事实投影到认知栏"
+		"11. 连续调查会把已确认事实投影到认知栏"
 	)
 	_check(
 		"递给陈米 1 份食物" in history_text.text
 		and "读涨价告示" in history_text.text
 		and "检查柜脚旁的灰白粮粉" in history_text.text
 		and "来源不在这间铺子里" in history_text.text,
-		"11. 玩家看到的是连续行动历史，不是一次性测试输出"
+		"12. 玩家看到的是连续行动历史，不是一次性测试输出"
 	)
 
 	var visible_ui_text := "\n".join([
@@ -124,7 +129,7 @@ func _run() -> void:
 		"actor_" not in visible_ui_text
 		and "effect_template" not in visible_ui_text
 		and "candidate_only" not in visible_ui_text,
-		"12. 模拟内部标识没有泄漏到玩家界面"
+		"13. 模拟内部标识没有泄漏到玩家界面"
 	)
 
 	viewer.restart_session()
@@ -134,7 +139,7 @@ func _run() -> void:
 		and "饥饿：严重" in visible_people.text
 		and "还没有发生行动" in history_text.text
 		and _find_action_button(action_buttons, GIVE_FOOD_ACTION) != null,
-		"13. 独立场景可以重新载入初始局面"
+		"14. 独立场景可以重新载入初始局面"
 	)
 
 	viewer.advance_time()
@@ -148,23 +153,44 @@ func _run() -> void:
 		and "北埠旧档房" in feedback_body.text
 		and "north_quay_record_house" not in feedback_body.text
 		and "自行作出的决定" in feedback_body.text,
-		"14. 需求变化会让异地 NPC 走进当前地点，并说明来意与自主原因"
+		"15. 需求变化会让异地 NPC 走进当前地点，并说明来意与自主原因"
 	)
 	viewer.advance_time()
 	await process_frame
 	_check(
 		_find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) != null
-		and "粮铺门前的求助" in feedback_title.text
-		and "传闻：收门之后还有人在求食" in visible_observations.text
-		and "翻空的食物袋" in visible_observations.text,
-		"15. 交易受阻后出现可介入的求助、传闻和现场痕迹"
+		and "没买到食物后的求助" in feedback_title.text
+		and "传闻：没买到食物后有人求助" in visible_observations.text
+		and "翻空的食物袋" in visible_observations.text
+		and "low" not in feedback_body.text
+		and "medium" not in feedback_body.text,
+		"16. 交易受阻后出现可介入的求助、传闻和现场痕迹"
+	)
+	var rumor_button := _find_action_button_containing(
+		action_buttons,
+		"没买到食物后有人求助"
+	)
+	_check(
+		rumor_button != null,
+		"17. 传闻按钮直接写明要听取的具体主题"
+	)
+	(rumor_button as Button).pressed.emit()
+	await process_frame
+	_check(
+		"有人看见闻简在供应点翻空了食物袋" in feedback_body.text
+		and "你听到过“没买到食物后有人求助”" in knowledge_text.text
+		and _find_action_button_containing(
+			action_buttons,
+			"没买到食物后有人求助"
+		) == null,
+		"18. 听取后显示完整信息、写入认知并移除同一按钮"
 	)
 	(_find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) as Button).pressed.emit()
 	await process_frame
 	_check(
 		"饥饿：缓和" in visible_people.text
 		and _find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) == null,
-		"16. 玩家介入会缓解闻简的饥饿，并立即移除过期选项"
+		"19. 玩家介入会缓解闻简的饥饿，并立即移除过期选项"
 	)
 	viewer.advance_time()
 	await process_frame
@@ -173,7 +199,7 @@ func _run() -> void:
 		and "北埠旧档房" in feedback_body.text
 		and "north_quay_record_house" not in feedback_body.text
 		and "闻简" not in visible_people.text,
-		"17. 闻简返岗后离开本地投影，反馈只使用玩家可读地点名"
+		"20. 闻简返岗后离开本地投影，反馈只使用玩家可读地点名"
 	)
 
 	viewer.queue_free()
@@ -184,6 +210,13 @@ func _run() -> void:
 func _find_action_button(container: Node, action_id: String) -> Button:
 	for child: Node in container.get_children():
 		if child is Button and str(child.get_meta("action_id", "")) == action_id:
+			return child as Button
+	return null
+
+
+func _find_action_button_containing(container: Node, text: String) -> Button:
+	for child: Node in container.get_children():
+		if child is Button and text in (child as Button).text:
 			return child as Button
 	return null
 

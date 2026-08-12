@@ -5,7 +5,14 @@ var rumors: Array = []
 
 
 func add_rumor_seed(rumor: Dictionary) -> void:
-	rumors.append(rumor.duplicate(true))
+	var new_rumor := rumor.duplicate(true)
+	var replacement_key := _replacement_key(new_rumor)
+	if replacement_key != "":
+		for index in range(rumors.size()):
+			if _replacement_key(rumors[index]) == replacement_key:
+				rumors[index] = new_rumor
+				return
+	rumors.append(new_rumor)
 
 
 func list_rumors() -> Array:
@@ -26,3 +33,15 @@ func find_rumors_by_source_fact(fact_type: String) -> Array:
 		if str(rumor.get("source_fact_type", "")) == fact_type:
 			rows.append(rumor.duplicate(true))
 	return rows
+
+
+func _replacement_key(rumor: Dictionary) -> String:
+	var rumor_key := str(rumor.get("rumor_key", ""))
+	var actor_id := str(rumor.get("actor_id", ""))
+	var location_id := str(rumor.get(
+		"current_location",
+		rumor.get("origin_location", rumor.get("location_id", ""))
+	))
+	if rumor_key == "" or actor_id == "" or location_id == "":
+		return ""
+	return "%s:%s:%s" % [rumor_key, actor_id, location_id]

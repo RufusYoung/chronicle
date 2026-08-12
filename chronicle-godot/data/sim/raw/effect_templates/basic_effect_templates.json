@@ -378,6 +378,8 @@
           "fact_type": "actor_heard_rumor_seed",
           "actor_id": "{actor_id}",
           "target_id": "{target_id}",
+          "target_display_name": "{target_display_name}",
+          "summary": "{result_summary}",
           "action_id": "{action_id}",
           "rule_id": "{rule_id}",
           "fixture_id": "{fixture_id}",
@@ -401,8 +403,8 @@
       "traces": [],
       "rumors": [],
       "narrative": {
-        "title": "Heard Rumor",
-        "summary": "You heard a message already moving through the place.",
+        "title": "{result_title}",
+        "summary": "{result_summary}",
         "tone": "curious"
       }
     },

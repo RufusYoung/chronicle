@@ -22,10 +22,71 @@
             "high",
             "extreme"
           ],
+          "labels": {
+            "none": "不饿",
+            "low": "轻微",
+            "medium": "缓和",
+            "high": "严重",
+            "extreme": "极度"
+          },
           "narrative": {
             "title": "{actor_display_name}显得更饿了",
-            "summary": "时间继续往前，{actor_display_name}的饥饿从{from}加深到了{to}。这会改变接下来愿意采取的行动。",
+            "summary": "时间继续往前，{actor_display_name}的饥饿从{from_label}加深到了{to_label}。这会改变接下来愿意采取的行动。",
             "tone": "uneasy"
+          }
+        }
+      ]
+    },
+    {
+      "profile_id": "livelihood_work_cycle",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "livelihood_worker"
+        ]
+      },
+      "needs": [
+        {
+          "key": "work_readiness",
+          "clock_key": "work_elapsed_hours",
+          "interval_hours": 8,
+          "interval_state_key": "work_interval_hours",
+          "direction": "increase",
+          "scale": [
+            "resting",
+            "ready"
+          ],
+          "narrative": {
+            "title": "{actor_display_name}手头又有活可做",
+            "summary": "岗位上的杂活积攒起来，{actor_display_name}可以靠完成一轮工作挣回一点零钱。",
+            "tone": "purposeful"
+          }
+        }
+      ]
+    },
+    {
+      "profile_id": "food_producer_work_cycle",
+      "actor": {
+        "type": "person",
+        "tags_all": [
+          "food_producer"
+        ]
+      },
+      "needs": [
+        {
+          "key": "production_readiness",
+          "clock_key": "production_elapsed_hours",
+          "interval_hours": 4,
+          "interval_state_key": "production_interval_hours",
+          "direction": "increase",
+          "scale": [
+            "resting",
+            "ready"
+          ],
+          "narrative": {
+            "title": "{actor_display_name}等到了合适的潮水",
+            "summary": "潮水和手头的准备都到了时候，{actor_display_name}可以开始下一轮采集。",
+            "tone": "purposeful"
           }
         }
       ]

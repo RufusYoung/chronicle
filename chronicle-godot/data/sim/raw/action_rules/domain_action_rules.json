@@ -160,7 +160,10 @@
       "action_type": "rumor",
       "transaction_mode": "effect_template",
       "effect_template_id": "hear_rumor_effect",
-      "label_template": "[传闻] 听见小队议论",
+      "label_template": "[传闻] 听听：{target_display_name}",
+      "repeat_policy": "once_per_action",
+      "result_title": "听到传闻：{target_display_name}",
+      "result_summary": "{target_description}",
       "priority": 200,
       "target": {
         "type": "rumor_seed",

@@ -86,6 +86,29 @@ func _run() -> void:
 	var hear_result = resolver.resolve_action(hear_candidate, rumor_snapshot)
 	_check(_result_has_fact(hear_result, "actor_heard_rumor_seed"), "8. hear_rumor_seed produces actor_heard_rumor_seed fact")
 	_check(_result_has_memory(hear_result, "player", "remembers_heard_rumor"), "9. hear_rumor_seed produces remembers_heard_rumor memory")
+	_check(
+		str(hear_candidate.label).begins_with("[传闻] 听听：")
+		and str(hear_result.narrative_result.get("summary", ""))
+			== "有人说，玩家把私藏口粮的事报告给了罗恩。",
+		"10. 传闻候选显示具体主题，结算正文显示实际内容"
+	)
+	writer.apply_result(hear_result, rumor_stores)
+	var heard_snapshot = snapshot_builder.build_snapshot(
+		outpost_context,
+		rumor_stores
+	)
+	var heard_candidates: Array = affordance_system.generate_candidates(
+		heard_snapshot,
+		rules
+	)
+	_check(
+		_find_candidate(
+			heard_candidates,
+			"hear_rumor_seed",
+			"outpost_discipline_report_seed"
+		) == null,
+		"11. 同一条传闻听过后不再生成可重复按钮"
+	)
 
 	var favor_stores := _make_stores(outpost_context)
 	var conceal_snapshot = snapshot_builder.build_snapshot(outpost_context, favor_stores)
@@ -97,9 +120,9 @@ func _run() -> void:
 	var favor_candidates: Array = affordance_system.generate_candidates(favor_snapshot, rules)
 	var favor_candidate = _find_candidate(favor_candidates, "request_favor_from_indebted_person", "recruit_elai")
 	var favor_result = resolver.resolve_action(favor_candidate, favor_snapshot)
-	_check(_result_has_fact(favor_result, "actor_requested_favor_from_target"), "10. request_favor produces actor_requested_favor_from_target fact")
-	_check(_relationship_delta_exists(favor_result, "recruit_elai", "player", "debt", -5), "11. request_favor produces target -> player debt -5")
-	_check(_result_has_memory(favor_result, "recruit_elai", "remembers_favor_requested"), "12. request_favor produces remembers_favor_requested memory")
+	_check(_result_has_fact(favor_result, "actor_requested_favor_from_target"), "12. request_favor produces actor_requested_favor_from_target fact")
+	_check(_relationship_delta_exists(favor_result, "recruit_elai", "player", "debt", -5), "13. request_favor produces target -> player debt -5")
+	_check(_result_has_memory(favor_result, "recruit_elai", "remembers_favor_requested"), "14. request_favor produces remembers_favor_requested memory")
 	writer.apply_result(favor_result, favor_stores)
 	var after_favor_snapshot = snapshot_builder.build_snapshot(
 		outpost_context,
@@ -115,28 +138,28 @@ func _run() -> void:
 			"request_favor_from_indebted_person",
 			"recruit_elai"
 		) == null,
-		"13. request_favor disappears after its first resolved use"
+		"15. request_favor disappears after its first resolved use"
 	)
 
 	var lake_context = SimContextModel.new(registry.load_json(LAKE_TOWN_FIXTURE_PATH))
 	var lake_candidates: Array = affordance_system.generate_candidates(lake_context, rules)
 	var market_candidate = _find_candidate(lake_candidates, "ask_about_food_pressure_at_market")
 	var market_result = resolver.resolve_action(market_candidate, lake_context)
-	_check(_result_has_fact(market_result, "actor_asked_about_market_pressure"), "14. ask_market_pressure produces actor_asked_about_market_pressure fact")
-	_check(_result_has_memory(market_result, "player", "learned_market_pressure"), "15. ask_market_pressure produces learned_market_pressure memory")
+	_check(_result_has_fact(market_result, "actor_asked_about_market_pressure"), "16. ask_market_pressure produces actor_asked_about_market_pressure fact")
+	_check(_result_has_memory(market_result, "player", "learned_market_pressure"), "17. ask_market_pressure produces learned_market_pressure memory")
 
 	_check(
 		str(hear_result.contract_status) == "resolved"
 		and str(favor_result.contract_status) == "resolved"
 		and str(market_result.contract_status) == "resolved",
-		"16. batch one results are resolved"
+		"18. batch one results are resolved"
 	)
-	_check(_transaction_resolver_has_no_batch_one_rule_ids(), "17. batch one does not add TransactionResolver rule branches")
+	_check(_transaction_resolver_has_no_batch_one_rule_ids(), "19. batch one does not add TransactionResolver rule branches")
 	_check(
 		_rule_mode(rules, "approach_visible_person") == "effect_template"
 		and _rule_effect_template_id(rules, "approach_visible_person")
 			== "approach_person_effect",
-		"18. approaching a person now resolves a visible one-shot result"
+		"20. approaching a person now resolves a visible one-shot result"
 	)
 
 	_finish()

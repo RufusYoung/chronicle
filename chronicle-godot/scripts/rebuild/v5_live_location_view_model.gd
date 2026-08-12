@@ -544,6 +544,8 @@ func _has_challenge_outcome(
 func _action_rows() -> Array:
 	var rows: Array[Dictionary] = []
 	var snapshot: Variant = session.get_snapshot()
+	var ambient_trace_ids := _ambient_trace_ids(snapshot)
+	var surfaced_ambient_trace_count := 0
 	for option: Dictionary in session.get_investigation_options():
 		var action_type := str(
 			option.get("action_type", "investigation")
@@ -562,6 +564,11 @@ func _action_rows() -> Array:
 		})
 	for option: Dictionary in session.get_action_options():
 		var action_type := str(option.get("action_type", "normal"))
+		var target_id := str(option.get("target_id", ""))
+		if target_id in ambient_trace_ids:
+			if surfaced_ambient_trace_count >= 3:
+				continue
+			surfaced_ambient_trace_count += 1
 		rows.append({
 			"action_id": str(option.get("action_id", "")),
 			"event_type": "player_action",
@@ -611,6 +618,17 @@ func _action_rows() -> Array:
 			"hint": "一次推进到下一个 06:00；期间世界状态照常变化。",
 			"can_execute": true,
 		})
+	return rows
+
+
+func _ambient_trace_ids(snapshot: Variant) -> Array:
+	var rows: Array = []
+	for trace: Dictionary in snapshot.get_visible_traces():
+		if str(trace.get("actor_id", "")) == "":
+			continue
+		var trace_id := str(trace.get("id", trace.get("trace_id", "")))
+		if trace_id != "":
+			rows.append(trace_id)
 	return rows
 
 
@@ -1678,12 +1696,15 @@ func _fact_text(
 			return "你检查过%s：%s" % [target_name, summary]
 		if fact_type == "actor_requested_favor_from_target":
 			return "你请%s帮过忙：%s" % [target_name, summary]
+		if fact_type == "actor_heard_rumor_seed":
+			return "你听到过“%s”：%s" % [target_name, summary]
 	return {
 		"actor_gave_food_to_target": "你给%s递过食物。" % target_name,
 		"actor_asked_about_concealed_item": "你问过%s藏起来的东西。" % target_name,
 		"actor_read_object": "你读过%s。" % target_name,
 		"actor_inspected_trace": "你检查过%s。" % target_name,
 		"actor_requested_favor_from_target": "你请%s帮过一次忙。" % target_name,
+		"actor_heard_rumor_seed": "你听到过一条关于%s的传闻。" % target_name,
 		"actor_asked_about_market_pressure": "你确认湖湾镇正承受粮食压力。",
 		"actor_traveled_route": _travel_fact_text(fact),
 		"actor_prepared_for_challenge": _challenge_preparation_fact_text(fact),

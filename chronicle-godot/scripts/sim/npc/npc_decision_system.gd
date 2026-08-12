@@ -410,6 +410,9 @@ func _resolve_value(value: Variant, bindings: Dictionary) -> Variant:
 	if value is String:
 		var text := str(value)
 		for binding_key: Variant in bindings.keys():
+			if text == "{%s}" % str(binding_key):
+				return bindings[binding_key]
+		for binding_key: Variant in bindings.keys():
 			text = text.replace(
 				"{%s}" % str(binding_key),
 				str(bindings[binding_key])

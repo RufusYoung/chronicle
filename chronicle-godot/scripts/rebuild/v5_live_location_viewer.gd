@@ -49,8 +49,6 @@ func _ready() -> void:
 	restart_button.pressed.connect(_request_restart)
 	restart_dialog.confirmed.connect(restart_session)
 	restart_session()
-	if DisplayServer.get_name() != "headless":
-		call_deferred("_show_intro")
 
 
 func restart_session() -> void:
@@ -201,21 +199,17 @@ func _refresh_playtest(playtest: Dictionary) -> void:
 
 
 func _request_restart() -> void:
-	restart_dialog.popup_centered(Vector2i(500, 210))
+	restart_dialog.popup_centered_clamped(Vector2i(640, 210), 0.9)
 	restart_dialog.get_cancel_button().grab_focus()
-
-
-func _show_intro() -> void:
-	intro_dialog.popup_centered(Vector2i(560, 260))
 
 
 func _show_playtest_end(end_state: String) -> void:
 	if end_state != _playtest_end_state:
 		return
 	if end_state == "completed":
-		completion_dialog.popup_centered(Vector2i(560, 250))
+		completion_dialog.popup_centered_clamped(Vector2i(760, 230), 0.9)
 	elif end_state == "failed":
-		failure_dialog.popup_centered(Vector2i(560, 250))
+		failure_dialog.popup_centered_clamped(Vector2i(760, 230), 0.9)
 
 
 func _refresh_actions(actions: Array) -> void:

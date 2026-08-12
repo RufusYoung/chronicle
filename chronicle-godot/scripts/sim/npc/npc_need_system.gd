@@ -128,12 +128,15 @@ func _resolve_need(
 
 	var location_id := str(actor.get("location_id", ""))
 	var observed_by_player := location_id == str(snapshot.location.get("id", ""))
+	var labels: Dictionary = need.get("labels", {})
 	var values := {
 		"actor_id": actor_id,
 		"actor_display_name": str(actor.get("display_name", actor_id)),
 		"need_key": need_key,
 		"from": str(current_value),
 		"to": str(new_value),
+		"from_label": str(labels.get(str(current_value), current_value)),
+		"to_label": str(labels.get(str(new_value), new_value)),
 		"location_id": location_id,
 		"tick_event_id": str(tick_event.get("tick_event_id", "")),
 		"profile_id": str(profile.get("profile_id", "")),

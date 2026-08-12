@@ -25,7 +25,7 @@ func _run() -> void:
 	var baseline_tick: Dictionary = baseline.advance_time(1, "after_short_wait")
 	_check(
 		bool(baseline_start.get("success", false))
-		and int(baseline_start.get("autonomous_action_rule_count", 0)) == 8
+		and int(baseline_start.get("autonomous_action_rule_count", 0)) == 11
 		and baseline.stores["deferred_consequence_store"]
 			.find_pending_consequences()
 			.is_empty(),

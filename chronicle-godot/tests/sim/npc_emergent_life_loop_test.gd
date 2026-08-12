@@ -160,8 +160,13 @@ func _run() -> void:
 		"9. 营业路径会完成真实资源转移和已结算交易"
 	)
 	_check(
-		int(trade_tick.get("observed_autonomous_decision_count", -1)) == 0,
-		"10. 玩家留在档房时不会直接获知粮铺里的异地交易"
+		not _observed_actor_rules(trade_tick).has(
+			"north_quay_record_keeper:hungry_resident_buys_food"
+		)
+		and _observed_actor_rules(trade_tick).has(
+			"north_quay_net_mender:food_producer_replenishes_local_stock"
+		),
+		"10. 玩家在档房能看到本地补货，但不会直接获知粮铺里的异地交易"
 	)
 	trading.context.set_current_location("old_chen_shop")
 	var trade_snapshot: Variant = trading.get_snapshot()
@@ -244,6 +249,18 @@ func _has_action(options: Array, action_id: String) -> bool:
 		if str(option.get("action_id", "")) == action_id:
 			return true
 	return false
+
+
+func _observed_actor_rules(tick_result: Dictionary) -> Array:
+	var rows: Array = []
+	for decision: Dictionary in tick_result.get("autonomous_decisions", []):
+		if not bool(decision.get("observed_by_player", false)):
+			continue
+		rows.append("%s:%s" % [
+			str(decision.get("actor_id", "")),
+			str(decision.get("rule_id", "")),
+		])
+	return rows
 
 
 func _visible_trace_types(snapshot: Variant) -> Array:

@@ -28,7 +28,7 @@ func _run() -> void:
 		bool(start_result.get("success", false))
 		and int(session.get_time_summary().get("day", 0)) == 1
 		and int(session.get_time_summary().get("hour", -1)) == 10
-		and int(start_result.get("autonomous_action_rule_count", 0)) == 8,
+		and int(start_result.get("autonomous_action_rule_count", 0)) == 11,
 		"1. SimSession 从 fixture 载入世界时间"
 	)
 	_check(
@@ -171,7 +171,7 @@ func _run() -> void:
 		and session.stores["deferred_consequence_store"]
 			.find_pending_consequences()
 			.is_empty()
-		and session.autonomous_action_rules.size() == 8,
+		and session.autonomous_action_rules.size() == 11,
 		"14. 重载 fixture 会重置时钟并恢复 NPC 行动规则"
 	)
 

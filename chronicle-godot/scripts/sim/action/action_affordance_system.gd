@@ -266,6 +266,8 @@ func _context_visible_traces(context: Variant) -> Array:
 
 
 func _context_rumor_seeds(context: Variant) -> Array:
+	if context.has_method("get_visible_rumors"):
+		return context.get_visible_rumors()
 	if context.has_method("get_rumor_seeds"):
 		return context.get_rumor_seeds()
 	return []
@@ -346,7 +348,14 @@ func _rumor_to_target(rumor: Dictionary) -> Dictionary:
 	var rumor_id := str(rumor.get("id", rumor.get("rumor_id", "")))
 	return {
 		"id": rumor_id,
-		"display_name": str(rumor.get("display_name", rumor.get("text_hint", rumor_id))),
+		"display_name": str(rumor.get(
+			"display_name",
+			rumor.get("title", rumor.get("text_hint", rumor_id))
+		)),
+		"description": str(rumor.get(
+			"text_hint",
+			rumor.get("summary", "这句话正在此地流传。")
+		)),
 		"type": "rumor_seed",
 		"tags": _merge_tags(["rumor", "rumor_seed"], rumor.get("tags", [])),
 		"states": {
