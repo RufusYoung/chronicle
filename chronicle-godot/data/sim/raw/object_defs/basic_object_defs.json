@@ -1,65 +1,92 @@
 {
   "object_defs": [
     {
+      "object_def_id": "object.person",
+      "definition_version": 1,
       "type": "person",
+      "owner_kind": "character",
       "description": "可参与关系、状态、记忆和行动候选的人物实体。",
-      "default_tags": [
-        "person"
-      ]
+      "default_tags": ["person"]
     },
     {
+      "object_def_id": "object.region",
+      "definition_version": 1,
+      "type": "region",
+      "owner_kind": "region",
+      "description": "具有环境、压力和制度影响的地区实体。",
+      "default_tags": ["region"]
+    },
+    {
+      "object_def_id": "object.institution",
+      "definition_version": 1,
+      "type": "institution",
+      "owner_kind": "institution",
+      "description": "具有身份、资源、制度状态和行动能力的组织实体。",
+      "default_tags": ["institution"]
+    },
+    {
+      "object_def_id": "object.environment_detail",
+      "definition_version": 1,
+      "type": "environment_detail",
+      "owner_kind": "object",
+      "description": "可观察、可变化或可参与挑战的环境对象。",
+      "default_tags": ["environment_detail"]
+    },
+    {
+      "object_def_id": "object.readable_notice",
+      "definition_version": 1,
       "type": "readable_notice",
+      "owner_kind": "object",
       "description": "公开可读的告示或公告。",
-      "default_tags": [
-        "readable_notice",
-        "readable"
-      ]
+      "default_tags": ["readable_notice", "readable"]
     },
     {
+      "object_def_id": "object.readable_record",
+      "definition_version": 1,
       "type": "readable_record",
+      "owner_kind": "object",
       "description": "账册、口粮记录、巡逻记录等可读结构化记录。",
-      "default_tags": [
-        "readable_record",
-        "readable"
-      ]
+      "default_tags": ["readable_record", "readable"]
     },
     {
+      "object_def_id": "object.trace",
+      "definition_version": 1,
       "type": "trace",
+      "owner_kind": "object",
       "description": "行动或环境留下的可检查痕迹。",
-      "default_tags": [
-        "trace",
-        "inspectable"
-      ]
+      "default_tags": ["trace", "inspectable"]
     },
     {
+      "object_def_id": "object.food",
+      "definition_version": 1,
       "type": "food",
+      "owner_kind": "object",
       "description": "可食用或可交易的食物对象。",
-      "default_tags": [
-        "food"
-      ]
+      "default_tags": ["food"]
     },
     {
+      "object_def_id": "object.concealed_item",
+      "definition_version": 1,
       "type": "concealed_item",
+      "owner_kind": "object",
       "description": "被某个实体藏起或遮掩的对象。",
-      "default_tags": [
-        "concealed_item"
-      ]
+      "default_tags": ["concealed_item"]
     },
     {
+      "object_def_id": "object.door_or_entry",
+      "definition_version": 1,
       "type": "door_or_entry",
+      "owner_kind": "object",
       "description": "门、入口、缝隙和可进入点。",
-      "default_tags": [
-        "door_or_entry"
-      ]
+      "default_tags": ["door_or_entry"]
     },
     {
+      "object_def_id": "object.ration_record",
+      "definition_version": 1,
       "type": "ration_record",
+      "owner_kind": "object",
       "description": "军营、哨站或组织配给相关记录。",
-      "default_tags": [
-        "ration_record",
-        "readable_record",
-        "military"
-      ]
+      "default_tags": ["ration_record", "readable_record", "military"]
     }
   ]
 }

@@ -655,21 +655,26 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 
 ### 11.6.5 当前进度
 
-截至 2026-08-12，步骤 1 已完成：
+截至 2026-08-12，步骤 1 与步骤 2A 已完成：
 
 - 已审计 State、Fact、Memory、Relationship、Item、Snapshot、Action 与 Transaction 边界。
 - 已裁定库存、事实、地区状态和角色状态的重复真值。
 - 已裁定属性、天赋、特质、印记、技艺、物品、装备和商店的术语边界。
 - 已形成最小 schema 草案与旧字段迁移顺序。
+- 已实现 StateDef 与 ObjectDef 的稳定 ID、版本和严格 schema 注册。
+- `EntityStore` 与 `StateStore` 已接入 `SimSession`，并成为实体元数据与可变状态的唯一运行时真值。
+- Session 初始化后会释放 Context 中的玩家、实体、地区、制度和事实副本，Snapshot 只从 Store 重建投影。
+- 新增 17 项合同断言，全项目回归为 `59 / 59` 通过。
 
 交付文档：
 
 ```text
 texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md
 texts/v5/CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md
+chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_definition_entity_state_contract_report.md
 ```
 
-当前进入步骤 2A：先实现 Definition 注册并把 EntityStore 接入 Session，确立实体身份与状态的唯一真值。之后再实现角色特征 Store、ItemInstance 扩展、EquipmentLoadout 和最小合同 fixture。Inventory 与 MarketStock 只做派生视图，不建立新的可写真值。
+当前进入步骤 2B：实现角色特征 Store 与只读 `CharacterProgress` 投影，统一属性、天赋、特质、印记和技艺的所有权。之后再实现 ItemInstance 扩展、EquipmentLoadout 和最小合同 fixture。Inventory 与 MarketStock 只做派生视图，不建立新的可写真值。
 
 阶段 5.5 通过后，恢复阶段 5 的季度、年度和五年内容扩展，再进入阶段 6。
 

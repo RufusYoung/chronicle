@@ -4,6 +4,8 @@ class_name V5SimContext
 var world_id: String = ""
 var actor_id: String = ""
 var fixture_id: String = ""
+var region_entity_id: String = ""
+var institution_entity_id: String = ""
 var location_id: String = ""
 var location: Dictionary = {}
 var locations: Dictionary = {}
@@ -20,6 +22,14 @@ func _init(initial_data: Dictionary = {}) -> void:
 	world_id = str(initial_data.get("world_id", ""))
 	actor_id = str(initial_data.get("actor_id", ""))
 	fixture_id = str(initial_data.get("fixture_id", ""))
+	region_entity_id = str(initial_data.get(
+		"region_entity_id",
+		"%s:region" % fixture_id if fixture_id != "" else ""
+	))
+	institution_entity_id = str(initial_data.get(
+		"institution_entity_id",
+		"%s:institution" % fixture_id if fixture_id != "" else ""
+	))
 	location = (initial_data.get("location", {}) as Dictionary).duplicate(true)
 	location_id = str(initial_data.get("location_id", location.get("id", "")))
 	_load_locations(initial_data.get("locations", []))
@@ -37,6 +47,8 @@ func _init(initial_data: Dictionary = {}) -> void:
 	entities = (initial_data.get("entities", []) as Array).duplicate(true)
 	_assign_missing_entity_locations()
 	player = (initial_data.get("player", {}) as Dictionary).duplicate(true)
+	if actor_id == "":
+		actor_id = str(player.get("id", "player"))
 	known_fact_ids = (initial_data.get("known_fact_ids", []) as Array).duplicate(true)
 	known_facts = (initial_data.get("known_facts", []) as Array).duplicate(true)
 	if visible_entity_ids.is_empty():
@@ -48,6 +60,8 @@ func to_dict() -> Dictionary:
 		"world_id": world_id,
 		"actor_id": actor_id,
 		"fixture_id": fixture_id,
+		"region_entity_id": region_entity_id,
+		"institution_entity_id": institution_entity_id,
 		"location_id": location_id,
 		"location": location.duplicate(true),
 		"locations": locations.duplicate(true),
@@ -134,6 +148,16 @@ func get_entity_by_id(entity_id: String) -> Dictionary:
 		if str(entity.get("id", "")) == entity_id:
 			return entity.duplicate(true)
 	return {}
+
+
+func release_runtime_sources() -> void:
+	visible_entity_ids.clear()
+	region_state.clear()
+	institution.clear()
+	entities.clear()
+	player.clear()
+	known_fact_ids.clear()
+	known_facts.clear()
 
 
 func _derive_visible_entity_ids() -> Array:

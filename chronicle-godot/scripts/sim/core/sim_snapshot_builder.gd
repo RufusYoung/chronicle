@@ -9,6 +9,7 @@ func build_snapshot(
 		stores: Dictionary,
 		include_all_entities: bool = false
 ) -> Variant:
+	var entity_store: Variant = stores.get("entity_store")
 	var state_store: Variant = stores.get("state_store")
 	var relationship_store: Variant = stores.get("relationship_store")
 	var memory_store: Variant = stores.get("memory_store")
@@ -18,7 +19,9 @@ func build_snapshot(
 	var pressure_store: Variant = stores.get("pressure_store")
 	var obligation_store: Variant = stores.get("obligation_store")
 	var exchange_store: Variant = stores.get("exchange_store")
-	var deferred_consequence_store: Variant = stores.get("deferred_consequence_store")
+	var deferred_consequence_store: Variant = stores.get(
+		"deferred_consequence_store"
+	)
 	var item_store: Variant = stores.get("item_store")
 	var chronicle_store: Variant = stores.get("chronicle_store")
 	var investigation_store: Variant = stores.get("investigation_store")
@@ -27,21 +30,35 @@ func build_snapshot(
 	if state_store != null:
 		states = state_store.states.duplicate(true)
 
-	var entities := _entities_with_states(context.entities, states)
+	var player_id := _player_id(context)
+	var source_entities := _entities_from_context(context, player_id)
+	if entity_store != null:
+		source_entities = entity_store.list_entity_rows([player_id])
+	var entities := _entities_with_states(source_entities, states)
 	if not include_all_entities:
 		entities = _entities_at_location(entities, context.location_id)
-	var player: Dictionary = context.player.duplicate(true)
-	var player_id := str(context.get_player_value("id", "player"))
+
+	var player := _player_from_context(context)
+	if entity_store != null:
+		var stored_player: Dictionary = entity_store.get_entity(player_id)
+		if not stored_player.is_empty():
+			player = stored_player
 	if states.has(player_id):
-		var player_states: Dictionary = states[player_id]
-		for key: String in player_states.keys():
-			player[key] = player_states[key]
+		for key: String in (states[player_id] as Dictionary).keys():
+			player[key] = (states[player_id] as Dictionary)[key]
+
+	var region_state: Dictionary = context.region_state.duplicate(true)
+	if state_store != null and str(context.region_entity_id) != "":
+		region_state = state_store.list_states(str(context.region_entity_id))
+	var institution: Dictionary = context.institution.duplicate(true)
+	if state_store != null and str(context.institution_entity_id) != "":
+		institution = state_store.list_states(str(context.institution_entity_id))
 
 	return SimSnapshotModel.new({
 		"fixture_id": str(context.fixture_id),
 		"location": context.location.duplicate(true),
-		"region_state": context.region_state.duplicate(true),
-		"institution": context.institution.duplicate(true),
+		"region_state": region_state,
+		"institution": institution,
 		"player": player,
 		"entities": entities,
 		"states": states,
@@ -68,9 +85,45 @@ func _states_from_context(context: Variant) -> Dictionary:
 			continue
 		states[entity_id] = (entity.get("states", {}) as Dictionary).duplicate(true)
 
-	var player_id := str(context.get_player_value("id", "player"))
-	states[player_id] = context.player.duplicate(true)
+	var player_id := _player_id(context)
+	var player_states: Dictionary = context.player.duplicate(true)
+	for static_key: String in [
+		"id", "type", "role", "display_name", "description", "tags", "interactions"
+	]:
+		player_states.erase(static_key)
+	states[player_id] = player_states
 	return states
+
+
+func _entities_from_context(context: Variant, player_id: String) -> Array:
+	var rows: Array = []
+	for entity: Dictionary in context.entities:
+		if str(entity.get("id", "")) == player_id:
+			continue
+		rows.append(entity.duplicate(true))
+	return rows
+
+
+func _player_from_context(context: Variant) -> Dictionary:
+	var player: Dictionary = context.player.duplicate(true)
+	var static_player: Dictionary = {}
+	for key: String in [
+		"id", "type", "role", "display_name", "description", "tags", "interactions"
+	]:
+		if player.has(key):
+			static_player[key] = player[key]
+	if not static_player.has("id"):
+		static_player["id"] = _player_id(context)
+	if not static_player.has("type"):
+		static_player["type"] = "person"
+	return static_player
+
+
+func _player_id(context: Variant) -> String:
+	var player_id := str(context.actor_id)
+	if player_id == "":
+		player_id = str(context.player.get("id", "player"))
+	return player_id
 
 
 func _entities_with_states(source_entities: Array, states: Dictionary) -> Array:
@@ -79,9 +132,7 @@ func _entities_with_states(source_entities: Array, states: Dictionary) -> Array:
 		var entity_copy := entity.duplicate(true)
 		var entity_id := str(entity_copy.get("id", ""))
 		if states.has(entity_id):
-			var entity_states := (
-				states[entity_id] as Dictionary
-			).duplicate(true)
+			var entity_states := (states[entity_id] as Dictionary).duplicate(true)
 			entity_copy["states"] = entity_states
 			if entity_states.has("location_id"):
 				entity_copy["location_id"] = str(

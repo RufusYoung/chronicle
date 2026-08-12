@@ -26,4 +26,11 @@ State、Relationship、Location、Item、Action 等系统会读取实体存在�
 
 ## 当前状态
 
-骨架阶段，暂未实现正式逻辑。
+阶段 5.5 步骤 2A 已接入正式运行链：
+
+- `SimSession` 启动时先注册 ObjectDef，再由 `EntityStore` 装载世界实体。
+- `EntityStore` 是实体身份、类型、显示名、标签等静态元数据的唯一真值。
+- 位置和其他可变字段由 `StateStore` 管理，Snapshot 只负责合并投影。
+- 严格模式拒绝未知实体类型；旧 fixture 通过兼容模式迁移并报告警告。
+
+当前还未实现通用的运行时实体创建、销毁和跨存档重建合同。

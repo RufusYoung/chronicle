@@ -22,6 +22,7 @@ const WorldTickAdapterModel = preload(
 	"res://scripts/sim/world_tick/world_tick_adapter.gd"
 )
 const FactStoreModel = preload("res://scripts/sim/fact/fact_store.gd")
+const EntityStoreModel = preload("res://scripts/sim/entity/entity_store.gd")
 const StateStoreModel = preload("res://scripts/sim/state/state_store.gd")
 const RelationshipStoreModel = preload("res://scripts/sim/relationship/relationship_store.gd")
 const MemoryStoreModel = preload("res://scripts/sim/memory/memory_store.gd")
@@ -44,6 +45,8 @@ const DeferredConsequenceStoreModel = preload(
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
 )
+const STATE_DEFS_PATH := "res://data/sim/raw/state_defs/basic_state_defs.json"
+const OBJECT_DEFS_PATH := "res://data/sim/raw/object_defs/basic_object_defs.json"
 const AUTONOMOUS_ACTION_RULES_PATH := (
 	"res://data/sim/raw/npc_action_rules/basic_npc_action_rules.json"
 )
@@ -103,6 +106,14 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if fixture.is_empty():
 		return _start_failure("fixture_not_loaded")
 
+	var definition_report: Dictionary = registry.load_raw_definition_files([
+		STATE_DEFS_PATH,
+		OBJECT_DEFS_PATH,
+	])
+	if not bool(definition_report.get("ok", false)):
+		var failed := _start_failure("raw_definition_contract_invalid")
+		failed["definition_report"] = definition_report
+		return failed
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	context = SimContextModel.new(fixture)
@@ -145,6 +156,16 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	world_tick_adapter.configure_need_profiles(npc_need_profiles)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	_create_stores(fixture)
+	var entity_report: Dictionary = stores["entity_store"].get_contract_report()
+	var state_report: Dictionary = stores["state_store"].get_contract_report()
+	if not bool(entity_report.get("ok", false)) or not bool(
+		state_report.get("ok", false)
+	):
+		var failed := _start_failure("fixture_store_contract_invalid")
+		failed["entity_report"] = entity_report
+		failed["state_report"] = state_report
+		return failed
+	context.release_runtime_sources()
 	initialized = true
 	return {
 		"success": true,
@@ -156,6 +177,13 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"autonomous_action_rule_count": autonomous_action_rules.size(),
 		"npc_need_profile_count": npc_need_profiles.size(),
 		"candidate_count": get_action_candidates().size(),
+		"definition_count": int(definition_report.get(
+			"total_definition_count",
+			0
+		)),
+		"definition_report": definition_report,
+		"entity_contract_report": entity_report,
+		"state_contract_report": state_report,
 		"time": get_time_summary(),
 	}
 
@@ -188,8 +216,8 @@ func get_travel_options() -> Array:
 	if not initialized:
 		return []
 	var rows: Array = []
-	var food_count := int(context.get_player_value("food_count", 0))
 	var snapshot: Variant = get_snapshot()
+	var food_count := int(snapshot.get_player_value("food_count", 0))
 	for route: Dictionary in travel_routes:
 		if str(route.get("from_location_id", "")) != context.location_id:
 			continue
@@ -462,7 +490,6 @@ func execute_return_echo_option(
 			option_id
 		)
 	writer.apply_result(transaction_result, stores)
-	_sync_context_after_result(transaction_result)
 
 	var event_id := return_echo_count + 1
 	var log_entry := _build_return_echo_log_entry(
@@ -595,7 +622,6 @@ func execute_investigation_option(
 			option_id
 		)
 	writer.apply_result(transaction_result, stores)
-	_sync_context_after_result(transaction_result)
 
 	var log_entry := _build_investigation_log_entry(
 		option,
@@ -694,7 +720,6 @@ func execute_challenge_option(
 			get_time_summary()
 		)
 	writer.apply_result(transaction_result, stores)
-	_sync_context_after_result(transaction_result)
 
 	var log_entry := _build_challenge_log_entry(
 		option,
@@ -753,9 +778,10 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 		return _travel_failure("invalid_route_contract", route_id)
 	if not _route_access_time_allows(route):
 		return _travel_failure("outside_access_window", route_id)
-	if not _route_required_items_met(route, get_snapshot()):
+	var pre_travel_snapshot: Variant = get_snapshot()
+	if not _route_required_items_met(route, pre_travel_snapshot):
 		return _travel_failure("missing_required_item", route_id)
-	if int(context.get_player_value("food_count", 0)) < food_cost:
+	if int(pre_travel_snapshot.get_player_value("food_count", 0)) < food_cost:
 		return _travel_failure("insufficient_food", route_id)
 
 	var from_location_id: String = str(context.location_id)
@@ -794,7 +820,6 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 		travel_count + 1
 	)
 	writer.apply_result(transaction_result, stores)
-	_sync_context_after_result(transaction_result)
 	if not context.set_current_location(to_location_id):
 		return _travel_failure("destination_switch_failed", route_id)
 
@@ -912,7 +937,6 @@ func advance_world(tick_event: Dictionary, elapsed_hours_delta: int = 0) -> Dict
 		world_log.append_entry(entry)
 
 	if bool(result.get("success", false)):
-		_sync_context_after_tick_result(result)
 		_advance_clock(maxi(elapsed_hours_delta, 0))
 		world_tick_count += 1
 
@@ -948,6 +972,7 @@ func get_store_summary() -> Dictionary:
 	if not initialized:
 		return _empty_store_summary()
 	return {
+		"entities": stores["entity_store"].list_entities().size(),
 		"facts": stores["fact_store"].list_facts().size(),
 		"states": _count_states(stores["state_store"]),
 		"relationships": _count_relationship_axes(stores["relationship_store"]),
@@ -976,6 +1001,7 @@ func get_store_snapshots() -> Dictionary:
 	if not initialized:
 		return {}
 	return {
+		"entities": stores["entity_store"].list_entities(),
 		"facts": stores["fact_store"].list_facts(),
 		"states": stores["state_store"].states.duplicate(true),
 		"relationships": stores["relationship_store"].relations.duplicate(true),
@@ -1074,7 +1100,18 @@ func _reset_runtime() -> void:
 
 
 func _create_stores(fixture: Dictionary) -> void:
+	var entity_store = EntityStoreModel.new()
+	entity_store.configure_definitions(
+		registry.list_definitions("object"),
+		false
+	)
+	entity_store.load_from_context(context)
 	var state_store = StateStoreModel.new()
+	state_store.configure_definitions(
+		registry.list_definitions("state"),
+		entity_store,
+		false
+	)
 	state_store.load_from_context(context)
 	var relationship_store = RelationshipStoreModel.new()
 	relationship_store.load_axis_defs(RELATIONSHIP_AXIS_DEFS_PATH)
@@ -1084,6 +1121,7 @@ func _create_stores(fixture: Dictionary) -> void:
 		(fixture.get("initial_items", []) as Array).duplicate(true)
 	)
 	stores = {
+		"entity_store": entity_store,
 		"fact_store": FactStoreModel.new(),
 		"state_store": state_store,
 		"relationship_store": relationship_store,
@@ -1098,6 +1136,8 @@ func _create_stores(fixture: Dictionary) -> void:
 		"investigation_store": InvestigationLeadStoreModel.new(),
 		"deferred_consequence_store": deferred_store,
 	}
+	for fact: Dictionary in fixture.get("known_facts", []):
+		stores["fact_store"].add_fact(fact)
 	for consequence: Dictionary in fixture.get(
 		"initial_deferred_consequences",
 		[]
@@ -1113,7 +1153,6 @@ func _execute_candidate(
 ) -> Dictionary:
 	var transaction_result: Variant = resolver.resolve_action(candidate, snapshot)
 	writer.apply_result(transaction_result, stores)
-	_sync_context_after_result(transaction_result)
 
 	var step_index := int(metadata.get("step_index", action_count))
 	var step_id := str(metadata.get("step_id", "live_action_%d" % action_count))
@@ -1145,52 +1184,6 @@ func _execute_candidate(
 	}
 
 
-func _sync_context_after_result(result: Variant) -> void:
-	var state_store: Variant = stores.get("state_store")
-	for change: Dictionary in result.state_changes:
-		var entity_id := str(change.get("entity_id", ""))
-		var state_key := str(change.get("key", ""))
-		if entity_id == "" or state_key == "":
-			continue
-
-		var value: Variant = state_store.get_state(entity_id, state_key, null)
-		_set_context_state(entity_id, state_key, value)
-
-	for fact: Dictionary in result.facts_added:
-		var fact_id := str(fact.get("fact_id", ""))
-		if fact_id != "" and fact_id not in context.known_fact_ids:
-			context.known_fact_ids.append(fact_id)
-			context.known_facts.append(fact.duplicate(true))
-
-
-func _sync_context_after_tick_result(result: Dictionary) -> void:
-	for result_data: Dictionary in result.get("results", []):
-		_sync_context_after_result_data(result_data)
-	for result_data: Dictionary in result.get("due_results", []):
-		_sync_context_after_result_data(result_data)
-	for result_data: Dictionary in result.get("need_results", []):
-		_sync_context_after_result_data(result_data)
-	for result_data: Dictionary in result.get("autonomous_results", []):
-		_sync_context_after_result_data(result_data)
-
-
-func _sync_context_after_result_data(result_data: Dictionary) -> void:
-	var state_store: Variant = stores.get("state_store")
-	for change: Dictionary in result_data.get("state_changes", []):
-		var entity_id := str(change.get("entity_id", ""))
-		var state_key := str(change.get("key", ""))
-		if entity_id == "" or state_key == "":
-			continue
-		var value: Variant = state_store.get_state(entity_id, state_key, null)
-		_set_context_state(entity_id, state_key, value)
-
-	for fact: Dictionary in result_data.get("facts_added", []):
-		var fact_id := str(fact.get("fact_id", ""))
-		if fact_id != "" and fact_id not in context.known_fact_ids:
-			context.known_fact_ids.append(fact_id)
-			context.known_facts.append(fact.duplicate(true))
-
-
 func _configure_world_time(fixture: Dictionary) -> void:
 	var time_data: Dictionary = fixture.get("world_time", {})
 	current_day = maxi(int(time_data.get("day", 1)), 1)
@@ -1210,23 +1203,6 @@ func _advance_clock(hours: int) -> void:
 	current_day = int(projected.get("day", current_day))
 	current_hour = int(projected.get("hour", current_hour))
 	elapsed_hours_since_start += maxi(hours, 0)
-
-
-func _set_context_state(entity_id: String, state_key: String, value: Variant) -> void:
-	var player_id := str(context.get_player_value("id", "player"))
-	if entity_id == player_id:
-		context.player[state_key] = value
-		return
-
-	for index: int in range(context.entities.size()):
-		var entity: Dictionary = context.entities[index]
-		if str(entity.get("id", "")) != entity_id:
-			continue
-		var states: Dictionary = entity.get("states", {})
-		states[state_key] = value
-		entity["states"] = states
-		context.entities[index] = entity
-		return
 
 
 func _find_candidate_by_action_id(candidates: Array, action_id: String) -> Variant:
@@ -2129,6 +2105,7 @@ func _count_snapshot_relationship_axes(snapshot: Variant) -> int:
 
 func _empty_store_summary() -> Dictionary:
 	return {
+		"entities": 0,
 		"facts": 0,
 		"states": 0,
 		"relationships": 0,

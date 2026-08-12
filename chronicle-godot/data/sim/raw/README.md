@@ -20,4 +20,10 @@ Raw 不保存地点专属按钮表。
 
 ## 当前状态
 
-骨架阶段，暂未实现正式数据。
+阶段 5.5 步骤 2A 已启用第一批正式定义：
+
+- `state_defs/basic_state_defs.json` 提供带稳定 ID 和版本号的基础 StateDef。
+- `object_defs/basic_object_defs.json` 提供带稳定 ID、所有者类型和默认标签的 ObjectDef。
+- `SimRegistry` 在 Session 启动前执行严格注册，拒绝重复 ID、缺失版本及不合法 schema。
+
+天赋、特质、印记、技艺、物品模板和装备位定义将在后续步骤分别接入，不能继续塞进 fixture 临时字段。
