@@ -1,7 +1,14 @@
 # Chronicle 核心系统合同前置计划 v5.1
 
 日期：2026-08-12
-状态：当前执行计划
+状态：阶段 5.5 执行中；步骤 1 已完成，下一步进入步骤 2
+
+步骤 1 交付：
+
+- `CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md`
+- `CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md`
+
+审计已确认保留现有 `Store -> Snapshot -> Affordance -> Transaction -> Writer` 主链，并裁定 State、Fact、Memory、角色特征、物品实例、装备位、市场投影与存档的唯一真值。步骤 2 不再重新讨论术语，而是把 schema 草案实现为可校验的数据和 Store 边界。
 
 ## 1. 为什么现在调整顺序
 
@@ -345,4 +352,17 @@ player_facing_reason
 
 ## 9. 当前下一步
 
-立即执行步骤 1，审计当前数据合同并输出术语裁决与最小 schema 草案。在该审计完成前，不新增第七哨站第二年内容。
+步骤 1 已完成。立即进入步骤 2：
+
+1. 步骤 2A：实现 Raw Definition 注册、稳定 ID 和 schema 校验；将 `EntityStore` 接入 Session，并确立 `EntityStore` 与 `StateStore` 的唯一真值边界。
+2. 步骤 2B：引入角色特征 Store 与只读 `CharacterProgress` 投影。
+3. 步骤 2C：扩展 `ItemStore` 的 holder、quantity、transfer、consume 和 durability 合同，移除 `inventory_item_ids` 双写。
+4. 步骤 2D：引入 `EquipmentLoadout`，并把 Inventory 与 MarketStock 保持为只读投影。
+5. 步骤 2E：建立最小合同 fixture，为后续 SaveEnvelope 和往返一致性测试准备数据。
+
+实施依据：
+
+- `CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md`
+- `CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md`
+
+在步骤 2 至 6 完成前，不新增第七哨站第二年内容。

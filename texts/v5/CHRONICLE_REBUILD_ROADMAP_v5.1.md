@@ -653,6 +653,24 @@ spoiled_grain
 texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 ```
 
+### 11.6.5 当前进度
+
+截至 2026-08-12，步骤 1 已完成：
+
+- 已审计 State、Fact、Memory、Relationship、Item、Snapshot、Action 与 Transaction 边界。
+- 已裁定库存、事实、地区状态和角色状态的重复真值。
+- 已裁定属性、天赋、特质、印记、技艺、物品、装备和商店的术语边界。
+- 已形成最小 schema 草案与旧字段迁移顺序。
+
+交付文档：
+
+```text
+texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md
+texts/v5/CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md
+```
+
+当前进入步骤 2A：先实现 Definition 注册并把 EntityStore 接入 Session，确立实体身份与状态的唯一真值。之后再实现角色特征 Store、ItemInstance 扩展、EquipmentLoadout 和最小合同 fixture。Inventory 与 MarketStock 只做派生视图，不建立新的可写真值。
+
 阶段 5.5 通过后，恢复阶段 5 的季度、年度和五年内容扩展，再进入阶段 6。
 
 ---

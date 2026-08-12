@@ -65,6 +65,23 @@
 
 该计划不要求现在完成全部系统内容与数值平衡。它要求在继续扩写第七哨站年份内容前，先让核心系统通过同一数据合同进入湖湾镇与第一冬。
 
+### CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md
+
+阶段 5.5 步骤 1 的现状审计与术语裁决。
+
+用于回答：
+
+- 现有 Store、Snapshot、Action 和 Transaction 哪些应保留；
+- 当前有哪些重复真值和死合同；
+- 属性、天赋、特质、印记、技艺、物品、装备和商店分别归谁管理；
+- `inventory_item_ids`、`training`、`mist_salt_echo` 等旧字段如何迁移。
+
+### CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md
+
+阶段 5.5 步骤 2 的实施输入。
+
+用于定义角色特征、物品实例、装备位、市场投影、统一条件与效果、事务 v2 和 SaveEnvelope 的最小 schema。
+
 ---
 
 ## 2. 推荐阅读顺序
@@ -75,8 +92,10 @@
 2. `CHRONICLE_SYSTEM_MODULES_v5.1.md`
 3. `CHRONICLE_REBUILD_ROADMAP_v5.1.md`
 4. `CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md`
-5. 当前阶段的具体系统规格
-6. `Chronicle Game Design Document.md`
+5. `CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md`
+6. `CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md`
+7. 当前阶段的具体系统规格
+8. `Chronicle Game Design Document.md`
 
 说明：
 
@@ -145,7 +164,14 @@ Codex 只执行这一小块
 texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 ```
 
-第一项工作是审计现有数据合同，裁决属性、天赋、特质、印记和技艺的边界，并输出最小 schema 草案。
+步骤 1 的现状审计、术语裁决和最小 schema 草案已经完成。当前进入步骤 2A：先实现可校验的 Definition，并把 EntityStore 接入 Session，确立实体身份与状态的唯一真值；然后再接角色特征、物品实例与装备位合同。
+
+当前实施依据：
+
+```text
+texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md
+texts/v5/CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md
+```
 
 ---
 
