@@ -1,0 +1,287 @@
+{
+  "project_id": "seventh_outpost_first_winter",
+  "title": "第七哨站 · 新兵之冬",
+  "duration_days": 7,
+  "scope_entity_id": "seventh_outpost",
+  "ritual": {
+    "title": "第 {day} 天 · 清晨点名",
+    "body": "罗恩依次念过霍克、玛塔、赛拉、伊莱和你的名字。雪落在点名册上，每个人都要出声证明自己还在。"
+  },
+  "state_bounds": {
+    "seventh_outpost": {
+      "supply": [0, 12],
+      "morale": [0, 12],
+      "discipline": [0, 12],
+      "wall_integrity": [0, 12],
+      "border_pressure": [0, 12],
+      "readiness": [0, 12]
+    },
+    "player": {
+      "fatigue": [0, 10],
+      "training": [0, 20]
+    }
+  },
+  "daily_settlement": {
+    "base_state_changes": [
+      {"entity_id": "seventh_outpost", "key": "supply", "delta": -2},
+      {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": 2},
+      {"entity_id": "player", "key": "fatigue", "delta": -1}
+    ],
+    "conditional_effects": [
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "supply", "max": 2}
+        ],
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": -1}
+        ],
+        "narrative": "晚汤只剩薄薄一层，点名时有人开始盯着厨房烟囱。"
+      },
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "border_pressure", "min": 8}
+        ],
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "wall_integrity", "delta": -1},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": -1}
+        ],
+        "narrative": "雾线外的动静逼近了一夜，东墙木楔松了一枚，睡着的人也比昨天少。"
+      },
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "readiness", "min": 8},
+          {"entity_id": "seventh_outpost", "key": "wall_integrity", "min": 7}
+        ],
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": -1},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": 1}
+        ],
+        "narrative": "换岗和墙头信号都没有出错，雾线外的试探没有找到缺口。"
+      }
+    ]
+  },
+  "status_axes": [
+    {"key": "supply", "label": "补给", "warning_below": 3},
+    {"key": "morale", "label": "士气", "warning_below": 4},
+    {"key": "discipline", "label": "军纪", "warning_below": 3},
+    {"key": "wall_integrity", "label": "哨墙", "warning_below": 5},
+    {"key": "readiness", "label": "战备", "warning_below": 4},
+    {"key": "border_pressure", "label": "边境压力", "warning_above": 7}
+  ],
+  "completion": {
+    "title": "新兵之冬 · 七日小结",
+    "intro": "你在第七哨站完成了第一轮值勤。七天不等于一年，但点名、饥饿、疲劳和身边人的反应已经留下了可追溯的差别。",
+    "outcomes": [
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "border_pressure", "max": 5}
+        ],
+        "text": "雾线暂时退远，罗恩没有在点名后追加夜岗。"
+      },
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "border_pressure", "min": 8}
+        ],
+        "text": "雾线压力没有缓解，额外夜岗成为这个冬天的新常规。"
+      },
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "supply", "max": 2}
+        ],
+        "text": "玛塔开始把汤兑薄，存粮已无法让所有人安心。"
+      },
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "wall_integrity", "min": 9}
+        ],
+        "text": "东墙的新木楔撑住了风雪，霍克记得谁和他一起抬过木料。"
+      },
+      {
+        "conditions": [
+          {"entity_id": "seventh_outpost", "key": "morale", "min": 8}
+        ],
+        "text": "晚火旁仍有人等同伴回来，点名不只是军纪。"
+      },
+      {
+        "conditions": [
+          {"entity_id": "player", "key": "fatigue", "min": 7}
+        ],
+        "text": "赛拉在你的值岗牌背面留下记号：你已经学会硬撑，还没有学会停下。"
+      }
+    ]
+  },
+  "duties": [
+    {
+      "duty_id": "patrol_fog_line",
+      "label": "[感知] 巡查雾线",
+      "kind": "值勤",
+      "hint": "需要感知 8。压低边境压力，但会明显增加疲劳。",
+      "player_min": {"perception": 8},
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": -3},
+          {"entity_id": "seventh_outpost", "key": "readiness", "delta": 1},
+          {"entity_id": "player", "key": "fatigue", "delta": 3},
+          {"entity_id": "player", "key": "training", "delta": 1},
+          {"entity_id": "player", "key": "last_duty", "to": "patrol_fog_line"}
+        ],
+        "relationship_changes": [
+          {"source_id": "captain_ron", "target_id": "player", "axis": "discipline_respect", "delta": 2}
+        ],
+        "narrative": {
+          "title": "雾线外没有脚印",
+          "summary": "你沿界桩走完一圈，把三处被雪压低的警绳重新拉紧。没有看见敌人，但哨站今晚少了一块盲区。"
+        }
+      }
+    },
+    {
+      "duty_id": "repair_east_wall",
+      "label": "[力量] 和霍克补东墙",
+      "kind": "劳作",
+      "hint": "需要力量 7。消耗木料和体力，直接修复哨墙。",
+      "player_min": {"strength": 7},
+      "available_if": [
+        {"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 9}
+      ],
+      "requirements": [
+        {"entity_id": "seventh_outpost", "key": "supply", "min": 1, "label": "修墙物资"}
+      ],
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 3},
+          {"entity_id": "seventh_outpost", "key": "supply", "delta": -1},
+          {"entity_id": "player", "key": "fatigue", "delta": 3},
+          {"entity_id": "player", "key": "training", "delta": 1},
+          {"entity_id": "player", "key": "last_duty", "to": "repair_east_wall"}
+        ],
+        "relationship_changes": [
+          {"source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 3}
+        ],
+        "narrative": {
+          "title": "东墙多撑住了一层雪",
+          "summary": "你和霍克把新木楔砸进裂缝。他只说了一次“够了”，收工时却把最重的锤子交给你背回去。"
+        }
+      }
+    },
+    {
+      "duty_id": "audit_rations_with_marta",
+      "label": "[智慧] 和玛塔核对口粮",
+      "kind": "补给",
+      "hint": "需要智慧 9。找出损耗与重复记账，保住可用口粮。",
+      "player_min": {"wisdom": 9},
+      "available_if": [
+        {"entity_id": "seventh_outpost", "key": "supply", "max": 8}
+      ],
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "supply", "delta": 2},
+          {"entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"entity_id": "player", "key": "fatigue", "delta": 1},
+          {"entity_id": "player", "key": "last_duty", "to": "audit_rations_with_marta"}
+        ],
+        "relationship_changes": [
+          {"source_id": "cook_marta", "target_id": "player", "axis": "trust", "delta": 3}
+        ],
+        "narrative": {
+          "title": "两袋盐肉没有真正丢失",
+          "summary": "你从三处不同笔迹里找出一笔重复损耗。玛塔把两袋盐肉重新挂回账上，晚汤终于不用继续兑水。"
+        }
+      }
+    },
+    {
+      "duty_id": "drill_with_elai",
+      "label": "[魅力] 陪伊莱练换弦",
+      "kind": "同袍",
+      "hint": "需要魅力 6。提高小队战备与士气，建立战友情。",
+      "player_min": {"charisma": 6},
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "readiness", "delta": 2},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": 1},
+          {"entity_id": "player", "key": "fatigue", "delta": 2},
+          {"entity_id": "player", "key": "training", "delta": 1},
+          {"entity_id": "player", "key": "last_duty", "to": "drill_with_elai"}
+        ],
+        "relationship_changes": [
+          {"source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 4},
+          {"source_id": "recruit_elai", "target_id": "player", "axis": "familiarity", "delta": 2}
+        ],
+        "narrative": {
+          "title": "伊莱终于没有把弦扣打死",
+          "summary": "你没有替他完成，只让他从头再来。第三次换弦时，伊莱的手不再发抖，收弓后也第一次主动等你同行。"
+        }
+      }
+    },
+    {
+      "duty_id": "practice_wall_archery",
+      "label": "[敏捷] 在哨墙练速射",
+      "kind": "训练",
+      "hint": "需要敏捷 8。消耗一份箭材，提高个人训练与哨站战备。",
+      "player_min": {"dexterity": 8},
+      "requirements": [
+        {"entity_id": "seventh_outpost", "key": "supply", "min": 1, "label": "箭材"}
+      ],
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "readiness", "delta": 3},
+          {"entity_id": "seventh_outpost", "key": "supply", "delta": -1},
+          {"entity_id": "player", "key": "fatigue", "delta": 2},
+          {"entity_id": "player", "key": "training", "delta": 2},
+          {"entity_id": "player", "key": "last_duty", "to": "practice_wall_archery"}
+        ],
+        "narrative": {
+          "title": "第五支箭赶上了巡逻铃",
+          "summary": "你在风里连续张弓。箭簇没有全部命中，但最后一轮已经能在巡逻铃第二响前射完。"
+        }
+      }
+    },
+    {
+      "duty_id": "share_hard_bread",
+      "label": "把两份硬面包留在火边",
+      "kind": "生活",
+      "hint": "消耗 2 份哨站补给。缓和士气，但罗恩不会把它算作正式值勤。",
+      "requirements": [
+        {"entity_id": "seventh_outpost", "key": "supply", "min": 2, "label": "哨站补给"}
+      ],
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "supply", "delta": -2},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": 3},
+          {"entity_id": "seventh_outpost", "key": "discipline", "delta": -1},
+          {"entity_id": "player", "key": "fatigue", "delta": 1},
+          {"entity_id": "player", "key": "last_duty", "to": "share_hard_bread"}
+        ],
+        "relationship_changes": [
+          {"source_id": "recruit_elai", "target_id": "player", "axis": "gratitude", "delta": 3},
+          {"source_id": "cook_marta", "target_id": "player", "axis": "familiarity", "delta": 2}
+        ],
+        "narrative": {
+          "title": "点名以后还有人在火边等你",
+          "summary": "你把两份硬面包掰开，谁也没问这算谁的份额。罗恩经过时看了一眼，没有停；伊莱把最大的一块推回你面前。"
+        }
+      }
+    },
+    {
+      "duty_id": "rest_in_infirmary",
+      "label": "听赛拉的话休息一天",
+      "kind": "恢复",
+      "hint": "疲劳达到 5 时出现。大幅恢复，但今天不会增加战备。",
+      "available_if": [
+        {"entity_id": "player", "key": "fatigue", "min": 5}
+      ],
+      "effects": {
+        "state_changes": [
+          {"entity_id": "player", "key": "fatigue", "delta": -4},
+          {"entity_id": "player", "key": "last_duty", "to": "rest_in_infirmary"}
+        ],
+        "relationship_changes": [
+          {"source_id": "medic_saira", "target_id": "player", "axis": "familiarity", "delta": 3}
+        ],
+        "narrative": {
+          "title": "军医室的窗一整天没有结霜",
+          "summary": "赛拉把你的靴子放到炉边，禁止你碰值岗牌。外面的口令换了三次，你第一次只听见声音，没有立刻惊醒。"
+        }
+      }
+    }
+  ]
+}

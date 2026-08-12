@@ -535,10 +535,10 @@ ok_button_text = "开始试玩"
 
 [node name="CompletionDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
-title = "这次旅程已经抵达终点"
-dialog_text = "你已经从湖湾镇的粮仓旧事追到雾盐旧井，并带着这段亲历返回北埠。\n\n内部试玩目标已经完成。你可以留在当前世界继续观察，也可以使用右上角的“重新开始试玩”体验另一条选择。"
+title = "湖湾镇旅程结束 · 前往第七哨站"
+dialog_text = "你已经从湖湾镇的粮仓旧事追到雾盐旧井，并带着这段亲历返回北埠。\n\n短期调查切片已经完成。下一段将进入第七哨站，体验第一冬的七个值勤日：点名、补给、军纪、训练和同袍关系会共同变化。"
 dialog_autowrap = true
-ok_button_text = "继续留在世界"
+ok_button_text = "前往第七哨站服役"
 
 [node name="FailureDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true

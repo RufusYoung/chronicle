@@ -1,0 +1,320 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/rebuild/v5_seventh_outpost_viewer.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="panel"]
+bg_color = Color(0.065, 0.078, 0.08, 0.98)
+content_margin_left = 16.0
+content_margin_top = 14.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.29, 0.29, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="header"]
+bg_color = Color(0.07, 0.085, 0.09, 1)
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+border_width_bottom = 1
+border_color = Color(0.5, 0.43, 0.3, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="feedback"]
+bg_color = Color(0.052, 0.064, 0.068, 1)
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+border_width_left = 3
+border_color = Color(0.59, 0.47, 0.28, 1)
+
+[sub_resource type="StyleBoxFlat" id="dock"]
+bg_color = Color(0.047, 0.059, 0.063, 1)
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+border_width_top = 1
+border_color = Color(0.4, 0.34, 0.23, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="V5SeventhOutpostViewer" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 15
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.022, 0.029, 0.032, 1)
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="Root" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="PanelContainer" parent="Margin/Root"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("header")
+
+[node name="Row" type="HBoxContainer" parent="Margin/Root/Header"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Brand" type="VBoxContainer" parent="Margin/Root/Header/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Margin/Root/Header/Row/Brand"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.89, 0.82, 0.68, 1)
+theme_override_font_sizes/font_size = 22
+text = "CHRONICLE"
+
+[node name="Subtitle" type="Label" parent="Margin/Root/Header/Row/Brand"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.6, 0.61, 1)
+text = "边境服役 · 第一年 · 新兵之冬"
+
+[node name="DayLabel" type="Label" parent="Margin/Root/Header/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.72, 0.58, 1)
+theme_override_font_sizes/font_size = 16
+text = "第 1 / 7 天　06:00　清晨点名"
+
+[node name="RestartButton" type="Button" parent="Margin/Root/Header/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 40)
+layout_mode = 2
+text = "重新开始服役"
+
+[node name="Main" type="HBoxContainer" parent="Margin/Root"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Left" type="PanelContainer" parent="Margin/Root/Main"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("panel")
+
+[node name="Content" type="VBoxContainer" parent="Margin/Root/Main/Left"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PlayerHeading" type="Label" parent="Margin/Root/Main/Left/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.76, 0.61, 1)
+theme_override_font_sizes/font_size = 17
+text = "服役中的你"
+
+[node name="PlayerText" type="RichTextLabel" parent="Margin/Root/Main/Left/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+fit_content = false
+
+[node name="Divider" type="HSeparator" parent="Margin/Root/Main/Left/Content"]
+layout_mode = 2
+
+[node name="ObjectiveText" type="RichTextLabel" parent="Margin/Root/Main/Left/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.72, 0.72, 0.67, 1)
+bbcode_enabled = true
+fit_content = false
+
+[node name="Center" type="PanelContainer" parent="Margin/Root/Main"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+theme_override_styles/panel = SubResource("panel")
+
+[node name="Content" type="VBoxContainer" parent="Margin/Root/Main/Center"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RitualTitle" type="Label" parent="Margin/Root/Main/Center/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
+theme_override_font_sizes/font_size = 20
+text = "第 1 天 · 清晨点名"
+
+[node name="RitualBody" type="RichTextLabel" parent="Margin/Root/Main/Center/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 74)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.77, 0.78, 0.74, 1)
+fit_content = false
+
+[node name="Feedback" type="PanelContainer" parent="Margin/Root/Main/Center/Content"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_styles/panel = SubResource("feedback")
+
+[node name="Box" type="VBoxContainer" parent="Margin/Root/Main/Center/Content/Feedback"]
+layout_mode = 2
+
+[node name="Eyebrow" type="Label" parent="Margin/Root/Main/Center/Content/Feedback/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.47, 0.55, 0.54, 1)
+text = "刚刚发生"
+
+[node name="FeedbackTitle" type="Label" parent="Margin/Root/Main/Center/Content/Feedback/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.7, 0.43, 1)
+theme_override_font_sizes/font_size = 17
+text = "第一次点名"
+
+[node name="FeedbackBody" type="RichTextLabel" parent="Margin/Root/Main/Center/Content/Feedback/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+fit_content = false
+scroll_active = true
+
+[node name="PeopleHeading" type="Label" parent="Margin/Root/Main/Center/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
+theme_override_font_sizes/font_size = 17
+text = "同一轮点名里的人"
+
+[node name="PeopleText" type="RichTextLabel" parent="Margin/Root/Main/Center/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="Right" type="PanelContainer" parent="Margin/Root/Main"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("panel")
+
+[node name="Content" type="VBoxContainer" parent="Margin/Root/Main/Right"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="StatusHeading" type="Label" parent="Margin/Root/Main/Right/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
+theme_override_font_sizes/font_size = 17
+text = "哨站状况"
+
+[node name="StatusText" type="RichTextLabel" parent="Margin/Root/Main/Right/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 164)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = false
+
+[node name="Divider" type="HSeparator" parent="Margin/Root/Main/Right/Content"]
+layout_mode = 2
+
+[node name="HistoryHeading" type="Label" parent="Margin/Root/Main/Right/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
+theme_override_font_sizes/font_size = 17
+text = "这一轮值勤"
+
+[node name="HistoryText" type="RichTextLabel" parent="Margin/Root/Main/Right/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+
+[node name="Dock" type="PanelContainer" parent="Margin/Root"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+theme_override_styles/panel = SubResource("dock")
+
+[node name="Content" type="VBoxContainer" parent="Margin/Root/Dock"]
+layout_mode = 2
+
+[node name="ActionHeading" type="Label" parent="Margin/Root/Dock/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.89, 0.81, 0.64, 1)
+theme_override_font_sizes/font_size = 17
+text = "今日职责"
+
+[node name="ActionHint" type="Label" parent="Margin/Root/Dock/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.57, 0.56, 1)
+text = "每项职责直接列出条件、消耗与影响；选择后推进到次日点名。"
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/Root/Dock/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ActionButtons" type="FlowContainer" parent="Margin/Root/Dock/Content/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6
+
+[node name="IntroDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "第七哨站 · 新兵之冬"
+dialog_text = "你进入第七哨站服役。\n\n这一轮内部试玩压缩了第一冬的七个值勤日。每天选择一项职责，补给、士气、军纪、哨墙、战备与边境压力会继续变化；罗恩、伊莱、玛塔、赛拉和霍克也会依据局面自行行动。\n\n七日不是完整五年，它用来验证长期生活的基本单位。"
+dialog_autowrap = true
+ok_button_text = "参加第一次点名"
+theme_override_styles/panel = SubResource("panel")
+
+[node name="CompletionDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "新兵之冬 · 七日小结"
+dialog_autowrap = true
+ok_button_text = "留在哨站查看结果"
+theme_override_styles/panel = SubResource("panel")

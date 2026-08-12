@@ -164,7 +164,22 @@ func _run() -> void:
 		"11. Confirmed restart clears end states and starts a fresh run"
 	)
 
+	completion_dialog.confirmed.emit()
+	await process_frame
+	await process_frame
+	var outpost_scene := current_scene
+	_check(
+		outpost_scene != null
+		and outpost_scene.name == "V5SeventhOutpostViewer"
+		and (
+			outpost_scene.get_node("%DayLabel") as Label
+		).text.begins_with("第 1 / 7 天"),
+		"12. Completing Lake Town can enter Seventh Outpost service"
+	)
+
 	viewer.queue_free()
+	if outpost_scene != null:
+		outpost_scene.queue_free()
 	await process_frame
 	_finish()
 

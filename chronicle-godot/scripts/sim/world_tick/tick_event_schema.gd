@@ -1,7 +1,12 @@
 extends RefCounted
 class_name V5TickEventSchema
 
-const ALLOWED_TICK_TYPES := ["time_event", "manual_event", "test_event"]
+const ALLOWED_TICK_TYPES := [
+	"time_event",
+	"manual_event",
+	"life_project_day",
+	"test_event",
+]
 const ALLOWED_SCOPE_TYPES := ["location", "institution", "region", "global"]
 const ALLOWED_DUE_KINDS := ["obligation", "exchange"]
 

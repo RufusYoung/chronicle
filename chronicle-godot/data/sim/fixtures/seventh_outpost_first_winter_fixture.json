@@ -1,0 +1,330 @@
+{
+  "fixture_id": "seventh_outpost_first_winter",
+  "location_id": "outpost_courtyard",
+  "locations": {
+    "outpost_courtyard": {
+      "id": "outpost_courtyard",
+      "display_name": "第七哨站",
+      "description": "晨雪压住木墙的裂缝，点名册在罗恩手里翻过一页。厨房烟囱刚冒烟，雾线外的巡逻铃还没有响。",
+      "tags": [
+        "military_outpost",
+        "border",
+        "snowbound",
+        "service_life"
+      ]
+    }
+  },
+  "world_time": {
+    "day": 1,
+    "hour": 6
+  },
+  "region_state": {
+    "border_threat": "present",
+    "winter": "first_winter",
+    "weather": "snow"
+  },
+  "institution": {
+    "chain_of_command": "active",
+    "discipline_level": "strict",
+    "service_year": 1,
+    "ritual": "morning_roll_call"
+  },
+  "entities": [
+    {
+      "id": "seventh_outpost",
+      "location_id": "outpost_courtyard",
+      "display_name": "第七哨站",
+      "type": "institution",
+      "tags": ["military_outpost", "service_project"],
+      "states": {
+        "visible": false,
+        "supply": 8,
+        "morale": 6,
+        "discipline": 5,
+        "wall_integrity": 8,
+        "border_pressure": 5,
+        "readiness": 3
+      }
+    },
+    {
+      "id": "captain_ron",
+      "location_id": "outpost_courtyard",
+      "display_name": "罗恩",
+      "description": "队长。沉默、克制，点名时从不念错一个名字。",
+      "type": "person",
+      "tags": ["person", "captain", "superior", "outpost_resident"],
+      "states": {
+        "visible": true,
+        "institution_role": "captain",
+        "fatigue": 2
+      }
+    },
+    {
+      "id": "recruit_elai",
+      "location_id": "outpost_courtyard",
+      "display_name": "伊莱",
+      "description": "和你同一冬入伍的新兵，弓弦总比别人多检查一遍。",
+      "type": "person",
+      "tags": ["person", "recruit", "squadmate", "outpost_resident"],
+      "states": {
+        "visible": true,
+        "institution_role": "recruit",
+        "hunger": "medium",
+        "fatigue": 3
+      }
+    },
+    {
+      "id": "cook_marta",
+      "location_id": "outpost_courtyard",
+      "display_name": "玛塔",
+      "description": "管厨房和口粮册的人，知道每块硬面包该落进谁的碗里。",
+      "type": "person",
+      "tags": ["person", "cook", "ration_keeper", "outpost_resident"],
+      "states": {
+        "visible": true,
+        "institution_role": "cook",
+        "fatigue": 4
+      }
+    },
+    {
+      "id": "medic_saira",
+      "location_id": "outpost_courtyard",
+      "display_name": "赛拉",
+      "description": "军医。她记伤口，也记谁总说自己还能撑。",
+      "type": "person",
+      "tags": ["person", "medic", "outpost_resident"],
+      "states": {
+        "visible": true,
+        "institution_role": "medic",
+        "fatigue": 2
+      }
+    },
+    {
+      "id": "veteran_hoke",
+      "location_id": "outpost_courtyard",
+      "display_name": "霍克",
+      "description": "守过七个冬天的老兵，修墙时很少说话。",
+      "type": "person",
+      "tags": ["person", "veteran", "outpost_resident"],
+      "states": {
+        "visible": true,
+        "institution_role": "veteran",
+        "fatigue": 5
+      }
+    },
+    {
+      "id": "morning_roll_call_register",
+      "location_id": "outpost_courtyard",
+      "display_name": "清晨点名册",
+      "description": "页角被雪水浸硬，五个人的名字每天都要在这里重新出现。",
+      "type": "readable_record",
+      "tags": ["readable_record", "military_record", "ritual"],
+      "states": {
+        "visible": true,
+        "readable": true
+      }
+    }
+  ],
+  "player": {
+    "id": "player",
+    "role": "recruit",
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
+    "perception": 10,
+    "health": 100,
+    "injury": "none",
+    "fatigue": 1,
+    "service_day": 1,
+    "training": 0,
+    "last_duty": "none"
+  },
+  "known_facts": [],
+  "autonomous_action_rules": [
+    {
+      "rule_id": "ron_tightens_watch_under_border_pressure",
+      "actor_id": "captain_ron",
+      "minimum_utility": 50,
+      "priority": 40,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "entity_id": "seventh_outpost",
+          "key": "border_pressure",
+          "min": 8
+        }
+      ],
+      "base_utility": 90,
+      "effects": {
+        "state_changes": [
+          {
+            "entity_id": "seventh_outpost",
+            "key": "discipline",
+            "delta": 1,
+            "reason": "ron_tightened_watch"
+          },
+          {
+            "entity_id": "seventh_outpost",
+            "key": "morale",
+            "delta": -1,
+            "reason": "extra_watch_rotation"
+          }
+        ],
+        "narrative": {
+          "title": "罗恩加了一轮夜岗",
+          "summary": "雾线压力太高，罗恩在点名册上补了一轮夜岗。军纪更紧，没人因此高兴。",
+          "tone": "strict"
+        }
+      }
+    },
+    {
+      "rule_id": "marta_stretches_low_supplies",
+      "actor_id": "cook_marta",
+      "minimum_utility": 50,
+      "priority": 40,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "entity_id": "seventh_outpost",
+          "key": "supply",
+          "max": 3
+        }
+      ],
+      "base_utility": 95,
+      "effects": {
+        "state_changes": [
+          {
+            "entity_id": "seventh_outpost",
+            "key": "supply",
+            "delta": 1,
+            "reason": "marta_stretched_rations"
+          },
+          {
+            "entity_id": "seventh_outpost",
+            "key": "morale",
+            "delta": -1,
+            "reason": "thin_soup"
+          }
+        ],
+        "narrative": {
+          "title": "玛塔把汤又兑薄了一层",
+          "summary": "存粮见底，玛塔刮净锅底，勉强多凑出一天的份额。碗都装满了，只是没人吃饱。",
+          "tone": "strained"
+        }
+      }
+    },
+    {
+      "rule_id": "saira_orders_exhausted_recruit_to_rest",
+      "actor_id": "medic_saira",
+      "minimum_utility": 50,
+      "priority": 50,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "entity_id": "player",
+          "key": "fatigue",
+          "min": 7
+        }
+      ],
+      "base_utility": 110,
+      "effects": {
+        "state_changes": [
+          {
+            "entity_id": "player",
+            "key": "fatigue",
+            "delta": -2,
+            "reason": "saira_enforced_rest"
+          }
+        ],
+        "relationship_changes": [
+          {
+            "source_id": "medic_saira",
+            "target_id": "player",
+            "axis": "familiarity",
+            "delta": 2,
+            "reason": "treated_exhaustion"
+          }
+        ],
+        "narrative": {
+          "title": "赛拉没收了你的值岗牌",
+          "summary": "赛拉看见你握杯时手在发抖，直接划掉一轮夜岗。你少做了一件事，也终于睡了几个小时。",
+          "tone": "firm_care"
+        }
+      }
+    },
+    {
+      "rule_id": "hoke_repairs_failing_wall",
+      "actor_id": "veteran_hoke",
+      "minimum_utility": 50,
+      "priority": 30,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "entity_id": "seventh_outpost",
+          "key": "wall_integrity",
+          "max": 8
+        }
+      ],
+      "base_utility": 85,
+      "effects": {
+        "state_changes": [
+          {
+            "entity_id": "seventh_outpost",
+            "key": "wall_integrity",
+            "delta": 1,
+            "reason": "hoke_emergency_repair"
+          },
+          {
+            "entity_id": "veteran_hoke",
+            "key": "fatigue",
+            "delta": 1,
+            "reason": "emergency_wall_repair"
+          }
+        ],
+        "narrative": {
+          "title": "霍克独自补了东墙",
+          "summary": "东墙撑不住下一场雪，霍克没有等排班，自己扛着木料去了墙根。裂缝小了一点，他的旧伤却又开始跛。",
+          "tone": "weary_duty"
+        }
+      }
+    },
+    {
+      "rule_id": "elai_repeats_drill_when_unready",
+      "actor_id": "recruit_elai",
+      "minimum_utility": 50,
+      "priority": 20,
+      "requirements": [
+        {
+          "source": "entity_state",
+          "entity_id": "seventh_outpost",
+          "key": "readiness",
+          "max": 3
+        }
+      ],
+      "base_utility": 75,
+      "effects": {
+        "state_changes": [
+          {
+            "entity_id": "seventh_outpost",
+            "key": "readiness",
+            "delta": 1,
+            "reason": "elai_repeated_drill"
+          },
+          {
+            "entity_id": "recruit_elai",
+            "key": "fatigue",
+            "delta": 1,
+            "reason": "extra_drill"
+          }
+        ],
+        "narrative": {
+          "title": "伊莱又练了一遍换弦",
+          "summary": "大家散开以后，伊莱还留在箭架旁，把冻硬的弓弦重新换了一遍。动作仍慢，却没有再打结。",
+          "tone": "determined"
+        }
+      }
+    }
+  ]
+}

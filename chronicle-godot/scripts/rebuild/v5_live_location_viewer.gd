@@ -48,6 +48,7 @@ func _ready() -> void:
 	wait_button.pressed.connect(advance_time)
 	restart_button.pressed.connect(_request_restart)
 	restart_dialog.confirmed.connect(restart_session)
+	completion_dialog.confirmed.connect(_enter_seventh_outpost)
 	restart_session()
 
 
@@ -210,6 +211,12 @@ func _show_playtest_end(end_state: String) -> void:
 		completion_dialog.popup_centered_clamped(Vector2i(760, 230), 0.9)
 	elif end_state == "failed":
 		failure_dialog.popup_centered_clamped(Vector2i(760, 230), 0.9)
+
+
+func _enter_seventh_outpost() -> void:
+	get_tree().change_scene_to_file(
+		"res://scenes/rebuild/v5_seventh_outpost_viewer.tscn"
+	)
 
 
 func _refresh_actions(actions: Array) -> void:
