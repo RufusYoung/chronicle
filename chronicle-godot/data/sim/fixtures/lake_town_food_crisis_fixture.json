@@ -158,8 +158,8 @@
       "target_entity_id": "abandoned_granary_broken_door",
       "status_state_key": "challenge_status",
       "available_status": "available",
-      "stat_key": "perception",
-      "stat_label": "感知",
+      "stat_key": "dexterity",
+      "stat_label": "敏捷",
       "die_sides": 20,
       "difficulty": 21,
       "risk_label": "高",
@@ -169,13 +169,13 @@
         "label": "[准备] 遮住口鼻，试探地板　1小时",
         "hours": 1,
         "state_key": "entry_prepared",
-        "bonus": 10,
+        "bonus": 12,
         "narrative_title": "在门外做好准备",
         "narrative": "你撕下一截干净布条掩住口鼻，又用断木逐块敲过门后的地板。几块声音发空的木板被你用白灰圈了出来。"
       },
       "attempt": {
         "option_id": "enter_abandoned_granary",
-        "label": "[危险] 踏进粮仓深处　1小时",
+        "label": "[敏捷·危险] 踏进粮仓深处　1小时",
         "hours": 1
       },
       "success": {
@@ -217,8 +217,8 @@
       "target_entity_id": "north_quay_flooded_stack_door",
       "status_state_key": "challenge_status",
       "available_status": "available",
-      "stat_key": "perception",
-      "stat_label": "感知",
+      "stat_key": "strength",
+      "stat_label": "力量",
       "die_sides": 20,
       "difficulty": 19,
       "risk_label": "中",
@@ -228,13 +228,13 @@
         "label": "[准备] 借灯笼和油布探路　1小时",
         "hours": 1,
         "state_key": "stack_search_prepared",
-        "bonus": 8,
+        "bonus": 11,
         "narrative_title": "等潮线退到旧刻痕下",
         "narrative": "闻简借给你一盏罩灯和一卷旧油布。你没有立刻下去，而是沿廊柱记下潮线，等水面退过第二道刻痕，再把能落脚的横梁逐一照出来。"
       },
       "attempt": {
         "option_id": "search_flooded_archive_stack",
-        "label": "[危险] 进入水浸封存层　1小时",
+        "label": "[力量·危险] 进入水浸封存层　1小时",
         "hours": 1
       },
       "success": {
@@ -411,15 +411,15 @@
       "target_entity_id": "mist_salt_second_ring_stairs",
       "status_state_key": "challenge_status",
       "available_status": "available",
-      "stat_key": "perception",
-      "stat_label": "感知",
+      "stat_key": "constitution",
+      "stat_label": "体质",
       "die_sides": 20,
       "difficulty": 23,
       "risk_label": "不可逆",
       "risk_description": "第二环的盐雾会穿过蜡布。无论找到什么，只要继续向下，呼吸都会留下不能按普通伤势处理的长期雾盐回响；你也可以检查井口盐壳后立刻返回。",
       "attempt": {
         "option_id": "descend_mist_salt_well_second_ring",
-        "label": "[深入] 沿盐梯下降到第二环　2小时",
+        "label": "[体质·深入] 沿盐梯下降到第二环　2小时",
         "hours": 2
       },
       "attempt_consequences": {
@@ -1219,6 +1219,11 @@
     "id": "player",
     "role": "traveler",
     "food_count": 3,
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
     "perception": 10,
     "health": 100,
     "injury": "none",

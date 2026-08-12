@@ -197,14 +197,14 @@ func _run() -> void:
 		risk_heading.visible
 		and "眼前的风险　不可逆" in risk_heading.text
 		and "不能按普通伤势处理" in risk_text.text
-		and "d20 + 感知 10 / 难度 23" in risk_text.text
+		and "d20 + 体质 8 / 难度 23" in risk_text.text
 		and descend_button != null,
 		"10a. Reading the warning reveals the irreversible descent risk"
 	)
 
 	var deep_result: Dictionary = viewer.view_model.perform_challenge(
 		WELL_DESCENT,
-		{"source": "test_injection", "roll_override": 13}
+		{"source": "test_injection", "roll_override": 15}
 	)
 	viewer.refresh_view()
 	await process_frame

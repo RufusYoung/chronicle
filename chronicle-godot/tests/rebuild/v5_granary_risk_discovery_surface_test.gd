@@ -70,7 +70,7 @@ func _run() -> void:
 	)
 	_check(
 		"朽木地板" in risk_text.text
-		and "d20 + 感知 10 / 难度 21" in risk_text.text
+		and "d20 + 敏捷 8 / 难度 21" in risk_text.text
 		and "不会死亡" in risk_text.text
 		and "也可返回" in risk_text.text,
 		"4. Risk panel explains formula, preparation, retreat, and failure"
@@ -103,7 +103,7 @@ func _run() -> void:
 	)
 	_check(
 		"准备已经完成" in risk_text.text
-		and "准备 10" in risk_text.text
+		and "准备 12" in risk_text.text
 		and _find_challenge_button(action_buttons, PREPARE_OPTION) == null
 		and _find_challenge_button(action_buttons, ENTER_OPTION) != null,
 		"7. Preparation changes the formula and cannot be repeated"
@@ -117,7 +117,7 @@ func _run() -> void:
 		"16:00" in time_label.text
 		and feedback_title.text == "梁柱后的旧物"
 		and "掷骰" in feedback_body.text
-		and "准备 10" in feedback_body.text
+		and "准备 12" in feedback_body.text
 		and "旧粮仓验粮铜牌" in feedback_body.text,
 		"8. Entry shows the real roll formula and successful discovery"
 	)

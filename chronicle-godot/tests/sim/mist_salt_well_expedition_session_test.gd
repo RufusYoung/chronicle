@@ -274,13 +274,20 @@ func _run() -> void:
 	session = _session_at_well()
 	var succeeded: Dictionary = session.execute_challenge_option(
 		WELL_DESCENT,
-		{"source": "test_injection", "roll_override": 13}
+		{"source": "test_injection", "roll_override": 15}
 	)
 	var success_snapshot: Variant = session.get_snapshot()
 	var sample: Dictionary = success_snapshot.get_item(WELL_SAMPLE)
 	_check(
 		bool(succeeded.get("success", false))
 		and str(succeeded.get("outcome", "")) == "success"
+		and str((succeeded.get(
+			"transaction_result",
+			{}
+		) as Dictionary).get(
+			"narrative_result",
+			{}
+		).get("stat_key", "")) == "constitution"
 		and int((succeeded.get(
 			"transaction_result",
 			{}

@@ -44,7 +44,7 @@ func _run() -> void:
 	var enter_option := _option(initial_options, ENTER_OPTION)
 	_check(
 		str(enter_option.get("risk_label", "")) == "高"
-		and "d20 + 感知 10 / 难度 21" in str(
+		and "d20 + 敏捷 8 / 难度 21" in str(
 			enter_option.get("check_text", "")
 		)
 		and "不会死亡" in str(enter_option.get("failure_hint", "")),
@@ -63,7 +63,7 @@ func _run() -> void:
 		bool(failed_attempt.get("success", false))
 		and str(failed_attempt.get("outcome", "")) == "failure"
 		and int(failed_check.get("roll", 0)) == 3
-		and int(failed_check.get("total", 0)) == 13
+		and int(failed_check.get("total", 0)) == 11
 		and int(failed_check.get("difficulty", 0)) == 21,
 		"4. Unprepared low roll resolves through the real check formula"
 	)
@@ -137,7 +137,7 @@ func _run() -> void:
 	_check(
 		prepared_options.size() == 1
 		and not _has_option(prepared_options, PREPARE_OPTION)
-		and "准备 10" in str(
+		and "准备 12" in str(
 			_option(prepared_options, ENTER_OPTION).get("check_text", "")
 		),
 		"11. Preparation disappears after use and changes the displayed formula"
@@ -175,10 +175,16 @@ func _run() -> void:
 		bool(success_attempt.get("success", false))
 		and str(success_attempt.get("outcome", "")) == "success"
 		and int(success_check.get("roll", 0)) == 3
-		and int(success_check.get("stat_value", 0)) == 10
-		and int(success_check.get("preparation_bonus", 0)) == 10
+		and str(success_check.get("stat_key", "")) == "dexterity"
+		and int(success_check.get("stat_value", 0)) == 8
+		and int(success_check.get("preparation_bonus", 0)) == 12
 		and int(success_check.get("total", 0)) == 23,
 		"13. The same low roll succeeds after preparation bonus"
+	)
+	_check(
+		1 + int(success_check.get("stat_value", 0))
+			+ int(success_check.get("preparation_bonus", 0)) >= 21,
+		"13a. Full preparation guarantees the granary's lowest legal roll"
 	)
 	_check(
 		int(success_snapshot.get_player_value("health", 0)) == 100

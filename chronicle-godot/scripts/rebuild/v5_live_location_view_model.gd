@@ -793,6 +793,12 @@ func _rumor_row(rumor: Dictionary) -> Dictionary:
 
 func _player_view(snapshot: Variant) -> Dictionary:
 	var role := str(snapshot.get_player_value("role", "traveler"))
+	var strength := int(snapshot.get_player_value("strength", 0))
+	var dexterity := int(snapshot.get_player_value("dexterity", 0))
+	var wisdom := int(snapshot.get_player_value("wisdom", 0))
+	var charisma := int(snapshot.get_player_value("charisma", 0))
+	var constitution := int(snapshot.get_player_value("constitution", 0))
+	var perception := int(snapshot.get_player_value("perception", 0))
 	var health := int(snapshot.get_player_value("health", 100))
 	var injury := str(snapshot.get_player_value("injury", "none"))
 	var mist_salt_echo := str(
@@ -810,16 +816,26 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		"title": "无名旅人",
 		"role": _role_label(role),
 		"food_count": int(snapshot.get_player_value("food_count", 0)),
-		"perception": int(snapshot.get_player_value("perception", 0)),
+		"strength": strength,
+		"dexterity": dexterity,
+		"wisdom": wisdom,
+		"charisma": charisma,
+		"constitution": constitution,
+		"perception": perception,
 		"health": health,
 		"injury": injury,
 		"mist_salt_echo": mist_salt_echo,
 		"items": item_names,
-		"summary": "身份　%s%s\n食物　%d 份　感知　%d\n健康　%d　伤势　%s\n发现物　%s" % [
+		"summary": "身份　%s%s\n力量 %d　敏捷 %d　智慧 %d\n魅力 %d　体质 %d　感知 %d\n食物　%d 份　健康　%d　伤势　%s\n发现物　%s" % [
 			_role_label(role),
 			long_term_line,
+			strength,
+			dexterity,
+			wisdom,
+			charisma,
+			constitution,
+			perception,
 			int(snapshot.get_player_value("food_count", 0)),
-			int(snapshot.get_player_value("perception", 0)),
 			health,
 			_injury_label(injury),
 			"、".join(item_names) if not item_names.is_empty() else "无",
@@ -1814,6 +1830,11 @@ func _state_key_label(key: String) -> String:
 	return {
 		"hunger": "饥饿状态",
 		"food_count": "食物数量",
+		"strength": "力量",
+		"dexterity": "敏捷",
+		"wisdom": "智慧",
+		"charisma": "魅力",
+		"constitution": "体质",
 		"perception": "感知",
 		"health": "健康",
 		"injury": "伤势",

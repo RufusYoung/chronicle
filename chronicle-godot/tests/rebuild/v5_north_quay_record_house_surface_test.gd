@@ -138,7 +138,7 @@ func _run() -> void:
 		risk_heading.visible
 		and "眼前的风险　中" in risk_heading.text
 		and "齐腰深的湖水" in risk_text.text
-		and "d20 + 感知 10 / 难度 19" in risk_text.text
+		and "d20 + 力量 7 / 难度 19" in risk_text.text
 		and "不会死亡" in risk_text.text
 		and chronicle_text.custom_minimum_size.y == 58.0
 		and risk_text.custom_minimum_size.y == 64.0
@@ -169,7 +169,7 @@ func _run() -> void:
 		"第 2 天　09:00" in time_label.text
 		and feedback_title.text == "等潮线退到旧刻痕下"
 		and "罩灯" in feedback_body.text
-		and "准备 8" in risk_text.text
+		and "准备 11" in risk_text.text
 		and _find_challenge_button(
 			action_buttons,
 			ARCHIVE_PREPARE

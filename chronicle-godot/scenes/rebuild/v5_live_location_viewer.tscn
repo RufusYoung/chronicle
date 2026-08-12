@@ -198,7 +198,7 @@ text = "旅人"
 
 [node name="PlayerSummary" type="RichTextLabel" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 82)
+custom_minimum_size = Vector2(0, 126)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = false

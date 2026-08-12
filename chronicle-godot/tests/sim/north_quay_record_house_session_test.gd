@@ -123,7 +123,7 @@ func _run() -> void:
 		and _has_option(archive_options, ARCHIVE_PREPARE)
 		and _has_option(archive_options, ARCHIVE_SEARCH)
 		and str(attempt.get("risk_label", "")) == "中"
-		and "d20 + 感知 10 / 难度 19" in str(
+		and "d20 + 力量 7 / 难度 19" in str(
 			attempt.get("check_text", "")
 		),
 		"8. Flooded stacks expose preparation, direct risk, and the real formula"
@@ -165,7 +165,7 @@ func _run() -> void:
 	_check(
 		bool(prepared.get("success", false))
 		and int(session.get_time_summary().get("hour", -1)) == 9
-		and "准备 8" in str(prepared_option.get("check_text", ""))
+		and "准备 11" in str(prepared_option.get("check_text", ""))
 		and not _has_option(
 			session.get_challenge_options(),
 			ARCHIVE_PREPARE
@@ -184,6 +184,8 @@ func _run() -> void:
 	_check(
 		bool(searched.get("success", false))
 		and str(searched.get("outcome", "")) == "success"
+		and str(narrative.get("stat_key", "")) == "strength"
+		and int(narrative.get("stat_value", 0)) == 7
 		and int(narrative.get("total", 0)) == 19
 		and int(session.get_time_summary().get("hour", -1)) == 10,
 		"12. The same low roll succeeds after preparation at a real time cost"
