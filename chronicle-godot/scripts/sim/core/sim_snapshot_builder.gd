@@ -2,6 +2,9 @@ extends RefCounted
 class_name V5SimSnapshotBuilder
 
 const SimSnapshotModel = preload("res://scripts/sim/core/sim_snapshot.gd")
+const CharacterProgressProjectorModel = preload(
+	"res://scripts/sim/character_feature/character_progress_projector.gd"
+)
 
 
 func build_snapshot(
@@ -25,6 +28,7 @@ func build_snapshot(
 	var item_store: Variant = stores.get("item_store")
 	var chronicle_store: Variant = stores.get("chronicle_store")
 	var investigation_store: Variant = stores.get("investigation_store")
+	var character_feature_store: Variant = stores.get("character_feature_store")
 
 	var states := _states_from_context(context)
 	if state_store != null:
@@ -46,6 +50,20 @@ func build_snapshot(
 	if states.has(player_id):
 		for key: String in (states[player_id] as Dictionary).keys():
 			player[key] = (states[player_id] as Dictionary)[key]
+	if character_feature_store != null:
+		var legacy_projection: Dictionary = (
+			character_feature_store.get_legacy_projection(player_id)
+		)
+		for key: String in legacy_projection.keys():
+			player[key] = legacy_projection[key]
+
+	var character_progress: Dictionary = {}
+	if state_store != null and character_feature_store != null:
+		character_progress = CharacterProgressProjectorModel.new().build(
+			player_id,
+			state_store,
+			character_feature_store
+		)
 
 	var region_state: Dictionary = context.region_state.duplicate(true)
 	if state_store != null and str(context.region_entity_id) != "":
@@ -62,7 +80,10 @@ func build_snapshot(
 		"player": player,
 		"entities": entities,
 		"states": states,
-		"relationships": {} if relationship_store == null else relationship_store.relations.duplicate(true),
+		"relationships": (
+			{} if relationship_store == null
+			else relationship_store.relations.duplicate(true)
+		),
 		"memories": [] if memory_store == null else memory_store.memories.duplicate(true),
 		"traces": [] if trace_store == null else trace_store.list_traces(),
 		"rumors": [] if rumor_store == null else rumor_store.list_rumors(),
@@ -70,10 +91,33 @@ func build_snapshot(
 		"pressures": [] if pressure_store == null else pressure_store.list_pressures(),
 		"obligations": [] if obligation_store == null else obligation_store.list_obligations(),
 		"exchanges": [] if exchange_store == null else exchange_store.list_exchanges(),
-		"deferred_consequences": [] if deferred_consequence_store == null else deferred_consequence_store.list_deferred_consequences(),
+		"deferred_consequences": (
+			[] if deferred_consequence_store == null
+			else deferred_consequence_store.list_deferred_consequences()
+		),
 		"items": [] if item_store == null else item_store.list_items(),
 		"chronicle_entries": [] if chronicle_store == null else chronicle_store.list_entries(),
-		"investigation_leads": [] if investigation_store == null else investigation_store.list_leads(),
+		"investigation_leads": (
+			[] if investigation_store == null
+			else investigation_store.list_leads()
+		),
+		"talent_assignments": (
+			[] if character_feature_store == null
+			else character_feature_store.list_talent_assignments()
+		),
+		"trait_instances": (
+			[] if character_feature_store == null
+			else character_feature_store.list_trait_instances()
+		),
+		"mark_instances": (
+			[] if character_feature_store == null
+			else character_feature_store.list_mark_instances()
+		),
+		"skill_progress": (
+			[] if character_feature_store == null
+			else character_feature_store.list_skill_progress()
+		),
+		"character_progress": character_progress,
 	})
 
 

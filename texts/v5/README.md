@@ -164,7 +164,7 @@ Codex 只执行这一小块
 texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 ```
 
-步骤 1 与步骤 2A 已完成。Raw Definition 已支持稳定 ID、版本与严格校验，`EntityStore` 和 `StateStore` 已接管实体身份及可变状态的运行时真值，全项目测试为 `59 / 59`。当前进入步骤 2B：实现角色特征 Store 与只读 `CharacterProgress` 投影，然后再接物品实例与装备位合同。
+步骤 1、步骤 2A 与步骤 2B 已完成。Raw Definition 已支持角色特征定义，`CharacterFeatureStore` 已接管天赋、特质、印记和技艺进度，`CharacterProgress` 只从 StateStore 与角色特征 Store 聚合读取。伤势和雾盐回响已迁出 StateStore，第一冬巡雾事实能够产生侦察技艺成长，全项目测试为 `60 / 60`。当前进入步骤 2C：扩展物品实例合同并移除库存双写，然后再接装备位合同。
 
 当前实施依据：
 

@@ -236,6 +236,26 @@ func _run() -> void:
 	var failure_echo_facts: Array = session.stores[
 		"fact_store"
 	].find_facts_by_type("actor_acquired_mist_salt_echo")
+	var failure_marks: Array = failed_snapshot.get_mark_instances("player")
+	var failure_traits: Array = failed_snapshot.get_trait_instances("player")
+	var player_states: Dictionary = session.stores["state_store"].list_states(
+		"player"
+	)
+	_check(
+		failure_marks.size() == 1
+		and failure_echo_facts.size() == 1
+		and str((failure_marks[0] as Dictionary).get("mark_def_id", ""))
+			== "mark.mist_salt_echo"
+		and str((failure_echo_facts[0] as Dictionary).get("fact_id", "")) in (
+			(failure_marks[0] as Dictionary).get("source_fact_ids", []) as Array
+		)
+		and failure_traits.size() == 1
+		and str((failure_traits[0] as Dictionary).get("trait_def_id", ""))
+			== "trait.mist_salt_throat_burn"
+		and not player_states.has("injury")
+		and not player_states.has("mist_salt_echo"),
+		"14a. Failure facts own the Trait and Mark while legacy fields remain projections"
+	)
 	_check(
 		failure_echo_facts.size() == 1
 		and str((failure_echo_facts[0] as Dictionary).get(

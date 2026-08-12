@@ -17,6 +17,15 @@ func list_facts() -> Array:
 	return facts.duplicate(true)
 
 
+func get_fact(fact_id: String) -> Dictionary:
+	if fact_id == "":
+		return {}
+	for fact: Dictionary in facts:
+		if str(fact.get("fact_id", "")) == fact_id:
+			return fact.duplicate(true)
+	return {}
+
+
 func find_facts_by_type(fact_type: String) -> Array:
 	var rows: Array = []
 	for fact: Dictionary in facts:

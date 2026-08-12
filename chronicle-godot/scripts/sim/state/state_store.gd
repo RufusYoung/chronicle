@@ -11,6 +11,8 @@ const PLAYER_STATIC_KEYS := [
 	"interactions",
 ]
 
+const CHARACTER_FEATURE_MIGRATION_KEYS := ["injury", "mist_salt_echo"]
+
 var states: Dictionary = {}
 var state_defs_by_key: Dictionary = {}
 var entity_store: Variant = null
@@ -57,7 +59,10 @@ func load_from_context(context: Variant) -> Dictionary:
 	if player_id == "":
 		player_id = "player"
 	for state_key: String in context.player.keys():
-		if state_key in PLAYER_STATIC_KEYS:
+		if (
+			state_key in PLAYER_STATIC_KEYS
+			or state_key in CHARACTER_FEATURE_MIGRATION_KEYS
+		):
 			continue
 		_set_initial_state(player_id, state_key, context.player[state_key])
 	if str(context.region_entity_id) != "":
@@ -161,6 +166,11 @@ func _write_state(
 	last_error = ""
 	if entity_id == "" or state_key == "":
 		return _reject("missing_state_identity")
+	if state_key in CHARACTER_FEATURE_MIGRATION_KEYS:
+		return _reject("%s:%s:character_feature_owned_key" % [
+			entity_id,
+			state_key,
+		])
 	if entity_store != null and not entity_store.has_entity(entity_id):
 		return _reject("%s:%s:unknown_entity" % [entity_id, state_key])
 

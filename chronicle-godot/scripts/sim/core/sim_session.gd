@@ -24,6 +24,9 @@ const WorldTickAdapterModel = preload(
 const FactStoreModel = preload("res://scripts/sim/fact/fact_store.gd")
 const EntityStoreModel = preload("res://scripts/sim/entity/entity_store.gd")
 const StateStoreModel = preload("res://scripts/sim/state/state_store.gd")
+const CharacterFeatureStoreModel = preload(
+	"res://scripts/sim/character_feature/character_feature_store.gd"
+)
 const RelationshipStoreModel = preload("res://scripts/sim/relationship/relationship_store.gd")
 const MemoryStoreModel = preload("res://scripts/sim/memory/memory_store.gd")
 const TraceStoreModel = preload("res://scripts/sim/trace/trace_store.gd")
@@ -47,6 +50,9 @@ const RELATIONSHIP_AXIS_DEFS_PATH := (
 )
 const STATE_DEFS_PATH := "res://data/sim/raw/state_defs/basic_state_defs.json"
 const OBJECT_DEFS_PATH := "res://data/sim/raw/object_defs/basic_object_defs.json"
+const CHARACTER_FEATURE_DEFS_PATH := (
+	"res://data/sim/raw/character_feature_defs/basic_character_feature_defs.json"
+)
 const AUTONOMOUS_ACTION_RULES_PATH := (
 	"res://data/sim/raw/npc_action_rules/basic_npc_action_rules.json"
 )
@@ -109,6 +115,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	var definition_report: Dictionary = registry.load_raw_definition_files([
 		STATE_DEFS_PATH,
 		OBJECT_DEFS_PATH,
+		CHARACTER_FEATURE_DEFS_PATH,
 	])
 	if not bool(definition_report.get("ok", false)):
 		var failed := _start_failure("raw_definition_contract_invalid")
@@ -158,12 +165,16 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	_create_stores(fixture)
 	var entity_report: Dictionary = stores["entity_store"].get_contract_report()
 	var state_report: Dictionary = stores["state_store"].get_contract_report()
+	var character_feature_report: Dictionary = stores[
+		"character_feature_store"
+	].get_contract_report()
 	if not bool(entity_report.get("ok", false)) or not bool(
 		state_report.get("ok", false)
-	):
+	) or not bool(character_feature_report.get("ok", false)):
 		var failed := _start_failure("fixture_store_contract_invalid")
 		failed["entity_report"] = entity_report
 		failed["state_report"] = state_report
+		failed["character_feature_report"] = character_feature_report
 		return failed
 	context.release_runtime_sources()
 	initialized = true
@@ -184,6 +195,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"definition_report": definition_report,
 		"entity_contract_report": entity_report,
 		"state_contract_report": state_report,
+		"character_feature_contract_report": character_feature_report,
 		"time": get_time_summary(),
 	}
 
@@ -975,6 +987,9 @@ func get_store_summary() -> Dictionary:
 		"entities": stores["entity_store"].list_entities().size(),
 		"facts": stores["fact_store"].list_facts().size(),
 		"states": _count_states(stores["state_store"]),
+		"character_features": _count_character_features(
+			stores["character_feature_store"]
+		),
 		"relationships": _count_relationship_axes(stores["relationship_store"]),
 		"memories": stores["memory_store"].memories.size(),
 		"traces": stores["trace_store"].list_traces().size(),
@@ -1004,6 +1019,18 @@ func get_store_snapshots() -> Dictionary:
 		"entities": stores["entity_store"].list_entities(),
 		"facts": stores["fact_store"].list_facts(),
 		"states": stores["state_store"].states.duplicate(true),
+		"talent_assignments": stores[
+			"character_feature_store"
+		].list_talent_assignments(),
+		"trait_instances": stores[
+			"character_feature_store"
+		].list_trait_instances(),
+		"mark_instances": stores[
+			"character_feature_store"
+		].list_mark_instances(),
+		"skill_progress": stores[
+			"character_feature_store"
+		].list_skill_progress(),
 		"relationships": stores["relationship_store"].relations.duplicate(true),
 		"memories": stores["memory_store"].memories.duplicate(true),
 		"traces": stores["trace_store"].list_traces(),
@@ -1120,10 +1147,22 @@ func _create_stores(fixture: Dictionary) -> void:
 	item_store.load_initial_items(
 		(fixture.get("initial_items", []) as Array).duplicate(true)
 	)
+	var fact_store = FactStoreModel.new()
+	for fact: Dictionary in fixture.get("known_facts", []):
+		fact_store.add_fact(fact)
+	var character_feature_store = CharacterFeatureStoreModel.new()
+	character_feature_store.configure({
+		"talent": registry.list_definitions("talent"),
+		"trait": registry.list_definitions("trait"),
+		"mark": registry.list_definitions("mark"),
+		"skill": registry.list_definitions("skill"),
+	}, entity_store, fact_store)
+	character_feature_store.load_initial_data(fixture, context)
 	stores = {
 		"entity_store": entity_store,
-		"fact_store": FactStoreModel.new(),
+		"fact_store": fact_store,
 		"state_store": state_store,
+		"character_feature_store": character_feature_store,
 		"relationship_store": relationship_store,
 		"memory_store": MemoryStoreModel.new(),
 		"trace_store": TraceStoreModel.new(),
@@ -1136,8 +1175,6 @@ func _create_stores(fixture: Dictionary) -> void:
 		"investigation_store": InvestigationLeadStoreModel.new(),
 		"deferred_consequence_store": deferred_store,
 	}
-	for fact: Dictionary in fixture.get("known_facts", []):
-		stores["fact_store"].add_fact(fact)
 	for consequence: Dictionary in fixture.get(
 		"initial_deferred_consequences",
 		[]
@@ -2093,6 +2130,15 @@ func _count_relationship_axes(relationship_store: Variant) -> int:
 	return count
 
 
+func _count_character_features(store: Variant) -> int:
+	return (
+		store.list_talent_assignments().size()
+		+ store.list_trait_instances().size()
+		+ store.list_mark_instances().size()
+		+ store.list_skill_progress().size()
+	)
+
+
 func _count_snapshot_relationship_axes(snapshot: Variant) -> int:
 	var count := 0
 	for source_id: String in snapshot.relationships.keys():
@@ -2108,6 +2154,7 @@ func _empty_store_summary() -> Dictionary:
 		"entities": 0,
 		"facts": 0,
 		"states": 0,
+		"character_features": 0,
 		"relationships": 0,
 		"memories": 0,
 		"traces": 0,

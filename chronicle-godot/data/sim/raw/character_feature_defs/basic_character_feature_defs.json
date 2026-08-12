@@ -1,0 +1,134 @@
+{
+  "talent_defs": [
+    {
+      "talent_def_id": "talent.night_adapted_eyes",
+      "definition_version": 1,
+      "display_name_key": "talent.night_adapted_eyes.name",
+      "tags": ["innate", "perception", "night"],
+      "granted_affordance_tags": ["observe_in_dim_light"],
+      "modifiers": [
+        {
+          "modifier_id": "night_observation_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -1,
+          "when": [{"kind": "context_tag", "tag": "dim_light"}]
+        }
+      ]
+    }
+  ],
+  "trait_defs": [
+    {
+      "trait_def_id": "trait.twisted_ankle",
+      "definition_version": 1,
+      "display_name_key": "trait.twisted_ankle.name",
+      "tags": ["physical", "injury", "recoverable"],
+      "stage_order": ["fresh", "recovering", "healed"],
+      "terminal_stages": ["healed"],
+      "allow_multiple_instances": true,
+      "legacy_state_value": "twisted_ankle",
+      "source_fact_rules": [
+        {
+          "fact_type": "actor_injured_during_challenge",
+          "field_equals": {"injury": "twisted_ankle"},
+          "stage_id": "fresh",
+          "severity": 2
+        }
+      ],
+      "modifiers": [
+        {
+          "modifier_id": "twisted_ankle_long_travel_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": 2,
+          "when": [{"kind": "action_tag", "tag": "long_travel"}]
+        }
+      ]
+    },
+    {
+      "trait_def_id": "trait.archive_splinter_cut",
+      "definition_version": 1,
+      "display_name_key": "trait.archive_splinter_cut.name",
+      "tags": ["physical", "injury", "recoverable", "hand"],
+      "stage_order": ["fresh", "recovering", "healed"],
+      "terminal_stages": ["healed"],
+      "allow_multiple_instances": true,
+      "legacy_state_value": "archive_splinter_cut",
+      "source_fact_rules": [
+        {
+          "fact_type": "actor_injured_during_challenge",
+          "field_equals": {"injury": "archive_splinter_cut"},
+          "stage_id": "fresh",
+          "severity": 1
+        }
+      ],
+      "modifiers": []
+    },
+    {
+      "trait_def_id": "trait.mist_salt_throat_burn",
+      "definition_version": 1,
+      "display_name_key": "trait.mist_salt_throat_burn.name",
+      "tags": ["physical", "injury", "recoverable", "mist_salt"],
+      "stage_order": ["fresh", "recovering", "healed"],
+      "terminal_stages": ["healed"],
+      "allow_multiple_instances": true,
+      "legacy_state_value": "mist_salt_throat_burn",
+      "source_fact_rules": [
+        {
+          "fact_type": "actor_injured_during_challenge",
+          "field_equals": {"injury": "mist_salt_throat_burn"},
+          "stage_id": "fresh",
+          "severity": 2
+        }
+      ],
+      "modifiers": []
+    }
+  ],
+  "mark_defs": [
+    {
+      "mark_def_id": "mark.mist_salt_echo",
+      "definition_version": 1,
+      "display_name_key": "mark.mist_salt_echo.name",
+      "tags": ["experience", "anomaly", "persistent"],
+      "stages": [
+        {"stage_id": "faint", "threshold": 1},
+        {"stage_id": "resonant", "threshold": 4}
+      ],
+      "accepted_fact_types": [
+        "actor_acquired_mist_salt_echo",
+        "actor_endured_mist_salt_resonance"
+      ],
+      "progress_by_fact_type": {
+        "actor_acquired_mist_salt_echo": 1,
+        "actor_endured_mist_salt_resonance": 1
+      },
+      "granted_affordance_tags": ["recognize_mist_salt_resonance"],
+      "modifiers": []
+    }
+  ],
+  "skill_defs": [
+    {
+      "skill_def_id": "skill.scouting",
+      "definition_version": 1,
+      "display_name_key": "skill.scouting.name",
+      "tags": ["fieldcraft", "observation"],
+      "rank_thresholds": [0, 20, 60, 140, 300],
+      "accepted_practice_fact_types": [
+        "life_project_duty_completed",
+        "actor_inspected_trace"
+      ],
+      "practice_rules": [
+        {
+          "fact_type": "life_project_duty_completed",
+          "field_equals": {"duty_id": "patrol_fog_line"},
+          "xp": 8
+        },
+        {
+          "fact_type": "actor_inspected_trace",
+          "xp": 3
+        }
+      ],
+      "modifiers": []
+    }
+  ]
+}

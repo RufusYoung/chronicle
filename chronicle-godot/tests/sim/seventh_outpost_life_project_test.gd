@@ -71,6 +71,21 @@ func _run() -> void:
 		and patrol.get_day() == 8,
 		"5. Seven duties complete the first-winter slice without a fixed event"
 	)
+	var scouting_rows: Array = patrol.session.get_snapshot().get_skill_progress(
+		"player"
+	)
+	_check(
+		scouting_rows.size() == 1
+		and str((scouting_rows[0] as Dictionary).get("skill_def_id", ""))
+			== "skill.scouting"
+		and int((scouting_rows[0] as Dictionary).get("practice_xp", 0)) == 56
+		and int((scouting_rows[0] as Dictionary).get("rank", -1)) == 1
+		and ((scouting_rows[0] as Dictionary).get(
+			"source_fact_ids",
+			[]
+		) as Array).size() == 7,
+		"5a. Seven patrol facts produce traceable scouting practice and rank"
+	)
 
 	var patrol_status: Dictionary = patrol.get_status()
 	var patrol_completion: Dictionary = patrol.get_completion_summary()

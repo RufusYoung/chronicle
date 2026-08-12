@@ -20,6 +20,11 @@ var deferred_consequences: Array = []
 var items: Array = []
 var chronicle_entries: Array = []
 var investigation_leads: Array = []
+var talent_assignments: Array = []
+var trait_instances: Array = []
+var mark_instances: Array = []
+var skill_progress: Array = []
+var character_progress: Dictionary = {}
 
 
 func _init(data: Dictionary = {}) -> void:
@@ -42,6 +47,13 @@ func _init(data: Dictionary = {}) -> void:
 	items = (data.get("items", []) as Array).duplicate(true)
 	chronicle_entries = (data.get("chronicle_entries", []) as Array).duplicate(true)
 	investigation_leads = (data.get("investigation_leads", []) as Array).duplicate(true)
+	talent_assignments = (data.get("talent_assignments", []) as Array).duplicate(true)
+	trait_instances = (data.get("trait_instances", []) as Array).duplicate(true)
+	mark_instances = (data.get("mark_instances", []) as Array).duplicate(true)
+	skill_progress = (data.get("skill_progress", []) as Array).duplicate(true)
+	character_progress = (
+		data.get("character_progress", {}) as Dictionary
+	).duplicate(true)
 
 
 func get_entity(entity_id: String) -> Dictionary:
@@ -241,6 +253,26 @@ func get_player_value(key: String, default_value: Variant = null) -> Variant:
 	return player.get(key, default_value)
 
 
+func get_character_progress() -> Dictionary:
+	return character_progress.duplicate(true)
+
+
+func get_talent_assignments(owner_id: String = "") -> Array:
+	return _owned_character_features(talent_assignments, owner_id)
+
+
+func get_trait_instances(owner_id: String = "") -> Array:
+	return _owned_character_features(trait_instances, owner_id)
+
+
+func get_mark_instances(owner_id: String = "") -> Array:
+	return _owned_character_features(mark_instances, owner_id)
+
+
+func get_skill_progress(owner_id: String = "") -> Array:
+	return _owned_character_features(skill_progress, owner_id)
+
+
 func to_dict() -> Dictionary:
 	return {
 		"fixture_id": fixture_id,
@@ -262,4 +294,17 @@ func to_dict() -> Dictionary:
 		"items": items.duplicate(true),
 		"chronicle_entries": chronicle_entries.duplicate(true),
 		"investigation_leads": investigation_leads.duplicate(true),
+		"talent_assignments": talent_assignments.duplicate(true),
+		"trait_instances": trait_instances.duplicate(true),
+		"mark_instances": mark_instances.duplicate(true),
+		"skill_progress": skill_progress.duplicate(true),
+		"character_progress": character_progress.duplicate(true),
 	}
+
+
+func _owned_character_features(source: Array, owner_id: String) -> Array:
+	var rows: Array = []
+	for value: Dictionary in source:
+		if owner_id == "" or str(value.get("owner_entity_id", "")) == owner_id:
+			rows.append(value.duplicate(true))
+	return rows
