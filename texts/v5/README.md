@@ -51,13 +51,32 @@
 
 ---
 
+### CHRONICLE_REBUILD_ROADMAP_v5.1.md
+
+当前重构执行路线图。
+
+用于记录已完成阶段、当前阶段、顺序调整与各阶段验收标准。
+
+### CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
+
+当前优先执行的系统合同前置计划。
+
+用于定义成长、天赋、特质、印记、技艺、物品装备、经济、统一结算与存档的最小边界。
+
+该计划不要求现在完成全部系统内容与数值平衡。它要求在继续扩写第七哨站年份内容前，先让核心系统通过同一数据合同进入湖湾镇与第一冬。
+
+---
+
 ## 2. 推荐阅读顺序
 
 后续讨论、写规格、让 Codex 执行前，优先按以下顺序阅读：
 
 1. `CHRONICLE_GDD_v5.1_REBUILD.md`
 2. `CHRONICLE_SYSTEM_MODULES_v5.1.md`
-3. `Chronicle Game Design Document.md`
+3. `CHRONICLE_REBUILD_ROADMAP_v5.1.md`
+4. `CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md`
+5. 当前阶段的具体系统规格
+6. `Chronicle Game Design Document.md`
 
 说明：
 
@@ -120,21 +139,13 @@ Codex 只执行这一小块
 
 ## 5. 当前推荐下一步
 
-第 0 步完成后，下一步应新增：
+截至 2026-08-12，湖湾镇调查闭环与第七哨站第一冬七日生活单元已经可以运行。当前暂停扩写第二年至第五年，先执行：
 
 ```text
-texts/v5/CHRONICLE_REBUILD_ROADMAP_v5.1.md
+texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 ```
 
-用于明确 v5.1 重构路线、阶段目标、验收标准、旧代码复用边界和禁止修改范围。
-
-再下一步新增：
-
-```text
-texts/v5/CHRONICLE_LOCATION_UI_FLOW_v5.1.md
-```
-
-用于细化第一阶段“地点局面主界面 + 行动流”。
+第一项工作是审计现有数据合同，裁决属性、天赋、特质、印记和技艺的边界，并输出最小 schema 草案。
 
 ---
 
@@ -150,24 +161,10 @@ chronicle-godot/project.godot
 chronicle-godot/素材包/
 ```
 
-本次第 0 步只允许新增或修改：
-
-```text
-texts/v5/README.md
-```
+当前阶段的可修改范围由最新用户指令、路线图和具体系统计划共同决定，不再使用第 0 步的旧文件限制。
 
 ---
 
-## 7. 本阶段目标
+## 7. 当前阶段目标
 
-第 0 步完成后，`texts/v5` 文件夹应具备清晰入口：
-
-```text
-texts/v5/
-├─ README.md
-├─ Chronicle Game Design Document.md
-├─ CHRONICLE_GDD_v5.1_REBUILD.md
-└─ CHRONICLE_SYSTEM_MODULES_v5.1.md
-```
-
-`README.md` 是后续进入 v5 文档体系的第一入口。
+让核心系统拥有统一、可保存、可解释的合同，并在已有可玩流程中验证。当前不以增加更多年份文本或独立演示场景作为进度。
