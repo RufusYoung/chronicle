@@ -569,14 +569,15 @@ func _action_rows() -> Array:
 			if surfaced_ambient_trace_count >= 3:
 				continue
 			surfaced_ambient_trace_count += 1
+		var can_execute := bool(option.get("can_execute", true))
 		rows.append({
 			"action_id": str(option.get("action_id", "")),
 			"event_type": "player_action",
-			"label": str(option.get("label", "采取行动")),
+			"label": _action_label(option, can_execute),
 			"action_type": action_type,
 			"kind": _action_kind(action_type),
 			"hint": _action_hint(option),
-			"can_execute": true,
+			"can_execute": can_execute,
 		})
 	for option: Dictionary in session.get_challenge_options():
 		if not _surface_requirements_met(
@@ -971,14 +972,18 @@ func _feedback_view() -> Dictionary:
 
 	if not bool(latest_result.get("success", false)):
 		var error := str(latest_result.get("error", ""))
+		var error_body := "当前局面无法执行这个行动。"
+		if error == "candidate_not_found":
+			error_body = "局面已经变化，这个行动不再可用。"
+		elif error == "action_blocked":
+			error_body = str(latest_result.get(
+				"blocked_reason",
+				"当前能力不足，无法执行这个行动。"
+			))
 		return {
 			"status": "error",
 			"title": "行动没有发生",
-			"body": (
-				"局面已经变化，这个行动不再可用。"
-				if error == "candidate_not_found"
-				else "当前局面无法执行这个行动。"
-			),
+			"body": error_body,
 			"details": [],
 		}
 
@@ -1000,7 +1005,7 @@ func _feedback_view() -> Dictionary:
 		"status": contract_status,
 		"title": title,
 		"body": body,
-		"details": _result_detail_lines(transaction),
+		"details": _result_detail_lines(transaction, candidate),
 	}
 
 
@@ -1419,8 +1424,19 @@ func _result_narrative(result: Dictionary) -> String:
 	return str(narrative.get("summary", narrative.get("body", "")))
 
 
-func _result_detail_lines(transaction: Dictionary) -> Array:
+func _result_detail_lines(
+		transaction: Dictionary,
+		candidate: Dictionary = {}
+) -> Array:
 	var rows: Array[String] = []
+	for requirement: Dictionary in candidate.get("player_requirements", []):
+		if not bool(requirement.get("met", false)):
+			continue
+		rows.append("%s %s，满足行动要求 %s" % [
+			str(requirement.get("label", "能力")),
+			_attribute_number(requirement.get("current", 0)),
+			_attribute_number(requirement.get("required", 0)),
+		])
 	for change: Dictionary in transaction.get("state_changes", []):
 		rows.append(_state_change_text(change))
 	for change: Dictionary in transaction.get("relationship_changes", []):
@@ -1597,6 +1613,8 @@ func _action_kind(action_type: String) -> String:
 
 
 func _action_hint(option: Dictionary) -> String:
+	if not bool(option.get("can_execute", true)):
+		return str(option.get("blocked_reason", "当前能力不足"))
 	var extra: Dictionary = option.get("extra", {})
 	var contextual_hint := str(extra.get("hint", ""))
 	if contextual_hint != "":
@@ -1605,6 +1623,30 @@ func _action_hint(option: Dictionary) -> String:
 	if mode == "candidate_only":
 		return "记录选择，等待后续对话系统承接"
 	return "由当前世界状态即时结算"
+
+
+func _action_label(option: Dictionary, can_execute: bool) -> String:
+	var label := str(option.get("label", "采取行动"))
+	if can_execute:
+		return label
+	var requirements: Array = option.get("player_requirements", [])
+	for requirement: Dictionary in requirements:
+		if bool(requirement.get("met", false)):
+			continue
+		return "%s　[%s %s/%s]" % [
+			label,
+			str(requirement.get("label", "能力")),
+			_attribute_number(requirement.get("current", 0)),
+			_attribute_number(requirement.get("required", 0)),
+		]
+	return "%s　[当前不可用]" % label
+
+
+func _attribute_number(value: Variant) -> String:
+	var number := float(value)
+	if is_equal_approx(number, round(number)):
+		return str(int(number))
+	return str(number)
 
 
 func _challenge_action_hint(option: Dictionary) -> String:

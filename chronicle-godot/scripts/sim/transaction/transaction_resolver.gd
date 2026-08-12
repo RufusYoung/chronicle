@@ -19,6 +19,8 @@ func resolve_action(candidate: Variant, context_or_snapshot: Variant) -> Variant
 		return TransactionResultModel.invalid_contract(candidate, "missing_candidate")
 	if context_or_snapshot == null:
 		return TransactionResultModel.invalid_contract(candidate, "missing_context")
+	if not _candidate_bool(candidate, "can_execute", true):
+		return TransactionResultModel.invalid_contract(candidate, "action_blocked")
 
 	var transaction_mode := _candidate_transaction_mode(candidate)
 	match transaction_mode:
@@ -48,6 +50,15 @@ func _candidate_transaction_mode(candidate: Variant) -> String:
 
 func _candidate_effect_template_id(candidate: Variant) -> String:
 	return _candidate_string(candidate, "effect_template_id")
+
+
+func _candidate_bool(candidate: Variant, key: String, default_value: bool) -> bool:
+	if candidate == null:
+		return default_value
+	if candidate is Dictionary:
+		return bool((candidate as Dictionary).get(key, default_value))
+	var value: Variant = candidate.get(key)
+	return default_value if value == null else bool(value)
 
 
 func _candidate_string(candidate: Variant, key: String) -> String:

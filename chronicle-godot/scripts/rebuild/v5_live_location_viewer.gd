@@ -214,7 +214,15 @@ func _show_playtest_end(end_state: String) -> void:
 
 func _refresh_actions(actions: Array) -> void:
 	_clear_children(action_buttons)
-	action_heading.text = "此刻你能做什么　%d 项" % actions.size()
+	var executable_count := 0
+	for action_value: Variant in actions:
+		var action := action_value as Dictionary
+		if bool(action.get("can_execute", true)):
+			executable_count += 1
+	var blocked_count := actions.size() - executable_count
+	action_heading.text = "此刻可做　%d 项" % executable_count
+	if blocked_count > 0:
+		action_heading.text += "　·　受限 %d 项" % blocked_count
 	action_hint.text = (
 		"把鼠标移到选择上，先看清它会做什么。执行后，完成的调查会从这里消失。"
 		if not actions.is_empty()

@@ -748,10 +748,13 @@
           "hint": "直接问起陈米藏在柜台后的旧粮袋。"
         },
         "request_favor_from_indebted_person": {
-          "label_template": "请陈米帮你确认北埠早船",
+          "label_template": "[魅力] 请陈米帮你确认北埠早船",
           "result_title": "去北埠的早船",
           "result_summary": "陈米说，去北埠旧档房的摆渡只在 06:00 至 18:00 开船。夜里没有船；你可以在铺里歇到天亮，再去码头。",
-          "hint": "用掉一份人情，确认摆渡时辰；执行后不会重复出现。"
+          "hint": "需要魅力 6；用掉一份人情，确认摆渡时辰；执行后不会重复出现。",
+          "player_min": {
+            "charisma": 6
+          }
         }
       }
     },
@@ -1062,10 +1065,13 @@
       },
       "interactions": {
         "read_visible_readable_object": {
-          "label_template": "读受潮的查档规条",
-          "result_title": "水涨时不得进入",
-          "result_summary": "规条把开卷时辰写得很清楚，唯独下层封存间多了一句后补的禁令。墨迹比木牌新，旁边记着三次进水日期。",
-          "hint": "确认封存层的开放时辰和水患记录。"
+          "label_template": "[智慧] 辨读受潮的查档规条",
+          "result_title": "后补禁令与三次进水日期",
+          "result_summary": "你分辨出下层禁令使用了更晚的墨，旁边三次进水日期却分属不同笔迹。它不是建档时写下的规矩，而是每逢事故逐步补成的警告。",
+          "hint": "需要智慧 9；辨明禁令的增补顺序和水患记录。",
+          "player_min": {
+            "wisdom": 9
+          }
         }
       }
     },

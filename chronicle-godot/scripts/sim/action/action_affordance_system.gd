@@ -14,13 +14,15 @@ func generate_candidates(context: Variant, rules: Array) -> Array:
 		return candidates
 
 	for rule: Dictionary in rules:
+		if not _context_matches_rule(context, rule):
+			continue
 		if rule.has("target"):
 			for entity: Dictionary in _candidate_targets(context, rule):
-				if _context_matches_rule(context, rule) and _target_matches_rule(context, entity, rule.get("target", {}), rule):
+				if _target_matches_rule(context, entity, rule.get("target", {}), rule):
 					var candidate: Variant = _build_candidate(context, rule, entity)
 					if _candidate_can_repeat(context, rule, candidate):
 						candidates.append(candidate)
-		elif _context_matches_rule(context, rule):
+		else:
 			var candidate: Variant = _build_candidate(context, rule, {})
 			if _candidate_can_repeat(context, rule, candidate):
 				candidates.append(candidate)
@@ -36,6 +38,11 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 	var target_id := str(target.get("id", ""))
 	var target_display_name := str(target.get("display_name", target_id))
 	var interaction := _target_interaction(target, rule_id)
+	var requirement_status := _player_requirement_status(
+		_context_player(context),
+		_effective_dictionary(rule, interaction, "player_min"),
+		_effective_dictionary(rule, interaction, "player_min_labels")
+	)
 	var label := str(interaction.get(
 		"label_template",
 		rule.get("label_template", rule_id)
@@ -55,6 +62,7 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 			rule.get("result_summary", "")
 		), target_display_name, target),
 		"hint": str(interaction.get("hint", rule.get("hint", ""))),
+		"player_requirements": requirement_status.get("requirements", []),
 	}
 
 	var candidate_data := {
@@ -68,6 +76,9 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 		"target_display_name": target_display_name,
 		"priority": int(rule.get("priority", 0)),
 		"domain": str(rule.get("domain", "")),
+		"can_execute": bool(requirement_status.get("can_execute", true)),
+		"blocked_reason": str(requirement_status.get("blocked_reason", "")),
+		"player_requirements": requirement_status.get("requirements", []),
 		"extra": extra,
 	}
 	_apply_pressure_priority(context, rule, candidate_data)
@@ -80,6 +91,73 @@ func _target_interaction(target: Dictionary, rule_id: String) -> Dictionary:
 	if interaction is Dictionary:
 		return (interaction as Dictionary).duplicate(true)
 	return {}
+
+
+func _effective_dictionary(
+		rule: Dictionary,
+		interaction: Dictionary,
+		key: String
+) -> Dictionary:
+	var result: Dictionary = {}
+	var rule_value: Variant = rule.get(key, {})
+	if rule_value is Dictionary:
+		result = (rule_value as Dictionary).duplicate(true)
+	var interaction_value: Variant = interaction.get(key, {})
+	if interaction_value is Dictionary:
+		for entry_key: Variant in (interaction_value as Dictionary).keys():
+			result[entry_key] = interaction_value.get(entry_key)
+	return result
+
+
+func _player_requirement_status(
+		player: Dictionary,
+		minimums: Dictionary,
+		custom_labels: Dictionary
+) -> Dictionary:
+	var requirements: Array[Dictionary] = []
+	var blocked_parts: Array[String] = []
+	for key: String in minimums.keys():
+		var current := float(player.get(key, 0))
+		var required := float(minimums.get(key, 0))
+		var label := str(custom_labels.get(key, _player_value_label(key)))
+		var met := current >= required
+		requirements.append({
+			"key": key,
+			"label": label,
+			"current": current,
+			"required": required,
+			"met": met,
+		})
+		if not met:
+			blocked_parts.append("%s不足：需要 %s，当前 %s" % [
+				label,
+				_number_text(required),
+				_number_text(current),
+			])
+	return {
+		"can_execute": blocked_parts.is_empty(),
+		"blocked_reason": "；".join(blocked_parts),
+		"requirements": requirements,
+	}
+
+
+func _player_value_label(key: String) -> String:
+	return {
+		"strength": "力量",
+		"dexterity": "敏捷",
+		"wisdom": "智慧",
+		"charisma": "魅力",
+		"constitution": "体质",
+		"perception": "感知",
+		"food_count": "食物",
+		"health": "健康",
+	}.get(key, key)
+
+
+func _number_text(value: float) -> String:
+	if is_equal_approx(value, round(value)):
+		return str(int(value))
+	return str(value)
 
 
 func _format_target_text(
@@ -133,8 +211,6 @@ func _context_matches_rule(context: Variant, rule: Dictionary) -> bool:
 		return false
 	if not _dictionary_matches(_context_player(context), rule.get("player_equals", {})):
 		return false
-	if not _dictionary_min_matches(_context_player(context), rule.get("player_min", {})):
-		return false
 	if not _has_visible_entity_with_tags(context, rule.get("required_visible_entity_tags", [])):
 		return false
 	if not _has_visible_entity_with_tags(context, rule.get("required_visible_object_tags", [])):
@@ -169,13 +245,6 @@ func _dictionary_matches(actual: Dictionary, expected: Dictionary) -> bool:
 		if not actual.has(key):
 			return false
 		if actual.get(key) != expected.get(key):
-			return false
-	return true
-
-
-func _dictionary_min_matches(actual: Dictionary, expected: Dictionary) -> bool:
-	for key: String in expected.keys():
-		if float(actual.get(key, 0)) < float(expected.get(key, 0)):
 			return false
 	return true
 

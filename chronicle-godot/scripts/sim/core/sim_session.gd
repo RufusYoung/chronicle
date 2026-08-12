@@ -834,6 +834,8 @@ func execute_action(action_id: String, metadata: Dictionary = {}) -> Dictionary:
 	var candidate: Variant = _find_candidate_by_action_id(candidates, action_id)
 	if candidate == null:
 		return _candidate_not_found(action_id, "", "", candidates)
+	if not bool(candidate.can_execute):
+		return _candidate_blocked(candidate, candidates.size())
 	return _execute_candidate(snapshot, candidate, candidates.size(), metadata)
 
 
@@ -851,6 +853,8 @@ func execute_selection(
 	var candidate: Variant = _find_candidate(candidates, rule_id, target_id)
 	if candidate == null:
 		return _candidate_not_found("", rule_id, target_id, candidates)
+	if not bool(candidate.can_execute):
+		return _candidate_blocked(candidate, candidates.size())
 	return _execute_candidate(snapshot, candidate, candidates.size(), metadata)
 
 
@@ -1550,6 +1554,21 @@ func _candidate_not_found(
 		"target_id": target_id,
 		"candidate_count": candidates.size(),
 		"available_action_ids": _candidate_action_ids(candidates),
+		"store_summary": get_store_summary(),
+	}
+
+
+func _candidate_blocked(candidate: Variant, candidate_count: int) -> Dictionary:
+	return {
+		"success": false,
+		"error": "action_blocked",
+		"blocked_reason": str(candidate.blocked_reason),
+		"fixture_id": fixture_id,
+		"action_id": str(candidate.action_id),
+		"rule_id": str(candidate.rule_id),
+		"target_id": str(candidate.target_id),
+		"candidate_count": candidate_count,
+		"candidate": candidate.to_dict(),
 		"store_summary": get_store_summary(),
 	}
 

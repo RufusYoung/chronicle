@@ -12,6 +12,9 @@ var target_id: String = ""
 var target_display_name: String = ""
 var priority: int = 0
 var domain: String = ""
+var can_execute: bool = true
+var blocked_reason: String = ""
+var player_requirements: Array = []
 var extra: Dictionary = {}
 
 
@@ -27,6 +30,11 @@ func _init(data: Dictionary = {}) -> void:
 	target_display_name = str(data.get("target_display_name", ""))
 	priority = int(data.get("priority", 0))
 	domain = str(data.get("domain", ""))
+	can_execute = bool(data.get("can_execute", true))
+	blocked_reason = str(data.get("blocked_reason", ""))
+	player_requirements = (
+		data.get("player_requirements", []) as Array
+	).duplicate(true)
 	extra = (data.get("extra", {}) as Dictionary).duplicate(true)
 
 
@@ -43,6 +51,9 @@ func to_dict() -> Dictionary:
 		"target_display_name": target_display_name,
 		"priority": priority,
 		"domain": domain,
+		"can_execute": can_execute,
+		"blocked_reason": blocked_reason,
+		"player_requirements": player_requirements.duplicate(true),
 		"extra": extra.duplicate(true),
 	}
 
