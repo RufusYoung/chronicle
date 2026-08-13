@@ -1,0 +1,121 @@
+{
+  "project_id": "seventh_outpost_second_year_reception",
+  "title": "第七哨站 · 第二年接收",
+  "subtitle": "第二年 · 三个周节点 · 旧职责接受现实检验",
+  "duration_days": 3,
+  "calendar_days_by_step": [7, 7, 7],
+  "progress_unit_label": "周",
+  "transition_requires_growth_confirmation": false,
+  "transition_requires_milestone_resolution": false,
+  "tick_label": "第七哨站第二年周值勤结算",
+  "scope_entity_id": "seventh_outpost",
+  "transition_persistent_entity_ids": ["seventh_outpost", "captain_ron", "recruit_elai", "cook_marta", "medic_saira", "veteran_hoke", "messenger_nia"],
+  "state_bounds": {
+    "seventh_outpost": {"supply": [0, 12], "morale": [0, 12], "discipline": [0, 12], "wall_integrity": [0, 12], "border_pressure": [0, 12], "readiness": [0, 12]},
+    "player": {"fatigue": [0, 10], "training": [0, 20]},
+    "captain_ron": {"fatigue": [0, 10]}, "recruit_elai": {"fatigue": [0, 10]},
+    "cook_marta": {"fatigue": [0, 10]}, "medic_saira": {"fatigue": [0, 10]},
+    "veteran_hoke": {"fatigue": [0, 10]}, "messenger_nia": {"fatigue": [0, 10]}
+  },
+  "ritual": {
+    "title": "第二年 · 第 {step} 周 · 新册点名",
+    "body": "世界第 {world_day} 天。你的名字不再排在待确认的新兵栏，罗恩把一项普通周值勤直接写到你名下。",
+    "variants": [
+      {
+        "conditions": [{"conditions": [{"kind": "state", "entity_id": "recruit_elai", "key": "institution_role", "operator": "eq", "value": "watchmate"}]}],
+        "body": "世界第 {world_day} 天。罗恩把你和伊莱的名字并排写进雾线岗；伊莱没有等你检查肩带，先把短线地图摊开。"
+      },
+      {
+        "conditions": [{"conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "hoke_relinquishes_wall_round"}, "operator": "eq", "value": true}]}],
+        "body": "世界第 {world_day} 天。东段墙牌已经挂在你名下，霍克站在队尾听你报修补顺序，没有再替你补上一句。"
+      },
+      {
+        "conditions": [{"conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "roll_call_support_web"}, "operator": "eq", "value": true}]}],
+        "body": "世界第 {world_day} 天。新名册保留了去年的替岗记号。罗恩念完正岗，又照着记号念出每个人的替补。"
+      }
+    ]
+  },
+  "status_axes": [
+    {"key": "supply", "label": "补给", "warning_below": 4}, {"key": "morale", "label": "士气", "warning_below": 4},
+    {"key": "discipline", "label": "军纪", "warning_below": 4}, {"key": "wall_integrity", "label": "哨墙", "warning_below": 5},
+    {"key": "border_pressure", "label": "边境压力", "warning_above": 8}, {"key": "readiness", "label": "戒备", "warning_below": 4}
+  ],
+  "step_settlement": {
+    "summary": "一周的雾线、墙巡和点名已经结算。旧职责只有继续改变现实，才算真正进入第二年。",
+    "base_state_changes": [
+      {"entity_id": "seventh_outpost", "key": "supply", "delta": -1},
+      {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": 1},
+      {"entity_id": "player", "key": "fatigue", "delta": -1}
+    ]
+  },
+  "completion": {
+    "title": "第二年 · 接收完成",
+    "intro": "二十一天已经过去。第一年形成的关系和制度没有停在总结页里，它们改变了第二年的职责候选，也让身边的人在你行动之后做出不同选择。",
+    "outcomes": [
+      {"conditions": [{"entity_id": "recruit_elai", "key": "institution_role", "equals": "watchmate"}], "text": "伊莱已经能独立复查雾线，你们之间不再只有跟随与照看。"},
+      {"conditions": [{"conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "hoke_relinquishes_wall_round"}, "operator": "eq", "value": true}]}], "text": "霍克交出的墙巡成为持续职责，他开始用记录而不是代劳支持东段墙。"},
+      {"conditions": [{"conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "roll_call_support_web"}, "operator": "eq", "value": true}]}], "text": "替岗关系进入第二年的日常排班，不再只是某次缺粮时的临时照顾。"}
+    ]
+  },
+  "duties": [
+    {
+      "duty_id": "second_year_take_regular_watch",
+      "label": "[体质/值勤] 接下一轮常规周岗",
+      "kind": "值勤",
+      "hint": "正式戍卒的基础职责；稳定军纪和戒备，但会积累疲劳。",
+      "requirements": [{"entity_id": "player", "key": "institution_role", "equals": "outpost_regular", "label": "正式戍卒"}],
+      "action_tags": ["regular_watch"],
+      "progress_fact": {"fact_type": "actor_completed_second_year_regular_watch", "summary": "完成一周常规周岗。"},
+      "effects": {"operations": [
+        {"operation": "state_add", "entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+        {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 1},
+        {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2}
+      ], "narrative": {"title": "你的名字直接落在常规周岗下面", "summary": "没有人再检查你是否记得换岗钟。你照着名册接过这一周，第二年的身份首先表现为一份不会特别说明的责任。"}}
+    },
+    {
+      "duty_id": "second_year_lead_elai_fog_watch",
+      "label": "[感知/侦察] 与岗友伊莱分查雾线",
+      "kind": "巡逻",
+      "hint": "只在伊莱第一年成为岗友后出现；你们分开检查两段雾线。",
+      "requirements": [{"entity_id": "recruit_elai", "key": "institution_role", "equals": "watchmate", "label": "伊莱的岗友身份"}],
+      "action_tags": ["fog_patrol", "watchmate_duty"],
+      "progress_fact": {"fact_type": "watchmates_split_second_year_fog_line", "summary": "与伊莱分查第二年雾线。"},
+      "effects": {"operations": [
+        {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -2},
+        {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 2},
+        {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+        {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 1}
+      ], "narrative": {"title": "雾线第一次被你们从两端同时查完", "summary": "伊莱不再贴着你的脚印走。他独自带回北段木片，你们在庭院把两段记录拼成一张完整的雾图。"}}
+    },
+    {
+      "duty_id": "second_year_hold_east_wall_round",
+      "label": "[力量/维护] 正式接管东段墙巡",
+      "kind": "修缮",
+      "hint": "只在霍克第一年真正交出墙巡后出现；他负责记录，你负责判断和修补。",
+      "requirements": [{"requirement_id": "hoke_relinquished_wall_round", "label": "东段墙巡已交接", "mode": "all", "conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "hoke_relinquishes_wall_round"}, "operator": "eq", "value": true}]}],
+      "action_tags": ["wall_work", "owned_duty"],
+      "progress_fact": {"fact_type": "actor_owned_second_year_east_wall_round", "summary": "独立承担第二年东段墙巡。"},
+      "effects": {"operations": [
+        {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 3},
+        {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 3},
+        {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -1}
+      ], "narrative": {"title": "东段墙巡没有再回到霍克手里", "summary": "你决定先换哪根木楔、哪道裂缝留到雨后复查。霍克只在簿上记下你的顺序，没有越过你接走锤子。"}}
+    },
+    {
+      "duty_id": "second_year_assign_relief_pairs",
+      "label": "[智慧/组织] 按替岗记号重排周岗",
+      "kind": "组织",
+      "hint": "只在替岗关系进入第一年点名册后出现；用已有互助关系分担疲劳。",
+      "requirements": [{"requirement_id": "support_web_recorded", "label": "替岗关系已入册", "mode": "all", "conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "roll_call_support_web"}, "operator": "eq", "value": true}]}],
+      "action_tags": ["roster_work", "support_web"],
+      "progress_fact": {"fact_type": "actor_assigned_second_year_relief_pairs", "summary": "按既有互助关系重排第二年周岗。"},
+      "effects": {"operations": [
+        {"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": 2},
+        {"operation": "state_add", "entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+        {"operation": "state_add", "entity_id": "cook_marta", "key": "fatigue", "delta": -1},
+        {"operation": "state_add", "entity_id": "messenger_nia", "key": "fatigue", "delta": -1},
+        {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1}
+      ], "narrative": {"title": "替岗记号第一次决定了整周排班", "summary": "你没有把空位临时塞给最闲的人，而是沿用去年留下的互助关系。玛塔和妮娅都提前知道自己何时能歇半班。"}}
+    }
+  ]
+}

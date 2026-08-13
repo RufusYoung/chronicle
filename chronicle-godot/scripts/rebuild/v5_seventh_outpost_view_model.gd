@@ -22,11 +22,21 @@ const FIRST_YEAR_CLOSE_FIXTURE_PATH := (
 const FIRST_YEAR_CLOSE_PROJECT_PATH := (
 	"res://data/sim/raw/life_projects/seventh_outpost_first_year_close.json"
 )
+const SECOND_YEAR_RECEPTION_FIXTURE_PATH := (
+	"res://data/sim/fixtures/seventh_outpost_second_year_reception_fixture.json"
+)
+const SECOND_YEAR_RECEPTION_PROJECT_PATH := (
+	"res://data/sim/raw/life_projects/seventh_outpost_second_year_reception.json"
+)
 const FIRST_WINTER_PHASE_ID := "first_winter"
 const FIRST_QUARTER_PHASE_ID := "first_quarter"
 const FIRST_YEAR_CLOSE_PHASE_ID := "first_year_close"
+const SECOND_YEAR_RECEPTION_PHASE_ID := "second_year_reception"
 const FIRST_QUARTER_FIXTURE_ID := "seventh_outpost_first_quarter"
 const FIRST_YEAR_CLOSE_FIXTURE_ID := "seventh_outpost_first_year_close"
+const SECOND_YEAR_RECEPTION_FIXTURE_ID := (
+	"seventh_outpost_second_year_reception"
+)
 const MARKET_POLICY_ID := "market_policy.seventh_outpost_canteen"
 const LifeStageTransitionServiceModel = preload(
 	"res://scripts/sim/save/life_stage_transition_service.gd"
@@ -106,6 +116,23 @@ func enter_first_year_close() -> Dictionary:
 			"error": "first_year_close_transition_not_ready",
 		}
 	return start(transition, FIRST_YEAR_CLOSE_PHASE_ID)
+
+
+func enter_second_year_reception() -> Dictionary:
+	if not is_ready() or current_phase_id != FIRST_YEAR_CLOSE_PHASE_ID:
+		return {
+			"success": false,
+			"error": "second_year_reception_transition_not_available",
+		}
+	var transition: Dictionary = controller.build_life_stage_transition(
+		SECOND_YEAR_RECEPTION_FIXTURE_ID
+	)
+	if transition.is_empty():
+		return {
+			"success": false,
+			"error": "second_year_reception_transition_not_ready",
+		}
+	return start(transition, SECOND_YEAR_RECEPTION_PHASE_ID)
 
 
 func is_ready() -> bool:
@@ -233,7 +260,9 @@ func build_view_data() -> Dictionary:
 		"world_day": int(controller.session.current_day),
 		"complete": controller.is_complete(),
 		"can_advance_phase": (
-			_can_enter_first_quarter() or _can_enter_first_year_close()
+			_can_enter_first_quarter()
+			or _can_enter_first_year_close()
+			or _can_enter_second_year_reception()
 		),
 		"objective": str(phase.get("objective", "")),
 		"ritual": controller.get_ritual(),
@@ -255,6 +284,8 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		identity = "第七哨站戍卒 · 第一季度"
 	elif current_phase_id == FIRST_YEAR_CLOSE_PHASE_ID:
 		identity = "第七哨站戍卒 · 第一年度"
+	elif current_phase_id == SECOND_YEAR_RECEPTION_PHASE_ID:
+		identity = "第七哨站正式戍卒 · 第二年"
 	return {
 		"summary": "\n".join([
 			"身份　%s" % identity,
@@ -473,6 +504,14 @@ func _action_rows() -> Array:
 
 func _feedback_view() -> Dictionary:
 	if latest_result.is_empty():
+		if current_phase_id == SECOND_YEAR_RECEPTION_PHASE_ID:
+			return {
+				"title": "第一年的结果开始承担第二年的工作",
+				"body": "这个短阶段只检验跨年因果。去年形成的正式身份、岗友、墙巡交接或替岗制度，会改变当前可选职责、点名仪式以及 NPC 在你行动后的自主选择。",
+				"details": ["当前世界第 %d 天。" % int(
+					controller.session.current_day
+				)],
+			}
 		if current_phase_id == FIRST_YEAR_CLOSE_PHASE_ID:
 			return {
 				"title": "融雪期以后，日子开始按月计算",
@@ -620,6 +659,16 @@ func _can_enter_first_year_close() -> bool:
 	)
 
 
+func _can_enter_second_year_reception() -> bool:
+	return (
+		current_phase_id == FIRST_YEAR_CLOSE_PHASE_ID
+		and controller.is_complete()
+		and not controller.build_life_stage_transition(
+			SECOND_YEAR_RECEPTION_FIXTURE_ID
+		).is_empty()
+	)
+
+
 func _resolve_phase_id(
 		transition: Dictionary, requested_phase_id: String
 ) -> String:
@@ -627,12 +676,17 @@ func _resolve_phase_id(
 		FIRST_WINTER_PHASE_ID,
 		FIRST_QUARTER_PHASE_ID,
 		FIRST_YEAR_CLOSE_PHASE_ID,
+		SECOND_YEAR_RECEPTION_PHASE_ID,
 	]:
 		return requested_phase_id
 	if str(transition.get("target_fixture_id", "")) == FIRST_QUARTER_FIXTURE_ID:
 		return FIRST_QUARTER_PHASE_ID
 	if str(transition.get("target_fixture_id", "")) == FIRST_YEAR_CLOSE_FIXTURE_ID:
 		return FIRST_YEAR_CLOSE_PHASE_ID
+	if str(transition.get(
+		"target_fixture_id", ""
+	)) == SECOND_YEAR_RECEPTION_FIXTURE_ID:
+		return SECOND_YEAR_RECEPTION_PHASE_ID
 	return FIRST_WINTER_PHASE_ID
 
 
@@ -642,10 +696,19 @@ func _phase_id_for_project(source_project_id: String) -> String:
 			return FIRST_QUARTER_PHASE_ID
 		"seventh_outpost_first_year_close":
 			return FIRST_YEAR_CLOSE_PHASE_ID
+		"seventh_outpost_second_year_reception":
+			return SECOND_YEAR_RECEPTION_PHASE_ID
 	return FIRST_WINTER_PHASE_ID
 
 
 func _phase_config(phase_id: String) -> Dictionary:
+	if phase_id == SECOND_YEAR_RECEPTION_PHASE_ID:
+		return {
+			"fixture_path": SECOND_YEAR_RECEPTION_FIXTURE_PATH,
+			"project_path": SECOND_YEAR_RECEPTION_PROJECT_PATH,
+			"subtitle": "边境服役 · 第二年 · 跨年接收",
+			"objective": "[b]第二年接收目标[/b]\n完成三个周值勤节点，共推进 21 天。这里不新增预设主线，只验证第一年的职责事实能否改变第二年的行动候选、点名仪式和 NPC 自主行为。",
+		}
 	if phase_id == FIRST_YEAR_CLOSE_PHASE_ID:
 		return {
 			"fixture_path": FIRST_YEAR_CLOSE_FIXTURE_PATH,

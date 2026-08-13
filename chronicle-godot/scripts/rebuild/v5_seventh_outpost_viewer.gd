@@ -80,6 +80,14 @@ func enter_first_year_close() -> Dictionary:
 	return result
 
 
+func enter_second_year_reception() -> Dictionary:
+	completion_was_shown = false
+	completion_dialog.hide()
+	var result: Dictionary = view_model.enter_second_year_reception()
+	refresh_view()
+	return result
+
+
 func perform_duty(
 		duty_id: String, options: Dictionary = {}
 ) -> Dictionary:
@@ -135,7 +143,11 @@ func refresh_view() -> void:
 			int(current_view_data.get("world_day", 1)),
 		]
 	elif bool(current_view_data.get("complete", false)):
-		if phase_id == "first_year_close":
+		if phase_id == "second_year_reception":
+			day_label.text = "第二年接收已完成 · 世界第 %d 天" % int(
+				current_view_data.get("world_day", 1)
+			)
+		elif phase_id == "first_year_close":
 			day_label.text = "第一年已结束 · 世界第 %d 天" % int(
 				current_view_data.get("world_day", 1)
 			)
@@ -160,6 +172,13 @@ func refresh_view() -> void:
 			calendar_days,
 			int(current_view_data.get("world_day", 1)),
 		]
+	elif phase_id == "second_year_reception":
+		day_label.text = "第 %d / %d 周 · 本周 %d 天 · 世界第 %d 天" % [
+			day,
+			duration,
+			calendar_days,
+			int(current_view_data.get("world_day", 1)),
+		]
 	else:
 		day_label.text = "第 %d / %d 天　06:00　清晨点名" % [day, duration]
 	var player: Dictionary = current_view_data.get("player", {})
@@ -171,6 +190,8 @@ func refresh_view() -> void:
 			restart_button.text = "重来第一季度"
 		"first_year_close":
 			restart_button.text = "重来年度轮转"
+		"second_year_reception":
+			restart_button.text = "重来第二年接收"
 		_:
 			restart_button.text = "重新开始服役"
 	var ritual: Dictionary = current_view_data.get("ritual", {})
@@ -195,6 +216,8 @@ func refresh_view() -> void:
 			_refresh_milestone_actions((
 				current_view_data.get("completion", {}) as Dictionary
 			).get("milestone", {}))
+		elif phase_id == "second_year_reception":
+			_refresh_second_year_completion_actions()
 		else:
 			_refresh_growth_actions(growth_candidates)
 	else:
@@ -348,7 +371,16 @@ func _refresh_milestone_actions(milestone: Dictionary) -> void:
 		action_heading.text = str(milestone.get(
 			"resolved_title", "第一年的变化已经写入世界"
 		))
-		action_hint.text = "年末变化已写入人物状态、关系、事实与个人纪事；重复结算不会再次生效。"
+		action_hint.text = "年末变化已写入人物状态、关系、事实与个人纪事；第二年会读取这些结果，而不是重新选择一条剧情。"
+		if bool(current_view_data.get("can_advance_phase", false)):
+			var next_button := Button.new()
+			next_button.custom_minimum_size = Vector2(340, 76)
+			next_button.text = "进入第二年接收\n三个周节点 · 检验跨年因果"
+			next_button.set_meta(
+				"phase_transition_id", "second_year_reception"
+			)
+			next_button.pressed.connect(enter_second_year_reception)
+			action_buttons.add_child(next_button)
 		return
 	action_heading.text = "年末点名 · %d 项变化满足条件" % outcomes.size()
 	var lines: Array[String] = [str(milestone.get("intro", ""))]
@@ -370,6 +402,13 @@ func _refresh_milestone_actions(milestone: Dictionary) -> void:
 	button.set_meta("milestone_action", "resolve")
 	button.pressed.connect(resolve_milestone)
 	action_buttons.add_child(button)
+
+
+func _refresh_second_year_completion_actions() -> void:
+	for child: Node in action_buttons.get_children():
+		child.queue_free()
+	action_heading.text = "第二年接收已经完成"
+	action_hint.text = "跨年职责、仪式和 NPC 自主行为已经由第一年事实改写。年度手写扩展到此停止，下一开发阶段转入人物生成合同。"
 
 
 func _request_growth_confirmation(candidate: Dictionary) -> void:

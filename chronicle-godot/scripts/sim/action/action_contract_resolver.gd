@@ -684,6 +684,12 @@ func _record_matches(
 	for key: String in (condition.get("field_equals", {}) as Dictionary).keys():
 		if record.get(key) != condition.get("field_equals", {}).get(key):
 			return false
+	for key: String in (condition.get("field_contains", {}) as Dictionary).keys():
+		var field_value: Variant = record.get(key)
+		if not field_value is Array or (
+			condition.get("field_contains", {}).get(key) not in field_value
+		):
+			return false
 	var required_actor := str(condition.get("actor", ""))
 	if required_actor != "" and str(
 		record.get("actor_id", "")

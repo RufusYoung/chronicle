@@ -329,7 +329,6 @@
         "minimum_fact_count": 3,
         "effects": {
           "operations": [
-            {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -3},
             {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 2},
             {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 1}
           ]

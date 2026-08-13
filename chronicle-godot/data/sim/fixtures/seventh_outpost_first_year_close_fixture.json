@@ -131,9 +131,26 @@
     "mark_instances": [],
     "skill_progress": []
   },
-  "initial_items": [],
+  "initial_items": [
+    {
+      "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer",
+      "item_def_id": "item.field_repair_hammer",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {"durability": 68, "maximum_durability": 80, "quality": "serviceable"},
+      "custom_tags": ["issued_by_seventh_outpost"],
+      "provenance": {"original_owner_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    }
+  ],
   "initial_equipment_loadouts": [
-    {"entity_id": "player", "slots": {}, "updated_tick": 0}
+    {
+      "entity_id": "player",
+      "slots": {"main_hand": "item_instance.seventh_outpost.player_repair_hammer"},
+      "updated_tick": 0
+    }
   ],
   "initial_pressures": [
     {

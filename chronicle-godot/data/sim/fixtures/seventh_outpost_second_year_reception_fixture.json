@@ -1,0 +1,173 @@
+{
+  "fixture_id": "seventh_outpost_second_year_reception",
+  "location_id": "outpost_second_year_courtyard",
+  "challenge_seed": 27014,
+  "locations": {
+    "outpost_second_year_courtyard": {
+      "id": "outpost_second_year_courtyard",
+      "display_name": "第七哨站 · 第二年雾庭",
+      "description": "第二年的雾从北坡压进庭院。墙牌、点名册和替岗记号都还留着去年的手迹，新职责从这些已经发生的变化里分配。",
+      "tags": ["military_outpost", "border", "service_life", "second_year"]
+    }
+  },
+  "world_time": {"day": 365, "hour": 6},
+  "region_state": {
+    "border_threat": "present",
+    "winter": "second_winter_approaching",
+    "weather": "fog"
+  },
+  "institution": {
+    "chain_of_command": "active",
+    "discipline_level": "strict",
+    "service_year": 2,
+    "ritual": "second_year_reception"
+  },
+  "entities": [
+    {
+      "id": "seventh_outpost",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "第七哨站",
+      "type": "institution",
+      "tags": ["military_outpost", "service_project"],
+      "states": {"visible": false, "supply": 6, "morale": 6, "discipline": 6, "wall_integrity": 7, "border_pressure": 5, "readiness": 5}
+    },
+    {
+      "id": "captain_ron",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "罗恩",
+      "description": "队长。第二年点名时，他开始把整段职责交给已经证明能承担它的人。",
+      "type": "person",
+      "tags": ["person", "captain", "superior", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "captain", "fatigue": 3}
+    },
+    {
+      "id": "recruit_elai",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "伊莱",
+      "description": "与你一起度过第一年的年轻戍卒。他在等名册决定自己是随行者，还是能独立带回一段雾线。",
+      "type": "person",
+      "tags": ["person", "recruit", "squadmate", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "recruit", "hunger": "medium", "fear": "medium", "fatigue": 3}
+    },
+    {
+      "id": "cook_marta",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "玛塔",
+      "description": "厨子和口粮保管人。她正在等罗恩决定替岗记号会不会正式留在新名册上。",
+      "type": "person",
+      "tags": ["person", "cook", "ration_keeper", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "cook", "fatigue": 4}
+    },
+    {
+      "id": "medic_saira",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "赛拉",
+      "description": "军医。她把去年的劳损记录摊在晨雾吹不到的桌角。",
+      "type": "person",
+      "tags": ["person", "medic", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "medic", "fatigue": 2}
+    },
+    {
+      "id": "veteran_hoke",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "霍克",
+      "description": "老兵。东段墙牌是否还挂在他名下，取决于第一年有没有人真正把那段墙接过去。",
+      "type": "person",
+      "tags": ["person", "veteran", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "veteran", "fatigue": 5}
+    },
+    {
+      "id": "messenger_nia",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "妮娅",
+      "description": "传令兵。她带来了第二年第一封北线公文，也在等新的值勤名单。",
+      "type": "person",
+      "tags": ["person", "messenger", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "messenger", "fatigue": 3}
+    },
+    {
+      "id": "morning_roll_call_register",
+      "location_id": "outpost_second_year_courtyard",
+      "display_name": "第二年点名册",
+      "description": "去年形成的正式身份、岗友关系、墙巡交接和替岗制度，都要在这本新册上接受一次现实检验。",
+      "type": "readable_record",
+      "tags": ["readable_record", "military_record", "ritual"],
+      "states": {"visible": true, "readable": true}
+    }
+  ],
+  "player": {
+    "id": "player", "role": "recruit", "strength": 7, "dexterity": 8,
+    "wisdom": 9, "charisma": 6, "constitution": 8, "perception": 10,
+    "health": 100, "fatigue": 1, "service_day": 1, "training": 0,
+    "last_duty": "none"
+  },
+  "known_facts": [],
+  "initial_character_features": {"talent_assignments": [], "trait_instances": [], "mark_instances": [], "skill_progress": []},
+  "initial_items": [],
+  "initial_equipment_loadouts": [{"entity_id": "player", "slots": {}, "updated_tick": 0}],
+  "initial_pressures": [],
+  "autonomous_action_rules": [
+    {
+      "rule_id": "second_year_elai_prechecks_fog_line",
+      "actor_id": "recruit_elai",
+      "minimum_utility": 50,
+      "priority": 80,
+      "requirements": [{
+        "requirement_id": "elai_is_watchmate",
+        "label": "伊莱已成为岗友",
+        "mode": "all",
+        "conditions": [{"kind": "state", "entity_id": "recruit_elai", "key": "institution_role", "operator": "eq", "value": "watchmate"}]
+      }],
+      "base_utility": 95,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": -1},
+          {"entity_id": "seventh_outpost", "key": "readiness", "delta": 1},
+          {"entity_id": "recruit_elai", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": {"title": "伊莱先一步复查了雾线", "summary": "你还在庭院结算职责时，伊莱已经独自走完北坡短线，把两处新雾标记在木片上。"}
+      }
+    },
+    {
+      "rule_id": "second_year_hoke_updates_wall_ledger",
+      "actor_id": "veteran_hoke",
+      "minimum_utility": 50,
+      "priority": 80,
+      "requirements": [{
+        "requirement_id": "hoke_wall_round_relinquished",
+        "label": "霍克已交出东段墙巡",
+        "mode": "all",
+        "conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "hoke_relinquishes_wall_round"}, "operator": "eq", "value": true}]
+      }],
+      "base_utility": 95,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 1},
+          {"entity_id": "veteran_hoke", "key": "fatigue", "delta": -1}
+        ],
+        "narrative": {"title": "霍克留在庭院改墙巡簿", "summary": "他没有再抢先去东墙，只把你报回的木楔和裂缝位置补进旧簿。"}
+      }
+    },
+    {
+      "rule_id": "second_year_ron_assigns_relief_pairs",
+      "actor_id": "captain_ron",
+      "minimum_utility": 50,
+      "priority": 80,
+      "requirements": [{
+        "requirement_id": "support_web_entered_roll_call",
+        "label": "替岗关系已进入点名册",
+        "mode": "all",
+        "conditions": [{"kind": "fact_exists", "fact_type": "life_project_milestone_resolved", "field_contains": {"outcome_ids": "roll_call_support_web"}, "operator": "eq", "value": true}]
+      }],
+      "base_utility": 95,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": 1},
+          {"entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"entity_id": "captain_ron", "key": "fatigue", "delta": -1}
+        ],
+        "narrative": {"title": "罗恩按替岗记号分了三组人", "summary": "谁能替谁留半碗热汤不再靠临时开口，名册上的旧记号成了第二年的正式排班。"}
+      }
+    }
+  ]
+}
