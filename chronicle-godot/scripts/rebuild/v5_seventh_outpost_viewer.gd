@@ -72,6 +72,14 @@ func enter_first_quarter() -> Dictionary:
 	return result
 
 
+func enter_first_year_close() -> Dictionary:
+	completion_was_shown = false
+	completion_dialog.hide()
+	var result: Dictionary = view_model.enter_first_year_close()
+	refresh_view()
+	return result
+
+
 func perform_duty(
 		duty_id: String, options: Dictionary = {}
 ) -> Dictionary:
@@ -103,6 +111,12 @@ func confirm_growth_candidate(candidate_id: String) -> Dictionary:
 	return result
 
 
+func resolve_milestone() -> Dictionary:
+	var result: Dictionary = view_model.resolve_milestone()
+	refresh_view()
+	return result
+
+
 func refresh_view() -> void:
 	current_view_data = view_model.build_view_data()
 	if not bool(current_view_data.get("ready", false)):
@@ -121,18 +135,28 @@ func refresh_view() -> void:
 			int(current_view_data.get("world_day", 1)),
 		]
 	elif bool(current_view_data.get("complete", false)):
-		day_label.text = (
-			"第一季度已结束 · 世界第 %d 天" % int(
+		if phase_id == "first_year_close":
+			day_label.text = "第一年已结束 · 世界第 %d 天" % int(
 				current_view_data.get("world_day", 1)
 			)
-			if phase_id == "first_quarter"
-			else "第一轮值勤已结束"
-		)
+		elif phase_id == "first_quarter":
+			day_label.text = "第一季度已结束 · 世界第 %d 天" % int(
+				current_view_data.get("world_day", 1)
+			)
+		else:
+			day_label.text = "第一轮值勤已结束"
 	elif phase_id == "first_quarter":
 		day_label.text = "第 %d / %d %s · 每轮 %d 天 · 世界第 %d 天" % [
 			day,
 			duration,
 			unit_label,
+			calendar_days,
+			int(current_view_data.get("world_day", 1)),
+		]
+	elif phase_id == "first_year_close":
+		day_label.text = "第 %d / %d 月 · 本月 %d 天 · 世界第 %d 天" % [
+			day,
+			duration,
 			calendar_days,
 			int(current_view_data.get("world_day", 1)),
 		]
@@ -142,9 +166,13 @@ func refresh_view() -> void:
 	player_text.text = str(player.get("summary", ""))
 	feature_text.text = str(player.get("features", ""))
 	objective_text.text = str(current_view_data.get("objective", ""))
-	restart_button.text = (
-		"重来第一季度" if phase_id == "first_quarter" else "重新开始服役"
-	)
+	match phase_id:
+		"first_quarter":
+			restart_button.text = "重来第一季度"
+		"first_year_close":
+			restart_button.text = "重来年度轮转"
+		_:
+			restart_button.text = "重新开始服役"
 	var ritual: Dictionary = current_view_data.get("ritual", {})
 	ritual_title.text = str(ritual.get("title", "清晨点名"))
 	ritual_body.text = str(ritual.get("body", ""))
@@ -163,6 +191,10 @@ func refresh_view() -> void:
 		).get("growth_candidates", [])
 		if phase_id == "first_quarter":
 			_refresh_quarter_completion_actions()
+		elif phase_id == "first_year_close":
+			_refresh_milestone_actions((
+				current_view_data.get("completion", {}) as Dictionary
+			).get("milestone", {}))
 		else:
 			_refresh_growth_actions(growth_candidates)
 	else:
@@ -298,7 +330,46 @@ func _refresh_quarter_completion_actions() -> void:
 	for child: Node in action_buttons.get_children():
 		child.queue_free()
 	action_heading.text = "第一季度已经结束"
-	action_hint.text = "八十四天的状态、人物变化、物品履历与纪事已经写入。本轮原型暂止于此。"
+	action_hint.text = "八十四天的状态、人物变化、物品履历与纪事已经写入。现在可以进入第一年余下九个月。"
+	if bool(current_view_data.get("can_advance_phase", false)):
+		var next_button := Button.new()
+		next_button.custom_minimum_size = Vector2(320, 72)
+		next_button.text = "进入年度轮转\n九个月度节点 · 推进 273 天"
+		next_button.set_meta("phase_transition_id", "first_year_close")
+		next_button.pressed.connect(enter_first_year_close)
+		action_buttons.add_child(next_button)
+
+
+func _refresh_milestone_actions(milestone: Dictionary) -> void:
+	for child: Node in action_buttons.get_children():
+		child.queue_free()
+	var outcomes: Array = milestone.get("outcomes", [])
+	if bool(milestone.get("resolved", false)):
+		action_heading.text = str(milestone.get(
+			"resolved_title", "第一年的变化已经写入世界"
+		))
+		action_hint.text = "年末变化已写入人物状态、关系、事实与个人纪事；重复结算不会再次生效。"
+		return
+	action_heading.text = "年末点名 · %d 项变化满足条件" % outcomes.size()
+	var lines: Array[String] = [str(milestone.get("intro", ""))]
+	for outcome: Dictionary in outcomes:
+		lines.append("%s：%s %d / %d" % [
+			str(outcome.get("title", "年度变化")),
+			str(outcome.get("evidence_label", "经历")),
+			int(outcome.get("evidence_count", 0)),
+			int(outcome.get("minimum_fact_count", 1)),
+		])
+	action_hint.text = "\n".join(lines)
+	if outcomes.is_empty():
+		return
+	var button := Button.new()
+	button.custom_minimum_size = Vector2(320, 72)
+	button.text = "%s\n把满足阈值的变化写入第一年纪事" % str(
+		milestone.get("action_label", "完成年末点名")
+	)
+	button.set_meta("milestone_action", "resolve")
+	button.pressed.connect(resolve_milestone)
+	action_buttons.add_child(button)
 
 
 func _request_growth_confirmation(candidate: Dictionary) -> void:
@@ -458,6 +529,17 @@ func _show_completion() -> void:
 			str(candidate.get("description", "")),
 			str(preview.get("summary", "成长奖励")),
 		])
+	var milestone: Dictionary = completion.get("milestone", {})
+	if bool(milestone.get("active", false)):
+		lines.append("\n年末长期变化（关闭小结后在底部结算）")
+		for outcome: Dictionary in milestone.get("outcomes", []):
+			lines.append("• %s（%s %d / %d）\n  %s" % [
+				str(outcome.get("title", "年度变化")),
+				str(outcome.get("evidence_label", "经历")),
+				int(outcome.get("evidence_count", 0)),
+				int(outcome.get("minimum_fact_count", 1)),
+				str(outcome.get("text", "")),
+			])
 	completion_dialog.dialog_text = "\n".join(lines)
 	completion_dialog.popup_centered_clamped(Vector2i(820, 520), 0.9)
 

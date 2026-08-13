@@ -1,0 +1,244 @@
+{
+  "fixture_id": "seventh_outpost_first_year_close",
+  "location_id": "outpost_year_courtyard",
+  "challenge_seed": 17013,
+  "locations": {
+    "outpost_year_courtyard": {
+      "id": "outpost_year_courtyard",
+      "display_name": "第七哨站 · 年度庭院",
+      "description": "融雪线已经退到北坡背面。晾绳、箭靶和点名册在九个月里反复换过位置，哨墙上也留下了新旧颜色不同的修补木。",
+      "tags": ["military_outpost", "border", "service_life", "year_cycle"]
+    }
+  },
+  "world_time": {"day": 92, "hour": 6},
+  "region_state": {
+    "border_threat": "present",
+    "winter": "first_winter_complete",
+    "weather": "clear"
+  },
+  "institution": {
+    "chain_of_command": "active",
+    "discipline_level": "strict",
+    "service_year": 1,
+    "ritual": "monthly_roll_call"
+  },
+  "entities": [
+    {
+      "id": "seventh_outpost",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "第七哨站",
+      "type": "institution",
+      "tags": ["military_outpost", "service_project"],
+      "states": {
+        "visible": false,
+        "supply": 6,
+        "morale": 6,
+        "discipline": 5,
+        "wall_integrity": 7,
+        "border_pressure": 5,
+        "readiness": 4
+      }
+    },
+    {
+      "id": "captain_ron",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "罗恩",
+      "description": "队长。如今他念名册时很少抬头，只有某个位置空着太久才会停一下。",
+      "type": "person",
+      "tags": ["person", "captain", "superior", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "captain", "fatigue": 3}
+    },
+    {
+      "id": "recruit_elai",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "伊莱",
+      "description": "和你一起熬过第一冬的新兵。他已经不再每次都站错点名位置，却还会在雾太浓时说个不停。",
+      "type": "person",
+      "tags": ["person", "recruit", "squadmate", "outpost_resident"],
+      "states": {
+        "visible": true,
+        "institution_role": "recruit",
+        "hunger": "medium",
+        "fear": "medium",
+        "fatigue": 3
+      }
+    },
+    {
+      "id": "cook_marta",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "玛塔",
+      "description": "厨子和口粮保管人。她把每月的余粮写在灶台侧面，雨季用炭笔，冬天改用刻痕。",
+      "type": "person",
+      "tags": ["person", "cook", "ration_keeper", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "cook", "fatigue": 4}
+    },
+    {
+      "id": "medic_saira",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "赛拉",
+      "description": "军医。她开始把冻伤、烂靴和睡眠不足分开登记，因为这些东西不会在雪化后一起消失。",
+      "type": "person",
+      "tags": ["person", "medic", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "medic", "fatigue": 2}
+    },
+    {
+      "id": "veteran_hoke",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "霍克",
+      "description": "老兵。天暖以后旧腿仍会在雨前发紧，他只是把走路慢下来的原因归给泥地。",
+      "type": "person",
+      "tags": ["person", "veteran", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "veteran", "fatigue": 5}
+    },
+    {
+      "id": "messenger_nia",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "妮娅",
+      "description": "传令兵。她每隔几周带来北线的封蜡信袋，也带走一叠被雨水和油污弄皱的回信。",
+      "type": "person",
+      "tags": ["person", "messenger", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "messenger", "fatigue": 3}
+    },
+    {
+      "id": "morning_roll_call_register",
+      "location_id": "outpost_year_courtyard",
+      "display_name": "清晨点名册",
+      "description": "纸边已经被翻软。第一行仍是罗恩，后面的名字却在一年里逐渐有了固定间距。",
+      "type": "readable_record",
+      "tags": ["readable_record", "military_record", "ritual"],
+      "states": {"visible": true, "readable": true}
+    }
+  ],
+  "player": {
+    "id": "player",
+    "role": "recruit",
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
+    "perception": 10,
+    "health": 100,
+    "fatigue": 1,
+    "service_day": 1,
+    "training": 0,
+    "last_duty": "none"
+  },
+  "known_facts": [],
+  "initial_character_features": {
+    "talent_assignments": [],
+    "trait_instances": [],
+    "mark_instances": [],
+    "skill_progress": []
+  },
+  "initial_items": [],
+  "initial_equipment_loadouts": [
+    {"entity_id": "player", "slots": {}, "updated_tick": 0}
+  ],
+  "initial_pressures": [
+    {
+      "pressure_id": "pressure.seventh_outpost.food.1",
+      "domain": "economy",
+      "scope_id": "seventh_outpost",
+      "pressure_type": "food_pressure",
+      "value": 2,
+      "source": "first_year_supply_route"
+    }
+  ],
+  "market_policies": [
+    {
+      "market_policy_id": "market_policy.seventh_outpost_canteen",
+      "display_name": "第七哨站配给处",
+      "location_id": "outpost_year_courtyard",
+      "seller_entity_id": "cook_marta",
+      "accepted_currency_item_def_ids": ["item.copper_coin"],
+      "sellable_item_def_ids": ["item.travel_ration"],
+      "sellable_item_tags_any": ["food", "ration"],
+      "base_markup": 0.0,
+      "pressure_bindings": [
+        {
+          "scope_id": "seventh_outpost",
+          "pressure_type": "food_pressure",
+          "label": "粮食压力",
+          "price_factor_per_point": 0.25
+        }
+      ],
+      "relationship_discount": {
+        "axis": "trust",
+        "label": "玛塔的信任",
+        "discount_per_point": 0.03,
+        "maximum_discount": 0.15
+      },
+      "trade_pressure_change": {
+        "domain": "economy",
+        "scope_id": "seventh_outpost",
+        "pressure_type": "food_pressure",
+        "value_per_unit": 1
+      }
+    }
+  ],
+  "autonomous_action_rules": [
+    {
+      "rule_id": "year_ron_tightens_high_pressure_watch",
+      "actor_id": "captain_ron",
+      "minimum_utility": 50,
+      "priority": 40,
+      "requirements": [{
+        "requirement_id": "year_high_border_pressure",
+        "label": "边境压力升高",
+        "mode": "all",
+        "conditions": [{"kind": "state", "entity_id": "seventh_outpost", "key": "border_pressure", "operator": "gte", "value": 8}]
+      }],
+      "base_utility": 90,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": -1},
+          {"entity_id": "captain_ron", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": {"title": "罗恩增派了北坡夜岗", "summary": "雾线动静连续两月没有回落，罗恩把两班之间的空档也写进了名册。"}
+      }
+    },
+    {
+      "rule_id": "year_hoke_braces_weak_wall",
+      "actor_id": "veteran_hoke",
+      "minimum_utility": 50,
+      "priority": 30,
+      "requirements": [{
+        "requirement_id": "year_wall_weak",
+        "label": "哨墙失修",
+        "mode": "all",
+        "conditions": [{"kind": "state", "entity_id": "seventh_outpost", "key": "wall_integrity", "operator": "lte", "value": 5}]
+      }],
+      "base_utility": 85,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 1},
+          {"entity_id": "veteran_hoke", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": {"title": "霍克独自补上了一处墙缝", "summary": "他在点名后带着木楔去了墙脚，回来时裤腿沾满湿泥。"}
+      }
+    },
+    {
+      "rule_id": "year_marta_stretches_low_supply",
+      "actor_id": "cook_marta",
+      "minimum_utility": 50,
+      "priority": 35,
+      "requirements": [{
+        "requirement_id": "year_supply_low",
+        "label": "补给不足",
+        "mode": "all",
+        "conditions": [{"kind": "state", "entity_id": "seventh_outpost", "key": "supply", "operator": "lte", "value": 3}]
+      }],
+      "base_utility": 88,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "supply", "delta": 1},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": -1},
+          {"entity_id": "cook_marta", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": {"title": "玛塔又把一袋麦粒拆成两袋", "summary": "锅里仍有东西，勺子碰到底的声音却比上个月更早。"}
+      }
+    }
+  ]
+}

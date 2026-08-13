@@ -16,9 +16,17 @@ const FIRST_QUARTER_FIXTURE_PATH := (
 const FIRST_QUARTER_PROJECT_PATH := (
 	"res://data/sim/raw/life_projects/seventh_outpost_first_quarter.json"
 )
+const FIRST_YEAR_CLOSE_FIXTURE_PATH := (
+	"res://data/sim/fixtures/seventh_outpost_first_year_close_fixture.json"
+)
+const FIRST_YEAR_CLOSE_PROJECT_PATH := (
+	"res://data/sim/raw/life_projects/seventh_outpost_first_year_close.json"
+)
 const FIRST_WINTER_PHASE_ID := "first_winter"
 const FIRST_QUARTER_PHASE_ID := "first_quarter"
+const FIRST_YEAR_CLOSE_PHASE_ID := "first_year_close"
 const FIRST_QUARTER_FIXTURE_ID := "seventh_outpost_first_quarter"
+const FIRST_YEAR_CLOSE_FIXTURE_ID := "seventh_outpost_first_year_close"
 const MARKET_POLICY_ID := "market_policy.seventh_outpost_canteen"
 const LifeStageTransitionServiceModel = preload(
 	"res://scripts/sim/save/life_stage_transition_service.gd"
@@ -81,6 +89,23 @@ func enter_first_quarter() -> Dictionary:
 			"error": "first_quarter_transition_not_ready",
 		}
 	return start(transition, FIRST_QUARTER_PHASE_ID)
+
+
+func enter_first_year_close() -> Dictionary:
+	if not is_ready() or current_phase_id != FIRST_QUARTER_PHASE_ID:
+		return {
+			"success": false,
+			"error": "first_year_close_transition_not_available",
+		}
+	var transition: Dictionary = controller.build_life_stage_transition(
+		FIRST_YEAR_CLOSE_FIXTURE_ID
+	)
+	if transition.is_empty():
+		return {
+			"success": false,
+			"error": "first_year_close_transition_not_ready",
+		}
+	return start(transition, FIRST_YEAR_CLOSE_PHASE_ID)
 
 
 func is_ready() -> bool:
@@ -156,6 +181,13 @@ func confirm_growth_candidate(candidate_id: String) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func resolve_milestone() -> Dictionary:
+	if not is_ready():
+		return {"success": false, "error": "project_not_ready"}
+	latest_result = controller.resolve_milestone()
+	return latest_result.duplicate(true)
+
+
 func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "ok": false, "error": "project_not_ready"}
@@ -200,7 +232,9 @@ func build_view_data() -> Dictionary:
 		"progress_unit_label": controller.get_progress_unit_label(),
 		"world_day": int(controller.session.current_day),
 		"complete": controller.is_complete(),
-		"can_advance_phase": _can_enter_first_quarter(),
+		"can_advance_phase": (
+			_can_enter_first_quarter() or _can_enter_first_year_close()
+		),
 		"objective": str(phase.get("objective", "")),
 		"ritual": controller.get_ritual(),
 		"player": _player_view(snapshot),
@@ -216,11 +250,11 @@ func build_view_data() -> Dictionary:
 
 
 func _player_view(snapshot: Variant) -> Dictionary:
-	var identity := (
-		"第七哨站新兵"
-		if current_phase_id == FIRST_WINTER_PHASE_ID
-		else "第七哨站戍卒 · 第一季度"
-	)
+	var identity := "第七哨站新兵"
+	if current_phase_id == FIRST_QUARTER_PHASE_ID:
+		identity = "第七哨站戍卒 · 第一季度"
+	elif current_phase_id == FIRST_YEAR_CLOSE_PHASE_ID:
+		identity = "第七哨站戍卒 · 第一年度"
 	return {
 		"summary": "\n".join([
 			"身份　%s" % identity,
@@ -383,9 +417,12 @@ func _people_view(snapshot: Variant) -> Array:
 		"cook_marta": ["trust", "信任"],
 		"medic_saira": ["familiarity", "熟悉"],
 		"veteran_hoke": ["trust", "信任"],
+		"messenger_nia": ["familiarity", "熟悉"],
 	}
 	for person_id: String in relationship_axes.keys():
 		var person: Dictionary = snapshot.get_entity(person_id)
+		if person.is_empty():
+			continue
 		var axis_data: Array = relationship_axes[person_id]
 		rows.append({
 			"id": person_id,
@@ -436,6 +473,14 @@ func _action_rows() -> Array:
 
 func _feedback_view() -> Dictionary:
 	if latest_result.is_empty():
+		if current_phase_id == FIRST_YEAR_CLOSE_PHASE_ID:
+			return {
+				"title": "融雪期以后，日子开始按月计算",
+				"body": "接下来九次选择覆盖第一年余下的二百七十三天。普通插曲仍是小事；只有反复留下并跨过事实阈值的职责，才会在年末改变人物与点名册。",
+				"details": ["当前世界第 %d 天。" % int(
+					controller.session.current_day
+				)],
+			}
 		if current_phase_id == FIRST_QUARTER_PHASE_ID:
 			return {
 				"title": "第一冬已经翻页",
@@ -565,25 +610,49 @@ func _can_enter_first_quarter() -> bool:
 	)
 
 
+func _can_enter_first_year_close() -> bool:
+	return (
+		current_phase_id == FIRST_QUARTER_PHASE_ID
+		and controller.is_complete()
+		and not controller.build_life_stage_transition(
+			FIRST_YEAR_CLOSE_FIXTURE_ID
+		).is_empty()
+	)
+
+
 func _resolve_phase_id(
 		transition: Dictionary, requested_phase_id: String
 ) -> String:
-	if requested_phase_id in [FIRST_WINTER_PHASE_ID, FIRST_QUARTER_PHASE_ID]:
+	if requested_phase_id in [
+		FIRST_WINTER_PHASE_ID,
+		FIRST_QUARTER_PHASE_ID,
+		FIRST_YEAR_CLOSE_PHASE_ID,
+	]:
 		return requested_phase_id
 	if str(transition.get("target_fixture_id", "")) == FIRST_QUARTER_FIXTURE_ID:
 		return FIRST_QUARTER_PHASE_ID
+	if str(transition.get("target_fixture_id", "")) == FIRST_YEAR_CLOSE_FIXTURE_ID:
+		return FIRST_YEAR_CLOSE_PHASE_ID
 	return FIRST_WINTER_PHASE_ID
 
 
 func _phase_id_for_project(source_project_id: String) -> String:
-	return (
-		FIRST_QUARTER_PHASE_ID
-		if source_project_id == "seventh_outpost_first_quarter"
-		else FIRST_WINTER_PHASE_ID
-	)
+	match source_project_id:
+		"seventh_outpost_first_quarter":
+			return FIRST_QUARTER_PHASE_ID
+		"seventh_outpost_first_year_close":
+			return FIRST_YEAR_CLOSE_PHASE_ID
+	return FIRST_WINTER_PHASE_ID
 
 
 func _phase_config(phase_id: String) -> Dictionary:
+	if phase_id == FIRST_YEAR_CLOSE_PHASE_ID:
+		return {
+			"fixture_path": FIRST_YEAR_CLOSE_FIXTURE_PATH,
+			"project_path": FIRST_YEAR_CLOSE_PROJECT_PATH,
+			"subtitle": "边境服役 · 第一年 · 九个月度轮转",
+			"objective": "[b]第一年度目标[/b]\n完成余下九个月度节点，共推进 273 天。职责可以反复承担，普通插曲由当前状态触发；只有跨过事实阈值的经历才进入年末点名。",
+		}
 	if phase_id == FIRST_QUARTER_PHASE_ID:
 		return {
 			"fixture_path": FIRST_QUARTER_FIXTURE_PATH,

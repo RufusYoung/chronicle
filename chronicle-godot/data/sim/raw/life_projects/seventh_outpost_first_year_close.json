@@ -1,0 +1,510 @@
+{
+  "project_id": "seventh_outpost_first_year_close",
+  "title": "第七哨站 · 第一年度轮转",
+  "subtitle": "第一年 · 九个月度节点 · 年末点名",
+  "duration_days": 9,
+  "calendar_days_by_step": [30, 30, 30, 30, 30, 30, 30, 30, 33],
+  "progress_unit_label": "月",
+  "transition_requires_growth_confirmation": false,
+  "transition_requires_milestone_resolution": true,
+  "tick_label": "第七哨站月度生活结算",
+  "scope_entity_id": "seventh_outpost",
+  "transition_persistent_entity_ids": [
+    "seventh_outpost",
+    "captain_ron",
+    "recruit_elai",
+    "cook_marta",
+    "medic_saira",
+    "veteran_hoke",
+    "messenger_nia"
+  ],
+  "state_bounds": {
+    "seventh_outpost": {
+      "supply": [0, 12],
+      "morale": [0, 12],
+      "discipline": [0, 12],
+      "wall_integrity": [0, 12],
+      "border_pressure": [0, 12],
+      "readiness": [0, 12]
+    },
+    "player": {"fatigue": [0, 10], "training": [0, 20]},
+    "captain_ron": {"fatigue": [0, 10]},
+    "recruit_elai": {"fatigue": [0, 10]},
+    "cook_marta": {"fatigue": [0, 10]},
+    "medic_saira": {"fatigue": [0, 10]},
+    "veteran_hoke": {"fatigue": [0, 10]},
+    "messenger_nia": {"fatigue": [0, 10]}
+  },
+  "ritual": {
+    "title": "第 {step} 月 · 清晨点名",
+    "body": "世界第 {world_day} 天。罗恩照旧从名册第一行念起；同一套次序已经不再需要你低头确认。",
+    "variants": [
+      {
+        "conditions": [{"entity_id": "player", "key": "service_day", "max": 3}],
+        "body": "世界第 {world_day} 天。北坡的积雪退进石缝，点名后的人开始换上薄一些的外衣。"
+      },
+      {
+        "conditions": [{"entity_id": "player", "key": "service_day", "min": 4, "max": 6}],
+        "body": "世界第 {world_day} 天。补给车留下的泥辙穿过庭院，罗恩念名时得压过卸货声。"
+      },
+      {
+        "conditions": [{"entity_id": "player", "key": "service_day", "min": 7}],
+        "body": "世界第 {world_day} 天。霜重新爬上墙顶，名册里的位置却已经和第一场雪时不同。"
+      }
+    ]
+  },
+  "status_axes": [
+    {"key": "supply", "label": "补给", "warning_below": 4},
+    {"key": "morale", "label": "士气", "warning_below": 4},
+    {"key": "discipline", "label": "军纪", "warning_below": 4},
+    {"key": "wall_integrity", "label": "哨墙", "warning_below": 5},
+    {"key": "border_pressure", "label": "边境压力", "warning_above": 8},
+    {"key": "readiness", "label": "戒备", "warning_below": 4}
+  ],
+  "step_settlement": {
+    "summary": "一个月的岗次、口粮、天气与边境动静已经汇总。",
+    "base_state_changes": [
+      {"entity_id": "seventh_outpost", "key": "supply", "delta": -1},
+      {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": 1},
+      {"entity_id": "player", "key": "fatigue", "delta": -2}
+    ],
+    "conditional_effects": [
+      {
+        "requirements": [{"entity_id": "seventh_outpost", "key": "supply", "max": 2}],
+        "operations": [{"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": -1}],
+        "narrative": "这个月的麦袋见底太早，点名队列里少了几句闲话。"
+      },
+      {
+        "requirements": [{"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 5}],
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": 1},
+          {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": "霍克又替空缺的墙巡补了一轮，北坡盲区仍没有完全封住。"
+      }
+    ]
+  },
+  "life_incident_system": {
+    "trigger_chance_percent": 45,
+    "maximum_per_project": 4,
+    "minimum_steps_between": 2
+  },
+  "life_incidents": [
+    {
+      "incident_id": "month_boot_seam",
+      "title": "靴后跟又磨开了一线",
+      "body": "回到庭院时，湿泥已经从靴缝里挤进袜子。它不是什么命运转折，只会让下一轮岗更难受。",
+      "story_role": "incidental",
+      "weight": 3,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["fog_patrol", "supply_escort"],
+      "source_conditions": [{"entity_id": "player", "key": "fatigue", "min": 3}],
+      "trigger_reason": "长途值勤与当前疲劳让旧靴缝裂开。",
+      "responses": [
+        {
+          "response_id": "stitch_before_supper",
+          "label": "趁晚饭前把靴缝缝紧",
+          "hint": "疲劳 +1；下个月不用带着湿袜上岗。",
+          "effects": {
+            "operations": [{"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1}],
+            "narrative": {"title": "针脚歪得厉害，但没有再进泥", "summary": "你借了赛拉的粗针，把开线处来回穿了三遍。晚汤凉了，靴子却还能继续穿。"}
+          },
+          "outcome_notes": ["疲劳 +1"]
+        },
+        {
+          "response_id": "dry_it_by_fire",
+          "label": "只把靴子放到火边烘干",
+          "hint": "立刻休息；疲劳 -1。",
+          "effects": {
+            "operations": [{"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": -1}],
+            "narrative": {"title": "火边多了一双冒白气的靴子", "summary": "你没有修那条缝，只先让脚暖回来。明天仍得小心绕开最深的泥。"}
+          },
+          "outcome_notes": ["疲劳 -1"]
+        }
+      ]
+    },
+    {
+      "incident_id": "month_elai_missed_buckle",
+      "title": "伊莱的肩带扣反了",
+      "body": "他在点名结束后才发现箭囊一直向外歪。旁边没有敌人，也没有秘密，只有一件会让长岗更累的小错。",
+      "story_role": "incidental",
+      "weight": 3,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["watch_training", "fog_patrol"],
+      "source_conditions": [{"entity_id": "recruit_elai", "key": "fear", "equals": "medium"}],
+      "trigger_reason": "伊莱仍紧张，训练与巡线会让这种小失误露出来。",
+      "responses": [
+        {
+          "response_id": "show_the_buckle",
+          "label": "替他重新穿一遍肩带",
+          "hint": "伊莱信任 +1、疲劳 -1。",
+          "effects": {
+            "operations": [
+              {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 1},
+              {"operation": "state_add", "entity_id": "recruit_elai", "key": "fatigue", "delta": -1}
+            ],
+            "narrative": {"title": "箭囊终于贴回背侧", "summary": "你把扣环顺序拆给他看。伊莱试了两次，第三次没再问。"}
+          },
+          "outcome_notes": ["伊莱信任 +1", "伊莱疲劳 -1"]
+        },
+        {
+          "response_id": "let_him_notice",
+          "label": "等他自己把哪里不对找出来",
+          "hint": "伊莱紧张降低。",
+          "effects": {
+            "operations": [{"operation": "state_set", "entity_id": "recruit_elai", "key": "fear", "to": "low"}],
+            "narrative": {"title": "伊莱把肩带拆了又穿", "summary": "他在你面前试了几种穿法，最后自己找到扣反的那一节。"}
+          },
+          "outcome_notes": ["伊莱紧张降为低"]
+        }
+      ]
+    },
+    {
+      "incident_id": "month_hoke_wet_glove",
+      "title": "霍克把一只湿手套忘在墙脚",
+      "body": "手套压在木楔下面，已经吸饱雨水。霍克没有找它，只在火边用另一只手揉旧腿。",
+      "story_role": "incidental",
+      "weight": 2,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["wall_work"],
+      "source_conditions": [{"entity_id": "veteran_hoke", "key": "fatigue", "min": 5}],
+      "trigger_reason": "霍克疲劳偏高，墙巡之后遗落了随身小物。",
+      "responses": [
+        {
+          "response_id": "hang_glove_by_fire",
+          "label": "把手套挂到火边",
+          "hint": "霍克疲劳 -1、信任 +1。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -1},
+              {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 1}
+            ],
+            "narrative": {"title": "手套在火边滴了一夜水", "summary": "霍克第二天戴上时什么也没说，只把你负责的墙段少查了一遍。"}
+          },
+          "outcome_notes": ["霍克疲劳 -1", "霍克信任 +1"]
+        },
+        {
+          "response_id": "leave_glove_on_peg",
+          "label": "把手套放回他的木钉",
+          "hint": "不额外消耗体力。",
+          "effects": {
+            "operations": [],
+            "narrative": {"title": "木钉上多了一只沉重的湿手套", "summary": "它会自己慢慢干。这个月还有别的事要做。"}
+          },
+          "outcome_notes": ["没有额外变化"]
+        }
+      ]
+    },
+    {
+      "incident_id": "month_marta_cracked_mug",
+      "title": "配给桌下裂了一只木杯",
+      "body": "杯沿有一道细缝，盛汤会慢慢渗水。玛塔把它留在一边，打算等忙完再处理。",
+      "story_role": "incidental",
+      "weight": 2,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["ration_work"],
+      "source_conditions": [{"entity_id": "seventh_outpost", "key": "supply", "max": 6}],
+      "trigger_reason": "补给紧时，配给处连替换日用品都要往后排。",
+      "responses": [
+        {
+          "response_id": "seal_mug_with_wax",
+          "label": "用旧封蜡补住杯缝",
+          "hint": "玛塔疲劳 -1、信任 +1。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "cook_marta", "key": "fatigue", "delta": -1},
+              {"operation": "relationship_add", "source_id": "cook_marta", "target_id": "player", "axis": "trust", "delta": 1}
+            ],
+            "narrative": {"title": "木杯又能盛住一碗汤", "summary": "封蜡颜色和杯子不搭，却把那条缝堵住了。玛塔顺手给你多刮了半勺锅底。"}
+          },
+          "outcome_notes": ["玛塔疲劳 -1", "玛塔信任 +1"]
+        },
+        {
+          "response_id": "set_mug_aside",
+          "label": "把杯子放到待修木器堆",
+          "hint": "不额外消耗体力。",
+          "effects": {
+            "operations": [],
+            "narrative": {"title": "裂杯被平码在木碗旁", "summary": "它不会今晚就消失，也不值得为此耽误整轮配给。"}
+          },
+          "outcome_notes": ["没有额外变化"]
+        }
+      ]
+    },
+    {
+      "incident_id": "month_nia_ink_stain",
+      "title": "妮娅把封蜡印沾上了墨",
+      "body": "印面糊成一小块黑色，下一封公文会留下难看的边。她拿布擦了几次，反而把桌角也染黑。",
+      "story_role": "incidental",
+      "weight": 2,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["roster_work", "supply_escort"],
+      "source_conditions": [{"entity_id": "seventh_outpost", "key": "discipline", "min": 6}],
+      "trigger_reason": "文书往来与严格军纪让一块小污迹也需要在下一封信前处理。",
+      "responses": [
+        {
+          "response_id": "scrape_the_seal",
+          "label": "用刀背刮净印面",
+          "hint": "妮娅疲劳 -1；军纪不变。",
+          "effects": {
+            "operations": [{"operation": "state_add", "entity_id": "messenger_nia", "key": "fatigue", "delta": -1}],
+            "narrative": {"title": "下一枚封蜡仍能看清纹路", "summary": "墨屑落在桌缝里。妮娅把印章收回袋中，继续清点信件。"}
+          },
+          "outcome_notes": ["妮娅疲劳 -1"]
+        },
+        {
+          "response_id": "leave_the_mark",
+          "label": "让下一封信带着这点墨",
+          "hint": "士气 +1；一件小错没有被追责。",
+          "effects": {
+            "operations": [{"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": 1}],
+            "narrative": {"title": "封蜡边缘留下了一点黑", "summary": "信仍能送到，印也仍能辨认。妮娅笑了一下，把脏布扔进盆里。"}
+          },
+          "outcome_notes": ["士气 +1"]
+        }
+      ]
+    }
+  ],
+  "completion": {
+    "title": "第一年 · 年末点名",
+    "intro": "从第一场雪到霜重新落上墙顶，三百六十五天已经过去。年末不会把每件小事都写成传奇，只会留下反复发生、终于改变了人的那些事。",
+    "outcomes": [
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "readiness", "min": 8}],
+        "text": "北坡岗路已经形成一套稳定巡次，来年的雾线不再从空白开始。"
+      },
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "wall_integrity", "min": 8}],
+        "text": "哨墙带着一年里不同颜色的木楔站住了，霍克终于少查了一遍你负责的墙段。"
+      },
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "morale", "min": 8}],
+        "text": "点名仍旧严格，但队列里的人已经知道谁会替谁留半碗热汤。"
+      }
+    ]
+  },
+  "milestone": {
+    "title": "第一年 · 年末变化",
+    "intro": "以下变化只来自这一年反复留下的职责事实。普通生活插曲仍只是生活插曲，不会单独晋升为主线。",
+    "action_label": "完成年末点名",
+    "resolved_title": "第一年的名字已经写定",
+    "chronicle_title": "第七哨站第一年",
+    "rules": [
+      {
+        "outcome_id": "first_year_regular",
+        "title": "不再需要确认位置",
+        "text": "罗恩念到你的名字时没有停顿。你已经从新兵变成第七哨站的一名正式戍卒。",
+        "evidence_label": "第一年余下月份完成的职责",
+        "fact_match": {"fact_type": "life_project_duty_completed", "project_ids": ["seventh_outpost_first_year_close"]},
+        "minimum_fact_count": 9,
+        "effects": {
+          "operations": [
+            {"operation": "state_set", "entity_id": "player", "key": "institution_role", "to": "outpost_regular"},
+            {"operation": "relationship_add", "source_id": "captain_ron", "target_id": "player", "axis": "discipline_respect", "delta": 1}
+          ]
+        }
+      },
+      {
+        "outcome_id": "elai_watchmate",
+        "title": "伊莱能独自接下半轮岗",
+        "text": "你与伊莱反复巡线和练岗，他在年末名册上不再被标作需要照看的新兵。",
+        "evidence_label": "与伊莱共同巡线或练岗",
+        "fact_match": {"fact_type": "life_project_duty_completed", "project_ids": ["seventh_outpost_first_year_close"], "duty_ids": ["month_patrol_fog_line", "month_train_watch_pair"]},
+        "minimum_fact_count": 3,
+        "effects": {
+          "operations": [
+            {"operation": "state_set", "entity_id": "recruit_elai", "key": "institution_role", "to": "watchmate"},
+            {"operation": "state_set", "entity_id": "recruit_elai", "key": "fear", "to": "low"},
+            {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 2},
+            {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 1}
+          ]
+        }
+      },
+      {
+        "outcome_id": "hoke_relinquishes_wall_round",
+        "title": "霍克交出一段墙巡",
+        "text": "你反复维护哨墙，霍克终于把东段木牌挂到你的名字下面，自己少走一轮旧腿最疼的雨后墙巡。",
+        "evidence_label": "维护墙体或替霍克巡墙",
+        "fact_match": {"fact_type": "life_project_duty_completed", "project_ids": ["seventh_outpost_first_year_close"], "duty_ids": ["month_maintain_wall", "month_take_hoke_wall_round"]},
+        "minimum_fact_count": 3,
+        "effects": {
+          "operations": [
+            {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -3},
+            {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 2},
+            {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 1}
+          ]
+        }
+      },
+      {
+        "outcome_id": "roll_call_support_web",
+        "title": "点名册开始记录替岗关系",
+        "text": "你反复照看配给与岗次，罗恩在年末名册旁加了一栏替岗记号；火边默契第一次进入正式制度。",
+        "evidence_label": "整理配给或重排岗次",
+        "fact_match": {"fact_type": "life_project_duty_completed", "project_ids": ["seventh_outpost_first_year_close"], "duty_ids": ["month_preserve_rations", "month_rework_roll_call"]},
+        "minimum_fact_count": 3,
+        "effects": {
+          "operations": [
+            {"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": 2},
+            {"operation": "state_add", "entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+            {"operation": "relationship_add", "source_id": "cook_marta", "target_id": "player", "axis": "trust", "delta": 1}
+          ]
+        }
+      }
+    ]
+  },
+  "duties": [
+    {
+      "duty_id": "month_patrol_fog_line",
+      "label": "[感知/侦察] 带伊莱复查雾线",
+      "kind": "巡逻",
+      "hint": "降低边境压力并提高戒备；伊莱会继续从共同巡线中变化。",
+      "action_tags": ["fog_patrol", "watch_training"],
+      "progress_fact": {"fact_type": "actor_led_monthly_fog_watch", "summary": "完成一个月的雾线复查。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -3},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 2},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+          {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 1}
+        ],
+        "narrative": {"title": "雾线木桩之间多了一套你们都认得的记号", "summary": "你和伊莱用一个月复查北坡旧路。他开始先报地形再报动静，不再把每道阴影都喊成敌情。"}
+      }
+    },
+    {
+      "duty_id": "month_maintain_wall",
+      "label": "[力量/维护] 接下整月墙巡",
+      "kind": "修缮",
+      "hint": "提高哨墙，减轻霍克的疲劳；会累积年末墙巡证据。",
+      "action_tags": ["wall_work", "winter_labor"],
+      "progress_fact": {"fact_type": "actor_maintained_monthly_wall", "summary": "接下一个月的东段墙巡。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 3},
+          {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -1},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 3},
+          {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 1},
+          {"operation": "item_history", "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer", "history_entry": {"fact_id": "$duty_fact_id", "event_type": "monthly_wall_round", "summary": "这把锤子完成了一整月东段墙巡。"}}
+        ],
+        "narrative": {"title": "东段墙牌整月挂在你名下", "summary": "你查过松楔、排水沟和雨后开裂。霍克最初仍来复查，后来有两次只在庭院里问了结果。"}
+      }
+    },
+    {
+      "duty_id": "month_preserve_rations",
+      "label": "[智慧] 和玛塔安排整月配给",
+      "kind": "补给",
+      "hint": "提高补给与士气；会累积年末共同生活证据。",
+      "action_tags": ["ration_work", "roster_work"],
+      "progress_fact": {"fact_type": "actor_managed_monthly_rations", "summary": "与玛塔完成一个月的配给安排。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "supply", "delta": 2},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": 1},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+          {"operation": "relationship_add", "source_id": "cook_marta", "target_id": "player", "axis": "trust", "delta": 1}
+        ],
+        "narrative": {"title": "灶台侧面多了一列你写的余粮数", "summary": "你和玛塔把麦袋、盐肉和巡逻口粮按整月重排。锅没有因此变满，但月底没有人空着手离开配给桌。"}
+      }
+    },
+    {
+      "duty_id": "month_train_watch_pair",
+      "label": "[体质/同袍] 和伊莱练整月换岗",
+      "kind": "训练",
+      "hint": "提高军纪与伊莱信任，逐步降低他的紧张。",
+      "action_tags": ["watch_training", "roster_work"],
+      "progress_fact": {"fact_type": "actor_trained_monthly_watch_pair", "summary": "与伊莱完成一个月换岗训练。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"operation": "state_set", "entity_id": "recruit_elai", "key": "fear", "to": "low"},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+          {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 2}
+        ],
+        "narrative": {"title": "伊莱开始在口令前半步准备接岗", "summary": "你们把交灯、报时和箭囊检查重复了一个月。他仍然话多，却不再漏掉换岗顺序。"}
+      }
+    },
+    {
+      "duty_id": "month_take_hoke_wall_round",
+      "label": "[关系] 替霍克接雨后墙巡",
+      "kind": "照应",
+      "hint": "仅在霍克疲劳偏高时出现；明显减轻他的负担。",
+      "action_tags": ["wall_work", "shared_burden"],
+      "available_if": [{"entity_id": "veteran_hoke", "key": "fatigue", "min": 6}],
+      "progress_fact": {"fact_type": "actor_took_hoke_wall_round", "summary": "替霍克接下一个月雨后墙巡。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 2},
+          {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -3},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 3},
+          {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 2}
+        ],
+        "narrative": {"title": "霍克第一次整月没有走雨后东墙", "summary": "你把墙牌从他木钉上取下来。月底交回时，他只指出两处明年还会松动的楔子。"}
+      }
+    },
+    {
+      "duty_id": "month_rework_roll_call",
+      "label": "[魅力/军纪] 重排替岗与点名次序",
+      "kind": "组织",
+      "hint": "士气偏低时出现；把互相照应写进正式岗次。",
+      "action_tags": ["roster_work", "shared_burden"],
+      "available_if": [{"entity_id": "seventh_outpost", "key": "morale", "max": 6}],
+      "progress_fact": {"fact_type": "actor_reworked_monthly_roll_call", "summary": "重排一个月的替岗与点名次序。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": 3},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1},
+          {"operation": "relationship_add", "source_id": "captain_ron", "target_id": "player", "axis": "discipline_respect", "delta": 1}
+        ],
+        "narrative": {"title": "点名册边上第一次出现替岗记号", "summary": "你先问过每个人能接哪一轮，再把结果交给罗恩。月底少了一次漏岗，也少了两场争吵。"}
+      }
+    },
+    {
+      "duty_id": "month_escort_supply_wagons",
+      "label": "[夏秋限定] 护送补给车穿过泥路",
+      "kind": "护送",
+      "hint": "第 4 至 6 月出现；大幅补充物资，但提高疲劳。",
+      "action_tags": ["supply_escort", "fog_patrol"],
+      "available_if": [{"entity_id": "player", "key": "service_day", "min": 4, "max": 6}],
+      "progress_fact": {"fact_type": "actor_escorted_supply_wagons", "summary": "护送一批补给车抵达第七哨站。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "supply", "delta": 4},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -1},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 4},
+          {"operation": "relationship_add", "source_id": "messenger_nia", "target_id": "player", "axis": "familiarity", "delta": 1}
+        ],
+        "narrative": {"title": "三辆补给车在傍晚前越过最后一段泥坡", "summary": "你和妮娅来回垫了四次车轮。玛塔清点到深夜，灶房外终于重新堆起麦袋。"}
+      }
+    },
+    {
+      "duty_id": "month_prepare_winter_return",
+      "label": "[入冬限定] 封住第一批霜裂",
+      "kind": "冬备",
+      "hint": "第 7 至 9 月出现；同时提高哨墙与戒备。",
+      "action_tags": ["wall_work", "winter_labor"],
+      "available_if": [{"entity_id": "player", "key": "service_day", "min": 7}],
+      "progress_fact": {"fact_type": "actor_prepared_for_returning_winter", "summary": "封住入冬前第一批墙体霜裂。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 2},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 2},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 3},
+          {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 1}
+        ],
+        "narrative": {"title": "霜线停在了新填的木屑外", "summary": "你和霍克赶在夜温骤降前封住墙缝。那晚他没有再提第一冬你握锤的姿势。"}
+      }
+    },
+    {
+      "duty_id": "month_infirmary_rest",
+      "label": "让赛拉划掉一个月的重岗",
+      "kind": "恢复",
+      "hint": "疲劳达到 7 时出现；明显恢复身体，但这个月不直接改善哨站。",
+      "available_if": [{"entity_id": "player", "key": "fatigue", "min": 7}],
+      "effects": {
+        "state_changes": [{"entity_id": "player", "key": "fatigue", "delta": -6}],
+        "relationship_changes": [{"source_id": "medic_saira", "target_id": "player", "axis": "familiarity", "delta": 2}],
+        "narrative": {"title": "赛拉把你的名字从四轮重岗上划掉", "summary": "你仍参加点名，也做药柜和清点，却没有再把手抖藏进袖口。一个月后，睡眠终于不再被腿抽筋打断。"}
+      }
+    }
+  ]
+}

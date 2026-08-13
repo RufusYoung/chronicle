@@ -108,7 +108,19 @@ func build_save_envelope(options: Dictionary = {}) -> Dictionary:
 func build_life_stage_transition(target_fixture_id: String) -> Dictionary:
 	if (
 		not is_complete()
-		or _confirmed_growth_candidate_id() == ""
+		or (
+			bool(definition.get(
+				"transition_requires_milestone_resolution", true
+			))
+			and not definition.get("milestone", {}).is_empty()
+			and not bool(get_milestone_summary().get("resolved", false))
+		)
+		or (
+			bool(definition.get(
+				"transition_requires_growth_confirmation", true
+			))
+			and _confirmed_growth_candidate_id() == ""
+		)
 		or target_fixture_id == ""
 	):
 		return {}
@@ -176,6 +188,14 @@ func get_duration_days() -> int:
 
 
 func get_calendar_days_per_step() -> int:
+	return get_calendar_days_for_step(get_day())
+
+
+func get_calendar_days_for_step(step: int) -> int:
+	var schedule: Variant = definition.get("calendar_days_by_step", [])
+	if schedule is Array and not (schedule as Array).is_empty():
+		var index := clampi(step - 1, 0, (schedule as Array).size() - 1)
+		return maxi(int((schedule as Array)[index]), 1)
 	return maxi(int(definition.get("calendar_days_per_step", 1)), 1)
 
 
@@ -257,7 +277,7 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	var day := get_day()
 	var calendar_day_start := int(session.current_day)
 	var calendar_days := get_calendar_days_per_step()
-	var tick_event := _day_tick_event(day)
+	var tick_event := _day_tick_event(day, calendar_days)
 	var tick_validation: Dictionary = TickEventSchemaModel.new().validate(
 		tick_event
 	)
@@ -564,7 +584,120 @@ func get_completion_summary() -> Dictionary:
 		"duty_counts": duty_counts.duplicate(true),
 		"status": get_status(),
 		"growth_candidates": get_growth_candidates(),
+		"milestone": get_milestone_summary(),
 	}
+
+
+func get_milestone_summary() -> Dictionary:
+	if not is_complete():
+		return {"active": false}
+	var milestone: Dictionary = definition.get("milestone", {})
+	if milestone.is_empty():
+		return {"active": false}
+	var outcomes := _eligible_milestone_outcomes()
+	return {
+		"active": true,
+		"resolved": not _milestone_resolution_fact().is_empty(),
+		"title": str(milestone.get("title", "阶段节点")),
+		"intro": str(milestone.get("intro", "")),
+		"action_label": str(milestone.get("action_label", "完成阶段结算")),
+		"resolved_title": str(milestone.get(
+			"resolved_title", "阶段变化已经写入世界"
+		)),
+		"outcomes": outcomes,
+	}
+
+
+func resolve_milestone() -> Dictionary:
+	if not is_ready():
+		return _failure("project_not_initialized")
+	if not is_complete():
+		return _failure("project_not_complete")
+	var milestone: Dictionary = definition.get("milestone", {})
+	if milestone.is_empty():
+		return _failure("project_milestone_missing")
+	if not _milestone_resolution_fact().is_empty():
+		return _failure("project_milestone_already_resolved")
+	var outcomes := _eligible_milestone_outcomes()
+	if outcomes.is_empty():
+		return _failure("project_milestone_has_no_outcomes")
+	var outcome_ids: Array = []
+	var source_fact_ids: Array = []
+	for outcome: Dictionary in outcomes:
+		outcome_ids.append(str(outcome.get("outcome_id", "")))
+		for source_id: Variant in outcome.get("source_fact_ids", []):
+			if source_id not in source_fact_ids:
+				source_fact_ids.append(source_id)
+	var fact_id := "%s:milestone_resolved" % project_id
+	var result = TransactionResultModel.new()
+	result.add_fact({
+		"fact_id": fact_id,
+		"fact_type": "life_project_milestone_resolved",
+		"actor_id": "player",
+		"project_id": project_id,
+		"outcome_ids": outcome_ids,
+		"source_fact_ids": source_fact_ids,
+		"day": get_day(),
+		"location_id": str(session.context.location_id),
+	})
+	for outcome: Dictionary in outcomes:
+		var rule := _find_milestone_rule(str(outcome.get("outcome_id", "")))
+		var effects: Variant = _replace_effect_tokens(
+			rule.get("effects", {}), {"$milestone_fact_id": fact_id}
+		)
+		var effect_report: Dictionary = effect_protocol_resolver.append_effects(
+			result, effects
+		)
+		if not bool(effect_report.get("ok", false)):
+			var invalid := _failure("project_milestone_effect_invalid")
+			invalid["contract_errors"] = effect_report.get("errors", [])
+			return invalid
+	var lines: Array[String] = []
+	for outcome: Dictionary in outcomes:
+		lines.append(str(outcome.get("text", "")))
+	result.add_chronicle_entry({
+		"entry_id": "%s:milestone" % project_id,
+		"subject_id": "player",
+		"title": str(milestone.get("chronicle_title", milestone.get(
+			"title", "阶段节点"
+		))),
+		"body": "%s\n\n%s" % [
+			str(milestone.get("intro", "")), "\n".join(lines)
+		],
+		"project_id": project_id,
+		"outcome_ids": outcome_ids,
+		"source_fact_ids": [fact_id],
+	})
+	result.set_narrative_result({
+		"title": str(milestone.get(
+			"resolved_title", "阶段变化已经写入世界"
+		)),
+		"summary": "\n".join(lines),
+	})
+	result.mark_resolved("life_project_milestone")
+	if not session.writer.apply_result(result, session.stores):
+		var failed := _failure("project_milestone_transaction_rejected")
+		failed["transaction_report"] = session.writer.last_report.duplicate(true)
+		return failed
+	_clamp_states()
+	session.world_log.append_entry({
+		"entry_type": "life_project_milestone",
+		"project_id": project_id,
+		"outcome_ids": outcome_ids,
+		"transaction_mode": "life_project_milestone",
+		"contract_status": "resolved",
+		"facts_added": ["life_project_milestone_resolved"],
+	})
+	latest_result = {
+		"success": true,
+		"milestone_resolved": true,
+		"title": str(result.narrative_result.get("title", "阶段变化已经写入世界")),
+		"summary": str(result.narrative_result.get("summary", "")),
+		"outcomes": outcomes,
+		"settlement_notes": [],
+		"npc_narratives": [],
+	}
+	return latest_result.duplicate(true)
 
 
 func get_growth_candidates() -> Array:
@@ -795,13 +928,20 @@ func _growth_contract_failure(error: String, report: Dictionary) -> Dictionary:
 
 
 func _matching_growth_fact_ids(match_rule: Variant) -> Array:
+	return _matching_fact_ids(match_rule)
+
+
+func _matching_fact_ids(match_rule: Variant) -> Array:
 	var rows: Array = []
 	if not match_rule is Dictionary:
 		return rows
 	var matcher := match_rule as Dictionary
 	var duty_ids: Array = matcher.get("duty_ids", [])
+	var project_ids: Array = matcher.get("project_ids", [project_id])
+	if project_ids.is_empty():
+		project_ids = [project_id]
 	for fact: Dictionary in session.stores["fact_store"].list_facts():
-		if str(fact.get("project_id", "")) != project_id:
+		if str(fact.get("project_id", "")) not in project_ids:
 			continue
 		var fact_type := str(matcher.get("fact_type", ""))
 		if fact_type != "" and str(fact.get("fact_type", "")) != fact_type:
@@ -810,6 +950,52 @@ func _matching_growth_fact_ids(match_rule: Variant) -> Array:
 			continue
 		rows.append(str(fact.get("fact_id", "")))
 	return rows
+
+
+func _eligible_milestone_outcomes() -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	var milestone: Dictionary = definition.get("milestone", {})
+	for value: Variant in milestone.get("rules", []):
+		if not value is Dictionary:
+			continue
+		var rule := value as Dictionary
+		if not _conditions_match(rule.get("conditions", [])):
+			continue
+		var source_fact_ids := _matching_fact_ids(rule.get("fact_match", {}))
+		var minimum_count := maxi(int(rule.get("minimum_fact_count", 1)), 1)
+		if source_fact_ids.size() < minimum_count:
+			continue
+		rows.append({
+			"outcome_id": str(rule.get("outcome_id", "")),
+			"title": str(rule.get("title", "年度变化")),
+			"text": str(rule.get("text", "")),
+			"evidence_label": str(rule.get("evidence_label", "累积经历")),
+			"evidence_count": source_fact_ids.size(),
+			"minimum_fact_count": minimum_count,
+			"source_fact_ids": source_fact_ids,
+		})
+	return rows
+
+
+func _find_milestone_rule(outcome_id: String) -> Dictionary:
+	var milestone: Dictionary = definition.get("milestone", {})
+	for value: Variant in milestone.get("rules", []):
+		if value is Dictionary and str(
+			(value as Dictionary).get("outcome_id", "")
+		) == outcome_id:
+			return (value as Dictionary).duplicate(true)
+	return {}
+
+
+func _milestone_resolution_fact() -> Dictionary:
+	if not is_ready():
+		return {}
+	for fact: Dictionary in session.stores[
+		"fact_store"
+	].find_facts_by_type("life_project_milestone_resolved"):
+		if str(fact.get("project_id", "")) == project_id:
+			return fact.duplicate(true)
+	return {}
 
 
 func _build_duty_transaction(
@@ -1367,8 +1553,8 @@ func _find_duty(duty_id: String) -> Dictionary:
 	return {}
 
 
-func _day_tick_event(day: int) -> Dictionary:
-	var elapsed_hours := get_calendar_days_per_step() * 24
+func _day_tick_event(day: int, calendar_days: int) -> Dictionary:
+	var elapsed_hours := calendar_days * 24
 	var projected_day := int(
 		session.current_day + (session.current_hour + elapsed_hours) / 24
 	)

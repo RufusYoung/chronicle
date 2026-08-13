@@ -5,6 +5,7 @@
   "duration_days": 6,
   "calendar_days_per_step": 14,
   "progress_unit_label": "轮",
+  "transition_requires_growth_confirmation": false,
   "tick_label": "第七哨站第一季度双周结算",
   "scope_entity_id": "seventh_outpost",
   "transition_persistent_entity_ids": [
