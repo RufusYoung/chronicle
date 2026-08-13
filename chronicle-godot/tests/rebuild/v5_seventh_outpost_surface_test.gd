@@ -190,10 +190,36 @@ func _run() -> void:
 		and "雾线守望 integrated（11）" in feature_text.text
 		and "侦察 2级·60经验" in feature_text.text
 		and "遮光巡灯 52/60 · 1 条履历" in feature_text.text
-		and action_buttons.get_child_count() == 0
+		and action_buttons.get_child_count() == 1
+		and str((action_buttons.get_child(0) as Button).get_meta(
+			"phase_transition_id", ""
+		)) == "first_quarter"
 		and "阶段成长已确认" in action_heading.text
 		and feedback_title.text == "成长已经留下",
-		"11b. Confirmed growth refreshes the sheet and removes repeat actions"
+		"11b. Confirmed growth refreshes the sheet and offers the next life stage"
+	)
+	(action_buttons.get_child(0) as Button).pressed.emit()
+	await process_frame
+	await process_frame
+	_check(
+		"融雪期 · 第一季度" in viewer.get_node("%Subtitle").text
+		and day_label.text == "第 1 / 6 轮 · 每轮 14 天 · 世界第 8 天"
+		and "推进 84 天" in viewer.get_node("%ObjectiveText").text
+		and "第一冬已经翻页" in feedback_title.text
+		and _find_duty_button(action_buttons, "read_thaw_tracks") != null
+		and _find_duty_button(action_buttons, "lead_thaw_repair") == null
+		and "紧张 中" in people_text.text,
+		"11c. The earned route enters a readable formal quarter surface"
+	)
+	viewer.perform_duty("read_thaw_tracks")
+	await process_frame
+	_check(
+		day_label.text == "第 2 / 6 轮 · 每轮 14 天 · 世界第 22 天"
+		and feedback_title.text == "伊莱终于分清兽迹和拖枪的痕迹"
+		and "紧张 低" in people_text.text
+		and "世界日 8–22" in history_text.text
+		and "遮光巡灯 52/60 · 2 条履历" in feature_text.text,
+		"11d. A quarter duty shows calendar, person, feedback, and item-history changes"
 	)
 
 	viewer.restart_project()

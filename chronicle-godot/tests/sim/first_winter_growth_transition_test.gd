@@ -36,8 +36,19 @@ func _run() -> void:
 	var transition: Dictionary = source.build_life_stage_transition(
 		TARGET_FIXTURE_ID
 	)
+	var source_outpost_states: Dictionary = source.session.stores[
+		"state_store"
+	].list_states("seventh_outpost")
+	var source_hoke_fatigue := int(source.session.stores[
+		"state_store"
+	].get_state("veteran_hoke", "fatigue", 0))
+	var source_timber_quantity := int(source.session.stores[
+		"item_store"
+	].get_item("item_instance.seventh_outpost.wall_timber").get(
+		"quantity", 0
+	))
 	_check(
-		int(transition.get("schema_version", 0)) == 2
+		int(transition.get("schema_version", 0)) == 3
 		and str(transition.get("target_fixture_id", "")) == TARGET_FIXTURE_ID
 		and not (transition.get("equipment_loadouts", {}) as Dictionary).is_empty(),
 		"1. A confirmed first winter builds a target-specific transition package"
@@ -66,8 +77,20 @@ func _run() -> void:
 		and target.session.stores["equipment_store"].get_equipped_item_id(
 			"player", "utility"
 		) == "item_instance.seventh_outpost.player_patrol_lantern"
+		and _outpost_axes_equal(
+			target.session.stores["state_store"].list_states(
+				"seventh_outpost"
+			),
+			source_outpost_states
+		)
+		and int(target.session.stores["state_store"].get_state(
+			"veteran_hoke", "fatigue", 0
+		)) == source_hoke_fatigue
+		and int(target.session.stores["item_store"].get_item(
+			"item_instance.seventh_outpost.wall_timber"
+		).get("quantity", 0)) == source_timber_quantity
 		and _has_fact(target.session, "actor_entered_life_stage"),
-		"2. Growth, history, equipment, and the transition fact enter the target atomically"
+		"2. Growth, outpost state, fixed people, shared items, equipment, and the transition fact enter atomically"
 	)
 	var continued: Dictionary = target.execute_duty(
 		"patrol_fog_line", {"risk_roll_override": 10}
@@ -159,6 +182,20 @@ func _history_has_growth_fact(item: Dictionary) -> bool:
 		if "growth_confirmed" in str(entry.get("fact_id", "")):
 			return true
 	return false
+
+
+func _outpost_axes_equal(left: Dictionary, right: Dictionary) -> bool:
+	for key: String in [
+		"supply",
+		"morale",
+		"discipline",
+		"wall_integrity",
+		"border_pressure",
+		"readiness",
+	]:
+		if left.get(key) != right.get(key):
+			return false
+	return true
 
 
 func _equivalent(left: Variant, right: Variant) -> bool:

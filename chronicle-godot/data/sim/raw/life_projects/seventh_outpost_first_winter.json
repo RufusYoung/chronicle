@@ -2,6 +2,14 @@
   "project_id": "seventh_outpost_first_winter",
   "title": "第七哨站 · 新兵之冬",
   "duration_days": 7,
+  "transition_persistent_entity_ids": [
+    "seventh_outpost",
+    "captain_ron",
+    "recruit_elai",
+    "cook_marta",
+    "medic_saira",
+    "veteran_hoke"
+  ],
   "scope_entity_id": "seventh_outpost",
   "ritual": {
     "title": "第 {day} 天 · 清晨点名",

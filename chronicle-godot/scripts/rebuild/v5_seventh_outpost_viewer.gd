@@ -35,7 +35,7 @@ var pending_growth_candidate_id: String = ""
 
 func _ready() -> void:
 	view_model = ViewModelModel.new()
-	restart_button.pressed.connect(restart_project)
+	restart_button.pressed.connect(_restart_current_phase)
 	growth_confirmation_dialog.confirmed.connect(_confirm_pending_growth)
 	var transition: Dictionary = {}
 	var relay: Node = get_node_or_null("/root/_LifeStageTransition")
@@ -51,6 +51,25 @@ func restart_project(transition: Dictionary = {}) -> void:
 	growth_confirmation_dialog.hide()
 	view_model.start(transition)
 	refresh_view()
+
+
+func _restart_current_phase() -> void:
+	completion_was_shown = false
+	pending_growth_candidate_id = ""
+	completion_dialog.hide()
+	growth_confirmation_dialog.hide()
+	view_model.restart_current_phase()
+	refresh_view()
+
+
+func enter_first_quarter() -> Dictionary:
+	completion_was_shown = false
+	pending_growth_candidate_id = ""
+	completion_dialog.hide()
+	growth_confirmation_dialog.hide()
+	var result: Dictionary = view_model.enter_first_quarter()
+	refresh_view()
+	return result
 
 
 func perform_duty(duty_id: String) -> Dictionary:
@@ -83,16 +102,33 @@ func refresh_view() -> void:
 	subtitle.text = str(current_view_data.get("subtitle", ""))
 	var day := int(current_view_data.get("day", 1))
 	var duration := int(current_view_data.get("duration_days", 7))
-	day_label.text = (
-		"第一轮值勤已结束"
-		if bool(current_view_data.get("complete", false))
-		else "第 %d / %d 天　06:00　清晨点名" % [day, duration]
-	)
+	var unit_label := str(current_view_data.get("progress_unit_label", "天"))
+	var calendar_days := int(current_view_data.get("calendar_days_per_step", 1))
+	var phase_id := str(current_view_data.get("phase_id", "first_winter"))
+	if bool(current_view_data.get("complete", false)):
+		day_label.text = (
+			"第一季度已结束 · 世界第 %d 天" % int(
+				current_view_data.get("world_day", 1)
+			)
+			if phase_id == "first_quarter"
+			else "第一轮值勤已结束"
+		)
+	elif phase_id == "first_quarter":
+		day_label.text = "第 %d / %d %s · 每轮 %d 天 · 世界第 %d 天" % [
+			day,
+			duration,
+			unit_label,
+			calendar_days,
+			int(current_view_data.get("world_day", 1)),
+		]
+	else:
+		day_label.text = "第 %d / %d 天　06:00　清晨点名" % [day, duration]
 	var player: Dictionary = current_view_data.get("player", {})
 	player_text.text = str(player.get("summary", ""))
 	feature_text.text = str(player.get("features", ""))
-	objective_text.text = (
-		"[b]第一冬目标[/b]\n完成七个值勤日。每天只选一项职责；口粮、疲劳、军纪与身边人的行动都会继续结算。"
+	objective_text.text = str(current_view_data.get("objective", ""))
+	restart_button.text = (
+		"重来第一季度" if phase_id == "first_quarter" else "重新开始服役"
 	)
 	var ritual: Dictionary = current_view_data.get("ritual", {})
 	ritual_title.text = str(ritual.get("title", "清晨点名"))
@@ -105,11 +141,13 @@ func refresh_view() -> void:
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []))
 	if bool(current_view_data.get("complete", false)):
-		_refresh_growth_actions(
-			(current_view_data.get("completion", {}) as Dictionary).get(
-				"growth_candidates", []
-			)
-		)
+		var growth_candidates: Array = (
+			current_view_data.get("completion", {}) as Dictionary
+		).get("growth_candidates", [])
+		if phase_id == "first_quarter":
+			_refresh_quarter_completion_actions()
+		else:
+			_refresh_growth_actions(growth_candidates)
 	else:
 		_refresh_actions(current_view_data.get("actions", []))
 	if (
@@ -144,7 +182,10 @@ func _refresh_actions(actions: Array) -> void:
 	)
 	for action: Dictionary in actions:
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(300, 88)
+		button.custom_minimum_size = Vector2(
+			270 if actions.size() <= 4 else 300,
+			88
+		)
 		button.text = "%s\n%s" % [
 			str(action.get("label", "承担值勤")),
 			str(action.get("hint", "")),
@@ -175,7 +216,14 @@ func _refresh_growth_actions(candidates: Array) -> void:
 		action_heading.text = "阶段成长已确认　%s" % str(
 			confirmed.get("title", "阶段成长")
 		)
-		action_hint.text = "这项成长已经写入角色、事实与纪事，不能重复领取。"
+		action_hint.text = "这项成长已经写入角色、事实与纪事。现在可以让它进入下一段生活。"
+		if bool(current_view_data.get("can_advance_phase", false)):
+			var next_button := Button.new()
+			next_button.custom_minimum_size = Vector2(300, 72)
+			next_button.text = "进入第一季度\n六个双周节点 · 推进 84 天"
+			next_button.set_meta("phase_transition_id", "first_quarter")
+			next_button.pressed.connect(enter_first_quarter)
+			action_buttons.add_child(next_button)
 		return
 	action_heading.text = "从实际经历中确认一项成长　%d 项可选" % candidates.size()
 	action_hint.text = "成长会永久写入本次存档。点击选项查看依据和奖励，再进行确认。"
@@ -194,6 +242,13 @@ func _refresh_growth_actions(candidates: Array) -> void:
 		button.set_meta("candidate_id", str(candidate.get("candidate_id", "")))
 		button.pressed.connect(_request_growth_confirmation.bind(candidate))
 		action_buttons.add_child(button)
+
+
+func _refresh_quarter_completion_actions() -> void:
+	for child: Node in action_buttons.get_children():
+		child.queue_free()
+	action_heading.text = "第一季度已经结束"
+	action_hint.text = "八十四天的状态、人物变化、物品履历与纪事已经写入。本轮原型暂止于此。"
 
 
 func _request_growth_confirmation(candidate: Dictionary) -> void:
@@ -273,9 +328,18 @@ func _refresh_history(history: Array) -> void:
 	var rows: Array[String] = []
 	var first := maxi(history.size() - 4, 0)
 	for entry: Dictionary in history.slice(first):
-		rows.append("[b]第 %d 天　%s[/b]\n[color=#9aa29d]%s[/color]" % [
+		var unit_label := str(entry.get("progress_unit_label", "天"))
+		var calendar_text := ""
+		if int(entry.get("calendar_day_end", 0)) > 0:
+			calendar_text = "\n[color=#7f918c]世界日 %d–%d[/color]" % [
+				int(entry.get("calendar_day_start", 0)),
+				int(entry.get("calendar_day_end", 0)),
+			]
+		rows.append("[b]第 %d %s　%s[/b]%s\n[color=#9aa29d]%s[/color]" % [
 			int(entry.get("day", 0)),
+			unit_label,
 			str(entry.get("label", "值勤")),
+			calendar_text,
 			str(entry.get("summary", "")),
 		])
 	history_text.text = "\n\n".join(rows)
@@ -294,7 +358,16 @@ func _format_people(people: Array) -> String:
 		rows.append("[b]%s[/b]%s\n%s" % [
 			str(person.get("name", "")),
 			relation,
-			str(person.get("description", "")),
+			"%s%s" % [
+				str(person.get("description", "")),
+				(
+					"\n[color=#8fa09b]%s[/color]" % str(
+						person.get("state_summary", "")
+					)
+					if str(person.get("state_summary", "")) != ""
+					else ""
+				),
+			],
 		])
 	return "\n\n".join(rows)
 
@@ -317,6 +390,7 @@ func _show_intro() -> void:
 
 func _show_completion() -> void:
 	var completion: Dictionary = current_view_data.get("completion", {})
+	completion_dialog.title = str(completion.get("title", "阶段小结"))
 	var lines: Array[String] = [str(completion.get("intro", ""))]
 	for line: Variant in completion.get("lines", []):
 		lines.append("• %s" % str(line))

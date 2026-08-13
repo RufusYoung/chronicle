@@ -3,7 +3,7 @@ class_name V5LifeStageTransitionService
 
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
 
-const SCHEMA_VERSION := 2
+const SCHEMA_VERSION := 3
 const DEFAULT_TARGET_FIXTURE_ID := "seventh_outpost_first_winter"
 const PLAYER_STATE_EXCLUSIONS := [
 	"location_id",
@@ -12,6 +12,7 @@ const PLAYER_STATE_EXCLUSIONS := [
 	"training",
 	"last_duty",
 ]
+const ENTITY_STATE_EXCLUSIONS := ["location_id"]
 
 
 func build_player_transition(
@@ -26,15 +27,31 @@ func build_player_transition(
 	))
 	if target_fixture_id == "":
 		return {}
+	var persistent_entity_ids := _existing_entity_ids(
+		source_session,
+		options.get("persistent_entity_ids", []),
+		actor_id
+	)
 	var facts: Array = source_session.stores["fact_store"].to_save_data()
-	var relationships := _player_relationships(
+	var player_relationships := _player_relationships(
 		source_session.stores["relationship_store"].to_save_data(),
 		actor_id
 	)
-	var linked_ids := _linked_entity_ids(relationships, actor_id)
-	var items: Array = source_session.stores[
-		"item_store"
-	].list_items_for_owner(actor_id)
+	var linked_ids := _linked_entity_ids(player_relationships, actor_id)
+	for entity_id: String in persistent_entity_ids:
+		if entity_id not in linked_ids:
+			linked_ids.append(entity_id)
+	var carried_owner_ids: Array = [actor_id]
+	carried_owner_ids.append_array(persistent_entity_ids)
+	var relationships := _relationships_between_ids(
+		source_session.stores["relationship_store"].to_save_data(),
+		carried_owner_ids + linked_ids
+	)
+	var items: Array = []
+	for owner_id: String in carried_owner_ids:
+		items.append_array(source_session.stores[
+			"item_store"
+		].list_items_for_owner(owner_id))
 	for item: Dictionary in items:
 		var provided_by := str((item.get("provenance", {}) as Dictionary).get(
 			"provided_by", ""
@@ -51,6 +68,18 @@ func build_player_transition(
 	var features: Dictionary = source_session.stores[
 		"character_feature_store"
 	].to_save_data()
+	var entity_states: Dictionary = {}
+	for entity_id: String in persistent_entity_ids:
+		entity_states[entity_id] = source_session.stores[
+			"state_store"
+		].list_states(entity_id)
+	var equipment_loadouts: Dictionary = {}
+	for owner_id: String in carried_owner_ids:
+		var loadout: Dictionary = source_session.stores[
+			"equipment_store"
+		].get_loadout(owner_id)
+		if not loadout.is_empty():
+			equipment_loadouts[owner_id] = loadout
 	return {
 		"schema_version": SCHEMA_VERSION,
 		"payload_kind": "life_stage_transition",
@@ -66,34 +95,39 @@ func build_player_transition(
 		"player_states": source_session.stores[
 			"state_store"
 		].list_states(actor_id),
+		"persistent_entity_ids": persistent_entity_ids,
+		"entity_states": entity_states,
 		"linked_entities": linked_entities,
 		"relationships": relationships,
 		"facts": facts,
-		"memories": source_session.stores[
-			"memory_store"
-		].list_memories(actor_id),
+		"memories": _owned_memories(
+			source_session.stores["memory_store"].to_save_data(),
+			carried_owner_ids
+		),
 		"character_features": {
-			"talent_assignments": _owned_rows(
-				features.get("talent_assignments", []), actor_id
+			"talent_assignments": _owned_rows_for_ids(
+				features.get("talent_assignments", []), carried_owner_ids
 			),
-			"trait_instances": _owned_rows(
-				features.get("trait_instances", []), actor_id
+			"trait_instances": _owned_rows_for_ids(
+				features.get("trait_instances", []), carried_owner_ids
 			),
-			"mark_instances": _owned_rows(
-				features.get("mark_instances", []), actor_id
+			"mark_instances": _owned_rows_for_ids(
+				features.get("mark_instances", []), carried_owner_ids
 			),
-			"skill_progress": _owned_rows(
-				features.get("skill_progress", []), actor_id
+			"skill_progress": _owned_rows_for_ids(
+				features.get("skill_progress", []), carried_owner_ids
 			),
 		},
 		"items": _canonical_item_records(items),
-		"equipment_loadouts": {
-			actor_id: source_session.stores[
-				"equipment_store"
-			].get_loadout(actor_id),
-		},
-		"chronicle_entries": _subject_rows(
-			source_session.stores["chronicle_store"].to_save_data(), actor_id
+		"equipment_loadouts": equipment_loadouts,
+		"pressures": _scoped_rows(
+			source_session.stores["pressure_store"].to_save_data(),
+			persistent_entity_ids,
+			"scope_id"
+		),
+		"chronicle_entries": _subject_rows_for_ids(
+			source_session.stores["chronicle_store"].to_save_data(),
+			carried_owner_ids
 		),
 		"world_log": source_session.world_log.to_save_data(),
 	}
@@ -149,6 +183,8 @@ func apply_to_controller(controller: Variant, transition: Variant) -> Dictionary
 		)
 		failure["rollback_ok"] = bool(rollback_report.get("success", false))
 		return failure
+	if controller.has_method("set_entry_transition"):
+		controller.set_entry_transition(data)
 	_refresh_controller_resolver(controller)
 	return {
 		"success": true,
@@ -200,6 +236,22 @@ func _apply_transition_data(session: Variant, data: Dictionary) -> Dictionary:
 		if key not in PLAYER_STATE_EXCLUSIONS:
 			player_states[key] = data["player_states"][key]
 	states[actor_id] = player_states
+	for entity_id: String in (data.get("entity_states", {}) as Dictionary).keys():
+		if entity_id == actor_id:
+			continue
+		var carried_states: Variant = data["entity_states"].get(entity_id)
+		if not carried_states is Dictionary:
+			return _failure(
+				"transition_entity_state_invalid:%s" % entity_id,
+				"states"
+			)
+		var merged_states: Dictionary = (
+			states.get(entity_id, {}) as Dictionary
+		).duplicate(true)
+		for key: String in (carried_states as Dictionary).keys():
+			if key not in ENTITY_STATE_EXCLUSIONS:
+				merged_states[key] = carried_states.get(key)
+		states[entity_id] = merged_states
 	var state_report: Dictionary = session.stores[
 		"state_store"
 	].load_save_data(states)
@@ -238,6 +290,15 @@ func _apply_transition_data(session: Variant, data: Dictionary) -> Dictionary:
 	))
 	if not bool(equipment_report.get("ok", false)):
 		return _store_failure("equipment_loadouts", equipment_report)
+	var pressure_report: Dictionary = session.stores[
+		"pressure_store"
+	].load_save_data(_merge_rows_by_id(
+		data.get("pressures", []),
+		session.stores["pressure_store"].to_save_data(),
+		"pressure_id"
+	))
+	if not bool(pressure_report.get("ok", false)):
+		return _store_failure("pressures", pressure_report)
 	var memory_report: Dictionary = session.stores[
 		"memory_store"
 	].load_save_data(_merge_rows_by_id(
@@ -304,6 +365,7 @@ func _validate_transition(value: Variant) -> Dictionary:
 	for key: String in [
 		"world_time",
 		"player_states",
+		"entity_states",
 		"linked_entities",
 		"relationships",
 		"character_features",
@@ -312,7 +374,13 @@ func _validate_transition(value: Variant) -> Dictionary:
 		if not data.get(key) is Dictionary:
 			return _failure("transition_field_not_dictionary:%s" % key, "contract")
 	for key: String in [
-		"facts", "memories", "items", "chronicle_entries", "world_log"
+		"persistent_entity_ids",
+		"facts",
+		"memories",
+		"items",
+		"pressures",
+		"chronicle_entries",
+		"world_log",
 	]:
 		if not data.get(key) is Array:
 			return _failure("transition_field_not_array:%s" % key, "contract")
@@ -344,22 +412,79 @@ func _linked_entity_ids(relationships: Dictionary, actor_id: String) -> Array:
 	return ids
 
 
-func _owned_rows(value: Variant, actor_id: String) -> Array:
+func _existing_entity_ids(
+		source_session: Variant,
+		value: Variant,
+		actor_id: String
+) -> Array:
+	var ids: Array = []
+	if not value is Array:
+		return ids
+	for raw_id: Variant in value:
+		var entity_id := str(raw_id)
+		if (
+			entity_id == ""
+			or entity_id == actor_id
+			or entity_id in ids
+			or not source_session.stores["entity_store"].has_entity(entity_id)
+		):
+			continue
+		ids.append(entity_id)
+	return ids
+
+
+func _relationships_between_ids(source: Dictionary, entity_ids: Array) -> Dictionary:
+	var result: Dictionary = {}
+	for source_id: String in source.keys():
+		if source_id not in entity_ids:
+			continue
+		for target_id: String in (source[source_id] as Dictionary).keys():
+			if target_id not in entity_ids:
+				continue
+			if not result.has(source_id):
+				result[source_id] = {}
+			result[source_id][target_id] = (
+				(source[source_id] as Dictionary)[target_id] as Dictionary
+			).duplicate(true)
+	return result
+
+
+func _owned_rows_for_ids(value: Variant, owner_ids: Array) -> Array:
 	var rows: Array = []
 	if not value is Array:
 		return rows
 	for row: Dictionary in value:
-		if str(row.get("owner_entity_id", "")) == actor_id:
+		if str(row.get("owner_entity_id", "")) in owner_ids:
 			rows.append(row.duplicate(true))
 	return rows
 
 
-func _subject_rows(value: Variant, actor_id: String) -> Array:
+func _owned_memories(value: Variant, owner_ids: Array) -> Array:
 	var rows: Array = []
 	if not value is Array:
 		return rows
 	for row: Dictionary in value:
-		if str(row.get("subject_id", "")) == actor_id:
+		if str(row.get("owner_id", "")) in owner_ids:
+			rows.append(row.duplicate(true))
+	return rows
+
+
+func _subject_rows_for_ids(value: Variant, subject_ids: Array) -> Array:
+	var rows: Array = []
+	if not value is Array:
+		return rows
+	for row: Dictionary in value:
+		if str(row.get("subject_id", "")) in subject_ids:
+			rows.append(row.duplicate(true))
+	return rows
+
+
+func _scoped_rows(value: Variant, scope_ids: Array, scope_key: String) -> Array:
+	var rows: Array = []
+	if not value is Array:
+		return rows
+	for row: Dictionary in value:
+		if str(row.get(scope_key, "")) in scope_ids:
 			rows.append(row.duplicate(true))
 	return rows
 

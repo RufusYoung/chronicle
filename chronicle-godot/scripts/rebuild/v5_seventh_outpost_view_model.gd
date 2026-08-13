@@ -4,12 +4,21 @@ class_name V5SeventhOutpostViewModel
 const ControllerModel = preload(
 	"res://scripts/sim/life_project/life_project_controller.gd"
 )
-const FIXTURE_PATH := (
+const FIRST_WINTER_FIXTURE_PATH := (
 	"res://data/sim/fixtures/seventh_outpost_first_winter_fixture.json"
 )
-const PROJECT_PATH := (
+const FIRST_WINTER_PROJECT_PATH := (
 	"res://data/sim/raw/life_projects/seventh_outpost_first_winter.json"
 )
+const FIRST_QUARTER_FIXTURE_PATH := (
+	"res://data/sim/fixtures/seventh_outpost_first_quarter_fixture.json"
+)
+const FIRST_QUARTER_PROJECT_PATH := (
+	"res://data/sim/raw/life_projects/seventh_outpost_first_quarter.json"
+)
+const FIRST_WINTER_PHASE_ID := "first_winter"
+const FIRST_QUARTER_PHASE_ID := "first_quarter"
+const FIRST_QUARTER_FIXTURE_ID := "seventh_outpost_first_quarter"
 const MARKET_POLICY_ID := "market_policy.seventh_outpost_canteen"
 const LifeStageTransitionServiceModel = preload(
 	"res://scripts/sim/save/life_stage_transition_service.gd"
@@ -18,12 +27,19 @@ const LifeStageTransitionServiceModel = preload(
 var controller: Variant = null
 var latest_result: Dictionary = {}
 var start_result: Dictionary = {}
+var current_phase_id: String = FIRST_WINTER_PHASE_ID
+var phase_start_transition: Dictionary = {}
 
 
-func start(transition: Dictionary = {}) -> Dictionary:
+func start(
+		transition: Dictionary = {}, requested_phase_id: String = ""
+) -> Dictionary:
+	var next_phase_id := _resolve_phase_id(transition, requested_phase_id)
+	var phase: Dictionary = _phase_config(next_phase_id)
 	var next_controller = ControllerModel.new()
 	var start_report: Dictionary = next_controller.start(
-		FIXTURE_PATH, PROJECT_PATH
+		str(phase.get("fixture_path", "")),
+		str(phase.get("project_path", ""))
 	)
 	if not bool(start_report.get("success", false)):
 		start_result = start_report.duplicate(true)
@@ -39,9 +55,32 @@ func start(transition: Dictionary = {}) -> Dictionary:
 			return transition_report
 		start_report["transition"] = transition_report
 	controller = next_controller
+	current_phase_id = next_phase_id
+	phase_start_transition = transition.duplicate(true)
 	latest_result = {}
 	start_result = start_report.duplicate(true)
 	return start_report
+
+
+func restart_current_phase() -> Dictionary:
+	return start(phase_start_transition, current_phase_id)
+
+
+func enter_first_quarter() -> Dictionary:
+	if not is_ready() or current_phase_id != FIRST_WINTER_PHASE_ID:
+		return {
+			"success": false,
+			"error": "first_quarter_transition_not_available",
+		}
+	var transition: Dictionary = controller.build_life_stage_transition(
+		FIRST_QUARTER_FIXTURE_ID
+	)
+	if transition.is_empty():
+		return {
+			"success": false,
+			"error": "first_quarter_transition_not_ready",
+		}
+	return start(transition, FIRST_QUARTER_PHASE_ID)
 
 
 func is_ready() -> bool:
@@ -123,6 +162,8 @@ func load_from_path(path: String) -> Dictionary:
 			"phase": "ui_load",
 		}
 	if bool(result.get("success", false)):
+		current_phase_id = _phase_id_for_project(controller.project_id)
+		phase_start_transition = controller.get_entry_transition()
 		latest_result = controller.latest_result.duplicate(true)
 	return result
 
@@ -131,13 +172,20 @@ func build_view_data() -> Dictionary:
 	if not is_ready():
 		return {"ready": false, "error_text": "第七哨站暂时无法载入。"}
 	var snapshot: Variant = controller.session.get_snapshot()
+	var phase: Dictionary = _phase_config(current_phase_id)
 	return {
 		"ready": true,
 		"title": "第七哨站",
-		"subtitle": "边境服役 · 第一年 · 新兵之冬",
+		"subtitle": str(phase.get("subtitle", "边境服役")),
+		"phase_id": current_phase_id,
 		"day": controller.get_day(),
 		"duration_days": controller.get_duration_days(),
+		"calendar_days_per_step": controller.get_calendar_days_per_step(),
+		"progress_unit_label": controller.get_progress_unit_label(),
+		"world_day": int(controller.session.current_day),
 		"complete": controller.is_complete(),
+		"can_advance_phase": _can_enter_first_quarter(),
+		"objective": str(phase.get("objective", "")),
 		"ritual": controller.get_ritual(),
 		"player": _player_view(snapshot),
 		"status": controller.get_status(),
@@ -151,9 +199,14 @@ func build_view_data() -> Dictionary:
 
 
 func _player_view(snapshot: Variant) -> Dictionary:
+	var identity := (
+		"第七哨站新兵"
+		if current_phase_id == FIRST_WINTER_PHASE_ID
+		else "第七哨站戍卒 · 第一季度"
+	)
 	return {
 		"summary": "\n".join([
-			"身份　第七哨站新兵",
+			"身份　%s" % identity,
 			"力量 %d　敏捷 %d　智慧 %d" % [
 				int(snapshot.get_player_value("strength", 0)),
 				int(snapshot.get_player_value("dexterity", 0)),
@@ -317,6 +370,7 @@ func _people_view(snapshot: Variant) -> Array:
 			"id": person_id,
 			"name": str(person.get("display_name", person_id)),
 			"description": str(person.get("description", "")),
+			"state_summary": _person_state_summary(snapshot, person_id),
 			"relation_label": str(axis_data[1]),
 			"relation_value": int(snapshot.get_relation(
 				person_id, "player", str(axis_data[0]), 0
@@ -361,6 +415,14 @@ func _action_rows() -> Array:
 
 func _feedback_view() -> Dictionary:
 	if latest_result.is_empty():
+		if current_phase_id == FIRST_QUARTER_PHASE_ID:
+			return {
+				"title": "第一冬已经翻页",
+				"body": "北坡开始融雪。接下来每次选择代表两周值勤，第一冬留下的成长、关系、物资和哨站压力都会继续参与结算。",
+				"details": ["当前世界第 %d 天。" % int(
+					controller.session.current_day
+				)],
+			}
 		return {
 			"title": "第一次点名",
 			"body": "罗恩念到你的名字时没有抬头。今天做什么，会在明早的点名以前改变哨站。",
@@ -470,3 +532,62 @@ func _growth_error_text(result: Dictionary) -> String:
 		"growth_transaction_rejected":
 			return "成长写入未通过完整性检查，角色状态没有改变。"
 	return "这项成长没有确认，角色状态没有改变。"
+
+
+func _can_enter_first_quarter() -> bool:
+	return (
+		current_phase_id == FIRST_WINTER_PHASE_ID
+		and controller.is_complete()
+		and not controller.build_life_stage_transition(
+			FIRST_QUARTER_FIXTURE_ID
+		).is_empty()
+	)
+
+
+func _resolve_phase_id(
+		transition: Dictionary, requested_phase_id: String
+) -> String:
+	if requested_phase_id in [FIRST_WINTER_PHASE_ID, FIRST_QUARTER_PHASE_ID]:
+		return requested_phase_id
+	if str(transition.get("target_fixture_id", "")) == FIRST_QUARTER_FIXTURE_ID:
+		return FIRST_QUARTER_PHASE_ID
+	return FIRST_WINTER_PHASE_ID
+
+
+func _phase_id_for_project(source_project_id: String) -> String:
+	return (
+		FIRST_QUARTER_PHASE_ID
+		if source_project_id == "seventh_outpost_first_quarter"
+		else FIRST_WINTER_PHASE_ID
+	)
+
+
+func _phase_config(phase_id: String) -> Dictionary:
+	if phase_id == FIRST_QUARTER_PHASE_ID:
+		return {
+			"fixture_path": FIRST_QUARTER_FIXTURE_PATH,
+			"project_path": FIRST_QUARTER_PROJECT_PATH,
+			"subtitle": "边境服役 · 第一年 · 融雪期 · 第一季度",
+			"objective": "[b]第一季度目标[/b]\n完成六个双周值勤节点，共推进 84 天。冬季形成的成长会解锁不同职责；人物、物资和哨站压力会继续变化。",
+		}
+	return {
+		"fixture_path": FIRST_WINTER_FIXTURE_PATH,
+		"project_path": FIRST_WINTER_PROJECT_PATH,
+		"subtitle": "边境服役 · 第一年 · 新兵之冬",
+		"objective": "[b]第一冬目标[/b]\n完成七个值勤日。每天只选一项职责；口粮、疲劳、军纪与身边人的行动都会继续结算。",
+	}
+
+
+func _person_state_summary(snapshot: Variant, person_id: String) -> String:
+	var rows: Array[String] = []
+	var fatigue: Variant = snapshot.get_entity_state(
+		person_id, "fatigue", null
+	)
+	if fatigue != null:
+		rows.append("疲劳 %d/10" % int(fatigue))
+	var fear := str(snapshot.get_entity_state(person_id, "fear", ""))
+	if fear != "":
+		rows.append("紧张 %s" % {
+			"low": "低", "medium": "中", "high": "高"
+		}.get(fear, fear))
+	return "　".join(rows)

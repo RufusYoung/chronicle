@@ -1,0 +1,255 @@
+{
+  "fixture_id": "seventh_outpost_first_quarter",
+  "location_id": "outpost_thaw_courtyard",
+  "locations": {
+    "outpost_thaw_courtyard": {
+      "id": "outpost_thaw_courtyard",
+      "display_name": "第七哨站 · 融雪庭院",
+      "description": "北坡的雪正在退，墙脚却被融水泡软。点名仍在清晨进行，只是人们开始把斗篷搭在手臂上。",
+      "tags": ["military_outpost", "border", "thaw", "service_life"]
+    }
+  },
+  "world_time": {"day": 8, "hour": 6},
+  "region_state": {
+    "border_threat": "present",
+    "winter": "first_winter_complete",
+    "weather": "thaw"
+  },
+  "institution": {
+    "chain_of_command": "active",
+    "discipline_level": "strict",
+    "service_year": 1,
+    "ritual": "thaw_roll_call"
+  },
+  "entities": [
+    {
+      "id": "seventh_outpost",
+      "location_id": "outpost_thaw_courtyard",
+      "display_name": "第七哨站",
+      "type": "institution",
+      "tags": ["military_outpost", "service_project"],
+      "states": {
+        "visible": false,
+        "supply": 6,
+        "morale": 6,
+        "discipline": 5,
+        "wall_integrity": 7,
+        "border_pressure": 5,
+        "readiness": 4
+      }
+    },
+    {
+      "id": "captain_ron",
+      "location_id": "outpost_thaw_courtyard",
+      "display_name": "罗恩",
+      "description": "队长。融雪以后，他开始在点名册边缘记下北坡道路的开通日期。",
+      "type": "person",
+      "tags": ["person", "captain", "superior", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "captain", "fatigue": 3}
+    },
+    {
+      "id": "recruit_elai",
+      "location_id": "outpost_thaw_courtyard",
+      "display_name": "伊莱",
+      "description": "与你一起熬过第一冬的新兵。雪退后，他望向雾线的次数反而更多。",
+      "type": "person",
+      "tags": ["person", "recruit", "squadmate", "outpost_resident"],
+      "states": {
+        "visible": true,
+        "institution_role": "recruit",
+        "hunger": "medium",
+        "fear": "medium",
+        "fatigue": 3
+      }
+    },
+    {
+      "id": "cook_marta",
+      "location_id": "outpost_thaw_courtyard",
+      "display_name": "玛塔",
+      "description": "厨子和口粮保管人。她每天计算道路解冻前还要少放几勺麦粒。",
+      "type": "person",
+      "tags": ["person", "cook", "ration_keeper", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "cook", "fatigue": 4}
+    },
+    {
+      "id": "medic_saira",
+      "location_id": "outpost_thaw_courtyard",
+      "display_name": "赛拉",
+      "description": "军医。她把冻伤记录收进柜底，换上一页记录融雪期的烂靴和旧伤。",
+      "type": "person",
+      "tags": ["person", "medic", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "medic", "fatigue": 2}
+    },
+    {
+      "id": "veteran_hoke",
+      "location_id": "outpost_thaw_courtyard",
+      "display_name": "霍克",
+      "description": "老兵。雪越薄，他越常蹲在墙脚查看被冻土顶歪的木桩。",
+      "type": "person",
+      "tags": ["person", "veteran", "outpost_resident"],
+      "states": {"visible": true, "institution_role": "veteran", "fatigue": 5}
+    },
+    {
+      "id": "morning_roll_call_register",
+      "location_id": "outpost_thaw_courtyard",
+      "display_name": "清晨点名册",
+      "description": "旧纸上留下第一冬的水痕，新的日期正沿着融雪线向下排列。",
+      "type": "readable_record",
+      "tags": ["readable_record", "military_record", "ritual"],
+      "states": {"visible": true, "readable": true}
+    }
+  ],
+  "player": {
+    "id": "player",
+    "role": "recruit",
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
+    "perception": 10,
+    "health": 100,
+    "fatigue": 1,
+    "service_day": 1,
+    "training": 0,
+    "last_duty": "none"
+  },
+  "known_facts": [],
+  "initial_character_features": {
+    "talent_assignments": [],
+    "trait_instances": [],
+    "mark_instances": [],
+    "skill_progress": []
+  },
+  "initial_items": [],
+  "initial_equipment_loadouts": [
+    {"entity_id": "player", "slots": {}, "updated_tick": 0}
+  ],
+  "initial_pressures": [
+    {
+      "pressure_id": "pressure.seventh_outpost.food.1",
+      "domain": "economy",
+      "scope_id": "seventh_outpost",
+      "pressure_type": "food_pressure",
+      "value": 2,
+      "source": "winter_supply_route"
+    }
+  ],
+  "market_policies": [
+    {
+      "market_policy_id": "market_policy.seventh_outpost_canteen",
+      "display_name": "第七哨站配给处",
+      "location_id": "outpost_thaw_courtyard",
+      "seller_entity_id": "cook_marta",
+      "accepted_currency_item_def_ids": ["item.copper_coin"],
+      "sellable_item_def_ids": ["item.travel_ration"],
+      "sellable_item_tags_any": ["food", "ration"],
+      "base_markup": 0.0,
+      "pressure_bindings": [
+        {
+          "scope_id": "seventh_outpost",
+          "pressure_type": "food_pressure",
+          "label": "粮食压力",
+          "price_factor_per_point": 0.25
+        }
+      ],
+      "relationship_discount": {
+        "axis": "trust",
+        "label": "玛塔的信任",
+        "discount_per_point": 0.03,
+        "maximum_discount": 0.15
+      },
+      "trade_pressure_change": {
+        "domain": "economy",
+        "scope_id": "seventh_outpost",
+        "pressure_type": "food_pressure",
+        "value_per_unit": 1
+      }
+    }
+  ],
+  "autonomous_action_rules": [
+    {
+      "rule_id": "quarter_ron_tightens_high_pressure_watch",
+      "actor_id": "captain_ron",
+      "minimum_utility": 50,
+      "priority": 40,
+      "requirements": [
+        {
+          "requirement_id": "quarter_high_border_pressure",
+          "label": "边境压力升高",
+          "mode": "all",
+          "conditions": [
+            {"kind": "state", "entity_id": "seventh_outpost", "key": "border_pressure", "operator": "gte", "value": 8}
+          ]
+        }
+      ],
+      "base_utility": 90,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": -1},
+          {"entity_id": "captain_ron", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": {
+          "title": "罗恩重排了北坡夜岗",
+          "summary": "雾线动静压过融雪声，罗恩在点名后留下三个人，把北坡巡次重新排了一遍。"
+        }
+      }
+    },
+    {
+      "rule_id": "quarter_hoke_braces_soft_wall",
+      "actor_id": "veteran_hoke",
+      "minimum_utility": 50,
+      "priority": 30,
+      "requirements": [
+        {
+          "requirement_id": "quarter_wall_softened",
+          "label": "哨墙被融水泡软",
+          "mode": "all",
+          "conditions": [
+            {"kind": "state", "entity_id": "seventh_outpost", "key": "wall_integrity", "operator": "lte", "value": 6}
+          ]
+        }
+      ],
+      "base_utility": 85,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 1},
+          {"entity_id": "veteran_hoke", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": {
+          "title": "霍克又去看了一遍墙脚",
+          "summary": "融水把木桩周围的土泡软了。霍克独自塞进几块碎石，回来时旧腿比早上更跛。"
+        }
+      }
+    },
+    {
+      "rule_id": "quarter_marta_stretches_low_supply",
+      "actor_id": "cook_marta",
+      "minimum_utility": 50,
+      "priority": 35,
+      "requirements": [
+        {
+          "requirement_id": "quarter_supply_low",
+          "label": "补给不足",
+          "mode": "all",
+          "conditions": [
+            {"kind": "state", "entity_id": "seventh_outpost", "key": "supply", "operator": "lte", "value": 3}
+          ]
+        }
+      ],
+      "base_utility": 88,
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "supply", "delta": 1},
+          {"entity_id": "seventh_outpost", "key": "morale", "delta": -1},
+          {"entity_id": "cook_marta", "key": "fatigue", "delta": 1}
+        ],
+        "narrative": {
+          "title": "玛塔把最后几袋麦粒重新分装",
+          "summary": "每只袋子都轻了一点，账上的日子却多出一行。锅没有空，只是勺子碰到底更快。"
+        }
+      }
+    }
+  ]
+}

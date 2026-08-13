@@ -30,6 +30,7 @@ var initialized: bool = false
 var fixture_source_path: String = ""
 var project_source_path: String = ""
 var rule_source_paths: Array = []
+var entry_transition: Dictionary = {}
 var action_contract_resolver: Variant = ActionContractResolverModel.new()
 var effect_protocol_resolver: Variant = EffectProtocolResolverModel.new()
 
@@ -79,6 +80,15 @@ func reset() -> void:
 	fixture_source_path = ""
 	project_source_path = ""
 	rule_source_paths = []
+	entry_transition = {}
+
+
+func set_entry_transition(transition: Dictionary) -> void:
+	entry_transition = transition.duplicate(true)
+
+
+func get_entry_transition() -> Dictionary:
+	return entry_transition.duplicate(true)
 
 
 func build_save_envelope(options: Dictionary = {}) -> Dictionary:
@@ -98,7 +108,12 @@ func build_life_stage_transition(target_fixture_id: String) -> Dictionary:
 		return {}
 	return LifeStageTransitionServiceModel.new().build_player_transition(
 		session,
-		{"target_fixture_id": target_fixture_id}
+		{
+			"target_fixture_id": target_fixture_id,
+			"persistent_entity_ids": definition.get(
+				"transition_persistent_entity_ids", []
+			),
+		}
 	)
 
 
@@ -146,13 +161,32 @@ func get_duration_days() -> int:
 	return maxi(int(definition.get("duration_days", 1)), 1)
 
 
+func get_calendar_days_per_step() -> int:
+	return maxi(int(definition.get("calendar_days_per_step", 1)), 1)
+
+
+func get_progress_unit_label() -> String:
+	return str(definition.get("progress_unit_label", "天"))
+
+
 func get_ritual() -> Dictionary:
-	var ritual: Dictionary = definition.get("ritual", {})
+	var ritual: Dictionary = definition.get("ritual", {}).duplicate(true)
+	for variant_value: Variant in ritual.get("variants", []):
+		if not variant_value is Dictionary:
+			continue
+		var variant := variant_value as Dictionary
+		if not _conditions_match(variant.get("conditions", [])):
+			continue
+		for key: String in ["title", "body"]:
+			if variant.has(key):
+				ritual[key] = variant.get(key)
+		break
+	var step := mini(get_day(), get_duration_days())
 	return {
-		"title": str(ritual.get("title", "清晨点名")).replace(
-			"{day}", str(mini(get_day(), get_duration_days()))
+		"title": _replace_ritual_tokens(
+			str(ritual.get("title", "清晨点名")), step
 		),
-		"body": str(ritual.get("body", "")),
+		"body": _replace_ritual_tokens(str(ritual.get("body", "")), step),
 	}
 
 
@@ -201,6 +235,8 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 		return blocked
 
 	var day := get_day()
+	var calendar_day_start := int(session.current_day)
+	var calendar_days := get_calendar_days_per_step()
 	var tick_event := _day_tick_event(day)
 	var tick_validation: Dictionary = TickEventSchemaModel.new().validate(
 		tick_event
@@ -225,7 +261,7 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	_append_duty_log(duty, duty_result, day)
 	duty_counts[duty_id] = int(duty_counts.get(duty_id, 0)) + 1
 
-	var settlement_result: Variant = _settle_day(day)
+	var settlement_result: Variant = _settle_day(day, calendar_days)
 	if str(settlement_result.contract_status) != "resolved":
 		var invalid_settlement := _failure("day_settlement_contract_invalid")
 		invalid_settlement["contract_error"] = str(
@@ -238,7 +274,9 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 		return failed_settlement
 	_clamp_states()
 
-	var tick_result: Dictionary = session.advance_world(tick_event, 24)
+	var tick_result: Dictionary = session.advance_world(
+		tick_event, calendar_days * 24
+	)
 	if not bool(tick_result.get("success", false)):
 		var failed_tick := _failure("day_tick_failed")
 		failed_tick["tick_result"] = tick_result.duplicate(true)
@@ -251,6 +289,9 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	)
 	var row := {
 		"day": day,
+		"progress_unit_label": get_progress_unit_label(),
+		"calendar_day_start": calendar_day_start,
+		"calendar_day_end": int(session.current_day),
 		"duty_id": duty_id,
 		"label": str(duty.get("label", duty_id)),
 		"title": str(duty_result.narrative_result.get("title", "值勤结束")),
@@ -273,6 +314,8 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	latest_result = {
 		"success": true,
 		"day": day,
+		"calendar_day_start": calendar_day_start,
+		"calendar_day_end": int(session.current_day),
 		"duty_id": duty_id,
 		"title": row["title"],
 		"summary": row["summary"],
@@ -767,9 +810,11 @@ func _replace_effect_tokens(value: Variant, replacements: Dictionary) -> Variant
 	return value
 
 
-func _settle_day(day: int) -> Variant:
+func _settle_day(day: int, calendar_days: int = 1) -> Variant:
 	var result = TransactionResultModel.new()
-	var model: Dictionary = definition.get("daily_settlement", {})
+	var model: Dictionary = definition.get(
+		"step_settlement", definition.get("daily_settlement", {})
+	)
 	var base_effects: Variant = model.get(
 		"base_effects",
 		{"state_changes": model.get("base_state_changes", [])}
@@ -812,11 +857,16 @@ func _settle_day(day: int) -> Variant:
 		"actor_id": "player",
 		"project_id": project_id,
 		"day": day,
+		"calendar_days": calendar_days,
+		"world_day_start": int(session.current_day),
+		"world_day_end": int(session.current_day + calendar_days),
 		"location_id": str(session.context.location_id),
 	})
 	result.set_narrative_result({
-		"title": "第 %d 天过去" % day,
-		"summary": "值勤、消耗和风雪都已经结算。",
+		"title": "第 %d %s过去" % [day, get_progress_unit_label()],
+		"summary": str(model.get(
+			"summary", "值勤、消耗和风雪都已经结算。"
+		)),
 		"notes": notes,
 	})
 	result.mark_resolved("life_project_day_settlement")
@@ -889,6 +939,7 @@ func _life_project_save_data() -> Dictionary:
 		"day_history": day_history.duplicate(true),
 		"duty_counts": duty_counts.duplicate(true),
 		"latest_result": latest_result.duplicate(true),
+		"entry_transition": entry_transition.duplicate(true),
 	}
 
 
@@ -910,10 +961,12 @@ func _restore_life_project(session_result: Dictionary) -> Dictionary:
 	var history_value: Variant = runtime.get("day_history", [])
 	var duty_value: Variant = runtime.get("duty_counts", {})
 	var latest_value: Variant = runtime.get("latest_result", {})
+	var entry_transition_value: Variant = runtime.get("entry_transition", {})
 	if (
 		not history_value is Array
 		or not duty_value is Dictionary
 		or not latest_value is Dictionary
+		or not entry_transition_value is Dictionary
 	):
 		reset()
 		return _failure("save_life_project_runtime_invalid")
@@ -925,6 +978,9 @@ func _restore_life_project(session_result: Dictionary) -> Dictionary:
 	day_history.assign((history_value as Array).duplicate(true))
 	duty_counts = (duty_value as Dictionary).duplicate(true)
 	latest_result = (latest_value as Dictionary).duplicate(true)
+	entry_transition = (
+		entry_transition_value as Dictionary
+	).duplicate(true)
 	action_contract_resolver.configure(session.registry)
 	initialized = true
 	if int(runtime.get("current_day", 0)) != get_day():
@@ -954,20 +1010,30 @@ func _find_duty(duty_id: String) -> Dictionary:
 
 
 func _day_tick_event(day: int) -> Dictionary:
+	var elapsed_hours := get_calendar_days_per_step() * 24
+	var projected_day := int(
+		session.current_day + (session.current_hour + elapsed_hours) / 24
+	)
 	return {
 		"tick_event_id": "%s_day_%d" % [project_id, day],
 		"tick_type": "life_project_day",
 		"trigger_key": "life_project_day_end",
 		"scope_type": "location",
 		"scope_id": str(session.context.location_id),
-		"day": int(session.current_day + 1),
+		"day": projected_day,
 		"time_key": "next_roll_call",
 		"source": "LifeProjectController",
-		"label": "第七哨站值勤日结算",
+		"label": str(definition.get("tick_label", "第七哨站值勤结算")),
 		"elapsed_hours": 0,
 		"include_due_checks": true,
 		"due_kinds": ["obligation", "exchange"],
 	}
+
+
+func _replace_ritual_tokens(text: String, step: int) -> String:
+	return text.replace("{day}", str(step)).replace(
+		"{step}", str(step)
+	).replace("{world_day}", str(session.current_day))
 
 
 func _clamp_states() -> void:

@@ -1,0 +1,338 @@
+{
+  "project_id": "seventh_outpost_first_quarter",
+  "title": "第七哨站 · 第一季度",
+  "subtitle": "第一年 · 融雪期 · 六个双周值勤节点",
+  "duration_days": 6,
+  "calendar_days_per_step": 14,
+  "progress_unit_label": "轮",
+  "tick_label": "第七哨站第一季度双周结算",
+  "scope_entity_id": "seventh_outpost",
+  "transition_persistent_entity_ids": [
+    "seventh_outpost",
+    "captain_ron",
+    "recruit_elai",
+    "cook_marta",
+    "medic_saira",
+    "veteran_hoke"
+  ],
+  "state_bounds": {
+    "seventh_outpost": {
+      "supply": [0, 12],
+      "morale": [0, 12],
+      "discipline": [0, 12],
+      "wall_integrity": [0, 12],
+      "border_pressure": [0, 12],
+      "readiness": [0, 12]
+    },
+    "player": {"fatigue": [0, 10], "training": [0, 20]},
+    "captain_ron": {"fatigue": [0, 10]},
+    "recruit_elai": {"fatigue": [0, 10]},
+    "cook_marta": {"fatigue": [0, 10]},
+    "medic_saira": {"fatigue": [0, 10]},
+    "veteran_hoke": {"fatigue": [0, 10]}
+  },
+  "ritual": {
+    "title": "第 {step} 轮 · 融雪点名 · 世界第 {world_day} 天",
+    "body": "罗恩念过六个名字。雪水从屋檐落下，点名册上的第一冬已经翻页，但每个人应声的方式仍带着那个冬天。",
+    "variants": [
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "border_pressure", "min": 8}],
+        "body": "罗恩念完名字后没有合上名册，又补读了一遍北坡岗次。应声都很短，所有人都在听雾线外的动静。"
+      },
+      {
+        "conditions": [{"entity_id": "veteran_hoke", "key": "fatigue", "min": 8}],
+        "body": "霍克的应声比平时慢。罗恩抬头看了他一眼，没有删去他的名字，只在墙巡后面添了赛拉的记号。"
+      },
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "morale", "min": 8}],
+        "body": "伊莱应声以后，火边有人低低接了一句旧口令。罗恩没有制止，只把每个名字都念得比往常慢。"
+      }
+    ]
+  },
+  "status_axes": [
+    {"key": "supply", "label": "补给", "warning_below": 3},
+    {"key": "morale", "label": "士气", "warning_below": 4},
+    {"key": "discipline", "label": "军纪", "warning_below": 3},
+    {"key": "wall_integrity", "label": "哨墙", "warning_below": 5},
+    {"key": "readiness", "label": "战备", "warning_below": 4},
+    {"key": "border_pressure", "label": "边境压力", "warning_above": 7}
+  ],
+  "step_settlement": {
+    "summary": "十四天的巡次、口粮消耗、融雪和边境动静已经汇总。",
+    "base_state_changes": [
+      {"entity_id": "seventh_outpost", "key": "supply", "delta": -1},
+      {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": 1},
+      {"entity_id": "player", "key": "fatigue", "delta": -2}
+    ],
+    "conditional_effects": [
+      {
+        "requirements": [{"entity_id": "seventh_outpost", "key": "supply", "max": 2}],
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": -1}
+        ],
+        "narrative": "补给没有等到道路完全解冻，晚汤又薄了一层。"
+      },
+      {
+        "requirements": [{"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 5}],
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": 1}
+        ],
+        "narrative": "墙脚被融水泡软，北坡的盲区随裂缝一起扩大。"
+      }
+    ]
+  },
+  "completion": {
+    "title": "第一季度 · 融雪期小结",
+    "intro": "八十四天过去。第一冬留下的本领没有停在角色面板上，它们已经进入哨站的下一段生活。",
+    "outcomes": [
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "border_pressure", "max": 4}],
+        "text": "北坡的融雪路保持畅通，雾线巡次没有留下新的盲区。"
+      },
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "wall_integrity", "min": 9}],
+        "text": "哨墙撑过融雪，霍克终于有一轮没有在点名后独自走向墙脚。"
+      },
+      {
+        "conditions": [{"entity_id": "seventh_outpost", "key": "morale", "min": 8}],
+        "text": "点名依旧是军纪，但火边的旧口令已经有人接得上。"
+      },
+      {
+        "conditions": [
+          {
+            "requirement_id": "quarter_fog_growth_present",
+            "label": "第一冬形成雾线读迹者",
+            "mode": "all",
+            "conditions": [{"kind": "talent", "talent_def_id": "talent.fog_line_reader"}]
+          }
+        ],
+        "text": "第一冬教会你的读迹方法已被写进北坡巡查图，成为别人也能沿用的路线。"
+      },
+      {
+        "conditions": [
+          {
+            "requirement_id": "quarter_worker_growth_present",
+            "label": "第一冬形成风雪中的稳手",
+            "mode": "all",
+            "conditions": [{"kind": "talent", "talent_def_id": "talent.winter_steady_worker"}]
+          }
+        ],
+        "text": "你手上的劳茧没有白留，霍克把一段融雪墙巡正式交给了你。"
+      },
+      {
+        "conditions": [
+          {
+            "requirement_id": "quarter_fire_growth_present",
+            "label": "第一冬形成火边留席",
+            "mode": "all",
+            "conditions": [{"kind": "talent", "talent_def_id": "talent.fire_circle_seat"}]
+          }
+        ],
+        "text": "火边留给你的位子开始影响排班：有人愿意替同袍接下一轮岗。"
+      }
+    ]
+  },
+  "growth_candidate_rules": [],
+  "duties": [
+    {
+      "duty_id": "survey_thaw_routes",
+      "label": "[感知/侦察] 复查融雪路",
+      "kind": "巡查",
+      "hint": "压低边境压力并提高战备；一次选择代表两周巡次。",
+      "action_tags": ["fog_patrol", "foot_patrol"],
+      "base_values": {"action.risk": 5},
+      "requirements": [
+        {
+          "requirement_id": "quarter_route_survey_skill",
+          "label": "感知达到 9 或侦察达到 1 级",
+          "mode": "any",
+          "conditions": [
+            {"kind": "attribute", "key": "perception", "operator": "gte", "value": 9},
+            {"kind": "skill_rank", "skill_def_id": "skill.scouting", "operator": "gte", "value": 1}
+          ]
+        }
+      ],
+      "progress_fact": {"fact_type": "actor_completed_border_watch", "summary": "完成两周融雪路巡查。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -2},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 1},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+          {"operation": "relationship_add", "source_id": "captain_ron", "target_id": "player", "axis": "discipline_respect", "delta": 1}
+        ],
+        "narrative": {
+          "title": "融雪路上多了六处新记号",
+          "summary": "你用两周复查北坡，把塌陷、旧脚印和可以通行的坡面分别标在木牌上。罗恩据此撤掉一处重复岗。"
+        }
+      }
+    },
+    {
+      "duty_id": "reopen_supply_path",
+      "label": "[智慧] 和玛塔重算补给路",
+      "kind": "补给",
+      "hint": "把道路、库存与配给合在一张表上，提高补给和军纪。",
+      "player_min": {"wisdom": 9},
+      "effects": {
+        "state_changes": [
+          {"entity_id": "seventh_outpost", "key": "supply", "delta": 2},
+          {"entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"entity_id": "player", "key": "fatigue", "delta": 1}
+        ],
+        "relationship_changes": [
+          {"source_id": "cook_marta", "target_id": "player", "axis": "trust", "delta": 2}
+        ],
+        "narrative": {
+          "title": "第一辆补给车少绕了半天山路",
+          "summary": "你和玛塔把融雪深度、车辙和剩余口粮并在一张表上。车还没有变多，但下一批麦袋没有走进断路。"
+        }
+      }
+    },
+    {
+      "duty_id": "brace_thaw_wall",
+      "label": "[力量/维护] 加固融雪墙脚",
+      "kind": "修缮",
+      "hint": "消耗 1 份修墙木料；提高哨墙，减轻霍克独自补墙的负担。",
+      "action_tags": ["winter_labor", "precision_work"],
+      "requirements": [
+        {
+          "requirement_id": "quarter_wall_material",
+          "label": "修墙木料",
+          "mode": "all",
+          "conditions": [
+            {"kind": "item_owned", "owner": "seventh_outpost", "item_def_id": "item.wall_timber_bundle", "label": "修墙木料", "operator": "gte", "value": 1}
+          ]
+        },
+        {
+          "requirement_id": "quarter_wall_skill",
+          "label": "力量达到 7 或维护达到 1 级",
+          "mode": "any",
+          "conditions": [
+            {"kind": "attribute", "key": "strength", "operator": "gte", "value": 7},
+            {"kind": "skill_rank", "skill_def_id": "skill.maintenance", "operator": "gte", "value": 1}
+          ]
+        }
+      ],
+      "progress_fact": {"fact_type": "actor_repaired_outpost_wall", "summary": "完成两周融雪墙脚加固。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 3},
+          {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -1},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 3},
+          {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 2},
+          {"operation": "item_consume", "item_instance_id": "item_instance.seventh_outpost.wall_timber", "quantity": 1, "source_fact_ids": ["$duty_fact_id"]},
+          {"operation": "item_condition", "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer", "delta": -1, "source_fact_ids": ["$duty_fact_id"]}
+        ],
+        "narrative": {
+          "title": "霍克第一次把墙巡牌交给你",
+          "summary": "你用两周把融水沟引离木桩。霍克检查完最后一处墙脚，没有返工，只把下一轮墙巡牌放进你手里。"
+        }
+      }
+    },
+    {
+      "duty_id": "read_thaw_tracks",
+      "label": "[雾线读迹者] 绘制北坡读迹图",
+      "kind": "成长回声",
+      "hint": "只有第一冬形成「雾线读迹者」后出现；显著压低压力，并让伊莱不再把每道痕迹都当成敌情。",
+      "action_tags": ["fog_patrol", "foot_patrol"],
+      "available_if": [
+        {
+          "requirement_id": "quarter_fog_reader",
+          "label": "拥有天赋「雾线读迹者」",
+          "mode": "all",
+          "conditions": [{"kind": "talent", "talent_def_id": "talent.fog_line_reader"}]
+        }
+      ],
+      "progress_fact": {"fact_type": "actor_mapped_thaw_tracks", "summary": "把第一冬的读迹经验整理成北坡巡查图。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -4},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 2},
+          {"operation": "state_set", "entity_id": "recruit_elai", "key": "fear", "to": "low"},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+          {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 2},
+          {"operation": "item_history", "item_instance_id": "item_instance.seventh_outpost.player_patrol_lantern", "history_entry": {"fact_id": "$duty_fact_id", "event_type": "quarter_echo", "summary": "巡灯照过北坡读迹图的每一处实地标记。"}}
+        ],
+        "narrative": {
+          "title": "伊莱终于分清兽迹和拖枪的痕迹",
+          "summary": "你把第一冬学会的判断画在木板上，又带伊莱逐处核对。下一次点名时，他没有再把北坡的鹿迹报成敌方斥候。"
+        }
+      }
+    },
+    {
+      "duty_id": "lead_thaw_repair",
+      "label": "[风雪中的稳手] 接管融雪墙巡",
+      "kind": "成长回声",
+      "hint": "只有第一冬形成「风雪中的稳手」后出现；不消耗整捆木料，并让霍克得到恢复。",
+      "action_tags": ["winter_labor", "precision_work"],
+      "available_if": [
+        {
+          "requirement_id": "quarter_steady_worker",
+          "label": "拥有天赋「风雪中的稳手」",
+          "mode": "all",
+          "conditions": [{"kind": "talent", "talent_def_id": "talent.winter_steady_worker"}]
+        }
+      ],
+      "progress_fact": {"fact_type": "actor_led_thaw_wall_watch", "summary": "凭第一冬的维护经验接管融雪墙巡。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 4},
+          {"operation": "state_add", "entity_id": "veteran_hoke", "key": "fatigue", "delta": -2},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+          {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 3},
+          {"operation": "item_condition", "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer", "delta": -1, "source_fact_ids": ["$duty_fact_id"]},
+          {"operation": "item_history", "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer", "history_entry": {"fact_id": "$duty_fact_id", "event_type": "quarter_echo", "summary": "这把锤子第一次在没有霍克盯着的情况下完成整轮墙巡。"}}
+        ],
+        "narrative": {
+          "title": "霍克在点名后留在了火边",
+          "summary": "你按冬季积累的经验独自排完墙巡。霍克没有跟去复查，只在火边烤着旧腿，告诉你哪处木桩明年还会出问题。"
+        }
+      }
+    },
+    {
+      "duty_id": "redraw_watch_pairs",
+      "label": "[火边留席] 重排同袍岗次",
+      "kind": "成长回声",
+      "hint": "只有第一冬形成「火边留席」后出现；提高士气与军纪，并减轻伊莱的疲劳。",
+      "available_if": [
+        {
+          "requirement_id": "quarter_fire_circle",
+          "label": "拥有天赋「火边留席」",
+          "mode": "all",
+          "conditions": [{"kind": "talent", "talent_def_id": "talent.fire_circle_seat"}]
+        }
+      ],
+      "progress_fact": {"fact_type": "actor_reorganized_watch_pairs", "summary": "把火边形成的信任写进正式岗次。"},
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": 3},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "discipline", "delta": 1},
+          {"operation": "state_add", "entity_id": "recruit_elai", "key": "fatigue", "delta": -1},
+          {"operation": "state_set", "entity_id": "recruit_elai", "key": "fear", "to": "low"},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1},
+          {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 3},
+          {"operation": "relationship_add", "source_id": "captain_ron", "target_id": "player", "axis": "discipline_respect", "delta": 1},
+          {"operation": "item_history", "item_instance_id": "item_instance.seventh_outpost.player_winter_cloak", "history_entry": {"fact_id": "$duty_fact_id", "event_type": "quarter_echo", "summary": "冬衣内侧的红线成为重排同袍岗次时被提起的旧事。"}}
+        ],
+        "narrative": {
+          "title": "火边的默契进入了点名册",
+		"summary": "你把谁愿意替谁接岗说给罗恩听，再把新岗次逐个问过。两周后少了一次漏岗，伊莱也终于睡过一个完整夜班间隙，不再害怕独自错过换岗口令。"
+        }
+      }
+    },
+    {
+      "duty_id": "quarter_infirmary_rest",
+      "label": "让赛拉划掉一轮重岗",
+      "kind": "恢复",
+      "hint": "疲劳达到 6 时出现；恢复身体，但这一轮不直接改善哨站压力。",
+      "available_if": [{"entity_id": "player", "key": "fatigue", "min": 6}],
+      "effects": {
+        "state_changes": [{"entity_id": "player", "key": "fatigue", "delta": -5}],
+        "relationship_changes": [{"source_id": "medic_saira", "target_id": "player", "axis": "familiarity", "delta": 2}],
+        "narrative": {
+          "title": "赛拉把两周重岗换成了药柜清点",
+          "summary": "你仍在名册上，却没有被派去北坡。赛拉让你把冻伤药换成防烂靴的油膏，直到手不再发抖。"
+        }
+      }
+    }
+  ]
+}
