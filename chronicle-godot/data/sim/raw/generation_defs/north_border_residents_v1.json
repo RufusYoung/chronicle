@@ -1,0 +1,23 @@
+{
+  "generation_def_id": "generation.residents.north_border_v1",
+  "definition_version": 1,
+  "culture_id": "culture.north_border_lakes",
+  "culture_label": "北境湖地",
+  "surnames": ["安", "白", "陈", "杜", "高", "何", "雷", "林", "罗", "梅", "宁", "石", "苏", "陶", "温", "叶"],
+  "given_names": ["岑", "川", "冬", "禾", "简", "澜", "黎", "苓", "牧", "宁", "荞", "桑", "朔", "苇", "溪", "砚", "遥", "照"],
+  "temperaments": [
+    {"id": "steady", "label": "沉稳", "weight": 4},
+    {"id": "cautious", "label": "谨慎", "weight": 3},
+    {"id": "bold", "label": "果断", "weight": 2},
+    {"id": "sociable", "label": "好交谈", "weight": 2},
+    {"id": "reserved", "label": "寡言", "weight": 3}
+  ],
+  "occupations": [
+    {"occupation_id": "net_fisher", "label": "网渔人", "workplace_id": "reedbank_landing", "livelihood_status": "self_employed", "weight": 4, "minimum_slots": 1, "maximum_slots": 4, "attribute_bias": {"dexterity": 2, "constitution": 1, "perception": 1}},
+    {"occupation_id": "terrace_farmer", "label": "坡田农", "workplace_id": "upper_terraces", "livelihood_status": "self_employed", "weight": 4, "minimum_slots": 1, "maximum_slots": 4, "attribute_bias": {"strength": 2, "constitution": 2}},
+    {"occupation_id": "reed_weaver", "label": "苇编匠", "workplace_id": "hamlet_work_shed", "livelihood_status": "self_employed", "weight": 3, "minimum_slots": 1, "maximum_slots": 3, "attribute_bias": {"dexterity": 2, "wisdom": 1}},
+    {"occupation_id": "road_carter", "label": "短途车夫", "workplace_id": "south_road_yard", "livelihood_status": "employed", "weight": 2, "minimum_slots": 0, "maximum_slots": 2, "attribute_bias": {"strength": 1, "constitution": 2}},
+    {"occupation_id": "marsh_herbalist", "label": "泽地采药人", "workplace_id": "hamlet_work_shed", "livelihood_status": "self_employed", "weight": 2, "minimum_slots": 0, "maximum_slots": 2, "attribute_bias": {"wisdom": 2, "perception": 2}},
+    {"occupation_id": "watch_hand", "label": "村岗守夜人", "workplace_id": "north_watch_post", "livelihood_status": "employed", "weight": 2, "minimum_slots": 0, "maximum_slots": 2, "attribute_bias": {"constitution": 1, "perception": 2}}
+  ]
+}

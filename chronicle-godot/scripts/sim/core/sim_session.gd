@@ -53,6 +53,9 @@ const SaveEnvelopeServiceModel = preload(
 const MarketServiceModel = preload(
 	"res://scripts/sim/economy/market_service.gd"
 )
+const ResidentGeneratorModel = preload(
+	"res://scripts/sim/generation/resident_generator.gd"
+)
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -95,6 +98,7 @@ var challenge_definitions: Array = []
 var return_echo_definitions: Array = []
 var investigation_definitions: Array = []
 var market_policies: Array = []
+var resident_generation_report: Dictionary = {}
 var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var save_envelope_service: Variant = SaveEnvelopeServiceModel.new()
 var market_service: Variant = MarketServiceModel.new()
@@ -134,8 +138,9 @@ func start_from_fixture_path(
 		))
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
-		fixture_source_path = fixture_path
-		fixture_source_data = {}
+		if resident_generation_report.is_empty():
+			fixture_source_path = fixture_path
+			fixture_source_data = {}
 	return result
 
 
@@ -143,6 +148,16 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	_reset_runtime()
 	if fixture.is_empty():
 		return _start_failure("fixture_not_loaded")
+	fixture = fixture.duplicate(true)
+	var generation_result := _apply_resident_generation(fixture)
+	if not bool(generation_result.get("ok", false)):
+		var failed := _start_failure("resident_generation_failed")
+		failed["generation_error"] = str(generation_result.get("error", ""))
+		return failed
+	fixture = generation_result.get("fixture", fixture)
+	resident_generation_report = (
+		generation_result.get("report", {}) as Dictionary
+	).duplicate(true)
 
 	var definition_report: Dictionary = registry.load_raw_definition_files([
 		STATE_DEFS_PATH,
@@ -242,6 +257,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"investigation_definition_count": investigation_definitions.size(),
 		"autonomous_action_rule_count": autonomous_action_rules.size(),
 		"npc_need_profile_count": npc_need_profiles.size(),
+		"resident_generation": resident_generation_report.duplicate(true),
 		"candidate_count": get_action_candidates().size(),
 		"definition_count": int(definition_report.get(
 			"total_definition_count",
@@ -1213,6 +1229,7 @@ func build_save_envelope(options: Dictionary = {}) -> Dictionary:
 			"fixture_id": fixture_id,
 			"actor_entity_id": str(context.actor_id),
 			"current_location_id": str(context.location_id),
+			"resident_generation": resident_generation_report.duplicate(true),
 			"runtime_cursors": _runtime_cursor_save_data(),
 			"life_project_runtime": (
 				options.get("life_project_runtime", {}) as Dictionary
@@ -1302,10 +1319,15 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 		_reset_runtime()
 		return _save_failure("save_actor_id_mismatch", "session")
 	if not context.set_current_location(str(
-		session_data.get("current_location_id", "")
+			session_data.get("current_location_id", "")
 	)):
 		_reset_runtime()
 		return _save_failure("save_location_unknown", "session")
+	resident_generation_report = (
+		session_data.get(
+			"resident_generation", resident_generation_report
+		) as Dictionary
+	).duplicate(true)
 	_restore_runtime_cursors(session_data.get("runtime_cursors", {}))
 	var time_data: Dictionary = envelope.get("world_time", {})
 	current_day = maxi(int(time_data.get("day", 1)), 1)
@@ -1406,6 +1428,7 @@ func _reset_runtime() -> void:
 	return_echo_definitions = []
 	investigation_definitions = []
 	market_policies = []
+	resident_generation_report = {}
 	challenge_rng = RandomNumberGenerator.new()
 	market_service = MarketServiceModel.new()
 	fixture_source_path = ""
@@ -1425,6 +1448,25 @@ func _reset_runtime() -> void:
 	current_day = 1
 	current_hour = 8
 	elapsed_hours_since_start = 0
+
+
+func _apply_resident_generation(fixture: Dictionary) -> Dictionary:
+	var config: Dictionary = fixture.get("resident_generation", {})
+	if config.is_empty():
+		return {"ok": true, "fixture": fixture, "report": {}}
+	var definition_path := str(config.get("definition_path", ""))
+	if definition_path == "":
+		return {"ok": false, "error": "generation_definition_path_missing"}
+	var definition: Dictionary = registry.load_json(definition_path)
+	if definition.is_empty():
+		return {"ok": false, "error": "generation_definition_not_loaded"}
+	var resolved_config := config.duplicate(true)
+	resolved_config["seed"] = int(config.get(
+		"seed", fixture.get("challenge_seed", 1)
+	))
+	return ResidentGeneratorModel.new().generate_fixture(
+		fixture, resolved_config, definition
+	)
 
 
 func _registered_definition_ids() -> Array:
@@ -1550,6 +1592,34 @@ func _validate_save_references() -> Dictionary:
 	var entity_store: Variant = stores["entity_store"]
 	var fact_store: Variant = stores["fact_store"]
 	var item_store: Variant = stores["item_store"]
+	for entity_id: String in stores["state_store"].states.keys():
+		var entity_states: Dictionary = stores["state_store"].states[entity_id]
+		for state_key: String in ["household_id", "settlement_id"]:
+			if not entity_states.has(state_key):
+				continue
+			var target_entity_id := str(entity_states.get(state_key, ""))
+			if target_entity_id == "" or not entity_store.has_entity(
+				target_entity_id
+			):
+				return _save_failure(
+					"save_state_entity_reference_unknown:%s:%s" % [
+						entity_id, state_key,
+					],
+					"references"
+				)
+		for state_key: String in ["home_location_id", "workplace_id"]:
+			if not entity_states.has(state_key):
+				continue
+			var target_location_id := str(entity_states.get(state_key, ""))
+			if target_location_id == "" or not context.locations.has(
+				target_location_id
+			):
+				return _save_failure(
+					"save_state_location_reference_unknown:%s:%s" % [
+						entity_id, state_key,
+					],
+					"references"
+				)
 	for source_id: String in stores["relationship_store"].relations.keys():
 		if not entity_store.has_entity(source_id):
 			return _save_failure(

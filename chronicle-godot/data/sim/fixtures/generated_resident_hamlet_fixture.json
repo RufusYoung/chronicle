@@ -1,0 +1,45 @@
+{
+  "fixture_id": "generated_resident_hamlet",
+  "world_id": "world.generated_resident_contract",
+  "actor_id": "player",
+  "location_id": "reedbank_square",
+  "challenge_seed": 51017,
+  "locations": {
+    "reedbank_square": {"id": "reedbank_square", "display_name": "芦岸村场", "description": "芦苇岸边的公共空地。居民并未写在夹具里，而是在世界启动时生成。", "tags": ["settlement", "hamlet", "public_space"]},
+    "reedbank_landing": {"id": "reedbank_landing", "display_name": "芦岸泊台", "description": "网渔人收船和理网的浅水木台。", "tags": ["workplace", "fishery", "waterside"]},
+    "upper_terraces": {"id": "upper_terraces", "display_name": "上坡薄田", "description": "依坡修出的几层薄田。", "tags": ["workplace", "farmland"]},
+    "hamlet_work_shed": {"id": "hamlet_work_shed", "display_name": "村场工棚", "description": "苇编、修具和晾药共用的长棚。", "tags": ["workplace", "craft"]},
+    "south_road_yard": {"id": "south_road_yard", "display_name": "南路车坪", "description": "短途货车歇轮和换绳的泥地。", "tags": ["workplace", "road"]},
+    "north_watch_post": {"id": "north_watch_post", "display_name": "北坡守望台", "description": "能看见湖雾和南路岔口的矮台。", "tags": ["workplace", "watch"]}
+  },
+  "region_state": {},
+  "institution": {},
+  "entities": [
+    {
+      "id": "reedbank_hamlet",
+      "type": "institution",
+      "display_name": "芦岸村",
+      "description": "作为 G1 人物生成的手工聚落锚点；聚落自身要到 G3 才由系统生成。",
+      "location_id": "reedbank_square",
+      "tags": ["settlement", "hamlet", "generation_anchor"],
+      "states": {"visible": false}
+    }
+  ],
+  "player": {
+    "id": "player", "type": "person", "role": "traveler", "display_name": "旅人",
+    "strength": 7, "dexterity": 8, "wisdom": 9, "charisma": 6,
+    "constitution": 8, "perception": 10, "health": 100
+  },
+  "known_facts": [],
+  "initial_items": [],
+  "initial_relationships": {},
+  "initial_chronicle_entries": [],
+  "resident_generation": {
+    "definition_path": "res://data/sim/raw/generation_defs/north_border_residents_v1.json",
+    "resident_count": 12,
+    "minimum_households": 3,
+    "maximum_households": 4,
+    "settlement_id": "reedbank_hamlet",
+    "settlement_name": "芦岸村"
+  }
+}

@@ -45,7 +45,9 @@ const STATE_VALUE_TYPES := [
 ]
 
 const STATE_OPERATIONS := ["set", "add", "degrade"]
-const STATE_OWNER_KINDS := ["entity", "character", "object", "region", "institution"]
+const STATE_OWNER_KINDS := [
+	"entity", "character", "object", "region", "institution", "household",
+]
 const STATE_UI_VISIBILITY := ["hidden", "summary", "detail"]
 
 var definitions: Dictionary = {}

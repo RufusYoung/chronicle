@@ -39,7 +39,7 @@ func _run() -> void:
 	])
 	_check(
 		bool(report.get("ok", false))
-		and int(report.get("total_definition_count", 0)) == 64
+		and int(report.get("total_definition_count", 0)) == 74
 		and registry.has_definition("item", "item.travel_ration")
 		and registry.has_definition("item", "item.waxed_winter_cloak")
 		and registry.has_definition("item", "item.copper_coin")
@@ -343,7 +343,7 @@ func _run() -> void:
 		_finish()
 		return
 	_check(
-		int(start.get("definition_count", 0)) == 64
+		int(start.get("definition_count", 0)) == 74
 		and bool((start.get("item_contract_report", {}) as Dictionary).get(
 			"ok",
 			false

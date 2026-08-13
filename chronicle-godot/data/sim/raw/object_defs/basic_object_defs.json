@@ -25,6 +25,14 @@
       "default_tags": ["institution"]
     },
     {
+      "object_def_id": "object.household",
+      "definition_version": 1,
+      "type": "household",
+      "owner_kind": "household",
+      "description": "共享居所、食物与日常负担的家庭或同住生活单元。",
+      "default_tags": ["household", "social_unit"]
+    },
+    {
       "object_def_id": "object.environment_detail",
       "definition_version": 1,
       "type": "environment_detail",

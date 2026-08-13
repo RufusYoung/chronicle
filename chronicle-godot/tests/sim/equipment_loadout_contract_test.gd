@@ -50,7 +50,7 @@ func _run() -> void:
 	])
 	_check(
 		bool(definition_report.get("ok", false))
-		and int(definition_report.get("total_definition_count", 0)) == 64
+		and int(definition_report.get("total_definition_count", 0)) == 74
 		and registry.has_definition("equipment_slot", "slot.body_outer")
 		and registry.has_definition("equipment_slot", "slot.main_hand")
 		and registry.has_definition("equipment_slot", "slot.utility"),
@@ -337,7 +337,7 @@ func _run() -> void:
 	)
 	_check(
 		bool(start.get("success", false))
-		and int(start.get("definition_count", 0)) == 64
+		and int(start.get("definition_count", 0)) == 74
 		and bool((start.get(
 			"equipment_contract_report",
 			{}
