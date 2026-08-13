@@ -43,9 +43,9 @@ func _run() -> void:
 	var action_buttons := viewer.get_node("%ActionButtons") as FlowContainer
 
 	_check(
-		not risk_heading.visible
+		 not risk_heading.visible
 		and "健康　100" in player_summary.text
-		and "发现物　无" in player_summary.text,
+		and "随身物品　旅行口粮 ×3" in player_summary.text,
 		"2. Shop starts without a local risk and shows health and inventory"
 	)
 
@@ -177,7 +177,7 @@ func _run() -> void:
 		location_title.text == "老陈铺子"
 		and "10:00" in time_label.text
 		and "健康　100" in player_summary.text
-		and "发现物　无" in player_summary.text
+		and "随身物品　旅行口粮 ×3" in player_summary.text
 		and not risk_heading.visible,
 		"15. Restart resets the complete risk and discovery loop"
 	)

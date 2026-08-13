@@ -56,11 +56,15 @@ func _run() -> void:
 		"granary_rotten_floor_entry"
 	)
 	fake_item["provenance"] = fake_provenance
-	fake_fixture["initial_items"] = [fake_item]
+	var fake_initial_items: Array = (
+		fake_fixture.get("initial_items", []) as Array
+	).duplicate(true)
+	fake_initial_items.append(fake_item)
+	fake_fixture["initial_items"] = fake_initial_items
 	var fake_session = SimSessionModel.new()
 	fake_session.start_from_fixture_data(fake_fixture, RULE_PATHS)
 	_check(
-		fake_session.get_snapshot().get_player_items().size() == 1
+		fake_session.get_snapshot().get_player_items().size() == 2
 		and fake_session.get_return_echo_options().is_empty(),
 		"2. An injected matching item cannot bypass travel and discovery facts"
 	)
@@ -76,7 +80,7 @@ func _run() -> void:
 		{"source": "test_injection", "roll_override": 3}
 	)
 	_check(
-		session.get_snapshot().get_player_items().size() == 1
+		session.get_snapshot().get_player_items().size() == 2
 		and session.get_return_echo_options().is_empty(),
 		"4. Discovery alone is insufficient before the return journey"
 	)
@@ -259,7 +263,8 @@ func _run() -> void:
 		session.return_echo_count == 0
 		and session.stores["chronicle_store"].list_entries().is_empty()
 		and session.stores["memory_store"].memories.is_empty()
-		and session.stores["item_store"].list_items().is_empty(),
+		and session.stores["item_store"].get_item(DISCOVERY_ITEM).is_empty()
+		and int(session.get_snapshot().get_player_value("food_count", -1)) == 3,
 		"18. Restart clears echo, memory, item, and chronicle state"
 	)
 	_finish()

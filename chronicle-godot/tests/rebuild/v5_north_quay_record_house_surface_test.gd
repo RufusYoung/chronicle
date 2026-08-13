@@ -258,7 +258,7 @@ func _run() -> void:
 	_check(
 		location_title.text == "老陈铺子"
 		and "第 1 天　10:00" in time_label.text
-		and "发现物　无" in player_summary.text
+		and "随身物品　旅行口粮 ×3" in player_summary.text
 		and _find_travel_button(
 			travel_buttons,
 			NORTH_QUAY_OUTBOUND

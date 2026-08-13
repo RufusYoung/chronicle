@@ -75,8 +75,8 @@ func _run() -> void:
 		"5. Failure causes a persistent non-lethal injury"
 	)
 	_check(
-		session.stores["item_store"].list_items().is_empty()
-		and failure_snapshot.get_player_items().is_empty()
+		session.stores["item_store"].get_item(DISCOVERY_ITEM).is_empty()
+		and int(failure_snapshot.get_player_value("food_count", -1)) == 2
 		and str(failure_snapshot.get_entity_state(
 			"abandoned_granary_broken_door",
 			"challenge_status",
@@ -210,7 +210,7 @@ func _run() -> void:
 		str(item.get("display_name", "")) == "旧粮仓验粮铜牌"
 		and str(item.get("owner_id", "")) == "player"
 		and DISCOVERY_ITEM in inventory_ids
-		and success_snapshot.get_player_items().size() == 1,
+		and success_snapshot.get_player_items().size() == 2,
 		"15. Success creates a real owned item and updates player inventory"
 	)
 	_check(
@@ -239,7 +239,7 @@ func _run() -> void:
 	var returned_snapshot: Variant = session.get_snapshot()
 	_check(
 		str(session.context.location_id) == "old_chen_shop"
-		and returned_snapshot.get_player_items().size() == 1
+		and returned_snapshot.get_player_items().size() == 2
 		and DISCOVERY_ITEM in (
 			returned_snapshot.get_player_value(
 				"inventory_item_ids",
@@ -253,7 +253,7 @@ func _run() -> void:
 		int(summary.get("challenges_resolved", 0)) == 1
 		and int(summary.get("challenge_preparations", 0)) == 1
 		and int(summary.get("world_ticks_executed", 0)) == 4
-		and int(summary.get("store_summary", {}).get("items", 0)) == 1,
+		and int(summary.get("store_summary", {}).get("items", 0)) == 2,
 		"19. Summary separates preparation, check, world ticks, and items"
 	)
 
@@ -262,7 +262,8 @@ func _run() -> void:
 		int(session.get_snapshot().get_player_value("health", 0)) == 100
 		and str(session.get_snapshot().get_player_value("injury", ""))
 			== "none"
-		and session.stores["item_store"].list_items().is_empty()
+		and session.stores["item_store"].get_item(DISCOVERY_ITEM).is_empty()
+		and int(session.get_snapshot().get_player_value("food_count", -1)) == 3
 		and session.challenge_count == 0
 		and session.challenge_preparation_count == 0,
 		"20. Restart resets injury, discovery, and challenge counters"

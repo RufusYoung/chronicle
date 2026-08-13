@@ -66,5 +66,6 @@ Travel 不负责：
 - 结算地点内部的调查与危险。
 - 把时间窗当成动态天气或潮汐模拟。
 
-路线成功后仍通过 `TravelResolver` 产生旅行事实、资源变化和叙事，再由统一事务
-写回。世界 Tick 在旅途中继续推进。
+路线成功后仍通过 `TravelResolver` 产生旅行事实、口粮 ItemInstance 消耗和叙事，
+再由统一事务写回。`food_count` 只从行动者持有的 `item.travel_ration` 堆叠聚合，
+不会作为 StateStore 第二真值写入。世界 Tick 在旅途中继续推进。

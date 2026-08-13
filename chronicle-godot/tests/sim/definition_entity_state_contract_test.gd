@@ -259,7 +259,18 @@ func _run() -> void:
 		"14. 篡改 Context 运行副本不会改变 Store 真值或 Snapshot"
 	)
 
-	session.stores["state_store"].set_state("player", "food_count", 0)
+	session.stores["fact_store"].add_fact({
+		"fact_id": "fact.test.consume_all_rations",
+		"fact_type": "test_consumed_rations",
+		"actor_id": "player",
+		"tick": 1,
+	})
+	session.stores["item_store"].apply_item_change({
+		"operation": "consume",
+		"item_instance_id": "item_instance.lake_town.player_travel_rations",
+		"quantity": 3,
+		"source_fact_ids": ["fact.test.consume_all_rations"],
+	})
 	var changed_snapshot: Variant = session.get_snapshot()
 	var changed_options: Array = session.get_action_options()
 	var food_action := _find_action(
@@ -272,7 +283,7 @@ func _run() -> void:
 		and not bool(food_action.get("can_execute", true))
 		and int(((food_action.get("player_requirements", []) as Array)[0]
 			as Dictionary).get("current", -1)) == 0,
-		"15. StateStore 改变会立即重建 Snapshot 与候选阻塞解释"
+		"15. ItemStore 口粮变化会立即重建 Snapshot 与候选阻塞解释"
 	)
 	_check(
 		str(changed_snapshot.get_player_value("role", "")) == "traveler"
@@ -298,11 +309,10 @@ func _find_action(options: Array, action_id: String) -> Dictionary:
 func _check_runtime_registered_state_rejection(session: Variant) -> void:
 	var state_store: Variant = session.stores["state_store"]
 	_check(
-		not state_store.set_state("player", "food_count", -1)
-		and not state_store.set_state("player", "food_count", 0.5)
-		and int(state_store.get_state("player", "food_count", -1)) == 0
-		and "value_type_mismatch" in state_store.last_error,
-		"17. 兼容 fixture 不会放宽已注册状态的范围与 int 类型边界"
+		not state_store.set_state("player", "food_count", 0)
+		and not state_store.list_states("player").has("food_count")
+		and "external_projection_owned_key" in state_store.last_error,
+		"17. StateStore 拒绝写入由 ItemStore 聚合的 food_count 投影"
 	)
 
 

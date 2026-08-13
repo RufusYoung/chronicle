@@ -2,6 +2,9 @@ extends RefCounted
 class_name V5EffectTemplateResolver
 
 const TransactionResultModel = preload("res://scripts/sim/transaction/transaction_result.gd")
+const ItemConsumptionPlannerModel = preload(
+	"res://scripts/sim/item/item_consumption_planner.gd"
+)
 
 var templates: Dictionary = {}
 
@@ -115,6 +118,13 @@ func resolve_template_with_bindings(
 		var deferred_update := _resolve_dictionary(deferred_update_template, resolved_bindings)
 		if _valid_deferred_consequence_update(deferred_update):
 			result.add_deferred_consequence_update(deferred_update)
+
+	for item_change_template: Dictionary in template.get("item_changes", []):
+		var item_change := _resolve_dictionary(
+			item_change_template,
+			resolved_bindings
+		)
+		_append_item_changes(result, item_change, snapshot)
 
 	var narrative := _resolve_dictionary(template.get("narrative", {}), resolved_bindings)
 	if not narrative.is_empty():
@@ -366,6 +376,40 @@ func _valid_exchange_update(update: Dictionary) -> bool:
 
 func _valid_deferred_consequence_update(update: Dictionary) -> bool:
 	return str(update.get("deferred_id", "")) != "" and str(update.get("status", "")) != ""
+
+
+func _append_item_changes(
+		result: Variant,
+		change: Dictionary,
+		snapshot: Variant
+) -> void:
+	if str(change.get("operation", "")) != "item_consume":
+		return
+	var target: Dictionary = change.get("target", {})
+	if str(target.get("kind", "")) != "owned_item_by_definition":
+		return
+	var source_fact_ids: Array = (
+		change.get("source_fact_ids", []) as Array
+	).duplicate(true)
+	var plan: Dictionary = ItemConsumptionPlannerModel.new(
+	).plan_owned_definition_consumption(
+		snapshot,
+		str(target.get("owner_entity_id", "")),
+		str(target.get("item_def_id", "")),
+		int(change.get("quantity", 0)),
+		source_fact_ids
+	)
+	if not bool(plan.get("supported", false)):
+		return
+	for planned_change: Dictionary in plan.get("changes", []):
+		result.add_item_change(planned_change)
+	if not bool(plan.get("ok", false)):
+		result.add_item_change({
+			"operation": "consume",
+			"item_instance_id": "",
+			"quantity": int(plan.get("missing_quantity", 0)),
+			"source_fact_ids": source_fact_ids,
+		})
 
 
 func _player_id(snapshot: Variant) -> String:

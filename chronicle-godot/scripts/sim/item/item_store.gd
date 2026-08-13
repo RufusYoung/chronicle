@@ -166,6 +166,18 @@ func list_items() -> Array:
 	return rows
 
 
+func list_item_records() -> Array:
+	var rows: Array = []
+	for item_instance_id: String in items.keys():
+		rows.append((items[item_instance_id] as Dictionary).duplicate(true))
+	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.get("item_instance_id", "")) < str(
+			b.get("item_instance_id", "")
+		)
+	)
+	return rows
+
+
 func list_items_for_holder(holder: Dictionary) -> Array:
 	var rows: Array = []
 	for item: Dictionary in items.values():
@@ -422,6 +434,10 @@ func _project_item(value: Dictionary) -> Dictionary:
 	item["item_id"] = item_instance_id
 	item["id"] = item_instance_id
 	item["item_type"] = str(definition.get("item_kind", ""))
+	if str(item.get("display_name", "")) == "":
+		item["display_name"] = str(
+			definition.get("display_name", item.get("item_def_id", ""))
+		)
 	item["equip_slots"] = (definition.get("equip_slots", []) as Array).duplicate(true)
 	item["capabilities"] = (
 		definition.get("capabilities", []) as Array

@@ -115,10 +115,23 @@
   "player": {
     "id": "player",
     "role": "squadmate",
-    "food_count": 1,
     "perception": 8
   },
   "known_facts": [],
+  "initial_items": [
+    {
+      "item_instance_id": "item_instance.seventh_outpost.player_ration",
+      "item_def_id": "item.travel_ration",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {},
+      "custom_tags": ["issued_ration"],
+      "provenance": {"original_owner_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    }
+  ],
   "expected_generated_actions": [
     "approach_visible_person",
     "give_food_to_hungry_person",

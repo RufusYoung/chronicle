@@ -49,6 +49,11 @@ func _init(initial_data: Dictionary = {}) -> void:
 	player = (initial_data.get("player", {}) as Dictionary).duplicate(true)
 	if actor_id == "":
 		actor_id = str(player.get("id", "player"))
+	player["food_count"] = _initial_owned_item_quantity(
+		initial_data.get("initial_items", []),
+		actor_id,
+		"item.travel_ration"
+	)
 	known_fact_ids = (initial_data.get("known_fact_ids", []) as Array).duplicate(true)
 	known_facts = (initial_data.get("known_facts", []) as Array).duplicate(true)
 	if visible_entity_ids.is_empty():
@@ -200,3 +205,22 @@ func _assign_missing_entity_locations() -> void:
 		if str(entity.get("location_id", "")) == "":
 			entity["location_id"] = location_id
 			entities[index] = entity
+
+
+func _initial_owned_item_quantity(
+		source_items: Variant,
+		owner_entity_id: String,
+		item_def_id: String
+) -> int:
+	if not source_items is Array:
+		return 0
+	var quantity := 0
+	for item: Dictionary in source_items:
+		var holder: Dictionary = item.get("holder", {})
+		if (
+			str(item.get("item_def_id", "")) == item_def_id
+			and str(holder.get("kind", "")) == "entity"
+			and str(holder.get("id", "")) == owner_entity_id
+		):
+			quantity += int(item.get("quantity", 0))
+	return quantity

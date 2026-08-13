@@ -164,7 +164,7 @@ Codex 只执行这一小块
 texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 ```
 
-步骤 1、步骤 2A、步骤 2B、步骤 2C 与步骤 2D 已完成。角色特征与物品已拥有独立真值；三个 EquipmentSlotDef、`EquipmentLoadoutStore`、物品与装备联合预检，以及 Inventory/MarketStock 只读投影已经接入。第七哨站玩家现在持有并装备一件有独立耐久和来源的真实冬斗篷，全项目测试为 `61 / 61`。当前进入步骤 2E：建立最小合同 fixture，把旅行口粮从 `food_count` 迁移为实际物品堆叠，再为 SaveEnvelope 准备往返数据。
+步骤 1 与步骤 2A 至 2E 已完成。角色特征、物品和装备已经拥有独立真值；旅行、赠粮和远征补给会读写真实口粮堆叠，`food_count` 只由 Snapshot 聚合。最小合同 fixture 已覆盖两件独立冬衣、商人库存、伤势、印记、技艺和口粮，并可导出通过 JSON 语义往返的 SaveEnvelope seed。全项目测试为 `63 / 63`。当前进入步骤 3：统一 Requirement、Modifier、Effect 与跨 Store 失败协议；正式保存、载入和迁移仍在步骤 4。
 
 当前实施依据：
 

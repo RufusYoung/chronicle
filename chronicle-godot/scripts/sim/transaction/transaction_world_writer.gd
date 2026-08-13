@@ -2,6 +2,7 @@ extends RefCounted
 class_name V5TransactionWorldWriter
 
 const EXTERNAL_PROJECTION_KEYS := [
+	"food_count",
 	"injury",
 	"mist_salt_echo",
 	"inventory_item_ids",

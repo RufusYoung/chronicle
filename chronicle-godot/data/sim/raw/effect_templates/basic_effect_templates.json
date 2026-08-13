@@ -49,12 +49,6 @@
           "key": "hunger",
           "operation": "decrease_tier",
           "reason": "give_food_help_effect"
-        },
-        {
-          "entity_id": "{actor_id}",
-          "key": "food_count",
-          "delta": -1,
-          "reason": "give_food_help_effect"
         }
       ],
       "relationship_changes": [
@@ -93,6 +87,18 @@
       ],
       "traces": [],
       "rumors": [],
+      "item_changes": [
+        {
+          "operation": "item_consume",
+          "target": {
+            "kind": "owned_item_by_definition",
+            "owner_entity_id": "{actor_id}",
+            "item_def_id": "item.travel_ration"
+          },
+          "quantity": 1,
+          "source_fact_ids": ["actor_gave_food_to_target:{target_id}"]
+        }
+      ],
       "narrative": {
         "title": "{result_title}",
         "summary": "{result_summary}",

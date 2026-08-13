@@ -62,5 +62,6 @@ Core 不定义具体地点内容，不绘制 UI，不实现旅行、战斗或纪
 - 可以把事实、状态、关系、记忆、痕迹、传闻和后果持续写入同一批 Store。
 - 可以拒绝已失效候选。
 - 可以输出 WorldLog、Store snapshot 和运行摘要。
+- 可以导出包含 Store 真值、世界时间、运行游标和 Definition manifest 的 SaveEnvelope seed。
 
-当前尚未接入正式 UI、存档、旅行和完整时间推进。
+当前 rebuild UI、旅行和世界时间已接入 SimSession。SaveEnvelope seed 只用于确认序列化边界与 JSON 往返，还没有正式保存、载入、迁移、RNG 恢复和候选一致性恢复。

@@ -13,10 +13,13 @@ const RelationshipStoreModel = preload("res://scripts/sim/relationship/relations
 const MemoryStoreModel = preload("res://scripts/sim/memory/memory_store.gd")
 const TraceStoreModel = preload("res://scripts/sim/trace/trace_store.gd")
 const RumorStoreModel = preload("res://scripts/sim/rumor/rumor_store.gd")
+const EntityStoreModel = preload("res://scripts/sim/entity/entity_store.gd")
+const ItemStoreModel = preload("res://scripts/sim/item/item_store.gd")
 
 const BASIC_RULES_PATH := "res://data/sim/raw/action_rules/basic_action_rules.json"
 const DOMAIN_RULES_PATH := "res://data/sim/raw/action_rules/domain_action_rules.json"
 const RELATIONSHIP_AXIS_DEFS_PATH := "res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
+const ITEM_DEFS_PATH := "res://data/sim/raw/item_defs/basic_item_defs.json"
 const LAKE_TOWN_FIXTURE_PATH := "res://data/sim/fixtures/lake_town_food_crisis_fixture.json"
 const SEVENTH_OUTPOST_FIXTURE_PATH := "res://data/sim/fixtures/seventh_outpost_ration_fixture.json"
 const LAKE_TOWN_SCENARIO_PATH := "res://data/sim/fixtures/scenarios/lake_town_food_crisis_sequence.json"
@@ -32,6 +35,7 @@ func _run() -> void:
 	var raw_rule_paths := [BASIC_RULES_PATH, DOMAIN_RULES_PATH]
 	var registry = SimRegistryModel.new()
 	registry.load_action_rules(raw_rule_paths)
+	registry.load_raw_definition_files([ITEM_DEFS_PATH])
 	var rules: Array = registry.get_action_rules()
 	var builder = SimSnapshotBuilderModel.new()
 	var affordance_system = ActionAffordanceModel.new()
@@ -39,7 +43,7 @@ func _run() -> void:
 	var writer = TransactionWorldWriterModel.new()
 
 	var lake_context = SimContextModel.new(registry.load_json(LAKE_TOWN_FIXTURE_PATH))
-	var lake_stores := _make_stores(lake_context)
+	var lake_stores := _make_stores(lake_context, registry)
 	var lake_snapshot = builder.build_snapshot(lake_context, lake_stores)
 	_check(
 		lake_snapshot.fixture_id == "lake_town_food_crisis"
@@ -64,7 +68,7 @@ func _run() -> void:
 	)
 
 	var report_context = SimContextModel.new(registry.load_json(SEVENTH_OUTPOST_FIXTURE_PATH))
-	var report_stores := _make_stores(report_context)
+	var report_stores := _make_stores(report_context, registry)
 	var report_snapshot = builder.build_snapshot(report_context, report_stores)
 	var report_candidates: Array = affordance_system.generate_candidates(report_snapshot, rules)
 	var report_candidate = _find_candidate(
@@ -95,7 +99,7 @@ func _run() -> void:
 	)
 
 	var conceal_context = SimContextModel.new(registry.load_json(SEVENTH_OUTPOST_FIXTURE_PATH))
-	var conceal_stores := _make_stores(conceal_context)
+	var conceal_stores := _make_stores(conceal_context, registry)
 	var conceal_snapshot = builder.build_snapshot(conceal_context, conceal_stores)
 	var conceal_candidates: Array = affordance_system.generate_candidates(conceal_snapshot, rules)
 	var conceal_candidate = _find_candidate(
@@ -139,14 +143,34 @@ func _run() -> void:
 	_finish()
 
 
-func _make_stores(context: Variant) -> Dictionary:
+func _make_stores(context: Variant, registry: Variant) -> Dictionary:
+	var entity_store = EntityStoreModel.new()
+	entity_store.load_from_context(context)
+	var fact_store = FactStoreModel.new()
+	var item_store = ItemStoreModel.new()
+	item_store.configure(
+		registry.list_definitions("item"),
+		entity_store,
+		context.locations,
+		fact_store
+	)
+	var fixture_path := (
+		LAKE_TOWN_FIXTURE_PATH
+		if str(context.fixture_id) == "lake_town_food_crisis"
+		else SEVENTH_OUTPOST_FIXTURE_PATH
+	)
+	item_store.load_initial_items(
+		(registry.load_json(fixture_path).get("initial_items", []) as Array)
+	)
 	var state_store = StateStoreModel.new()
 	state_store.load_from_context(context)
 	var relationship_store = RelationshipStoreModel.new()
 	relationship_store.load_axis_defs(RELATIONSHIP_AXIS_DEFS_PATH)
 	return {
-		"fact_store": FactStoreModel.new(),
+		"entity_store": entity_store,
+		"fact_store": fact_store,
 		"state_store": state_store,
+		"item_store": item_store,
 		"relationship_store": relationship_store,
 		"memory_store": MemoryStoreModel.new(),
 		"trace_store": TraceStoreModel.new(),

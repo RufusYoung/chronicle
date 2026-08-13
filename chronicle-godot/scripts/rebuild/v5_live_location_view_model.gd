@@ -807,7 +807,7 @@ func _player_view(snapshot: Variant) -> Dictionary:
 	)
 	var item_names: Array[String] = []
 	for item: Dictionary in snapshot.get_player_items():
-		item_names.append(str(item.get("display_name", "未命名物品")))
+		item_names.append(_item_display_text(item))
 	var long_term_line := ""
 	if mist_salt_echo != "none":
 		long_term_line = "\n长期痕迹　%s" % _mist_salt_echo_label(
@@ -827,7 +827,7 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		"injury": injury,
 		"mist_salt_echo": mist_salt_echo,
 		"items": item_names,
-		"summary": "身份　%s%s\n力量 %d　敏捷 %d　智慧 %d\n魅力 %d　体质 %d　感知 %d\n食物　%d 份　健康　%d　伤势　%s\n发现物　%s" % [
+		"summary": "身份　%s%s\n力量 %d　敏捷 %d　智慧 %d\n魅力 %d　体质 %d　感知 %d\n食物　%d 份　健康　%d　伤势　%s\n随身物品　%s" % [
 			_role_label(role),
 			long_term_line,
 			strength,
@@ -1162,10 +1162,18 @@ func _challenge_feedback_view() -> Dictionary:
 				details.append(_state_change_text(change))
 		for item_change: Dictionary in transaction.get("item_changes", []):
 			var prepared_item: Dictionary = item_change.get("item", {})
-			details.append(
-				"远行装备进入随身物品：%s"
-				% str(prepared_item.get("display_name", "未命名装备"))
-			)
+			if str(prepared_item.get("item_def_id", "")) == "item.travel_ration":
+				details.append(
+					"随身食物 +%d 份（%s）" % [
+						int(prepared_item.get("quantity", 1)),
+						_item_display_text(prepared_item),
+					]
+				)
+			else:
+				details.append(
+					"远行装备进入随身物品：%s"
+					% _item_display_text(prepared_item, "未命名装备")
+				)
 	else:
 		var preparation_bonus := int(narrative.get("preparation_bonus", 0))
 		var formula := "掷骰 %d + %s %d" % [
@@ -1441,6 +1449,10 @@ func _result_detail_lines(
 		rows.append(_state_change_text(change))
 	for change: Dictionary in transaction.get("relationship_changes", []):
 		rows.append(_relationship_change_text(change))
+	for change: Dictionary in transaction.get("item_changes", []):
+		var item_text := _item_change_text(change)
+		if item_text != "":
+			rows.append(item_text)
 	var facts: Array = transaction.get("facts_added", [])
 	if not facts.is_empty():
 		rows.append("形成了 %d 条可追溯事实" % facts.size())
@@ -1479,6 +1491,35 @@ func _relationship_change_text(change: Dictionary) -> String:
 		_relationship_axis_label(str(change.get("axis", ""))),
 		_signed_number(int(change.get("delta", 0))),
 	]
+
+
+func _item_change_text(change: Dictionary) -> String:
+	var operation := str(change.get("operation", ""))
+	var quantity := int(change.get("quantity", 1))
+	if operation == "consume":
+		if str(change.get("item_def_id", "")) == "item.travel_ration":
+			return "随身食物 -%d 份" % quantity
+		return "消耗随身物品：%s" % _item_display_text(change)
+	if operation == "create":
+		return "随身物品增加：%s" % _item_display_text(
+			change.get("item", {})
+		)
+	return ""
+
+
+func _item_display_text(
+		item: Dictionary,
+		fallback: String = "未命名物品"
+) -> String:
+	var display_name := str(item.get("display_name", ""))
+	if display_name == "" and str(item.get("item_def_id", "")) == "item.travel_ration":
+		display_name = "旅行口粮"
+	if display_name == "":
+		display_name = fallback
+	var quantity := int(item.get("quantity", 1))
+	if quantity > 1:
+		return "%s ×%d" % [display_name, quantity]
+	return display_name
 
 
 func _find_action_option(action_id: String) -> Dictionary:

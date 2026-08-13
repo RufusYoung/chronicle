@@ -369,8 +369,12 @@ func _run() -> void:
 			== "player"
 		and not internal_token.has("owner_id")
 		and not internal_token.has("item_id")
-		and snapshot.get_player_value("inventory_item_ids", [])
-			== ["lake_town_granary_measure_token"]
+		and "lake_town_granary_measure_token" in (
+			snapshot.get_player_value("inventory_item_ids", []) as Array
+		)
+		and "item_instance.lake_town.player_travel_rations" in (
+			snapshot.get_player_value("inventory_item_ids", []) as Array
+		)
 		and not session.stores["state_store"].list_states("player").has(
 			"inventory_item_ids"
 		),

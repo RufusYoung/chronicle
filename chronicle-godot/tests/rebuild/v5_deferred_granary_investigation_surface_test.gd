@@ -215,7 +215,7 @@ func _run() -> void:
 	await process_frame
 	_check(
 		"第 1 天　10:00" in time_label.text
-		and "发现物　无" in player_summary.text
+		and "随身物品　旅行口粮 ×3" in player_summary.text
 		and not investigation_bar.visible
 		and not chronicle_heading.visible,
 		"17. Restart clears the complete investigation branch"

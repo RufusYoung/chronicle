@@ -35,7 +35,21 @@ func _run() -> void:
 	var action_heading := viewer.get_node("%ActionHeading") as Label
 	var feedback_body := viewer.get_node("%FeedbackBody") as RichTextLabel
 
-	state_store.set_state("player", "food_count", 0)
+	var food_fact_store: Variant = session.stores["fact_store"]
+	food_fact_store.add_fact({
+		"fact_id": "fact.test.attribute_affordance.consume_rations",
+		"fact_type": "test_consumed_rations",
+		"actor_id": "player",
+		"tick": 1,
+	})
+	session.stores["item_store"].apply_item_change({
+		"operation": "consume",
+		"item_instance_id": "item_instance.lake_town.player_travel_rations",
+		"quantity": 3,
+		"source_fact_ids": [
+			"fact.test.attribute_affordance.consume_rations"
+		],
+	})
 	viewer.refresh_view()
 	var food_button := _find_action_button(action_buttons, FOOD_ACTION)
 	_check(

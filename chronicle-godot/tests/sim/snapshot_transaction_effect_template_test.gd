@@ -9,6 +9,8 @@ const EffectTemplateResolverModel = preload("res://scripts/sim/transaction/effec
 const TransactionResolverModel = preload("res://scripts/sim/transaction/transaction_resolver.gd")
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const FactStoreModel = preload("res://scripts/sim/fact/fact_store.gd")
+const EntityStoreModel = preload("res://scripts/sim/entity/entity_store.gd")
+const ItemStoreModel = preload("res://scripts/sim/item/item_store.gd")
 const StateStoreModel = preload("res://scripts/sim/state/state_store.gd")
 const RelationshipStoreModel = preload("res://scripts/sim/relationship/relationship_store.gd")
 const MemoryStoreModel = preload("res://scripts/sim/memory/memory_store.gd")
@@ -19,6 +21,10 @@ const BASIC_RULES_PATH := "res://data/sim/raw/action_rules/basic_action_rules.js
 const DOMAIN_RULES_PATH := "res://data/sim/raw/action_rules/domain_action_rules.json"
 const EFFECT_TEMPLATES_PATH := "res://data/sim/raw/effect_templates/basic_effect_templates.json"
 const RELATIONSHIP_AXIS_DEFS_PATH := "res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
+const ITEM_DEFS_PATH := "res://data/sim/raw/item_defs/basic_item_defs.json"
+const SLOT_DEFS_PATH := (
+	"res://data/sim/raw/equipment_slot_defs/basic_equipment_slot_defs.json"
+)
 const LAKE_TOWN_FIXTURE_PATH := "res://data/sim/fixtures/lake_town_food_crisis_fixture.json"
 const SEVENTH_OUTPOST_FIXTURE_PATH := "res://data/sim/fixtures/seventh_outpost_ration_fixture.json"
 const SEVENTH_OUTPOST_CONCEAL_SCENARIO_PATH := "res://data/sim/fixtures/scenarios/seventh_outpost_conceal_sequence.json"
@@ -33,6 +39,7 @@ func _initialize() -> void:
 func _run() -> void:
 	var raw_rule_paths := [BASIC_RULES_PATH, DOMAIN_RULES_PATH]
 	var registry = SimRegistryModel.new()
+	registry.load_raw_definition_files([ITEM_DEFS_PATH, SLOT_DEFS_PATH])
 	registry.load_action_rules(raw_rule_paths)
 	var rules: Array = registry.get_action_rules()
 	var affordance_system = ActionAffordanceModel.new()
@@ -49,7 +56,7 @@ func _run() -> void:
 	)
 
 	var outpost_context = SimContextModel.new(registry.load_json(SEVENTH_OUTPOST_FIXTURE_PATH))
-	var outpost_stores := _make_stores(outpost_context)
+	var outpost_stores := _make_stores(outpost_context, registry)
 	var outpost_snapshot = snapshot_builder.build_snapshot(outpost_context, outpost_stores)
 	var outpost_candidates: Array = affordance_system.generate_candidates(outpost_snapshot, rules)
 	var ask_candidate = _find_candidate(outpost_candidates, "ask_about_concealed_item", "recruit_elai")
@@ -82,7 +89,7 @@ func _run() -> void:
 	)
 
 	var lake_context = SimContextModel.new(registry.load_json(LAKE_TOWN_FIXTURE_PATH))
-	var lake_stores := _make_stores(lake_context)
+	var lake_stores := _make_stores(lake_context, registry)
 	var lake_snapshot = snapshot_builder.build_snapshot(lake_context, lake_stores)
 	var lake_candidates: Array = affordance_system.generate_candidates(lake_snapshot, rules)
 	var give_food_candidate = _find_candidate(lake_candidates, "give_food_to_hungry_person", "chen_mi")
@@ -93,7 +100,7 @@ func _run() -> void:
 		"7. give_food_to_hungry_person 基于 snapshot 仍产生 hunger 降级"
 	)
 
-	var report_stores := _make_stores(outpost_context)
+	var report_stores := _make_stores(outpost_context, registry)
 	var report_snapshot = snapshot_builder.build_snapshot(outpost_context, report_stores)
 	var report_candidates: Array = affordance_system.generate_candidates(report_snapshot, rules)
 	var report_candidate = _find_candidate(
@@ -134,14 +141,35 @@ func _run() -> void:
 	_finish()
 
 
-func _make_stores(context: Variant) -> Dictionary:
+func _make_stores(context: Variant, registry: Variant) -> Dictionary:
+	var entity_store = EntityStoreModel.new()
+	entity_store.load_from_context(context)
+	var fact_store = FactStoreModel.new()
+	var item_store = ItemStoreModel.new()
+	item_store.configure(
+		registry.list_definitions("item"),
+		entity_store,
+		context.locations,
+		fact_store
+	)
+	item_store.load_initial_items(
+		(registry.load_json(
+			LAKE_TOWN_FIXTURE_PATH
+		).get("initial_items", []) as Array).duplicate(true)
+		if str(context.fixture_id) == "lake_town_food_crisis"
+		else (registry.load_json(
+			SEVENTH_OUTPOST_FIXTURE_PATH
+		).get("initial_items", []) as Array).duplicate(true)
+	)
 	var state_store = StateStoreModel.new()
 	state_store.load_from_context(context)
 	var relationship_store = RelationshipStoreModel.new()
 	relationship_store.load_axis_defs(RELATIONSHIP_AXIS_DEFS_PATH)
 	return {
-		"fact_store": FactStoreModel.new(),
+		"entity_store": entity_store,
+		"fact_store": fact_store,
 		"state_store": state_store,
+		"item_store": item_store,
 		"relationship_store": relationship_store,
 		"memory_store": MemoryStoreModel.new(),
 		"trace_store": TraceStoreModel.new(),

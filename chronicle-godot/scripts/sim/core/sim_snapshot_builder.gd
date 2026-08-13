@@ -58,8 +58,11 @@ func build_snapshot(
 		for key: String in legacy_projection.keys():
 			player[key] = legacy_projection[key]
 	if item_store != null:
-		player["inventory_item_ids"] = _item_ids(
-			item_store.list_items_for_owner(player_id)
+		var player_items: Array = item_store.list_items_for_owner(player_id)
+		player["inventory_item_ids"] = _item_ids(player_items)
+		player["food_count"] = _item_quantity_by_definition(
+			player_items,
+			"item.travel_ration"
 		)
 
 	var character_progress: Dictionary = {}
@@ -153,6 +156,14 @@ func _item_ids(rows: Array) -> Array:
 	for item: Dictionary in rows:
 		ids.append(str(item.get("item_instance_id", "")))
 	return ids
+
+
+func _item_quantity_by_definition(rows: Array, item_def_id: String) -> int:
+	var quantity := 0
+	for item: Dictionary in rows:
+		if str(item.get("item_def_id", "")) == item_def_id:
+			quantity += int(item.get("quantity", 0))
+	return quantity
 
 
 func _entities_from_context(context: Variant, player_id: String) -> Array:

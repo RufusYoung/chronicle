@@ -655,7 +655,7 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 
 ### 11.6.5 当前进度
 
-截至 2026-08-13，步骤 1、步骤 2A、步骤 2B、步骤 2C 与步骤 2D 已完成：
+截至 2026-08-13，步骤 1 与步骤 2A 至 2E 已完成：
 
 - 已审计 State、Fact、Memory、Relationship、Item、Snapshot、Action 与 Transaction 边界。
 - 已裁定库存、事实、地区状态和角色状态的重复真值。
@@ -678,6 +678,11 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 - Transaction Writer 会在写入 Fact 前模拟物品与装备的最终状态，拒绝未同步卸装的转移或完全损坏。
 - InventoryView 与最小 MarketStockView 只从 holder 派生；后者当前只给出未报价商品候选，不包含动态定价。
 - 新增 15 项装备合同断言，全项目回归为 `61 / 61` 通过。
+- 湖湾镇与第七哨站的旅行口粮已成为真实、可堆叠、可拆分、可消耗的 ItemInstance；`food_count` 仅作为 Snapshot 只读聚合值存在。
+- 赠粮、旅行和雾盐旧井远征补给已通过统一事务读写实际口粮，界面会显示口粮堆叠和具体增减。
+- 新增最小合同 fixture，同时包含两件独立冬衣、两个持有人的同定义印记、可恢复伤势、侦察技艺、玩家口粮和商人实际库存。
+- Session 可以导出确定顺序的 SaveEnvelope seed；Store 真值与 Definition manifest 已通过 JSON 编码、解码和引用完整性校验。
+- 新增 13 项最小合同夹具断言，全项目回归为 `63 / 63` 通过。
 
 交付文档：
 
@@ -688,9 +693,10 @@ chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_definition_entity
 chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_character_feature_contract_report.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_item_instance_contract_report.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_equipment_loadout_contract_report.md
+chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_minimum_contract_fixture_report.md
 ```
 
-当前进入步骤 2E：建立最小合同 fixture，把旅行 `food_count` 迁移为实际口粮堆叠，并补齐两名角色的不同冬衣实例、商人实际商品堆叠及往返数据准备。步骤 3 再把本轮的物品与装备预检扩展为全 Store 统一失败协议，并接入通用 Requirement、Modifier 与 Effect。
+当前进入步骤 3：接入通用 Requirement、Modifier 与 Effect，让角色特征、装备和即时状态通过同一协议改变行动资格、风险与结果解释，并将事务预检扩展为全 Store 统一失败协议。正式 SaveEnvelope 保存、载入和迁移仍属于步骤 4。
 
 阶段 5.5 通过后，恢复阶段 5 的季度、年度和五年内容扩展，再进入阶段 6。
 

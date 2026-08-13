@@ -52,8 +52,9 @@ func _run() -> void:
 	)
 	_check(
 		session.stores["state_store"].get_state("chen_mi", "hunger") == "medium"
-		and int(session.stores["state_store"].get_state("player", "food_count", -1)) == 2,
-		"4. 行动结果持续写回同一个 StateStore"
+		and not session.stores["state_store"].list_states("player").has("food_count")
+		and int(session.get_snapshot().get_player_value("food_count", -1)) == 2,
+		"4. 饥饿写回 StateStore，口粮消耗写回 ItemStore"
 	)
 	_check(
 		not _has_action(

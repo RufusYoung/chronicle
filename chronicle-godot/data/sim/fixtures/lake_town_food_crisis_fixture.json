@@ -367,11 +367,6 @@
         "state_changes": [
           {
             "entity_id": "actor",
-            "key": "food_count",
-            "delta": 4
-          },
-          {
-            "entity_id": "actor",
             "key": "mist_salt_expedition_prepared",
             "to": true
           }
@@ -393,6 +388,16 @@
             "provenance": {
               "provided_by": "north_quay_record_keeper",
               "former_use": "salt_fog_route_protection"
+            }
+          },
+          {
+            "item_id": "item_instance.lake_town.mist_salt_expedition_rations",
+            "item_def_id": "item.travel_ration",
+            "quantity": 4,
+            "custom_tags": ["hard_ship_biscuit", "expedition_supply"],
+            "provenance": {
+              "provided_by": "north_quay_record_keeper",
+              "source": "archive_work_exchange"
             }
           }
         ],
@@ -1228,7 +1233,6 @@
   "player": {
     "id": "player",
     "role": "traveler",
-    "food_count": 3,
     "strength": 7,
     "dexterity": 8,
     "wisdom": 9,
@@ -1240,6 +1244,20 @@
     "mist_salt_echo": "none"
   },
   "known_facts": [],
+  "initial_items": [
+    {
+      "item_instance_id": "item_instance.lake_town.player_travel_rations",
+      "item_def_id": "item.travel_ration",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 3,
+      "condition": {},
+      "custom_tags": ["personal_travel_supply"],
+      "provenance": {"source": "journey_starting_supply"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    }
+  ],
   "initial_deferred_consequences": [],
   "expected_generated_actions": [
     "approach_visible_person",

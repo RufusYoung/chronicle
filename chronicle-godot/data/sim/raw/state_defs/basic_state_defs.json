@@ -169,9 +169,9 @@
       "default": 0,
       "minimum": 0,
       "allowed_operations": ["set", "add"],
-      "persistence": "save",
+      "persistence": "derived",
       "ui_visibility": "summary",
-      "description": "物品堆叠迁移完成前使用的兼容口粮数量。"
+      "description": "由角色持有的 travel ration 物品堆叠聚合得到的兼容只读投影。"
     },
     {
       "state_def_id": "state.character.hunger",

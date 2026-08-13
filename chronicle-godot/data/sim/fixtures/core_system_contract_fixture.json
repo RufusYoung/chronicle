@@ -1,0 +1,226 @@
+{
+  "fixture_id": "core_system_contract",
+  "world_id": "world.contract.v1",
+  "actor_id": "player",
+  "location_id": "contract_market",
+  "locations": [
+    {
+      "id": "contract_market",
+      "display_name": "合同样本集市",
+      "description": "只用于核心系统合同与未来存档往返验证。",
+      "tags": ["settlement", "market", "cold"]
+    }
+  ],
+  "world_time": {"day": 4, "hour": 9},
+  "region_state": {},
+  "institution": {},
+  "entities": [
+    {
+      "id": "outpost_veteran",
+      "location_id": "contract_market",
+      "display_name": "霍克",
+      "type": "person",
+      "role": "veteran",
+      "tags": ["person", "outpost_resident"],
+      "states": {"visible": true, "health": 84}
+    },
+    {
+      "id": "merchant_sela",
+      "location_id": "contract_market",
+      "display_name": "塞拉",
+      "type": "person",
+      "role": "merchant",
+      "tags": ["person", "merchant"],
+      "states": {"visible": true}
+    }
+  ],
+  "player": {
+    "id": "player",
+    "type": "person",
+    "role": "traveler",
+    "display_name": "旅人",
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
+    "perception": 10,
+    "health": 92
+  },
+  "known_facts": [
+    {
+      "fact_id": "fact.contract.player_cloak_issued",
+      "fact_type": "item_issued",
+      "actor_id": "player",
+      "target_id": "item_instance.contract.player_winter_cloak",
+      "tick": 1
+    },
+    {
+      "fact_id": "fact.contract.veteran_cloak_repaired",
+      "fact_type": "item_repaired",
+      "actor_id": "outpost_veteran",
+      "target_id": "item_instance.contract.veteran_winter_cloak",
+      "tick": 2
+    },
+    {
+      "fact_id": "fact.contract.player_mist_echo",
+      "fact_type": "actor_acquired_mist_salt_echo",
+      "actor_id": "player",
+      "target_id": "mist_salt_well",
+      "tick": 4
+    },
+    {
+      "fact_id": "fact.contract.veteran_mist_echo",
+      "fact_type": "actor_acquired_mist_salt_echo",
+      "actor_id": "outpost_veteran",
+      "target_id": "mist_salt_well",
+      "tick": 5
+    },
+    {
+      "fact_id": "fact.contract.player_patrol_practice",
+      "fact_type": "life_project_duty_completed",
+      "actor_id": "player",
+      "target_id": "seventh_outpost",
+      "duty_id": "patrol_fog_line",
+      "tick": 6
+    }
+  ],
+  "initial_character_features": {
+    "talent_assignments": [],
+    "trait_instances": [
+      {
+        "trait_instance_id": "trait_instance.contract.player_twisted_ankle",
+        "trait_def_id": "trait.twisted_ankle",
+        "owner_entity_id": "player",
+        "stage_id": "recovering",
+        "severity": 2,
+        "recovery_progress": 3,
+        "status": "active",
+        "source_kind": "migration_fixture",
+        "source_fact_ids": [],
+        "created_tick": 3,
+        "updated_tick": 7
+      }
+    ],
+    "mark_instances": [
+      {
+        "mark_instance_id": "mark_instance.player.mist_salt_echo",
+        "mark_def_id": "mark.mist_salt_echo",
+        "owner_entity_id": "player",
+        "progress": 1,
+        "status": "active",
+        "source_fact_ids": ["fact.contract.player_mist_echo"],
+        "progress_events": [
+          {"fact_id": "fact.contract.player_mist_echo", "delta": 1}
+        ],
+        "created_tick": 4,
+        "updated_tick": 4
+      },
+      {
+        "mark_instance_id": "mark_instance.outpost_veteran.mist_salt_echo",
+        "mark_def_id": "mark.mist_salt_echo",
+        "owner_entity_id": "outpost_veteran",
+        "progress": 1,
+        "status": "active",
+        "source_fact_ids": ["fact.contract.veteran_mist_echo"],
+        "progress_events": [
+          {"fact_id": "fact.contract.veteran_mist_echo", "delta": 1}
+        ],
+        "created_tick": 5,
+        "updated_tick": 5
+      }
+    ],
+    "skill_progress": [
+      {
+        "skill_progress_id": "skill_progress.player.scouting",
+        "skill_def_id": "skill.scouting",
+        "owner_entity_id": "player",
+        "practice_xp": 8,
+        "source_fact_ids": ["fact.contract.player_patrol_practice"],
+        "practice_events": [
+          {"fact_id": "fact.contract.player_patrol_practice", "xp": 8}
+        ],
+        "created_tick": 6,
+        "updated_tick": 6
+      }
+    ]
+  },
+  "initial_items": [
+    {
+      "item_instance_id": "item_instance.contract.player_winter_cloak",
+      "item_def_id": "item.waxed_winter_cloak",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {
+        "durability": 76,
+        "maximum_durability": 100,
+        "quality": "serviceable"
+      },
+      "custom_tags": ["issued_by_seventh_outpost"],
+      "provenance": {"original_owner_entity_id": "seventh_outpost"},
+      "history": [
+        {"event_type": "issued", "fact_id": "fact.contract.player_cloak_issued"}
+      ],
+      "created_tick": 1,
+      "updated_tick": 1
+    },
+    {
+      "item_instance_id": "item_instance.contract.veteran_winter_cloak",
+      "item_def_id": "item.waxed_winter_cloak",
+      "holder": {"kind": "entity", "id": "outpost_veteran"},
+      "quantity": 1,
+      "condition": {
+        "durability": 43,
+        "maximum_durability": 100,
+        "quality": "worn"
+      },
+      "custom_tags": ["field_repaired"],
+      "provenance": {"original_owner_entity_id": "outpost_veteran"},
+      "history": [
+        {"event_type": "repaired", "fact_id": "fact.contract.veteran_cloak_repaired"}
+      ],
+      "created_tick": 0,
+      "updated_tick": 2
+    },
+    {
+      "item_instance_id": "item_instance.contract.player_rations",
+      "item_def_id": "item.travel_ration",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 6,
+      "condition": {},
+      "custom_tags": ["winter_travel_supply"],
+      "provenance": {"source": "contract_fixture"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.contract.merchant_rations",
+      "item_def_id": "item.travel_ration",
+      "holder": {"kind": "entity", "id": "merchant_sela"},
+      "quantity": 12,
+      "condition": {},
+      "custom_tags": ["merchant_stock"],
+      "provenance": {"supplier_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    }
+  ],
+  "initial_equipment_loadouts": [
+    {
+      "entity_id": "player",
+      "slots": {
+        "body_outer": "item_instance.contract.player_winter_cloak"
+      },
+      "updated_tick": 1
+    },
+    {
+      "entity_id": "outpost_veteran",
+      "slots": {
+        "body_outer": "item_instance.contract.veteran_winter_cloak"
+      },
+      "updated_tick": 2
+    }
+  ]
+}

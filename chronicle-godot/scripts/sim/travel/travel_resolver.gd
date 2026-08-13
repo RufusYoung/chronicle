@@ -4,6 +4,9 @@ class_name V5TravelResolver
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
+const ItemConsumptionPlannerModel = preload(
+	"res://scripts/sim/item/item_consumption_planner.gd"
+)
 
 
 func resolve(
@@ -21,8 +24,9 @@ func resolve(
 	var food_cost := int(route.get("food_cost", 0))
 	var hours := int(route.get("hours", 0))
 
+	var travel_fact_id := "actor_traveled_route:%d" % journey_id
 	result.add_fact({
-		"fact_id": "actor_traveled_route:%d" % journey_id,
+		"fact_id": travel_fact_id,
 		"fact_type": "actor_traveled_route",
 		"source_id": actor_id,
 		"target_id": to_location_id,
@@ -35,11 +39,23 @@ func resolve(
 		"source_action": "travel",
 	})
 	if food_cost > 0:
-		result.add_state_change({
-			"entity_id": actor_id,
-			"key": "food_count",
-			"delta": -food_cost,
-		})
+		var plan: Dictionary = ItemConsumptionPlannerModel.new(
+		).plan_owned_definition_consumption(
+			snapshot,
+			actor_id,
+			"item.travel_ration",
+			food_cost,
+			[travel_fact_id]
+		)
+		for change: Dictionary in plan.get("changes", []):
+			result.add_item_change(change)
+		if not bool(plan.get("ok", false)):
+			result.add_item_change({
+				"operation": "consume",
+				"item_instance_id": "",
+				"quantity": int(plan.get("missing_quantity", food_cost)),
+				"source_fact_ids": [travel_fact_id],
+			})
 	result.set_narrative_result({
 		"title": str(route.get("narrative_title", "旅途")),
 		"summary": str(route.get("narrative", "你抵达了新的地点。")),

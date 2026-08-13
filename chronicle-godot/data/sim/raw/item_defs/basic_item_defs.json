@@ -64,6 +64,7 @@
       "item_def_id": "item.travel_ration",
       "definition_version": 1,
       "display_name_key": "item.travel_ration.name",
+      "display_name": "旅行口粮",
       "item_kind": "food",
       "tags": ["food", "ration", "portable", "consumable"],
       "stackable": true,

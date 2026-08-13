@@ -1070,6 +1070,37 @@ func get_store_snapshots() -> Dictionary:
 	}
 
 
+func build_save_envelope_seed() -> Dictionary:
+	if not initialized:
+		return {}
+	var store_records := get_store_snapshots()
+	store_records["items"] = stores["item_store"].list_item_records()
+	return {
+		"schema_version": 1,
+		"payload_kind": "save_envelope_seed",
+		"world_id": str(context.world_id),
+		"fixture_id": fixture_id,
+		"location_id": str(context.location_id),
+		"world_time": get_time_summary(),
+		"runtime_cursors": {
+			"action_count": action_count,
+			"travel_count": travel_count,
+			"challenge_count": challenge_count,
+			"challenge_preparation_count": challenge_preparation_count,
+			"return_echo_count": return_echo_count,
+			"investigation_count": investigation_count,
+			"investigation_defer_count": investigation_defer_count,
+			"candidate_generation_count": candidate_generation_count,
+			"world_tick_count": world_tick_count,
+			"elapsed_hours_since_start": elapsed_hours_since_start,
+		},
+		"stores": store_records,
+		"definition_manifest": {
+			"required_definition_ids": _registered_definition_ids(),
+		},
+	}
+
+
 func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 	if not initialized:
 		var failed := {
@@ -1147,6 +1178,24 @@ func _reset_runtime() -> void:
 	current_day = 1
 	current_hour = 8
 	elapsed_hours_since_start = 0
+
+
+func _registered_definition_ids() -> Array:
+	var ids: Array = []
+	for kind: String in [
+		"state",
+		"object",
+		"talent",
+		"trait",
+		"mark",
+		"skill",
+		"item",
+		"equipment_slot",
+	]:
+		for definition_id: String in registry.list_definitions(kind).keys():
+			ids.append("%s:%s" % [kind, definition_id])
+	ids.sort()
+	return ids
 
 
 func _create_stores(fixture: Dictionary) -> void:

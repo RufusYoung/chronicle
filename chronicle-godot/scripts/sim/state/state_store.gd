@@ -12,6 +12,7 @@ const PLAYER_STATIC_KEYS := [
 ]
 
 const EXTERNAL_PROJECTION_KEYS := [
+	"food_count",
 	"injury",
 	"mist_salt_echo",
 	"inventory_item_ids",
