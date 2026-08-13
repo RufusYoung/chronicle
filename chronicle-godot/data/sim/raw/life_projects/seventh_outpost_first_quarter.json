@@ -81,6 +81,263 @@
       }
     ]
   },
+  "life_incident_system": {
+    "trigger_chance_percent": 55,
+    "maximum_per_project": 3,
+    "minimum_steps_between": 2
+  },
+  "life_incidents": [
+    {
+      "incident_id": "marta_thin_stew",
+      "title": "玛塔把勺子在空锅里刮了两遍",
+      "body": "补给车还没翻过南坡，锅底只剩一层粘住的麦粒。玛塔盯着那点东西，没有叫任何人的名字。",
+      "trigger_reason": "因为哨站补给已经降到 5 或更低，这件小事才会出现。",
+      "story_role": "incidental",
+      "creates_memory": false,
+      "weight": 3,
+      "maximum_occurrences": 1,
+      "source_conditions": [{"entity_id": "seventh_outpost", "key": "supply", "max": 5}],
+      "responses": [
+        {
+          "response_id": "scrape_the_pot",
+          "label": "留下来帮她刮净锅底",
+          "hint": "疲劳 +1；玛塔信任 +1。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1},
+              {"operation": "relationship_add", "source_id": "cook_marta", "target_id": "player", "axis": "trust", "delta": 1}
+            ],
+            "narrative": {
+              "title": "锅底最后一层麦粒没有浪费",
+              "summary": "你和玛塔把焦住的麦粒泡开，分进明早的面糊。没有新任务出现，只是她下次报库存时先把真实数字告诉了你。"
+            }
+          },
+          "outcome_notes": ["疲劳 +1", "玛塔信任 +1"]
+        },
+        {
+          "response_id": "carry_water_away",
+          "label": "把洗锅水提去墙外",
+          "hint": "玛塔疲劳 -1；不形成后续任务。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "cook_marta", "key": "fatigue", "delta": -1}
+            ],
+            "narrative": {
+              "title": "洗锅水顺着融雪沟流走",
+              "summary": "你替玛塔提走木桶。她揉了揉手腕，继续准备下一锅；这件事到这里就结束了。"
+            }
+          },
+          "outcome_notes": ["玛塔疲劳 -1", "未开启故事线"]
+        }
+      ]
+    },
+    {
+      "incident_id": "elai_blistered_heel",
+      "title": "伊莱的靴后跟磨出了一片血印",
+      "body": "融雪路比积雪更磨脚。伊莱坐在界石上，假装只是在重新系靴带。",
+      "trigger_reason": "伊莱仍处于紧张状态，并且你刚完成了需要走路的巡查。",
+      "story_role": "incidental",
+      "creates_memory": true,
+      "weight": 4,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["fog_patrol", "foot_patrol"],
+      "source_conditions": [{"entity_id": "recruit_elai", "key": "fear", "equals": "medium"}],
+      "responses": [
+        {
+          "response_id": "rewrap_his_boot",
+          "label": "停下来替他重新垫靴后跟",
+          "hint": "疲劳 +1；伊莱疲劳 -1、信任 +1。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1},
+              {"operation": "state_add", "entity_id": "recruit_elai", "key": "fatigue", "delta": -1},
+              {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 1}
+            ],
+            "narrative": {
+              "title": "你们晚了半刻钟回到岗哨",
+              "summary": "你用旧布重新垫好伊莱的靴子。罗恩只记了迟到，伊莱接下来几天没有再一瘸一拐。"
+            }
+          },
+          "outcome_notes": ["疲劳 +1", "伊莱疲劳 -1", "伊莱信任 +1"]
+        },
+        {
+          "response_id": "teach_a_tighter_wrap",
+          "label": "教他自己把靴带缠紧",
+          "hint": "需要感知 9；伊莱紧张降低、信任 +1。",
+          "requirements": [
+            {
+              "requirement_id": "notice_the_bad_wrap",
+              "label": "感知达到 9",
+              "mode": "all",
+              "conditions": [{"kind": "attribute", "key": "perception", "operator": "gte", "value": 9}]
+            }
+          ],
+          "effects": {
+            "operations": [
+              {"operation": "state_set", "entity_id": "recruit_elai", "key": "fear", "to": "low"},
+              {"operation": "relationship_add", "source_id": "recruit_elai", "target_id": "player", "axis": "trust", "delta": 1}
+            ],
+            "narrative": {
+              "title": "伊莱终于承认靴带一直缠反了",
+              "summary": "你没有替他动手，只指出皮带受力的方向。回程时他走在前面，也没再频繁回头看雾线。"
+            }
+          },
+          "outcome_notes": ["伊莱紧张降为低", "伊莱信任 +1"]
+        }
+      ]
+    },
+    {
+      "incident_id": "loose_wall_wedge",
+      "title": "墙脚的一枚木楔被融水顶了出来",
+      "body": "木桩暂时还没歪，但水正沿着楔孔往里灌。霍克在另一段墙后，没有看见这里。",
+      "trigger_reason": "只有哨墙完整度不高于 8，且刚做过修缮时才会遇见。",
+      "story_role": "incidental",
+      "creates_memory": false,
+      "weight": 4,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["winter_labor", "precision_work"],
+      "source_conditions": [{"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 8}],
+      "responses": [
+        {
+          "response_id": "drive_wedge_back",
+          "label": "趁木料还湿，把楔子重新敲紧",
+          "hint": "疲劳 +1；哨墙 +1、霍克信任 +1。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1},
+              {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 1},
+              {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 1}
+            ],
+            "narrative": {
+              "title": "木楔重新吃住了力",
+              "summary": "你补敲三下，再挖开一条指宽的排水沟。霍克后来摸到新鲜锤痕，什么也没问。"
+            }
+          },
+          "outcome_notes": ["疲劳 +1", "哨墙 +1", "霍克信任 +1"]
+        },
+        {
+          "response_id": "mark_for_next_watch",
+          "label": "用石灰画圈，交给下一轮墙巡",
+          "hint": "战备 +1；不增加疲劳。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 1}
+            ],
+            "narrative": {
+              "title": "白圈留在了下一轮墙巡图上",
+              "summary": "你把位置和水流方向写在巡牌背面。下一班人接手了它，没有人因此离开原来的岗次。"
+            }
+          },
+          "outcome_notes": ["战备 +1", "未开启故事线"]
+        }
+      ]
+    },
+    {
+      "incident_id": "fog_on_lantern_glass",
+      "title": "巡灯玻璃上结了一圈向北的水珠",
+      "body": "风没有变大，灯罩上的水却全往一个方向爬。远处雾线安静得过分。",
+      "trigger_reason": "边境压力达到 6 后，这种异常才值得被注意。",
+      "story_role": "incidental",
+      "creates_memory": true,
+      "weight": 2,
+      "maximum_occurrences": 1,
+      "source_action_tags_any": ["fog_patrol", "foot_patrol"],
+      "source_conditions": [{"entity_id": "seventh_outpost", "key": "border_pressure", "min": 6}],
+      "responses": [
+        {
+          "response_id": "read_the_droplets",
+          "label": "按水珠方向多查一段背风坡",
+          "hint": "需要感知 9；疲劳 +1、边境压力 -1。",
+          "requirements": [
+            {
+              "requirement_id": "read_fog_droplets",
+              "label": "感知达到 9",
+              "mode": "all",
+              "conditions": [{"kind": "attribute", "key": "perception", "operator": "gte", "value": 9}]
+            }
+          ],
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1},
+              {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -1}
+            ],
+            "narrative": {
+              "title": "背风坡上只有一只断掉的鹿角",
+              "summary": "你多走了一段，没有发现敌情。异常有了普通原因，哨站因此少报了一次假警。"
+            }
+          },
+          "outcome_notes": ["疲劳 +1", "边境压力 -1", "异常被解释，没有开启调查线"]
+        },
+        {
+          "response_id": "record_without_alarm",
+          "label": "记下方向，但不拉响警铃",
+          "hint": "战备 +1；边境压力不变。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 1}
+            ],
+            "narrative": {
+              "title": "方向被写进巡查图的边角",
+              "summary": "你留下一个小记号，继续按原路线回营。这可能只是天气，也可能以后有用，但现在没有任务因此展开。"
+            }
+          },
+          "outcome_notes": ["战备 +1", "未开启故事线"]
+        }
+      ]
+    },
+    {
+      "incident_id": "saira_checks_old_bruise",
+      "title": "赛拉在水桶旁看见你旧伤处的淤青",
+      "body": "她用两根手指按了按，问你抬手时会不会发麻。远处的点名已经结束。",
+      "trigger_reason": "你的疲劳达到 5 后，军医才会在日常空隙里注意到这处旧伤。",
+      "story_role": "incidental",
+      "creates_memory": false,
+      "weight": 3,
+      "maximum_occurrences": 1,
+      "source_conditions": [{"entity_id": "player", "key": "fatigue", "min": 5}],
+      "responses": [
+        {
+          "response_id": "accept_the_bandage",
+          "label": "让她重新缠紧护带",
+          "hint": "疲劳 -2；赛拉熟悉 +1。",
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": -2},
+              {"operation": "relationship_add", "source_id": "medic_saira", "target_id": "player", "axis": "familiarity", "delta": 1}
+            ],
+            "narrative": {
+              "title": "护带比早晨紧了一指",
+              "summary": "赛拉重新缠好旧伤，叫你今晚少提一桶水。第二天照常点名，没有新增病历任务。"
+            }
+          },
+          "outcome_notes": ["疲劳 -2", "赛拉熟悉 +1"]
+        },
+        {
+          "response_id": "show_full_range",
+          "label": "活动肩膀，证明还能继续值勤",
+          "hint": "需要体质 8；军纪 +1。",
+          "requirements": [
+            {
+              "requirement_id": "withstand_old_bruise",
+              "label": "体质达到 8",
+              "mode": "all",
+              "conditions": [{"kind": "attribute", "key": "constitution", "operator": "gte", "value": 8}]
+            }
+          ],
+          "effects": {
+            "operations": [
+              {"operation": "state_add", "entity_id": "seventh_outpost", "key": "discipline", "delta": 1}
+            ],
+            "narrative": {
+              "title": "赛拉没有把你的名字写进病号栏",
+              "summary": "你完成几次抬臂，赛拉让你继续值勤，只提醒你下一次发麻要立刻来找她。"
+            }
+          },
+          "outcome_notes": ["军纪 +1", "未开启故事线"]
+        }
+      ]
+    }
+  ],
   "completion": {
     "title": "第一季度 · 融雪期小结",
     "intro": "八十四天过去。第一冬留下的本领没有停在角色面板上，它们已经进入哨站的下一段生活。",

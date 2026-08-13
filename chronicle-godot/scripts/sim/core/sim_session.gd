@@ -118,12 +118,20 @@ var current_hour: int = 8
 var elapsed_hours_since_start: int = 0
 
 
-func start_from_fixture_path(fixture_path: String, raw_rule_paths: Array) -> Dictionary:
+func start_from_fixture_path(
+		fixture_path: String,
+		raw_rule_paths: Array,
+		options: Dictionary = {}
+) -> Dictionary:
 	var loader = SimRegistryModel.new()
 	var fixture: Dictionary = loader.load_json(fixture_path)
 	if fixture.is_empty():
 		_reset_runtime()
 		return _start_failure("fixture_not_loaded")
+	if options.has("challenge_seed_override"):
+		fixture["challenge_seed"] = int(options.get(
+			"challenge_seed_override", fixture.get("challenge_seed", 1)
+		))
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		fixture_source_path = fixture_path

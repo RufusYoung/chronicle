@@ -48,9 +48,12 @@ func _run() -> void:
 		"quantity", 0
 	))
 	_check(
-		int(transition.get("schema_version", 0)) == 3
+		int(transition.get("schema_version", 0)) == 4
 		and str(transition.get("target_fixture_id", "")) == TARGET_FIXTURE_ID
-		and not (transition.get("equipment_loadouts", {}) as Dictionary).is_empty(),
+		and not (transition.get("equipment_loadouts", {}) as Dictionary).is_empty()
+		and str((transition.get("rng_states", {}) as Dictionary).get(
+			"challenge_rng_state", ""
+		)) == str(source.session.challenge_rng.state),
 		"1. A confirmed first winter builds a target-specific transition package"
 	)
 
@@ -89,6 +92,11 @@ func _run() -> void:
 		and int(target.session.stores["item_store"].get_item(
 			"item_instance.seventh_outpost.wall_timber"
 		).get("quantity", 0)) == source_timber_quantity
+		and str(target.session.challenge_rng.state) == str(
+			(transition.get("rng_states", {}) as Dictionary).get(
+				"challenge_rng_state", ""
+			)
+		)
 		and _has_fact(target.session, "actor_entered_life_stage"),
 		"2. Growth, outpost state, fixed people, shared items, equipment, and the transition fact enter atomically"
 	)
@@ -146,6 +154,21 @@ func _run() -> void:
 		and str(rejected.get("phase", "")) == "preflight"
 		and _equivalent(rejected_target.session.get_save_store_data(), before),
 		"5. A late invalid reference leaves the real target session untouched"
+	)
+	var legacy_target = ControllerModel.new()
+	legacy_target.start(TARGET_FIXTURE, TARGET_PROJECT)
+	var legacy := transition.duplicate(true)
+	legacy["schema_version"] = 3
+	legacy.erase("rng_states")
+	var legacy_applied: Dictionary = (
+		TransitionServiceModel.new().apply_to_controller(legacy_target, legacy)
+	)
+	_check(
+		bool(legacy_applied.get("success", false))
+		and "life_stage_transition_v3_to_v4" in (
+			legacy_applied.get("migrations", []) as Array
+		),
+		"6. Existing schema v3 stage snapshots migrate without breaking restart"
 	)
 	_finish()
 

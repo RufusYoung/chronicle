@@ -211,7 +211,7 @@ func _run() -> void:
 		and "紧张 中" in people_text.text,
 		"11c. The earned route enters a readable formal quarter surface"
 	)
-	viewer.perform_duty("read_thaw_tracks")
+	viewer.perform_duty("read_thaw_tracks", {"incident_roll_override": 100})
 	await process_frame
 	_check(
 		day_label.text == "第 2 / 6 轮 · 每轮 14 天 · 世界第 22 天"

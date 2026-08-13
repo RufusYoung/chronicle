@@ -3,7 +3,7 @@ class_name V5LifeStageTransitionService
 
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
 
-const SCHEMA_VERSION := 3
+const SCHEMA_VERSION := 4
 const DEFAULT_TARGET_FIXTURE_ID := "seventh_outpost_first_winter"
 const PLAYER_STATE_EXCLUSIONS := [
 	"location_id",
@@ -92,6 +92,9 @@ func build_player_transition(
 			"tick": int(source_session.world_tick_count),
 			"elapsed_hours": int(source_session.elapsed_hours_since_start),
 		},
+		"rng_states": {
+			"challenge_rng_state": str(source_session.challenge_rng.state),
+		},
 		"player_states": source_session.stores[
 			"state_store"
 		].list_states(actor_id),
@@ -136,10 +139,13 @@ func build_player_transition(
 func apply_to_controller(controller: Variant, transition: Variant) -> Dictionary:
 	if controller == null or not controller.is_ready():
 		return _failure("transition_target_not_ready", "target")
-	var contract := _validate_transition(transition)
+	var normalized_transition: Variant = _migrate_transition(
+		transition, controller.session
+	)
+	var contract := _validate_transition(normalized_transition)
 	if not bool(contract.get("ok", false)):
 		return contract
-	var data := transition as Dictionary
+	var data := normalized_transition as Dictionary
 	var session: Variant = controller.session
 	if str(session.fixture_id) != str(data.get("target_fixture_id", "")):
 		return _failure("transition_target_fixture_mismatch", "target")
@@ -194,6 +200,7 @@ func apply_to_controller(controller: Variant, transition: Variant) -> Dictionary
 		"source_fixture_id": str(data.get("source_fixture_id", "")),
 		"target_fixture_id": str(data.get("target_fixture_id", "")),
 		"candidate_count": controller.get_duty_options().size(),
+		"migrations": contract.get("migrations", []),
 	}
 
 
@@ -336,6 +343,10 @@ func _apply_transition_data(session: Variant, data: Dictionary) -> Dictionary:
 	session.elapsed_hours_since_start = maxi(int(
 		time_data.get("elapsed_hours", 0)
 	), 0)
+	var rng_states: Dictionary = data.get("rng_states", {})
+	session.challenge_rng.state = int(str(rng_states.get(
+		"challenge_rng_state", "0"
+	)))
 	var references: Dictionary = session.validate_persistent_references()
 	if not bool(references.get("ok", false)):
 		return references
@@ -364,6 +375,7 @@ func _validate_transition(value: Variant) -> Dictionary:
 			return _failure("transition_field_missing:%s" % key, "contract")
 	for key: String in [
 		"world_time",
+		"rng_states",
 		"player_states",
 		"entity_states",
 		"linked_entities",
@@ -384,7 +396,26 @@ func _validate_transition(value: Variant) -> Dictionary:
 	]:
 		if not data.get(key) is Array:
 			return _failure("transition_field_not_array:%s" % key, "contract")
-	return {"ok": true, "error": "", "phase": "contract"}
+	return {
+		"ok": true,
+		"error": "",
+		"phase": "contract",
+		"migrations": data.get("_migrations", []),
+	}
+
+
+func _migrate_transition(value: Variant, target_session: Variant) -> Variant:
+	if not value is Dictionary:
+		return value
+	var data := (value as Dictionary).duplicate(true)
+	if int(data.get("schema_version", 0)) != 3:
+		return data
+	data["schema_version"] = SCHEMA_VERSION
+	data["rng_states"] = {
+		"challenge_rng_state": str(target_session.challenge_rng.state),
+	}
+	data["_migrations"] = ["life_stage_transition_v3_to_v4"]
+	return data
 
 
 func _player_relationships(source: Dictionary, actor_id: String) -> Dictionary:

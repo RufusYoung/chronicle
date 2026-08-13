@@ -87,10 +87,19 @@ func is_ready() -> bool:
 	return controller != null and controller.is_ready()
 
 
-func perform_duty(duty_id: String) -> Dictionary:
+func perform_duty(
+		duty_id: String, options: Dictionary = {}
+) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "error": "project_not_ready"}
-	latest_result = controller.execute_duty(duty_id)
+	latest_result = controller.execute_duty(duty_id, options)
+	return latest_result.duplicate(true)
+
+
+func resolve_life_incident(response_id: String) -> Dictionary:
+	if not is_ready():
+		return {"success": false, "error": "project_not_ready"}
+	latest_result = controller.resolve_life_incident(response_id)
 	return latest_result.duplicate(true)
 
 
@@ -101,6 +110,13 @@ func purchase_market_offer(
 ) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "error": "project_not_ready"}
+	if controller.has_pending_incident():
+		latest_result = {
+			"success": false,
+			"error": "life_incident_pending",
+			"blocked_reason": "先回应眼前的途中插曲，再处理补给交易。",
+		}
+		return latest_result.duplicate(true)
 	var trade: Dictionary = controller.session.execute_market_trade(
 		MARKET_POLICY_ID,
 		{
@@ -192,6 +208,7 @@ func build_view_data() -> Dictionary:
 		"market": _market_view(snapshot),
 		"people": _people_view(snapshot),
 		"actions": _action_rows(),
+		"incident": controller.get_pending_incident(),
 		"feedback": _feedback_view(),
 		"history": controller.day_history.duplicate(true),
 		"completion": controller.get_completion_summary(),
@@ -320,13 +337,17 @@ func _market_view(snapshot: Variant) -> Dictionary:
 	var offers: Array[Dictionary] = []
 	for offer: Dictionary in stock.get("offers", []):
 		var unit_price := int(offer.get("unit_price", 0))
+		var incident_pending: bool = bool(controller.has_pending_incident())
 		offers.append({
 			"item_instance_id": str(offer.get("item_instance_id", "")),
 			"display_name": str(offer.get("display_name", "口粮")),
 			"available_quantity": int(offer.get("available_quantity", 0)),
 			"unit_price": unit_price,
 			"quote_summary": str(offer.get("quote_summary", "")),
-			"can_purchase": coin_count >= unit_price,
+			"can_purchase": coin_count >= unit_price and not incident_pending,
+			"blocked_reason": (
+				"先回应眼前的途中插曲。" if incident_pending else ""
+			),
 		})
 	return {
 		"display_name": str(stock.get("display_name", "哨站配给处")),

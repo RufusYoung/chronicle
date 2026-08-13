@@ -31,6 +31,9 @@ var fixture_source_path: String = ""
 var project_source_path: String = ""
 var rule_source_paths: Array = []
 var entry_transition: Dictionary = {}
+var pending_incident: Dictionary = {}
+var incident_history: Array[Dictionary] = []
+var incident_counts: Dictionary = {}
 var action_contract_resolver: Variant = ActionContractResolverModel.new()
 var effect_protocol_resolver: Variant = EffectProtocolResolverModel.new()
 
@@ -81,6 +84,9 @@ func reset() -> void:
 	project_source_path = ""
 	rule_source_paths = []
 	entry_transition = {}
+	pending_incident = {}
+	incident_history.clear()
+	incident_counts.clear()
 
 
 func set_entry_transition(transition: Dictionary) -> void:
@@ -148,7 +154,15 @@ func is_ready() -> bool:
 
 
 func is_complete() -> bool:
-	return is_ready() and get_day() > get_duration_days()
+	return (
+		is_ready()
+		and get_day() > get_duration_days()
+		and not has_pending_incident()
+	)
+
+
+func has_pending_incident() -> bool:
+	return not pending_incident.is_empty()
 
 
 func get_day() -> int:
@@ -192,7 +206,11 @@ func get_ritual() -> Dictionary:
 
 func get_duty_options() -> Array:
 	var rows: Array[Dictionary] = []
-	if not is_ready() or is_complete():
+	if (
+		not is_ready()
+		or has_pending_incident()
+		or get_day() > get_duration_days()
+	):
 		return rows
 	for duty_value: Variant in definition.get("duties", []):
 		if not (duty_value is Dictionary):
@@ -221,7 +239,9 @@ func get_duty_options() -> Array:
 func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	if not is_ready():
 		return _failure("project_not_initialized")
-	if is_complete():
+	if has_pending_incident():
+		return _failure("life_incident_pending")
+	if get_day() > get_duration_days():
 		return _failure("project_complete")
 	var duty := _find_duty(duty_id)
 	if duty.is_empty() or not _conditions_match(duty.get("available_if", [])):
@@ -309,6 +329,7 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 		"status": get_status(),
 	}
 	day_history.append(row)
+	var queued_incident := _try_queue_life_incident(duty, day, options)
 	if is_complete():
 		_store_completion_chronicle()
 	latest_result = {
@@ -325,11 +346,170 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 		"status": row["status"],
 		"complete": is_complete(),
 		"completion": get_completion_summary(),
+		"incident_pending": not queued_incident.is_empty(),
+		"incident": queued_incident,
 		"base_values": eligibility.get("base_values", {}),
 		"modified_values": eligibility.get("modified_values", {}),
 		"modifier_explanations": eligibility.get(
 			"modifier_explanations", []
 		),
+	}
+	return latest_result.duplicate(true)
+
+
+func get_pending_incident() -> Dictionary:
+	if not is_ready() or pending_incident.is_empty():
+		return {"active": false}
+	var incident := _find_life_incident(str(
+		pending_incident.get("incident_id", "")
+	))
+	if incident.is_empty():
+		return {"active": false, "error": "life_incident_definition_missing"}
+	var responses: Array[Dictionary] = []
+	for response_value: Variant in incident.get("responses", []):
+		if not response_value is Dictionary:
+			continue
+		var response := response_value as Dictionary
+		var eligibility := _incident_response_eligibility(response)
+		responses.append({
+			"response_id": str(response.get("response_id", "")),
+			"label": str(response.get("label", "回应")),
+			"hint": str(response.get("hint", "")),
+			"can_execute": bool(eligibility.get("can_execute", true)),
+			"blocked_reason": str(eligibility.get("blocked_reason", "")),
+			"requirements": eligibility.get("requirements", []),
+		})
+	return {
+		"active": true,
+		"incident_id": str(incident.get("incident_id", "")),
+		"title": str(incident.get("title", "路上发生了一件小事")),
+		"body": str(incident.get("body", "")),
+		"trigger_reason": str(incident.get("trigger_reason", "")),
+		"story_role": str(incident.get("story_role", "incidental")),
+		"responses": responses,
+		"source_duty_id": str(pending_incident.get("source_duty_id", "")),
+		"trigger_day": int(pending_incident.get("trigger_day", 0)),
+		"trigger_world_day": int(pending_incident.get("trigger_world_day", 0)),
+	}
+
+
+func resolve_life_incident(response_id: String) -> Dictionary:
+	if not is_ready():
+		return _failure("project_not_initialized")
+	if pending_incident.is_empty():
+		return _failure("life_incident_not_pending")
+	var incident_id := str(pending_incident.get("incident_id", ""))
+	var incident := _find_life_incident(incident_id)
+	if incident.is_empty():
+		return _failure("life_incident_definition_missing")
+	var response := _find_incident_response(incident, response_id)
+	if response.is_empty():
+		return _failure("life_incident_response_not_available")
+	var eligibility := _incident_response_eligibility(response)
+	if not bool(eligibility.get("can_execute", false)):
+		var blocked := _failure("life_incident_response_blocked")
+		blocked["blocked_reason"] = str(eligibility.get(
+			"blocked_reason", "当前状态不能这样回应。"
+		))
+		return blocked
+	var story_role := str(incident.get("story_role", "incidental"))
+	var effects: Dictionary = response.get("effects", {}).duplicate(true)
+	if story_role == "incidental" and not _incidental_effects_are_bounded(effects):
+		return _failure("incidental_effect_opens_storyline")
+	var occurrence := int(incident_counts.get(incident_id, 0)) + 1
+	var fact_id := "%s:incident:%s:%d" % [
+		project_id, incident_id, occurrence
+	]
+	var result = TransactionResultModel.new()
+	result.add_fact({
+		"fact_id": fact_id,
+		"fact_type": "life_incident_resolved",
+		"actor_id": "player",
+		"project_id": project_id,
+		"incident_id": incident_id,
+		"response_id": response_id,
+		"story_role": story_role,
+		"opens_storyline": false,
+		"source_duty_id": str(pending_incident.get("source_duty_id", "")),
+		"source_fact_ids": [str(pending_incident.get("source_fact_id", ""))],
+		"day": int(pending_incident.get("trigger_day", get_day())),
+		"location_id": str(session.context.location_id),
+		"summary": str((effects.get("narrative", {}) as Dictionary).get(
+			"summary", ""
+		)),
+	})
+	var resolved_effects: Variant = _replace_effect_tokens(
+		effects, {"$incident_fact_id": fact_id}
+	)
+	var effect_report: Dictionary = effect_protocol_resolver.append_effects(
+		result, resolved_effects
+	)
+	if not bool(effect_report.get("ok", false)):
+		var invalid := _failure("life_incident_effect_contract_invalid")
+		invalid["contract_errors"] = effect_report.get("errors", [])
+		return invalid
+	if bool(incident.get("creates_memory", true)):
+		result.add_memory({
+			"memory_id": "%s:memory" % fact_id,
+			"owner_id": "player",
+			"memory_type": "life_incident",
+			"project_id": project_id,
+			"incident_id": incident_id,
+			"response_id": response_id,
+			"source_fact_ids": [fact_id],
+			"emotional_tone": str(response.get("emotional_tone", "ordinary")),
+			"clarity": "medium",
+			"can_be_told_as_rumor": false,
+		})
+	var narrative: Dictionary = effects.get("narrative", {}).duplicate(true)
+	result.set_narrative_result(narrative)
+	result.mark_resolved("life_incident_response")
+	if not session.writer.apply_result(result, session.stores):
+		var failed := _failure("life_incident_transaction_rejected")
+		failed["transaction_report"] = session.writer.last_report.duplicate(true)
+		return failed
+	_clamp_states()
+	incident_counts[incident_id] = occurrence
+	incident_history.append({
+		"incident_id": incident_id,
+		"response_id": response_id,
+		"trigger_day": int(pending_incident.get("trigger_day", 0)),
+		"trigger_world_day": int(pending_incident.get("trigger_world_day", 0)),
+		"source_duty_id": str(pending_incident.get("source_duty_id", "")),
+		"fact_id": fact_id,
+	})
+	session.world_log.append_entry({
+		"entry_type": "life_incident_response",
+		"project_id": project_id,
+		"incident_id": incident_id,
+		"response_id": response_id,
+		"story_role": story_role,
+		"contract_status": "resolved",
+		"facts_added": ["life_incident_resolved"],
+		"state_change_count": result.state_changes.size(),
+		"relationship_change_count": result.relationship_changes.size(),
+		"memory_count": result.memories_added.size(),
+	})
+	pending_incident = {}
+	if is_complete():
+		_store_completion_chronicle()
+	latest_result = {
+		"success": true,
+		"incident_resolved": true,
+		"incident_id": incident_id,
+		"response_id": response_id,
+		"title": str(narrative.get("title", "这件小事过去了")),
+		"summary": str(narrative.get("summary", "")),
+		"settlement_notes": (
+			response.get("outcome_notes", []) as Array
+		).duplicate(true),
+		"npc_narratives": [],
+		"status": get_status(),
+		"complete": is_complete(),
+		"completion": get_completion_summary(),
+		"base_values": {},
+		"modified_values": {},
+		"modifier_explanations": [],
 	}
 	return latest_result.duplicate(true)
 
@@ -919,6 +1099,164 @@ func _conditions_match(conditions: Array) -> bool:
 	return _requirements_match(conditions, session.get_snapshot())
 
 
+func _try_queue_life_incident(
+		duty: Dictionary,
+		day: int,
+		options: Dictionary
+) -> Dictionary:
+	var config: Dictionary = definition.get("life_incident_system", {})
+	if config.is_empty() or pending_incident.size() > 0:
+		return {}
+	if incident_history.size() >= int(config.get("maximum_per_project", 3)):
+		return {}
+	var minimum_gap := maxi(int(config.get("minimum_steps_between", 2)), 1)
+	if not incident_history.is_empty():
+		var previous: Dictionary = incident_history.back()
+		if day - int(previous.get("trigger_day", -minimum_gap)) < minimum_gap:
+			return {}
+	var candidates := _eligible_life_incidents(duty)
+	if candidates.is_empty():
+		return {}
+	var override_id := str(options.get("incident_id_override", ""))
+	var selected: Dictionary = {}
+	if override_id != "":
+		for candidate: Dictionary in candidates:
+			if str(candidate.get("incident_id", "")) == override_id:
+				selected = candidate
+				break
+		if selected.is_empty():
+			return {}
+	else:
+		var chance := clampi(
+			int(config.get("trigger_chance_percent", 50)), 0, 100
+		)
+		var roll := int(options.get("incident_roll_override", 0))
+		if roll < 1:
+			roll = session.challenge_rng.randi_range(1, 100)
+		if clampi(roll, 1, 100) > chance:
+			return {}
+		selected = _weighted_life_incident(candidates)
+	if selected.is_empty():
+		return {}
+	pending_incident = {
+		"incident_id": str(selected.get("incident_id", "")),
+		"source_duty_id": str(duty.get("duty_id", "")),
+		"source_fact_id": "%s:duty:%d:%s" % [
+			project_id, day, str(duty.get("duty_id", ""))
+		],
+		"trigger_day": day,
+		"trigger_world_day": int(session.current_day),
+	}
+	return get_pending_incident()
+
+
+func _eligible_life_incidents(duty: Dictionary) -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	for value: Variant in definition.get("life_incidents", []):
+		if not value is Dictionary:
+			continue
+		var incident := value as Dictionary
+		var incident_id := str(incident.get("incident_id", ""))
+		var source_conditions: Array = incident.get("source_conditions", [])
+		# Incidents must expose a concrete state cause; an unconditional card is invalid.
+		if incident_id == "" or source_conditions.is_empty():
+			continue
+		if not _conditions_match(source_conditions):
+			continue
+		if not _incident_matches_duty(incident, duty):
+			continue
+		if int(incident_counts.get(incident_id, 0)) >= maxi(
+			int(incident.get("maximum_occurrences", 1)), 1
+		):
+			continue
+		rows.append(incident.duplicate(true))
+	return rows
+
+
+func _incident_matches_duty(incident: Dictionary, duty: Dictionary) -> bool:
+	var duty_ids: Array = incident.get("source_duty_ids", [])
+	if not duty_ids.is_empty() and str(duty.get("duty_id", "")) not in duty_ids:
+		return false
+	var required_tags: Array = incident.get("source_action_tags_any", [])
+	if required_tags.is_empty():
+		return true
+	var duty_tags: Array = duty.get("action_tags", [])
+	for tag: Variant in required_tags:
+		if tag in duty_tags:
+			return true
+	return false
+
+
+func _weighted_life_incident(candidates: Array[Dictionary]) -> Dictionary:
+	var total_weight := 0
+	for candidate: Dictionary in candidates:
+		total_weight += maxi(int(candidate.get("weight", 1)), 1)
+	if total_weight <= 0:
+		return {}
+	var roll: int = int(session.challenge_rng.randi_range(1, total_weight))
+	var cursor := 0
+	for candidate: Dictionary in candidates:
+		cursor += maxi(int(candidate.get("weight", 1)), 1)
+		if roll <= cursor:
+			return candidate.duplicate(true)
+	return candidates.back().duplicate(true)
+
+
+func _find_life_incident(incident_id: String) -> Dictionary:
+	for value: Variant in definition.get("life_incidents", []):
+		if value is Dictionary and str(
+			(value as Dictionary).get("incident_id", "")
+		) == incident_id:
+			return (value as Dictionary).duplicate(true)
+	return {}
+
+
+func _find_incident_response(
+		incident: Dictionary, response_id: String
+) -> Dictionary:
+	for value: Variant in incident.get("responses", []):
+		if value is Dictionary and str(
+			(value as Dictionary).get("response_id", "")
+		) == response_id:
+			return (value as Dictionary).duplicate(true)
+	return {}
+
+
+func _incident_response_eligibility(response: Dictionary) -> Dictionary:
+	var contract := response.duplicate(true)
+	contract["requirements"] = (
+		action_contract_resolver.adapt_legacy_state_requirements(
+			response.get("requirements", [])
+		)
+	)
+	return action_contract_resolver.evaluate(
+		session.get_snapshot(), contract, "player"
+	)
+
+
+func _incidental_effects_are_bounded(effects: Dictionary) -> bool:
+	for forbidden_key: String in [
+		"facts", "facts_added", "traces", "rumors", "exchanges",
+		"obligations", "deferred_consequences", "chronicle_entries",
+		"memories", "memories_added", "pressure_changes",
+	]:
+		var forbidden_value: Variant = effects.get(forbidden_key, [])
+		if forbidden_value is Array and not forbidden_value.is_empty():
+			return false
+		if forbidden_value is Dictionary and not forbidden_value.is_empty():
+			return false
+	var allowed_operations := [
+		"state_set", "state_add", "state_degrade", "relationship_add",
+		"item_consume", "item_condition", "item_history",
+	]
+	for value: Variant in effects.get("operations", []):
+		if not value is Dictionary:
+			return false
+		if str((value as Dictionary).get("operation", "")) not in allowed_operations:
+			return false
+	return true
+
+
 func _requirements_match(conditions: Array, snapshot: Variant) -> bool:
 	var requirements: Array = action_contract_resolver.adapt_legacy_conditions(
 		conditions
@@ -940,6 +1278,9 @@ func _life_project_save_data() -> Dictionary:
 		"duty_counts": duty_counts.duplicate(true),
 		"latest_result": latest_result.duplicate(true),
 		"entry_transition": entry_transition.duplicate(true),
+		"pending_incident": pending_incident.duplicate(true),
+		"incident_history": incident_history.duplicate(true),
+		"incident_counts": incident_counts.duplicate(true),
 	}
 
 
@@ -962,11 +1303,17 @@ func _restore_life_project(session_result: Dictionary) -> Dictionary:
 	var duty_value: Variant = runtime.get("duty_counts", {})
 	var latest_value: Variant = runtime.get("latest_result", {})
 	var entry_transition_value: Variant = runtime.get("entry_transition", {})
+	var pending_incident_value: Variant = runtime.get("pending_incident", {})
+	var incident_history_value: Variant = runtime.get("incident_history", [])
+	var incident_counts_value: Variant = runtime.get("incident_counts", {})
 	if (
 		not history_value is Array
 		or not duty_value is Dictionary
 		or not latest_value is Dictionary
 		or not entry_transition_value is Dictionary
+		or not pending_incident_value is Dictionary
+		or not incident_history_value is Array
+		or not incident_counts_value is Dictionary
 	):
 		reset()
 		return _failure("save_life_project_runtime_invalid")
@@ -981,8 +1328,19 @@ func _restore_life_project(session_result: Dictionary) -> Dictionary:
 	entry_transition = (
 		entry_transition_value as Dictionary
 	).duplicate(true)
+	pending_incident = (pending_incident_value as Dictionary).duplicate(true)
+	incident_history.assign((incident_history_value as Array).duplicate(true))
+	incident_counts = (incident_counts_value as Dictionary).duplicate(true)
 	action_contract_resolver.configure(session.registry)
 	initialized = true
+	if (
+		not pending_incident.is_empty()
+		and _find_life_incident(str(pending_incident.get(
+			"incident_id", ""
+		))).is_empty()
+	):
+		reset()
+		return _failure("save_life_incident_definition_missing")
 	if int(runtime.get("current_day", 0)) != get_day():
 		reset()
 		return _failure("save_life_project_day_mismatch")

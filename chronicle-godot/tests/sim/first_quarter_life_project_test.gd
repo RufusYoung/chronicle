@@ -60,7 +60,7 @@ func _run() -> void:
 	).size()
 	for step: int in range(6):
 		var result: Dictionary = fog_quarter.execute_duty(
-			"read_thaw_tracks"
+			"read_thaw_tracks", {"incident_roll_override": 100}
 		)
 		_check(
 			bool(result.get("success", false)),
@@ -149,7 +149,7 @@ func _run() -> void:
 		"state_store"
 	].get_state("veteran_hoke", "fatigue", 0))
 	var worker_result: Dictionary = worker_quarter.execute_duty(
-		"lead_thaw_repair"
+		"lead_thaw_repair", {"incident_roll_override": 100}
 	)
 	_check(
 		_has_duty(worker_options, "lead_thaw_repair")
@@ -172,7 +172,7 @@ func _run() -> void:
 		"state_store"
 	].get_state("seventh_outpost", "morale", 0))
 	var fire_result: Dictionary = fire_quarter.execute_duty(
-		"redraw_watch_pairs"
+		"redraw_watch_pairs", {"incident_roll_override": 100}
 	)
 	_check(
 		_has_duty(fire_options, "redraw_watch_pairs")

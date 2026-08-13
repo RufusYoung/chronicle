@@ -72,8 +72,16 @@ func enter_first_quarter() -> Dictionary:
 	return result
 
 
-func perform_duty(duty_id: String) -> Dictionary:
-	var result: Dictionary = view_model.perform_duty(duty_id)
+func perform_duty(
+		duty_id: String, options: Dictionary = {}
+) -> Dictionary:
+	var result: Dictionary = view_model.perform_duty(duty_id, options)
+	refresh_view()
+	return result
+
+
+func resolve_life_incident(response_id: String) -> Dictionary:
+	var result: Dictionary = view_model.resolve_life_incident(response_id)
 	refresh_view()
 	return result
 
@@ -105,7 +113,14 @@ func refresh_view() -> void:
 	var unit_label := str(current_view_data.get("progress_unit_label", "天"))
 	var calendar_days := int(current_view_data.get("calendar_days_per_step", 1))
 	var phase_id := str(current_view_data.get("phase_id", "first_winter"))
-	if bool(current_view_data.get("complete", false)):
+	var incident: Dictionary = current_view_data.get("incident", {})
+	if bool(incident.get("active", false)):
+		day_label.text = "第 %d %s结算后 · 世界第 %d 天" % [
+			int(incident.get("trigger_day", day)),
+			unit_label,
+			int(current_view_data.get("world_day", 1)),
+		]
+	elif bool(current_view_data.get("complete", false)):
 		day_label.text = (
 			"第一季度已结束 · 世界第 %d 天" % int(
 				current_view_data.get("world_day", 1)
@@ -140,7 +155,9 @@ func refresh_view() -> void:
 	_refresh_market(current_view_data.get("market", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []))
-	if bool(current_view_data.get("complete", false)):
+	if bool(incident.get("active", false)):
+		_refresh_life_incident(incident)
+	elif bool(current_view_data.get("complete", false)):
 		var growth_candidates: Array = (
 			current_view_data.get("completion", {}) as Dictionary
 		).get("growth_candidates", [])
@@ -201,6 +218,39 @@ func _refresh_actions(actions: Array) -> void:
 		button.pressed.connect(perform_duty.bind(
 			str(action.get("duty_id", ""))
 		))
+		action_buttons.add_child(button)
+
+
+func _refresh_life_incident(incident: Dictionary) -> void:
+	for child: Node in action_buttons.get_children():
+		child.queue_free()
+	action_heading.text = "途中插曲 · %s" % str(
+		incident.get("title", "一件小事")
+	)
+	action_hint.text = "%s\n%s" % [
+		str(incident.get("body", "")),
+		str(incident.get(
+			"trigger_reason", "它来自刚刚结算后的地点与人物状态。"
+		)),
+	]
+	for response: Dictionary in incident.get("responses", []):
+		var button := Button.new()
+		button.custom_minimum_size = Vector2(300, 76)
+		var hint := str(response.get("hint", ""))
+		if not bool(response.get("can_execute", true)):
+			hint = str(response.get("blocked_reason", "当前不能这样回应"))
+		button.text = "%s\n%s" % [
+			str(response.get("label", "回应")), hint
+		]
+		button.disabled = not bool(response.get("can_execute", true))
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.set_meta("incident_response_id", str(
+			response.get("response_id", "")
+		))
+		button.pressed.connect(resolve_life_incident.bind(str(
+			response.get("response_id", "")
+		)))
 		action_buttons.add_child(button)
 
 
@@ -305,7 +355,9 @@ func _refresh_market(market: Dictionary) -> void:
 	button.custom_minimum_size = Vector2(0, 38)
 	button.text = "购买 1 份 · %d 铜币" % int(offer.get("unit_price", 0))
 	button.disabled = not bool(offer.get("can_purchase", false))
-	button.tooltip_text = str(offer.get("quote_summary", ""))
+	button.tooltip_text = str(offer.get(
+		"blocked_reason", offer.get("quote_summary", "")
+	))
 	button.pressed.connect(purchase_market_offer.bind(
 		str(offer.get("item_instance_id", "")),
 		int(offer.get("unit_price", 0))

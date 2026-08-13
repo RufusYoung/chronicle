@@ -44,13 +44,23 @@ func _init(source_session: Variant = null) -> void:
 	session = source_session
 
 
-func start() -> Dictionary:
+func start(options: Dictionary = {}) -> Dictionary:
 	if session == null:
 		session = SimSessionModel.new()
 	action_history.clear()
 	latest_result = {}
 	latest_event_type = ""
-	start_result = session.start_from_fixture_path(FIXTURE_PATH, RULE_PATHS)
+	var start_options := options.duplicate(true)
+	if (
+		not start_options.has("challenge_seed_override")
+		and not "--script" in OS.get_cmdline_args()
+	):
+		var runtime_rng := RandomNumberGenerator.new()
+		runtime_rng.randomize()
+		start_options["challenge_seed_override"] = int(runtime_rng.randi())
+	start_result = session.start_from_fixture_path(
+		FIXTURE_PATH, RULE_PATHS, start_options
+	)
 	return start_result.duplicate(true)
 
 

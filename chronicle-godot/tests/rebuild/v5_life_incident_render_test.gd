@@ -3,7 +3,7 @@ extends SceneTree
 const VIEWER_SCENE := (
 	"res://scenes/rebuild/v5_seventh_outpost_viewer.tscn"
 )
-const OUTPUT_PATH := "user://tests/v5_first_quarter_render.png"
+const OUTPUT_PATH := "user://tests/v5_life_incident_render.png"
 
 var failures: Array[String] = []
 
@@ -28,40 +28,48 @@ func _run() -> void:
 		await process_frame
 	viewer.confirm_growth_candidate("growth.first_winter.fog_reader")
 	await process_frame
-	var transition: Dictionary = viewer.enter_first_quarter()
+	viewer.enter_first_quarter()
 	await process_frame
-	viewer.perform_duty("read_thaw_tracks", {"incident_roll_override": 100})
-	await process_frame
-	await process_frame
-	_check(
-		bool(transition.get("success", false)),
-		"1. Render state reaches the first quarter"
+	viewer.perform_duty(
+		"survey_thaw_routes",
+		{
+			"incident_roll_override": 1,
+			"incident_id_override": "marta_thin_stew",
+		}
 	)
+	await process_frame
+	await process_frame
 	var viewport_size := root.get_visible_rect().size
 	var action_buttons := viewer.get_node("%ActionButtons") as Control
 	var action_scroll := action_buttons.get_parent() as Control
-	var people_text := viewer.get_node("%PeopleText") as Control
-	var feedback_body := viewer.get_node("%FeedbackBody") as Control
+	var action_hint := viewer.get_node("%ActionHint") as Control
+	var market_buttons := viewer.get_node("%MarketButtons") as VBoxContainer
 	_check(
 		viewport_size == Vector2(1280, 720)
 		and _inside_viewport(action_scroll.get_global_rect(), viewport_size)
-		and _inside_viewport(people_text.get_global_rect(), viewport_size)
-		and _inside_viewport(feedback_body.get_global_rect(), viewport_size)
-		and action_buttons.get_child_count() == 4
+		and _inside_viewport(action_hint.get_global_rect(), viewport_size)
+		and action_buttons.get_child_count() == 2
 		and _children_inside(action_buttons, action_scroll.get_global_rect()),
-		"2. Quarter controls stay inside the 1280x720 viewport"
+		"1. Incident explanation and response controls fit 1280x720"
+	)
+	_check(
+		market_buttons.get_child_count() == 1
+		and (market_buttons.get_child(0) as Button).disabled
+		and (market_buttons.get_child(0) as Button).tooltip_text
+			== "先回应眼前的途中插曲。",
+		"2. Side transactions are disabled while a response is pending"
 	)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(
 		"user://tests"
 	))
 	if DisplayServer.get_name() == "headless":
-		print("[V5 FIRST QUARTER RENDER SKIP] Dummy renderer has no readable texture")
+		print("[V5 LIFE INCIDENT RENDER SKIP] Dummy renderer has no readable texture")
 	else:
 		var texture: ViewportTexture = root.get_texture()
 		var image: Image = texture.get_image()
 		var error := image.save_png(OUTPUT_PATH)
-		_check(error == OK, "3. Quarter render screenshot is written")
-		print("[V5 FIRST QUARTER RENDER PATH] %s" % (
+		_check(error == OK, "3. Incident render screenshot is written")
+		print("[V5 LIFE INCIDENT RENDER PATH] %s" % (
 			ProjectSettings.globalize_path(OUTPUT_PATH)
 		))
 	viewer.queue_free()
@@ -89,7 +97,7 @@ func _children_inside(container: Control, visible_rect: Rect2) -> bool:
 
 func _check(condition: bool, label: String) -> void:
 	if condition:
-		print("[V5 FIRST QUARTER RENDER PASS] " + label)
+		print("[V5 LIFE INCIDENT RENDER PASS] " + label)
 		return
 	failures.append(label)
 
@@ -100,10 +108,10 @@ func _fail(label: String) -> void:
 
 func _finish() -> void:
 	if failures.is_empty():
-		print("[V5 FIRST QUARTER RENDER RESULT] PASS")
+		print("[V5 LIFE INCIDENT RENDER RESULT] PASS")
 		quit(0)
 		return
 	for failure: String in failures:
-		push_error("[V5 FIRST QUARTER RENDER FAIL] " + failure)
-	print("[V5 FIRST QUARTER RENDER RESULT] FAIL (%d)" % failures.size())
+		push_error("[V5 LIFE INCIDENT RENDER FAIL] " + failure)
+	print("[V5 LIFE INCIDENT RENDER RESULT] FAIL (%d)" % failures.size())
 	quit(1)
