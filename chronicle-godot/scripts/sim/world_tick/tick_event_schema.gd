@@ -28,6 +28,12 @@ func normalize(event: Dictionary) -> Dictionary:
 
 	if event.has("day"):
 		normalized["day"] = _int_value(event, "day", 0)
+	if event.has("hour"):
+		normalized["hour"] = _int_value(event, "hour", 0)
+	if event.has("start_day"):
+		normalized["start_day"] = _int_value(event, "start_day", 0)
+	if event.has("start_hour"):
+		normalized["start_hour"] = _int_value(event, "start_hour", 0)
 	if event.has("time_key"):
 		normalized["time_key"] = _string_value(event, "time_key")
 
@@ -65,6 +71,17 @@ func validate(event: Dictionary) -> Dictionary:
 		errors.append("invalid_max_triggers")
 	if elapsed_hours < 0:
 		errors.append("invalid_elapsed_hours")
+	if normalized.has("day") and int(normalized.get("day", 0)) < 1:
+		errors.append("invalid_day")
+	if normalized.has("hour") and int(normalized.get("hour", 0)) not in range(24):
+		errors.append("invalid_hour")
+	if normalized.has("start_day") and int(normalized.get("start_day", 0)) < 1:
+		errors.append("invalid_start_day")
+	if (
+		normalized.has("start_hour")
+		and int(normalized.get("start_hour", 0)) not in range(24)
+	):
+		errors.append("invalid_start_hour")
 	if event.has("include_due_checks") and not (event.get("include_due_checks") is bool):
 		errors.append("invalid_include_due_checks")
 	if event.has("due_kinds") and not (event.get("due_kinds") is Array):

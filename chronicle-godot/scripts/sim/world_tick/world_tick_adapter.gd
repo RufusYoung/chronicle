@@ -11,6 +11,9 @@ const NpcDecisionSystemModel = preload(
 const NpcNeedSystemModel = preload(
 	"res://scripts/sim/npc/npc_need_system.gd"
 )
+const NpcLivelihoodSystemModel = preload(
+	"res://scripts/sim/npc/npc_livelihood_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -19,6 +22,7 @@ const SOURCE := "WorldTickAdapter"
 
 var autonomous_action_rules: Array = []
 var npc_need_profiles: Array = []
+var npc_livelihood_profiles: Array = []
 var registry: Variant = null
 
 
@@ -32,6 +36,10 @@ func configure_autonomous_actions(rules: Array) -> void:
 
 func configure_need_profiles(profiles: Array) -> void:
 	npc_need_profiles = profiles.duplicate(true)
+
+
+func configure_livelihood_profiles(profiles: Array) -> void:
+	npc_livelihood_profiles = profiles.duplicate(true)
 
 
 func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictionary) -> Dictionary:
@@ -94,6 +102,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var need_changes: Array = []
 	var observed_need_results: Array = []
 	var observed_need_changes: Array = []
+	var livelihood_results: Array = []
+	var livelihood_events: Array = []
 	var autonomous_actor_ids: Dictionary = {}
 	var autonomous_actor_count := 0
 	var obligation_due_count := 0
@@ -130,6 +140,14 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				tick_event_id,
 				round_index + 1,
 			]
+		if event.has("start_day") and event.has("start_hour"):
+			var round_absolute_hour := int(event.get(
+				"start_hour", 0
+			)) + round_index + (1 if elapsed_hours > 0 else 0)
+			round_event["day"] = int(event.get("start_day", 1)) + int(
+				round_absolute_hour / 24
+			)
+			round_event["hour"] = posmod(round_absolute_hour, 24)
 
 		if not npc_need_profiles.is_empty():
 			var need_snapshot = snapshot_builder.build_snapshot(
@@ -159,6 +177,41 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 					observed_need_changes.append(change.duplicate(true))
 			need_results.append_array(round_need_results)
 			need_changes.append_array(round_need_changes)
+
+		if not npc_livelihood_profiles.is_empty():
+			var livelihood_system = NpcLivelihoodSystemModel.new()
+			var work_snapshot = snapshot_builder.build_snapshot(
+				context,
+				stores,
+				true
+			)
+			var work_data: Dictionary = livelihood_system.resolve_work_tick(
+				work_snapshot,
+				npc_livelihood_profiles,
+				round_event
+			)
+			var work_results: Array = work_data.get("results", [])
+			for work_result: Variant in work_results:
+				writer.apply_result(work_result, stores)
+			livelihood_results.append_array(work_results)
+			livelihood_events.append_array(work_data.get("events", []))
+
+			var support_snapshot = snapshot_builder.build_snapshot(
+				context,
+				stores,
+				true
+			)
+			var support_data: Dictionary = (
+				livelihood_system.resolve_household_support(
+					support_snapshot,
+					round_event
+				)
+			)
+			var support_results: Array = support_data.get("results", [])
+			for support_result: Variant in support_results:
+				writer.apply_result(support_result, stores)
+			livelihood_results.append_array(support_results)
+			livelihood_events.append_array(support_data.get("events", []))
 
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(
@@ -197,6 +250,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var tick_log_results := transaction_results.duplicate()
 	tick_log_results.append_array(due_results)
 	tick_log_results.append_array(need_results)
+	tick_log_results.append_array(livelihood_results)
 	tick_log_results.append_array(autonomous_results)
 	world_log.append_entry(_build_tick_log_entry(
 		event,
@@ -257,6 +311,10 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"due_results": _result_rows(due_results),
 		"need_results": _result_rows(need_results),
 		"observed_need_results": _result_rows(observed_need_results),
+		"livelihood_result_count": livelihood_results.size(),
+		"livelihood_results": _result_rows(livelihood_results),
+		"livelihood_event_count": livelihood_events.size(),
+		"livelihood_events": livelihood_events.duplicate(true),
 		"autonomous_results": _result_rows(autonomous_results),
 		"observed_autonomous_results": _result_rows(
 			observed_autonomous_results
@@ -324,6 +382,10 @@ func _failure_result(
 		"due_results": [],
 		"need_results": [],
 		"observed_need_results": [],
+		"livelihood_result_count": 0,
+		"livelihood_results": [],
+		"livelihood_event_count": 0,
+		"livelihood_events": [],
 		"autonomous_results": [],
 		"observed_autonomous_results": [],
 		"world_log_entries": world_log.list_entries(),

@@ -375,6 +375,32 @@
       "description": "生成时确定的基础性格倾向，供后续行为效用规则读取。"
     },
     {
+      "state_def_id": "state.character.livelihood_elapsed_hours",
+      "definition_version": 1,
+      "key": "livelihood_elapsed_hours",
+      "owner_kinds": ["character"],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": ["set", "add"],
+      "persistence": "save",
+      "ui_visibility": "hidden",
+      "description": "角色距离下一轮职业产出已经累计的有效工作小时数。"
+    },
+    {
+      "state_def_id": "state.character.livelihood_cycle_count",
+      "definition_version": 1,
+      "key": "livelihood_cycle_count",
+      "owner_kinds": ["character"],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": ["set", "add"],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "角色已经完成并写入世界真值的职业生产轮数。"
+    },
+    {
       "state_def_id": "state.institution.discipline_level",
       "definition_version": 1,
       "key": "discipline_level",

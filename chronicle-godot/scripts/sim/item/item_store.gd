@@ -62,6 +62,8 @@ func apply_item_change(change: Dictionary) -> bool:
 			return _transfer_item(change)
 		"consume":
 			return _consume_item(change)
+		"increase_quantity":
+			return _increase_quantity(change)
 		"adjust_durability":
 			return _adjust_durability(change)
 		"split_stack":
@@ -367,6 +369,41 @@ func _consume_item(change: Dictionary) -> bool:
 	return true
 
 
+func _increase_quantity(change: Dictionary) -> bool:
+	var item_instance_id := _change_item_id(change)
+	if not items.has(item_instance_id):
+		return _reject("%s:unknown_item" % item_instance_id)
+	var source_fact_value: Variant = change.get("source_fact_ids", [])
+	if not source_fact_value is Array:
+		return _reject("%s:source_fact_ids_not_array" % item_instance_id)
+	var source_fact_ids: Array = (source_fact_value as Array).duplicate(true)
+	if source_fact_ids.is_empty() or not _facts_exist(source_fact_ids):
+		return _reject("%s:quantity_increase_requires_source_fact" % item_instance_id)
+	var stored: Dictionary = items[item_instance_id]
+	if _is_destroyed(stored):
+		return _reject("%s:item_destroyed" % item_instance_id)
+	var definition: Dictionary = item_defs.get(str(stored.get("item_def_id", "")), {})
+	if not bool(definition.get("stackable", false)):
+		return _reject("%s:item_not_stackable" % item_instance_id)
+	var quantity_value: Variant = change.get("quantity", 0)
+	if not _is_whole_number(quantity_value):
+		return _reject("%s:increase_quantity_not_integer" % item_instance_id)
+	var quantity := int(quantity_value)
+	var current_quantity := int(stored.get("quantity", 0))
+	var maximum := int(definition.get("max_stack", 1))
+	if quantity < 1 or current_quantity + quantity > maximum:
+		return _reject("%s:increase_quantity_out_of_range" % item_instance_id)
+	stored["quantity"] = current_quantity + quantity
+	stored["updated_tick"] = _source_tick(source_fact_ids, change)
+	_append_generated_history(stored, "quantity_increased", source_fact_ids, {
+		"quantity": quantity,
+		"from": current_quantity,
+		"to": current_quantity + quantity,
+	})
+	items[item_instance_id] = stored
+	return true
+
+
 func _adjust_durability(change: Dictionary) -> bool:
 	var item_instance_id := _change_item_id(change)
 	if not items.has(item_instance_id):
@@ -481,6 +518,8 @@ func _project_item(value: Dictionary) -> Dictionary:
 	).duplicate(true)
 	item["base_mass"] = float(definition.get("base_mass", 0.0))
 	item["base_value"] = float(definition.get("base_value", 0.0))
+	item["stackable"] = bool(definition.get("stackable", false))
+	item["max_stack"] = int(definition.get("max_stack", 1))
 	item["modifiers"] = (definition.get("modifiers", []) as Array).duplicate(true)
 	var tags: Array = (definition.get("tags", []) as Array).duplicate(true)
 	for tag: Variant in item.get("custom_tags", []):

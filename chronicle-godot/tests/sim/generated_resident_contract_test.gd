@@ -39,8 +39,8 @@ func _run() -> void:
 	)
 	_check(
 		bool(first_start.get("success", false))
-		and int(first_start.get("definition_count", 0)) == 74,
-		"2. G1 夹具通过正式 SimSession 启动并注册 74 个定义"
+		and int(first_start.get("definition_count", 0)) == 80,
+		"2. G2 夹具通过正式 SimSession 启动并注册 80 个定义"
 	)
 	if not bool(first_start.get("success", false)):
 		_finish()
@@ -116,14 +116,16 @@ func _run() -> void:
 		18, "generated_resident_life_probe"
 	)
 	var livelihood_facts: Array = first.stores["fact_store"].find_facts_by_type(
-		"generated_resident_completed_livelihood_round"
+		"npc_livelihood_produced"
 	)
+	var meal_facts := _meal_facts(first)
 	_check(
 		bool(tick_result.get("success", false))
-		and livelihood_facts.size() == _generated_worker_count(first, resident_ids)
+		and livelihood_facts.size() >= _generated_worker_count(first, resident_ids)
+		and not meal_facts.is_empty()
 		and _state_values(first, resident_ids, "hunger") != hunger_before
-		and _all_state_values_equal(first, resident_ids, "hunger", "extreme"),
-		"10. 推进十八小时后，生成居民可抵达极度饥饿并产生自主生计事实"
+		and not _all_state_values_equal(first, resident_ids, "hunger", "extreme"),
+		"10. 推进十八小时后，居民持续生产真实物品，并通过进食避免全员极度饥饿"
 	)
 
 	var before_save := first.get_save_store_data()
@@ -287,6 +289,16 @@ func _generated_worker_count(session: Variant, resident_ids: Array) -> int:
 		if "generated_worker" in (entity.get("tags", []) as Array):
 			count += 1
 	return count
+
+
+func _meal_facts(session: Variant) -> Array:
+	var rows: Array = session.stores["fact_store"].find_facts_by_type(
+		"npc_self_meal"
+	)
+	rows.append_array(session.stores["fact_store"].find_facts_by_type(
+		"npc_household_shared_food"
+	))
+	return rows
 
 
 func _state_values(

@@ -93,6 +93,7 @@ var investigation_resolver: Variant = null
 var world_tick_adapter: Variant = null
 var autonomous_action_rules: Array = []
 var npc_need_profiles: Array = []
+var npc_livelihood_profiles: Array = []
 var travel_routes: Array = []
 var challenge_definitions: Array = []
 var return_echo_definitions: Array = []
@@ -217,6 +218,12 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		autonomous_action_rules
 	)
 	world_tick_adapter.configure_need_profiles(npc_need_profiles)
+	npc_livelihood_profiles = (
+		fixture.get("generated_livelihood_profiles", []) as Array
+	).duplicate(true)
+	world_tick_adapter.configure_livelihood_profiles(
+		npc_livelihood_profiles
+	)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	var initial_store_report := _create_stores(fixture)
 	if not bool(initial_store_report.get("ok", false)):
@@ -1034,6 +1041,9 @@ func advance_time(
 		"scope_type": scope_type,
 		"scope_id": scope_id,
 		"day": int(next_time.get("day", current_day)),
+		"hour": int(next_time.get("hour", current_hour)),
+		"start_day": current_day,
+		"start_hour": current_hour,
 		"time_key": str(metadata.get("time_key", trigger_key)),
 		"source": str(metadata.get("source", "SimSession.advance_time")),
 		"label": str(metadata.get("label", "advance time")),
@@ -1423,6 +1433,7 @@ func _reset_runtime() -> void:
 	world_tick_adapter.configure_registry(registry)
 	autonomous_action_rules = []
 	npc_need_profiles = []
+	npc_livelihood_profiles = []
 	travel_routes = []
 	challenge_definitions = []
 	return_echo_definitions = []

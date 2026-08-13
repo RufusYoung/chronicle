@@ -39,7 +39,7 @@ func _run() -> void:
 	])
 	_check(
 		bool(report.get("ok", false))
-		and int(report.get("total_definition_count", 0)) == 74
+		and int(report.get("total_definition_count", 0)) == 80
 		and registry.has_definition("item", "item.travel_ration")
 		and registry.has_definition("item", "item.waxed_winter_cloak")
 		and registry.has_definition("item", "item.copper_coin")
@@ -292,6 +292,36 @@ func _run() -> void:
 		) as Dictionary).get("kind", "")) == "location",
 		"10. split_stack 保留总量并允许新堆叠进入合法 holder"
 	)
+	var increase_fact := _fact(
+		"fact.item.rations.increased",
+		"item_quantity_increased",
+		"player",
+		23
+	)
+	fact_store.add_fact(increase_fact)
+	_check(
+		store.apply_item_change({
+			"operation": "increase_quantity",
+			"item_instance_id": "item_instance.rations.2",
+			"quantity": 2,
+			"source_fact_ids": ["fact.item.rations.increased"],
+		})
+		and int(store.get_item(
+			"item_instance.rations.2"
+		).get("quantity", 0)) == 4
+		and str((store.get_item("item_instance.rations.2").get(
+			"history", []
+		) as Array).back().get("fact_id", "")) == (
+			"fact.item.rations.increased"
+		)
+		and not store.apply_item_change({
+			"operation": "increase_quantity",
+			"item_instance_id": "item_instance.rations.2",
+			"quantity": 30,
+			"source_fact_ids": ["fact.item.rations.increased"],
+		}),
+		"11. increase_quantity 合并合法堆叠、写入来源历史并拒绝越过上限"
+	)
 
 	var consume_fact := _fact(
 		"fact.item.rations.consumed",
@@ -318,7 +348,7 @@ func _run() -> void:
 			"new_holder": {"kind": "entity", "id": "player"},
 			"source_fact_ids": ["fact.item.rations.consumed"],
 		}),
-		"11. 完全消耗将 holder 变为 destroyed 且不能重新转移"
+		"12. 完全消耗将 holder 变为 destroyed 且不能重新转移"
 	)
 	_check(
 		not store.apply_item_change({
@@ -330,7 +360,7 @@ func _run() -> void:
 			},
 			"source_fact_ids": ["fact.item.cloak.transferred"],
 		}),
-		"12. container holder 拒绝直接自包含循环"
+		"13. container holder 拒绝直接自包含循环"
 	)
 
 	var session = SimSessionModel.new()
@@ -339,11 +369,11 @@ func _run() -> void:
 		RULE_PATHS
 	)
 	if not bool(start.get("success", false)):
-		_check(false, "13. Session 启动失败：%s" % JSON.stringify(start))
+		_check(false, "14. Session 启动失败：%s" % JSON.stringify(start))
 		_finish()
 		return
 	_check(
-		int(start.get("definition_count", 0)) == 74
+		int(start.get("definition_count", 0)) == 80
 		and bool((start.get("item_contract_report", {}) as Dictionary).get(
 			"ok",
 			false
@@ -351,7 +381,7 @@ func _run() -> void:
 		and not session.stores["state_store"].list_states("player").has(
 			"inventory_item_ids"
 		),
-		"13. Session 接入 ItemDef 与 ItemStore 合同且 StateStore 不保存库存数组"
+		"14. Session 接入 ItemDef 与 ItemStore 合同且 StateStore 不保存库存数组"
 	)
 	session.travel("old_chen_shop_to_abandoned_granary")
 	session.execute_challenge_option("prepare_granary_entry")
@@ -380,7 +410,7 @@ func _run() -> void:
 		and not session.stores["state_store"].list_states("player").has(
 			"inventory_item_ids"
 		),
-		"14. 真实发现物只以 holder 存储，旧库存数组由 Snapshot 当场派生"
+		"15. 真实发现物只以 holder 存储，旧库存数组由 Snapshot 当场派生"
 	)
 	_check(
 		not session.stores["state_store"].set_state(
@@ -391,7 +421,7 @@ func _run() -> void:
 		and session.stores["state_store"].last_error.ends_with(
 			"external_projection_owned_key"
 		),
-		"15. StateStore 拒绝伪造 inventory_item_ids 第二真值"
+		"16. StateStore 拒绝伪造 inventory_item_ids 第二真值"
 	)
 
 	_finish()

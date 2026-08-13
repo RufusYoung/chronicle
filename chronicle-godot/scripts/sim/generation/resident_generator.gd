@@ -127,6 +127,7 @@ func generate_fixture(
 			"source_fact_ids": [batch_fact_id],
 		})
 		var household_members: Array[String] = []
+		var household_member_ages: Dictionary = {}
 		for member_index: int in range(int(household_sizes[household_index])):
 			resident_index += 1
 			var resident_id := "generated_resident.%s.%03d" % [
@@ -171,6 +172,8 @@ func generate_fixture(
 				"health": rng.randi_range(72, 100),
 				"fatigue": rng.randi_range(0, 3),
 				"hunger": ["low", "low", "medium"][rng.randi_range(0, 2)],
+				"livelihood_elapsed_hours": 0,
+				"livelihood_cycle_count": 0,
 			}
 			states.merge(attributes, true)
 			entities.append({
@@ -190,6 +193,7 @@ func generate_fixture(
 			})
 			resident_ids.append(resident_id)
 			household_members.append(resident_id)
+			household_member_ages[resident_id] = age
 			if member_index == 0:
 				household_heads.append(resident_id)
 			facts.append({
@@ -206,6 +210,13 @@ func generate_fixture(
 			if livelihood_status in ["employed", "self_employed"]:
 				items.append(_coin_stack(resident_id, seed, rng))
 		_link_household_members(relationships, household_members, rng)
+		_append_household_relationship_facts(
+			facts,
+			household_id,
+			household_members,
+			household_member_ages,
+			batch_fact_id
+		)
 
 	_link_household_heads(relationships, household_heads, rng)
 	chronicles.append({
@@ -218,17 +229,15 @@ func generate_fixture(
 		"source_fact_ids": [batch_fact_id],
 		"generation_seed": seed,
 	})
-	var rules: Array = (
-		fixture.get("autonomous_action_rules", []) as Array
-	).duplicate(true)
-	rules.append(_generated_worker_rule())
 	fixture["locations"] = locations
 	fixture["entities"] = entities
 	fixture["known_facts"] = facts
 	fixture["initial_relationships"] = relationships
 	fixture["initial_items"] = items
 	fixture["initial_chronicle_entries"] = chronicles
-	fixture["autonomous_action_rules"] = rules
+	fixture["generated_livelihood_profiles"] = _livelihood_profiles(
+		occupations
+	)
 	var report := {
 		"ok": true,
 		"generation_id": generation_id,
@@ -464,6 +473,39 @@ func _link_household_heads(
 		})
 
 
+func _append_household_relationship_facts(
+		facts: Array,
+		household_id: String,
+		member_ids: Array[String],
+		member_ages: Dictionary,
+		batch_fact_id: String
+) -> void:
+	for source_id: String in member_ids:
+		for target_id: String in member_ids:
+			if source_id == target_id:
+				continue
+			var source_age := int(member_ages.get(source_id, 18))
+			var target_age := int(member_ages.get(target_id, 18))
+			var relationship_kind := "co_resident"
+			if source_age >= 18 and target_age < 18:
+				relationship_kind = "guardian"
+			elif source_age < 18 and target_age >= 18:
+				relationship_kind = "dependent"
+			facts.append({
+				"fact_id": "fact.generated_social_relation.%s.%s.%s" % [
+					_safe_id(household_id),
+					_safe_id(source_id),
+					_safe_id(target_id),
+				],
+				"fact_type": "generated_social_relation",
+				"actor_id": source_id,
+				"target_id": target_id,
+				"household_id": household_id,
+				"relationship_kind": relationship_kind,
+				"source_fact_ids": [batch_fact_id],
+			})
+
+
 func _set_relation_axes(
 		relationships: Dictionary,
 		source_id: String,
@@ -496,33 +538,28 @@ func _coin_stack(
 	}
 
 
-func _generated_worker_rule() -> Dictionary:
-	return {
-		"rule_id": "generated_worker_completes_livelihood_round",
-		"actor": {"type": "person", "tags_all": ["generated_worker"]},
-		"once_fact_type": "generated_resident_completed_livelihood_round",
-		"minimum_utility": 50,
-		"priority": 5,
-		"base_utility": 75,
-		"effects": {
-			"facts": [{
-				"fact_id": "generated_work:{actor_id}:{tick_event_id}",
-				"fact_type": "generated_resident_completed_livelihood_round",
-				"actor_id": "{actor_id}",
-				"location_id": "{location_id}",
-				"source_rule_id": "{rule_id}",
-				"summary": "{actor_display_name}完成了一轮维持生计的日常工作。",
-			}],
-			"state_changes": [{
-				"entity_id": "{actor_id}", "key": "fatigue", "delta": 1,
-			}],
-			"narrative": {
-				"title": "一轮普通活计结束",
-				"summary": "{actor_display_name}收好工具，完成了今天维持生计的一轮工作。",
-				"tone": "ordinary_life",
-			},
-		},
-	}
+func _livelihood_profiles(occupations: Array) -> Array:
+	var rows: Array = []
+	for occupation: Dictionary in occupations:
+		var products: Variant = occupation.get("products", [])
+		if not products is Array or (products as Array).is_empty():
+			continue
+		rows.append({
+			"occupation_id": str(occupation.get("occupation_id", "")),
+			"actor_tags_all": ["generated_worker"],
+			"work_interval_hours": int(occupation.get(
+				"work_interval_hours", 8
+			)),
+			"products": (products as Array).duplicate(true),
+			"work_summary": str(occupation.get(
+				"work_summary", "一轮普通生计结束，产物进入了居民库存。"
+			)),
+		})
+	return rows
+
+
+func _safe_id(value: String) -> String:
+	return value.replace(":", ".").replace("/", ".").replace(" ", "_")
 
 
 func _signature(

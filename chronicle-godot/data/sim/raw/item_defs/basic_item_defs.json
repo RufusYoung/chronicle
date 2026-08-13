@@ -189,6 +189,70 @@
         }
       ],
       "base_value": 12
+    },
+    {
+      "item_def_id": "item.fresh_fish_portion",
+      "definition_version": 1,
+      "display_name_key": "item.fresh_fish_portion.name",
+      "display_name": "鲜鱼",
+      "item_kind": "food",
+      "tags": ["food", "fresh_food", "fish", "livelihood_product"],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 0.7,
+      "equip_slots": [],
+      "capabilities": ["consume", "trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 3
+    },
+    {
+      "item_def_id": "item.root_vegetable_portion",
+      "definition_version": 1,
+      "display_name_key": "item.root_vegetable_portion.name",
+      "display_name": "耐寒块根",
+      "item_kind": "food",
+      "tags": ["food", "staple_food", "root_vegetable", "livelihood_product"],
+      "stackable": true,
+      "max_stack": 30,
+      "base_mass": 0.6,
+      "equip_slots": [],
+      "capabilities": ["consume", "trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 2
+    },
+    {
+      "item_def_id": "item.woven_reed_mat",
+      "definition_version": 1,
+      "display_name_key": "item.woven_reed_mat.name",
+      "display_name": "编苇席",
+      "item_kind": "craft_good",
+      "tags": ["craft_good", "reed", "household_good", "livelihood_product"],
+      "stackable": true,
+      "max_stack": 10,
+      "base_mass": 1.5,
+      "equip_slots": [],
+      "capabilities": ["trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 6
+    },
+    {
+      "item_def_id": "item.marsh_herb_bundle",
+      "definition_version": 1,
+      "display_name_key": "item.marsh_herb_bundle.name",
+      "display_name": "泽草束",
+      "item_kind": "herb",
+      "tags": ["herb", "medicine_material", "marsh", "livelihood_product"],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 0.3,
+      "equip_slots": [],
+      "capabilities": ["trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 4
     }
   ]
 }
