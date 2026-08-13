@@ -26,6 +26,7 @@ func build_snapshot(
 		"deferred_consequence_store"
 	)
 	var item_store: Variant = stores.get("item_store")
+	var equipment_store: Variant = stores.get("equipment_store")
 	var chronicle_store: Variant = stores.get("chronicle_store")
 	var investigation_store: Variant = stores.get("investigation_store")
 	var character_feature_store: Variant = stores.get("character_feature_store")
@@ -100,6 +101,10 @@ func build_snapshot(
 			else deferred_consequence_store.list_deferred_consequences()
 		),
 		"items": [] if item_store == null else item_store.list_items(),
+		"equipment_loadouts": (
+			{} if equipment_store == null
+			else equipment_store.list_loadouts()
+		),
 		"chronicle_entries": [] if chronicle_store == null else chronicle_store.list_entries(),
 		"investigation_leads": (
 			[] if investigation_store == null

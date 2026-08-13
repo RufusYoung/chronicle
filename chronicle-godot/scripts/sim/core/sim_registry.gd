@@ -30,6 +30,10 @@ const DEFINITION_COLLECTIONS := {
 		"kind": "item",
 		"id_field": "item_def_id",
 	},
+	"equipment_slot_defs": {
+		"kind": "equipment_slot",
+		"id_field": "slot_def_id",
+	},
 }
 
 const STATE_VALUE_TYPES := [
@@ -206,6 +210,7 @@ func load_raw_definition_files(
 	for path_value: Variant in paths:
 		var report := load_raw_definitions(str(path_value), strict)
 		registered_count += int(report.get("registered_count", 0))
+	_validate_cross_definition_references()
 	return _definition_report(registered_count)
 
 
@@ -248,7 +253,8 @@ func _validate_definition(
 	var errors: Array[String] = []
 	var warnings: Array[String] = []
 	if kind not in [
-		"state", "object", "talent", "trait", "mark", "skill", "item"
+		"state", "object", "talent", "trait", "mark", "skill", "item",
+		"equipment_slot"
 	]:
 		return {"errors": errors, "warnings": warnings}
 
@@ -270,6 +276,8 @@ func _validate_definition(
 		_validate_skill_definition(definition_id, definition, errors)
 	elif kind == "item":
 		_validate_item_definition(definition_id, definition, errors)
+	elif kind == "equipment_slot":
+		_validate_equipment_slot_definition(definition_id, definition, errors)
 	return {"errors": errors, "warnings": warnings}
 
 
@@ -483,6 +491,25 @@ func _validate_item_definition(
 		errors.append("item:%s:invalid_base_value" % definition_id)
 	_validate_array_field("item", definition_id, definition, "equip_slots", errors)
 	_validate_array_field("item", definition_id, definition, "capabilities", errors)
+	var equip_slots: Variant = definition.get("equip_slots", [])
+	var capabilities: Variant = definition.get("capabilities", [])
+	if (
+		equip_slots is Array
+		and not (equip_slots as Array).is_empty()
+		and capabilities is Array
+		and "equip" not in (capabilities as Array)
+	):
+		errors.append("item:%s:equipment_slots_without_equip_capability" % definition_id)
+	if definitions.has("equipment_slot") and not (
+		definitions["equipment_slot"] as Dictionary
+	).is_empty() and equip_slots is Array:
+		for slot_value: Variant in equip_slots:
+			var slot_id := "slot.%s" % str(slot_value).trim_prefix("slot.")
+			if not (definitions["equipment_slot"] as Dictionary).has(slot_id):
+				errors.append("item:%s:unknown_equipment_slot:%s" % [
+					definition_id,
+					str(slot_value),
+				])
 	var durability: Variant = definition.get("durability", {})
 	if not durability is Dictionary:
 		errors.append("item:%s:durability_not_dictionary" % definition_id)
@@ -494,6 +521,20 @@ func _validate_item_definition(
 			or int(maximum) < 1
 		):
 			errors.append("item:%s:invalid_maximum_durability" % definition_id)
+
+
+func _validate_equipment_slot_definition(
+		definition_id: String,
+		definition: Dictionary,
+		errors: Array[String]
+) -> void:
+	if str(definition.get("display_name_key", "")) == "":
+		errors.append("equipment_slot:%s:missing_display_name_key" % definition_id)
+	var accepted_tags: Variant = definition.get("accepts_item_tags_any", [])
+	if not accepted_tags is Array or (accepted_tags as Array).is_empty():
+		errors.append("equipment_slot:%s:missing_accepted_item_tags" % definition_id)
+	if str(definition.get("exclusive_group", "")) == "":
+		errors.append("equipment_slot:%s:missing_exclusive_group" % definition_id)
 
 
 func _validate_feature_header(
@@ -632,6 +673,8 @@ func _definition_id_field(kind: String) -> String:
 		return "skill_def_id"
 	if kind == "item":
 		return "item_def_id"
+	if kind == "equipment_slot":
+		return "slot_def_id"
 	return ""
 
 
@@ -707,6 +750,20 @@ func _array_values_allowed(values: Array, allowed_values: Array) -> bool:
 		if value not in allowed_values:
 			return false
 	return true
+
+
+func _validate_cross_definition_references() -> void:
+	var available_slots: Dictionary = list_definitions("equipment_slot")
+	for item_id: String in list_definitions("item").keys():
+		var definition := get_definition("item", item_id)
+		for slot_value: Variant in definition.get("equip_slots", []):
+			var short_id := str(slot_value).trim_prefix("slot.")
+			var slot_id := "slot.%s" % short_id
+			if short_id == "" or not available_slots.has(slot_id):
+				_definition_error("item:%s:unknown_equipment_slot:%s" % [
+					item_id,
+					str(slot_value),
+				])
 
 
 func _definition_value_matches_type(value: Variant, value_type: String) -> bool:

@@ -192,6 +192,22 @@ func is_held_by(item_instance_id: String, owner_id: String) -> bool:
 	)
 
 
+func get_item_definition(item_def_id: String) -> Dictionary:
+	if not item_defs.has(item_def_id):
+		return {}
+	return (item_defs[item_def_id] as Dictionary).duplicate(true)
+
+
+func fork_for_preflight(preview_fact_store: Variant) -> Variant:
+	var clone = get_script().new()
+	clone.items = items.duplicate(true)
+	clone.item_defs = item_defs.duplicate(true)
+	clone.entity_store = entity_store
+	clone.fact_store = preview_fact_store
+	clone.location_ids = location_ids.duplicate(true)
+	return clone
+
+
 func get_contract_report() -> Dictionary:
 	return {
 		"ok": validation_errors.is_empty(),
@@ -406,6 +422,13 @@ func _project_item(value: Dictionary) -> Dictionary:
 	item["item_id"] = item_instance_id
 	item["id"] = item_instance_id
 	item["item_type"] = str(definition.get("item_kind", ""))
+	item["equip_slots"] = (definition.get("equip_slots", []) as Array).duplicate(true)
+	item["capabilities"] = (
+		definition.get("capabilities", []) as Array
+	).duplicate(true)
+	item["base_mass"] = float(definition.get("base_mass", 0.0))
+	item["base_value"] = float(definition.get("base_value", 0.0))
+	item["modifiers"] = (definition.get("modifiers", []) as Array).duplicate(true)
 	var tags: Array = (definition.get("tags", []) as Array).duplicate(true)
 	for tag: Variant in item.get("custom_tags", []):
 		if tag not in tags:

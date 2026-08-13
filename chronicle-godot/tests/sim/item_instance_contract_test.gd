@@ -12,6 +12,9 @@ const FEATURE_DEFS_PATH := (
 	"res://data/sim/raw/character_feature_defs/basic_character_feature_defs.json"
 )
 const ITEM_DEFS_PATH := "res://data/sim/raw/item_defs/basic_item_defs.json"
+const EQUIPMENT_SLOT_DEFS_PATH := (
+	"res://data/sim/raw/equipment_slot_defs/basic_equipment_slot_defs.json"
+)
 const FIXTURE_PATH := "res://data/sim/fixtures/lake_town_food_crisis_fixture.json"
 const RULE_PATHS := [
 	"res://data/sim/raw/action_rules/basic_action_rules.json",
@@ -32,10 +35,11 @@ func _run() -> void:
 		OBJECT_DEFS_PATH,
 		FEATURE_DEFS_PATH,
 		ITEM_DEFS_PATH,
+		EQUIPMENT_SLOT_DEFS_PATH,
 	])
 	_check(
 		bool(report.get("ok", false))
-		and int(report.get("total_definition_count", 0)) == 46
+		and int(report.get("total_definition_count", 0)) == 49
 		and registry.has_definition("item", "item.travel_ration")
 		and registry.has_definition("item", "item.waxed_winter_cloak"),
 		"1. ItemDef 以稳定 ID 进入严格 Registry"
@@ -337,7 +341,7 @@ func _run() -> void:
 		_finish()
 		return
 	_check(
-		int(start.get("definition_count", 0)) == 46
+		int(start.get("definition_count", 0)) == 49
 		and bool((start.get("item_contract_report", {}) as Dictionary).get(
 			"ok",
 			false

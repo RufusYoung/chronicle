@@ -68,6 +68,7 @@ func summary() -> Dictionary:
 	var exchange_update_count := 0
 	var deferred_consequence_update_count := 0
 	var item_change_count := 0
+	var equipment_change_count := 0
 	var chronicle_entry_count := 0
 	var investigation_change_count := 0
 	var tick_event_count := 0
@@ -113,6 +114,7 @@ func summary() -> Dictionary:
 		exchange_update_count += int(entry.get("exchange_update_count", 0))
 		deferred_consequence_update_count += int(entry.get("deferred_consequence_update_count", 0))
 		item_change_count += int(entry.get("item_change_count", 0))
+		equipment_change_count += int(entry.get("equipment_change_count", 0))
 		chronicle_entry_count += int(
 			entry.get("chronicle_entry_count", 0)
 		)
@@ -179,6 +181,7 @@ func summary() -> Dictionary:
 		"exchange_update_count": exchange_update_count,
 		"deferred_consequence_update_count": deferred_consequence_update_count,
 		"item_change_count": item_change_count,
+		"equipment_change_count": equipment_change_count,
 		"chronicle_entry_count": chronicle_entry_count,
 		"investigation_change_count": investigation_change_count,
 		"tick_event_count": tick_event_count,

@@ -7,8 +7,19 @@ const EXTERNAL_PROJECTION_KEYS := [
 	"inventory_item_ids",
 ]
 
+var last_report: Dictionary = {"ok": true, "error": ""}
 
-func apply_result(result: Variant, stores: Dictionary) -> void:
+
+func apply_result(result: Variant, stores: Dictionary) -> bool:
+	last_report = _preflight_item_and_equipment(result, stores)
+	if not bool(last_report.get("ok", false)):
+		if result != null and result.has_method("mark_invalid_contract"):
+			result.mark_invalid_contract(
+				str(result.transaction_mode),
+				str(last_report.get("error", "transaction_preflight_failed"))
+			)
+		return false
+
 	var fact_store: Variant = stores.get("fact_store")
 	if fact_store != null:
 		for fact: Dictionary in result.facts_added:
@@ -76,6 +87,11 @@ func apply_result(result: Variant, stores: Dictionary) -> void:
 		for item_change: Dictionary in result.item_changes:
 			item_store.apply_item_change(item_change)
 
+	var equipment_store: Variant = stores.get("equipment_store")
+	if equipment_store != null:
+		for equipment_change: Dictionary in result.equipment_changes:
+			equipment_store.apply_equipment_change(equipment_change)
+
 	var chronicle_store: Variant = stores.get("chronicle_store")
 	if chronicle_store != null:
 		for entry: Dictionary in result.chronicle_entries_added:
@@ -85,3 +101,53 @@ func apply_result(result: Variant, stores: Dictionary) -> void:
 	if investigation_store != null:
 		for change: Dictionary in result.investigation_changes:
 			investigation_store.apply_change(change)
+	return true
+
+
+func _preflight_item_and_equipment(
+		result: Variant,
+		stores: Dictionary
+) -> Dictionary:
+	if result.item_changes.is_empty() and result.equipment_changes.is_empty():
+		return {"ok": true, "error": ""}
+	var fact_store: Variant = stores.get("fact_store")
+	var item_store: Variant = stores.get("item_store")
+	var equipment_store: Variant = stores.get("equipment_store")
+	if fact_store == null or item_store == null:
+		return {"ok": false, "error": "item_equipment_preflight_store_missing"}
+	if not result.equipment_changes.is_empty() and equipment_store == null:
+		return {"ok": false, "error": "equipment_store_missing"}
+
+	var preview_fact_store = fact_store.get_script().new()
+	for fact: Dictionary in fact_store.list_facts():
+		preview_fact_store.add_fact(fact)
+	for fact: Dictionary in result.facts_added:
+		preview_fact_store.add_fact(fact)
+	var preview_item_store = item_store.fork_for_preflight(preview_fact_store)
+	for item_change: Dictionary in result.item_changes:
+		if not preview_item_store.apply_item_change(item_change):
+			return {
+				"ok": false,
+				"error": "item_preflight_failed:%s" % preview_item_store.last_error,
+			}
+	if equipment_store == null:
+		return {"ok": true, "error": ""}
+	var preview_equipment_store = equipment_store.fork_for_preflight(
+		preview_item_store,
+		preview_fact_store
+	)
+	for equipment_change: Dictionary in result.equipment_changes:
+		if not preview_equipment_store.apply_equipment_change(equipment_change):
+			return {
+				"ok": false,
+				"error": "equipment_preflight_failed:%s"
+					% preview_equipment_store.last_error,
+			}
+	var integrity: Dictionary = preview_equipment_store.validate_integrity()
+	if not bool(integrity.get("ok", false)):
+		return {
+			"ok": false,
+			"error": "equipment_integrity_failed:%s"
+				% str((integrity.get("errors", []) as Array)[0]),
+		}
+	return {"ok": true, "error": ""}

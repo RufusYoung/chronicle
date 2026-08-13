@@ -1,0 +1,25 @@
+{
+  "equipment_slot_defs": [
+    {
+      "slot_def_id": "slot.body_outer",
+      "definition_version": 1,
+      "display_name_key": "slot.body_outer.name",
+      "accepts_item_tags_any": ["clothing", "armor_outer"],
+      "exclusive_group": "body_outer"
+    },
+    {
+      "slot_def_id": "slot.main_hand",
+      "definition_version": 1,
+      "display_name_key": "slot.main_hand.name",
+      "accepts_item_tags_any": ["weapon", "tool", "main_hand"],
+      "exclusive_group": "hands"
+    },
+    {
+      "slot_def_id": "slot.utility",
+      "definition_version": 1,
+      "display_name_key": "slot.utility.name",
+      "accepts_item_tags_any": ["expedition_gear", "utility", "tool"],
+      "exclusive_group": "utility"
+    }
+  ]
+}

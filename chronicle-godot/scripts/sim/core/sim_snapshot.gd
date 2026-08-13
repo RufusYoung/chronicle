@@ -18,6 +18,7 @@ var obligations: Array = []
 var exchanges: Array = []
 var deferred_consequences: Array = []
 var items: Array = []
+var equipment_loadouts: Dictionary = {}
 var chronicle_entries: Array = []
 var investigation_leads: Array = []
 var talent_assignments: Array = []
@@ -45,6 +46,9 @@ func _init(data: Dictionary = {}) -> void:
 	exchanges = (data.get("exchanges", []) as Array).duplicate(true)
 	deferred_consequences = (data.get("deferred_consequences", []) as Array).duplicate(true)
 	items = (data.get("items", []) as Array).duplicate(true)
+	equipment_loadouts = (
+		data.get("equipment_loadouts", {}) as Dictionary
+	).duplicate(true)
 	chronicle_entries = (data.get("chronicle_entries", []) as Array).duplicate(true)
 	investigation_leads = (data.get("investigation_leads", []) as Array).duplicate(true)
 	talent_assignments = (data.get("talent_assignments", []) as Array).duplicate(true)
@@ -209,6 +213,62 @@ func get_player_items() -> Array:
 	return rows
 
 
+func get_inventory_view(owner_entity_id: String) -> Dictionary:
+	var item_instance_ids: Array = []
+	var total_mass := 0.0
+	for item: Dictionary in items:
+		var holder: Dictionary = item.get("holder", {})
+		if (
+			str(holder.get("kind", "")) != "entity"
+			or str(holder.get("id", "")) != owner_entity_id
+		):
+			continue
+		item_instance_ids.append(str(item.get("item_instance_id", "")))
+		total_mass += float(item.get("base_mass", 0.0)) * int(
+			item.get("quantity", 0)
+		)
+	return {
+		"owner_entity_id": owner_entity_id,
+		"item_instance_ids": item_instance_ids,
+		"total_mass": total_mass,
+	}
+
+
+func get_market_stock_view(seller_entity_id: String) -> Dictionary:
+	var offers: Array = []
+	for item: Dictionary in items:
+		var holder: Dictionary = item.get("holder", {})
+		if (
+			str(holder.get("kind", "")) != "entity"
+			or str(holder.get("id", "")) != seller_entity_id
+			or "trade" not in (item.get("capabilities", []) as Array)
+		):
+			continue
+		offers.append({
+			"item_instance_id": str(item.get("item_instance_id", "")),
+			"available_quantity": int(item.get("quantity", 0)),
+			"unit_base_value": float(item.get("base_value", 0.0)),
+			"quote_status": "unquoted",
+		})
+	return {"seller_entity_id": seller_entity_id, "offers": offers}
+
+
+func get_equipment_loadout(entity_id: String) -> Dictionary:
+	if not equipment_loadouts.has(entity_id):
+		return {"entity_id": entity_id, "slots": {}, "updated_tick": 0}
+	return (equipment_loadouts[entity_id] as Dictionary).duplicate(true)
+
+
+func get_equipped_item(entity_id: String, slot_id: String) -> Dictionary:
+	var loadout := get_equipment_loadout(entity_id)
+	var normalized_slot := slot_id if slot_id.begins_with("slot.") else "slot.%s" % slot_id
+	var item_value: Variant = (
+		loadout.get("slots", {}) as Dictionary
+	).get(normalized_slot)
+	var item_instance_id := "" if item_value == null else str(item_value)
+	return get_item(item_instance_id)
+
+
 func get_chronicle_entries() -> Array:
 	return chronicle_entries.duplicate(true)
 
@@ -296,6 +356,7 @@ func to_dict() -> Dictionary:
 		"exchanges": exchanges.duplicate(true),
 		"deferred_consequences": deferred_consequences.duplicate(true),
 		"items": items.duplicate(true),
+		"equipment_loadouts": equipment_loadouts.duplicate(true),
 		"chronicle_entries": chronicle_entries.duplicate(true),
 		"investigation_leads": investigation_leads.duplicate(true),
 		"talent_assignments": talent_assignments.duplicate(true),

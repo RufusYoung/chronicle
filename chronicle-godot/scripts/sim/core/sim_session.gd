@@ -35,6 +35,9 @@ const PressureStoreModel = preload("res://scripts/sim/pressure/pressure_store.gd
 const ObligationStoreModel = preload("res://scripts/sim/obligation/obligation_store.gd")
 const ExchangeStoreModel = preload("res://scripts/sim/exchange/exchange_store.gd")
 const ItemStoreModel = preload("res://scripts/sim/item/item_store.gd")
+const EquipmentLoadoutStoreModel = preload(
+	"res://scripts/sim/equipment/equipment_loadout_store.gd"
+)
 const ChronicleStoreModel = preload(
 	"res://scripts/sim/chronicle/chronicle_store.gd"
 )
@@ -54,6 +57,9 @@ const CHARACTER_FEATURE_DEFS_PATH := (
 	"res://data/sim/raw/character_feature_defs/basic_character_feature_defs.json"
 )
 const ITEM_DEFS_PATH := "res://data/sim/raw/item_defs/basic_item_defs.json"
+const EQUIPMENT_SLOT_DEFS_PATH := (
+	"res://data/sim/raw/equipment_slot_defs/basic_equipment_slot_defs.json"
+)
 const AUTONOMOUS_ACTION_RULES_PATH := (
 	"res://data/sim/raw/npc_action_rules/basic_npc_action_rules.json"
 )
@@ -118,6 +124,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		OBJECT_DEFS_PATH,
 		CHARACTER_FEATURE_DEFS_PATH,
 		ITEM_DEFS_PATH,
+		EQUIPMENT_SLOT_DEFS_PATH,
 	])
 	if not bool(definition_report.get("ok", false)):
 		var failed := _start_failure("raw_definition_contract_invalid")
@@ -171,16 +178,22 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"character_feature_store"
 	].get_contract_report()
 	var item_report: Dictionary = stores["item_store"].get_contract_report()
+	var equipment_report: Dictionary = stores[
+		"equipment_store"
+	].get_contract_report()
 	if not bool(entity_report.get("ok", false)) or not bool(
 		state_report.get("ok", false)
 	) or not bool(character_feature_report.get("ok", false)) or not bool(
 		item_report.get("ok", false)
+	) or not bool(
+		equipment_report.get("ok", false)
 	):
 		var failed := _start_failure("fixture_store_contract_invalid")
 		failed["entity_report"] = entity_report
 		failed["state_report"] = state_report
 		failed["character_feature_report"] = character_feature_report
 		failed["item_report"] = item_report
+		failed["equipment_report"] = equipment_report
 		return failed
 	context.release_runtime_sources()
 	initialized = true
@@ -203,6 +216,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"state_contract_report": state_report,
 		"character_feature_contract_report": character_feature_report,
 		"item_contract_report": item_report,
+		"equipment_contract_report": equipment_report,
 		"time": get_time_summary(),
 	}
 
@@ -1005,6 +1019,7 @@ func get_store_summary() -> Dictionary:
 		"obligations": stores["obligation_store"].list_obligations().size(),
 		"exchanges": stores["exchange_store"].list_exchanges().size(),
 		"items": stores["item_store"].list_items().size(),
+		"equipment_loadouts": stores["equipment_store"].list_loadouts().size(),
 		"chronicle_entries": (
 			stores["chronicle_store"].list_entries().size()
 		),
@@ -1046,6 +1061,7 @@ func get_store_snapshots() -> Dictionary:
 		"obligations": stores["obligation_store"].list_obligations(),
 		"exchanges": stores["exchange_store"].list_exchanges(),
 		"items": stores["item_store"].list_items(),
+		"equipment_loadouts": stores["equipment_store"].list_loadouts(),
 		"chronicle_entries": stores["chronicle_store"].list_entries(),
 		"investigation_leads": stores["investigation_store"].list_leads(),
 		"deferred_consequences": (
@@ -1163,6 +1179,17 @@ func _create_stores(fixture: Dictionary) -> void:
 	item_store.load_initial_items(
 		(fixture.get("initial_items", []) as Array).duplicate(true)
 	)
+	var equipment_store = EquipmentLoadoutStoreModel.new()
+	equipment_store.configure(
+		registry.list_definitions("equipment_slot"),
+		entity_store,
+		item_store,
+		fact_store
+	)
+	equipment_store.load_initial_loadouts(
+		fixture.get("initial_equipment_loadouts", [])
+	)
+	equipment_store.ensure_loadout(str(context.actor_id))
 	var character_feature_store = CharacterFeatureStoreModel.new()
 	character_feature_store.configure({
 		"talent": registry.list_definitions("talent"),
@@ -1184,6 +1211,7 @@ func _create_stores(fixture: Dictionary) -> void:
 		"obligation_store": ObligationStoreModel.new(),
 		"exchange_store": ExchangeStoreModel.new(),
 		"item_store": item_store,
+		"equipment_store": equipment_store,
 		"chronicle_store": ChronicleStoreModel.new(),
 		"investigation_store": InvestigationLeadStoreModel.new(),
 		"deferred_consequence_store": deferred_store,
@@ -1826,6 +1854,8 @@ func _build_world_log_entry(
 		"deferred_consequence_update_count": result.deferred_consequence_updates.size(),
 		"item_changes": result.item_changes.duplicate(true),
 		"item_change_count": result.item_changes.size(),
+		"equipment_changes": result.equipment_changes.duplicate(true),
+		"equipment_change_count": result.equipment_changes.size(),
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
@@ -1865,6 +1895,7 @@ func _build_travel_log_entry(
 		"exchange_update_count": 0,
 		"deferred_consequence_update_count": 0,
 		"item_change_count": 0,
+		"equipment_change_count": 0,
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
@@ -1907,6 +1938,8 @@ func _build_challenge_log_entry(
 		"deferred_consequence_update_count": 0,
 		"item_changes": result.item_changes.duplicate(true),
 		"item_change_count": result.item_changes.size(),
+		"equipment_changes": result.equipment_changes.duplicate(true),
+		"equipment_change_count": result.equipment_changes.size(),
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
@@ -1949,6 +1982,8 @@ func _build_return_echo_log_entry(
 		"deferred_consequence_update_count": 0,
 		"item_changes": result.item_changes.duplicate(true),
 		"item_change_count": result.item_changes.size(),
+		"equipment_changes": result.equipment_changes.duplicate(true),
+		"equipment_change_count": result.equipment_changes.size(),
 		"chronicle_entries_added": (
 			result.chronicle_entries_added.duplicate(true)
 		),
@@ -2005,6 +2040,8 @@ func _build_investigation_log_entry(
 		"deferred_consequence_update_count": 0,
 		"item_changes": result.item_changes.duplicate(true),
 		"item_change_count": result.item_changes.size(),
+		"equipment_changes": result.equipment_changes.duplicate(true),
+		"equipment_change_count": result.equipment_changes.size(),
 		"chronicle_entries_added": (
 			result.chronicle_entries_added.duplicate(true)
 		),
@@ -2159,6 +2196,7 @@ func _empty_store_summary() -> Dictionary:
 		"exchanges": 0,
 		"deferred_consequences": 0,
 		"items": 0,
+		"equipment_loadouts": 0,
 		"chronicle_entries": 0,
 		"investigation_leads": 0,
 	}

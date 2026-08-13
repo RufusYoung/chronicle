@@ -655,7 +655,7 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 
 ### 11.6.5 当前进度
 
-截至 2026-08-13，步骤 1、步骤 2A、步骤 2B 与步骤 2C 已完成：
+截至 2026-08-13，步骤 1、步骤 2A、步骤 2B、步骤 2C 与步骤 2D 已完成：
 
 - 已审计 State、Fact、Memory、Relationship、Item、Snapshot、Action 与 Transaction 边界。
 - 已裁定库存、事实、地区状态和角色状态的重复真值。
@@ -673,6 +673,11 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 - `ItemStore` 已成为物品实例、holder、数量、耐久、来源和历史的唯一运行时真值，并拒绝悬空 holder、无事实运行时创建和非法操作。
 - `inventory_item_ids` 已从 fixture 与写入链移除，只由 Snapshot 按 holder 查询派生。
 - 新增 15 项 ItemInstance 合同断言；加入该测试后，全项目仍为 `60 / 60` 通过。
+- body outer、main hand 与 utility 三个 EquipmentSlotDef 已进入严格 Registry。
+- `EquipmentLoadoutStore` 已成为角色装备位引用的唯一运行时真值；第七哨站玩家冬斗篷已作为真实 ItemInstance 装入 body outer。
+- Transaction Writer 会在写入 Fact 前模拟物品与装备的最终状态，拒绝未同步卸装的转移或完全损坏。
+- InventoryView 与最小 MarketStockView 只从 holder 派生；后者当前只给出未报价商品候选，不包含动态定价。
+- 新增 15 项装备合同断言，全项目回归为 `61 / 61` 通过。
 
 交付文档：
 
@@ -682,9 +687,10 @@ texts/v5/CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_definition_entity_state_contract_report.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_character_feature_contract_report.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_item_instance_contract_report.md
+chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_equipment_loadout_contract_report.md
 ```
 
-当前进入步骤 2D：实现 EquipmentLoadout，并为物品与装备联合变化增加整笔预检，避免留下悬空装备引用或半写事务。Inventory 与 MarketStock 继续只做派生视图，不建立新的可写真值。步骤 2E 再用最小合同 fixture 把旅行 `food_count` 迁移为实际口粮堆叠。
+当前进入步骤 2E：建立最小合同 fixture，把旅行 `food_count` 迁移为实际口粮堆叠，并补齐两名角色的不同冬衣实例、商人实际商品堆叠及往返数据准备。步骤 3 再把本轮的物品与装备预检扩展为全 Store 统一失败协议，并接入通用 Requirement、Modifier 与 Effect。
 
 阶段 5.5 通过后，恢复阶段 5 的季度、年度和五年内容扩展，再进入阶段 6。
 

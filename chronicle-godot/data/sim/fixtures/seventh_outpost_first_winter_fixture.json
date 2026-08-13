@@ -142,6 +142,35 @@
     "last_duty": "none"
   },
   "known_facts": [],
+  "initial_items": [
+    {
+      "item_instance_id": "item_instance.seventh_outpost.player_winter_cloak",
+      "item_def_id": "item.waxed_winter_cloak",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {
+        "durability": 76,
+        "maximum_durability": 100,
+        "quality": "serviceable"
+      },
+      "custom_tags": ["issued_by_seventh_outpost"],
+      "provenance": {
+        "original_owner_entity_id": "seventh_outpost"
+      },
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    }
+  ],
+  "initial_equipment_loadouts": [
+    {
+      "entity_id": "player",
+      "slots": {
+        "body_outer": "item_instance.seventh_outpost.player_winter_cloak"
+      },
+      "updated_tick": 0
+    }
+  ],
   "autonomous_action_rules": [
     {
       "rule_id": "ron_tightens_watch_under_border_pressure",
