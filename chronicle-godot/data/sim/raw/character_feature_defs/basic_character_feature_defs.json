@@ -4,6 +4,7 @@
       "talent_def_id": "talent.night_adapted_eyes",
       "definition_version": 1,
       "display_name_key": "talent.night_adapted_eyes.name",
+      "display_name": "夜视适应",
       "tags": ["innate", "perception", "night"],
       "granted_affordance_tags": ["observe_in_dim_light"],
       "modifiers": [
@@ -12,7 +13,26 @@
           "target": "action.risk",
           "operation": "add",
           "value": -1,
-          "when": [{"kind": "context_tag", "tag": "dim_light"}]
+          "when": [{"kind": "context_tag", "tag": "dim_light"}],
+          "explain_text": "眼睛更快适应昏暗环境。"
+        }
+      ]
+    },
+    {
+      "talent_def_id": "talent.steady_hands",
+      "definition_version": 1,
+      "display_name_key": "talent.steady_hands.name",
+      "display_name": "稳手",
+      "tags": ["innate", "precision", "craft"],
+      "granted_affordance_tags": ["steady_precision_work"],
+      "modifiers": [
+        {
+          "modifier_id": "steady_hands_precision_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -1,
+          "when": [{"kind": "action_tag", "tag": "precision_work"}],
+          "explain_text": "手上动作稳定，精细劳作更少出错。"
         }
       ]
     }
@@ -116,6 +136,36 @@
           "explain_text": "雾盐回响会在相似环境中扰乱判断。"
         }
       ]
+    },
+    {
+      "mark_def_id": "mark.border_watch_habit",
+      "definition_version": 1,
+      "display_name_key": "mark.border_watch_habit.name",
+      "display_name": "雾线守望",
+      "tags": ["experience", "military", "persistent"],
+      "stages": [
+        {"stage_id": "noticed", "threshold": 1},
+        {"stage_id": "ingrained", "threshold": 3}
+      ],
+      "accepted_fact_types": ["actor_completed_border_watch"],
+      "progress_by_fact_type": {"actor_completed_border_watch": 1},
+      "granted_affordance_tags": ["border_watch_instinct"],
+      "modifiers": []
+    },
+    {
+      "mark_def_id": "mark.winter_wall_callus",
+      "definition_version": 1,
+      "display_name_key": "mark.winter_wall_callus.name",
+      "display_name": "冬墙硬茧",
+      "tags": ["experience", "labor", "persistent"],
+      "stages": [
+        {"stage_id": "forming", "threshold": 1},
+        {"stage_id": "hardened", "threshold": 3}
+      ],
+      "accepted_fact_types": ["actor_repaired_outpost_wall"],
+      "progress_by_fact_type": {"actor_repaired_outpost_wall": 1},
+      "granted_affordance_tags": ["winter_wall_worker"],
+      "modifiers": []
     }
   ],
   "skill_defs": [
@@ -152,6 +202,40 @@
           "explain_text": "侦察训练让你更早辨认雪地与雾中的异常。"
         }
       ]
+    },
+    {
+      "skill_def_id": "skill.maintenance",
+      "definition_version": 1,
+      "display_name_key": "skill.maintenance.name",
+      "display_name": "维护",
+      "tags": ["craft", "repair", "fieldwork"],
+      "rank_thresholds": [0, 16, 48, 120, 260],
+      "accepted_practice_fact_types": ["life_project_duty_completed"],
+      "practice_rules": [
+        {
+          "fact_type": "life_project_duty_completed",
+          "field_equals": {"duty_id": "repair_east_wall"},
+          "xp": 8
+        }
+      ],
+      "modifiers": []
+    },
+    {
+      "skill_def_id": "skill.archery",
+      "definition_version": 1,
+      "display_name_key": "skill.archery.name",
+      "display_name": "弓术",
+      "tags": ["combat", "ranged", "military"],
+      "rank_thresholds": [0, 16, 48, 120, 260],
+      "accepted_practice_fact_types": ["life_project_duty_completed"],
+      "practice_rules": [
+        {
+          "fact_type": "life_project_duty_completed",
+          "field_equals": {"duty_id": "practice_wall_archery"},
+          "xp": 8
+        }
+      ],
+      "modifiers": []
     }
   ]
 }

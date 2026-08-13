@@ -26,6 +26,10 @@ func _run() -> void:
 		and patrol.get_duration_days() == 7,
 		"1. First winter starts as a seven-day life project"
 	)
+	if not bool(start.get("success", false)):
+		push_error("[V5 SEVENTH OUTPOST START REPORT] %s" % str(start))
+		_finish()
+		return
 
 	var initial_options: Array = patrol.get_duty_options()
 	_check(

@@ -117,6 +117,56 @@
       }
     ]
   },
+  "growth_candidate_rules": [
+    {
+      "candidate_id": "growth.first_winter.fog_reader",
+      "title": "雾线读迹者",
+      "description": "反复巡过同一段雾线后，你开始把积雪、风向和边境动静看成同一张图。",
+      "evidence_label": "雾线巡查",
+      "minimum_fact_count": 3,
+      "fact_match": {
+        "fact_type": "life_project_duty_completed",
+        "duty_ids": ["patrol_fog_line"]
+      },
+      "reward_preview": {
+        "kind": "attribute_or_skill_growth",
+        "attribute": "perception",
+        "skill_def_id": "skill.scouting"
+      }
+    },
+    {
+      "candidate_id": "growth.first_winter.steady_worker",
+      "title": "风雪中的稳手",
+      "description": "修墙和反复训练让你的动作不再只靠蛮力，工具与材料也开始留下可复述的经验。",
+      "evidence_label": "修缮与训练",
+      "minimum_fact_count": 3,
+      "fact_match": {
+        "fact_type": "life_project_duty_completed",
+        "duty_ids": ["repair_east_wall", "practice_wall_archery"]
+      },
+      "reward_preview": {
+        "kind": "talent_or_skill_growth",
+        "talent_def_id": "talent.steady_hands",
+        "skill_def_ids": ["skill.maintenance", "skill.archery"]
+      }
+    },
+    {
+      "candidate_id": "growth.first_winter.fire_circle",
+      "title": "火边留席",
+      "description": "你没有把同袍只当作状态数字，几次共同值勤之后，火边开始有人替你留位置。",
+      "evidence_label": "共同生活",
+      "minimum_fact_count": 3,
+      "fact_match": {
+        "fact_type": "life_project_duty_completed",
+        "duty_ids": ["drill_with_elai", "share_hard_bread", "audit_rations_with_marta", "rest_in_infirmary"]
+      },
+      "reward_preview": {
+        "kind": "attribute_or_relationship_growth",
+        "attribute": "charisma",
+        "relationship_axis": "familiarity"
+      }
+    }
+  ],
   "duties": [
     {
       "duty_id": "patrol_fog_line",
@@ -125,6 +175,34 @@
       "hint": "感知达到 8 或侦察达到 1 级即可。压低边境压力，但会明显增加疲劳。",
       "action_tags": ["fog_patrol", "foot_patrol", "mist_salt_exposure"],
       "base_values": {"action.risk": 6},
+      "progress_fact": {
+        "fact_type": "actor_completed_border_watch",
+        "summary": "完成了一次雾线巡查。"
+      },
+      "risk_resolution": {
+        "die_sides": 10,
+        "tiers": [
+          {
+            "tier_id": "clean",
+            "minimum_margin": 0,
+            "title": "平安归队",
+            "consequence": "你辨清了风雪里的旧痕，没有让一次误判拖慢巡线。",
+            "effects": {"operations": []}
+          },
+          {
+            "tier_id": "setback",
+            "minimum_margin": -100,
+            "title": "雾中失足",
+            "consequence": "你在被雪盖住的壕沟边失足，额外耗掉了体力，警绳也漏查了一段。",
+            "effects": {
+              "operations": [
+                {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 1},
+                {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": 1}
+              ]
+            }
+          }
+        ]
+      },
       "requirements": [
         {
           "requirement_id": "patrol_fog_line_awareness",
@@ -174,18 +252,50 @@
         {"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 9}
       ],
       "requirements": [
-        {"entity_id": "seventh_outpost", "key": "supply", "min": 1, "label": "修墙物资"}
+        {
+          "requirement_id": "repair_wall_timber",
+          "label": "修墙木料",
+          "mode": "all",
+          "conditions": [
+            {
+              "kind": "item_owned",
+              "owner": "seventh_outpost",
+              "item_def_id": "item.wall_timber_bundle",
+              "label": "修墙木料",
+              "operator": "gte",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "requirement_id": "repair_hammer_equipped",
+          "label": "已装备修缮锤",
+          "mode": "all",
+          "conditions": [
+            {
+              "kind": "item_equipped",
+              "owner": "player",
+              "item_def_id": "item.field_repair_hammer",
+              "label": "修缮锤",
+              "operator": "eq",
+              "value": true
+            }
+          ]
+        }
       ],
+      "progress_fact": {
+        "fact_type": "actor_repaired_outpost_wall",
+        "summary": "在风雪里完成了一次哨墙修缮。"
+      },
       "effects": {
-        "state_changes": [
-          {"entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 3},
-          {"entity_id": "seventh_outpost", "key": "supply", "delta": -1},
-          {"entity_id": "player", "key": "fatigue", "delta": 3},
-          {"entity_id": "player", "key": "training", "delta": 1},
-          {"entity_id": "player", "key": "last_duty", "to": "repair_east_wall"}
-        ],
-        "relationship_changes": [
-          {"source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 3}
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "wall_integrity", "delta": 3},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 3},
+          {"operation": "state_add", "entity_id": "player", "key": "training", "delta": 1},
+          {"operation": "state_set", "entity_id": "player", "key": "last_duty", "to": "repair_east_wall"},
+          {"operation": "relationship_add", "source_id": "veteran_hoke", "target_id": "player", "axis": "trust", "delta": 3},
+          {"operation": "item_consume", "item_instance_id": "item_instance.seventh_outpost.wall_timber", "quantity": 1, "source_fact_ids": ["$duty_fact_id"]},
+          {"operation": "item_condition", "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer", "delta": -2, "source_fact_ids": ["$duty_fact_id"]}
         ],
         "narrative": {
           "title": "东墙多撑住了一层雪",
@@ -249,15 +359,29 @@
       "hint": "需要敏捷 8。消耗一份箭材，提高个人训练与哨站战备。",
       "player_min": {"dexterity": 8},
       "requirements": [
-        {"entity_id": "seventh_outpost", "key": "supply", "min": 1, "label": "箭材"}
+        {
+          "requirement_id": "archery_materials",
+          "label": "箭材",
+          "mode": "all",
+          "conditions": [
+            {
+              "kind": "item_owned",
+              "owner": "seventh_outpost",
+              "item_def_id": "item.arrow_material_bundle",
+              "label": "箭材",
+              "operator": "gte",
+              "value": 1
+            }
+          ]
+        }
       ],
       "effects": {
-        "state_changes": [
-          {"entity_id": "seventh_outpost", "key": "readiness", "delta": 3},
-          {"entity_id": "seventh_outpost", "key": "supply", "delta": -1},
-          {"entity_id": "player", "key": "fatigue", "delta": 2},
-          {"entity_id": "player", "key": "training", "delta": 2},
-          {"entity_id": "player", "key": "last_duty", "to": "practice_wall_archery"}
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 3},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 2},
+          {"operation": "state_add", "entity_id": "player", "key": "training", "delta": 2},
+          {"operation": "state_set", "entity_id": "player", "key": "last_duty", "to": "practice_wall_archery"},
+          {"operation": "item_consume", "item_instance_id": "item_instance.seventh_outpost.arrow_materials", "quantity": 1, "source_fact_ids": ["$duty_fact_id"]}
         ],
         "narrative": {
           "title": "第五支箭赶上了巡逻铃",

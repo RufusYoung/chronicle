@@ -143,6 +143,31 @@
     "last_duty": "none"
   },
   "known_facts": [],
+  "initial_character_features": {
+    "talent_assignments": [
+      {
+        "talent_assignment_id": "talent_assignment.player.night_adapted_eyes",
+        "talent_def_id": "talent.night_adapted_eyes",
+        "owner_entity_id": "player",
+        "source_kind": "character_creation",
+        "source_fact_ids": [],
+        "status": "active",
+        "assigned_tick": 0
+      },
+      {
+        "talent_assignment_id": "talent_assignment.player.steady_hands",
+        "talent_def_id": "talent.steady_hands",
+        "owner_entity_id": "player",
+        "source_kind": "character_creation",
+        "source_fact_ids": [],
+        "status": "active",
+        "assigned_tick": 0
+      }
+    ],
+    "trait_instances": [],
+    "mark_instances": [],
+    "skill_progress": []
+  },
   "initial_items": [
     {
       "item_instance_id": "item_instance.seventh_outpost.player_winter_cloak",
@@ -161,15 +186,150 @@
       "history": [],
       "created_tick": 0,
       "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer",
+      "item_def_id": "item.field_repair_hammer",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {"durability": 68, "maximum_durability": 80, "quality": "serviceable"},
+      "custom_tags": ["issued_by_seventh_outpost"],
+      "provenance": {"original_owner_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.seventh_outpost.player_patrol_lantern",
+      "item_def_id": "item.patrol_lantern",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {"durability": 52, "maximum_durability": 60, "quality": "serviceable"},
+      "custom_tags": ["issued_by_seventh_outpost"],
+      "provenance": {"original_owner_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.seventh_outpost.player_coins",
+      "item_def_id": "item.copper_coin",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 12,
+      "condition": {},
+      "custom_tags": ["recruit_savings"],
+      "provenance": {"source": "character_creation"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.seventh_outpost.wall_timber",
+      "item_def_id": "item.wall_timber_bundle",
+      "holder": {"kind": "entity", "id": "seventh_outpost"},
+      "quantity": 4,
+      "condition": {},
+      "custom_tags": ["east_wall_reserve"],
+      "provenance": {"supplier_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.seventh_outpost.arrow_materials",
+      "item_def_id": "item.arrow_material_bundle",
+      "holder": {"kind": "entity", "id": "seventh_outpost"},
+      "quantity": 4,
+      "condition": {},
+      "custom_tags": ["training_reserve"],
+      "provenance": {"supplier_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.seventh_outpost.marta_rations",
+      "item_def_id": "item.travel_ration",
+      "holder": {"kind": "entity", "id": "cook_marta"},
+      "quantity": 6,
+      "condition": {},
+      "custom_tags": ["canteen_trade_stock"],
+      "provenance": {"supplier_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.seventh_outpost.player_rations",
+      "item_def_id": "item.travel_ration",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 2,
+      "condition": {},
+      "custom_tags": ["personal_ration"],
+      "provenance": {"supplier_entity_id": "seventh_outpost"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
     }
   ],
   "initial_equipment_loadouts": [
     {
       "entity_id": "player",
       "slots": {
-        "body_outer": "item_instance.seventh_outpost.player_winter_cloak"
+        "body_outer": "item_instance.seventh_outpost.player_winter_cloak",
+        "main_hand": "item_instance.seventh_outpost.player_repair_hammer",
+        "utility": "item_instance.seventh_outpost.player_patrol_lantern"
       },
       "updated_tick": 0
+    }
+  ],
+  "initial_relationships": {
+    "cook_marta": {
+      "player": {"trust": 1, "familiarity": 1}
+    }
+  },
+  "initial_pressures": [
+    {
+      "pressure_id": "pressure.seventh_outpost.food.1",
+      "domain": "economy",
+      "scope_id": "seventh_outpost",
+      "pressure_type": "food_pressure",
+      "value": 2,
+      "source": "winter_supply_route"
+    }
+  ],
+  "initial_obligations": [],
+  "initial_exchanges": [],
+  "market_policies": [
+    {
+      "market_policy_id": "market_policy.seventh_outpost_canteen",
+      "display_name": "第七哨站配给处",
+      "location_id": "seventh_outpost",
+      "seller_entity_id": "cook_marta",
+      "accepted_currency_item_def_ids": ["item.copper_coin"],
+      "sellable_item_def_ids": ["item.travel_ration"],
+      "sellable_item_tags_any": ["food", "ration"],
+      "base_markup": 0.0,
+      "pressure_bindings": [
+        {
+          "scope_id": "seventh_outpost",
+          "pressure_type": "food_pressure",
+          "label": "粮食压力",
+          "price_factor_per_point": 0.25
+        }
+      ],
+      "relationship_discount": {
+        "axis": "trust",
+        "label": "玛塔的信任",
+        "discount_per_point": 0.03,
+        "maximum_discount": 0.15
+      },
+      "trade_pressure_change": {
+        "domain": "economy",
+        "scope_id": "seventh_outpost",
+        "pressure_type": "food_pressure",
+        "value_per_unit": 1
+      }
     }
   ],
   "autonomous_action_rules": [

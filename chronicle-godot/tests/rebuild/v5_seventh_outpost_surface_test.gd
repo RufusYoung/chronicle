@@ -25,6 +25,9 @@ func _run() -> void:
 
 	var day_label := viewer.get_node("%DayLabel") as Label
 	var player_text := viewer.get_node("%PlayerText") as RichTextLabel
+	var feature_text := viewer.get_node("%FeatureText") as RichTextLabel
+	var market_text := viewer.get_node("%MarketText") as RichTextLabel
+	var market_buttons := viewer.get_node("%MarketButtons") as VBoxContainer
 	var people_text := viewer.get_node("%PeopleText") as RichTextLabel
 	var status_text := viewer.get_node("%StatusText") as RichTextLabel
 	var feedback_title := viewer.get_node("%FeedbackTitle") as Label
@@ -46,6 +49,32 @@ func _run() -> void:
 		and "疲劳 1 / 10" in player_text.text,
 		"3. Service screen exposes attributes and changing condition"
 	)
+	_check(
+		_all_in_text(feature_text.text, [
+			"夜视适应", "稳手", "侦察 0级", "维护 0级", "弓术 0级",
+			"上蜡冬衣", "野战工锤 68/80", "遮光巡灯 52/60"
+		]),
+		"3c. Talents, zero-rank skills, and three equipment slots are visible"
+	)
+	_check(
+		"口粮 2　铜币 12" in market_text.text
+		and "库存 6" in market_text.text
+		and "粮食压力 2" in market_text.text
+		and market_buttons.get_child_count() == 1,
+		"3a. Inventory, quoted stock, and price reasons are visible"
+	)
+	var purchase_button := market_buttons.get_child(0) as Button
+	purchase_button.pressed.emit()
+	await process_frame
+	_check(
+		"口粮 3　铜币 9" in market_text.text
+		and "库存 5" in market_text.text
+		and "4 铜币" in (market_buttons.get_child(0) as Button).text
+		and feedback_title.text == "从玛塔手里领到一份口粮",
+		"3b. Purchase gives immediate inventory, stock, quote, and feedback changes"
+	)
+	viewer.restart_project()
+	await process_frame
 	_check(
 		_all_in_text(people_text.text, ["罗恩", "伊莱", "玛塔", "赛拉", "霍克"])
 		and _all_in_text(status_text.text, [
@@ -93,7 +122,10 @@ func _run() -> void:
 		day_label.text.begins_with("第 3 / 7 天")
 		and feedback_title.text == "雾线外没有脚印"
 		and "今晚少了一块盲区" in feedback_body.text
+		and "掷骰" in feedback_body.text
 		and "上蜡冬衣 -2 风险" in feedback_body.text
+		and "雾线守望" in feature_text.text
+		and "侦察 0级·16经验" in feature_text.text
 		and "第 2 天" in history_text.text
 		and "直接列出条件、消耗与影响" in (
 			viewer.get_node("%ActionHint") as Label
@@ -125,6 +157,8 @@ func _run() -> void:
 	)
 	_check(
 		"雾线暂时退远" in completion_dialog.dialog_text
+		and "雾线读迹者" in completion_dialog.dialog_text
+		and "雾线巡查 6 次" in completion_dialog.dialog_text
 		and viewer.view_model.controller.session.stores[
 			"chronicle_store"
 		].list_entries().size() == 1,
@@ -136,13 +170,23 @@ func _run() -> void:
 	viewer.view_model.controller.session.stores["state_store"].set_state(
 		"seventh_outpost", "supply", 0
 	)
+	for item_id: String in [
+		"item_instance.seventh_outpost.wall_timber",
+		"item_instance.seventh_outpost.arrow_materials",
+	]:
+		viewer.view_model.controller.session.stores["item_store"].items[
+			item_id
+		]["quantity"] = 0
+		viewer.view_model.controller.session.stores["item_store"].items[
+			item_id
+		]["holder"] = {"kind": "destroyed", "id": ""}
 	viewer.refresh_view()
 	await process_frame
 	var repair := _find_duty_button(action_buttons, "repair_east_wall")
 	var archery := _find_duty_button(action_buttons, "practice_wall_archery")
 	var share := _find_duty_button(action_buttons, "share_hard_bread")
 	_check(
-		repair != null and repair.disabled and "修墙物资 0/1" in repair.text
+		repair != null and repair.disabled and "修墙木料 0/1" in repair.text
 		and archery != null and archery.disabled and "箭材 0/1" in archery.text
 		and share != null and share.disabled and "哨站补给 0/2" in share.text
 		and "受限 3 项" in action_heading.text,

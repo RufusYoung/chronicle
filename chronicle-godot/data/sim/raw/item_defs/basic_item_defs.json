@@ -100,6 +100,95 @@
         }
       ],
       "base_value": 24
+    },
+    {
+      "item_def_id": "item.copper_coin",
+      "definition_version": 1,
+      "display_name_key": "item.copper_coin.name",
+      "display_name": "铜币",
+      "item_kind": "currency",
+      "tags": ["currency", "copper", "portable"],
+      "stackable": true,
+      "max_stack": 200,
+      "base_mass": 0.02,
+      "equip_slots": [],
+      "capabilities": ["trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 1
+    },
+    {
+      "item_def_id": "item.wall_timber_bundle",
+      "definition_version": 1,
+      "display_name_key": "item.wall_timber_bundle.name",
+      "display_name": "修墙木楔",
+      "item_kind": "repair_material",
+      "tags": ["repair_material", "timber", "outpost_supply"],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 3.0,
+      "equip_slots": [],
+      "capabilities": ["consume", "trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 4
+    },
+    {
+      "item_def_id": "item.arrow_material_bundle",
+      "definition_version": 1,
+      "display_name_key": "item.arrow_material_bundle.name",
+      "display_name": "箭材",
+      "item_kind": "ammunition_material",
+      "tags": ["ammunition", "arrow_material", "outpost_supply"],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 1.0,
+      "equip_slots": [],
+      "capabilities": ["consume", "trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 3
+    },
+    {
+      "item_def_id": "item.field_repair_hammer",
+      "definition_version": 1,
+      "display_name_key": "item.field_repair_hammer.name",
+      "display_name": "野战工锤",
+      "item_kind": "tool",
+      "tags": ["tool", "main_hand", "repair_tool"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 1.8,
+      "equip_slots": ["main_hand"],
+      "capabilities": ["equip", "trade", "repair"],
+      "durability": {"maximum": 80},
+      "modifiers": [],
+      "base_value": 15
+    },
+    {
+      "item_def_id": "item.patrol_lantern",
+      "definition_version": 1,
+      "display_name_key": "item.patrol_lantern.name",
+      "display_name": "遮光巡灯",
+      "item_kind": "utility_equipment",
+      "tags": ["utility", "tool", "light", "patrol_gear"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 1.1,
+      "equip_slots": ["utility"],
+      "capabilities": ["equip", "trade", "repair"],
+      "durability": {"maximum": 60},
+      "modifiers": [
+        {
+          "modifier_id": "patrol_lantern_night_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -1,
+          "when": [{"kind": "action_tag", "tag": "dim_light"}],
+          "explain_text": "遮光巡灯照亮近处，又不把整个人暴露在雾里。"
+        }
+      ],
+      "base_value": 12
     }
   ]
 }

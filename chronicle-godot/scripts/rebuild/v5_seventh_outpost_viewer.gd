@@ -12,7 +12,10 @@ var completion_was_shown: bool = false
 @onready var subtitle: Label = %Subtitle
 @onready var day_label: Label = %DayLabel
 @onready var player_text: RichTextLabel = %PlayerText
+@onready var feature_text: RichTextLabel = %FeatureText
 @onready var objective_text: RichTextLabel = %ObjectiveText
+@onready var market_text: RichTextLabel = %MarketText
+@onready var market_buttons: VBoxContainer = %MarketButtons
 @onready var ritual_title: Label = %RitualTitle
 @onready var ritual_body: RichTextLabel = %RitualBody
 @onready var people_text: RichTextLabel = %PeopleText
@@ -51,6 +54,17 @@ func perform_duty(duty_id: String) -> Dictionary:
 	return result
 
 
+func purchase_market_offer(
+		item_instance_id: String,
+		quoted_unit_price: int
+) -> Dictionary:
+	var result: Dictionary = view_model.purchase_market_offer(
+		item_instance_id, quoted_unit_price
+	)
+	refresh_view()
+	return result
+
+
 func refresh_view() -> void:
 	current_view_data = view_model.build_view_data()
 	if not bool(current_view_data.get("ready", false)):
@@ -63,9 +77,9 @@ func refresh_view() -> void:
 		if bool(current_view_data.get("complete", false))
 		else "第 %d / %d 天　06:00　清晨点名" % [day, duration]
 	)
-	player_text.text = str(
-		(current_view_data.get("player", {}) as Dictionary).get("summary", "")
-	)
+	var player: Dictionary = current_view_data.get("player", {})
+	player_text.text = str(player.get("summary", ""))
+	feature_text.text = str(player.get("features", ""))
 	objective_text.text = (
 		"[b]第一冬目标[/b]\n完成七个值勤日。每天只选一项职责；口粮、疲劳、军纪与身边人的行动都会继续结算。"
 	)
@@ -76,6 +90,7 @@ func refresh_view() -> void:
 	status_text.text = _format_status(
 		current_view_data.get("status", {}) as Dictionary
 	)
+	_refresh_market(current_view_data.get("market", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []))
 	_refresh_actions(current_view_data.get("actions", []))
@@ -111,7 +126,7 @@ func _refresh_actions(actions: Array) -> void:
 	)
 	for action: Dictionary in actions:
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(280, 68)
+		button.custom_minimum_size = Vector2(300, 88)
 		button.text = "%s\n%s" % [
 			str(action.get("label", "承担值勤")),
 			str(action.get("hint", "")),
@@ -128,6 +143,39 @@ func _refresh_actions(actions: Array) -> void:
 			str(action.get("duty_id", ""))
 		))
 		action_buttons.add_child(button)
+
+
+func _refresh_market(market: Dictionary) -> void:
+	for child: Node in market_buttons.get_children():
+		child.queue_free()
+	var offers: Array = market.get("offers", [])
+	var lines := [
+		"[b]随身[/b]　口粮 %d　铜币 %d" % [
+			int(market.get("ration_count", 0)),
+			int(market.get("coin_count", 0)),
+		]
+	]
+	if offers.is_empty():
+		lines.append("玛塔今天没有可出售的口粮。")
+		market_text.text = "\n".join(lines)
+		return
+	var offer: Dictionary = offers[0]
+	lines.append("[b]%s[/b]　库存 %d" % [
+		str(offer.get("display_name", "口粮")),
+		int(offer.get("available_quantity", 0)),
+	])
+	lines.append(str(offer.get("quote_summary", "")))
+	market_text.text = "\n".join(lines)
+	var button := Button.new()
+	button.custom_minimum_size = Vector2(0, 38)
+	button.text = "购买 1 份 · %d 铜币" % int(offer.get("unit_price", 0))
+	button.disabled = not bool(offer.get("can_purchase", false))
+	button.tooltip_text = str(offer.get("quote_summary", ""))
+	button.pressed.connect(purchase_market_offer.bind(
+		str(offer.get("item_instance_id", "")),
+		int(offer.get("unit_price", 0))
+	))
+	market_buttons.add_child(button)
 
 
 func _refresh_feedback(feedback: Dictionary) -> void:
@@ -192,8 +240,18 @@ func _show_completion() -> void:
 	var lines: Array[String] = [str(completion.get("intro", ""))]
 	for line: Variant in completion.get("lines", []):
 		lines.append("• %s" % str(line))
+	var candidates: Array = completion.get("growth_candidates", [])
+	if not candidates.is_empty():
+		lines.append("\n阶段成长候选")
+	for candidate: Dictionary in candidates:
+		lines.append("• %s（%s %d 次）\n  %s" % [
+			str(candidate.get("title", "阶段成长")),
+			str(candidate.get("evidence_label", "经历")),
+			int(candidate.get("evidence_count", 0)),
+			str(candidate.get("description", "")),
+		])
 	completion_dialog.dialog_text = "\n".join(lines)
-	completion_dialog.popup_centered_clamped(Vector2i(780, 360), 0.9)
+	completion_dialog.popup_centered_clamped(Vector2i(820, 520), 0.9)
 
 
 func _scroll_history_to_latest() -> void:

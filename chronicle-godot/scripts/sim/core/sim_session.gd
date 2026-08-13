@@ -50,6 +50,9 @@ const DeferredConsequenceStoreModel = preload(
 const SaveEnvelopeServiceModel = preload(
 	"res://scripts/sim/save/save_envelope_service.gd"
 )
+const MarketServiceModel = preload(
+	"res://scripts/sim/economy/market_service.gd"
+)
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -91,8 +94,10 @@ var travel_routes: Array = []
 var challenge_definitions: Array = []
 var return_echo_definitions: Array = []
 var investigation_definitions: Array = []
+var market_policies: Array = []
 var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var save_envelope_service: Variant = SaveEnvelopeServiceModel.new()
+var market_service: Variant = MarketServiceModel.new()
 var fixture_source_path: String = ""
 var fixture_source_data: Dictionary = {}
 var rule_source_paths: Array = []
@@ -164,6 +169,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	investigation_definitions = (
 		fixture.get("investigations", []) as Array
 	).duplicate(true)
+	market_policies = (
+		fixture.get("market_policies", []) as Array
+	).duplicate(true)
 	var autonomous_rule_data: Dictionary = registry.load_json(
 		AUTONOMOUS_ACTION_RULES_PATH
 	)
@@ -187,7 +195,11 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	)
 	world_tick_adapter.configure_need_profiles(npc_need_profiles)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
-	_create_stores(fixture)
+	var initial_store_report := _create_stores(fixture)
+	if not bool(initial_store_report.get("ok", false)):
+		var failed := _start_failure("fixture_initial_store_data_invalid")
+		failed["initial_store_report"] = initial_store_report
+		return failed
 	var entity_report: Dictionary = stores["entity_store"].get_contract_report()
 	var state_report: Dictionary = stores["state_store"].get_contract_report()
 	var character_feature_report: Dictionary = stores[
@@ -245,6 +257,42 @@ func get_snapshot() -> Variant:
 	if not initialized:
 		return null
 	return snapshot_builder.build_snapshot(context, stores, false, get_time_summary())
+
+
+func get_market_stock_view(
+		market_policy_id: String,
+		buyer_entity_id: String = ""
+) -> Dictionary:
+	if not initialized:
+		return {"offers": [], "error": "session_not_ready"}
+	var policy := _find_market_policy(market_policy_id)
+	if policy.is_empty():
+		return {"offers": [], "error": "market_policy_not_found"}
+	var buyer_id := buyer_entity_id
+	if buyer_id == "":
+		buyer_id = str(context.actor_id)
+	return market_service.build_stock_view(policy, stores, buyer_id)
+
+
+func execute_market_trade(
+		market_policy_id: String,
+		intent: Dictionary
+) -> Dictionary:
+	if not initialized:
+		return {"success": false, "error": "session_not_ready"}
+	var policy := _find_market_policy(market_policy_id)
+	if policy.is_empty():
+		return {"success": false, "error": "market_policy_not_found"}
+	var normalized := intent.duplicate(true)
+	if str(normalized.get("buyer_entity_id", "")) == "":
+		normalized["buyer_entity_id"] = str(context.actor_id)
+	return market_service.execute_trade(
+		policy,
+		normalized,
+		stores,
+		writer,
+		get_time_summary()
+	)
 
 
 func get_action_candidates() -> Array:
@@ -1349,7 +1397,9 @@ func _reset_runtime() -> void:
 	challenge_definitions = []
 	return_echo_definitions = []
 	investigation_definitions = []
+	market_policies = []
 	challenge_rng = RandomNumberGenerator.new()
+	market_service = MarketServiceModel.new()
 	fixture_source_path = ""
 	fixture_source_data = {}
 	rule_source_paths = []
@@ -1385,6 +1435,13 @@ func _registered_definition_ids() -> Array:
 			ids.append("%s:%s" % [kind, definition_id])
 	ids.sort()
 	return ids
+
+
+func _find_market_policy(market_policy_id: String) -> Dictionary:
+	for policy: Dictionary in market_policies:
+		if str(policy.get("market_policy_id", "")) == market_policy_id:
+			return policy.duplicate(true)
+	return {}
 
 
 func get_save_store_data() -> Dictionary:
@@ -1589,7 +1646,7 @@ func _utc_timestamp() -> String:
 	return value if value.ends_with("Z") else value + "Z"
 
 
-func _create_stores(fixture: Dictionary) -> void:
+func _create_stores(fixture: Dictionary) -> Dictionary:
 	var entity_store = EntityStoreModel.new()
 	entity_store.configure_definitions(
 		registry.list_definitions("object"),
@@ -1605,7 +1662,6 @@ func _create_stores(fixture: Dictionary) -> void:
 	state_store.load_from_context(context)
 	var relationship_store = RelationshipStoreModel.new()
 	relationship_store.load_axis_defs(RELATIONSHIP_AXIS_DEFS_PATH)
-	var deferred_store = DeferredConsequenceStoreModel.new()
 	var fact_store = FactStoreModel.new()
 	for fact: Dictionary in fixture.get("known_facts", []):
 		fact_store.add_fact(fact)
@@ -1638,29 +1694,70 @@ func _create_stores(fixture: Dictionary) -> void:
 		"skill": registry.list_definitions("skill"),
 	}, entity_store, fact_store)
 	character_feature_store.load_initial_data(fixture, context)
+	var memory_store = MemoryStoreModel.new()
+	var trace_store = TraceStoreModel.new()
+	var rumor_store = RumorStoreModel.new()
+	var pressure_store = PressureStoreModel.new()
+	var obligation_store = ObligationStoreModel.new()
+	var exchange_store = ExchangeStoreModel.new()
+	var chronicle_store = ChronicleStoreModel.new()
+	var investigation_store = InvestigationLeadStoreModel.new()
+	var deferred_store = DeferredConsequenceStoreModel.new()
 	stores = {
 		"entity_store": entity_store,
 		"fact_store": fact_store,
 		"state_store": state_store,
 		"character_feature_store": character_feature_store,
 		"relationship_store": relationship_store,
-		"memory_store": MemoryStoreModel.new(),
-		"trace_store": TraceStoreModel.new(),
-		"rumor_store": RumorStoreModel.new(),
-		"pressure_store": PressureStoreModel.new(),
-		"obligation_store": ObligationStoreModel.new(),
-		"exchange_store": ExchangeStoreModel.new(),
+		"memory_store": memory_store,
+		"trace_store": trace_store,
+		"rumor_store": rumor_store,
+		"pressure_store": pressure_store,
+		"obligation_store": obligation_store,
+		"exchange_store": exchange_store,
 		"item_store": item_store,
 		"equipment_store": equipment_store,
-		"chronicle_store": ChronicleStoreModel.new(),
-		"investigation_store": InvestigationLeadStoreModel.new(),
+		"chronicle_store": chronicle_store,
+		"investigation_store": investigation_store,
 		"deferred_consequence_store": deferred_store,
 	}
-	for consequence: Dictionary in fixture.get(
-		"initial_deferred_consequences",
-		[]
-	):
-		deferred_store.add_deferred_consequence(consequence)
+	var reports := {
+		"relationships": relationship_store.load_save_data(
+			fixture.get("initial_relationships", {})
+		),
+		"memories": memory_store.load_save_data(
+			fixture.get("initial_memories", [])
+		),
+		"traces": trace_store.load_save_data(fixture.get("initial_traces", [])),
+		"rumors": rumor_store.load_save_data(fixture.get("initial_rumors", [])),
+		"pressures": pressure_store.load_save_data(
+			fixture.get("initial_pressures", [])
+		),
+		"obligations": obligation_store.load_save_data(
+			fixture.get("initial_obligations", [])
+		),
+		"exchanges": exchange_store.load_save_data(
+			fixture.get("initial_exchanges", [])
+		),
+		"deferred_consequences": deferred_store.load_save_data(
+			fixture.get("initial_deferred_consequences", [])
+		),
+		"chronicle_entries": chronicle_store.load_save_data(
+			fixture.get("initial_chronicle_entries", [])
+		),
+		"investigation_leads": investigation_store.load_save_data(
+			fixture.get("initial_investigation_leads", [])
+		),
+	}
+	var errors: Array[String] = []
+	for key: String in reports.keys():
+		var report: Dictionary = reports[key]
+		if not bool(report.get("ok", false)):
+			errors.append("%s:%s" % [
+				key,
+				",".join(report.get("errors", [])),
+			])
+	return {"ok": errors.is_empty(), "errors": errors, "reports": reports}
 
 
 func _execute_candidate(

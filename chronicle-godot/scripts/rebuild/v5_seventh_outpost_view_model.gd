@@ -10,6 +10,7 @@ const FIXTURE_PATH := (
 const PROJECT_PATH := (
 	"res://data/sim/raw/life_projects/seventh_outpost_first_winter.json"
 )
+const MARKET_POLICY_ID := "market_policy.seventh_outpost_canteen"
 const LifeStageTransitionServiceModel = preload(
 	"res://scripts/sim/save/life_stage_transition_service.gd"
 )
@@ -54,6 +55,43 @@ func perform_duty(duty_id: String) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func purchase_market_offer(
+		item_instance_id: String,
+		quoted_unit_price: int,
+		quantity: int = 1
+) -> Dictionary:
+	if not is_ready():
+		return {"success": false, "error": "project_not_ready"}
+	var trade: Dictionary = controller.session.execute_market_trade(
+		MARKET_POLICY_ID,
+		{
+			"item_instance_id": item_instance_id,
+			"quoted_unit_price": quoted_unit_price,
+			"quantity": quantity,
+		}
+	)
+	if bool(trade.get("success", false)):
+		latest_result = {
+			"success": true,
+			"title": "从玛塔手里领到一份口粮",
+			"summary": "你付出 %d 枚铜币。口粮进入随身物品，玛塔的库存和哨站粮食压力也已经改变。" % int(
+				trade.get("total_price", 0)
+			),
+			"settlement_notes": ["交易事实与交换记录已经写入世界。"],
+			"npc_narratives": [],
+			"base_values": {},
+			"modified_values": {},
+			"modifier_explanations": [],
+		}
+	else:
+		latest_result = {
+			"success": false,
+			"error": str(trade.get("error", "market_trade_failed")),
+			"blocked_reason": _market_error_text(trade),
+		}
+	return trade
+
+
 func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "ok": false, "error": "project_not_ready"}
@@ -94,6 +132,7 @@ func build_view_data() -> Dictionary:
 		"ritual": controller.get_ritual(),
 		"player": _player_view(snapshot),
 		"status": controller.get_status(),
+		"market": _market_view(snapshot),
 		"people": _people_view(snapshot),
 		"actions": _action_rows(),
 		"feedback": _feedback_view(),
@@ -121,9 +160,118 @@ func _player_view(snapshot: Variant) -> Dictionary:
 				int(snapshot.get_player_value("training", 0)),
 			],
 		]),
+		"features": _feature_lines(snapshot),
 		"fatigue": int(snapshot.get_player_value("fatigue", 0)),
 		"training": int(snapshot.get_player_value("training", 0)),
 	}
+
+
+func _feature_lines(snapshot: Variant) -> String:
+	var talent_names: Array[String] = []
+	for assignment: Dictionary in snapshot.get_talent_assignments("player"):
+		var definition: Dictionary = controller.session.registry.get_definition(
+			"talent", str(assignment.get("talent_def_id", ""))
+		)
+		talent_names.append(str(definition.get(
+			"display_name", assignment.get("talent_def_id", "")
+		)))
+	var mark_names: Array[String] = []
+	for mark: Dictionary in snapshot.get_mark_instances("player"):
+		var definition: Dictionary = controller.session.registry.get_definition(
+			"mark", str(mark.get("mark_def_id", ""))
+		)
+		mark_names.append("%s %s（%d）" % [
+			str(definition.get("display_name", mark.get("mark_def_id", ""))),
+			str(mark.get("stage_id", "")),
+			int(mark.get("progress", 0)),
+		])
+	var skill_names: Array[String] = []
+	var progress_by_id: Dictionary = {}
+	for skill: Dictionary in snapshot.get_skill_progress("player"):
+		progress_by_id[str(skill.get("skill_def_id", ""))] = skill
+	for skill_id: String in [
+		"skill.scouting", "skill.maintenance", "skill.archery"
+	]:
+		var definition: Dictionary = controller.session.registry.get_definition(
+			"skill", skill_id
+		)
+		var progress: Dictionary = progress_by_id.get(skill_id, {})
+		skill_names.append("%s %d级·%d经验" % [
+			str(definition.get("display_name", skill_id)),
+			int(progress.get("rank", 0)),
+			int(progress.get("practice_xp", 0)),
+		])
+	var equipment_names: Array[String] = []
+	for slot: String in ["body_outer", "main_hand", "utility"]:
+		var item: Dictionary = snapshot.get_equipped_item("player", slot)
+		if item.is_empty():
+			continue
+		var condition: Dictionary = item.get("condition", {})
+		var durability := ""
+		if condition.has("durability"):
+			durability = " %d/%d" % [
+				int(condition.get("durability", 0)),
+				int(condition.get("maximum_durability", 0)),
+			]
+		equipment_names.append("%s%s" % [
+			str(item.get("display_name", item.get("item_def_id", ""))),
+			durability,
+		])
+	return "\n".join([
+		"天赋　%s" % "、".join(talent_names),
+		"印记　%s" % (
+			"尚未形成" if mark_names.is_empty() else "、".join(mark_names)
+		),
+		"技能　%s" % "　".join(skill_names),
+		"装备　%s" % "　".join(equipment_names),
+	])
+
+
+func _market_view(snapshot: Variant) -> Dictionary:
+	var stock: Dictionary = controller.session.get_market_stock_view(
+		MARKET_POLICY_ID
+	)
+	var coin_count := _owned_item_quantity(
+		snapshot, "player", "item.copper_coin"
+	)
+	var ration_count := _owned_item_quantity(
+		snapshot, "player", "item.travel_ration"
+	)
+	var offers: Array[Dictionary] = []
+	for offer: Dictionary in stock.get("offers", []):
+		var unit_price := int(offer.get("unit_price", 0))
+		offers.append({
+			"item_instance_id": str(offer.get("item_instance_id", "")),
+			"display_name": str(offer.get("display_name", "口粮")),
+			"available_quantity": int(offer.get("available_quantity", 0)),
+			"unit_price": unit_price,
+			"quote_summary": str(offer.get("quote_summary", "")),
+			"can_purchase": coin_count >= unit_price,
+		})
+	return {
+		"display_name": str(stock.get("display_name", "哨站配给处")),
+		"coin_count": coin_count,
+		"ration_count": ration_count,
+		"offers": offers,
+		"error": str(stock.get("error", "")),
+	}
+
+
+func _owned_item_quantity(
+		snapshot: Variant,
+		owner_id: String,
+		item_def_id: String
+) -> int:
+	var quantity := 0
+	for item: Dictionary in snapshot.get_items():
+		var holder: Dictionary = item.get("holder", {})
+		if (
+			str(holder.get("kind", "")) == "entity"
+			and str(holder.get("id", "")) == owner_id
+			and str(item.get("item_def_id", "")) == item_def_id
+		):
+			quantity += int(item.get("quantity", 0))
+	return quantity
 
 
 func _people_view(snapshot: Variant) -> Array:
@@ -200,6 +348,13 @@ func _feedback_view() -> Dictionary:
 			"details": [],
 		}
 	var details: Array[String] = []
+	var risk_outcome: Dictionary = latest_result.get("risk_outcome", {})
+	if not risk_outcome.is_empty():
+		details.append("%s：掷骰 %d，对抗风险 %d" % [
+			str(risk_outcome.get("title", "风险结算")),
+			int(risk_outcome.get("roll", 0)),
+			int(risk_outcome.get("risk", 0)),
+		])
 	for note: Variant in latest_result.get("settlement_notes", []):
 		details.append(str(note))
 	for narrative: Variant in latest_result.get("npc_narratives", []):
@@ -264,3 +419,14 @@ func _unmet_requirement_summary(requirements: Array) -> String:
 					_number_text(float(required)),
 				]
 	return ""
+
+
+func _market_error_text(result: Dictionary) -> String:
+	match str(result.get("error", "")):
+		"quote_changed":
+			return "粮食压力改变了报价，请查看当前价格后再买。"
+		"insufficient_payment":
+			return "你的铜币不够。物品和库存都没有改变。"
+		"insufficient_stock", "offer_no_longer_available":
+			return "玛塔手里已经没有这份库存。"
+	return "这笔交易没有完成，物品与铜币均未改变。"

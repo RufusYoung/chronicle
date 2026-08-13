@@ -39,9 +39,11 @@ func _run() -> void:
 	])
 	_check(
 		bool(report.get("ok", false))
-		and int(report.get("total_definition_count", 0)) == 49
+		and int(report.get("total_definition_count", 0)) == 59
 		and registry.has_definition("item", "item.travel_ration")
-		and registry.has_definition("item", "item.waxed_winter_cloak"),
+		and registry.has_definition("item", "item.waxed_winter_cloak")
+		and registry.has_definition("item", "item.copper_coin")
+		and registry.has_definition("item", "item.field_repair_hammer"),
 		"1. ItemDef 以稳定 ID 进入严格 Registry"
 	)
 	var invalid_registry = SimRegistryModel.new()
@@ -341,7 +343,7 @@ func _run() -> void:
 		_finish()
 		return
 	_check(
-		int(start.get("definition_count", 0)) == 49
+		int(start.get("definition_count", 0)) == 59
 		and bool((start.get("item_contract_report", {}) as Dictionary).get(
 			"ok",
 			false

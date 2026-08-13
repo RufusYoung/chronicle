@@ -328,11 +328,19 @@ func _evaluate_condition(
 			current = _skill_rank(snapshot, actor_id, skill_id)
 			label = _label_or_definition(label, "skill", skill_id)
 		"item_owned":
-			current = _owned_item_quantity(snapshot, actor_id, condition)
+			var owner_id := _resolve_side(
+				str(condition.get("owner", "actor")), actor_id, target_id
+			)
+			current = _owned_item_quantity(snapshot, owner_id, condition)
 			if label == "":
 				label = "持有物品"
 		"item_equipped":
-			current = _has_equipped_item(snapshot, actor_id, condition)
+			var equipment_owner_id := _resolve_side(
+				str(condition.get("owner", "actor")), actor_id, target_id
+			)
+			current = _has_equipped_item(
+				snapshot, equipment_owner_id, condition
+			)
 			if label == "":
 				label = "已装备物品"
 		"relationship_axis":

@@ -138,32 +138,80 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("panel")
 
-[node name="Content" type="VBoxContainer" parent="Margin/Root/Main/Left"]
+[node name="Scroll" type="ScrollContainer" parent="Margin/Root/Main/Left"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Content" type="VBoxContainer" parent="Margin/Root/Main/Left/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="PlayerHeading" type="Label" parent="Margin/Root/Main/Left/Content"]
+[node name="PlayerHeading" type="Label" parent="Margin/Root/Main/Left/Scroll/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.84, 0.76, 0.61, 1)
 theme_override_font_sizes/font_size = 17
 text = "服役中的你"
 
-[node name="PlayerText" type="RichTextLabel" parent="Margin/Root/Main/Left/Content"]
+[node name="PlayerText" type="RichTextLabel" parent="Margin/Root/Main/Left/Scroll/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 112)
 layout_mode = 2
-fit_content = false
+fit_content = true
+scroll_active = false
 
-[node name="Divider" type="HSeparator" parent="Margin/Root/Main/Left/Content"]
+[node name="MarketDivider" type="HSeparator" parent="Margin/Root/Main/Left/Scroll/Content"]
 layout_mode = 2
 
-[node name="ObjectiveText" type="RichTextLabel" parent="Margin/Root/Main/Left/Content"]
+[node name="MarketHeading" type="Label" parent="Margin/Root/Main/Left/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.76, 0.61, 1)
+theme_override_font_sizes/font_size = 17
+text = "随身与配给"
+
+[node name="MarketText" type="RichTextLabel" parent="Margin/Root/Main/Left/Scroll/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.72, 0.72, 0.67, 1)
 bbcode_enabled = true
-fit_content = false
+fit_content = true
+scroll_active = false
+
+[node name="MarketButtons" type="VBoxContainer" parent="Margin/Root/Main/Left/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FeatureDivider" type="HSeparator" parent="Margin/Root/Main/Left/Scroll/Content"]
+layout_mode = 2
+
+[node name="FeatureHeading" type="Label" parent="Margin/Root/Main/Left/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.76, 0.61, 1)
+theme_override_font_sizes/font_size = 17
+text = "经历与装备"
+
+[node name="FeatureText" type="RichTextLabel" parent="Margin/Root/Main/Left/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.72, 0.72, 0.67, 1)
+fit_content = true
+scroll_active = false
+
+[node name="Divider" type="HSeparator" parent="Margin/Root/Main/Left/Scroll/Content"]
+layout_mode = 2
+
+[node name="ObjectiveText" type="RichTextLabel" parent="Margin/Root/Main/Left/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.72, 0.72, 0.67, 1)
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
 
 [node name="Center" type="PanelContainer" parent="Margin/Root/Main"]
 custom_minimum_size = Vector2(500, 0)

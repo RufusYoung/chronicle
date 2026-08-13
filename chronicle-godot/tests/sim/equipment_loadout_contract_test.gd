@@ -50,7 +50,7 @@ func _run() -> void:
 	])
 	_check(
 		bool(definition_report.get("ok", false))
-		and int(definition_report.get("total_definition_count", 0)) == 49
+		and int(definition_report.get("total_definition_count", 0)) == 59
 		and registry.has_definition("equipment_slot", "slot.body_outer")
 		and registry.has_definition("equipment_slot", "slot.main_hand")
 		and registry.has_definition("equipment_slot", "slot.utility"),
@@ -337,7 +337,7 @@ func _run() -> void:
 	)
 	_check(
 		bool(start.get("success", false))
-		and int(start.get("definition_count", 0)) == 49
+		and int(start.get("definition_count", 0)) == 59
 		and bool((start.get(
 			"equipment_contract_report",
 			{}
@@ -362,16 +362,24 @@ func _run() -> void:
 			"durability",
 			0
 		)) == 76
-		and (inventory_view.get("item_instance_ids", []) as Array)
-			== ["item_instance.seventh_outpost.player_winter_cloak"]
-		and is_equal_approx(float(inventory_view.get("total_mass", 0.0)), 2.4),
-		"12. 第七哨站真实冬斗篷同时进入装备与 InventoryView 投影"
+		and (inventory_view.get("item_instance_ids", []) as Array).size() == 5
+		and "item_instance.seventh_outpost.player_winter_cloak" in (
+			inventory_view.get("item_instance_ids", []) as Array
+		)
+		and "item_instance.seventh_outpost.player_repair_hammer" in (
+			inventory_view.get("item_instance_ids", []) as Array
+		)
+		and "item_instance.seventh_outpost.player_patrol_lantern" in (
+			inventory_view.get("item_instance_ids", []) as Array
+		)
+		and is_equal_approx(float(inventory_view.get("total_mass", 0.0)), 6.54),
+		"12. 第七哨站三件装备与随身物同时进入 InventoryView 投影"
 	)
 	var outpost_market: Dictionary = snapshot.get_market_stock_view("seventh_outpost")
 	var player_market: Dictionary = snapshot.get_market_stock_view("player")
 	_check(
-		(outpost_market.get("offers", []) as Array).is_empty()
-		and (player_market.get("offers", []) as Array).size() == 1
+		(outpost_market.get("offers", []) as Array).size() == 2
+		and (player_market.get("offers", []) as Array).size() == 5
 		and str(((player_market.get("offers", []) as Array)[0] as Dictionary).get(
 			"quote_status",
 			""

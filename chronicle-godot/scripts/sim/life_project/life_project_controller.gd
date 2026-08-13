@@ -168,7 +168,7 @@ func get_duty_options() -> Array:
 	return rows
 
 
-func execute_duty(duty_id: String) -> Dictionary:
+func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	if not is_ready():
 		return _failure("project_not_initialized")
 	if is_complete():
@@ -195,7 +195,9 @@ func execute_duty(duty_id: String) -> Dictionary:
 			tick_validation.get("errors", []) as Array
 		).duplicate(true)
 		return invalid_tick
-	var duty_result: Variant = _build_duty_transaction(duty, day)
+	var duty_result: Variant = _build_duty_transaction(
+		duty, day, eligibility, options
+	)
 	if str(duty_result.contract_status) != "resolved":
 		var invalid_effect := _failure("duty_effect_contract_invalid")
 		invalid_effect["contract_error"] = str(duty_result.error_reason)
@@ -237,6 +239,9 @@ func execute_duty(duty_id: String) -> Dictionary:
 		"label": str(duty.get("label", duty_id)),
 		"title": str(duty_result.narrative_result.get("title", "值勤结束")),
 		"summary": str(duty_result.narrative_result.get("summary", "")),
+		"risk_outcome": (
+			duty_result.narrative_result.get("risk_outcome", {}) as Dictionary
+		).duplicate(true),
 		"settlement_notes": (
 			settlement_result.narrative_result.get("notes", []) as Array
 		).duplicate(true),
@@ -255,6 +260,7 @@ func execute_duty(duty_id: String) -> Dictionary:
 		"duty_id": duty_id,
 		"title": row["title"],
 		"summary": row["summary"],
+		"risk_outcome": row["risk_outcome"],
 		"settlement_notes": row["settlement_notes"],
 		"npc_narratives": row["npc_narratives"],
 		"status": row["status"],
@@ -318,14 +324,70 @@ func get_completion_summary() -> Dictionary:
 		"lines": lines,
 		"duty_counts": duty_counts.duplicate(true),
 		"status": get_status(),
+		"growth_candidates": get_growth_candidates(),
 	}
 
 
-func _build_duty_transaction(duty: Dictionary, day: int) -> Variant:
+func get_growth_candidates() -> Array:
+	var rows: Array[Dictionary] = []
+	if not is_ready():
+		return rows
+	for rule_value: Variant in definition.get("growth_candidate_rules", []):
+		if not rule_value is Dictionary:
+			continue
+		var rule := rule_value as Dictionary
+		if bool(rule.get("requires_completion", true)) and not is_complete():
+			continue
+		var source_fact_ids := _matching_growth_fact_ids(
+			rule.get("fact_match", {})
+		)
+		var minimum_count := maxi(int(rule.get("minimum_fact_count", 1)), 1)
+		if source_fact_ids.size() < minimum_count:
+			continue
+		rows.append({
+			"candidate_id": str(rule.get("candidate_id", "")),
+			"title": str(rule.get("title", "阶段成长")),
+			"description": str(rule.get("description", "")),
+			"evidence_label": str(rule.get("evidence_label", "经历事实")),
+			"evidence_count": source_fact_ids.size(),
+			"minimum_fact_count": minimum_count,
+			"source_fact_ids": source_fact_ids,
+			"reward_preview": (
+				rule.get("reward_preview", {}) as Dictionary
+			).duplicate(true),
+		})
+	return rows
+
+
+func _matching_growth_fact_ids(match_rule: Variant) -> Array:
+	var rows: Array = []
+	if not match_rule is Dictionary:
+		return rows
+	var matcher := match_rule as Dictionary
+	var duty_ids: Array = matcher.get("duty_ids", [])
+	for fact: Dictionary in session.stores["fact_store"].list_facts():
+		if str(fact.get("project_id", "")) != project_id:
+			continue
+		var fact_type := str(matcher.get("fact_type", ""))
+		if fact_type != "" and str(fact.get("fact_type", "")) != fact_type:
+			continue
+		if not duty_ids.is_empty() and str(fact.get("duty_id", "")) not in duty_ids:
+			continue
+		rows.append(str(fact.get("fact_id", "")))
+	return rows
+
+
+func _build_duty_transaction(
+		duty: Dictionary,
+		day: int,
+		eligibility: Dictionary = {},
+		options: Dictionary = {}
+) -> Variant:
 	var result = TransactionResultModel.new()
 	var duty_id := str(duty.get("duty_id", ""))
+	var duty_fact_id := "%s:duty:%d:%s" % [project_id, day, duty_id]
 	result.add_fact({
-		"fact_id": "%s:duty:%d:%s" % [project_id, day, duty_id],
+		"fact_id": duty_fact_id,
 		"fact_type": "life_project_duty_completed",
 		"actor_id": "player",
 		"project_id": project_id,
@@ -336,7 +398,28 @@ func _build_duty_transaction(duty: Dictionary, day: int) -> Variant:
 			"narrative", {}
 		).get("summary", "")),
 	})
-	var effects: Dictionary = duty.get("effects", {})
+	var progress_fact_id := ""
+	var progress_fact: Dictionary = duty.get("progress_fact", {})
+	if not progress_fact.is_empty():
+		progress_fact_id = "%s:progress:%d:%s" % [project_id, day, duty_id]
+		var normalized_progress_fact := progress_fact.duplicate(true)
+		normalized_progress_fact["fact_id"] = progress_fact_id
+		if str(normalized_progress_fact.get("actor_id", "")) == "":
+			normalized_progress_fact["actor_id"] = "player"
+		normalized_progress_fact["project_id"] = project_id
+		normalized_progress_fact["duty_id"] = duty_id
+		normalized_progress_fact["day"] = day
+		normalized_progress_fact["location_id"] = str(
+			session.context.location_id
+		)
+		result.add_fact(normalized_progress_fact)
+	var effects: Dictionary = _replace_effect_tokens(
+		duty.get("effects", {}),
+		{
+			"$duty_fact_id": duty_fact_id,
+			"$progress_fact_id": progress_fact_id,
+		}
+	)
 	var effect_report: Dictionary = effect_protocol_resolver.append_effects(
 		result, effects
 	)
@@ -357,11 +440,119 @@ func _build_duty_transaction(duty: Dictionary, day: int) -> Variant:
 		"clarity": "high",
 		"can_be_told_as_rumor": false,
 	})
-	result.set_narrative_result(
-		(effects.get("narrative", {}) as Dictionary).duplicate(true)
+	var narrative := (
+		effects.get("narrative", {}) as Dictionary
+	).duplicate(true)
+	var risk_report := _append_risk_outcome(
+		result, duty, day, eligibility, options
 	)
+	if not bool(risk_report.get("ok", true)):
+		result.mark_invalid_contract(
+			"life_project_duty",
+			str(risk_report.get("error", "risk_outcome_invalid"))
+		)
+		return result
+	var risk_outcome: Dictionary = risk_report.get("outcome", {})
+	if not risk_outcome.is_empty():
+		narrative["risk_outcome"] = risk_outcome
+		var consequence := str(risk_outcome.get("consequence", ""))
+		if consequence != "":
+			narrative["summary"] = "%s\n%s" % [
+				str(narrative.get("summary", "")), consequence
+			]
+	result.set_narrative_result(narrative)
 	result.mark_resolved("life_project_duty")
 	return result
+
+
+func _append_risk_outcome(
+		result: Variant,
+		duty: Dictionary,
+		day: int,
+		eligibility: Dictionary,
+		options: Dictionary
+) -> Dictionary:
+	var config: Dictionary = duty.get("risk_resolution", {})
+	if config.is_empty():
+		return {"ok": true, "outcome": {}}
+	var risk := maxi(int((eligibility.get(
+		"modified_values", {}
+	) as Dictionary).get("action.risk", 0)), 0)
+	var die_sides := maxi(int(config.get("die_sides", 10)), 1)
+	var roll := int(options.get("risk_roll_override", 0))
+	if roll < 1:
+		roll = session.challenge_rng.randi_range(1, die_sides)
+	roll = clampi(roll, 1, die_sides)
+	var margin := roll - risk
+	var selected: Dictionary = {}
+	var selected_threshold := -1000000
+	for tier_value: Variant in config.get("tiers", []):
+		if not tier_value is Dictionary:
+			continue
+		var tier := tier_value as Dictionary
+		var threshold := int(tier.get("minimum_margin", -1000000))
+		if margin >= threshold and threshold >= selected_threshold:
+			selected = tier
+			selected_threshold = threshold
+	if selected.is_empty():
+		return {"ok": false, "error": "risk_outcome_tier_missing"}
+	var fact_id := "%s:risk:%d:%s" % [
+		project_id, day, str(duty.get("duty_id", ""))
+	]
+	result.add_fact({
+		"fact_id": fact_id,
+		"fact_type": "life_project_risk_resolved",
+		"actor_id": "player",
+		"project_id": project_id,
+		"duty_id": str(duty.get("duty_id", "")),
+		"day": day,
+		"location_id": str(session.context.location_id),
+		"risk": risk,
+		"roll": roll,
+		"margin": margin,
+		"outcome_tier": str(selected.get("tier_id", "")),
+	})
+	var risk_effects: Variant = _replace_effect_tokens(
+		selected.get("effects", {}), {"$risk_fact_id": fact_id}
+	)
+	var effect_report: Dictionary = effect_protocol_resolver.append_effects(
+		result, risk_effects
+	)
+	if not bool(effect_report.get("ok", false)):
+		return {
+			"ok": false,
+			"error": ",".join(effect_report.get("errors", [])),
+		}
+	return {
+		"ok": true,
+		"outcome": {
+			"tier_id": str(selected.get("tier_id", "")),
+			"title": str(selected.get("title", "风险结算")),
+			"consequence": str(selected.get("consequence", "")),
+			"risk": risk,
+			"roll": roll,
+			"margin": margin,
+			"source_fact_id": fact_id,
+		},
+	}
+
+
+func _replace_effect_tokens(value: Variant, replacements: Dictionary) -> Variant:
+	if value is Dictionary:
+		var row: Dictionary = {}
+		for key: Variant in (value as Dictionary).keys():
+			row[key] = _replace_effect_tokens(
+				(value as Dictionary).get(key), replacements
+			)
+		return row
+	if value is Array:
+		var rows: Array = []
+		for entry: Variant in value:
+			rows.append(_replace_effect_tokens(entry, replacements))
+		return rows
+	if value is String and replacements.has(value):
+		return replacements.get(value)
+	return value
 
 
 func _settle_day(day: int) -> Variant:
