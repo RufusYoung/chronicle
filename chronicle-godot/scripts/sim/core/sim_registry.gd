@@ -420,6 +420,26 @@ func _validate_mark_definition(
 				or int(progress_by_type[fact_type]) <= 0
 			):
 				errors.append("mark:%s:invalid_progress_fact_type" % definition_id)
+	var progress_rules: Variant = definition.get("progress_rules", [])
+	if not progress_rules is Array:
+		errors.append("mark:%s:progress_rules_not_array" % definition_id)
+	else:
+		var accepted_types: Variant = definition.get("accepted_fact_types", [])
+		for rule_value: Variant in progress_rules:
+			if not rule_value is Dictionary:
+				errors.append("mark:%s:progress_rule_not_dictionary" % definition_id)
+				continue
+			var rule := rule_value as Dictionary
+			var fact_type := str(rule.get("fact_type", ""))
+			if (
+				fact_type == ""
+				or not accepted_types is Array
+				or fact_type not in accepted_types
+				or int(rule.get("delta", 0)) <= 0
+			):
+				errors.append("mark:%s:invalid_progress_rule" % definition_id)
+			if not rule.get("field_equals", {}) is Dictionary:
+				errors.append("mark:%s:progress_rule_fields_not_dictionary" % definition_id)
 
 
 func _validate_skill_definition(
@@ -689,6 +709,13 @@ func _normalize_definition(kind: String, data: Dictionary) -> Dictionary:
 				if stage_value is Dictionary:
 					(stage_value as Dictionary)["threshold"] = int(
 						(stage_value as Dictionary).get("threshold", 0)
+					)
+		var progress_rules: Variant = normalized.get("progress_rules", [])
+		if progress_rules is Array:
+			for rule_value: Variant in progress_rules:
+				if rule_value is Dictionary:
+					(rule_value as Dictionary)["delta"] = int(
+						(rule_value as Dictionary).get("delta", 0)
 					)
 	if kind == "skill":
 		var raw_thresholds: Variant = normalized.get("rank_thresholds", [])

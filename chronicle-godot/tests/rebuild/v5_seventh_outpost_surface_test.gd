@@ -187,6 +187,9 @@ func _run() -> void:
 	_check(
 		"感知 11" in player_text.text
 		and "雾线读迹者" in feature_text.text
+		and "雾线守望 integrated（11）" in feature_text.text
+		and "侦察 2级·60经验" in feature_text.text
+		and "遮光巡灯 52/60 · 1 条履历" in feature_text.text
 		and action_buttons.get_child_count() == 0
 		and "阶段成长已确认" in action_heading.text
 		and feedback_title.text == "成长已经留下",

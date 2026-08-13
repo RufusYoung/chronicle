@@ -1,0 +1,66 @@
+{
+  "fixture_id": "seventh_outpost_after_first_winter_transition",
+  "location_id": "outpost_spring_roll_call",
+  "locations": {
+    "outpost_spring_roll_call": {
+      "id": "outpost_spring_roll_call",
+      "display_name": "第七哨站 · 冬后点名",
+      "description": "雪线刚刚退到北坡，旧点名册已经翻到空白的一页。这是下一人生阶段的交接面，不包含第二年内容。",
+      "tags": ["military_outpost", "border", "life_stage_transition"]
+    }
+  },
+  "world_time": {"day": 8, "hour": 6},
+  "region_state": {
+    "winter": "first_winter_complete",
+    "weather": "thaw"
+  },
+  "institution": {
+    "chain_of_command": "active",
+    "service_year": 1,
+    "ritual": "post_winter_roll_call"
+  },
+  "entities": [
+    {
+      "id": "seventh_outpost",
+      "location_id": "outpost_spring_roll_call",
+      "display_name": "第七哨站",
+      "type": "institution",
+      "tags": ["military_outpost", "service_project"],
+      "states": {
+        "visible": false,
+        "supply": 6,
+        "morale": 6,
+        "discipline": 5,
+        "wall_integrity": 8,
+        "border_pressure": 4,
+        "readiness": 5
+      }
+    }
+  ],
+  "player": {
+    "id": "player",
+    "role": "recruit",
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
+    "perception": 10,
+    "health": 100,
+    "fatigue": 0,
+    "service_day": 1,
+    "training": 0,
+    "last_duty": "none"
+  },
+  "known_facts": [],
+  "initial_character_features": {
+    "talent_assignments": [],
+    "trait_instances": [],
+    "mark_instances": [],
+    "skill_progress": []
+  },
+  "initial_items": [],
+  "initial_equipment_loadouts": [
+    {"entity_id": "player", "slots": {}, "updated_tick": 0}
+  ]
+}

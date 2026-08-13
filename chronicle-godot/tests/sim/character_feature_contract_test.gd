@@ -33,10 +33,12 @@ func _run() -> void:
 	])
 	_check(
 		bool(definition_report.get("ok", false))
-		and int(definition_report.get("total_definition_count", 0)) == 48
+		and int(definition_report.get("total_definition_count", 0)) == 50
 		and registry.has_definition("talent", "talent.night_adapted_eyes")
 		and registry.has_definition("talent", "talent.steady_hands")
 		and registry.has_definition("trait", "trait.twisted_ankle")
+		and registry.has_definition("trait", "trait.winter_work_callus")
+		and registry.has_definition("trait", "trait.fire_circle_belonging")
 		and registry.has_definition("mark", "mark.mist_salt_echo")
 		and registry.has_definition("mark", "mark.winter_wall_callus")
 		and registry.has_definition("skill", "skill.scouting")
@@ -61,6 +63,30 @@ func _run() -> void:
 		})
 		and not bool(invalid_registry.get_definition_report().get("ok", true)),
 		"2. Registry 拒绝缺少事实来源或阶段阈值倒序的 MarkDef"
+	)
+	var invalid_progress_registry = SimRegistryModel.new()
+	_check(
+		not invalid_progress_registry.register_definition(
+			"mark",
+			"mark.invalid_progress_rule",
+			{
+				"definition_version": 1,
+				"display_name_key": "mark.invalid_progress_rule.name",
+				"tags": [],
+				"modifiers": [],
+				"granted_affordance_tags": [],
+				"accepted_fact_types": ["test_mark_progress"],
+				"progress_by_fact_type": {"test_mark_progress": 1},
+				"progress_rules": [
+					{"fact_type": "unaccepted_fact", "delta": 1},
+				],
+				"stages": [{"stage_id": "noticed", "threshold": 1}],
+			}
+		)
+		and not bool(invalid_progress_registry.get_definition_report().get(
+			"ok", true
+		)),
+		"2B. Registry rejects a Mark progress rule for an unaccepted fact"
 	)
 	var malformed_registry = SimRegistryModel.new()
 	_check(
@@ -303,7 +329,7 @@ func _run() -> void:
 	var snapshot: Variant = session.get_snapshot()
 	var progress: Dictionary = snapshot.get_character_progress()
 	_check(
-		int(start.get("definition_count", 0)) == 62
+		int(start.get("definition_count", 0)) == 64
 		and session.stores.has("character_feature_store")
 		and int((progress.get("attributes", {}) as Dictionary).get(
 			"perception",

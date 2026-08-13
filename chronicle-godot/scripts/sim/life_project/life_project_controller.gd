@@ -16,6 +16,9 @@ const EffectProtocolResolverModel = preload(
 	"res://scripts/sim/transaction/effect_protocol_resolver.gd"
 )
 const SimSnapshotModel = preload("res://scripts/sim/core/sim_snapshot.gd")
+const LifeStageTransitionServiceModel = preload(
+	"res://scripts/sim/save/life_stage_transition_service.gd"
+)
 
 var session: Variant = null
 var definition: Dictionary = {}
@@ -84,6 +87,19 @@ func build_save_envelope(options: Dictionary = {}) -> Dictionary:
 	var save_options := options.duplicate(true)
 	save_options["life_project_runtime"] = _life_project_save_data()
 	return session.build_save_envelope(save_options)
+
+
+func build_life_stage_transition(target_fixture_id: String) -> Dictionary:
+	if (
+		not is_complete()
+		or _confirmed_growth_candidate_id() == ""
+		or target_fixture_id == ""
+	):
+		return {}
+	return LifeStageTransitionServiceModel.new().build_player_transition(
+		session,
+		{"target_fixture_id": target_fixture_id}
+	)
 
 
 func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
@@ -376,8 +392,7 @@ func confirm_growth_candidate(candidate_id: String) -> Dictionary:
 	if reward.is_empty():
 		return _failure("growth_reward_missing")
 	var fact_id := "%s:growth_confirmed:%s" % [project_id, candidate_id]
-	var result = TransactionResultModel.new()
-	result.add_fact({
+	var growth_fact := {
 		"fact_id": fact_id,
 		"fact_type": "life_project_growth_confirmed",
 		"actor_id": "player",
@@ -388,9 +403,28 @@ func confirm_growth_candidate(candidate_id: String) -> Dictionary:
 		).duplicate(true),
 		"day": get_day(),
 		"location_id": str(session.context.location_id),
-	})
+	}
+	var derivation_report := _validate_growth_feature_derivations(
+		growth_fact,
+		reward.get("required_feature_derivations", {})
+	)
+	if not bool(derivation_report.get("ok", false)):
+		return _growth_contract_failure(
+			"growth_feature_derivation_invalid", derivation_report
+		)
+	var result = TransactionResultModel.new()
+	result.add_fact(growth_fact)
+	var reward_effects: Variant = _replace_effect_tokens(
+		reward.get("effects", {}),
+		{
+			"$growth_fact_id": fact_id,
+			"$growth_tick": int(
+				session.current_day * 24 + session.current_hour
+			),
+		}
+	)
 	var effect_report: Dictionary = effect_protocol_resolver.append_effects(
-		result, reward.get("effects", {})
+		result, reward_effects
 	)
 	if not bool(effect_report.get("ok", false)):
 		return _growth_contract_failure(
@@ -470,6 +504,38 @@ func confirm_growth_candidate(candidate_id: String) -> Dictionary:
 		"modifier_explanations": [],
 	}
 	return latest_result.duplicate(true)
+
+
+func _validate_growth_feature_derivations(
+		growth_fact: Dictionary,
+		required_value: Variant
+) -> Dictionary:
+	if not required_value is Dictionary:
+		return {
+			"ok": false,
+			"errors": ["required_feature_derivations_not_dictionary"],
+		}
+	var required := required_value as Dictionary
+	var store: Variant = session.stores.get("character_feature_store")
+	if store == null or not store.has_method("describe_fact_derivations"):
+		return {"ok": false, "errors": ["feature_derivation_store_missing"]}
+	var actual: Dictionary = store.describe_fact_derivations(growth_fact)
+	var errors: Array[String] = []
+	for key: String in ["trait_def_ids", "mark_def_ids", "skill_def_ids"]:
+		var expected_value: Variant = required.get(key, [])
+		if not expected_value is Array:
+			errors.append("feature_derivation_not_array:%s" % key)
+			continue
+		for definition_id: Variant in expected_value:
+			if str(definition_id) not in (actual.get(key, []) as Array):
+				errors.append(
+					"feature_derivation_missing:%s:%s" % [key, definition_id]
+				)
+	return {
+		"ok": errors.is_empty(),
+		"errors": errors,
+		"actual": actual,
+	}
 
 
 func _growth_candidate(candidate_id: String) -> Dictionary:

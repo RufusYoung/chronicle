@@ -1,0 +1,62 @@
+{
+  "project_id": "seventh_outpost_post_winter_transition_contract",
+  "title": "第七哨站 · 冬后交接合同",
+  "duration_days": 1,
+  "scope_entity_id": "seventh_outpost",
+  "ritual": {
+    "title": "冬后第 {day} 天 · 交接点名",
+    "body": "这一日仅用于验证上一人生阶段留下的状态可以继续参与演算，不代表第二年正式内容。"
+  },
+  "state_bounds": {
+    "seventh_outpost": {
+      "supply": [0, 12],
+      "morale": [0, 12],
+      "discipline": [0, 12],
+      "wall_integrity": [0, 12],
+      "border_pressure": [0, 12],
+      "readiness": [0, 12]
+    },
+    "player": {
+      "fatigue": [0, 10],
+      "training": [0, 20]
+    }
+  },
+  "daily_settlement": {
+    "base_state_changes": []
+  },
+  "status_axes": [
+    {"key": "border_pressure", "label": "边境压力", "warning_above": 7},
+    {"key": "readiness", "label": "战备", "warning_below": 4}
+  ],
+  "completion": {
+    "title": "冬后交接验证完成",
+    "intro": "角色携带第一冬成长完成了一次后续演算。",
+    "outcomes": []
+  },
+  "growth_candidate_rules": [],
+  "duties": [
+    {
+      "duty_id": "patrol_fog_line",
+      "label": "[合同验证] 再巡一次雾线",
+      "kind": "交接验证",
+      "hint": "验证第一冬获得的属性、技艺、印记和装备会继续参与行动。",
+      "action_tags": ["fog_patrol", "foot_patrol", "mist_salt_exposure"],
+      "base_values": {"action.risk": 6},
+      "progress_fact": {
+        "fact_type": "actor_completed_border_watch",
+        "summary": "冬后再次完成雾线巡查。"
+      },
+      "effects": {
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -1},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 1},
+          {"operation": "state_add", "entity_id": "player", "key": "training", "delta": 1}
+        ],
+        "narrative": {
+          "title": "旧经验仍在手上",
+          "summary": "你沿冬后雾线走过一圈，第一冬留下的判断和工具履历继续影响这次行动。"
+        }
+      }
+    }
+  ]
+}

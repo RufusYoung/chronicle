@@ -149,6 +149,53 @@
         }
       ],
       "modifiers": []
+    },
+    {
+      "trait_def_id": "trait.winter_work_callus",
+      "definition_version": 1,
+      "display_name_key": "trait.winter_work_callus.name",
+      "display_name": "风雪劳茧",
+      "tags": ["physical", "earned", "labor", "persistent"],
+      "stage_order": ["fresh", "settled"],
+      "terminal_stages": [],
+      "allow_multiple_instances": false,
+      "source_fact_rules": [
+        {
+          "fact_type": "life_project_growth_confirmed",
+          "field_equals": {"candidate_id": "growth.first_winter.steady_worker"},
+          "stage_id": "settled",
+          "severity": 1
+        }
+      ],
+      "modifiers": [
+        {
+          "modifier_id": "winter_work_callus_labor_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -1,
+          "when": [{"kind": "action_tag", "tag": "winter_labor"}],
+          "explain_text": "手上的劳茧记录了如何在严寒里握稳工具。"
+        }
+      ]
+    },
+    {
+      "trait_def_id": "trait.fire_circle_belonging",
+      "definition_version": 1,
+      "display_name_key": "trait.fire_circle_belonging.name",
+      "display_name": "火边归属",
+      "tags": ["social", "earned", "companionship", "persistent"],
+      "stage_order": ["recognized"],
+      "terminal_stages": [],
+      "allow_multiple_instances": false,
+      "source_fact_rules": [
+        {
+          "fact_type": "life_project_growth_confirmed",
+          "field_equals": {"candidate_id": "growth.first_winter.fire_circle"},
+          "stage_id": "recognized",
+          "severity": 1
+        }
+      ],
+      "modifiers": []
     }
   ],
   "mark_defs": [
@@ -190,10 +237,28 @@
       "tags": ["experience", "military", "persistent"],
       "stages": [
         {"stage_id": "noticed", "threshold": 1},
-        {"stage_id": "ingrained", "threshold": 3}
+        {"stage_id": "ingrained", "threshold": 3},
+        {"stage_id": "integrated", "threshold": 8}
       ],
-      "accepted_fact_types": ["actor_completed_border_watch"],
-      "progress_by_fact_type": {"actor_completed_border_watch": 1},
+      "accepted_fact_types": [
+        "actor_completed_border_watch",
+        "life_project_growth_confirmed"
+      ],
+      "progress_by_fact_type": {
+        "actor_completed_border_watch": 1,
+        "life_project_growth_confirmed": 5
+      },
+      "progress_rules": [
+        {
+          "fact_type": "actor_completed_border_watch",
+          "delta": 1
+        },
+        {
+          "fact_type": "life_project_growth_confirmed",
+          "field_equals": {"candidate_id": "growth.first_winter.fog_reader"},
+          "delta": 5
+        }
+      ],
       "granted_affordance_tags": ["border_watch_instinct"],
       "modifiers": []
     },
@@ -223,7 +288,8 @@
       "rank_thresholds": [0, 20, 60, 140, 300],
       "accepted_practice_fact_types": [
         "life_project_duty_completed",
-        "actor_inspected_trace"
+        "actor_inspected_trace",
+        "life_project_growth_confirmed"
       ],
       "practice_rules": [
         {
@@ -234,6 +300,11 @@
         {
           "fact_type": "actor_inspected_trace",
           "xp": 3
+        },
+        {
+          "fact_type": "life_project_growth_confirmed",
+          "field_equals": {"candidate_id": "growth.first_winter.fog_reader"},
+          "xp": 12
         }
       ],
       "modifiers": [
@@ -255,12 +326,20 @@
       "display_name": "维护",
       "tags": ["craft", "repair", "fieldwork"],
       "rank_thresholds": [0, 16, 48, 120, 260],
-      "accepted_practice_fact_types": ["life_project_duty_completed"],
+      "accepted_practice_fact_types": [
+        "life_project_duty_completed",
+        "life_project_growth_confirmed"
+      ],
       "practice_rules": [
         {
           "fact_type": "life_project_duty_completed",
           "field_equals": {"duty_id": "repair_east_wall"},
           "xp": 8
+        },
+        {
+          "fact_type": "life_project_growth_confirmed",
+          "field_equals": {"candidate_id": "growth.first_winter.steady_worker"},
+          "xp": 12
         }
       ],
       "modifiers": []

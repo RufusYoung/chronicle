@@ -231,6 +231,29 @@ func apply_facts(facts: Array) -> Dictionary:
 	return applied
 
 
+func describe_fact_derivations(fact: Dictionary) -> Dictionary:
+	var result := {
+		"trait_def_ids": [],
+		"mark_def_ids": [],
+		"skill_def_ids": [],
+	}
+	for trait_def_id: String in trait_defs.keys():
+		var definition: Dictionary = trait_defs[trait_def_id]
+		for rule: Dictionary in definition.get("source_fact_rules", []):
+			if _fact_matches_rule(fact, rule):
+				(result["trait_def_ids"] as Array).append(trait_def_id)
+				break
+	for mark_def_id: String in mark_defs.keys():
+		if _mark_progress_for_fact(fact, mark_defs[mark_def_id]) != 0:
+			(result["mark_def_ids"] as Array).append(mark_def_id)
+	for skill_def_id: String in skill_defs.keys():
+		if _practice_xp_for_fact(fact, skill_defs[skill_def_id]) != 0:
+			(result["skill_def_ids"] as Array).append(skill_def_id)
+	for key: String in result.keys():
+		(result[key] as Array).sort()
+	return result
+
+
 func apply_change(change: Dictionary) -> bool:
 	match str(change.get("operation", "")):
 		"grant_talent":
@@ -406,8 +429,8 @@ func _apply_fact_to_marks(fact: Dictionary) -> int:
 	var applied := 0
 	for mark_def_id: String in mark_defs.keys():
 		var definition: Dictionary = mark_defs[mark_def_id]
-		var fact_type := _fact_type(fact)
-		if fact_type not in (definition.get("accepted_fact_types", []) as Array):
+		var delta := _mark_progress_for_fact(fact, definition)
+		if delta == 0:
 			continue
 		var owner_id := _fact_owner_id(fact)
 		var instance_id := "mark_instance.%s.%s" % [
@@ -427,10 +450,6 @@ func _apply_fact_to_marks(fact: Dictionary) -> int:
 		})
 		if fact_id in (instance.get("source_fact_ids", []) as Array):
 			continue
-		var delta := int((definition.get("progress_by_fact_type", {}) as Dictionary).get(
-			fact_type,
-			1
-		))
 		instance["progress"] = maxi(int(instance.get("progress", 0)) + delta, 0)
 		instance["stage_id"] = _mark_stage(definition, int(instance["progress"]))
 		(instance["source_fact_ids"] as Array).append(fact_id)
@@ -602,15 +621,28 @@ func _mark_sources_are_valid(
 			or _fact_type(fact) not in (
 				definition.get("accepted_fact_types", []) as Array
 			)
-			or delta != int((definition.get(
-				"progress_by_fact_type",
-				{}
-			) as Dictionary).get(_fact_type(fact), 0))
+			or delta != _mark_progress_for_fact(fact, definition)
 		):
 			return false
 		event_fact_ids.append(fact_id)
 		total_progress += delta
 	return total_progress == int(instance.get("progress", 0))
+
+
+func _mark_progress_for_fact(fact: Dictionary, definition: Dictionary) -> int:
+	var fact_type := _fact_type(fact)
+	if fact_type not in (definition.get("accepted_fact_types", []) as Array):
+		return 0
+	var rules: Array = definition.get("progress_rules", [])
+	if not rules.is_empty():
+		for rule: Dictionary in rules:
+			if _fact_matches_rule(fact, rule):
+				return int(rule.get("delta", 0))
+		return 0
+	return int((definition.get("progress_by_fact_type", {}) as Dictionary).get(
+		fact_type,
+		0
+	))
 
 
 func _skill_sources_are_valid(

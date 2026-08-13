@@ -1,8 +1,10 @@
 extends RefCounted
 class_name V5LifeStageTransitionService
 
-const SCHEMA_VERSION := 1
-const TARGET_FIXTURE_ID := "seventh_outpost_first_winter"
+const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
+
+const SCHEMA_VERSION := 2
+const DEFAULT_TARGET_FIXTURE_ID := "seventh_outpost_first_winter"
 const PLAYER_STATE_EXCLUSIONS := [
 	"location_id",
 	"service_day",
@@ -12,10 +14,18 @@ const PLAYER_STATE_EXCLUSIONS := [
 ]
 
 
-func build_player_transition(source_session: Variant) -> Dictionary:
+func build_player_transition(
+		source_session: Variant,
+		options: Dictionary = {}
+) -> Dictionary:
 	if source_session == null or not source_session.is_ready():
 		return {}
 	var actor_id := str(source_session.context.actor_id)
+	var target_fixture_id := str(options.get(
+		"target_fixture_id", DEFAULT_TARGET_FIXTURE_ID
+	))
+	if target_fixture_id == "":
+		return {}
 	var facts: Array = source_session.stores["fact_store"].to_save_data()
 	var relationships := _player_relationships(
 		source_session.stores["relationship_store"].to_save_data(),
@@ -45,7 +55,7 @@ func build_player_transition(source_session: Variant) -> Dictionary:
 		"schema_version": SCHEMA_VERSION,
 		"payload_kind": "life_stage_transition",
 		"source_fixture_id": str(source_session.fixture_id),
-		"target_fixture_id": TARGET_FIXTURE_ID,
+		"target_fixture_id": target_fixture_id,
 		"actor_entity_id": actor_id,
 		"world_time": {
 			"day": int(source_session.current_day),
@@ -77,6 +87,11 @@ func build_player_transition(source_session: Variant) -> Dictionary:
 			),
 		},
 		"items": _canonical_item_records(items),
+		"equipment_loadouts": {
+			actor_id: source_session.stores[
+				"equipment_store"
+			].get_loadout(actor_id),
+		},
 		"chronicle_entries": _subject_rows(
 			source_session.stores["chronicle_store"].to_save_data(), actor_id
 		),
@@ -97,6 +112,57 @@ func apply_to_controller(controller: Variant, transition: Variant) -> Dictionary
 	var actor_id := str(data.get("actor_entity_id", ""))
 	if actor_id != str(session.context.actor_id):
 		return _failure("transition_actor_mismatch", "target")
+	var backup: Dictionary = session.build_save_envelope({
+		"save_id": "save.transition.preflight.%s" % str(session.fixture_id),
+		"source_kind": "test_fixture",
+	})
+	if backup.is_empty():
+		return _failure("transition_preflight_snapshot_failed", "preflight")
+	var preview = SimSessionModel.new()
+	var preview_restore: Dictionary = preview.load_from_save_envelope(backup)
+	if not bool(preview_restore.get("success", false)):
+		return _failure(
+			"transition_preflight_restore_failed:%s" % str(
+				preview_restore.get("error", "unknown_error")
+			),
+			"preflight"
+		)
+	var preflight: Dictionary = _apply_transition_data(preview, data)
+	if not bool(preflight.get("success", false)):
+		preflight["phase"] = "preflight"
+		return preflight
+	var committed_envelope: Dictionary = preview.build_save_envelope({
+		"save_id": "save.transition.committed.%s" % str(session.fixture_id),
+		"source_kind": "test_fixture",
+	})
+	var commit_report: Dictionary = session.load_from_save_envelope(
+		committed_envelope
+	)
+	if not bool(commit_report.get("success", false)):
+		var rollback_report: Dictionary = session.load_from_save_envelope(backup)
+		_refresh_controller_resolver(controller)
+		var failure := _failure(
+			"transition_commit_failed:%s" % str(
+				commit_report.get("error", "unknown_error")
+			),
+			"commit"
+		)
+		failure["rollback_ok"] = bool(rollback_report.get("success", false))
+		return failure
+	_refresh_controller_resolver(controller)
+	return {
+		"success": true,
+		"ok": true,
+		"error": "",
+		"phase": "transition_applied",
+		"source_fixture_id": str(data.get("source_fixture_id", "")),
+		"target_fixture_id": str(data.get("target_fixture_id", "")),
+		"candidate_count": controller.get_duty_options().size(),
+	}
+
+
+func _apply_transition_data(session: Variant, data: Dictionary) -> Dictionary:
+	var actor_id := str(data.get("actor_entity_id", ""))
 	var linked_entities: Dictionary = data.get("linked_entities", {})
 	for entity_id: String in linked_entities.keys():
 		if session.stores["entity_store"].has_entity(entity_id):
@@ -106,8 +172,8 @@ func apply_to_controller(controller: Variant, transition: Variant) -> Dictionary
 		):
 			return _failure("transition_entity_invalid:%s" % entity_id, "entities")
 	var facts := _merge_rows_by_id(
-		session.stores["fact_store"].to_save_data(),
 		data.get("facts", []),
+		session.stores["fact_store"].to_save_data(),
 		"fact_id"
 	)
 	facts.append({
@@ -157,13 +223,21 @@ func apply_to_controller(controller: Variant, transition: Variant) -> Dictionary
 		return _store_failure("character_features", feature_report)
 	var item_report: Dictionary = session.stores["item_store"].load_save_data(
 		_merge_rows_by_id(
-			session.stores["item_store"].to_save_data(),
 			data.get("items", []),
+			session.stores["item_store"].to_save_data(),
 			"item_instance_id"
 		)
 	)
 	if not bool(item_report.get("ok", false)):
 		return _store_failure("items", item_report)
+	var equipment_report: Dictionary = session.stores[
+		"equipment_store"
+	].load_save_data(_merge_equipment_loadouts(
+		session.stores["equipment_store"].to_save_data(),
+		data.get("equipment_loadouts", {})
+	))
+	if not bool(equipment_report.get("ok", false)):
+		return _store_failure("equipment_loadouts", equipment_report)
 	var memory_report: Dictionary = session.stores[
 		"memory_store"
 	].load_save_data(_merge_rows_by_id(
@@ -208,10 +282,9 @@ func apply_to_controller(controller: Variant, transition: Variant) -> Dictionary
 		"success": true,
 		"ok": true,
 		"error": "",
-		"phase": "transition_applied",
+		"phase": "transition_preflight_applied",
 		"source_fixture_id": str(data.get("source_fixture_id", "")),
 		"target_fixture_id": str(data.get("target_fixture_id", "")),
-		"candidate_count": controller.get_duty_options().size(),
 	}
 
 
@@ -234,6 +307,7 @@ func _validate_transition(value: Variant) -> Dictionary:
 		"linked_entities",
 		"relationships",
 		"character_features",
+		"equipment_loadouts",
 	]:
 		if not data.get(key) is Dictionary:
 			return _failure("transition_field_not_dictionary:%s" % key, "contract")
@@ -354,8 +428,8 @@ func _merge_feature_data(base: Dictionary, added: Variant) -> Dictionary:
 		"talent_assignments", "trait_instances", "mark_instances", "skill_progress"
 	]:
 		result[key] = _merge_rows_by_id(
-			result.get(key, []),
 			(added as Dictionary).get(key, []),
+			result.get(key, []),
 			{
 				"talent_assignments": "talent_assignment_id",
 				"trait_instances": "trait_instance_id",
@@ -364,6 +438,50 @@ func _merge_feature_data(base: Dictionary, added: Variant) -> Dictionary:
 			}[key]
 		)
 	return result
+
+
+func _merge_equipment_loadouts(base: Dictionary, added: Variant) -> Dictionary:
+	var result := base.duplicate(true)
+	if not added is Dictionary:
+		return result
+	for entity_id: String in (added as Dictionary).keys():
+		var added_loadout: Variant = (added as Dictionary).get(entity_id)
+		if not added_loadout is Dictionary:
+			continue
+		if not result.has(entity_id):
+			result[entity_id] = (added_loadout as Dictionary).duplicate(true)
+			continue
+		var merged: Dictionary = (result[entity_id] as Dictionary).duplicate(true)
+		var merged_slots: Dictionary = (
+			merged.get("slots", {}) as Dictionary
+		).duplicate(true)
+		var added_slots: Dictionary = (
+			(added_loadout as Dictionary).get("slots", {}) as Dictionary
+		)
+		for slot_id: String in added_slots.keys():
+			if _equipment_item_id(merged_slots.get(slot_id)) == "":
+				merged_slots[slot_id] = added_slots.get(slot_id)
+		merged["slots"] = merged_slots
+		merged["updated_tick"] = maxi(
+			int(merged.get("updated_tick", 0)),
+			int((added_loadout as Dictionary).get("updated_tick", 0))
+		)
+		result[entity_id] = merged
+	return result
+
+
+func _equipment_item_id(value: Variant) -> String:
+	if value == null:
+		return ""
+	if value is Dictionary:
+		return str((value as Dictionary).get("item_instance_id", ""))
+	return str(value)
+
+
+func _refresh_controller_resolver(controller: Variant) -> void:
+	var resolver: Variant = controller.get("action_contract_resolver")
+	if resolver != null and resolver.has_method("configure"):
+		resolver.configure(controller.session.registry)
 
 
 func _store_failure(store_key: String, report: Dictionary) -> Dictionary:

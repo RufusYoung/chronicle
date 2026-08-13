@@ -1,6 +1,6 @@
 # 2026-08-13 第一冬最小系统接入报告
 
-> 后续状态：本报告记录步骤 5 完成时的基线。步骤 6A 已在同日后续完成，成长候选现已支持正式确认、原子写回、防重复领取和保存恢复；详见 `2026-08-13_first_winter_growth_confirmation_report.md`。
+> 后续状态：本报告记录步骤 5 完成时的基线。步骤 6A 与 6B 已在同日后续完成，成长现已覆盖正式确认、完整奖励类型、原子阶段交接和继续演算；详见 `2026-08-13_first_winter_growth_confirmation_report.md` 与 `2026-08-13_first_winter_growth_transition_report.md`。
 
 ## 结论
 

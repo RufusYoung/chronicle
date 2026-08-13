@@ -194,6 +194,16 @@ func _feature_lines(snapshot: Variant) -> String:
 			str(mark.get("stage_id", "")),
 			int(mark.get("progress", 0)),
 		])
+	var trait_names: Array[String] = []
+	for trait_instance: Dictionary in snapshot.get_trait_instances("player"):
+		if str(trait_instance.get("status", "active")) != "active":
+			continue
+		var definition: Dictionary = controller.session.registry.get_definition(
+			"trait", str(trait_instance.get("trait_def_id", ""))
+		)
+		trait_names.append(str(definition.get(
+			"display_name", trait_instance.get("trait_def_id", "")
+		)))
 	var skill_names: Array[String] = []
 	var progress_by_id: Dictionary = {}
 	for skill: Dictionary in snapshot.get_skill_progress("player"):
@@ -222,12 +232,20 @@ func _feature_lines(snapshot: Variant) -> String:
 				int(condition.get("durability", 0)),
 				int(condition.get("maximum_durability", 0)),
 			]
-		equipment_names.append("%s%s" % [
+		var history_count := (item.get("history", []) as Array).size()
+		var history_text := (
+			" · %d 条履历" % history_count if history_count > 0 else ""
+		)
+		equipment_names.append("%s%s%s" % [
 			str(item.get("display_name", item.get("item_def_id", ""))),
 			durability,
+			history_text,
 		])
 	return "\n".join([
 		"天赋　%s" % "、".join(talent_names),
+		"特质　%s" % (
+			"尚未形成" if trait_names.is_empty() else "、".join(trait_names)
+		),
 		"印记　%s" % (
 			"尚未形成" if mark_names.is_empty() else "、".join(mark_names)
 		),

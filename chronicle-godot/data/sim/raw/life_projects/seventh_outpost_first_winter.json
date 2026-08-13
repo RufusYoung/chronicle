@@ -129,13 +129,27 @@
         "duty_ids": ["patrol_fog_line"]
       },
       "reward_preview": {
-        "summary": "感知 +1，并获得天赋「雾线读迹者」"
+        "summary": "感知 +1，获得天赋「雾线读迹者」、12 点侦察经验；「雾线守望」转化为融入本能，巡灯留下冬末履历"
       },
       "reward": {
         "effects": {
           "operations": [
-            {"operation": "state_add", "entity_id": "player", "key": "perception", "delta": 1}
+            {"operation": "state_add", "entity_id": "player", "key": "perception", "delta": 1},
+            {
+              "operation": "item_history",
+              "item_instance_id": "item_instance.seventh_outpost.player_patrol_lantern",
+              "history_entry": {
+                "fact_id": "$growth_fact_id",
+                "event_type": "life_stage_growth",
+                "summary": "这盏巡灯陪你读完第一冬的雾线，灯罩上的划痕成为正式值勤履历。"
+              },
+              "updated_tick": "$growth_tick"
+            }
           ]
+        },
+        "required_feature_derivations": {
+          "mark_def_ids": ["mark.border_watch_habit"],
+          "skill_def_ids": ["skill.scouting"]
         },
         "talent_grants": [
           {"owner_entity_id": "player", "talent_def_id": "talent.fog_line_reader"}
@@ -150,16 +164,30 @@
       "minimum_fact_count": 3,
       "fact_match": {
         "fact_type": "life_project_duty_completed",
-        "duty_ids": ["repair_east_wall", "practice_wall_archery"]
+        "duty_ids": ["repair_east_wall"]
       },
       "reward_preview": {
-        "summary": "体质 +1，并获得天赋「风雪中的稳手」"
+        "summary": "体质 +1，获得天赋「风雪中的稳手」、12 点维护经验和特质「风雪劳茧」，修缮锤留下冬末履历"
       },
       "reward": {
         "effects": {
           "operations": [
-            {"operation": "state_add", "entity_id": "player", "key": "constitution", "delta": 1}
+            {"operation": "state_add", "entity_id": "player", "key": "constitution", "delta": 1},
+            {
+              "operation": "item_history",
+              "item_instance_id": "item_instance.seventh_outpost.player_repair_hammer",
+              "history_entry": {
+                "fact_id": "$growth_fact_id",
+                "event_type": "life_stage_growth",
+                "summary": "锤柄被第一冬的修墙劳作磨亮，霍克认可它已经成了你的工具。"
+              },
+              "updated_tick": "$growth_tick"
+            }
           ]
+        },
+        "required_feature_derivations": {
+          "trait_def_ids": ["trait.winter_work_callus"],
+          "skill_def_ids": ["skill.maintenance"]
         },
         "talent_grants": [
           {"owner_entity_id": "player", "talent_def_id": "talent.winter_steady_worker"}
@@ -177,13 +205,26 @@
         "duty_ids": ["drill_with_elai", "share_hard_bread", "audit_rations_with_marta", "rest_in_infirmary"]
       },
       "reward_preview": {
-        "summary": "魅力 +1，并获得天赋「火边留席」"
+        "summary": "魅力 +1，获得天赋「火边留席」和特质「火边归属」，冬衣留下同袍共同缝补的履历"
       },
       "reward": {
         "effects": {
           "operations": [
-            {"operation": "state_add", "entity_id": "player", "key": "charisma", "delta": 1}
+            {"operation": "state_add", "entity_id": "player", "key": "charisma", "delta": 1},
+            {
+              "operation": "item_history",
+              "item_instance_id": "item_instance.seventh_outpost.player_winter_cloak",
+              "history_entry": {
+                "fact_id": "$growth_fact_id",
+                "event_type": "life_stage_growth",
+                "summary": "冬衣内侧多了一圈火边共同缝上的红线，记录同袍已经为你留席。"
+              },
+              "updated_tick": "$growth_tick"
+            }
           ]
+        },
+        "required_feature_derivations": {
+          "trait_def_ids": ["trait.fire_circle_belonging"]
         },
         "talent_grants": [
           {"owner_entity_id": "player", "talent_def_id": "talent.fire_circle_seat"}
@@ -274,7 +315,7 @@
       "action_tags": ["winter_labor"],
       "player_min": {"strength": 7},
       "available_if": [
-        {"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 9}
+        {"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 12}
       ],
       "requirements": [
         {
