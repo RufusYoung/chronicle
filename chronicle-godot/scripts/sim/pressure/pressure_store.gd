@@ -37,3 +37,20 @@ func get_pressure_value(scope_id: String, pressure_type: String) -> int:
 		):
 			total += int(pressure.get("value", 0))
 	return total
+
+
+func to_save_data() -> Array:
+	return list_pressures()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	pressures.clear()
+	var errors: Array[String] = []
+	if not data is Array:
+		return {"ok": false, "errors": ["save_pressures_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_pressure_not_dictionary")
+			continue
+		add_pressure_change(value)
+	return {"ok": errors.is_empty(), "errors": errors}

@@ -24,6 +24,9 @@ var day_history: Array[Dictionary] = []
 var duty_counts: Dictionary = {}
 var latest_result: Dictionary = {}
 var initialized: bool = false
+var fixture_source_path: String = ""
+var project_source_path: String = ""
+var rule_source_paths: Array = []
 var action_contract_resolver: Variant = ActionContractResolverModel.new()
 var effect_protocol_resolver: Variant = EffectProtocolResolverModel.new()
 
@@ -48,6 +51,9 @@ func start(
 	)
 	if not bool(start_result.get("success", false)):
 		return start_result
+	fixture_source_path = fixture_path
+	project_source_path = project_path
+	rule_source_paths = rule_paths.duplicate(true)
 	action_contract_resolver.configure(session.registry)
 	initialized = true
 	_clamp_states()
@@ -67,6 +73,43 @@ func reset() -> void:
 	duty_counts.clear()
 	latest_result = {}
 	initialized = false
+	fixture_source_path = ""
+	project_source_path = ""
+	rule_source_paths = []
+
+
+func build_save_envelope(options: Dictionary = {}) -> Dictionary:
+	if not is_ready():
+		return {}
+	var save_options := options.duplicate(true)
+	save_options["life_project_runtime"] = _life_project_save_data()
+	return session.build_save_envelope(save_options)
+
+
+func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
+	if not is_ready():
+		return _failure("project_not_initialized")
+	var save_options := options.duplicate(true)
+	save_options["life_project_runtime"] = _life_project_save_data()
+	return session.save_to_path(path, save_options)
+
+
+func load_from_path(path: String) -> Dictionary:
+	reset()
+	session = SimSessionModel.new()
+	var result: Dictionary = session.load_from_path(path)
+	if not bool(result.get("success", false)):
+		return result
+	return _restore_life_project(result)
+
+
+func load_from_save_envelope(envelope: Variant) -> Dictionary:
+	reset()
+	session = SimSessionModel.new()
+	var result: Dictionary = session.load_from_save_envelope(envelope)
+	if not bool(result.get("success", false)):
+		return result
+	return _restore_life_project(result)
 
 
 func is_ready() -> bool:
@@ -430,6 +473,72 @@ func _requirements_match(conditions: Array, snapshot: Variant) -> bool:
 	return bool(action_contract_resolver.evaluate_requirements(
 		snapshot, requirements, "player"
 	).get("can_execute", true))
+
+
+func _life_project_save_data() -> Dictionary:
+	return {
+		"project_id": project_id,
+		"project_path": project_source_path,
+		"fixture_path": fixture_source_path,
+		"rule_paths": rule_source_paths.duplicate(true),
+		"current_day": get_day(),
+		"status": "complete" if is_complete() else "active",
+		"day_history": day_history.duplicate(true),
+		"duty_counts": duty_counts.duplicate(true),
+		"latest_result": latest_result.duplicate(true),
+	}
+
+
+func _restore_life_project(session_result: Dictionary) -> Dictionary:
+	var runtime: Dictionary = session_result.get("life_project_runtime", {})
+	var project_path := str(runtime.get("project_path", ""))
+	if project_path == "":
+		reset()
+		return _failure("save_life_project_path_missing")
+	var loader = SimRegistryModel.new()
+	definition = loader.load_json(project_path)
+	if definition.is_empty():
+		reset()
+		return _failure("save_life_project_not_loaded")
+	project_id = str(definition.get("project_id", ""))
+	if project_id == "" or project_id != str(runtime.get("project_id", "")):
+		reset()
+		return _failure("save_life_project_id_mismatch")
+	var history_value: Variant = runtime.get("day_history", [])
+	var duty_value: Variant = runtime.get("duty_counts", {})
+	var latest_value: Variant = runtime.get("latest_result", {})
+	if (
+		not history_value is Array
+		or not duty_value is Dictionary
+		or not latest_value is Dictionary
+	):
+		reset()
+		return _failure("save_life_project_runtime_invalid")
+	project_source_path = project_path
+	fixture_source_path = str(runtime.get("fixture_path", ""))
+	rule_source_paths = (
+		runtime.get("rule_paths", []) as Array
+	).duplicate(true)
+	day_history.assign((history_value as Array).duplicate(true))
+	duty_counts = (duty_value as Dictionary).duplicate(true)
+	latest_result = (latest_value as Dictionary).duplicate(true)
+	action_contract_resolver.configure(session.registry)
+	initialized = true
+	if int(runtime.get("current_day", 0)) != get_day():
+		reset()
+		return _failure("save_life_project_day_mismatch")
+	return {
+		"success": true,
+		"ok": true,
+		"error": "",
+		"phase": "life_project_restored",
+		"project_id": project_id,
+		"source_kind": str(session_result.get("source_kind", "")),
+		"day": get_day(),
+		"duration_days": get_duration_days(),
+		"candidate_count": get_duty_options().size(),
+		"migrations": session_result.get("migrations", []),
+	}
 
 
 func _find_duty(duty_id: String) -> Dictionary:

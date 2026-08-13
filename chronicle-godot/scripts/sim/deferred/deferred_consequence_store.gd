@@ -71,6 +71,30 @@ func apply_deferred_consequence_update(update: Dictionary) -> bool:
 	return false
 
 
+func to_save_data() -> Array:
+	return list_deferred_consequences()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	deferred_consequences.clear()
+	var errors: Array[String] = []
+	var seen_ids: Dictionary = {}
+	if not data is Array:
+		return {"ok": false, "errors": ["save_deferred_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_deferred_not_dictionary")
+			continue
+		var consequence := value as Dictionary
+		var deferred_id := str(consequence.get("deferred_id", ""))
+		if deferred_id == "" or seen_ids.has(deferred_id):
+			errors.append("invalid_or_duplicate_deferred_id:%s" % deferred_id)
+			continue
+		seen_ids[deferred_id] = true
+		add_deferred_consequence(consequence)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func mark_triggered(deferred_id: String, reason: String = "") -> bool:
 	return apply_deferred_consequence_update({
 		"deferred_id": deferred_id,

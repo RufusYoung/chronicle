@@ -43,6 +43,23 @@ func find_traces_by_source_fact(fact_type: String) -> Array:
 	return rows
 
 
+func to_save_data() -> Array:
+	return list_traces()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	traces.clear()
+	var errors: Array[String] = []
+	if not data is Array:
+		return {"ok": false, "errors": ["save_traces_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_trace_not_dictionary")
+			continue
+		add_trace(value)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func _replacement_key(trace: Dictionary) -> String:
 	var trace_type := str(trace.get("trace_type", ""))
 	var actor_id := str(trace.get("actor_id", ""))

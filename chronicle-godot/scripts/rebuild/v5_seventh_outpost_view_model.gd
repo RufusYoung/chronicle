@@ -10,15 +10,37 @@ const FIXTURE_PATH := (
 const PROJECT_PATH := (
 	"res://data/sim/raw/life_projects/seventh_outpost_first_winter.json"
 )
+const LifeStageTransitionServiceModel = preload(
+	"res://scripts/sim/save/life_stage_transition_service.gd"
+)
 
 var controller: Variant = null
 var latest_result: Dictionary = {}
+var start_result: Dictionary = {}
 
 
-func start() -> Dictionary:
-	controller = ControllerModel.new()
+func start(transition: Dictionary = {}) -> Dictionary:
+	var next_controller = ControllerModel.new()
+	var start_report: Dictionary = next_controller.start(
+		FIXTURE_PATH, PROJECT_PATH
+	)
+	if not bool(start_report.get("success", false)):
+		start_result = start_report.duplicate(true)
+		return start_report
+	if not transition.is_empty():
+		var transition_report: Dictionary = (
+			LifeStageTransitionServiceModel.new().apply_to_controller(
+				next_controller, transition
+			)
+		)
+		if not bool(transition_report.get("success", false)):
+			start_result = transition_report.duplicate(true)
+			return transition_report
+		start_report["transition"] = transition_report
+	controller = next_controller
 	latest_result = {}
-	return controller.start(FIXTURE_PATH, PROJECT_PATH)
+	start_result = start_report.duplicate(true)
+	return start_report
 
 
 func is_ready() -> bool:
@@ -30,6 +52,32 @@ func perform_duty(duty_id: String) -> Dictionary:
 		return {"success": false, "error": "project_not_ready"}
 	latest_result = controller.execute_duty(duty_id)
 	return latest_result.duplicate(true)
+
+
+func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
+	if not is_ready():
+		return {"success": false, "ok": false, "error": "project_not_ready"}
+	return controller.save_to_path(path, options)
+
+
+func load_from_path(path: String) -> Dictionary:
+	controller = ControllerModel.new()
+	latest_result = {}
+	var result: Dictionary = controller.load_from_path(path)
+	if (
+		bool(result.get("success", false))
+		and str(result.get("source_kind", "")) != "player_save"
+	):
+		controller.reset()
+		return {
+			"success": false,
+			"ok": false,
+			"error": "save_source_kind_not_player_save",
+			"phase": "ui_load",
+		}
+	if bool(result.get("success", false)):
+		latest_result = controller.latest_result.duplicate(true)
+	return result
 
 
 func build_view_data() -> Dictionary:

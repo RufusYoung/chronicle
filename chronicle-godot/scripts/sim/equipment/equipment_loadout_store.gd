@@ -79,6 +79,14 @@ func list_loadouts() -> Dictionary:
 	return loadouts.duplicate(true)
 
 
+func to_save_data() -> Dictionary:
+	return list_loadouts()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	return load_initial_loadouts(data)
+
+
 func get_equipped_item_id(entity_id: String, slot_id: String) -> String:
 	var loadout := get_loadout(entity_id)
 	return _slot_item_id((loadout.get("slots", {}) as Dictionary).get(

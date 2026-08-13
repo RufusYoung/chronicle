@@ -75,6 +75,30 @@ func apply_exchange_update(update: Dictionary) -> bool:
 	return false
 
 
+func to_save_data() -> Array:
+	return list_exchanges()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	exchanges.clear()
+	var errors: Array[String] = []
+	var seen_ids: Dictionary = {}
+	if not data is Array:
+		return {"ok": false, "errors": ["save_exchanges_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_exchange_not_dictionary")
+			continue
+		var exchange := value as Dictionary
+		var exchange_id := str(exchange.get("exchange_id", ""))
+		if exchange_id == "" or seen_ids.has(exchange_id):
+			errors.append("invalid_or_duplicate_exchange_id:%s" % exchange_id)
+			continue
+		seen_ids[exchange_id] = true
+		add_exchange(exchange)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func mark_settled(exchange_id: String, reason: String = "") -> bool:
 	return apply_exchange_update({
 		"exchange_id": exchange_id,

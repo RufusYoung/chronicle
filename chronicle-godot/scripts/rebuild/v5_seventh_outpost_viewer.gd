@@ -31,13 +31,17 @@ var completion_was_shown: bool = false
 func _ready() -> void:
 	view_model = ViewModelModel.new()
 	restart_button.pressed.connect(restart_project)
-	restart_project()
+	var transition: Dictionary = {}
+	var relay: Node = get_node_or_null("/root/_LifeStageTransition")
+	if relay != null:
+		transition = relay.consume_transition()
+	restart_project(transition)
 
 
-func restart_project() -> void:
+func restart_project(transition: Dictionary = {}) -> void:
 	completion_was_shown = false
 	completion_dialog.hide()
-	view_model.start()
+	view_model.start(transition)
 	refresh_view()
 
 

@@ -214,6 +214,13 @@ func _show_playtest_end(end_state: String) -> void:
 
 
 func _enter_seventh_outpost() -> void:
+	var transition: Dictionary = view_model.build_life_stage_transition()
+	if transition.is_empty():
+		return
+	var relay: Node = get_node_or_null("/root/_LifeStageTransition")
+	if relay == null:
+		return
+	relay.store_transition(transition)
 	get_tree().change_scene_to_file(
 		"res://scenes/rebuild/v5_seventh_outpost_viewer.tscn"
 	)

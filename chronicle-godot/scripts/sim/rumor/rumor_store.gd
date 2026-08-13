@@ -35,6 +35,23 @@ func find_rumors_by_source_fact(fact_type: String) -> Array:
 	return rows
 
 
+func to_save_data() -> Array:
+	return list_rumors()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	rumors.clear()
+	var errors: Array[String] = []
+	if not data is Array:
+		return {"ok": false, "errors": ["save_rumors_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_rumor_not_dictionary")
+			continue
+		add_rumor_seed(value)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func _replacement_key(rumor: Dictionary) -> String:
 	var rumor_key := str(rumor.get("rumor_key", ""))
 	var actor_id := str(rumor.get("actor_id", ""))

@@ -247,6 +247,43 @@ func list_skill_progress(owner_id: String = "") -> Array:
 	return _list_owned(skill_progress, owner_id)
 
 
+func to_save_data() -> Dictionary:
+	return {
+		"talent_assignments": list_talent_assignments(),
+		"trait_instances": list_trait_instances(),
+		"mark_instances": list_mark_instances(),
+		"skill_progress": list_skill_progress(),
+	}
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	clear()
+	if not data is Dictionary:
+		_reject("save_character_features_not_dictionary")
+		return get_contract_report()
+	for assignment: Variant in (data as Dictionary).get("talent_assignments", []):
+		if assignment is Dictionary:
+			assign_talent(assignment)
+		else:
+			_reject("save_talent_assignment_not_dictionary")
+	for instance: Variant in (data as Dictionary).get("trait_instances", []):
+		if instance is Dictionary:
+			load_trait_instance(instance)
+		else:
+			_reject("save_trait_instance_not_dictionary")
+	for instance: Variant in (data as Dictionary).get("mark_instances", []):
+		if instance is Dictionary:
+			load_mark_instance(instance)
+		else:
+			_reject("save_mark_instance_not_dictionary")
+	for progress: Variant in (data as Dictionary).get("skill_progress", []):
+		if progress is Dictionary:
+			load_skill_progress(progress)
+		else:
+			_reject("save_skill_progress_not_dictionary")
+	return get_contract_report()
+
+
 func get_legacy_projection(owner_id: String) -> Dictionary:
 	var projection := {
 		"injury": "none",

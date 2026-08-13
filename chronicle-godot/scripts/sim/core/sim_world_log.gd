@@ -12,6 +12,23 @@ func list_entries() -> Array:
 	return entries.duplicate(true)
 
 
+func to_save_data() -> Array:
+	return list_entries()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	clear()
+	if not data is Array:
+		return {"ok": false, "errors": ["save_world_log_not_array"]}
+	var errors: Array[String] = []
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_world_log_entry_not_dictionary")
+			continue
+		append_entry(value)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func find_entries_by_fact_type(fact_type: String) -> Array:
 	var rows: Array = []
 	for entry: Dictionary in entries:

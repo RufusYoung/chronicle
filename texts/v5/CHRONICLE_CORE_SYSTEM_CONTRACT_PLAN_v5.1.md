@@ -1,7 +1,7 @@
 # Chronicle 核心系统合同前置计划 v5.1
 
 日期：2026-08-13
-状态：阶段 5.5 执行中；步骤 2A 至 2E、步骤 3 已完成，下一步进入步骤 4
+状态：阶段 5.5 执行中；步骤 2A 至 2E、步骤 3、步骤 4 已完成，下一步进入步骤 5
 
 步骤 1 交付：
 
@@ -31,6 +31,10 @@
 步骤 3 交付：
 
 - `chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_unified_action_contract_report.md`
+
+步骤 4 交付：
+
+- `chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_save_envelope_report.md`
 
 审计已确认保留现有 `Store -> Snapshot -> Affordance -> Transaction -> Writer` 主链，并裁定 State、Fact、Memory、角色特征、物品实例、装备位、市场投影与存档的唯一真值。步骤 2 不再重新讨论术语，而是把 schema 草案实现为可校验的数据和 Store 边界。
 
@@ -291,6 +295,8 @@ player_facing_reason
 
 验收：湖湾镇进入第七哨站后保存，重新载入时人物、关系、物品、印记进度、世界时间和行动候选完全一致。
 
+实施结果：已完成。`SaveEnvelope` v1 保存全部运行 Store、长期项目 runtime、世界时间、RNG 状态和 Definition 清单；载入会执行版本迁移、摘要校验、Definition 校验、固定顺序重建 Store 及跨 Store 引用校验。湖湾镇结束后通过显式阶段交接把玩家经历带入第七哨站，并通过保存、载入和下一步继续演算一致性测试。
+
 ### 步骤 5：第一冬最小系统接入
 
 只制作足以验证合同的一小组内容：
@@ -376,7 +382,7 @@ player_facing_reason
 
 ## 9. 当前下一步
 
-步骤 1、步骤 2A 至 2E、步骤 3 已完成。下一轮从步骤 4 开始：
+步骤 1、步骤 2A 至 2E、步骤 3、步骤 4 已完成。下一轮从步骤 5 开始：
 
 1. 步骤 2A：已实现 Raw Definition 注册、稳定 ID 和 schema 校验；`EntityStore` 已接入 Session，实体身份与可变状态的唯一真值边界已有自动化测试保护。
 2. 步骤 2B：已引入角色特征 Store 与只读 `CharacterProgress` 投影；伤势与雾盐回响已从 StateStore 迁出，侦察技艺可由真实职责事实成长。
@@ -385,7 +391,9 @@ player_facing_reason
 5. 步骤 2E：已建立最小合同 fixture；旅行、赠粮与远征补给全部读写真实口粮堆叠，`food_count` 只由 ItemStore 派生。两名角色的独立冬衣、商人库存、伤势、印记与技艺样本可以共同导出稳定的 SaveEnvelope seed，并通过 JSON 语义往返校验。
 6. 步骤 3：已实现通用 Requirement、Modifier 与 Effect 解析器。行动候选、NPC 资格与效用条件、生活职责、每日条件结算和完成条件共享 Requirement；NPC 与生活项目 Effect 先归一化为 TransactionResult。巡查雾线会同时读取感知、侦察技艺、冬衣、脚踝伤势和雾盐印记，并在 UI 显示基础风险、最终风险及逐项来源。
 7. 步骤 3 原子写入：Transaction Writer 会克隆并重连全部 Store，在预演图中完整执行结果和装备完整性校验；任一后置 Store 拒绝时，前置 Fact、状态与其他变化均不落地。旧 `player_min`、NPC condition 和生活项目 state requirement 仅作为兼容适配输入，不再拥有独立判定逻辑。
-8. 步骤 4：把现有 SaveEnvelope seed 扩展为正式保存、载入、迁移和候选一致性验证。seed 不是可恢复存档，不能提前宣称步骤 4 已完成。
+8. 步骤 4：已把 SaveEnvelope seed 扩展为正式 v1 存档；全部 Store 拥有显式序列化边界，支持内存与磁盘载入、v0 到 v1 迁移、完整性摘要、Definition 与跨 Store 引用校验，以及载入后行动候选和下一步演算一致性验证。
+9. 阶段交接：湖湾镇完成后会构造一次性人生阶段交接，只携带玩家相关状态、经历事实、关系、记忆、角色特征、物品、编年史和世界时间，不复制湖湾镇的整套地区运行状态；第七哨站接收后可立即保存并恢复。
+10. 步骤 5：接入第一冬最小系统内容，重点补齐由实际库存和粮食压力驱动的交易面、让风险参与结果档位，并生成一次与经历事实一致的阶段成长候选。
 
 实施依据：
 

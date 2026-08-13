@@ -1,6 +1,10 @@
 extends RefCounted
 class_name V5LiveLocationViewModel
 
+const LifeStageTransitionServiceModel = preload(
+	"res://scripts/sim/save/life_stage_transition_service.gd"
+)
+
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
 
 const FIXTURE_PATH := "res://data/sim/fixtures/lake_town_food_crisis_fixture.json"
@@ -52,6 +56,17 @@ func start() -> Dictionary:
 
 func is_ready() -> bool:
 	return session != null and session.is_ready()
+
+
+func build_life_stage_transition() -> Dictionary:
+	if not is_ready():
+		return {}
+	var playtest: Dictionary = _playtest_view(session.get_snapshot())
+	if not bool(playtest.get("completed", false)):
+		return {}
+	return LifeStageTransitionServiceModel.new().build_player_transition(
+		session
+	)
 
 
 func perform_action(action_id: String) -> Dictionary:

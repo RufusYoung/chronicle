@@ -529,7 +529,7 @@ theme_override_constants/v_separation = 6
 [node name="IntroDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "CHRONICLE 内部试玩"
-dialog_text = "你是一名途经湖湾镇的旅人。\n\n这次试玩的目标，是从废弃粮仓的异样一路追到雾盐旧井，并带着一次亲历返回北埠。旅行、等待和准备都会推进世界时间，失败也可能留下伤势与长期后果。\n\n当前版本尚未接入正式存档。左侧会持续显示当前目标。"
+dialog_text = "你是一名途经湖湾镇的旅人。\n\n这次试玩的目标，是从废弃粮仓的异样一路追到雾盐旧井，并带着一次亲历返回北埠。旅行、等待和准备都会推进世界时间，失败也可能留下伤势与长期后果。\n\n底层存档已经接通，但当前内部试玩界面还没有提供存档按钮。左侧会持续显示当前目标。"
 dialog_autowrap = true
 ok_button_text = "开始试玩"
 

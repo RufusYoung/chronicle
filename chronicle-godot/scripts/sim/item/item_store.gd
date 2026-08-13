@@ -178,6 +178,43 @@ func list_item_records() -> Array:
 	return rows
 
 
+func to_save_data() -> Array:
+	return list_item_records()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	clear()
+	if not data is Array:
+		_reject("save_items_not_array")
+		return get_contract_report()
+	var pending: Array = (data as Array).duplicate(true)
+	var previous_count := -1
+	while not pending.is_empty() and pending.size() != previous_count:
+		previous_count = pending.size()
+		for index: int in range(pending.size() - 1, -1, -1):
+			var value: Variant = pending[index]
+			if not value is Dictionary:
+				pending.remove_at(index)
+				_reject("save_item_not_dictionary")
+				continue
+			var item := value as Dictionary
+			var holder: Dictionary = item.get("holder", {})
+			if (
+				str(holder.get("kind", "")) == "container"
+				and not items.has(str(holder.get("id", "")))
+			):
+				continue
+			if _create_item(item, [], true):
+				pending.remove_at(index)
+	if not pending.is_empty():
+		for value: Variant in pending:
+			_reject("unresolved_save_item:%s" % str(
+				(value as Dictionary).get("item_instance_id", "")
+				if value is Dictionary else "invalid"
+			))
+	return get_contract_report()
+
+
 func list_items_for_holder(holder: Dictionary) -> Array:
 	var rows: Array = []
 	for item: Dictionary in items.values():

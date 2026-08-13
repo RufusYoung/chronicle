@@ -655,7 +655,7 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 
 ### 11.6.5 当前进度
 
-截至 2026-08-13，步骤 1 与步骤 2A 至 2E 已完成：
+截至 2026-08-13，步骤 1、步骤 2A 至 2E、步骤 3 与步骤 4 已完成：
 
 - 已审计 State、Fact、Memory、Relationship、Item、Snapshot、Action 与 Transaction 边界。
 - 已裁定库存、事实、地区状态和角色状态的重复真值。
@@ -683,6 +683,10 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 - 新增最小合同 fixture，同时包含两件独立冬衣、两个持有人的同定义印记、可恢复伤势、侦察技艺、玩家口粮和商人实际库存。
 - Session 可以导出确定顺序的 SaveEnvelope seed；Store 真值与 Definition manifest 已通过 JSON 编码、解码和引用完整性校验。
 - 新增 13 项最小合同夹具断言，全项目回归为 `63 / 63` 通过。
+- 通用 Requirement、Modifier 与 Effect 已接入行动候选、NPC 决策和生活项目；事务 Writer 会在全 Store 预演图中原子提交，失败不会留下半笔变化。
+- 正式 SaveEnvelope v1 已接入全部运行 Store、长期项目 runtime、世界时间、RNG 状态和 Definition 清单，并支持磁盘读写、v0 到 v1 迁移、完整性摘要与引用校验。
+- 湖湾镇完成后会通过一次性阶段交接，把玩家相关事实、关系、记忆、角色特征、物品、编年史和世界时间带入第七哨站；湖湾镇整套地区运行状态不会被错误复制。
+- 存档载入后会重建行动候选，并验证下一次相同行动产生同一结果和世界状态。全项目回归为 `65 / 65` 个测试脚本通过。
 
 交付文档：
 
@@ -694,9 +698,11 @@ chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_character_feature
 chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_item_instance_contract_report.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_equipment_loadout_contract_report.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_minimum_contract_fixture_report.md
+chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_unified_action_contract_report.md
+chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_save_envelope_report.md
 ```
 
-当前进入步骤 3：接入通用 Requirement、Modifier 与 Effect，让角色特征、装备和即时状态通过同一协议改变行动资格、风险与结果解释，并将事务预检扩展为全 Store 统一失败协议。正式 SaveEnvelope 保存、载入和迁移仍属于步骤 4。
+当前进入步骤 5：改造第一冬来验证最小系统合同。下一轮优先让实际库存和粮食压力共同驱动一个交易面，让已计算的风险进入结果档位，并在七日结束时生成一次与经历事实一致的成长候选。当前底层已经能够保存和恢复，但内部试玩界面还没有存档槽、自动存档和云同步。
 
 阶段 5.5 通过后，恢复阶段 5 的季度、年度和五年内容扩展，再进入阶段 6。
 

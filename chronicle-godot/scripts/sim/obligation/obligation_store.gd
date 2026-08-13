@@ -80,6 +80,30 @@ func apply_obligation_update(update: Dictionary) -> bool:
 	return false
 
 
+func to_save_data() -> Array:
+	return list_obligations()
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	obligations.clear()
+	var errors: Array[String] = []
+	var seen_ids: Dictionary = {}
+	if not data is Array:
+		return {"ok": false, "errors": ["save_obligations_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_obligation_not_dictionary")
+			continue
+		var obligation := value as Dictionary
+		var obligation_id := str(obligation.get("obligation_id", ""))
+		if obligation_id == "" or seen_ids.has(obligation_id):
+			errors.append("invalid_or_duplicate_obligation_id:%s" % obligation_id)
+			continue
+		seen_ids[obligation_id] = true
+		add_obligation(obligation)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func mark_fulfilled(obligation_id: String, reason: String = "") -> bool:
 	return apply_obligation_update({
 		"obligation_id": obligation_id,

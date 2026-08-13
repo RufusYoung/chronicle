@@ -2,7 +2,7 @@
 
 日期：2026-08-12
 
-状态：阶段 5.5 步骤 3 已实现；作为步骤 4 存档与迁移合同的输入
+状态：阶段 5.5 步骤 4 已实现；当前作为步骤 5 第一冬最小系统接入的持久化合同
 
 关联审计：`CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md`
 
@@ -795,11 +795,11 @@ Requirement 只判断资格，不直接修改结果。
 
 ## 11. 迁移顺序
 
-步骤 2 实现时按以下顺序迁移，减少一次性改动：
+阶段 5.5 按以下顺序迁移，减少一次性改动：
 
 1. 实现 Definition 注册、ID 与 schema 校验。
 2. 将 EntityStore 接入 SimSession，并让实体身份与可变状态分别只由 EntityStore 和 StateStore 持有。
-3. 为现有 Store 明确序列化边界；正式 `to_save_data()` 与 `load_save_data()` 在步骤 4 接入。
+3. 为现有 Store 明确序列化边界；正式 `to_save_data()` 与 `load_save_data()` 已在步骤 4 接入。
 4. 引入角色特征 Store 和只读 CharacterProgress 投影。
 5. 把 `mist_salt_echo` 迁成 MarkInstance，把一个伤势迁成 TraitInstance。
 6. 扩展 ItemStore 的 holder、quantity、transfer、consume 与 durability。
@@ -807,7 +807,9 @@ Requirement 只判断资格，不直接修改结果。
 8. 引入 EquipmentStore 和三个最小槽位。
 9. 生成 InventoryView 与 MarketStockView，不保存它们。
 10. 接入通用 Requirement、Modifier 与 Effect。
-11. 实现 SaveEnvelope、迁移注册表和往返一致性测试。
+11. 已实现 SaveEnvelope v1、v0 到 v1 迁移、内存与磁盘往返、完整性校验和继续演算一致性测试。
+
+步骤 4 还建立了显式人生阶段交接。它不是第二套存档格式，只负责从已完成的湖湾镇会话选择玩家相关的持久事实、关系、记忆、角色特征、物品、编年史与世界时间，写入新建的第七哨站 Session。交接完成后仍由同一个 SaveEnvelope 合同保存。
 
 ## 12. 最小验收 fixture
 

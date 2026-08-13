@@ -126,6 +126,28 @@ func list_entity_rows(excluded_ids: Array = []) -> Array:
 	return rows
 
 
+func to_save_data() -> Dictionary:
+	return entities.duplicate(true)
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	entities.clear()
+	entity_order.clear()
+	validation_errors.clear()
+	validation_warnings.clear()
+	if not data is Dictionary:
+		_reject("save_entities_not_dictionary")
+		return get_contract_report()
+	for entity_id_value: Variant in (data as Dictionary).keys():
+		var entity_id := str(entity_id_value)
+		var value: Variant = (data as Dictionary).get(entity_id_value)
+		if not value is Dictionary:
+			_reject("%s:save_entity_not_dictionary" % entity_id)
+			continue
+		add_entity(entity_id, value)
+	return get_contract_report()
+
+
 func get_contract_report() -> Dictionary:
 	return {
 		"ok": validation_errors.is_empty(),

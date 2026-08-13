@@ -164,7 +164,7 @@ Codex 只执行这一小块
 texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 ```
 
-步骤 1 与步骤 2A 至 2E 已完成。角色特征、物品和装备已经拥有独立真值；旅行、赠粮和远征补给会读写真实口粮堆叠，`food_count` 只由 Snapshot 聚合。最小合同 fixture 已覆盖两件独立冬衣、商人库存、伤势、印记、技艺和口粮，并可导出通过 JSON 语义往返的 SaveEnvelope seed。全项目测试为 `63 / 63`。当前进入步骤 3：统一 Requirement、Modifier、Effect 与跨 Store 失败协议；正式保存、载入和迁移仍在步骤 4。
+步骤 1、步骤 2A 至 2E、步骤 3 与步骤 4 已完成。角色特征、物品和装备已经拥有独立真值；Requirement、Modifier 与 Effect 由行动、NPC 和生活项目共享，跨 Store 事务失败不会留下半笔变化。SaveEnvelope v1 现可保存全部 Store、长期项目、世界时间与 RNG，支持磁盘载入、v0 到 v1 迁移、完整性及引用校验；湖湾镇完成后的玩家经历会显式交接到第七哨站。全项目测试为 `65 / 65`。当前进入步骤 5：用第一冬接入最小交易、风险结果和阶段成长候选。底层存档已经可恢复，内部试玩界面仍未提供存档槽、自动存档或云同步。
 
 当前实施依据：
 

@@ -25,3 +25,27 @@ func find_memories_by_type(owner_id: String, memory_type: String) -> Array:
 		):
 			rows.append(memory.duplicate(true))
 	return rows
+
+
+func to_save_data() -> Array:
+	return memories.duplicate(true)
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	memories.clear()
+	var errors: Array[String] = []
+	var seen_ids: Dictionary = {}
+	if not data is Array:
+		return {"ok": false, "errors": ["save_memories_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_memory_not_dictionary")
+			continue
+		var memory := value as Dictionary
+		var memory_id := str(memory.get("memory_id", ""))
+		if memory_id == "" or seen_ids.has(memory_id):
+			errors.append("invalid_or_duplicate_memory_id:%s" % memory_id)
+			continue
+		seen_ids[memory_id] = true
+		add_memory(memory)
+	return {"ok": errors.is_empty(), "errors": errors}

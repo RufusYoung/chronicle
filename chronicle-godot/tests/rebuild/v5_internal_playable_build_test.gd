@@ -1,5 +1,9 @@
 extends SceneTree
 
+const LifeProjectControllerModel = preload(
+	"res://scripts/sim/life_project/life_project_controller.gd"
+)
+
 const VIEWER_SCENE := "res://scenes/rebuild/v5_live_location_viewer.tscn"
 const GRANARY_OUTBOUND := "old_chen_shop_to_abandoned_granary"
 const GRANARY_RETURN := "abandoned_granary_to_old_chen_shop"
@@ -14,6 +18,7 @@ const ARCHIVE_SEARCH := "search_flooded_archive_stack"
 const EXPEDITION_PREPARE := "prepare_mist_salt_well_expedition"
 const WELL_OUTBOUND := "north_quay_record_house_to_mist_salt_well"
 const WELL_RETURN := "mist_salt_well_to_north_quay_record_house"
+const ONE_WAY_CONTACT := "test_one_way_lake_town_contact"
 
 var failures: Array[String] = []
 
@@ -61,7 +66,8 @@ func _run() -> void:
 		"3. The first screen gives a specific objective and progress"
 	)
 	_check(
-		"尚未接入正式存档" in intro_dialog.dialog_text
+		"底层存档已经接通" in intro_dialog.dialog_text
+		and "还没有提供存档按钮" in intro_dialog.dialog_text
 		and intro_dialog.get_ok_button().text == "开始试玩"
 		and restart_button.text == "重新开始试玩",
 		"4. Onboarding states the slice boundary and reset action clearly"
@@ -99,6 +105,14 @@ func _run() -> void:
 	viewer.restart_session()
 	await process_frame
 	session = viewer.view_model.session
+	session.stores["entity_store"].add_entity(ONE_WAY_CONTACT, {
+		"type": "person",
+		"display_name": "单向关系测试联系人",
+		"tags": ["person", "test_fixture"],
+	})
+	session.stores["relationship_store"].set_relation(
+		"player", ONE_WAY_CONTACT, "familiarity", 2
+	)
 
 	session.travel(GRANARY_OUTBOUND)
 	session.execute_challenge_option(GRANARY_PREPARE)
@@ -150,36 +164,90 @@ func _run() -> void:
 		and completion_dialog.visible,
 		"10. Returning from the well creates an explicit playable endpoint"
 	)
-
-	completion_dialog.hide()
-	restart_button.pressed.emit()
-	await process_frame
-	restart_dialog.confirmed.emit()
-	await process_frame
-	_check(
-		goal_progress.text == "内部试玩　目标 1 / 5"
-		and goal_title.text == "调查废弃粮仓的异常"
-		and not completion_dialog.visible
-		and not failure_dialog.visible,
-		"11. Confirmed restart clears end states and starts a fresh run"
-	)
-
 	completion_dialog.confirmed.emit()
 	await process_frame
 	await process_frame
 	var outpost_scene := current_scene
+	var outpost_session: Variant = (
+		outpost_scene.view_model.controller.session
+		if outpost_scene != null
+		and outpost_scene.name == "V5SeventhOutpostViewer"
+		else null
+	)
 	_check(
 		outpost_scene != null
 		and outpost_scene.name == "V5SeventhOutpostViewer"
+		and outpost_scene.view_model.is_ready()
 		and (
 			outpost_scene.get_node("%DayLabel") as Label
 		).text.begins_with("第 1 / 7 天"),
-		"12. Completing Lake Town can enter Seventh Outpost service"
+		"11. Completing Lake Town can enter Seventh Outpost service"
+	)
+	_check(
+		outpost_session != null
+		and _has_fact_for_target(
+			outpost_session,
+			"actor_inspected_trace",
+			"mist_salt_well_mouth_crust"
+		)
+		and not outpost_session.stores["item_store"].get_item(
+			"waxed_mist_salt_breathing_veil"
+		).is_empty()
+		and outpost_session.stores["entity_store"].has_entity(ONE_WAY_CONTACT)
+		and int(outpost_session.stores["relationship_store"].get_relation(
+			"player", ONE_WAY_CONTACT, "familiarity", 0
+		)) == 2
+		and int(outpost_session.current_day) >= 2,
+		"12. Lake Town facts, one-way relationships, gear, and time enter the outpost"
+	)
+	var transition_envelope: Dictionary = (
+		outpost_scene.view_model.controller.build_save_envelope({
+			"save_id": "save.test.transition",
+			"source_kind": "test_fixture",
+		})
+		if outpost_scene != null
+		else {}
+	)
+	var restored_controller = LifeProjectControllerModel.new()
+	var restored_report: Dictionary = restored_controller.load_from_save_envelope(
+		transition_envelope
+	)
+	_check(
+		bool(restored_report.get("success", false))
+		and _has_fact_for_target(
+			restored_controller.session,
+			"actor_inspected_trace",
+			"mist_salt_well_mouth_crust"
+		)
+		and restored_controller.get_duty_options().size() > 0,
+		"13. The transitioned outpost session survives SaveEnvelope restore"
 	)
 
-	viewer.queue_free()
 	if outpost_scene != null:
 		outpost_scene.queue_free()
+	completion_dialog.hide()
+	viewer.queue_free()
+	await process_frame
+	await process_frame
+	var restart_viewer := packed.instantiate()
+	root.add_child(restart_viewer)
+	await process_frame
+	await process_frame
+	var restart_goal := restart_viewer.get_node("%GoalProgress") as Label
+	var restart_completion := restart_viewer.get_node("%CompletionDialog") as AcceptDialog
+	var restart_failure := restart_viewer.get_node("%FailureDialog") as AcceptDialog
+	var restart_confirm := restart_viewer.get_node("%RestartDialog") as ConfirmationDialog
+	(restart_viewer.get_node("%RestartButton") as Button).pressed.emit()
+	await process_frame
+	restart_confirm.confirmed.emit()
+	await process_frame
+	_check(
+		restart_goal.text == "内部试玩　目标 1 / 5"
+		and not restart_completion.visible
+		and not restart_failure.visible,
+		"14. Confirmed restart clears end states and starts a fresh run"
+	)
+	restart_viewer.queue_free()
 	await process_frame
 	_finish()
 
@@ -196,6 +264,17 @@ func _complete_archive_record(session: Variant) -> void:
 		ARCHIVE_SEARCH,
 		{"source": "test_injection", "roll_override": 1}
 	)
+
+
+func _has_fact_for_target(
+		session: Variant, fact_type: String, target_id: String
+) -> bool:
+	for fact: Dictionary in session.stores["fact_store"].find_facts_by_type(
+		fact_type
+	):
+		if str(fact.get("target_id", "")) == target_id:
+			return true
+	return false
 
 
 func _finish() -> void:

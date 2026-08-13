@@ -47,6 +47,9 @@ const InvestigationLeadStoreModel = preload(
 const DeferredConsequenceStoreModel = preload(
 	"res://scripts/sim/deferred/deferred_consequence_store.gd"
 )
+const SaveEnvelopeServiceModel = preload(
+	"res://scripts/sim/save/save_envelope_service.gd"
+)
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -66,6 +69,7 @@ const AUTONOMOUS_ACTION_RULES_PATH := (
 const NPC_NEED_PROFILES_PATH := (
 	"res://data/sim/raw/npc_need_profiles/basic_npc_need_profiles.json"
 )
+const SAVE_BUILD_ID := "chronicle-v5.5-save-envelope-1"
 
 var registry: Variant = null
 var context: Variant = null
@@ -88,6 +92,10 @@ var challenge_definitions: Array = []
 var return_echo_definitions: Array = []
 var investigation_definitions: Array = []
 var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var save_envelope_service: Variant = SaveEnvelopeServiceModel.new()
+var fixture_source_path: String = ""
+var fixture_source_data: Dictionary = {}
+var rule_source_paths: Array = []
 
 var fixture_id: String = ""
 var initialized: bool = false
@@ -111,7 +119,11 @@ func start_from_fixture_path(fixture_path: String, raw_rule_paths: Array) -> Dic
 	if fixture.is_empty():
 		_reset_runtime()
 		return _start_failure("fixture_not_loaded")
-	return start_from_fixture_data(fixture, raw_rule_paths)
+	var result := start_from_fixture_data(fixture, raw_rule_paths)
+	if bool(result.get("success", false)):
+		fixture_source_path = fixture_path
+		fixture_source_data = {}
+	return result
 
 
 func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dictionary:
@@ -132,10 +144,14 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		return failed
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
+	fixture_source_data = fixture.duplicate(true)
+	rule_source_paths = raw_rule_paths.duplicate(true)
 	context = SimContextModel.new(fixture)
 	fixture_id = str(fixture.get("fixture_id", ""))
 	if fixture_id == "":
 		return _start_failure("missing_fixture_id")
+	if str(context.world_id) == "":
+		context.world_id = "world.%s" % fixture_id
 
 	_configure_world_time(fixture)
 	travel_routes = (fixture.get("travel_routes", []) as Array).duplicate(true)
@@ -1101,6 +1117,174 @@ func build_save_envelope_seed() -> Dictionary:
 	}
 
 
+func build_save_envelope(options: Dictionary = {}) -> Dictionary:
+	if not initialized:
+		return {}
+	var generated_timestamp := _utc_timestamp()
+	var save_id := str(options.get(
+		"save_id",
+		"save.%s.%d" % [
+			fixture_id,
+			int(Time.get_unix_time_from_system()),
+		]
+	))
+	var timestamp := str(options.get("saved_at_utc", generated_timestamp))
+	var source_kind := str(options.get("source_kind", "player_save"))
+	var envelope := {
+		"schema_version": 1,
+		"payload_kind": "save_envelope",
+		"save_id": save_id,
+		"world_id": str(context.world_id),
+		"build_id": SAVE_BUILD_ID,
+		"created_at_utc": str(options.get("created_at_utc", timestamp)),
+		"saved_at_utc": timestamp,
+		"source_kind": source_kind,
+		"bootstrap": {
+			"fixture_path": fixture_source_path,
+			"fixture_data": fixture_source_data.duplicate(true),
+			"rule_paths": rule_source_paths.duplicate(true),
+		},
+		"world_time": {
+			"day": current_day,
+			"hour": current_hour,
+			"tick": world_tick_count,
+			"elapsed_hours": elapsed_hours_since_start,
+		},
+		"rng_states": {
+			"challenge_rng_state": str(challenge_rng.state),
+		},
+		"session": {
+			"fixture_id": fixture_id,
+			"actor_entity_id": str(context.actor_id),
+			"current_location_id": str(context.location_id),
+			"runtime_cursors": _runtime_cursor_save_data(),
+			"life_project_runtime": (
+				options.get("life_project_runtime", {}) as Dictionary
+			).duplicate(true),
+		},
+		"stores": _store_save_data(),
+		"world_log": world_log.to_save_data(),
+		"definition_manifest": {
+			"content_pack_id": "chronicle.base",
+			"content_pack_version": 1,
+			"required_definition_ids": _registered_definition_ids(),
+		},
+	}
+	return save_envelope_service.finalize_envelope(envelope)
+
+
+func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
+	var envelope := build_save_envelope(options)
+	if envelope.is_empty():
+		return _save_failure("session_not_initialized", "build")
+	return save_envelope_service.save_to_path(path, envelope)
+
+
+func load_from_path(path: String) -> Dictionary:
+	var read_report: Dictionary = save_envelope_service.load_from_path(path)
+	if not bool(read_report.get("ok", false)):
+		_reset_runtime()
+		return read_report
+	var result := load_from_save_envelope(read_report.get("envelope", {}))
+	result["path"] = path
+	result["migrations"] = read_report.get("migrations", [])
+	return result
+
+
+func load_from_save_envelope(source: Variant) -> Dictionary:
+	var envelope_report: Dictionary = (
+		save_envelope_service.validate_and_migrate(source)
+	)
+	if not bool(envelope_report.get("ok", false)):
+		_reset_runtime()
+		return envelope_report
+	var envelope: Dictionary = envelope_report.get("envelope", {})
+	var bootstrap: Dictionary = envelope.get("bootstrap", {})
+	var rule_paths: Array = (
+		bootstrap.get("rule_paths", []) as Array
+	).duplicate(true)
+	var start_result: Dictionary
+	var source_path := str(bootstrap.get("fixture_path", ""))
+	var source_data: Dictionary = bootstrap.get("fixture_data", {})
+	if source_path != "":
+		start_result = start_from_fixture_path(source_path, rule_paths)
+	elif not source_data.is_empty():
+		start_result = start_from_fixture_data(source_data, rule_paths)
+	else:
+		_reset_runtime()
+		return _save_failure("save_bootstrap_fixture_missing", "bootstrap")
+	if not bool(start_result.get("success", false)):
+		_reset_runtime()
+		return _save_failure(
+			"save_bootstrap_failed:%s" % str(start_result.get("error", "")),
+			"bootstrap"
+		)
+	if str(envelope.get("world_id", "")) != str(context.world_id):
+		_reset_runtime()
+		return _save_failure("save_world_id_mismatch", "bootstrap")
+	var manifest_report := _validate_definition_manifest(
+		envelope.get("definition_manifest", {})
+	)
+	if not bool(manifest_report.get("ok", false)):
+		_reset_runtime()
+		return manifest_report
+	var store_report := _load_store_save_data(envelope.get("stores", {}))
+	if not bool(store_report.get("ok", false)):
+		_reset_runtime()
+		return store_report
+	var log_report: Dictionary = world_log.load_save_data(
+		envelope.get("world_log", [])
+	)
+	if not bool(log_report.get("ok", false)):
+		_reset_runtime()
+		return _save_failure(
+			"save_world_log_invalid:%s" % ",".join(log_report.get("errors", [])),
+			"world_log"
+		)
+	var session_data: Dictionary = envelope.get("session", {})
+	if str(session_data.get("actor_entity_id", "")) != str(context.actor_id):
+		_reset_runtime()
+		return _save_failure("save_actor_id_mismatch", "session")
+	if not context.set_current_location(str(
+		session_data.get("current_location_id", "")
+	)):
+		_reset_runtime()
+		return _save_failure("save_location_unknown", "session")
+	_restore_runtime_cursors(session_data.get("runtime_cursors", {}))
+	var time_data: Dictionary = envelope.get("world_time", {})
+	current_day = maxi(int(time_data.get("day", 1)), 1)
+	current_hour = posmod(int(time_data.get("hour", 8)), 24)
+	world_tick_count = maxi(int(time_data.get(
+		"tick", world_tick_count
+	)), 0)
+	elapsed_hours_since_start = maxi(int(time_data.get(
+		"elapsed_hours", elapsed_hours_since_start
+	)), 0)
+	var rng_states: Dictionary = envelope.get("rng_states", {})
+	if not rng_states.has("challenge_rng_state"):
+		_reset_runtime()
+		return _save_failure("save_rng_state_missing", "rng")
+	challenge_rng.state = int(str(rng_states.get("challenge_rng_state", "0")))
+	initialized = true
+	return {
+		"success": true,
+		"ok": true,
+		"error": "",
+		"phase": "restored",
+		"save_id": str(envelope.get("save_id", "")),
+		"source_kind": str(envelope.get("source_kind", "")),
+		"fixture_id": fixture_id,
+		"time": get_time_summary(),
+		"candidate_count": affordance_system.generate_candidates(
+			get_snapshot(), rules
+		).size(),
+		"life_project_runtime": (
+			session_data.get("life_project_runtime", {}) as Dictionary
+		).duplicate(true),
+		"migrations": envelope_report.get("migrations", []),
+	}
+
+
 func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 	if not initialized:
 		var failed := {
@@ -1166,6 +1350,9 @@ func _reset_runtime() -> void:
 	return_echo_definitions = []
 	investigation_definitions = []
 	challenge_rng = RandomNumberGenerator.new()
+	fixture_source_path = ""
+	fixture_source_data = {}
+	rule_source_paths = []
 	fixture_id = ""
 	initialized = false
 	action_count = 0
@@ -1198,6 +1385,208 @@ func _registered_definition_ids() -> Array:
 			ids.append("%s:%s" % [kind, definition_id])
 	ids.sort()
 	return ids
+
+
+func get_save_store_data() -> Dictionary:
+	return _store_save_data()
+
+
+func validate_persistent_references() -> Dictionary:
+	return _validate_save_references()
+
+
+func _store_save_data() -> Dictionary:
+	var features: Dictionary = stores[
+		"character_feature_store"
+	].to_save_data()
+	return {
+		"entities": stores["entity_store"].to_save_data(),
+		"states": stores["state_store"].to_save_data(),
+		"facts": stores["fact_store"].to_save_data(),
+		"memories": stores["memory_store"].to_save_data(),
+		"relationships": stores["relationship_store"].to_save_data(),
+		"traces": stores["trace_store"].to_save_data(),
+		"rumors": stores["rumor_store"].to_save_data(),
+		"pressures": stores["pressure_store"].to_save_data(),
+		"obligations": stores["obligation_store"].to_save_data(),
+		"exchanges": stores["exchange_store"].to_save_data(),
+		"deferred_consequences": stores[
+			"deferred_consequence_store"
+		].to_save_data(),
+		"character_features": features,
+		"items": stores["item_store"].to_save_data(),
+		"equipment_loadouts": stores["equipment_store"].to_save_data(),
+		"chronicle_entries": stores["chronicle_store"].to_save_data(),
+		"investigation_leads": stores["investigation_store"].to_save_data(),
+	}
+
+
+func _load_store_save_data(data: Variant) -> Dictionary:
+	if not data is Dictionary:
+		return _save_failure("save_stores_not_dictionary", "stores")
+	var source := data as Dictionary
+	var loaders := [
+		["entity_store", "entities"],
+		["state_store", "states"],
+		["fact_store", "facts"],
+		["relationship_store", "relationships"],
+		["memory_store", "memories"],
+		["trace_store", "traces"],
+		["rumor_store", "rumors"],
+		["pressure_store", "pressures"],
+		["obligation_store", "obligations"],
+		["exchange_store", "exchanges"],
+		["deferred_consequence_store", "deferred_consequences"],
+		["character_feature_store", "character_features"],
+		["item_store", "items"],
+		["equipment_store", "equipment_loadouts"],
+		["chronicle_store", "chronicle_entries"],
+		["investigation_store", "investigation_leads"],
+	]
+	for row: Array in loaders:
+		var store_key := str(row[0])
+		var data_key := str(row[1])
+		if not source.has(data_key):
+			return _save_failure(
+				"save_store_missing:%s" % data_key,
+				"stores"
+			)
+		var report: Dictionary = stores[store_key].load_save_data(
+			source.get(data_key)
+		)
+		if not bool(report.get("ok", false)):
+			return _save_failure(
+				"save_store_invalid:%s:%s" % [
+					data_key,
+					",".join(report.get("errors", [])),
+				],
+				"stores"
+			)
+	return _validate_save_references()
+
+
+func _validate_definition_manifest(value: Variant) -> Dictionary:
+	if not value is Dictionary:
+		return _save_failure("save_definition_manifest_invalid", "definitions")
+	var required: Variant = (value as Dictionary).get(
+		"required_definition_ids", []
+	)
+	if not required is Array:
+		return _save_failure("save_definition_ids_not_array", "definitions")
+	var expected := _registered_definition_ids()
+	var actual := (required as Array).duplicate(true)
+	actual.sort()
+	if actual != expected:
+		return _save_failure("save_definition_manifest_mismatch", "definitions")
+	return {"ok": true, "error": "", "phase": "definitions"}
+
+
+func _validate_save_references() -> Dictionary:
+	var entity_store: Variant = stores["entity_store"]
+	var fact_store: Variant = stores["fact_store"]
+	var item_store: Variant = stores["item_store"]
+	for source_id: String in stores["relationship_store"].relations.keys():
+		if not entity_store.has_entity(source_id):
+			return _save_failure(
+				"save_relationship_source_unknown:%s" % source_id,
+				"references"
+			)
+		for target_id: String in (
+			stores["relationship_store"].relations[source_id] as Dictionary
+		).keys():
+			if not entity_store.has_entity(target_id):
+				return _save_failure(
+					"save_relationship_target_unknown:%s" % target_id,
+					"references"
+				)
+	for memory: Dictionary in stores["memory_store"].to_save_data():
+		if not entity_store.has_entity(str(memory.get("owner_id", ""))):
+			return _save_failure("save_memory_owner_unknown", "references")
+		for fact_id: Variant in memory.get("source_fact_ids", []):
+			if fact_store.get_fact(str(fact_id)).is_empty():
+				return _save_failure(
+					"save_memory_fact_unknown:%s" % fact_id,
+					"references"
+				)
+	for entry: Dictionary in stores["chronicle_store"].to_save_data():
+		for fact_id: Variant in entry.get("source_fact_ids", []):
+			if fact_store.get_fact(str(fact_id)).is_empty():
+				return _save_failure(
+					"save_chronicle_fact_unknown:%s" % fact_id,
+					"references"
+				)
+	var item_records: Array = item_store.to_save_data()
+	for item: Dictionary in item_records:
+		var holder: Dictionary = item.get("holder", {})
+		if (
+			str(holder.get("kind", "")) == "container"
+			and item_store.get_item(str(holder.get("id", ""))).is_empty()
+		):
+			return _save_failure("save_item_container_unknown", "references")
+		for history: Dictionary in item.get("history", []):
+			var fact_id := str(history.get("fact_id", ""))
+			if fact_id != "" and fact_store.get_fact(fact_id).is_empty():
+				return _save_failure(
+					"save_item_history_fact_unknown:%s" % fact_id,
+					"references"
+				)
+	var equipment_report: Dictionary = stores[
+		"equipment_store"
+	].validate_integrity()
+	if not bool(equipment_report.get("ok", false)):
+		return _save_failure(
+			"save_equipment_invalid:%s" % ",".join(
+				equipment_report.get("errors", [])
+			),
+			"references"
+		)
+	return {"ok": true, "error": "", "phase": "references"}
+
+
+func _runtime_cursor_save_data() -> Dictionary:
+	return {
+		"action_count": action_count,
+		"travel_count": travel_count,
+		"challenge_count": challenge_count,
+		"challenge_preparation_count": challenge_preparation_count,
+		"return_echo_count": return_echo_count,
+		"investigation_count": investigation_count,
+		"investigation_defer_count": investigation_defer_count,
+		"candidate_generation_count": candidate_generation_count,
+		"world_tick_count": world_tick_count,
+		"elapsed_hours_since_start": elapsed_hours_since_start,
+	}
+
+
+func _restore_runtime_cursors(value: Variant) -> void:
+	var cursors: Dictionary = value if value is Dictionary else {}
+	action_count = maxi(int(cursors.get("action_count", 0)), 0)
+	travel_count = maxi(int(cursors.get("travel_count", 0)), 0)
+	challenge_count = maxi(int(cursors.get("challenge_count", 0)), 0)
+	challenge_preparation_count = maxi(int(cursors.get(
+		"challenge_preparation_count", 0
+	)), 0)
+	return_echo_count = maxi(int(cursors.get("return_echo_count", 0)), 0)
+	investigation_count = maxi(int(cursors.get("investigation_count", 0)), 0)
+	investigation_defer_count = maxi(int(cursors.get(
+		"investigation_defer_count", 0
+	)), 0)
+	candidate_generation_count = maxi(int(cursors.get(
+		"candidate_generation_count", 0
+	)), 0)
+	world_tick_count = maxi(int(cursors.get("world_tick_count", 0)), 0)
+	elapsed_hours_since_start = maxi(int(cursors.get(
+		"elapsed_hours_since_start", 0
+	)), 0)
+
+
+func _save_failure(error: String, phase: String) -> Dictionary:
+	return {"success": false, "ok": false, "error": error, "phase": phase}
+
+
+func _utc_timestamp() -> String:
+	var value := Time.get_datetime_string_from_system(true, false)
+	return value if value.ends_with("Z") else value + "Z"
 
 
 func _create_stores(fixture: Dictionary) -> void:

@@ -46,6 +46,32 @@ func list_open_leads_at_location(location_id: String) -> Array:
 	return rows
 
 
+func to_save_data() -> Array:
+	var rows := list_leads()
+	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.get("lead_id", "")) < str(b.get("lead_id", ""))
+	)
+	return rows
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	leads.clear()
+	var errors: Array[String] = []
+	if not data is Array:
+		return {"ok": false, "errors": ["save_investigation_leads_not_array"]}
+	for value: Variant in data:
+		if not value is Dictionary:
+			errors.append("save_investigation_lead_not_dictionary")
+			continue
+		var lead := value as Dictionary
+		var lead_id := str(lead.get("lead_id", lead.get("id", "")))
+		if lead_id == "" or leads.has(lead_id):
+			errors.append("invalid_or_duplicate_lead_id:%s" % lead_id)
+			continue
+		_create_lead(lead)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func _create_lead(lead: Dictionary) -> void:
 	var lead_id := str(lead.get("lead_id", lead.get("id", "")))
 	if lead_id == "" or leads.has(lead_id):

@@ -107,6 +107,41 @@ func list_relations_for(source_id: String) -> Dictionary:
 	return (relations[source_id] as Dictionary).duplicate(true)
 
 
+func to_save_data() -> Dictionary:
+	return relations.duplicate(true)
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	relations.clear()
+	var errors: Array[String] = []
+	if not data is Dictionary:
+		return {"ok": false, "errors": ["save_relationships_not_dictionary"]}
+	for source_value: Variant in (data as Dictionary).keys():
+		var source_id := str(source_value)
+		var targets: Variant = (data as Dictionary).get(source_value)
+		if not targets is Dictionary:
+			errors.append("%s:relationship_targets_not_dictionary" % source_id)
+			continue
+		for target_value: Variant in (targets as Dictionary).keys():
+			var target_id := str(target_value)
+			var axes: Variant = (targets as Dictionary).get(target_value)
+			if not axes is Dictionary:
+				errors.append("%s:%s:axes_not_dictionary" % [source_id, target_id])
+				continue
+			for axis_value: Variant in (axes as Dictionary).keys():
+				var axis := str(axis_value)
+				if not _axis_is_supported(axis):
+					errors.append("unknown_relationship_axis:%s" % axis)
+					continue
+				set_relation(
+					source_id,
+					target_id,
+					axis,
+					(axes as Dictionary).get(axis_value)
+				)
+	return {"ok": errors.is_empty(), "errors": errors}
+
+
 func apply_relationship_change(change: Dictionary) -> void:
 	var source_id := str(change.get("source_id", ""))
 	var target_id := str(change.get("target_id", ""))

@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 _RNG="*res://scripts/sys/RNG.gd"
 _WorldState="*res://scripts/sys/WorldState.gd"
 _Registry="*res://scripts/gen/registry.gd"
+_LifeStageTransition="*res://scripts/sim/save/life_stage_transition_relay.gd"
 
 [display]
 

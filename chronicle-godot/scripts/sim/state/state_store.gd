@@ -116,6 +116,34 @@ func list_entity_states(entity_id: String) -> Dictionary:
 	return list_states(entity_id)
 
 
+func to_save_data() -> Dictionary:
+	return states.duplicate(true)
+
+
+func load_save_data(data: Variant) -> Dictionary:
+	states.clear()
+	validation_errors.clear()
+	validation_warnings.clear()
+	unregistered_state_keys.clear()
+	last_error = ""
+	if not data is Dictionary:
+		_reject("save_states_not_dictionary")
+		return get_contract_report()
+	for entity_id_value: Variant in (data as Dictionary).keys():
+		var entity_id := str(entity_id_value)
+		var value: Variant = (data as Dictionary).get(entity_id_value)
+		if not value is Dictionary:
+			_reject("%s:save_entity_states_not_dictionary" % entity_id)
+			continue
+		for state_key_value: Variant in (value as Dictionary).keys():
+			_set_initial_state(
+				entity_id,
+				str(state_key_value),
+				(value as Dictionary).get(state_key_value)
+			)
+	return get_contract_report()
+
+
 func apply_state_change(change: Dictionary) -> bool:
 	var entity_id := str(change.get("entity_id", ""))
 	var state_key := str(change.get("key", ""))
