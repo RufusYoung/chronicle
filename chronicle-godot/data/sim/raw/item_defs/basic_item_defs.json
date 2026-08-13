@@ -80,6 +80,7 @@
       "item_def_id": "item.waxed_winter_cloak",
       "definition_version": 1,
       "display_name_key": "item.waxed_winter_cloak.name",
+      "display_name": "上蜡冬衣",
       "item_kind": "equipment",
       "tags": ["clothing", "winter", "water_resistant"],
       "stackable": false,
@@ -94,7 +95,8 @@
           "target": "action.risk",
           "operation": "add",
           "value": -2,
-          "when": [{"kind": "context_tag", "tag": "freezing"}]
+          "when": [{"kind": "context_tag", "tag": "freezing"}],
+          "explain_text": "上蜡冬衣挡住冻风，降低暴露风险。"
         }
       ],
       "base_value": 24

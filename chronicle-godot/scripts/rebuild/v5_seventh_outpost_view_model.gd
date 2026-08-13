@@ -108,25 +108,30 @@ func _action_rows() -> Array:
 		var can_execute := bool(option.get("can_execute", true))
 		var label := str(option.get("label", "承担值勤"))
 		if not can_execute:
-			for requirement: Dictionary in option.get("requirements", []):
-				if bool(requirement.get("met", false)):
-					continue
-				label += "　[%s %d/%d]" % [
-					str(requirement.get("label", "条件")),
-					int(requirement.get("current", 0)),
-					int(requirement.get("required", 0)),
-				]
-				break
+			var unmet_summary := _unmet_requirement_summary(
+				option.get("requirements", [])
+			)
+			label += "　[%s]" % (
+				unmet_summary if unmet_summary != "" else "条件不足"
+			)
+		var hint := (
+			str(option.get("blocked_reason", ""))
+			if not can_execute
+			else str(option.get("hint", ""))
+		)
+		var risk_text := _risk_text(option)
+		if risk_text != "":
+			hint += "\n%s" % risk_text
 		rows.append({
 			"duty_id": str(option.get("duty_id", "")),
 			"label": label,
 			"kind": str(option.get("kind", "值勤")),
-			"hint": (
-				str(option.get("blocked_reason", ""))
-				if not can_execute
-				else str(option.get("hint", ""))
-			),
+			"hint": hint,
 			"can_execute": can_execute,
+			"requirements": option.get("requirements", []),
+			"modifier_explanations": option.get("modifier_explanations", []),
+			"base_values": option.get("base_values", {}),
+			"modified_values": option.get("modified_values", {}),
 		})
 	return rows
 
@@ -151,8 +156,63 @@ func _feedback_view() -> Dictionary:
 		details.append(str(note))
 	for narrative: Variant in latest_result.get("npc_narratives", []):
 		details.append(str(narrative))
+	var risk_text := _risk_text(latest_result)
+	if risk_text != "":
+		details.push_front(risk_text)
+	for modifier: Dictionary in latest_result.get("modifier_explanations", []):
+		details.append(_modifier_text(modifier))
 	return {
 		"title": str(latest_result.get("title", "一天过去")),
 		"body": str(latest_result.get("summary", "")),
 		"details": details,
 	}
+
+
+func _risk_text(source: Dictionary) -> String:
+	var base_values: Dictionary = source.get("base_values", {})
+	var modified_values: Dictionary = source.get("modified_values", {})
+	if not base_values.has("action.risk"):
+		return ""
+	return "风险 %s → %s" % [
+		_number_text(float(base_values.get("action.risk", 0.0))),
+		_number_text(float(modified_values.get(
+			"action.risk", base_values.get("action.risk", 0.0)
+		))),
+	]
+
+
+func _modifier_text(modifier: Dictionary) -> String:
+	var amount := float(modifier.get("value", 0.0))
+	var sign := "+" if amount > 0.0 else ""
+	var reason := str(modifier.get("reason", ""))
+	return "%s %s%s 风险%s%s" % [
+		str(modifier.get("source_label", "修正")),
+		sign,
+		_number_text(amount),
+		"：" if reason != "" else "",
+		reason,
+	]
+
+
+func _number_text(value: float) -> String:
+	if is_equal_approx(value, round(value)):
+		return str(int(value))
+	return str(value)
+
+
+func _unmet_requirement_summary(requirements: Array) -> String:
+	for requirement: Dictionary in requirements:
+		if bool(requirement.get("met", false)):
+			continue
+		for condition: Dictionary in requirement.get("conditions", []):
+			if bool(condition.get("met", false)):
+				continue
+			var current: Variant = condition.get("current")
+			var required: Variant = condition.get("required")
+			if current is int or current is float:
+				return "%s %s/%s" % [
+					str(condition.get("label", "条件")),
+					_number_text(float(current)),
+					_number_text(float(required)),
+				]
+	return ""

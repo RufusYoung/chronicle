@@ -10,7 +10,8 @@ const CharacterProgressProjectorModel = preload(
 func build_snapshot(
 		context: Variant,
 		stores: Dictionary,
-		include_all_entities: bool = false
+		include_all_entities: bool = false,
+		world_time: Dictionary = {}
 ) -> Variant:
 	var entity_store: Variant = stores.get("entity_store")
 	var state_store: Variant = stores.get("state_store")
@@ -82,6 +83,7 @@ func build_snapshot(
 
 	return SimSnapshotModel.new({
 		"fixture_id": str(context.fixture_id),
+		"world_time": world_time.duplicate(true),
 		"location": context.location.duplicate(true),
 		"region_state": region_state,
 		"institution": institution,

@@ -29,11 +29,18 @@
     ],
     "conditional_effects": [
       {
-        "conditions": [
-          {"entity_id": "seventh_outpost", "key": "supply", "max": 2}
+        "requirements": [
+          {
+            "requirement_id": "low_outpost_supply",
+            "label": "哨站补给告急",
+            "mode": "all",
+            "conditions": [
+              {"kind": "state", "entity_id": "seventh_outpost", "key": "supply", "operator": "lte", "value": 2}
+            ]
+          }
         ],
-        "state_changes": [
-          {"entity_id": "seventh_outpost", "key": "morale", "delta": -1}
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "morale", "delta": -1}
         ],
         "narrative": "晚汤只剩薄薄一层，点名时有人开始盯着厨房烟囱。"
       },
@@ -115,18 +122,41 @@
       "duty_id": "patrol_fog_line",
       "label": "[感知] 巡查雾线",
       "kind": "值勤",
-      "hint": "需要感知 8。压低边境压力，但会明显增加疲劳。",
-      "player_min": {"perception": 8},
+      "hint": "感知达到 8 或侦察达到 1 级即可。压低边境压力，但会明显增加疲劳。",
+      "action_tags": ["fog_patrol", "foot_patrol", "mist_salt_exposure"],
+      "base_values": {"action.risk": 6},
+      "requirements": [
+        {
+          "requirement_id": "patrol_fog_line_awareness",
+          "label": "雾线辨识能力",
+          "mode": "any",
+          "visibility": "always_explain",
+          "conditions": [
+            {
+              "kind": "attribute",
+              "subject": "actor",
+              "key": "perception",
+              "operator": "gte",
+              "value": 8
+            },
+            {
+              "kind": "skill_rank",
+              "subject": "actor",
+              "skill_def_id": "skill.scouting",
+              "operator": "gte",
+              "value": 1
+            }
+          ]
+        }
+      ],
       "effects": {
-        "state_changes": [
-          {"entity_id": "seventh_outpost", "key": "border_pressure", "delta": -3},
-          {"entity_id": "seventh_outpost", "key": "readiness", "delta": 1},
-          {"entity_id": "player", "key": "fatigue", "delta": 3},
-          {"entity_id": "player", "key": "training", "delta": 1},
-          {"entity_id": "player", "key": "last_duty", "to": "patrol_fog_line"}
-        ],
-        "relationship_changes": [
-          {"source_id": "captain_ron", "target_id": "player", "axis": "discipline_respect", "delta": 2}
+        "operations": [
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "border_pressure", "delta": -3},
+          {"operation": "state_add", "entity_id": "seventh_outpost", "key": "readiness", "delta": 1},
+          {"operation": "state_add", "entity_id": "player", "key": "fatigue", "delta": 3},
+          {"operation": "state_add", "entity_id": "player", "key": "training", "delta": 1},
+          {"operation": "state_set", "entity_id": "player", "key": "last_duty", "to": "patrol_fog_line"},
+          {"operation": "relationship_add", "source_id": "captain_ron", "target_id": "player", "axis": "discipline_respect", "delta": 2}
         ],
         "narrative": {
           "title": "雾线外没有脚印",

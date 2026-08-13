@@ -10,6 +10,7 @@
         "military_outpost",
         "border",
         "snowbound",
+        "freezing",
         "service_life"
       ]
     }
@@ -179,22 +180,32 @@
       "priority": 40,
       "requirements": [
         {
-          "source": "entity_state",
-          "entity_id": "seventh_outpost",
-          "key": "border_pressure",
-          "min": 8
+          "requirement_id": "ron_high_border_pressure",
+          "label": "边境压力升高",
+          "mode": "all",
+          "conditions": [
+            {
+              "kind": "state",
+              "entity_id": "seventh_outpost",
+              "key": "border_pressure",
+              "operator": "gte",
+              "value": 8
+            }
+          ]
         }
       ],
       "base_utility": 90,
       "effects": {
-        "state_changes": [
+        "operations": [
           {
+            "operation": "state_add",
             "entity_id": "seventh_outpost",
             "key": "discipline",
             "delta": 1,
             "reason": "ron_tightened_watch"
           },
           {
+            "operation": "state_add",
             "entity_id": "seventh_outpost",
             "key": "morale",
             "delta": -1,

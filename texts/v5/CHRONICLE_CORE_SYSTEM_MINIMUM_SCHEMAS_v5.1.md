@@ -2,7 +2,7 @@
 
 日期：2026-08-12
 
-状态：阶段 5.5 步骤 1 草案，供步骤 2 实现
+状态：阶段 5.5 步骤 3 已实现；作为步骤 4 存档与迁移合同的输入
 
 关联审计：`CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md`
 
@@ -540,6 +540,15 @@ Resolver 必须在执行时重新验证库存、价格、营业状态和买方�
 - 双方可见的结果解释。
 
 ## 7. 通用 Requirement、Modifier 与 Effect
+
+实现状态（2026-08-13）：
+
+- `V5ActionContractResolver` 已作为共享 Requirement 与 Modifier 读取层。
+- 行动候选、NPC 决策、生活职责、每日条件结算和阶段完成条件已接入。
+- `player_min`、旧 NPC condition 与旧生活项目 state requirement 由适配器转换，不再各自判定。
+- `V5EffectProtocolResolver` 已将生活项目和 NPC Effect 转换为显式 `TransactionResult` 变化。
+- `V5TransactionWorldWriter` 已实现全 Store 预演、引用重连、装备完整性检查与整笔提交。
+- 第一批正式接入样本为“巡查雾线”、罗恩高压加岗、低补给日结算和 NPC 粮食交易生活链。
 
 ### 7.1 Requirement
 

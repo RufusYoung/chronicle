@@ -57,9 +57,10 @@ func _run() -> void:
 	var patrol := _find_duty_button(action_buttons, "patrol_fog_line")
 	_check(
 		patrol != null
-		and "需要感知 8" in patrol.text
+		and "感知达到 8 或侦察达到 1 级" in patrol.text
+		and "风险 6 → 4" in patrol.text
 		and _find_duty_button(action_buttons, "rest_in_infirmary") == null,
-		"5. Duties show requirements and rest is absent before fatigue"
+		"5. Duty shows combined requirements, equipment risk, and availability"
 	)
 
 	viewer.view_model.controller.session.stores["state_store"].set_state(
@@ -92,6 +93,7 @@ func _run() -> void:
 		day_label.text.begins_with("第 3 / 7 天")
 		and feedback_title.text == "雾线外没有脚印"
 		and "今晚少了一块盲区" in feedback_body.text
+		and "上蜡冬衣 -2 风险" in feedback_body.text
 		and "第 2 天" in history_text.text
 		and "直接列出条件、消耗与影响" in (
 			viewer.get_node("%ActionHint") as Label

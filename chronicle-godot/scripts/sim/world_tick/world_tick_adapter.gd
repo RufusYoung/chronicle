@@ -19,6 +19,11 @@ const SOURCE := "WorldTickAdapter"
 
 var autonomous_action_rules: Array = []
 var npc_need_profiles: Array = []
+var registry: Variant = null
+
+
+func configure_registry(source_registry: Variant) -> void:
+	registry = source_registry
 
 
 func configure_autonomous_actions(rules: Array) -> void:
@@ -162,6 +167,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				true
 			)
 			var decision_system = NpcDecisionSystemModel.new()
+			decision_system.configure(registry)
 			var decision_data: Dictionary = decision_system.resolve_tick(
 				decision_snapshot,
 				autonomous_action_rules,

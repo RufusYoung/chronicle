@@ -1,7 +1,7 @@
 # Chronicle 核心系统合同前置计划 v5.1
 
 日期：2026-08-13
-状态：阶段 5.5 执行中；步骤 2A、2B、2C、2D、2E 已完成，下一步进入步骤 3
+状态：阶段 5.5 执行中；步骤 2A 至 2E、步骤 3 已完成，下一步进入步骤 4
 
 步骤 1 交付：
 
@@ -28,6 +28,10 @@
 
 - `chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_minimum_contract_fixture_report.md`
 
+步骤 3 交付：
+
+- `chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_unified_action_contract_report.md`
+
 审计已确认保留现有 `Store -> Snapshot -> Affordance -> Transaction -> Writer` 主链，并裁定 State、Fact、Memory、角色特征、物品实例、装备位、市场投影与存档的唯一真值。步骤 2 不再重新讨论术语，而是把 schema 草案实现为可校验的数据和 Store 边界。
 
 ## 1. 为什么现在调整顺序
@@ -39,7 +43,7 @@
 - NPC 能根据局面自主行动。
 - 行动后有具体反馈，过期选项会消失。
 - 七日生活项目能结束，并根据实际状态生成不同小结。
-- 当前 Godot 全项目测试为 `63 / 63` 通过。
+- 当前 Godot 全项目测试为 `64 / 64` 通过。
 
 但第一冬的实际实现也暴露出一个结构缺口。现有结算主要读取属性、关系、疲劳和哨站局势，尚不能统一读取或产出：
 
@@ -372,15 +376,16 @@ player_facing_reason
 
 ## 9. 当前下一步
 
-步骤 1 与步骤 2A 至 2E 已完成。下一轮从步骤 3 开始：
+步骤 1、步骤 2A 至 2E、步骤 3 已完成。下一轮从步骤 4 开始：
 
 1. 步骤 2A：已实现 Raw Definition 注册、稳定 ID 和 schema 校验；`EntityStore` 已接入 Session，实体身份与可变状态的唯一真值边界已有自动化测试保护。
 2. 步骤 2B：已引入角色特征 Store 与只读 `CharacterProgress` 投影；伤势与雾盐回响已从 StateStore 迁出，侦察技艺可由真实职责事实成长。
 3. 步骤 2C：已注册 ItemDef，并实现 `ItemInstance.holder`、quantity、transfer、consume、split_stack 与 durability 合同；`inventory_item_ids` 已改为只读派生投影。
 4. 步骤 2D：已引入三个 EquipmentSlotDef 与 `EquipmentLoadoutStore`，Inventory 与 MarketStock 为只读投影；物品与装备联合写入会先模拟最终状态，非法转移或完全损坏不会留下 Fact 或悬空装备引用。
 5. 步骤 2E：已建立最小合同 fixture；旅行、赠粮与远征补给全部读写真实口粮堆叠，`food_count` 只由 ItemStore 派生。两名角色的独立冬衣、商人库存、伤势、印记与技艺样本可以共同导出稳定的 SaveEnvelope seed，并通过 JSON 语义往返校验。
-6. 步骤 3：统一 Requirement、Modifier 与 Effect，先让冬衣、伤势、侦察技艺和雾盐印记共同影响同一条行动规则并给出玩家可读解释；随后把物品与装备联合预检扩展为全 Store 统一失败协议。
-7. 步骤 4：把现有 SaveEnvelope seed 扩展为正式保存、载入、迁移和候选一致性验证。seed 不是可恢复存档，不能提前宣称步骤 4 已完成。
+6. 步骤 3：已实现通用 Requirement、Modifier 与 Effect 解析器。行动候选、NPC 资格与效用条件、生活职责、每日条件结算和完成条件共享 Requirement；NPC 与生活项目 Effect 先归一化为 TransactionResult。巡查雾线会同时读取感知、侦察技艺、冬衣、脚踝伤势和雾盐印记，并在 UI 显示基础风险、最终风险及逐项来源。
+7. 步骤 3 原子写入：Transaction Writer 会克隆并重连全部 Store，在预演图中完整执行结果和装备完整性校验；任一后置 Store 拒绝时，前置 Fact、状态与其他变化均不落地。旧 `player_min`、NPC condition 和生活项目 state requirement 仅作为兼容适配输入，不再拥有独立判定逻辑。
+8. 步骤 4：把现有 SaveEnvelope seed 扩展为正式保存、载入、迁移和候选一致性验证。seed 不是可恢复存档，不能提前宣称步骤 4 已完成。
 
 实施依据：
 

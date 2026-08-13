@@ -4,6 +4,19 @@ class_name V5NpcDecisionSystem
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
+const ActionContractResolverModel = preload(
+	"res://scripts/sim/action/action_contract_resolver.gd"
+)
+const EffectProtocolResolverModel = preload(
+	"res://scripts/sim/transaction/effect_protocol_resolver.gd"
+)
+
+var action_contract_resolver: Variant = ActionContractResolverModel.new()
+var effect_protocol_resolver: Variant = EffectProtocolResolverModel.new()
+
+
+func configure(source_registry: Variant) -> void:
+	action_contract_resolver.configure(source_registry)
 
 
 func resolve_tick(
@@ -73,21 +86,12 @@ func _evaluate_rule(
 		blocked_reason = "already_performed"
 
 	if eligible:
-		for requirement_value: Variant in rule.get("requirements", []):
-			if not (requirement_value is Dictionary):
-				continue
-			var requirement := _resolve_dictionary(
-				requirement_value as Dictionary,
-				bindings
-			)
-			if not _condition_matches(
-				requirement,
-				snapshot,
-				actor_id
-			):
-				eligible = false
-				blocked_reason = "requirements_not_met"
-				break
+		var requirement_result := _evaluate_requirements(
+			rule.get("requirements", []), bindings, snapshot, actor_id
+		)
+		if not bool(requirement_result.get("can_execute", true)):
+			eligible = false
+			blocked_reason = "requirements_not_met"
 
 	var score := int(rule.get("base_utility", 0))
 	var matched_factors: Array = []
@@ -99,7 +103,9 @@ func _evaluate_rule(
 			factor.get("condition", {}) as Dictionary,
 			bindings
 		)
-		if not _condition_matches(condition, snapshot, actor_id):
+		if not bool(_evaluate_requirements(
+			[condition], {}, snapshot, actor_id
+		).get("can_execute", true)):
 			continue
 		var weight := int(factor.get("weight", 0))
 		score += weight
@@ -129,6 +135,22 @@ func _evaluate_rule(
 		"bindings": bindings,
 		"rule": rule.duplicate(true),
 	}
+
+
+func _evaluate_requirements(
+		requirements: Array,
+		bindings: Dictionary,
+		snapshot: Variant,
+		actor_id: String
+) -> Dictionary:
+	var resolved: Array = []
+	for value: Variant in requirements:
+		if value is Dictionary:
+			resolved.append(_resolve_dictionary(value as Dictionary, bindings))
+	var groups: Array = action_contract_resolver.adapt_legacy_conditions(resolved)
+	return action_contract_resolver.evaluate_requirements(
+		snapshot, groups, actor_id
+	)
 
 
 func _matching_actor_ids(rule: Dictionary, snapshot: Variant) -> Array:
@@ -253,59 +275,6 @@ func _is_better_choice(candidate: Dictionary, current: Dictionary) -> bool:
 	return str(candidate.get("rule_id", "")) < str(current.get("rule_id", ""))
 
 
-func _condition_matches(
-		condition: Dictionary,
-		snapshot: Variant,
-		actor_id: String
-) -> bool:
-	if condition.is_empty():
-		return true
-
-	var source := str(condition.get("source", "entity_state"))
-	var value: Variant = null
-	match source:
-		"entity_state":
-			var entity_id := str(condition.get("entity_id", actor_id))
-			value = snapshot.get_entity_state(
-				entity_id,
-				str(condition.get("key", "")),
-				null
-			)
-		"region_state":
-			value = snapshot.region_state.get(str(condition.get("key", "")))
-		"institution":
-			value = snapshot.institution.get(str(condition.get("key", "")))
-		"relationship":
-			value = snapshot.get_relation(
-				str(condition.get("source_id", actor_id)),
-				str(condition.get("target_id", "player")),
-				str(condition.get("axis", "trust")),
-				0
-			)
-		"fact":
-			value = _has_fact_type(
-				snapshot,
-				str(condition.get("fact_type", "")),
-				str(condition.get("actor_id", ""))
-			)
-		_:
-			return false
-
-	if condition.has("equals") and value != condition.get("equals"):
-		return false
-	if condition.has("not_equals") and value == condition.get("not_equals"):
-		return false
-	if condition.has("in"):
-		var accepted_values: Variant = condition.get("in", [])
-		if not (accepted_values is Array) or not (value in accepted_values):
-			return false
-	if condition.has("min") and float(value) < float(condition.get("min", 0)):
-		return false
-	if condition.has("max") and float(value) > float(condition.get("max", 0)):
-		return false
-	return true
-
-
 func _has_fact_type(
 		snapshot: Variant,
 		fact_type: String,
@@ -356,35 +325,19 @@ func _build_result(
 	})
 
 	var effects: Dictionary = rule.get("effects", {})
-	for fact_value: Variant in effects.get("facts", []):
-		if fact_value is Dictionary:
-			var fact := _resolve_dictionary(fact_value, bindings)
-			if not fact.has("observed_by_player"):
-				fact["observed_by_player"] = observed_by_player
-			result.add_fact(fact)
-	for change_value: Variant in effects.get("state_changes", []):
-		if change_value is Dictionary:
-			result.add_state_change(_resolve_dictionary(change_value, bindings))
-	for change_value: Variant in effects.get("relationship_changes", []):
-		if change_value is Dictionary:
-			result.add_relationship_change(
-				_resolve_dictionary(change_value, bindings)
-			)
-	for change_value: Variant in effects.get("pressure_changes", []):
-		if change_value is Dictionary:
-			result.add_pressure_change(_resolve_dictionary(change_value, bindings))
-	for memory_value: Variant in effects.get("memories", []):
-		if memory_value is Dictionary:
-			result.add_memory(_resolve_dictionary(memory_value, bindings))
-	for trace_value: Variant in effects.get("traces", []):
-		if trace_value is Dictionary:
-			result.add_trace(_resolve_dictionary(trace_value, bindings))
-	for rumor_value: Variant in effects.get("rumors", []):
-		if rumor_value is Dictionary:
-			result.add_rumor_seed(_resolve_dictionary(rumor_value, bindings))
-	for exchange_value: Variant in effects.get("exchanges", []):
-		if exchange_value is Dictionary:
-			result.add_exchange(_resolve_dictionary(exchange_value, bindings))
+	var resolved_effects := _resolve_dictionary(effects, bindings)
+	for fact: Dictionary in resolved_effects.get("facts", []):
+		if not fact.has("observed_by_player"):
+			fact["observed_by_player"] = observed_by_player
+	var effect_report: Dictionary = effect_protocol_resolver.append_effects(
+		result, resolved_effects
+	)
+	if not bool(effect_report.get("ok", false)):
+		result.mark_invalid_contract(
+			"npc_autonomous_decision",
+			",".join(effect_report.get("errors", []))
+		)
+		return result
 
 	var narrative: Dictionary = effects.get("narrative", {})
 	if not narrative.is_empty():

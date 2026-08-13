@@ -228,7 +228,7 @@ func is_ready() -> bool:
 func get_snapshot() -> Variant:
 	if not initialized:
 		return null
-	return snapshot_builder.build_snapshot(context, stores)
+	return snapshot_builder.build_snapshot(context, stores, false, get_time_summary())
 
 
 func get_action_candidates() -> Array:
@@ -1150,6 +1150,7 @@ func _reset_runtime() -> void:
 	world_log = SimWorldLogModel.new()
 	snapshot_builder = SimSnapshotBuilderModel.new()
 	affordance_system = ActionAffordanceModel.new()
+	affordance_system.configure(registry)
 	resolver = TransactionResolverModel.new()
 	writer = TransactionWorldWriterModel.new()
 	travel_resolver = TravelResolverModel.new()
@@ -1157,6 +1158,7 @@ func _reset_runtime() -> void:
 	return_echo_resolver = ReturnEchoResolverModel.new()
 	investigation_resolver = InvestigationResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
+	world_tick_adapter.configure_registry(registry)
 	autonomous_action_rules = []
 	npc_need_profiles = []
 	travel_routes = []

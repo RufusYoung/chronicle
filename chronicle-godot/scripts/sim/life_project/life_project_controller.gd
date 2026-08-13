@@ -9,6 +9,13 @@ const TransactionResultModel = preload(
 const TickEventSchemaModel = preload(
 	"res://scripts/sim/world_tick/tick_event_schema.gd"
 )
+const ActionContractResolverModel = preload(
+	"res://scripts/sim/action/action_contract_resolver.gd"
+)
+const EffectProtocolResolverModel = preload(
+	"res://scripts/sim/transaction/effect_protocol_resolver.gd"
+)
+const SimSnapshotModel = preload("res://scripts/sim/core/sim_snapshot.gd")
 
 var session: Variant = null
 var definition: Dictionary = {}
@@ -17,6 +24,8 @@ var day_history: Array[Dictionary] = []
 var duty_counts: Dictionary = {}
 var latest_result: Dictionary = {}
 var initialized: bool = false
+var action_contract_resolver: Variant = ActionContractResolverModel.new()
+var effect_protocol_resolver: Variant = EffectProtocolResolverModel.new()
 
 
 func start(
@@ -39,6 +48,7 @@ func start(
 	)
 	if not bool(start_result.get("success", false)):
 		return start_result
+	action_contract_resolver.configure(session.registry)
 	initialized = true
 	_clamp_states()
 	return {
@@ -106,6 +116,11 @@ func get_duty_options() -> Array:
 			"can_execute": bool(eligibility.get("can_execute", true)),
 			"blocked_reason": str(eligibility.get("blocked_reason", "")),
 			"requirements": eligibility.get("requirements", []),
+			"base_values": eligibility.get("base_values", {}),
+			"modified_values": eligibility.get("modified_values", {}),
+			"modifier_explanations": eligibility.get(
+				"modifier_explanations", []
+			),
 		})
 	return rows
 
@@ -138,12 +153,28 @@ func execute_duty(duty_id: String) -> Dictionary:
 		).duplicate(true)
 		return invalid_tick
 	var duty_result: Variant = _build_duty_transaction(duty, day)
-	session.writer.apply_result(duty_result, session.stores)
+	if str(duty_result.contract_status) != "resolved":
+		var invalid_effect := _failure("duty_effect_contract_invalid")
+		invalid_effect["contract_error"] = str(duty_result.error_reason)
+		return invalid_effect
+	if not session.writer.apply_result(duty_result, session.stores):
+		var failed_write := _failure("duty_transaction_rejected")
+		failed_write["transaction_report"] = session.writer.last_report.duplicate(true)
+		return failed_write
 	_append_duty_log(duty, duty_result, day)
 	duty_counts[duty_id] = int(duty_counts.get(duty_id, 0)) + 1
 
 	var settlement_result: Variant = _settle_day(day)
-	session.writer.apply_result(settlement_result, session.stores)
+	if str(settlement_result.contract_status) != "resolved":
+		var invalid_settlement := _failure("day_settlement_contract_invalid")
+		invalid_settlement["contract_error"] = str(
+			settlement_result.error_reason
+		)
+		return invalid_settlement
+	if not session.writer.apply_result(settlement_result, session.stores):
+		var failed_settlement := _failure("day_settlement_rejected")
+		failed_settlement["transaction_report"] = session.writer.last_report.duplicate(true)
+		return failed_settlement
 	_clamp_states()
 
 	var tick_result: Dictionary = session.advance_world(tick_event, 24)
@@ -186,6 +217,11 @@ func execute_duty(duty_id: String) -> Dictionary:
 		"status": row["status"],
 		"complete": is_complete(),
 		"completion": get_completion_summary(),
+		"base_values": eligibility.get("base_values", {}),
+		"modified_values": eligibility.get("modified_values", {}),
+		"modifier_explanations": eligibility.get(
+			"modifier_explanations", []
+		),
 	}
 	return latest_result.duplicate(true)
 
@@ -258,10 +294,15 @@ func _build_duty_transaction(duty: Dictionary, day: int) -> Variant:
 		).get("summary", "")),
 	})
 	var effects: Dictionary = duty.get("effects", {})
-	for change: Dictionary in effects.get("state_changes", []):
-		result.add_state_change(change)
-	for change: Dictionary in effects.get("relationship_changes", []):
-		result.add_relationship_change(change)
+	var effect_report: Dictionary = effect_protocol_resolver.append_effects(
+		result, effects
+	)
+	if not bool(effect_report.get("ok", false)):
+		result.mark_invalid_contract(
+			"life_project_duty",
+			",".join(effect_report.get("errors", []))
+		)
+		return result
 	result.add_memory({
 		"memory_id": "%s:duty_memory:%d:%s" % [project_id, day, duty_id],
 		"owner_id": "player",
@@ -283,19 +324,39 @@ func _build_duty_transaction(duty: Dictionary, day: int) -> Variant:
 func _settle_day(day: int) -> Variant:
 	var result = TransactionResultModel.new()
 	var model: Dictionary = definition.get("daily_settlement", {})
-	for change: Dictionary in model.get("base_state_changes", []):
-		result.add_state_change(change)
+	var base_effects: Variant = model.get(
+		"base_effects",
+		{"state_changes": model.get("base_state_changes", [])}
+	)
+	var base_report: Dictionary = effect_protocol_resolver.append_effects(
+		result, base_effects
+	)
+	if not bool(base_report.get("ok", false)):
+		result.mark_invalid_contract(
+			"life_project_day_settlement",
+			",".join(base_report.get("errors", []))
+		)
+		return result
 	var notes: Array[String] = []
 	for effect_value: Variant in model.get("conditional_effects", []):
 		if not (effect_value is Dictionary):
 			continue
 		var effect := effect_value as Dictionary
 		if not _conditions_match_after_changes(
-			effect.get("conditions", []), result.state_changes
+			effect.get("requirements", effect.get("conditions", [])),
+			result.state_changes
 		):
 			continue
-		for change: Dictionary in effect.get("state_changes", []):
-			result.add_state_change(change)
+		var effect_report: Dictionary = effect_protocol_resolver.append_effects(
+			result,
+			effect.get("operations", effect)
+		)
+		if not bool(effect_report.get("ok", false)):
+			result.mark_invalid_contract(
+				"life_project_day_settlement",
+				",".join(effect_report.get("errors", []))
+			)
+			return result
 		var note := str(effect.get("narrative", ""))
 		if note != "":
 			notes.append(note)
@@ -320,103 +381,55 @@ func _conditions_match_after_changes(
 		conditions: Array,
 		pending_changes: Array
 ) -> bool:
-	var overrides: Dictionary = {}
-	var store: Variant = session.stores["state_store"]
+	var snapshot: Variant = session.get_snapshot()
+	var data: Dictionary = snapshot.to_dict()
+	var states: Dictionary = data.get("states", {})
+	var player: Dictionary = data.get("player", {})
 	for change: Dictionary in pending_changes:
 		var entity_id := str(change.get("entity_id", ""))
 		var key := str(change.get("key", ""))
-		var compound := "%s:%s" % [entity_id, key]
-		var current: Variant = overrides.get(
-			compound,
-			store.get_state(entity_id, key, 0)
-		)
+		var entity_states: Dictionary = (
+			states.get(entity_id, {}) as Dictionary
+		).duplicate(true)
+		var current: Variant = entity_states.get(key, 0)
 		if change.has("to"):
-			overrides[compound] = change.get("to")
+			entity_states[key] = change.get("to")
 		elif change.has("delta"):
-			overrides[compound] = int(current) + int(change.get("delta", 0))
-	for condition: Dictionary in conditions:
-		var compound := "%s:%s" % [
-			str(condition.get("entity_id", "")),
-			str(condition.get("key", "")),
-		]
-		if not _value_matches(overrides.get(
-			compound,
-			store.get_state(
-				str(condition.get("entity_id", "")),
-				str(condition.get("key", "")),
-				0
-			)
-		), condition):
-			return false
-	return true
+			entity_states[key] = float(current) + float(change.get("delta", 0))
+		states[entity_id] = entity_states
+		if entity_id == "player":
+			player[key] = entity_states[key]
+	data["states"] = states
+	data["player"] = player
+	return _requirements_match(conditions, SimSnapshotModel.new(data))
 
 
 func _duty_eligibility(duty: Dictionary) -> Dictionary:
-	var requirements: Array[Dictionary] = []
-	var blocked: Array[String] = []
 	var snapshot: Variant = session.get_snapshot()
-	for key: String in (duty.get("player_min", {}) as Dictionary).keys():
-		var current := int(snapshot.get_player_value(key, 0))
-		var required := int((duty.get("player_min", {}) as Dictionary)[key])
-		var label := _attribute_label(key)
-		requirements.append({
-			"label": label,
-			"current": current,
-			"required": required,
-			"met": current >= required,
-		})
-		if current < required:
-			blocked.append("%s不足：需要 %d，当前 %d" % [
-				label, required, current
-			])
-	var store: Variant = session.stores["state_store"]
-	for requirement: Dictionary in duty.get("requirements", []):
-		var current := int(store.get_state(
-			str(requirement.get("entity_id", "")),
-			str(requirement.get("key", "")), 0
-		))
-		var required := int(requirement.get("min", 0))
-		var label := str(requirement.get("label", "资源"))
-		requirements.append({
-			"label": label,
-			"current": current,
-			"required": required,
-			"met": current >= required,
-		})
-		if current < required:
-			blocked.append("%s不足：需要 %d，当前 %d" % [
-				label, required, current
-			])
-	return {
-		"can_execute": blocked.is_empty(),
-		"blocked_reason": "；".join(blocked),
-		"requirements": requirements,
-	}
+	var contract := duty.duplicate(true)
+	var requirements: Array = action_contract_resolver.adapt_legacy_state_requirements(
+		duty.get("requirements", [])
+	)
+	requirements.append_array(action_contract_resolver.adapt_player_min(
+		duty.get("player_min", {}), duty.get("player_min_labels", {})
+	))
+	contract["requirements"] = requirements
+	return action_contract_resolver.evaluate(snapshot, contract, "player")
 
 
 func _conditions_match(conditions: Array) -> bool:
 	if not is_ready():
 		return false
-	var store: Variant = session.stores["state_store"]
-	for condition: Dictionary in conditions:
-		var value: Variant = store.get_state(
-			str(condition.get("entity_id", "")),
-			str(condition.get("key", "")),
-			null
-		)
-		if not _value_matches(value, condition):
-			return false
-	return true
+	return _requirements_match(conditions, session.get_snapshot())
 
 
-func _value_matches(value: Variant, condition: Dictionary) -> bool:
-	if condition.has("equals") and value != condition.get("equals"):
-		return false
-	if condition.has("min") and float(value) < float(condition.get("min", 0)):
-		return false
-	if condition.has("max") and float(value) > float(condition.get("max", 0)):
-		return false
-	return true
+func _requirements_match(conditions: Array, snapshot: Variant) -> bool:
+	var requirements: Array = action_contract_resolver.adapt_legacy_conditions(
+		conditions
+	)
+	return bool(action_contract_resolver.evaluate_requirements(
+		snapshot, requirements, "player"
+	).get("can_execute", true))
 
 
 func _find_duty(duty_id: String) -> Dictionary:

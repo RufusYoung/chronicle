@@ -2,6 +2,15 @@ extends RefCounted
 class_name V5ActionAffordanceSystem
 
 const ActionCandidateModel = preload("res://scripts/sim/action/action_candidate.gd")
+const ActionContractResolverModel = preload(
+	"res://scripts/sim/action/action_contract_resolver.gd"
+)
+
+var contract_resolver: Variant = ActionContractResolverModel.new()
+
+
+func configure(source_registry: Variant) -> void:
+	contract_resolver.configure(source_registry)
 
 
 func build_candidates(context: Variant = null) -> Array:
@@ -38,10 +47,20 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 	var target_id := str(target.get("id", ""))
 	var target_display_name := str(target.get("display_name", target_id))
 	var interaction := _target_interaction(target, rule_id)
-	var requirement_status := _player_requirement_status(
-		_context_player(context),
-		_effective_dictionary(rule, interaction, "player_min"),
-		_effective_dictionary(rule, interaction, "player_min_labels")
+	var contract := rule.duplicate(true)
+	contract["requirements"] = _effective_requirements(rule, interaction)
+	contract["modifiers"] = _effective_array(rule, interaction, "modifiers")
+	contract["action_tags"] = _effective_array(rule, interaction, "action_tags")
+	contract["base_values"] = _effective_dictionary(
+		rule, interaction, "base_values"
+	)
+	var actor_id := str(context.get_player_value("id", "player"))
+	var requirement_status: Dictionary = contract_resolver.evaluate(
+		context, contract, actor_id, target_id
+	)
+	var requirement_groups: Array = requirement_status.get("requirements", [])
+	var requirement_summaries := _flatten_requirement_conditions(
+		requirement_groups
 	)
 	var label := str(interaction.get(
 		"label_template",
@@ -62,7 +81,13 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 			rule.get("result_summary", "")
 		), target_display_name, target),
 		"hint": str(interaction.get("hint", rule.get("hint", ""))),
-		"player_requirements": requirement_status.get("requirements", []),
+		"player_requirements": requirement_summaries,
+		"requirement_groups": requirement_groups,
+		"base_values": requirement_status.get("base_values", {}),
+		"modified_values": requirement_status.get("modified_values", {}),
+		"modifier_explanations": requirement_status.get(
+			"modifier_explanations", []
+		),
 	}
 
 	var candidate_data := {
@@ -78,7 +103,7 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 		"domain": str(rule.get("domain", "")),
 		"can_execute": bool(requirement_status.get("can_execute", true)),
 		"blocked_reason": str(requirement_status.get("blocked_reason", "")),
-		"player_requirements": requirement_status.get("requirements", []),
+		"player_requirements": requirement_summaries,
 		"extra": extra,
 	}
 	_apply_pressure_priority(context, rule, candidate_data)
@@ -107,6 +132,43 @@ func _effective_dictionary(
 		for entry_key: Variant in (interaction_value as Dictionary).keys():
 			result[entry_key] = interaction_value.get(entry_key)
 	return result
+
+
+func _effective_array(
+		rule: Dictionary,
+		interaction: Dictionary,
+		key: String
+) -> Array:
+	var result: Array = []
+	var rule_value: Variant = rule.get(key, [])
+	if rule_value is Array:
+		result.append_array((rule_value as Array).duplicate(true))
+	var interaction_value: Variant = interaction.get(key, [])
+	if interaction_value is Array:
+		result.append_array((interaction_value as Array).duplicate(true))
+	return result
+
+
+func _effective_requirements(
+		rule: Dictionary, interaction: Dictionary
+) -> Array:
+	var rows := _effective_array(rule, interaction, "requirements")
+	rows.append_array(contract_resolver.adapt_player_min(
+		_effective_dictionary(rule, interaction, "player_min"),
+		_effective_dictionary(rule, interaction, "player_min_labels")
+	))
+	return rows
+
+
+func _flatten_requirement_conditions(groups: Array) -> Array:
+	var rows: Array = []
+	for group: Dictionary in groups:
+		for condition: Dictionary in group.get("conditions", []):
+			var row := condition.duplicate(true)
+			row["requirement_id"] = str(group.get("requirement_id", ""))
+			row["requirement_mode"] = str(group.get("mode", "all"))
+			rows.append(row)
+	return rows
 
 
 func _player_requirement_status(

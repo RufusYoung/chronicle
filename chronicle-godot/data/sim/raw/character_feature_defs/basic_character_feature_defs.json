@@ -22,6 +22,7 @@
       "trait_def_id": "trait.twisted_ankle",
       "definition_version": 1,
       "display_name_key": "trait.twisted_ankle.name",
+      "display_name": "扭伤的脚踝",
       "tags": ["physical", "injury", "recoverable"],
       "stage_order": ["fresh", "recovering", "healed"],
       "terminal_stages": ["healed"],
@@ -41,7 +42,8 @@
           "target": "action.risk",
           "operation": "add",
           "value": 2,
-          "when": [{"kind": "action_tag", "tag": "long_travel"}]
+          "when": [{"kind": "action_tag", "tag": "foot_patrol"}],
+          "explain_text": "受伤的脚踝让雪地巡查更危险。"
         }
       ]
     },
@@ -89,6 +91,7 @@
       "mark_def_id": "mark.mist_salt_echo",
       "definition_version": 1,
       "display_name_key": "mark.mist_salt_echo.name",
+      "display_name": "雾盐回响",
       "tags": ["experience", "anomaly", "persistent"],
       "stages": [
         {"stage_id": "faint", "threshold": 1},
@@ -103,7 +106,16 @@
         "actor_endured_mist_salt_resonance": 1
       },
       "granted_affordance_tags": ["recognize_mist_salt_resonance"],
-      "modifiers": []
+      "modifiers": [
+        {
+          "modifier_id": "mist_salt_echo_patrol_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": 1,
+          "when": [{"kind": "action_tag", "tag": "mist_salt_exposure"}],
+          "explain_text": "雾盐回响会在相似环境中扰乱判断。"
+        }
+      ]
     }
   ],
   "skill_defs": [
@@ -111,6 +123,7 @@
       "skill_def_id": "skill.scouting",
       "definition_version": 1,
       "display_name_key": "skill.scouting.name",
+      "display_name": "侦察",
       "tags": ["fieldcraft", "observation"],
       "rank_thresholds": [0, 20, 60, 140, 300],
       "accepted_practice_fact_types": [
@@ -128,7 +141,17 @@
           "xp": 3
         }
       ],
-      "modifiers": []
+      "modifiers": [
+        {
+          "modifier_id": "scouting_fog_patrol_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -1,
+          "minimum_rank": 1,
+          "when": [{"kind": "action_tag", "tag": "fog_patrol"}],
+          "explain_text": "侦察训练让你更早辨认雪地与雾中的异常。"
+        }
+      ]
     }
   ]
 }

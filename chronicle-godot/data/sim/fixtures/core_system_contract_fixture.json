@@ -8,7 +8,7 @@
       "id": "contract_market",
       "display_name": "合同样本集市",
       "description": "只用于核心系统合同与未来存档往返验证。",
-      "tags": ["settlement", "market", "cold"]
+      "tags": ["settlement", "market", "cold", "freezing"]
     }
   ],
   "world_time": {"day": 4, "hour": 9},

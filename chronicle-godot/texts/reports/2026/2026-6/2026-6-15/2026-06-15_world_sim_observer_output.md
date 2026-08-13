@@ -3,25 +3,25 @@
 ## 1. 运行设置
 
 - 固定 seed：`20260613`
-- A 组：无模拟干预，运行 15 天
+- A 组：无模拟干预，运行 30 天
 - B 组：第 3 天测试注入 `help_faction(state, "wardens", "border_town")`
 - 输出为开发者观察数据，不接入正式 UI。
 
 ## 2. 无模拟干预 30 天总览
 
-- 总量：world_fact 108（微观事实 10），world_news 28，新闻历史 11，LeadCandidate 19，适配后线索 19，Trace 16，可叙述状态 5
-- 线索类型分布：`{"传闻":8,"烟柱":5,"足迹":6}`
+- 总量：world_fact 202（微观事实 10），world_news 41，新闻历史 13，LeadCandidate 40，适配后线索 40，Trace 16，可叙述状态 5
+- 线索类型分布：`{"传闻":15,"河流":3,"烟柱":13,"足迹":9}`
 - 30 天后地区最终状态：
-  - border_town：danger 46.73 / order 35.64 / scarcity 97.53 / mystic 32.35 / food 23.68 / herbs 41.25 / relics 16.51 / information 86.35 / tags [populated, resource_strained, scarcity_high, town, trade_route]
-  - mirror_lake_forest：danger 60.81 / order 34.27 / scarcity 40.55 / mystic 61.57 / food 64.82 / herbs 72.16 / relics 24.00 / information 50.75 / tags [beast_migration, forest, herb_rich, lake, order_low]
-  - old_ruins：danger 100.00 / order 0.00 / scarcity 45.30 / mystic 100.00 / food 24.62 / herbs 57.55 / relics 70.70 / information 54.00 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+  - border_town：danger 66.69 / order 0.00 / scarcity 98.00 / mystic 40.69 / food 3.61 / herbs 47.22 / relics 15.30 / information 100.00 / tags [danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route]
+  - mirror_lake_forest：danger 71.66 / order 29.07 / scarcity 35.09 / mystic 65.59 / food 73.66 / herbs 61.65 / relics 22.30 / information 53.74 / tags [danger_high, forest, herb_rich, lake, order_low]
+  - old_ruins：danger 100.00 / order 0.00 / scarcity 58.96 / mystic 100.00 / food 28.66 / herbs 62.82 / relics 57.32 / information 55.94 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
 - 30 天后势力最终状态：
-  - echo_cult：power 58.90 / wealth 42.30 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
-  - smugglers：power 43.10 / wealth 95.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
-  - wardens：power 70.90 / wealth 35.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+  - echo_cult：power 72.30 / wealth 48.10 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+  - smugglers：power 42.60 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+  - wardens：power 79.40 / wealth 10.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 - 地区 tag 变化：
-  - border_town：新增 [resource_strained, scarcity_high]，移除 []
-  - mirror_lake_forest：新增 [beast_migration, order_low]，移除 []
+  - border_town：新增 [danger_high, order_low, resource_strained, scarcity_high]，移除 []
+  - mirror_lake_forest：新增 [danger_high, order_low]，移除 []
   - old_ruins：新增 [danger_high, mystic_surge, order_low, resource_strained]，移除 []
 
 ## 湖湾镇微观链观察
@@ -684,37 +684,487 @@
 - 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.67 / 狩猎, 跟随, 设陷, 警告旅人
 - 传闻 / 镇上的低声传闻 / 东南 / freshness 1.00 / risk 0.43 / 核实, 购买情报, 散播消息, 报告
 
+### Day 16
+
+地区摘要：
+- border_town：danger 48.30 / order 34.42 / scarcity 100.00 / mystic 32.37 / food 17.19 / herbs 42.18 / relics 16.34 / information 87.32 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 61.51 / order 33.93 / scarcity 39.84 / mystic 61.34 / food 65.44 / herbs 73.13 / relics 23.99 / information 51.20 / tags [beast_migration, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 46.27 / mystic 100.00 / food 23.93 / herbs 58.23 / relics 70.64 / information 53.73 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 60.40 / wealth 41.80 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 41.60 / wealth 98.40 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 71.60 / wealth 34.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 3 / 累计 8：清剿累计 8 次，走私者转入暗线，镇上传闻更多了。
+- border_town / 地区观察 / 阶段 1 / 累计 1：边境镇 的状态标签发生变化：order_low, populated, resource_strained, scarcity_high, town, trade_route
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 16：走私者袭击补给线已持续 16 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 8：守望者清剿走私据点已持续 8 次，盘查与暗线活动同时增加。
+- border_town / 阶段 3 / 累计 8：守望者已护送 8 批补给，粮食危机仍未完全缓解。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
+### Day 17
+
+地区摘要：
+- border_town：danger 49.10 / order 31.67 / scarcity 98.00 / mystic 32.24 / food 19.37 / herbs 42.25 / relics 16.29 / information 87.27 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 62.21 / order 33.60 / scarcity 41.10 / mystic 62.70 / food 65.82 / herbs 68.06 / relics 23.86 / information 51.53 / tags [beast_migration, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 47.27 / mystic 100.00 / food 23.47 / herbs 57.72 / relics 70.67 / information 54.05 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 60.90 / wealth 43.00 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.30 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 72.10 / wealth 32.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- mirror_lake_forest / 回声教团 / 阶段 3 / 累计 5：草药短缺开始影响镇上的伤病治疗。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 17：走私者袭击补给线已持续 17 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 3 / 累计 9：守望者已护送 9 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 8：守望者清剿走私据点已持续 8 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- caravan / scarcity_high_and_smuggler_raid / fact_d17_120_raid_supplies / risk 0.74 / urgency 0.98
+- apparition / cult_ritual_and_mystic_pressure / fact_d17_118_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d17_121_harvest_herbs / risk 0.62 / urgency 0.66
+
+当天适配后 v0.3 线索：
+- 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.74 / 调查, 护送, 劫掠, 放任
+- 传闻 / 关于旧遗迹异象的传闻 / 北方 / freshness 1.00 / risk 1.00 / 观察, 打断, 跟随, 报告
+- 烟柱 / 林间冲突升起的烟柱 / 西北 / freshness 1.00 / risk 0.62 / 靠近, 侦察, 绕行, 通知守望者
+
+### Day 18
+
+地区摘要：
+- border_town：danger 49.93 / order 26.93 / scarcity 97.64 / mystic 34.00 / food 21.15 / herbs 43.21 / relics 16.11 / information 91.88 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 62.92 / order 33.24 / scarcity 40.34 / mystic 62.40 / food 66.37 / herbs 69.42 / relics 23.79 / information 51.20 / tags [beast_migration, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 48.28 / mystic 100.00 / food 23.16 / herbs 57.18 / relics 70.69 / information 53.89 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 61.50 / wealth 43.00 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 43.00 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 72.60 / wealth 30.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 10：已护送 10 批粮车，边境镇的粮食压力仍未解除。
+- border_town / 回声教团 / 阶段 3 / 累计 5：越来越多镇民梦见倒悬湖面，白日里也有人听见回声。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 18：走私者袭击补给线已持续 18 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 10：守望者已护送 10 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 8：守望者清剿走私据点已持续 8 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
+### Day 19
+
+地区摘要：
+- border_town：danger 51.65 / order 25.69 / scarcity 100.00 / mystic 34.38 / food 14.37 / herbs 43.75 / relics 15.98 / information 91.66 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 63.63 / order 32.90 / scarcity 39.53 / mystic 62.44 / food 67.59 / herbs 70.49 / relics 23.60 / information 51.50 / tags [beast_migration, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 49.32 / mystic 100.00 / food 22.65 / herbs 57.98 / relics 66.55 / information 53.55 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 62.50 / wealth 44.00 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 41.50 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 73.30 / wealth 29.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- old_ruins / 回声教团 / 阶段 3 / 累计 5：教团第 5 次带出遗物，遗迹神秘压力接近失控。
+
+连续事件摘要：
+- border_town / 阶段 4 / 累计 19：走私者袭击补给线已持续 19 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 10：守望者已护送 10 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- tracks / beast_migration / fact_d19_129_region_daily_shift / risk 0.68 / urgency 0.72
+- rumor / smuggler_information_market / fact_d19_128_region_daily_shift / risk 0.42 / urgency 0.92
+
+当天适配后 v0.3 线索：
+- 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.68 / 狩猎, 跟随, 设陷, 警告旅人
+- 传闻 / 镇上的低声传闻 / 东南 / freshness 1.00 / risk 0.42 / 核实, 购买情报, 散播消息, 报告
+
+### Day 20
+
+地区摘要：
+- border_town：danger 52.59 / order 22.92 / scarcity 98.00 / mystic 34.21 / food 16.68 / herbs 43.69 / relics 16.03 / information 92.64 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 64.34 / order 32.55 / scarcity 38.71 / mystic 62.30 / food 67.79 / herbs 71.21 / relics 23.64 / information 51.18 / tags [beast_migration, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 50.36 / mystic 100.00 / food 22.42 / herbs 58.55 / relics 66.47 / information 54.27 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 64.00 / wealth 43.50 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.20 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 73.80 / wealth 27.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- border_town / 雾路走私团 / 阶段 5 / 累计 20：补给线已遇袭 20 次，边境镇粮食接近见底。
+- old_ruins / 回声教团 / 阶段 3 / 累计 5：教团已举行 5 次仪式，遗迹神秘压力接近失控。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 20：走私者袭击补给线已持续 20 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 11：守望者已护送 11 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
+### Day 21
+
+地区摘要：
+- border_town：danger 53.56 / order 18.16 / scarcity 97.83 / mystic 36.21 / food 16.89 / herbs 44.14 / relics 16.02 / information 96.53 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 65.07 / order 32.21 / scarcity 37.83 / mystic 62.10 / food 68.93 / herbs 72.46 / relics 23.41 / information 51.52 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 51.35 / mystic 100.00 / food 23.75 / herbs 59.09 / relics 66.46 / information 54.45 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 64.60 / wealth 43.50 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.90 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 74.30 / wealth 25.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 21：走私者袭击补给线已持续 21 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 12：守望者已护送 12 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- caravan / scarcity_high_and_smuggler_raid / fact_d21_144_raid_supplies / risk 0.76 / urgency 0.98
+- apparition / cult_ritual_and_mystic_pressure / fact_d21_142_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d21_146_region_tags_changed / risk 0.65 / urgency 0.68
+
+当天适配后 v0.3 线索：
+- 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.76 / 调查, 护送, 劫掠, 放任
+- 传闻 / 关于旧遗迹异象的传闻 / 北方 / freshness 1.00 / risk 1.00 / 观察, 打断, 跟随, 报告
+- 烟柱 / 林间冲突升起的烟柱 / 西北 / freshness 1.00 / risk 0.65 / 靠近, 侦察, 绕行, 通知守望者
+
+### Day 22
+
+地区摘要：
+- border_town：danger 54.62 / order 15.40 / scarcity 97.67 / mystic 36.40 / food 16.94 / herbs 44.76 / relics 15.84 / information 96.59 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 65.78 / order 31.87 / scarcity 36.95 / mystic 61.96 / food 69.06 / herbs 73.40 / relics 23.25 / information 51.53 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 52.28 / mystic 100.00 / food 24.83 / herbs 59.54 / relics 62.24 / information 55.43 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 65.60 / wealth 44.50 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 43.60 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 74.80 / wealth 23.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 22：走私者袭击补给线已持续 22 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 13：守望者已护送 13 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 3 / 累计 9：守望者清剿走私据点已持续 9 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
+### Day 23
+
+地区摘要：
+- border_town：danger 56.50 / order 14.13 / scarcity 100.00 / mystic 36.18 / food 10.44 / herbs 45.43 / relics 15.74 / information 97.18 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 66.49 / order 31.53 / scarcity 38.02 / mystic 63.28 / food 70.30 / herbs 68.40 / relics 23.05 / information 51.25 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 53.19 / mystic 100.00 / food 25.42 / herbs 59.00 / relics 62.14 / information 55.65 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 66.10 / wealth 45.70 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.10 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 75.50 / wealth 22.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 10：第 10 次清剿后，边境镇秩序仍跌入危险线。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 23：走私者袭击补给线已持续 23 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 13：守望者已护送 13 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- tracks / beast_migration / fact_d23_158_harvest_herbs / risk 0.69 / urgency 0.72
+- river / resource_pressure_along_lake_routes / fact_d23_158_harvest_herbs / risk 0.49 / urgency 0.51
+- rumor / smuggler_information_market / fact_d23_153_region_daily_shift / risk 0.42 / urgency 0.95
+
+当天适配后 v0.3 线索：
+- 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.69 / 狩猎, 跟随, 设陷, 警告旅人
+- 河流 / 河岸资源异动 / 西北 / freshness 1.00 / risk 0.49 / 取水检验, 溯流追查, 提醒居民, 放任
+- 传闻 / 镇上的低声传闻 / 东南 / freshness 1.00 / risk 0.42 / 核实, 购买情报, 散播消息, 报告
+
+### Day 24
+
+地区摘要：
+- border_town：danger 57.60 / order 11.32 / scarcity 98.00 / mystic 35.97 / food 11.83 / herbs 45.67 / relics 15.79 / information 97.53 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 67.22 / order 31.18 / scarcity 37.12 / mystic 63.08 / food 69.52 / herbs 69.30 / relics 22.98 / information 51.96 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 54.10 / mystic 100.00 / food 25.41 / herbs 59.92 / relics 62.11 / information 55.23 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 67.60 / wealth 45.20 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.80 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 76.00 / wealth 20.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 24：走私者袭击补给线已持续 24 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 14：守望者已护送 14 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
+### Day 25
+
+地区摘要：
+- border_town：danger 58.75 / order 8.53 / scarcity 97.99 / mystic 36.29 / food 13.49 / herbs 46.30 / relics 15.77 / information 97.81 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 67.94 / order 30.83 / scarcity 36.17 / mystic 63.42 / food 70.61 / herbs 69.83 / relics 22.82 / information 51.97 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 54.97 / mystic 100.00 / food 26.40 / herbs 60.84 / relics 57.95 / information 55.13 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 68.60 / wealth 46.20 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 43.50 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 76.50 / wealth 18.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 25：走私者袭击补给线已持续 25 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 15：守望者已护送 15 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 10：守望者清剿走私据点已持续 10 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- caravan / scarcity_high_and_smuggler_raid / fact_d25_169_raid_supplies / risk 0.78 / urgency 0.98
+- apparition / cult_ritual_and_mystic_pressure / fact_d25_167_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d25_166_region_daily_shift / risk 0.68 / urgency 0.69
+
+当天适配后 v0.3 线索：
+- 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.78 / 调查, 护送, 劫掠, 放任
+- 传闻 / 关于旧遗迹异象的传闻 / 北方 / freshness 1.00 / risk 1.00 / 观察, 打断, 跟随, 报告
+- 烟柱 / 林间冲突升起的烟柱 / 西北 / freshness 1.00 / risk 0.68 / 靠近, 侦察, 绕行, 通知守望者
+
+### Day 26
+
+地区摘要：
+- border_town：danger 60.75 / order 7.23 / scarcity 100.00 / mystic 36.33 / food 7.57 / herbs 46.66 / relics 15.61 / information 97.72 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 68.66 / order 30.49 / scarcity 37.19 / mystic 65.03 / food 71.30 / herbs 65.07 / relics 22.86 / information 51.78 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 55.81 / mystic 100.00 / food 27.02 / herbs 61.79 / relics 57.81 / information 55.84 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 69.10 / wealth 47.40 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.00 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 77.20 / wealth 17.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 26：走私者袭击补给线已持续 26 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 15：守望者已护送 15 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 11：守望者清剿走私据点已持续 11 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
+### Day 27
+
+地区摘要：
+- border_town：danger 61.95 / order 2.40 / scarcity 98.00 / mystic 38.50 / food 8.30 / herbs 46.21 / relics 15.62 / information 100.00 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 69.41 / order 30.13 / scarcity 36.21 / mystic 64.75 / food 71.16 / herbs 65.65 / relics 22.84 / information 52.39 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 56.65 / mystic 100.00 / food 27.05 / herbs 62.12 / relics 57.72 / information 56.18 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 69.70 / wealth 47.40 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.70 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 77.70 / wealth 15.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 16：已护送 16 批粮车，但补给速度仍追不上消耗。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 27：走私者袭击补给线已持续 27 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 16：守望者已护送 16 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 11：守望者清剿走私据点已持续 11 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- tracks / beast_migration / fact_d27_178_region_daily_shift / risk 0.70 / urgency 0.71
+- river / resource_pressure_along_lake_routes / fact_d27_178_region_daily_shift / risk 0.52 / urgency 0.50
+- rumor / smuggler_information_market / fact_d27_177_region_daily_shift / risk 0.43 / urgency 0.95
+
+当天适配后 v0.3 线索：
+- 足迹 / 林中迁徙足迹 / 西北 / freshness 1.00 / risk 0.70 / 狩猎, 跟随, 设陷, 警告旅人
+- 河流 / 河岸资源异动 / 西北 / freshness 1.00 / risk 0.52 / 取水检验, 溯流追查, 提醒居民, 放任
+- 传闻 / 镇上的低声传闻 / 东南 / freshness 1.00 / risk 0.43 / 核实, 购买情报, 散播消息, 报告
+
+### Day 28
+
+地区摘要：
+- border_town：danger 63.24 / order 0.00 / scarcity 98.00 / mystic 38.42 / food 9.19 / herbs 46.37 / relics 15.65 / information 100.00 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 70.16 / order 29.78 / scarcity 35.22 / mystic 64.47 / food 71.48 / herbs 66.03 / relics 22.63 / information 53.06 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 57.43 / mystic 100.00 / food 28.11 / herbs 61.72 / relics 57.54 / information 55.63 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 71.20 / wealth 46.90 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 43.40 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 78.20 / wealth 13.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- 无
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 28：走私者袭击补给线已持续 28 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 17：守望者已护送 17 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 11：守望者清剿走私据点已持续 11 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
+### Day 29
+
+地区摘要：
+- border_town：danger 65.36 / order 0.00 / scarcity 100.00 / mystic 38.73 / food 2.75 / herbs 46.75 / relics 15.48 / information 100.00 / tags [danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 70.90 / order 29.43 / scarcity 36.17 / mystic 65.66 / food 72.89 / herbs 61.27 / relics 22.49 / information 52.75 / tags [beast_migration, danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 58.20 / mystic 100.00 / food 28.71 / herbs 62.71 / relics 57.40 / information 55.94 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 71.70 / wealth 48.10 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 41.90 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 78.90 / wealth 12.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- mirror_lake_forest / 回声教团 / 阶段 3 / 累计 8：草药已被集中采集 8 次，采药人开始深入危险地带。
+- border_town / 地区观察 / 阶段 1 / 累计 1：边境镇 的状态标签发生变化：danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 29：走私者袭击补给线已持续 29 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 17：守望者已护送 17 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 12：守望者清剿走私据点已持续 12 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- caravan / scarcity_high_and_smuggler_raid / fact_d29_193_raid_supplies / risk 0.83 / urgency 1.00
+- apparition / cult_ritual_and_mystic_pressure / fact_d29_191_region_daily_shift / risk 1.00 / urgency 1.00
+- smoke / order_collapse_and_forest_conflict / fact_d29_194_harvest_herbs / risk 0.71 / urgency 0.71
+
+当天适配后 v0.3 线索：
+- 烟柱 / 远处商队烟迹 / 东南 / freshness 1.00 / risk 0.83 / 调查, 护送, 劫掠, 放任
+- 传闻 / 关于旧遗迹异象的传闻 / 北方 / freshness 1.00 / risk 1.00 / 观察, 打断, 跟随, 报告
+- 烟柱 / 林间冲突升起的烟柱 / 西北 / freshness 1.00 / risk 0.71 / 靠近, 侦察, 绕行, 通知守望者
+
+### Day 30
+
+地区摘要：
+- border_town：danger 66.69 / order 0.00 / scarcity 98.00 / mystic 40.69 / food 3.61 / herbs 47.22 / relics 15.30 / information 100.00 / tags [danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route]
+- mirror_lake_forest：danger 71.66 / order 29.07 / scarcity 35.09 / mystic 65.59 / food 73.66 / herbs 61.65 / relics 22.30 / information 53.74 / tags [danger_high, forest, herb_rich, lake, order_low]
+- old_ruins：danger 100.00 / order 0.00 / scarcity 58.96 / mystic 100.00 / food 28.66 / herbs 62.82 / relics 57.32 / information 55.94 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+
+势力摘要：
+- echo_cult：power 72.30 / wealth 48.10 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+- smugglers：power 42.60 / wealth 100.00 / hostility 0.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+- wardens：power 79.40 / wealth 10.00 / hostility 0.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+
+湖湾镇微观链：今日无新增反应。
+
+当天新新闻：
+- border_town / 镜湖守望者 / 阶段 4 / 累计 18：已护送 18 批粮车，但补给速度仍追不上消耗。
+
+连续事件摘要：
+- border_town / 阶段 5 / 累计 30：走私者袭击补给线已持续 30 次，边境镇粮食压力仍在升高。
+- border_town / 阶段 4 / 累计 18：守望者已护送 18 批补给，粮食危机仍未完全缓解。
+- border_town / 阶段 4 / 累计 12：守望者清剿走私据点已持续 12 次，盘查与暗线活动同时增加。
+
+当天 LeadCandidate：
+- 无
+
+当天适配后 v0.3 线索：
+- 无
+
 ## 4. 第 3 天测试注入后 30 天总览
 
-- 总量：world_fact 112（微观事实 10），world_news 30，新闻历史 10，LeadCandidate 18，适配后线索 18，Trace 16，可叙述状态 5
-- 线索类型分布：`{"传闻":8,"烟柱":4,"足迹":6}`
+- 总量：world_fact 212（微观事实 10），world_news 46，新闻历史 12，LeadCandidate 39，适配后线索 39，Trace 16，可叙述状态 5
+- 线索类型分布：`{"传闻":15,"河流":3,"烟柱":12,"足迹":9}`
 - 30 天后地区最终状态：
-  - border_town：danger 44.54 / order 41.27 / scarcity 66.93 / mystic 32.35 / food 44.68 / herbs 41.25 / relics 16.51 / information 86.35 / tags [populated, scarcity_high, town, trade_route]
-  - mirror_lake_forest：danger 60.81 / order 34.27 / scarcity 40.55 / mystic 61.57 / food 64.82 / herbs 72.16 / relics 24.00 / information 50.75 / tags [beast_migration, forest, herb_rich, lake, order_low]
-  - old_ruins：danger 100.00 / order 0.00 / scarcity 45.30 / mystic 100.00 / food 24.62 / herbs 57.55 / relics 70.70 / information 54.00 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
+  - border_town：danger 62.55 / order 1.53 / scarcity 75.37 / mystic 40.69 / food 32.61 / herbs 47.22 / relics 15.30 / information 100.00 / tags [order_low, populated, resource_strained, scarcity_high, town, trade_route]
+  - mirror_lake_forest：danger 71.66 / order 29.07 / scarcity 35.09 / mystic 65.59 / food 73.66 / herbs 61.65 / relics 22.30 / information 53.74 / tags [danger_high, forest, herb_rich, lake, order_low]
+  - old_ruins：danger 100.00 / order 0.00 / scarcity 58.96 / mystic 100.00 / food 28.66 / herbs 62.82 / relics 57.32 / information 55.94 / tags [danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable]
 - 30 天后势力最终状态：
-  - echo_cult：power 58.90 / wealth 42.30 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
-  - smugglers：power 41.50 / wealth 92.00 / hostility 8.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
-  - wardens：power 74.50 / wealth 31.00 / hostility -6.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
+  - echo_cult：power 72.30 / wealth 48.10 / hostility 0.00 / goal 获取遗物与草药，提高神秘压力并制造异象
+  - smugglers：power 43.20 / wealth 100.00 / hostility 8.00 / goal 获取财富和情报，利用匮乏并削弱地区秩序
+  - wardens：power 82.80 / wealth 5.00 / hostility -6.00 / goal 维护秩序、压制走私者、阻止回声教团扩张
 - 地区 tag 变化：
-  - border_town：新增 [scarcity_high]，移除 []
-  - mirror_lake_forest：新增 [beast_migration, order_low]，移除 []
+  - border_town：新增 [order_low, resource_strained, scarcity_high]，移除 []
+  - mirror_lake_forest：新增 [danger_high, order_low]，移除 []
   - old_ruins：新增 [danger_high, mystic_surge, order_low, resource_strained]，移除 []
 
 ## 5. A/B 差异
 
 - 第 10 天是否已出现差异：是
 - 第 10 天差异项：`{"adapted_leads":false,"factions":true,"lead_candidates":false,"regions":true,"world_news":true}`
-- 数量差：world_news +2，LeadCandidate -1，适配后线索 -1
+- 数量差：world_news +5，LeadCandidate -1，适配后线索 -1
 - 线索签名是否不同：是；适配后线索签名是否不同：是
 - 第 30 天地区状态差异：
-  - border_town：`{"danger":-2.19,"food":21.0,"herbs":0.0,"information":0.0,"mystic":0.0,"order":5.63,"relics":0.0,"scarcity":-30.6}`
+  - border_town：`{"danger":-4.14,"food":29.0,"herbs":0.0,"information":0.0,"mystic":0.0,"order":1.53,"relics":0.0,"scarcity":-22.63}`
   - mirror_lake_forest：`{"danger":0.0,"food":0.0,"herbs":0.0,"information":0.0,"mystic":0.0,"order":0.0,"relics":0.0,"scarcity":0.0}`
   - old_ruins：`{"danger":0.0,"food":0.0,"herbs":0.0,"information":0.0,"mystic":0.0,"order":0.0,"relics":0.0,"scarcity":0.0}`
 - 第 30 天势力状态差异：
   - echo_cult：`{"hostility_to_player":0.0,"power":0.0,"wealth":0.0}`
-  - smugglers：`{"hostility_to_player":8.0,"power":-1.6,"wealth":-3.4}`
-  - wardens：`{"hostility_to_player":-6.0,"power":3.6,"wealth":-4.0}`
+  - smugglers：`{"hostility_to_player":8.0,"power":0.6,"wealth":0.0}`
+  - wardens：`{"hostility_to_player":-6.0,"power":3.4,"wealth":-5.0}`
 
 ## 6. 适配后线索样例
 

@@ -2,6 +2,7 @@ extends RefCounted
 class_name V5SimSnapshot
 
 var fixture_id: String = ""
+var world_time: Dictionary = {}
 var location: Dictionary = {}
 var region_state: Dictionary = {}
 var institution: Dictionary = {}
@@ -30,6 +31,7 @@ var character_progress: Dictionary = {}
 
 func _init(data: Dictionary = {}) -> void:
 	fixture_id = str(data.get("fixture_id", ""))
+	world_time = (data.get("world_time", {}) as Dictionary).duplicate(true)
 	location = (data.get("location", {}) as Dictionary).duplicate(true)
 	region_state = (data.get("region_state", {}) as Dictionary).duplicate(true)
 	institution = (data.get("institution", {}) as Dictionary).duplicate(true)
@@ -340,6 +342,7 @@ func get_skill_progress(owner_id: String = "") -> Array:
 func to_dict() -> Dictionary:
 	return {
 		"fixture_id": fixture_id,
+		"world_time": world_time.duplicate(true),
 		"location": location.duplicate(true),
 		"region_state": region_state.duplicate(true),
 		"institution": institution.duplicate(true),
