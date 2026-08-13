@@ -655,7 +655,7 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 
 ### 11.6.5 当前进度
 
-截至 2026-08-12，步骤 1、步骤 2A 与步骤 2B 已完成：
+截至 2026-08-13，步骤 1、步骤 2A、步骤 2B 与步骤 2C 已完成：
 
 - 已审计 State、Fact、Memory、Relationship、Item、Snapshot、Action 与 Transaction 边界。
 - 已裁定库存、事实、地区状态和角色状态的重复真值。
@@ -669,6 +669,10 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 - `CharacterProgress` 已成为 StateStore 与角色特征 Store 的只读聚合投影。
 - `injury` 与 `mist_salt_echo` 已从 StateStore 迁出，仅保留 Snapshot 兼容投影。
 - 新增 20 项角色特征合同断言，全项目回归为 `60 / 60` 通过。
+- ItemDef 已进入严格 Raw Definition 注册，现有四件调查物及最小口粮、冬装均有稳定定义。
+- `ItemStore` 已成为物品实例、holder、数量、耐久、来源和历史的唯一运行时真值，并拒绝悬空 holder、无事实运行时创建和非法操作。
+- `inventory_item_ids` 已从 fixture 与写入链移除，只由 Snapshot 按 holder 查询派生。
+- 新增 15 项 ItemInstance 合同断言；加入该测试后，全项目仍为 `60 / 60` 通过。
 
 交付文档：
 
@@ -677,9 +681,10 @@ texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_AUDIT_v5.1.md
 texts/v5/CHRONICLE_CORE_SYSTEM_MINIMUM_SCHEMAS_v5.1.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_definition_entity_state_contract_report.md
 chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_character_feature_contract_report.md
+chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_item_instance_contract_report.md
 ```
 
-当前进入步骤 2C：扩展 ItemInstance 的 holder、quantity、transfer、consume 与 durability 合同，并移除 `inventory_item_ids` 双写。之后实现 EquipmentLoadout 和最小合同 fixture。Inventory 与 MarketStock 只做派生视图，不建立新的可写真值。
+当前进入步骤 2D：实现 EquipmentLoadout，并为物品与装备联合变化增加整笔预检，避免留下悬空装备引用或半写事务。Inventory 与 MarketStock 继续只做派生视图，不建立新的可写真值。步骤 2E 再用最小合同 fixture 把旅行 `food_count` 迁移为实际口粮堆叠。
 
 阶段 5.5 通过后，恢复阶段 5 的季度、年度和五年内容扩展，再进入阶段 6。
 

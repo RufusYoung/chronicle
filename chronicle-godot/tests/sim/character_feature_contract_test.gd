@@ -299,7 +299,7 @@ func _run() -> void:
 	var snapshot: Variant = session.get_snapshot()
 	var progress: Dictionary = snapshot.get_character_progress()
 	_check(
-		int(start.get("definition_count", 0)) == 40
+		int(start.get("definition_count", 0)) == 46
 		and session.stores.has("character_feature_store")
 		and int((progress.get("attributes", {}) as Dictionary).get(
 			"perception",
@@ -325,9 +325,9 @@ func _run() -> void:
 			"twisted_ankle"
 		)
 		and session.stores["state_store"].last_error.ends_with(
-			"character_feature_owned_key"
+			"external_projection_owned_key"
 		),
-		"18. StateStore 拒绝直接写入已归 CharacterFeatureStore 所有的旧字段"
+		"18. StateStore 拒绝直接写入由外部 Store 派生的旧投影字段"
 	)
 
 	session.travel("old_chen_shop_to_abandoned_granary")

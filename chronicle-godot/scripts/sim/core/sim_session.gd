@@ -53,6 +53,7 @@ const OBJECT_DEFS_PATH := "res://data/sim/raw/object_defs/basic_object_defs.json
 const CHARACTER_FEATURE_DEFS_PATH := (
 	"res://data/sim/raw/character_feature_defs/basic_character_feature_defs.json"
 )
+const ITEM_DEFS_PATH := "res://data/sim/raw/item_defs/basic_item_defs.json"
 const AUTONOMOUS_ACTION_RULES_PATH := (
 	"res://data/sim/raw/npc_action_rules/basic_npc_action_rules.json"
 )
@@ -116,6 +117,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		STATE_DEFS_PATH,
 		OBJECT_DEFS_PATH,
 		CHARACTER_FEATURE_DEFS_PATH,
+		ITEM_DEFS_PATH,
 	])
 	if not bool(definition_report.get("ok", false)):
 		var failed := _start_failure("raw_definition_contract_invalid")
@@ -168,13 +170,17 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	var character_feature_report: Dictionary = stores[
 		"character_feature_store"
 	].get_contract_report()
+	var item_report: Dictionary = stores["item_store"].get_contract_report()
 	if not bool(entity_report.get("ok", false)) or not bool(
 		state_report.get("ok", false)
-	) or not bool(character_feature_report.get("ok", false)):
+	) or not bool(character_feature_report.get("ok", false)) or not bool(
+		item_report.get("ok", false)
+	):
 		var failed := _start_failure("fixture_store_contract_invalid")
 		failed["entity_report"] = entity_report
 		failed["state_report"] = state_report
 		failed["character_feature_report"] = character_feature_report
+		failed["item_report"] = item_report
 		return failed
 	context.release_runtime_sources()
 	initialized = true
@@ -196,6 +202,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"entity_contract_report": entity_report,
 		"state_contract_report": state_report,
 		"character_feature_contract_report": character_feature_report,
+		"item_contract_report": item_report,
 		"time": get_time_summary(),
 	}
 
@@ -1143,13 +1150,19 @@ func _create_stores(fixture: Dictionary) -> void:
 	var relationship_store = RelationshipStoreModel.new()
 	relationship_store.load_axis_defs(RELATIONSHIP_AXIS_DEFS_PATH)
 	var deferred_store = DeferredConsequenceStoreModel.new()
-	var item_store = ItemStoreModel.new()
-	item_store.load_initial_items(
-		(fixture.get("initial_items", []) as Array).duplicate(true)
-	)
 	var fact_store = FactStoreModel.new()
 	for fact: Dictionary in fixture.get("known_facts", []):
 		fact_store.add_fact(fact)
+	var item_store = ItemStoreModel.new()
+	item_store.configure(
+		registry.list_definitions("item"),
+		entity_store,
+		context.locations,
+		fact_store
+	)
+	item_store.load_initial_items(
+		(fixture.get("initial_items", []) as Array).duplicate(true)
+	)
 	var character_feature_store = CharacterFeatureStoreModel.new()
 	character_feature_store.configure({
 		"talent": registry.list_definitions("talent"),
@@ -1285,10 +1298,6 @@ func _challenge_requirements_met(
 		if not _facts_include_type(facts, str(fact_type_value)):
 			return false
 	var actor_id := str(snapshot.get_player_value("id", "player"))
-	var inventory_item_ids: Array = snapshot.get_player_value(
-		"inventory_item_ids",
-		[]
-	)
 	for item_id_value: Variant in challenge.get(
 		"required_item_ids",
 		[]
@@ -1299,7 +1308,6 @@ func _challenge_requirements_met(
 			item_id == ""
 			or item.is_empty()
 			or str(item.get("owner_id", "")) != actor_id
-			or item_id not in inventory_item_ids
 		):
 			return false
 	return true
@@ -1347,12 +1355,6 @@ func _return_echo_is_available(
 	var item: Dictionary = snapshot.get_item(item_id)
 	var actor_id := str(snapshot.get_player_value("id", "player"))
 	if item.is_empty() or str(item.get("owner_id", "")) != actor_id:
-		return false
-	var inventory_ids: Array = snapshot.get_player_value(
-		"inventory_item_ids",
-		[]
-	)
-	if item_id not in inventory_ids:
 		return false
 	for required_tag: Variant in definition.get(
 		"required_item_tags",
@@ -1516,9 +1518,7 @@ func _investigation_lead_is_available(
 	var actor_id := str(snapshot.get_player_value("id", "player"))
 	if item.is_empty() or str(item.get("owner_id", "")) != actor_id:
 		return false
-	return item_id in (
-		snapshot.get_player_value("inventory_item_ids", []) as Array
-	)
+	return true
 
 
 func _facts_include_id(facts: Array, fact_id: String) -> bool:
@@ -1706,10 +1706,6 @@ func _route_required_items_met(
 	if not required_item_values is Array:
 		return false
 	var actor_id := str(snapshot.get_player_value("id", "player"))
-	var inventory_item_ids: Array = snapshot.get_player_value(
-		"inventory_item_ids",
-		[]
-	)
 	for item_value: Variant in required_item_values:
 		var item_id := str(item_value)
 		var item: Dictionary = snapshot.get_item(item_id)
@@ -1717,7 +1713,6 @@ func _route_required_items_met(
 			item_id == ""
 			or item.is_empty()
 			or str(item.get("owner_id", "")) != actor_id
-			or item_id not in inventory_item_ids
 		):
 			return false
 	return true

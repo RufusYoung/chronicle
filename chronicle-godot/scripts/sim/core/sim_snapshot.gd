@@ -200,7 +200,11 @@ func get_player_items() -> Array:
 	var owner_id := str(get_player_value("id", "player"))
 	var rows: Array = []
 	for item: Dictionary in items:
-		if str(item.get("owner_id", "")) == owner_id:
+		var holder: Dictionary = item.get("holder", {})
+		if (
+			str(holder.get("kind", "")) == "entity"
+			and str(holder.get("id", "")) == owner_id
+		):
 			rows.append(item.duplicate(true))
 	return rows
 

@@ -1,7 +1,11 @@
 extends RefCounted
 class_name V5TransactionWorldWriter
 
-const CHARACTER_FEATURE_MIGRATION_KEYS := ["injury", "mist_salt_echo"]
+const EXTERNAL_PROJECTION_KEYS := [
+	"injury",
+	"mist_salt_echo",
+	"inventory_item_ids",
+]
 
 
 func apply_result(result: Variant, stores: Dictionary) -> void:
@@ -13,7 +17,7 @@ func apply_result(result: Variant, stores: Dictionary) -> void:
 	var state_store: Variant = stores.get("state_store")
 	if state_store != null:
 		for state_change: Dictionary in result.state_changes:
-			if str(state_change.get("key", "")) in CHARACTER_FEATURE_MIGRATION_KEYS:
+			if str(state_change.get("key", "")) in EXTERNAL_PROJECTION_KEYS:
 				continue
 			state_store.apply_state_change(state_change)
 

@@ -226,10 +226,6 @@ func _apply_preparation_items(
 	if not item_values is Array:
 		return
 	var actor_id := str(snapshot.get_player_value("id", "player"))
-	var inventory_item_ids: Array = (
-		snapshot.get_player_value("inventory_item_ids", []) as Array
-	).duplicate(true)
-	var inventory_changed := false
 	for item_value: Variant in item_values:
 		if not item_value is Dictionary:
 			continue
@@ -237,8 +233,9 @@ func _apply_preparation_items(
 		var item_id := str(item.get("item_id", item.get("id", "")))
 		if item_id == "":
 			continue
-		item["item_id"] = item_id
-		item["owner_id"] = actor_id
+		item.erase("item_id")
+		item["item_instance_id"] = item_id
+		item["holder"] = {"kind": "entity", "id": actor_id}
 		var provenance: Dictionary = (
 			item.get("provenance", {}) as Dictionary
 		).duplicate(true)
@@ -250,10 +247,10 @@ func _apply_preparation_items(
 		result.add_item_change({
 			"operation": "create",
 			"item": item,
+			"source_fact_ids": [
+				"actor_acquired_preparation_item:%d:%s" % [event_id, item_id]
+			],
 		})
-		if item_id not in inventory_item_ids:
-			inventory_item_ids.append(item_id)
-			inventory_changed = true
 		result.add_fact({
 			"fact_id": "actor_acquired_preparation_item:%d:%s"
 				% [event_id, item_id],
@@ -270,12 +267,6 @@ func _apply_preparation_items(
 			],
 			"visibility": "known",
 			"source_action": "challenge_preparation",
-		})
-	if inventory_changed:
-		result.add_state_change({
-			"entity_id": actor_id,
-			"key": "inventory_item_ids",
-			"to": inventory_item_ids,
 		})
 
 
@@ -374,8 +365,9 @@ func _apply_success_item(
 		item_id: String
 ) -> void:
 	var actor_id := str(snapshot.get_player_value("id", "player"))
-	item["item_id"] = item_id
-	item["owner_id"] = actor_id
+	item.erase("item_id")
+	item["item_instance_id"] = item_id
+	item["holder"] = {"kind": "entity", "id": actor_id}
 	var provenance: Dictionary = (
 		item.get("provenance", {}) as Dictionary
 	).duplicate(true)
@@ -387,17 +379,7 @@ func _apply_success_item(
 	result.add_item_change({
 		"operation": "create",
 		"item": item,
-	})
-
-	var inventory_item_ids: Array = (
-		snapshot.get_player_value("inventory_item_ids", []) as Array
-	).duplicate(true)
-	if item_id not in inventory_item_ids:
-		inventory_item_ids.append(item_id)
-	result.add_state_change({
-		"entity_id": actor_id,
-		"key": "inventory_item_ids",
-		"to": inventory_item_ids,
+		"source_fact_ids": ["actor_discovered_item:%d" % event_id],
 	})
 	result.add_fact({
 		"fact_id": "actor_discovered_item:%d" % event_id,

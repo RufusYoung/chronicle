@@ -158,13 +158,13 @@ Codex 只执行这一小块
 
 ## 5. 当前推荐下一步
 
-截至 2026-08-12，湖湾镇调查闭环与第七哨站第一冬七日生活单元已经可以运行。当前暂停扩写第二年至第五年，先执行：
+截至 2026-08-13，湖湾镇调查闭环与第七哨站第一冬七日生活单元已经可以运行。当前暂停扩写第二年至第五年，先执行：
 
 ```text
 texts/v5/CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 ```
 
-步骤 1、步骤 2A 与步骤 2B 已完成。Raw Definition 已支持角色特征定义，`CharacterFeatureStore` 已接管天赋、特质、印记和技艺进度，`CharacterProgress` 只从 StateStore 与角色特征 Store 聚合读取。伤势和雾盐回响已迁出 StateStore，第一冬巡雾事实能够产生侦察技艺成长，全项目测试为 `60 / 60`。当前进入步骤 2C：扩展物品实例合同并移除库存双写，然后再接装备位合同。
+步骤 1、步骤 2A、步骤 2B 与步骤 2C 已完成。角色特征、伤势、印记与技艺成长已拥有独立真值；ItemDef 与 ItemInstance 已支持严格注册、holder、数量、转移、消耗、拆分和耐久，`inventory_item_ids` 只由 Snapshot 派生。全项目测试仍为 `60 / 60`。当前进入步骤 2D：实现 EquipmentLoadout 与物品、装备联合写入预检；随后用最小合同 fixture 把旅行口粮从 `food_count` 迁移为实际物品堆叠。
 
 当前实施依据：
 

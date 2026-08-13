@@ -56,6 +56,10 @@ func build_snapshot(
 		)
 		for key: String in legacy_projection.keys():
 			player[key] = legacy_projection[key]
+	if item_store != null:
+		player["inventory_item_ids"] = _item_ids(
+			item_store.list_items_for_owner(player_id)
+		)
 
 	var character_progress: Dictionary = {}
 	if state_store != null and character_feature_store != null:
@@ -137,6 +141,13 @@ func _states_from_context(context: Variant) -> Dictionary:
 		player_states.erase(static_key)
 	states[player_id] = player_states
 	return states
+
+
+func _item_ids(rows: Array) -> Array:
+	var ids: Array = []
+	for item: Dictionary in rows:
+		ids.append(str(item.get("item_instance_id", "")))
+	return ids
 
 
 func _entities_from_context(context: Variant, player_id: String) -> Array:

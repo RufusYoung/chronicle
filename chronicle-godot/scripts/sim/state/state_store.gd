@@ -11,7 +11,11 @@ const PLAYER_STATIC_KEYS := [
 	"interactions",
 ]
 
-const CHARACTER_FEATURE_MIGRATION_KEYS := ["injury", "mist_salt_echo"]
+const EXTERNAL_PROJECTION_KEYS := [
+	"injury",
+	"mist_salt_echo",
+	"inventory_item_ids",
+]
 
 var states: Dictionary = {}
 var state_defs_by_key: Dictionary = {}
@@ -61,7 +65,7 @@ func load_from_context(context: Variant) -> Dictionary:
 	for state_key: String in context.player.keys():
 		if (
 			state_key in PLAYER_STATIC_KEYS
-			or state_key in CHARACTER_FEATURE_MIGRATION_KEYS
+			or state_key in EXTERNAL_PROJECTION_KEYS
 		):
 			continue
 		_set_initial_state(player_id, state_key, context.player[state_key])
@@ -166,8 +170,8 @@ func _write_state(
 	last_error = ""
 	if entity_id == "" or state_key == "":
 		return _reject("missing_state_identity")
-	if state_key in CHARACTER_FEATURE_MIGRATION_KEYS:
-		return _reject("%s:%s:character_feature_owned_key" % [
+	if state_key in EXTERNAL_PROJECTION_KEYS:
+		return _reject("%s:%s:external_projection_owned_key" % [
 			entity_id,
 			state_key,
 		])

@@ -185,6 +185,7 @@
         "narrative": "你避开几块发空的地板，在塌下来的粮架后发现一个贴着墙根的小龛。霉烂账页已经粘成一团，只有一枚刻着谷穗和秤纹的铜牌还能辨认。",
         "item": {
           "item_id": "lake_town_granary_measure_token",
+          "item_def_id": "item.lake_town_granary_measure_token",
           "display_name": "旧粮仓验粮铜牌",
           "description": "一枚掌心大小的铜牌，正面刻着谷穗和秤纹，背面残留“公仓验粮”四个字。",
           "item_type": "historical_token",
@@ -244,6 +245,7 @@
         "narrative": "最下层木匣已经泡成纸浆。你借着罩灯拆开夹层，从两片蜡布之间抽出一页没有归档的验粮簿。陆槐在页边写着：那批粮“不是霉”；末尾则记下他将沿北岸去雾盐旧井查粮袋的来路，此后再没有回档记录。",
         "item": {
           "item_id": "lu_huai_last_inspection_leaf",
+          "item_def_id": "item.lu_huai_last_inspection_leaf",
           "display_name": "陆槐最后一页验粮簿",
           "description": "一页被蜡布护住的旧验粮簿。陆槐写道，公仓粮袋里的白丝会朝井水方向弯曲，“不是霉”；最后一行是他准备前往雾盐旧井的日期。",
           "item_type": "historical_record",
@@ -377,6 +379,7 @@
         "items": [
           {
             "item_id": "waxed_mist_salt_breathing_veil",
+            "item_def_id": "item.waxed_mist_salt_breathing_veil",
             "display_name": "蜡布防盐面罩",
             "description": "闻简从旧船具里翻出的双层蜡布面罩，边缘缝着细铜丝。它不能隔绝井雾，只能让盐尘少一些进入口鼻。",
             "item_type": "expedition_gear",
@@ -447,6 +450,7 @@
         "narrative": "第二环没有井底，只有一圈没入雾中的石台。你把水囊靠近石壁，成片白丝便缓慢转向囊中的水；移开水囊，它们又弯回渗水缝。陆槐的秤纹刻在更下一段扶壁上，旁边只有一道向下的箭头，没有返程记号。你割下一小束封进蜡管，随后在呼吸变冷前退回井口。",
         "item": {
           "item_id": "mist_salt_reverse_flow_filament_sample",
+          "item_def_id": "item.mist_salt_reverse_flow_filament_sample",
           "display_name": "逆水白丝样本",
           "description": "一小束从雾盐旧井第二环取下的白丝，封在蜡管里。它在现场会缓慢弯向渗水与敞开的水囊；离开旧井后是否仍会如此，还没有得到验证。",
           "item_type": "anomalous_field_sample",
@@ -1233,8 +1237,7 @@
     "perception": 10,
     "health": 100,
     "injury": "none",
-    "mist_salt_echo": "none",
-    "inventory_item_ids": []
+    "mist_salt_echo": "none"
   },
   "known_facts": [],
   "initial_deferred_consequences": [],

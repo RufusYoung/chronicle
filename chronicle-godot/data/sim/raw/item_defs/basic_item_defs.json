@@ -1,0 +1,102 @@
+{
+  "item_defs": [
+    {
+      "item_def_id": "item.lake_town_granary_measure_token",
+      "definition_version": 1,
+      "display_name_key": "item.lake_town_granary_measure_token.name",
+      "item_kind": "historical_token",
+      "tags": ["granary_history", "lake_town", "discovery", "portable"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.2,
+      "equip_slots": [],
+      "capabilities": ["inspect", "trade", "present"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 8
+    },
+    {
+      "item_def_id": "item.lu_huai_last_inspection_leaf",
+      "definition_version": 1,
+      "display_name_key": "item.lu_huai_last_inspection_leaf.name",
+      "item_kind": "historical_record",
+      "tags": ["lake_town", "public_granary_record", "lu_huai", "mist_salt_well", "document_claim", "portable"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.1,
+      "equip_slots": [],
+      "capabilities": ["read", "inspect", "trade"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 12
+    },
+    {
+      "item_def_id": "item.waxed_mist_salt_breathing_veil",
+      "definition_version": 1,
+      "display_name_key": "item.waxed_mist_salt_breathing_veil.name",
+      "item_kind": "expedition_gear",
+      "tags": ["mist_salt_well", "breathing_protection", "expedition_gear", "portable"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.4,
+      "equip_slots": ["utility"],
+      "capabilities": ["equip", "trade", "repair"],
+      "durability": {"maximum": 40},
+      "modifiers": [],
+      "base_value": 18
+    },
+    {
+      "item_def_id": "item.mist_salt_reverse_flow_filament_sample",
+      "definition_version": 1,
+      "display_name_key": "item.mist_salt_reverse_flow_filament_sample.name",
+      "item_kind": "anomalous_field_sample",
+      "tags": ["mist_salt_well", "field_sample", "white_filament", "unidentified", "portable"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.2,
+      "equip_slots": [],
+      "capabilities": ["inspect", "research", "trade"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 30
+    },
+    {
+      "item_def_id": "item.travel_ration",
+      "definition_version": 1,
+      "display_name_key": "item.travel_ration.name",
+      "item_kind": "food",
+      "tags": ["food", "ration", "portable", "consumable"],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 0.5,
+      "equip_slots": [],
+      "capabilities": ["consume", "trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 2
+    },
+    {
+      "item_def_id": "item.waxed_winter_cloak",
+      "definition_version": 1,
+      "display_name_key": "item.waxed_winter_cloak.name",
+      "item_kind": "equipment",
+      "tags": ["clothing", "winter", "water_resistant"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 2.4,
+      "equip_slots": ["body_outer"],
+      "capabilities": ["equip", "trade", "repair"],
+      "durability": {"maximum": 100},
+      "modifiers": [
+        {
+          "modifier_id": "cold_exposure_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -2,
+          "when": [{"kind": "context_tag", "tag": "freezing"}]
+        }
+      ],
+      "base_value": 24
+    }
+  ]
+}

@@ -45,7 +45,9 @@ func _run() -> void:
 		).get("success", {}) as Dictionary
 	).get("item", {}) as Dictionary
 	fake_item = fake_item.duplicate(true)
-	fake_item["owner_id"] = "player"
+	fake_item.erase("item_id")
+	fake_item["item_instance_id"] = DISCOVERY_ITEM
+	fake_item["holder"] = {"kind": "entity", "id": "player"}
 	var fake_provenance: Dictionary = (
 		fake_item.get("provenance", {}) as Dictionary
 	).duplicate(true)
@@ -55,9 +57,6 @@ func _run() -> void:
 	)
 	fake_item["provenance"] = fake_provenance
 	fake_fixture["initial_items"] = [fake_item]
-	var fake_player: Dictionary = fake_fixture.get("player", {})
-	fake_player["inventory_item_ids"] = [DISCOVERY_ITEM]
-	fake_fixture["player"] = fake_player
 	var fake_session = SimSessionModel.new()
 	fake_session.start_from_fixture_data(fake_fixture, RULE_PATHS)
 	_check(

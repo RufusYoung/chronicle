@@ -1,7 +1,7 @@
 # Chronicle 核心系统合同前置计划 v5.1
 
-日期：2026-08-12
-状态：阶段 5.5 执行中；步骤 2A、2B 已完成，下一步进入步骤 2C
+日期：2026-08-13
+状态：阶段 5.5 执行中；步骤 2A、2B、2C 已完成，下一步进入步骤 2D
 
 步骤 1 交付：
 
@@ -15,6 +15,10 @@
 步骤 2B 交付：
 
 - `chronicle-godot/texts/reports/2026/2026-8/2026-8-12/2026-08-12_character_feature_contract_report.md`
+
+步骤 2C 交付：
+
+- `chronicle-godot/texts/reports/2026/2026-8/2026-8-13/2026-08-13_item_instance_contract_report.md`
 
 审计已确认保留现有 `Store -> Snapshot -> Affordance -> Transaction -> Writer` 主链，并裁定 State、Fact、Memory、角色特征、物品实例、装备位、市场投影与存档的唯一真值。步骤 2 不再重新讨论术语，而是把 schema 草案实现为可校验的数据和 Store 边界。
 
@@ -360,13 +364,14 @@ player_facing_reason
 
 ## 9. 当前下一步
 
-步骤 1、步骤 2A 与步骤 2B 已完成。下一轮从步骤 2C 开始：
+步骤 1、步骤 2A、步骤 2B 与步骤 2C 已完成。下一轮从步骤 2D 开始：
 
 1. 步骤 2A：已实现 Raw Definition 注册、稳定 ID 和 schema 校验；`EntityStore` 已接入 Session，实体身份与可变状态的唯一真值边界已有自动化测试保护。
 2. 步骤 2B：已引入角色特征 Store 与只读 `CharacterProgress` 投影；伤势与雾盐回响已从 StateStore 迁出，侦察技艺可由真实职责事实成长。
-3. 步骤 2C：扩展 `ItemStore` 的 holder、quantity、transfer、consume 和 durability 合同，移除 `inventory_item_ids` 双写。
-4. 步骤 2D：引入 `EquipmentLoadout`，并把 Inventory 与 MarketStock 保持为只读投影。
-5. 步骤 2E：建立最小合同 fixture，为后续 SaveEnvelope 和往返一致性测试准备数据。
+3. 步骤 2C：已注册 ItemDef，并实现 `ItemInstance.holder`、quantity、transfer、consume、split_stack 与 durability 合同；`inventory_item_ids` 已改为只读派生投影。
+4. 步骤 2D：引入 `EquipmentLoadout`，并把 Inventory 与 MarketStock 保持为只读投影；同时为物品与装备联合写入增加整笔预检，非法转移或销毁不得留下已写入的事实或悬空装备引用。
+5. 步骤 2E：建立最小合同 fixture，把旅行口粮从 `food_count` 迁移为可堆叠 ItemInstance，并为后续 SaveEnvelope 和往返一致性测试准备数据。
+6. 步骤 3 开始时统一 Transaction 的跨 Store 失败协议；验收反例是非法 item change 不得留下同笔事务的事实、状态或关系变化。
 
 实施依据：
 

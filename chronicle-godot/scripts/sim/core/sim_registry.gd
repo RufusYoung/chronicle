@@ -26,6 +26,10 @@ const DEFINITION_COLLECTIONS := {
 		"kind": "skill",
 		"id_field": "skill_def_id",
 	},
+	"item_defs": {
+		"kind": "item",
+		"id_field": "item_def_id",
+	},
 }
 
 const STATE_VALUE_TYPES := [
@@ -243,7 +247,9 @@ func _validate_definition(
 ) -> Dictionary:
 	var errors: Array[String] = []
 	var warnings: Array[String] = []
-	if kind not in ["state", "object", "talent", "trait", "mark", "skill"]:
+	if kind not in [
+		"state", "object", "talent", "trait", "mark", "skill", "item"
+	]:
 		return {"errors": errors, "warnings": warnings}
 
 	var version := int(definition.get("definition_version", 0))
@@ -262,6 +268,8 @@ func _validate_definition(
 		_validate_mark_definition(definition_id, definition, errors)
 	elif kind == "skill":
 		_validate_skill_definition(definition_id, definition, errors)
+	elif kind == "item":
+		_validate_item_definition(definition_id, definition, errors)
 	return {"errors": errors, "warnings": warnings}
 
 
@@ -446,6 +454,48 @@ func _validate_skill_definition(
 				errors.append("skill:%s:unaccepted_practice_rule" % definition_id)
 
 
+func _validate_item_definition(
+		definition_id: String,
+		definition: Dictionary,
+		errors: Array[String]
+) -> void:
+	_validate_feature_header("item", definition_id, definition, errors)
+	if str(definition.get("item_kind", "")) == "":
+		errors.append("item:%s:missing_item_kind" % definition_id)
+	if not definition.get("stackable", false) is bool:
+		errors.append("item:%s:stackable_not_bool" % definition_id)
+	var max_stack: Variant = definition.get("max_stack", 0)
+	if not max_stack is int or int(max_stack) < 1:
+		errors.append("item:%s:invalid_max_stack" % definition_id)
+	elif not bool(definition.get("stackable", false)) and int(max_stack) != 1:
+		errors.append("item:%s:non_stackable_max_stack" % definition_id)
+	var base_mass: Variant = definition.get("base_mass", 0.0)
+	if (
+		not (base_mass is int or base_mass is float)
+		or float(base_mass) < 0.0
+	):
+		errors.append("item:%s:invalid_base_mass" % definition_id)
+	var base_value: Variant = definition.get("base_value", 0)
+	if (
+		not (base_value is int or base_value is float)
+		or float(base_value) < 0.0
+	):
+		errors.append("item:%s:invalid_base_value" % definition_id)
+	_validate_array_field("item", definition_id, definition, "equip_slots", errors)
+	_validate_array_field("item", definition_id, definition, "capabilities", errors)
+	var durability: Variant = definition.get("durability", {})
+	if not durability is Dictionary:
+		errors.append("item:%s:durability_not_dictionary" % definition_id)
+	elif not (durability as Dictionary).is_empty():
+		var maximum: Variant = (durability as Dictionary).get("maximum", 0)
+		if (
+			not (maximum is int or maximum is float)
+			or not is_equal_approx(float(maximum), roundf(float(maximum)))
+			or int(maximum) < 1
+		):
+			errors.append("item:%s:invalid_maximum_durability" % definition_id)
+
+
 func _validate_feature_header(
 		kind: String,
 		definition_id: String,
@@ -580,6 +630,8 @@ func _definition_id_field(kind: String) -> String:
 		return "mark_def_id"
 	if kind == "skill":
 		return "skill_def_id"
+	if kind == "item":
+		return "item_def_id"
 	return ""
 
 
@@ -612,6 +664,33 @@ func _normalize_definition(kind: String, data: Dictionary) -> Dictionary:
 					(rule_value as Dictionary)["xp"] = int(
 						(rule_value as Dictionary).get("xp", 0)
 					)
+	if kind == "item":
+		var raw_max_stack: Variant = normalized.get("max_stack", 0)
+		if (
+			raw_max_stack is int
+			or (
+				raw_max_stack is float
+				and is_equal_approx(
+					float(raw_max_stack),
+					roundf(float(raw_max_stack))
+				)
+			)
+		):
+			normalized["max_stack"] = int(raw_max_stack)
+		var durability: Variant = normalized.get("durability", {})
+		if durability is Dictionary and (durability as Dictionary).has("maximum"):
+			var raw_maximum: Variant = (durability as Dictionary).get("maximum", 0)
+			if (
+				raw_maximum is int
+				or (
+					raw_maximum is float
+					and is_equal_approx(
+						float(raw_maximum),
+						roundf(float(raw_maximum))
+					)
+				)
+			):
+				(durability as Dictionary)["maximum"] = int(raw_maximum)
 	if kind != "state" or str(normalized.get("value_type", "")) != "int":
 		return normalized
 	for field: String in ["default", "minimum", "maximum"]:
