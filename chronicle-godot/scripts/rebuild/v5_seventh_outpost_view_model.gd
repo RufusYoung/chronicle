@@ -92,6 +92,15 @@ func purchase_market_offer(
 	return trade
 
 
+func confirm_growth_candidate(candidate_id: String) -> Dictionary:
+	if not is_ready():
+		return {"success": false, "error": "project_not_ready"}
+	latest_result = controller.confirm_growth_candidate(candidate_id)
+	if not bool(latest_result.get("success", false)):
+		latest_result["blocked_reason"] = _growth_error_text(latest_result)
+	return latest_result.duplicate(true)
+
+
 func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "ok": false, "error": "project_not_ready"}
@@ -430,3 +439,16 @@ func _market_error_text(result: Dictionary) -> String:
 		"insufficient_stock", "offer_no_longer_available":
 			return "玛塔手里已经没有这份库存。"
 	return "这笔交易没有完成，物品与铜币均未改变。"
+
+
+func _growth_error_text(result: Dictionary) -> String:
+	match str(result.get("error", "")):
+		"project_not_complete":
+			return "这一阶段尚未结束，当前经历还不能结算。"
+		"growth_candidate_not_available":
+			return "这项成长不符合你实际留下的经历。"
+		"growth_already_confirmed":
+			return "本阶段的成长已经确认，不能重复领取。"
+		"growth_transaction_rejected":
+			return "成长写入未通过完整性检查，角色状态没有改变。"
+	return "这项成长没有确认，角色状态没有改变。"

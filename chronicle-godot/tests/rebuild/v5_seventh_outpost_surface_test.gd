@@ -37,6 +37,9 @@ func _run() -> void:
 	var action_buttons := viewer.get_node("%ActionButtons") as FlowContainer
 	var intro_dialog := viewer.get_node("%IntroDialog") as AcceptDialog
 	var completion_dialog := viewer.get_node("%CompletionDialog") as AcceptDialog
+	var growth_dialog := viewer.get_node(
+		"%GrowthConfirmationDialog"
+	) as ConfirmationDialog
 
 	_check(
 		day_label.text == "第 1 / 7 天　06:00　清晨点名"
@@ -151,9 +154,13 @@ func _run() -> void:
 	_check(
 		bool(complete_view.get("complete", false))
 		and (complete_view.get("history", []) as Array).size() == 7
-		and action_buttons.get_child_count() == 0
+		and action_buttons.get_child_count() == 1
+		and str((action_buttons.get_child(0) as Button).get_meta(
+			"candidate_id", ""
+		)) == "growth.first_winter.fog_reader"
+		and "从实际经历中确认一项成长" in action_heading.text
 		and completion_dialog.visible,
-		"10. Seven state-driven duties reach an explicit playable endpoint"
+		"10. Seven duties end in one route-derived growth choice"
 	)
 	_check(
 		"雾线暂时退远" in completion_dialog.dialog_text
@@ -163,6 +170,27 @@ func _run() -> void:
 			"chronicle_store"
 		].list_entries().size() == 1,
 		"11. Completion text is derived from state and stored as Chronicle"
+	)
+	completion_dialog.hide()
+	(action_buttons.get_child(0) as Button).pressed.emit()
+	await process_frame
+	_check(
+		growth_dialog.visible
+		and "雾线巡查，共 6 次" in growth_dialog.dialog_text
+		and "感知 +1" in growth_dialog.dialog_text
+		and growth_dialog.get_cancel_button().has_focus(),
+		"11a. Growth confirmation exposes evidence and permanent reward"
+	)
+	growth_dialog.confirmed.emit()
+	await process_frame
+	await process_frame
+	_check(
+		"感知 11" in player_text.text
+		and "雾线读迹者" in feature_text.text
+		and action_buttons.get_child_count() == 0
+		and "阶段成长已确认" in action_heading.text
+		and feedback_title.text == "成长已经留下",
+		"11b. Confirmed growth refreshes the sheet and removes repeat actions"
 	)
 
 	viewer.restart_project()

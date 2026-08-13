@@ -35,6 +35,51 @@
           "explain_text": "手上动作稳定，精细劳作更少出错。"
         }
       ]
+    },
+    {
+      "talent_def_id": "talent.fog_line_reader",
+      "definition_version": 1,
+      "display_name_key": "talent.fog_line_reader.name",
+      "display_name": "雾线读迹者",
+      "tags": ["earned", "perception", "fieldcraft"],
+      "granted_affordance_tags": ["read_border_traces"],
+      "modifiers": [
+        {
+          "modifier_id": "fog_line_reader_patrol_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -1,
+          "when": [{"kind": "action_tag", "tag": "fog_patrol"}],
+          "explain_text": "反复巡查留下的经验让你更快辨认雾线痕迹。"
+        }
+      ]
+    },
+    {
+      "talent_def_id": "talent.winter_steady_worker",
+      "definition_version": 1,
+      "display_name_key": "talent.winter_steady_worker.name",
+      "display_name": "风雪中的稳手",
+      "tags": ["earned", "labor", "craft"],
+      "granted_affordance_tags": ["trusted_winter_worker"],
+      "modifiers": [
+        {
+          "modifier_id": "winter_steady_worker_labor_risk",
+          "target": "action.risk",
+          "operation": "add",
+          "value": -1,
+          "when": [{"kind": "action_tag", "tag": "winter_labor"}],
+          "explain_text": "在风雪里反复劳作后，你更懂得如何使用工具和保存体力。"
+        }
+      ]
+    },
+    {
+      "talent_def_id": "talent.fire_circle_seat",
+      "definition_version": 1,
+      "display_name_key": "talent.fire_circle_seat.name",
+      "display_name": "火边留席",
+      "tags": ["earned", "social", "companionship"],
+      "granted_affordance_tags": ["recognized_fire_circle_member"],
+      "modifiers": []
     }
   ],
   "trait_defs": [

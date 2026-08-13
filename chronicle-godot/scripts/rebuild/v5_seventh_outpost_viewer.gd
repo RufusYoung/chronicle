@@ -8,6 +8,7 @@ const ViewModelModel = preload(
 var view_model: Variant = null
 var current_view_data: Dictionary = {}
 var completion_was_shown: bool = false
+var pending_growth_candidate_id: String = ""
 
 @onready var subtitle: Label = %Subtitle
 @onready var day_label: Label = %DayLabel
@@ -29,11 +30,13 @@ var completion_was_shown: bool = false
 @onready var restart_button: Button = %RestartButton
 @onready var intro_dialog: AcceptDialog = %IntroDialog
 @onready var completion_dialog: AcceptDialog = %CompletionDialog
+@onready var growth_confirmation_dialog: ConfirmationDialog = %GrowthConfirmationDialog
 
 
 func _ready() -> void:
 	view_model = ViewModelModel.new()
 	restart_button.pressed.connect(restart_project)
+	growth_confirmation_dialog.confirmed.connect(_confirm_pending_growth)
 	var transition: Dictionary = {}
 	var relay: Node = get_node_or_null("/root/_LifeStageTransition")
 	if relay != null:
@@ -43,7 +46,9 @@ func _ready() -> void:
 
 func restart_project(transition: Dictionary = {}) -> void:
 	completion_was_shown = false
+	pending_growth_candidate_id = ""
 	completion_dialog.hide()
+	growth_confirmation_dialog.hide()
 	view_model.start(transition)
 	refresh_view()
 
@@ -61,6 +66,12 @@ func purchase_market_offer(
 	var result: Dictionary = view_model.purchase_market_offer(
 		item_instance_id, quoted_unit_price
 	)
+	refresh_view()
+	return result
+
+
+func confirm_growth_candidate(candidate_id: String) -> Dictionary:
+	var result: Dictionary = view_model.confirm_growth_candidate(candidate_id)
 	refresh_view()
 	return result
 
@@ -93,7 +104,14 @@ func refresh_view() -> void:
 	_refresh_market(current_view_data.get("market", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []))
-	_refresh_actions(current_view_data.get("actions", []))
+	if bool(current_view_data.get("complete", false)):
+		_refresh_growth_actions(
+			(current_view_data.get("completion", {}) as Dictionary).get(
+				"growth_candidates", []
+			)
+		)
+	else:
+		_refresh_actions(current_view_data.get("actions", []))
 	if (
 		bool(current_view_data.get("complete", false))
 		and not completion_was_shown
@@ -143,6 +161,68 @@ func _refresh_actions(actions: Array) -> void:
 			str(action.get("duty_id", ""))
 		))
 		action_buttons.add_child(button)
+
+
+func _refresh_growth_actions(candidates: Array) -> void:
+	for child: Node in action_buttons.get_children():
+		child.queue_free()
+	var confirmed: Dictionary = {}
+	for candidate: Dictionary in candidates:
+		if bool(candidate.get("confirmed", false)):
+			confirmed = candidate
+			break
+	if not confirmed.is_empty():
+		action_heading.text = "阶段成长已确认　%s" % str(
+			confirmed.get("title", "阶段成长")
+		)
+		action_hint.text = "这项成长已经写入角色、事实与纪事，不能重复领取。"
+		return
+	action_heading.text = "从实际经历中确认一项成长　%d 项可选" % candidates.size()
+	action_hint.text = "成长会永久写入本次存档。点击选项查看依据和奖励，再进行确认。"
+	for candidate: Dictionary in candidates:
+		var preview: Dictionary = candidate.get("reward_preview", {})
+		var button := Button.new()
+		button.custom_minimum_size = Vector2(300, 88)
+		button.text = "%s\n%s　·　%s %d 次" % [
+			str(candidate.get("title", "阶段成长")),
+			str(preview.get("summary", "查看成长奖励")),
+			str(candidate.get("evidence_label", "经历")),
+			int(candidate.get("evidence_count", 0)),
+		]
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.set_meta("candidate_id", str(candidate.get("candidate_id", "")))
+		button.pressed.connect(_request_growth_confirmation.bind(candidate))
+		action_buttons.add_child(button)
+
+
+func _request_growth_confirmation(candidate: Dictionary) -> void:
+	pending_growth_candidate_id = str(candidate.get("candidate_id", ""))
+	var preview: Dictionary = candidate.get("reward_preview", {})
+	growth_confirmation_dialog.title = "确认阶段成长 · %s" % str(
+		candidate.get("title", "阶段成长")
+	)
+	growth_confirmation_dialog.dialog_text = "%s\n\n经历依据：%s，共 %d 次\n奖励：%s\n\n确认后不能在本阶段改选。" % [
+		str(candidate.get("description", "")),
+		str(candidate.get("evidence_label", "经历事实")),
+		int(candidate.get("evidence_count", 0)),
+		str(preview.get("summary", "成长奖励")),
+	]
+	growth_confirmation_dialog.popup_centered_clamped(Vector2i(660, 320), 0.9)
+	call_deferred("_focus_growth_cancel")
+
+
+func _focus_growth_cancel() -> void:
+	if growth_confirmation_dialog.visible:
+		growth_confirmation_dialog.get_cancel_button().grab_focus()
+
+
+func _confirm_pending_growth() -> void:
+	if pending_growth_candidate_id == "":
+		return
+	var candidate_id := pending_growth_candidate_id
+	pending_growth_candidate_id = ""
+	confirm_growth_candidate(candidate_id)
 
 
 func _refresh_market(market: Dictionary) -> void:
@@ -242,13 +322,15 @@ func _show_completion() -> void:
 		lines.append("• %s" % str(line))
 	var candidates: Array = completion.get("growth_candidates", [])
 	if not candidates.is_empty():
-		lines.append("\n阶段成长候选")
+		lines.append("\n阶段成长候选（关闭小结后在底部确认一项）")
 	for candidate: Dictionary in candidates:
-		lines.append("• %s（%s %d 次）\n  %s" % [
+		var preview: Dictionary = candidate.get("reward_preview", {})
+		lines.append("• %s（%s %d 次）\n  %s\n  奖励：%s" % [
 			str(candidate.get("title", "阶段成长")),
 			str(candidate.get("evidence_label", "经历")),
 			int(candidate.get("evidence_count", 0)),
 			str(candidate.get("description", "")),
+			str(preview.get("summary", "成长奖励")),
 		])
 	completion_dialog.dialog_text = "\n".join(lines)
 	completion_dialog.popup_centered_clamped(Vector2i(820, 520), 0.9)

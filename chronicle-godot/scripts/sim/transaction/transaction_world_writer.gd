@@ -24,6 +24,7 @@ const STORE_REQUIREMENTS := {
 	"deferred_consequence_updates": "deferred_consequence_store",
 	"item_changes": "item_store",
 	"equipment_changes": "equipment_store",
+	"character_feature_changes": "character_feature_store",
 	"chronicle_entries_added": "chronicle_store",
 	"investigation_changes": "investigation_store",
 }
@@ -87,6 +88,11 @@ func _apply_to_stores(result: Variant, stores: Dictionary) -> Dictionary:
 		"character_feature_store"
 	)
 	if character_feature_store != null:
+		for feature_change: Dictionary in result.character_feature_changes:
+			if not character_feature_store.apply_change(feature_change):
+				return _store_failure(
+					"character_feature_store", character_feature_store
+				)
 		character_feature_store.apply_facts(result.facts_added)
 
 	var relationship_store: Variant = stores.get("relationship_store")

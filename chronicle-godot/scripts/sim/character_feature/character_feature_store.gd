@@ -231,6 +231,16 @@ func apply_facts(facts: Array) -> Dictionary:
 	return applied
 
 
+func apply_change(change: Dictionary) -> bool:
+	match str(change.get("operation", "")):
+		"grant_talent":
+			var assignment: Dictionary = change.get("assignment", {})
+			if assignment.is_empty():
+				return _reject("grant_talent_assignment_missing")
+			return assign_talent(assignment)
+	return _reject("unsupported_character_feature_operation")
+
+
 func list_talent_assignments(owner_id: String = "") -> Array:
 	return _list_owned(talent_assignments, owner_id)
 

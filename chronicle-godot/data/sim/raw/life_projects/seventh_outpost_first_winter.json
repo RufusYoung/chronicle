@@ -129,9 +129,17 @@
         "duty_ids": ["patrol_fog_line"]
       },
       "reward_preview": {
-        "kind": "attribute_or_skill_growth",
-        "attribute": "perception",
-        "skill_def_id": "skill.scouting"
+        "summary": "感知 +1，并获得天赋「雾线读迹者」"
+      },
+      "reward": {
+        "effects": {
+          "operations": [
+            {"operation": "state_add", "entity_id": "player", "key": "perception", "delta": 1}
+          ]
+        },
+        "talent_grants": [
+          {"owner_entity_id": "player", "talent_def_id": "talent.fog_line_reader"}
+        ]
       }
     },
     {
@@ -145,9 +153,17 @@
         "duty_ids": ["repair_east_wall", "practice_wall_archery"]
       },
       "reward_preview": {
-        "kind": "talent_or_skill_growth",
-        "talent_def_id": "talent.steady_hands",
-        "skill_def_ids": ["skill.maintenance", "skill.archery"]
+        "summary": "体质 +1，并获得天赋「风雪中的稳手」"
+      },
+      "reward": {
+        "effects": {
+          "operations": [
+            {"operation": "state_add", "entity_id": "player", "key": "constitution", "delta": 1}
+          ]
+        },
+        "talent_grants": [
+          {"owner_entity_id": "player", "talent_def_id": "talent.winter_steady_worker"}
+        ]
       }
     },
     {
@@ -161,9 +177,17 @@
         "duty_ids": ["drill_with_elai", "share_hard_bread", "audit_rations_with_marta", "rest_in_infirmary"]
       },
       "reward_preview": {
-        "kind": "attribute_or_relationship_growth",
-        "attribute": "charisma",
-        "relationship_axis": "familiarity"
+        "summary": "魅力 +1，并获得天赋「火边留席」"
+      },
+      "reward": {
+        "effects": {
+          "operations": [
+            {"operation": "state_add", "entity_id": "player", "key": "charisma", "delta": 1}
+          ]
+        },
+        "talent_grants": [
+          {"owner_entity_id": "player", "talent_def_id": "talent.fire_circle_seat"}
+        ]
       }
     }
   ],
@@ -247,6 +271,7 @@
       "label": "[力量] 和霍克补东墙",
       "kind": "劳作",
       "hint": "需要力量 7。消耗木料和体力，直接修复哨墙。",
+      "action_tags": ["winter_labor"],
       "player_min": {"strength": 7},
       "available_if": [
         {"entity_id": "seventh_outpost", "key": "wall_integrity", "max": 9}

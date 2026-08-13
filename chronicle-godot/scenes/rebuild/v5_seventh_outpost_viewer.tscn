@@ -366,3 +366,11 @@ title = "新兵之冬 · 七日小结"
 dialog_autowrap = true
 ok_button_text = "留在哨站查看结果"
 theme_override_styles/panel = SubResource("panel")
+
+[node name="GrowthConfirmationDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "确认阶段成长"
+dialog_autowrap = true
+ok_button_text = "确认这项成长"
+cancel_button_text = "再想一想"
+theme_override_styles/panel = SubResource("panel")

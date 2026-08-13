@@ -33,9 +33,11 @@ func _run() -> void:
 		and patrol_candidates.size() == 1
 		and int(fog_reader.get("evidence_count", 0)) == 7
 		and (fog_reader.get("source_fact_ids", []) as Array).size() == 7
-		and str((fog_reader.get("reward_preview", {}) as Dictionary).get(
-			"skill_def_id", ""
-		)) == "skill.scouting",
+		and "感知 +1" in str(
+			(fog_reader.get("reward_preview", {}) as Dictionary).get(
+				"summary", ""
+			)
+		),
 		"1. Patrol facts produce one traceable route-specific candidate"
 	)
 

@@ -332,6 +332,7 @@ func get_growth_candidates() -> Array:
 	var rows: Array[Dictionary] = []
 	if not is_ready():
 		return rows
+	var confirmed_candidate_id := _confirmed_growth_candidate_id()
 	for rule_value: Variant in definition.get("growth_candidate_rules", []):
 		if not rule_value is Dictionary:
 			continue
@@ -355,8 +356,153 @@ func get_growth_candidates() -> Array:
 			"reward_preview": (
 				rule.get("reward_preview", {}) as Dictionary
 			).duplicate(true),
+			"confirmed": str(rule.get("candidate_id", "")) == confirmed_candidate_id,
 		})
 	return rows
+
+
+func confirm_growth_candidate(candidate_id: String) -> Dictionary:
+	if not is_ready():
+		return _failure("project_not_initialized")
+	if not is_complete():
+		return _failure("project_not_complete")
+	if _confirmed_growth_candidate_id() != "":
+		return _failure("growth_already_confirmed")
+	var candidate := _growth_candidate(candidate_id)
+	if candidate.is_empty():
+		return _failure("growth_candidate_not_available")
+	var rule := _find_growth_rule(candidate_id)
+	var reward: Dictionary = rule.get("reward", {})
+	if reward.is_empty():
+		return _failure("growth_reward_missing")
+	var fact_id := "%s:growth_confirmed:%s" % [project_id, candidate_id]
+	var result = TransactionResultModel.new()
+	result.add_fact({
+		"fact_id": fact_id,
+		"fact_type": "life_project_growth_confirmed",
+		"actor_id": "player",
+		"project_id": project_id,
+		"candidate_id": candidate_id,
+		"source_fact_ids": (
+			candidate.get("source_fact_ids", []) as Array
+		).duplicate(true),
+		"day": get_day(),
+		"location_id": str(session.context.location_id),
+	})
+	var effect_report: Dictionary = effect_protocol_resolver.append_effects(
+		result, reward.get("effects", {})
+	)
+	if not bool(effect_report.get("ok", false)):
+		return _growth_contract_failure(
+			"growth_reward_effect_invalid", effect_report
+		)
+	for grant_value: Variant in reward.get("talent_grants", []):
+		if not grant_value is Dictionary:
+			return _failure("growth_talent_grant_invalid")
+		var grant := grant_value as Dictionary
+		var owner_id := str(grant.get("owner_entity_id", "player"))
+		var talent_def_id := str(grant.get("talent_def_id", ""))
+		if talent_def_id == "" or not session.registry.has_definition(
+			"talent", talent_def_id
+		):
+			return _failure("growth_talent_definition_missing")
+		result.add_character_feature_change({
+			"operation": "grant_talent",
+			"assignment": {
+				"talent_assignment_id": "%s:talent:%s:%s" % [
+					project_id,
+					candidate_id,
+					talent_def_id,
+				],
+				"talent_def_id": talent_def_id,
+				"owner_entity_id": owner_id,
+				"source_kind": "system_grant",
+				"source_fact_ids": [fact_id],
+				"status": "active",
+				"assigned_tick": int(session.current_day * 24 + session.current_hour),
+			},
+		})
+	result.add_chronicle_entry({
+		"entry_id": "%s:growth:%s" % [project_id, candidate_id],
+		"subject_id": "player",
+		"title": "阶段成长：%s" % str(candidate.get("title", "阶段成长")),
+		"body": "%s\n\n依据：%s，共 %d 次。" % [
+			str(candidate.get("description", "")),
+			str(candidate.get("evidence_label", "经历事实")),
+			int(candidate.get("evidence_count", 0)),
+		],
+		"project_id": project_id,
+		"candidate_id": candidate_id,
+		"source_fact_ids": [fact_id],
+	})
+	result.set_narrative_result({
+		"title": "成长已经留下",
+		"summary": "%s。%s" % [
+			str(candidate.get("title", "阶段成长")),
+			str((candidate.get("reward_preview", {}) as Dictionary).get(
+				"summary", "奖励已经写入角色。"
+			)),
+		],
+	})
+	result.mark_resolved("life_project_growth_confirmation")
+	if not session.writer.apply_result(result, session.stores):
+		var failed := _failure("growth_transaction_rejected")
+		failed["transaction_report"] = session.writer.last_report.duplicate(true)
+		return failed
+	session.world_log.append_entry({
+		"entry_type": "life_project_growth_confirmation",
+		"project_id": project_id,
+		"candidate_id": candidate_id,
+		"transaction_mode": "life_project_growth_confirmation",
+		"contract_status": "resolved",
+		"facts_added": ["life_project_growth_confirmed"],
+	})
+	latest_result = {
+		"success": true,
+		"growth_confirmed": true,
+		"candidate_id": candidate_id,
+		"title": str(result.narrative_result.get("title", "成长已经留下")),
+		"summary": str(result.narrative_result.get("summary", "")),
+		"settlement_notes": ["成长事实、属性、天赋和纪事已在同一事务中写入。"],
+		"npc_narratives": [],
+		"base_values": {},
+		"modified_values": {},
+		"modifier_explanations": [],
+	}
+	return latest_result.duplicate(true)
+
+
+func _growth_candidate(candidate_id: String) -> Dictionary:
+	for candidate: Dictionary in get_growth_candidates():
+		if str(candidate.get("candidate_id", "")) == candidate_id:
+			return candidate
+	return {}
+
+
+func _find_growth_rule(candidate_id: String) -> Dictionary:
+	for value: Variant in definition.get("growth_candidate_rules", []):
+		if value is Dictionary and str(
+			(value as Dictionary).get("candidate_id", "")
+		) == candidate_id:
+			return (value as Dictionary).duplicate(true)
+	return {}
+
+
+func _confirmed_growth_candidate_id() -> String:
+	if not is_ready():
+		return ""
+	for fact: Dictionary in session.stores["fact_store"].find_facts_by_type(
+		"life_project_growth_confirmed"
+	):
+		if str(fact.get("project_id", "")) == project_id:
+			return str(fact.get("candidate_id", ""))
+	return ""
+
+
+func _growth_contract_failure(error: String, report: Dictionary) -> Dictionary:
+	var failure := _failure(error)
+	failure["contract_errors"] = report.get("errors", [])
+	return failure
 
 
 func _matching_growth_fact_ids(match_rule: Variant) -> Array:
