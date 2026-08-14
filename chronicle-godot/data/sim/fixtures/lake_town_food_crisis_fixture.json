@@ -548,6 +548,170 @@
       }
     }
   ],
+  "combat_encounters": [
+    {
+      "encounter_id": "mist_salt_well_claimant",
+      "location_id": "mist_salt_well",
+      "title": "井雾里截路的人",
+      "description": "一个裹着盐硬旧布的拾荒客从塌墙后跨出来，用带钩长杆拦住井口。他没有立刻扑上来，但也不肯让开。",
+      "context_tags": ["dim_light", "mist_salt_well", "narrow_ground"],
+      "enemy": {
+        "entity_id": "mist_salt_well_claimant",
+        "display_name": "盐雾拾荒客",
+        "danger_label": "高",
+        "observable_features": [
+          "钩杆一直横在胸前，杆尾抵着石缝",
+          "呼吸急促，握杆的左手在发抖",
+          "他反复瞥向你的水囊和井口白丝"
+        ],
+        "observable_tags": ["human", "armed", "cornered"],
+        "tags": ["human", "armed", "cornered", "mist_sick"],
+        "attack": 16,
+        "defense": 17,
+        "pursuit": 17,
+        "resolve": 14
+      },
+      "approaches": [
+        {
+          "approach_id": "fight_balanced",
+          "option_id": "combat:mist_salt_well_claimant:fight_balanced",
+          "label": "架锤挡住钩杆",
+          "action_type": "danger",
+          "hours": 1,
+          "score_target": "combat.attack",
+          "difficulty_key": "defense",
+          "action_tags": ["combat_melee", "balanced_stance"],
+          "success": {
+            "fatigue_gain": 1,
+            "durability_loss": 1,
+            "durability_slot": "main_hand",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_claimant_driven_from_well_mouth",
+                "target_id": "enemy",
+                "summary": "你用工锤架开钩杆，盐雾拾荒客退进塌墙后的雾里。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "钩杆被压进石缝",
+            "narrative": "钩刃擦着锤柄滑开。你没有追进雾里，只守住井口；那人拖着长杆退过塌墙，很快只剩粗重的喘息声。"
+          },
+          "failure": {
+            "base_health_loss": 3,
+            "fatigue_gain": 2,
+            "injury": "combat_bruising",
+            "injury_label": "战斗挫伤",
+            "durability_loss": 4,
+            "durability_slot": "main_hand",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_claimant_won_brief_clash",
+                "target_id": "enemy",
+                "summary": "拾荒客撞开你的架势后没有追击，带着钩杆消失在塌墙后。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "肩背撞上盐墙",
+            "narrative": "钩杆压住锤头，把你撞向盐硬石墙。那人也在喘息里失了追击的力气；你们隔着几步退开，他先拖着钩杆没入雾中。"
+          }
+        },
+        {
+          "approach_id": "retreat",
+          "option_id": "combat:mist_salt_well_claimant:retreat",
+          "label": "举灯退向石墙缺口",
+          "action_type": "retreat",
+          "hours": 1,
+          "score_target": "combat.escape",
+          "difficulty_key": "pursuit",
+          "action_tags": ["combat_retreat"],
+          "success": {
+            "fatigue_gain": 1,
+            "durability_loss": 1,
+            "durability_slot": "utility",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "actor_withdrew_from_mist_salt_claimant",
+                "target_id": "enemy",
+                "summary": "你用遮光巡灯照出塌墙缺口，避开钩杆后重新绕回井口。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "灯罩里露出一线退路",
+            "narrative": "你只掀开一道灯罩，让光停在脚边。钩杆追着亮处扫空；等那人转身，你已经从塌墙缺口绕到更高的石坡。片刻后，井口重新安静下来。"
+          },
+          "failure": {
+            "base_health_loss": 1,
+            "fatigue_gain": 2,
+            "durability_loss": 2,
+            "durability_slot": "utility",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "actor_scrambled_away_from_mist_salt_claimant",
+                "target_id": "enemy",
+                "summary": "钩杆击中巡灯后，你翻过塌墙脱身；拾荒客没有继续追来。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "钩刃敲上灯罩",
+            "narrative": "你退得慢了一步，钩刃敲得灯罩猛地一暗。好在塌墙只到腰际；你翻过去滚进盐草，那人没有离开井口继续追赶。"
+          }
+        },
+        {
+          "approach_id": "negotiate",
+          "option_id": "combat:mist_salt_well_claimant:negotiate",
+          "label": "指出白丝正在追逐水囊",
+          "action_type": "dialogue",
+          "hours": 1,
+          "score_target": "combat.influence",
+          "difficulty_key": "resolve",
+          "action_tags": ["combat_negotiate", "field_observation"],
+          "success": {
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_claimant_shared_water_warning",
+                "target_id": "enemy",
+                "summary": "拾荒客确认白丝会追逐敞开的水，并警告你不要在井里打破水囊。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "钩杆先移开了半尺",
+            "narrative": "你没有靠近，只让他看脚边正朝水囊抬起的白丝。拾荒客低头时脸色变了；他收回钩杆，哑声说井下最怕破水，随后沿塌墙退进雾里。"
+          },
+          "failure": {
+            "fatigue_gain": 1,
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_claimant_refused_warning",
+                "target_id": "enemy",
+                "summary": "拾荒客不肯相信你的警告；僵持一小时后，他先退进了井雾。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "一句话没能放下钩杆",
+            "narrative": "那人把你的提醒当成夺路的把戏。你们隔着钩杆和水囊僵持，直到井雾变浓；他终于不愿继续暴露在白丝旁，骂了一句便退向塌墙。"
+          }
+        }
+      ]
+    }
+  ],
   "return_echoes": [
     {
       "echo_id": "chen_mi_recognizes_granary_measure_token",
@@ -1144,6 +1308,23 @@
       }
     },
     {
+      "id": "mist_salt_well_claimant",
+      "location_id": "mist_salt_well",
+      "display_name": "盐雾拾荒客",
+      "description": "旧布在盐雾里结得发硬，带钩长杆横在胸前。他的呼吸很急，眼睛却一直盯着你的水囊。",
+      "type": "person",
+      "tags": [
+        "person",
+        "armed",
+        "wilderness_scavenger",
+        "mist_sick",
+        "combat_encounter_actor"
+      ],
+      "states": {
+        "visible": true
+      }
+    },
+    {
       "id": "mist_salt_well_warning_stone",
       "location_id": "mist_salt_well",
       "display_name": "井口断裂的旧警石",
@@ -1255,6 +1436,40 @@
       "provenance": {"source": "journey_starting_supply"},
       "history": [],
       "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.lake_town.player_field_hammer",
+      "item_def_id": "item.field_repair_hammer",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {"durability": 68, "maximum_durability": 80, "quality": "serviceable"},
+      "custom_tags": ["traveler_field_kit"],
+      "provenance": {"source": "journey_starting_gear"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    },
+    {
+      "item_instance_id": "item_instance.lake_town.player_patrol_lantern",
+      "item_def_id": "item.patrol_lantern",
+      "holder": {"kind": "entity", "id": "player"},
+      "quantity": 1,
+      "condition": {"durability": 52, "maximum_durability": 60, "quality": "serviceable"},
+      "custom_tags": ["traveler_field_kit"],
+      "provenance": {"source": "journey_starting_gear"},
+      "history": [],
+      "created_tick": 0,
+      "updated_tick": 0
+    }
+  ],
+  "initial_equipment_loadouts": [
+    {
+      "entity_id": "player",
+      "slots": {
+        "main_hand": "item_instance.lake_town.player_field_hammer",
+        "utility": "item_instance.lake_town.player_patrol_lantern"
+      },
       "updated_tick": 0
     }
   ],

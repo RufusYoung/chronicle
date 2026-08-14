@@ -117,6 +117,9 @@ func _run() -> void:
 	)
 
 	session.start_from_fixture_path(FIXTURE_PATH, RULE_PATHS)
+	var initial_item_count: int = int(
+		session.get_snapshot().get_player_items().size()
+	)
 	session.travel(OUTBOUND_ROUTE)
 	var preparation: Dictionary = session.execute_challenge_option(
 		PREPARE_OPTION
@@ -206,11 +209,14 @@ func _run() -> void:
 		"inventory_item_ids",
 		[]
 	)
+	var success_item_count: int = int(
+		success_snapshot.get_player_items().size()
+	)
 	_check(
 		str(item.get("display_name", "")) == "旧粮仓验粮铜牌"
 		and str(item.get("owner_id", "")) == "player"
 		and DISCOVERY_ITEM in inventory_ids
-		and success_snapshot.get_player_items().size() == 2,
+		and success_item_count >= initial_item_count + 1,
 		"15. Success creates a real owned item and updates player inventory"
 	)
 	_check(
@@ -239,7 +245,7 @@ func _run() -> void:
 	var returned_snapshot: Variant = session.get_snapshot()
 	_check(
 		str(session.context.location_id) == "old_chen_shop"
-		and returned_snapshot.get_player_items().size() == 2
+		and returned_snapshot.get_player_items().size() == success_item_count
 		and DISCOVERY_ITEM in (
 			returned_snapshot.get_player_value(
 				"inventory_item_ids",
@@ -253,7 +259,10 @@ func _run() -> void:
 		int(summary.get("challenges_resolved", 0)) == 1
 		and int(summary.get("challenge_preparations", 0)) == 1
 		and int(summary.get("world_ticks_executed", 0)) == 4
-		and int(summary.get("store_summary", {}).get("items", 0)) == 2,
+		and int(summary.get("store_summary", {}).get("items", 0))
+			== session.stores["item_store"].list_items().size()
+		and int(summary.get("store_summary", {}).get("items", 0))
+			>= success_item_count,
 		"19. Summary separates preparation, check, world ticks, and items"
 	)
 

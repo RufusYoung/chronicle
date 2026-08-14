@@ -474,7 +474,7 @@ scroll_active = true
 
 [node name="ActionDock" type="PanelContainer" parent="Margin/RootLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 174)
+custom_minimum_size = Vector2(0, 142)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleActionDock")
 

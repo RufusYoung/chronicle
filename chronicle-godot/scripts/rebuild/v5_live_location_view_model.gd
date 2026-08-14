@@ -222,6 +222,39 @@ func perform_challenge(
 	return latest_result.duplicate(true)
 
 
+func perform_combat_encounter(
+		option_id: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
+	latest_event_type = "combat_encounter"
+	if not is_ready():
+		latest_result = {
+			"success": false,
+			"error": "session_not_initialized",
+			"option_id": option_id,
+		}
+		return latest_result.duplicate(true)
+
+	var option := _find_combat_encounter_option(option_id)
+	var execution_metadata := {
+		"source": "v5_live_location_surface",
+	}
+	execution_metadata.merge(metadata, true)
+	latest_result = session.execute_combat_encounter_option(
+		option_id, execution_metadata
+	)
+	if bool(latest_result.get("success", false)):
+		action_history.append({
+			"index": action_history.size() + 1,
+			"event_type": "combat_encounter",
+			"option_id": option_id,
+			"label": str(option.get("label", "处理眼前的遭遇")),
+			"outcome": str(latest_result.get("outcome", "")),
+			"narrative": _result_narrative(latest_result),
+		})
+	return latest_result.duplicate(true)
+
+
 func perform_return_echo(option_id: String) -> Dictionary:
 	latest_event_type = "return_echo"
 	if not is_ready():
@@ -569,6 +602,9 @@ func _has_challenge_outcome(
 func _action_rows() -> Array:
 	var rows: Array[Dictionary] = []
 	var snapshot: Variant = session.get_snapshot()
+	var combat_rows := _combat_action_rows()
+	if not combat_rows.is_empty():
+		return combat_rows
 	var ambient_trace_ids := _ambient_trace_ids(snapshot)
 	var surfaced_ambient_trace_count := 0
 	for option: Dictionary in session.get_investigation_options():
@@ -647,6 +683,29 @@ func _action_rows() -> Array:
 	return rows
 
 
+func _combat_action_rows() -> Array:
+	var rows: Array[Dictionary] = []
+	for option: Dictionary in session.get_combat_encounter_options():
+		var preview: Dictionary = option.get("preview", {})
+		var approach_id := str(option.get("approach_id", ""))
+		var approach_label := _combat_approach_label(approach_id)
+		rows.append({
+			"action_id": str(option.get("option_id", "")),
+			"combat_option_id": str(option.get("option_id", "")),
+			"event_type": "combat_encounter",
+			"label": "[%s·%s] %s" % [
+				approach_label,
+				_required_roll_text(int(preview.get("required_roll", 7))),
+				str(option.get("label", "处理遭遇")),
+			],
+			"action_type": str(option.get("action_type", "danger")),
+			"kind": approach_label,
+			"hint": _combat_action_hint(option),
+			"can_execute": bool(option.get("can_execute", false)),
+		})
+	return rows
+
+
 func _ambient_trace_ids(snapshot: Variant) -> Array:
 	var rows: Array = []
 	for trace: Dictionary in snapshot.get_visible_traces():
@@ -680,6 +739,9 @@ func _hours_until_north_quay_ferry() -> int:
 
 
 func _risk_view() -> Dictionary:
+	var combat_risk := _combat_risk_view()
+	if bool(combat_risk.get("active", false)):
+		return combat_risk
 	var options: Array = session.get_challenge_options()
 	var snapshot: Variant = session.get_snapshot()
 	if options.is_empty():
@@ -720,7 +782,41 @@ func _risk_view() -> Dictionary:
 	}
 
 
+func _combat_risk_view() -> Dictionary:
+	var options: Array = session.get_combat_encounter_options()
+	if options.is_empty():
+		return {"active": false}
+	var first: Dictionary = options[0]
+	var preview: Dictionary = first.get("preview", {})
+	var enemy: Dictionary = preview.get("enemy_observation", {})
+	var features: Array[String] = []
+	for feature: Variant in enemy.get("observable_features", []):
+		features.append("• %s" % str(feature))
+	var checks: Array[String] = []
+	for option: Dictionary in options:
+		var option_preview: Dictionary = option.get("preview", {})
+		checks.append("%s %s" % [
+			_combat_approach_label(str(option.get("approach_id", ""))),
+			_required_roll_text(int(option_preview.get("required_roll", 7))),
+		])
+	return {
+		"active": true,
+		"title": "眼前的遭遇　%s" % str(enemy.get("danger_label", "未知")),
+		"description": "%s\n%s\n%s" % [
+			str(first.get("encounter_description", "")),
+			str(enemy.get("display_name", "未知对手")),
+			"\n".join(features),
+		],
+		"check_text": "d6 检定　%s" % "　/　".join(checks),
+		"prepared": true,
+		"preparation_text": "当前装备与伤势已经计入每个选择的有效数值。",
+		"failure_hint": "选择会立刻推进 1 小时并只结算一次；失败会留下明确代价，但不会立即死亡。",
+	}
+
+
 func _travel_rows() -> Array:
+	if not session.get_combat_encounter_options().is_empty():
+		return []
 	var rows: Array[Dictionary] = []
 	var snapshot: Variant = session.get_snapshot()
 	for option: Dictionary in session.get_travel_options():
@@ -826,6 +922,7 @@ func _player_view(snapshot: Variant) -> Dictionary:
 	var constitution := int(snapshot.get_player_value("constitution", 0))
 	var perception := int(snapshot.get_player_value("perception", 0))
 	var health := int(snapshot.get_player_value("health", 100))
+	var fatigue := int(snapshot.get_player_value("fatigue", 0))
 	var injury := str(snapshot.get_player_value("injury", "none"))
 	var mist_salt_echo := str(
 		snapshot.get_player_value("mist_salt_echo", "none")
@@ -849,10 +946,11 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		"constitution": constitution,
 		"perception": perception,
 		"health": health,
+		"fatigue": fatigue,
 		"injury": injury,
 		"mist_salt_echo": mist_salt_echo,
 		"items": item_names,
-		"summary": "身份　%s%s\n力量 %d　敏捷 %d　智慧 %d\n魅力 %d　体质 %d　感知 %d\n食物　%d 份　健康　%d　伤势　%s\n随身物品　%s" % [
+		"summary": "身份　%s%s\n力量 %d　敏捷 %d　智慧 %d\n魅力 %d　体质 %d　感知 %d\n食物　%d 份　健康　%d　疲劳　%d / 10\n伤势　%s\n随身物品　%s" % [
 			_role_label(role),
 			long_term_line,
 			strength,
@@ -863,6 +961,7 @@ func _player_view(snapshot: Variant) -> Dictionary:
 			perception,
 			int(snapshot.get_player_value("food_count", 0)),
 			health,
+			fatigue,
 			_injury_label(injury),
 			"、".join(item_names) if not item_names.is_empty() else "无",
 		],
@@ -990,6 +1089,8 @@ func _feedback_view() -> Dictionary:
 		return _travel_feedback_view()
 	if latest_event_type == "challenge":
 		return _challenge_feedback_view()
+	if latest_event_type == "combat_encounter":
+		return _combat_encounter_feedback_view()
 	if latest_event_type == "return_echo":
 		return _return_echo_feedback_view()
 	if latest_event_type == "investigation":
@@ -1031,6 +1132,85 @@ func _feedback_view() -> Dictionary:
 		"title": title,
 		"body": body,
 		"details": _result_detail_lines(transaction, candidate),
+	}
+
+
+func _combat_encounter_feedback_view() -> Dictionary:
+	if not bool(latest_result.get("success", false)):
+		return {
+			"status": "error",
+			"title": "这次遭遇已经有了结果",
+			"body": "局面已经变化，刚才的处理方式不能再次结算。",
+			"details": ["没有追加事实，也没有再次消耗时间或装备。"],
+		}
+
+	var transaction: Dictionary = latest_result.get("transaction_result", {})
+	var narrative: Dictionary = transaction.get("narrative_result", {})
+	var preview: Dictionary = latest_result.get("preview", {})
+	var formula := "掷骰 %d + %s %d = %d / 难度 %d" % [
+			int(narrative.get("roll", 0)),
+			_combat_score_label(str(preview.get("score_target", ""))),
+			int(narrative.get("effective_score", 0)),
+			int(narrative.get("total", 0)),
+			int(narrative.get("difficulty", 0)),
+		]
+	var details: Array[String] = [formula]
+	var settlement: Array[String] = []
+	for change: Dictionary in transaction.get("state_changes", []):
+		if str(change.get("entity_id", "")) != "player":
+			continue
+		var state_text := _state_change_text(change)
+		if state_text != "":
+			settlement.append(state_text)
+	for change: Dictionary in transaction.get("item_changes", []):
+		var item_text := _item_change_text(change)
+		if item_text != "":
+			settlement.append(item_text)
+	for fact: Dictionary in transaction.get("facts_added", []):
+		if str(fact.get("fact_type", "")) == "actor_injured_during_combat":
+			settlement.append("伤势：%s" % _injury_label(str(
+				fact.get("injury", "combat_bruising")
+			)))
+	var outcome_text := (
+		"成功" if str(narrative.get("outcome", "")) == "success" else "失败"
+	)
+	var settlement_text := (
+		"结算：%s" % "；".join(settlement)
+		if not settlement.is_empty()
+		else "结算：没有身体或装备损耗"
+	)
+	for modifier: Dictionary in narrative.get("modifier_explanations", []):
+		var operation := str(modifier.get("operation", "add"))
+		var value := int(round(float(modifier.get("value", 0))))
+		var value_text := _signed_number(value) if operation == "add" else str(value)
+		details.append("%s使%s %s：%s" % [
+			str(modifier.get("source_label", "当前效果")),
+			_combat_score_label(str(modifier.get("target", ""))),
+			value_text,
+			str(modifier.get("reason", "修正已经生效")),
+		])
+	for change: Dictionary in transaction.get("state_changes", []):
+		var state_text := _state_change_text(change)
+		if state_text != "":
+			details.append(state_text)
+	for change: Dictionary in transaction.get("item_changes", []):
+		var item_text := _item_change_text(change)
+		if item_text != "":
+			details.append(item_text)
+	for fact: Dictionary in transaction.get("facts_added", []):
+		if bool(fact.get("show_in_feedback", false)):
+			details.append(str(fact.get("summary", "")))
+	details.append("这次遭遇已经结算，原来的三个选择已从行动栏撤下。")
+	return {
+		"status": str(narrative.get("outcome", "combat_encounter")),
+		"title": str(narrative.get("title", "遭遇结果")),
+		"body": "%s（%s）\n%s\n\n%s" % [
+			formula,
+			outcome_text,
+			settlement_text,
+			str(narrative.get("summary", "局面已经产生结果。")),
+		],
+		"details": details,
 	}
 
 
@@ -1489,12 +1669,24 @@ func _state_change_text(change: Dictionary) -> String:
 	var key := str(change.get("key", ""))
 	if key == "visible" and bool(change.get("to", false)):
 		return "%s出现在现场" % _entity_name(entity_id)
+	if key == "visible" and not bool(change.get("to", true)):
+		return "%s已经离开现场" % _entity_name(entity_id)
 	if key == "price_level" and str(change.get("to", "")) == "raised_again":
 		return "%s上的价格又被改高" % _entity_name(entity_id)
 	if entity_id == "player" and key == "food_count":
 		return "随身食物 %s" % _signed_number(int(change.get("delta", 0)))
 	if entity_id == "player" and key == "health":
-		return "健康降至 %d" % int(change.get("to", 0))
+		if change.has("to"):
+			return "健康降至 %d" % int(change.get("to", 0))
+		return "健康 %s，现为 %d" % [
+			_signed_number(int(change.get("delta", 0))),
+			int(session.get_snapshot().get_player_value("health", 0)),
+		]
+	if entity_id == "player" and key == "fatigue":
+		return "疲劳 %s，现为 %d / 10" % [
+			_signed_number(int(change.get("delta", 0))),
+			int(session.get_snapshot().get_player_value("fatigue", 0)),
+		]
 	if entity_id == "player" and key == "injury":
 		return "伤势：%s" % _injury_label(str(change.get("to", "")))
 	if entity_id == "player" and key == "mist_salt_echo":
@@ -1521,6 +1713,16 @@ func _relationship_change_text(change: Dictionary) -> String:
 func _item_change_text(change: Dictionary) -> String:
 	var operation := str(change.get("operation", ""))
 	var quantity := int(change.get("quantity", 1))
+	if operation == "adjust_durability":
+		var item: Dictionary = session.get_snapshot().get_item(str(change.get(
+			"item_instance_id", ""
+		)))
+		var condition: Dictionary = item.get("condition", {})
+		return "%s耐久降至 %d / %d" % [
+			str(item.get("display_name", "装备")),
+			int(condition.get("durability", change.get("to", 0))),
+			int(condition.get("maximum_durability", 0)),
+		]
 	if operation == "consume":
 		if str(change.get("item_def_id", "")) == "item.travel_ration":
 			return "随身食物 -%d 份" % quantity
@@ -1542,9 +1744,82 @@ func _item_display_text(
 	if display_name == "":
 		display_name = fallback
 	var quantity := int(item.get("quantity", 1))
+	var condition: Dictionary = item.get("condition", {})
+	var maximum_durability := int(condition.get("maximum_durability", 0))
+	if maximum_durability > 0:
+		display_name += " %d/%d" % [
+			int(condition.get("durability", maximum_durability)),
+			maximum_durability,
+		]
 	if quantity > 1:
 		return "%s ×%d" % [display_name, quantity]
 	return display_name
+
+
+func _combat_action_hint(option: Dictionary) -> String:
+	var preview: Dictionary = option.get("preview", {})
+	var parts: Array[String] = [
+		"d6 + %s %d，对难度 %d，%s" % [
+			_combat_score_label(str(preview.get("score_target", ""))),
+			int(preview.get("effective_score", 0)),
+			int(preview.get("difficulty", 0)),
+			_required_roll_text(int(preview.get("required_roll", 7))),
+		]
+	]
+	var applied: Array[String] = []
+	for modifier: Dictionary in preview.get("modifier_explanations", []):
+		applied.append("%s %s" % [
+			str(modifier.get("source_label", "当前效果")),
+			_signed_number(int(round(float(modifier.get("value", 0))))),
+		])
+	if not applied.is_empty():
+		parts.append("已计入：%s" % "、".join(applied))
+	var costs: Array[String] = []
+	var possible_costs: Dictionary = preview.get("possible_costs", {})
+	for description: Variant in possible_costs.get("descriptions", []):
+		costs.append(_combat_cost_text(str(description)))
+	if not costs.is_empty():
+		parts.append("失败可能：%s" % "；".join(costs))
+	return "。".join(parts) + "。"
+
+
+func _combat_cost_text(value: String) -> String:
+	return value.replace("main_hand装备", "主手装备").replace(
+		"utility装备", "工具装备"
+	).replace("body_outer装备", "外衣装备")
+
+
+func _combat_approach_label(approach_id: String) -> String:
+	return {
+		"fight_balanced": "交战",
+		"retreat": "撤退",
+		"negotiate": "交涉",
+	}.get(approach_id, "应对")
+
+
+func _combat_score_label(score_target: String) -> String:
+	return {
+		"combat.attack": "攻击",
+		"combat.guard": "防守",
+		"combat.escape": "撤离",
+		"combat.influence": "影响",
+		"combat.control": "控制",
+	}.get(score_target, "有效数值")
+
+
+func _required_roll_text(required_roll: int) -> String:
+	if required_roll <= 1:
+		return "必定成功"
+	if required_roll <= 6:
+		return "需 %d+" % required_roll
+	return "当前无法成功"
+
+
+func _find_combat_encounter_option(option_id: String) -> Dictionary:
+	for option: Dictionary in session.get_combat_encounter_options():
+		if str(option.get("option_id", "")) == option_id:
+			return option.duplicate(true)
+	return {}
 
 
 func _find_action_option(action_id: String) -> Dictionary:
@@ -1822,6 +2097,17 @@ func _fact_text(
 			return "你请%s帮过忙：%s" % [target_name, summary]
 		if fact_type == "actor_heard_rumor_seed":
 			return "你听到过“%s”：%s" % [target_name, summary]
+		if fact_type in [
+			"actor_resolved_combat_encounter",
+			"mist_salt_claimant_driven_from_well_mouth",
+			"mist_salt_claimant_won_brief_clash",
+			"actor_withdrew_from_mist_salt_claimant",
+			"actor_scrambled_away_from_mist_salt_claimant",
+			"mist_salt_claimant_shared_water_warning",
+			"mist_salt_claimant_refused_warning",
+			"actor_injured_during_combat",
+		]:
+			return summary
 	return {
 		"actor_gave_food_to_target": "你给%s递过食物。" % target_name,
 		"actor_asked_about_concealed_item": "你问过%s藏起来的东西。" % target_name,
@@ -1834,6 +2120,8 @@ func _fact_text(
 		"actor_prepared_for_challenge": _challenge_preparation_fact_text(fact),
 		"actor_attempted_challenge": _challenge_attempt_fact_text(fact),
 		"actor_injured_during_challenge": _challenge_injury_fact_text(fact),
+		"actor_injured_during_combat": "你在短遭遇中受了战斗挫伤。",
+		"actor_resolved_combat_encounter": "你已经处理过井口的短遭遇。",
 		"actor_discovered_item": _item_discovery_fact_text(target_name, fact),
 		"actor_acquired_preparation_item": "你为远行备好了%s。" % target_name,
 		"actor_prepared_mist_salt_expedition": "你在北埠用两小时劳动换得了往返口粮与防盐面罩。",
@@ -1956,6 +2244,7 @@ func _injury_label(injury: String) -> String:
 		"twisted_ankle": "脚踝扭伤",
 		"archive_splinter_cut": "手掌割伤",
 		"mist_salt_throat_burn": "盐雾灼伤",
+		"combat_bruising": "战斗挫伤",
 	}.get(injury, injury)
 
 

@@ -72,7 +72,7 @@ func _run() -> void:
 	)
 	_check(
 		investigation_bar.visible
-		and action_dock.custom_minimum_size.y == 174.0
+		and action_dock.custom_minimum_size.y == 142.0
 		and "调查方向　公仓封存记录" in investigation_bar.text
 		and "等待决定" in investigation_bar.text,
 		"3. Token recognition opens a visible investigation direction"
@@ -172,7 +172,7 @@ func _run() -> void:
 	)
 	_check(
 		not investigation_bar.visible
-		and action_dock.custom_minimum_size.y == 174.0
+		and action_dock.custom_minimum_size.y == 142.0
 		and _find_investigation_button(
 			action_buttons,
 			INVESTIGATE_OPTION
@@ -213,9 +213,13 @@ func _run() -> void:
 
 	viewer.restart_session()
 	await process_frame
+	var restarted_snapshot: Variant = viewer.view_model.session.get_snapshot()
 	_check(
 		"第 1 天　10:00" in time_label.text
-		and "随身物品　旅行口粮 ×3" in player_summary.text
+		and "食物　3 份" in player_summary.text
+		and restarted_snapshot.get_item(
+			"lake_town_granary_measure_token"
+		).is_empty()
 		and not investigation_bar.visible
 		and not chronicle_heading.visible,
 		"17. Restart clears the complete investigation branch"

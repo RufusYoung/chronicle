@@ -21,6 +21,9 @@ const WELL_TRACE_ACTION := (
 const WELL_WARNING_ACTION := (
 	"read_visible_readable_object:mist_salt_well_warning_stone"
 )
+const COMBAT_FIGHT := "combat:mist_salt_well_claimant:fight_balanced"
+const COMBAT_RETREAT := "combat:mist_salt_well_claimant:retreat"
+const COMBAT_NEGOTIATE := "combat:mist_salt_well_claimant:negotiate"
 
 var failures: Array[String] = []
 
@@ -49,6 +52,7 @@ func _run() -> void:
 	var time_label := viewer.get_node("%TimeLabel") as Label
 	var player_summary := viewer.get_node("%PlayerSummary") as RichTextLabel
 	var observations := viewer.get_node("%VisibleObservations") as RichTextLabel
+	var visible_people := viewer.get_node("%VisiblePeople") as RichTextLabel
 	var knowledge := viewer.get_node("%KnowledgeText") as RichTextLabel
 	var feedback_title := viewer.get_node("%FeedbackTitle") as Label
 	var feedback_body := viewer.get_node("%FeedbackBody") as RichTextLabel
@@ -133,17 +137,28 @@ func _run() -> void:
 	_check(
 		"井口断裂的旧警石" in observations.text
 		and "井口朝水弯曲的盐壳白丝" in observations.text
-		and "通往第二环的盐白石阶" in observations.text,
-		"7. The well shows a warning, a testable rule, and a deeper route"
+		and "通往第二环的盐白石阶" in observations.text
+		and "盐雾拾荒客" in visible_people.text,
+		"7. The well shows evidence, a deeper route, and the person blocking it"
 	)
 	_check(
-		not risk_heading.visible,
-		"8. Deeper risk stays hidden until the player reads the evidence"
+		risk_heading.visible
+		and "眼前的遭遇　高" in risk_heading.text
+		and "钩杆一直横在胸前" in risk_text.text
+		and "交战 需 4+" in risk_text.text
+		and "撤退 需 2+" in risk_text.text
+		and "交涉 需 4+" in risk_text.text,
+		"8. The encounter exposes observed behavior and all three odds before input"
 	)
 
 	var trace_button := _find_action_button(
 		action_buttons,
 		WELL_TRACE_ACTION
+	)
+	var fight_button := _find_combat_button(action_buttons, COMBAT_FIGHT)
+	var retreat_button := _find_combat_button(action_buttons, COMBAT_RETREAT)
+	var negotiate_button := _find_combat_button(
+		action_buttons, COMBAT_NEGOTIATE
 	)
 	var descend_button := _find_challenge_button(
 		action_buttons,
@@ -154,11 +169,45 @@ func _run() -> void:
 		WELL_RETURN
 	)
 	_check(
-		trace_button != null
+		trace_button == null
 		and descend_button == null
 		and return_button == null
-		and "试探盐壳白丝" in trace_button.text,
-		"9. Arrival presents the evidence before the consequential choices"
+		and fight_button != null
+		and retreat_button != null
+		and negotiate_button != null
+		and "需 4+" in fight_button.text
+		and "需 2+" in retreat_button.text,
+		"9. The unresolved encounter replaces unrelated actions and travel"
+	)
+	var encounter_result: Dictionary = viewer.perform_combat_encounter(
+		COMBAT_NEGOTIATE,
+		{"source": "test_injection", "roll_override": 4}
+	)
+	await process_frame
+	await process_frame
+	_check(
+		bool(encounter_result.get("success", false))
+		and str(encounter_result.get("outcome", "")) == "success"
+		and "第 2 天　19:00" in time_label.text
+		and feedback_title.text == "钩杆先移开了半尺"
+		and "掷骰 4 + 影响 10 = 14 / 难度 14" in feedback_body.text
+		and "原来的三个选择已从行动栏撤下" in feedback_body.text,
+		"9a. Negotiation resolves once and explains the full check immediately"
+	)
+	_check(
+		"不要在井里打破水囊" in knowledge.text
+		and "盐雾拾荒客" not in visible_people.text
+		and _find_combat_button(action_buttons, COMBAT_FIGHT) == null
+		and _find_combat_button(action_buttons, COMBAT_RETREAT) == null
+		and _find_combat_button(action_buttons, COMBAT_NEGOTIATE) == null
+		and not risk_heading.visible,
+		"9b. The result becomes knowledge, removes the actor, and consumes all choices"
+	)
+
+	trace_button = _find_action_button(action_buttons, WELL_TRACE_ACTION)
+	_check(
+		trace_button != null and "试探盐壳白丝" in trace_button.text,
+		"9c. Ordinary exploration returns after the encounter is settled"
 	)
 
 	trace_button.pressed.emit()
@@ -212,7 +261,7 @@ func _run() -> void:
 	_check(
 		bool(deep_result.get("success", false))
 		and str(deep_result.get("outcome", "")) == "success"
-		and "第 2 天　20:00" in time_label.text
+		and "第 2 天　21:00" in time_label.text
 		and feedback_title.text == "逆着渗水弯曲的白丝"
 		and "长期痕迹：雾盐回响·微弱" in feedback_body.text
 		and "逆水白丝样本" in feedback_body.text,
@@ -248,7 +297,7 @@ func _run() -> void:
 	await process_frame
 	_check(
 		location_title.text == "北埠旧档房"
-		and "第 3 天　02:00" in time_label.text
+		and "第 3 天　03:00" in time_label.text
 		and "长期痕迹　雾盐回响·微弱" in player_summary.text
 		and "逆水白丝样本" in player_summary.text,
 		"15. Returning to the archive preserves the expedition's long tail"
@@ -317,6 +366,16 @@ func _find_challenge_button(
 			child is Button
 			and str(child.get_meta("challenge_option_id", ""))
 				== option_id
+		):
+			return child as Button
+	return null
+
+
+func _find_combat_button(container: Node, option_id: String) -> Button:
+	for child: Node in container.get_children():
+		if (
+			child is Button
+			and str(child.get_meta("combat_option_id", "")) == option_id
 		):
 			return child as Button
 	return null

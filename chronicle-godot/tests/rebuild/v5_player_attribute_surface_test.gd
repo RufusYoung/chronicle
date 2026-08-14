@@ -55,7 +55,8 @@ func _run() -> void:
 	_check(
 		"力量 7　敏捷 8　智慧 9" in player_summary.text
 		and "魅力 6　体质 8　感知 10" in player_summary.text
-		and "食物　3 份　健康　100　伤势　无" in player_summary.text,
+		and "食物　3 份　健康　100　疲劳　0 / 10" in player_summary.text
+		and "伤势　无" in player_summary.text,
 		"3. Left summary exposes all attributes and survival state"
 	)
 	_check(

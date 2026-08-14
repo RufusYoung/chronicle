@@ -79,6 +79,17 @@ func perform_challenge(option_id: String) -> Dictionary:
 	return result
 
 
+func perform_combat_encounter(
+		option_id: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
+	var result: Dictionary = view_model.perform_combat_encounter(
+		option_id, metadata
+	)
+	refresh_view()
+	return result
+
+
 func perform_return_echo(option_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_return_echo(option_id)
 	refresh_view()
@@ -234,18 +245,34 @@ func _refresh_actions(actions: Array) -> void:
 		if bool(action.get("can_execute", true)):
 			executable_count += 1
 	var blocked_count := actions.size() - executable_count
-	action_heading.text = "此刻可做　%d 项" % executable_count
+	var combat_active := (
+		not actions.is_empty()
+		and str((actions[0] as Dictionary).get("event_type", ""))
+			== "combat_encounter"
+	)
+	action_heading.text = (
+		"眼前的遭遇　选择 1 种处理方式"
+		if combat_active
+		else "此刻可做　%d 项" % executable_count
+	)
 	if blocked_count > 0:
 		action_heading.text += "　·　受限 %d 项" % blocked_count
 	action_hint.text = (
-		"把鼠标移到选择上，先看清它会做什么。执行后，完成的调查会从这里消失。"
-		if not actions.is_empty()
-		else "这里暂时没有可执行的现场行动。查看当前目标或可前往的地点。"
+		"三个选择只会结算一个。按钮已写明最低骰点；移入或聚焦可查看有效数值、装备修正和失败代价。"
+		if combat_active
+		else (
+			"把鼠标移到选择上，先看清它会做什么。执行后，完成的调查会从这里消失。"
+			if not actions.is_empty()
+			else "这里暂时没有可执行的现场行动。查看当前目标或可前往的地点。"
+		)
 	)
 	for action_value: Variant in actions:
 		var action := action_value as Dictionary
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(210, 48)
+		button.custom_minimum_size = Vector2(
+			270 if str(action.get("event_type", "")) == "combat_encounter" else 210,
+			52 if str(action.get("event_type", "")) == "combat_encounter" else 48
+		)
 		button.text = str(action.get("label", "采取行动"))
 		var kind := str(action.get("kind", "行动"))
 		var hint := str(action.get("hint", ""))
@@ -270,6 +297,16 @@ func _refresh_actions(actions: Array) -> void:
 				button.pressed.connect(
 					perform_challenge.bind(
 						str(action.get("challenge_option_id", ""))
+					)
+				)
+			"combat_encounter":
+				button.set_meta(
+					"combat_option_id",
+					str(action.get("combat_option_id", ""))
+				)
+				button.pressed.connect(
+					perform_combat_encounter.bind(
+						str(action.get("combat_option_id", ""))
 					)
 				)
 			"return_echo":
@@ -306,6 +343,14 @@ func _show_action_hint(kind: String, hint: String) -> void:
 
 
 func _restore_action_hint() -> void:
+	var actions: Array = current_view_data.get("actions", [])
+	if (
+		not actions.is_empty()
+		and str((actions[0] as Dictionary).get("event_type", ""))
+			== "combat_encounter"
+	):
+		action_hint.text = "三个选择只会结算一个；先比较最低骰点、装备修正和失败代价。"
+		return
 	action_hint.text = "选择一个行动查看说明；完成的调查不会继续占着选项栏。"
 
 
@@ -471,6 +516,8 @@ func _apply_action_button_style(button: Button, action_type: String) -> void:
 		accent = Color("#6e8392")
 	elif action_type == "danger":
 		accent = Color("#9b5d4f")
+	elif action_type == "retreat":
+		accent = Color("#6e8392")
 	elif action_type == "relic":
 		accent = Color("#a57b4d")
 	elif action_type == "investigation":

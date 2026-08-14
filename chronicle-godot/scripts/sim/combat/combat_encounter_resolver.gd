@@ -321,6 +321,20 @@ func _append_consequences(
 	_append_equipment_wear(
 		result, snapshot, actor_id, fact_id, costs, time_summary
 	)
+	_append_configured_state_changes(
+		result,
+		consequence.get("state_changes", []),
+		actor_id,
+		str(enemy.get("entity_id", ""))
+	)
+	_append_configured_facts(
+		result,
+		consequence.get("additional_facts", []),
+		actor_id,
+		str(enemy.get("entity_id", "")),
+		fact_id,
+		time_summary
+	)
 	return costs
 
 
@@ -360,6 +374,68 @@ func _append_equipment_wear(
 			"source_fact_ids": [fact_id],
 			"updated_tick": int(time_summary.get("tick", 0)),
 		})
+
+
+func _append_configured_state_changes(
+		result: Variant,
+		change_values: Variant,
+		actor_id: String,
+		enemy_id: String
+) -> void:
+	if not change_values is Array:
+		return
+	for change_value: Variant in change_values:
+		if not change_value is Dictionary:
+			continue
+		var change := (change_value as Dictionary).duplicate(true)
+		var entity_id := str(change.get("entity_id", ""))
+		if entity_id == "actor":
+			entity_id = actor_id
+		elif entity_id == "enemy":
+			entity_id = enemy_id
+		if entity_id == "" or str(change.get("key", "")) == "":
+			continue
+		if not change.has("to") and not change.has("delta"):
+			continue
+		change["entity_id"] = entity_id
+		result.add_state_change(change)
+
+
+func _append_configured_facts(
+		result: Variant,
+		fact_values: Variant,
+		actor_id: String,
+		enemy_id: String,
+		source_fact_id: String,
+		time_summary: Dictionary
+) -> void:
+	if not fact_values is Array:
+		return
+	var index := 0
+	for fact_value: Variant in fact_values:
+		if not fact_value is Dictionary:
+			continue
+		var fact_type := str((fact_value as Dictionary).get("fact_type", ""))
+		if fact_type == "":
+			continue
+		index += 1
+		var fact := (fact_value as Dictionary).duplicate(true)
+		fact["fact_id"] = "%s.consequence.%d" % [source_fact_id, index]
+		fact["source_id"] = str(fact.get("source_id", actor_id))
+		var target_id := str(fact.get("target_id", enemy_id))
+		if target_id == "actor":
+			target_id = actor_id
+		elif target_id == "enemy":
+			target_id = enemy_id
+		fact["target_id"] = target_id
+		fact["source_fact_ids"] = [source_fact_id]
+		fact["observed_by_player"] = bool(fact.get(
+			"observed_by_player", true
+		))
+		fact["day"] = int(time_summary.get("day", 0))
+		fact["hour"] = int(time_summary.get("hour", 0))
+		fact["tick"] = int(time_summary.get("tick", 0))
+		result.add_fact(fact)
 
 
 func _potential_costs(

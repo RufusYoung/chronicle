@@ -64,7 +64,7 @@ func _run() -> void:
 	var fake_session = SimSessionModel.new()
 	fake_session.start_from_fixture_data(fake_fixture, RULE_PATHS)
 	_check(
-		fake_session.get_snapshot().get_player_items().size() == 2
+		not fake_session.get_snapshot().get_item(DISCOVERY_ITEM).is_empty()
 		and fake_session.get_return_echo_options().is_empty(),
 		"2. An injected matching item cannot bypass travel and discovery facts"
 	)
@@ -80,7 +80,7 @@ func _run() -> void:
 		{"source": "test_injection", "roll_override": 3}
 	)
 	_check(
-		session.get_snapshot().get_player_items().size() == 2
+		not session.get_snapshot().get_item(DISCOVERY_ITEM).is_empty()
 		and session.get_return_echo_options().is_empty(),
 		"4. Discovery alone is insufficient before the return journey"
 	)

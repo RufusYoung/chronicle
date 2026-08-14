@@ -12,6 +12,9 @@ const TravelResolverModel = preload("res://scripts/sim/travel/travel_resolver.gd
 const ChallengeResolverModel = preload(
 	"res://scripts/sim/challenge/challenge_resolver.gd"
 )
+const CombatEncounterResolverModel = preload(
+	"res://scripts/sim/combat/combat_encounter_resolver.gd"
+)
 const ReturnEchoResolverModel = preload(
 	"res://scripts/sim/echo/return_echo_resolver.gd"
 )
@@ -88,6 +91,7 @@ var resolver: Variant = null
 var writer: Variant = null
 var travel_resolver: Variant = null
 var challenge_resolver: Variant = null
+var combat_encounter_resolver: Variant = null
 var return_echo_resolver: Variant = null
 var investigation_resolver: Variant = null
 var world_tick_adapter: Variant = null
@@ -96,6 +100,7 @@ var npc_need_profiles: Array = []
 var npc_livelihood_profiles: Array = []
 var travel_routes: Array = []
 var challenge_definitions: Array = []
+var combat_encounter_definitions: Array = []
 var return_echo_definitions: Array = []
 var investigation_definitions: Array = []
 var market_policies: Array = []
@@ -113,6 +118,7 @@ var action_count: int = 0
 var travel_count: int = 0
 var challenge_count: int = 0
 var challenge_preparation_count: int = 0
+var combat_encounter_count: int = 0
 var return_echo_count: int = 0
 var investigation_count: int = 0
 var investigation_defer_count: int = 0
@@ -187,6 +193,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	challenge_definitions = (
 		fixture.get("challenges", []) as Array
 	).duplicate(true)
+	combat_encounter_definitions = (
+		fixture.get("combat_encounters", []) as Array
+	).duplicate(true)
 	return_echo_definitions = (
 		fixture.get("return_echoes", []) as Array
 	).duplicate(true)
@@ -260,6 +269,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"fixture_id": fixture_id,
 		"rule_count": rules.size(),
 		"challenge_definition_count": challenge_definitions.size(),
+		"combat_encounter_definition_count": combat_encounter_definitions.size(),
 		"return_echo_definition_count": return_echo_definitions.size(),
 		"investigation_definition_count": investigation_definitions.size(),
 		"autonomous_action_rule_count": autonomous_action_rules.size(),
@@ -505,6 +515,57 @@ func get_challenge_options() -> Array:
 				),
 				"can_execute": true,
 				"blocked_reason": "",
+			})
+	return rows
+
+
+func get_combat_encounter_options() -> Array:
+	if not initialized:
+		return []
+	var snapshot: Variant = get_snapshot()
+	var rows: Array = []
+	for encounter: Dictionary in combat_encounter_definitions:
+		if str(encounter.get("location_id", "")) != context.location_id:
+			continue
+		if not _combat_encounter_requirements_met(encounter, snapshot):
+			continue
+		if _combat_encounter_resolved(encounter, snapshot):
+			continue
+		var enemy: Dictionary = encounter.get("enemy", {})
+		if snapshot.get_entity(str(enemy.get("entity_id", ""))).is_empty():
+			continue
+		for approach_value: Variant in encounter.get("approaches", []):
+			if not approach_value is Dictionary:
+				continue
+			var approach := approach_value as Dictionary
+			var approach_id := str(approach.get("approach_id", ""))
+			var preview: Dictionary = combat_encounter_resolver.preview(
+				encounter, snapshot, approach_id
+			)
+			if not bool(preview.get("ok", false)):
+				continue
+			rows.append({
+				"option_id": str(approach.get(
+					"option_id",
+					"combat:%s:%s" % [
+						str(encounter.get("encounter_id", "")),
+						approach_id,
+					]
+				)),
+				"encounter_id": str(encounter.get("encounter_id", "")),
+				"encounter_title": str(encounter.get(
+					"title", "眼前的遭遇"
+				)),
+				"encounter_description": str(encounter.get(
+					"description", ""
+				)),
+				"approach_id": approach_id,
+				"label": str(approach.get("label", "处理遭遇")),
+				"action_type": str(approach.get("action_type", "danger")),
+				"hours": maxi(int(approach.get("hours", 1)), 1),
+				"preview": preview.duplicate(true),
+				"can_execute": bool(preview.get("can_execute", true)),
+				"blocked_reason": str(preview.get("blocked_reason", "")),
 			})
 	return rows
 
@@ -774,6 +835,107 @@ func execute_investigation_option(
 		"time": get_time_summary(),
 		"investigation_count": investigation_count,
 		"investigation_defer_count": investigation_defer_count,
+		"store_summary": get_store_summary(),
+	}
+
+
+func execute_combat_encounter_option(
+		option_id: String,
+		metadata: Dictionary = {}
+) -> Dictionary:
+	if not initialized:
+		return _combat_encounter_failure(
+			"session_not_initialized", option_id
+		)
+	var option := _find_combat_encounter_option(option_id)
+	if option.is_empty():
+		return _combat_encounter_failure(
+			"combat_encounter_option_not_found", option_id
+		)
+	if not bool(option.get("can_execute", false)):
+		return _combat_encounter_failure(
+			"combat_encounter_option_blocked", option_id
+		)
+	var encounter := _find_combat_encounter_definition(
+		str(option.get("encounter_id", ""))
+	)
+	if encounter.is_empty():
+		return _combat_encounter_failure(
+			"combat_encounter_not_found", option_id
+		)
+
+	var roll := 0
+	if metadata.has("roll_override"):
+		if str(metadata.get("source", "")) != "test_injection":
+			return _combat_encounter_failure(
+				"roll_override_requires_test_injection", option_id
+			)
+		roll = int(metadata.get("roll_override", 0))
+		if roll < 1 or roll > 6:
+			return _combat_encounter_failure(
+				"invalid_roll_override", option_id
+			)
+	else:
+		roll = challenge_rng.randi_range(1, 6)
+
+	var hours := int(option.get("hours", 1))
+	var tick_result := advance_time(
+		hours,
+		"after_combat_encounter",
+		{
+			"scope_type": "location",
+			"scope_id": context.location_id,
+			"source": "SimSession.execute_combat_encounter_option",
+			"label": str(option.get("label", "处理遭遇")),
+		}
+	)
+	if not bool(tick_result.get("success", false)):
+		return _combat_encounter_failure(
+			str(tick_result.get("error_reason", "world_tick_failed")),
+			option_id
+		)
+
+	var event_id := combat_encounter_count + 1
+	var transaction_result: Variant = (
+		combat_encounter_resolver.resolve_attempt(
+			encounter,
+			get_snapshot(),
+			str(option.get("approach_id", "")),
+			roll,
+			event_id,
+			get_time_summary()
+		)
+	)
+	if not writer.apply_result(transaction_result, stores):
+		var failed := _combat_encounter_failure(
+			str(transaction_result.error_reason), option_id
+		)
+		failed["transaction_result"] = transaction_result.to_dict()
+		failed["tick_result"] = tick_result
+		return failed
+
+	var log_entry := _build_combat_encounter_log_entry(
+		option, transaction_result, event_id, roll
+	)
+	world_log.append_entry(log_entry)
+	combat_encounter_count += 1
+	var narrative: Dictionary = transaction_result.narrative_result
+	return {
+		"success": true,
+		"error": "",
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"encounter_id": str(option.get("encounter_id", "")),
+		"approach_id": str(option.get("approach_id", "")),
+		"outcome": str(narrative.get("outcome", "")),
+		"hours": hours,
+		"roll": roll,
+		"preview": option.get("preview", {}),
+		"transaction_result": transaction_result.to_dict(),
+		"tick_result": tick_result,
+		"world_log_entry": log_entry.duplicate(true),
+		"time": get_time_summary(),
+		"combat_encounter_count": combat_encounter_count,
 		"store_summary": get_store_summary(),
 	}
 
@@ -1185,6 +1347,7 @@ func build_save_envelope_seed() -> Dictionary:
 			"travel_count": travel_count,
 			"challenge_count": challenge_count,
 			"challenge_preparation_count": challenge_preparation_count,
+			"combat_encounter_count": combat_encounter_count,
 			"return_echo_count": return_echo_count,
 			"investigation_count": investigation_count,
 			"investigation_defer_count": investigation_defer_count,
@@ -1395,6 +1558,7 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"journeys_completed": travel_count,
 		"challenges_resolved": challenge_count,
 		"challenge_preparations": challenge_preparation_count,
+		"combat_encounters_resolved": combat_encounter_count,
 		"return_echoes_resolved": return_echo_count,
 		"investigations_resolved": investigation_count,
 		"investigations_deferred": investigation_defer_count,
@@ -1427,6 +1591,8 @@ func _reset_runtime() -> void:
 	writer = TransactionWorldWriterModel.new()
 	travel_resolver = TravelResolverModel.new()
 	challenge_resolver = ChallengeResolverModel.new()
+	combat_encounter_resolver = CombatEncounterResolverModel.new()
+	combat_encounter_resolver.configure(registry)
 	return_echo_resolver = ReturnEchoResolverModel.new()
 	investigation_resolver = InvestigationResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
@@ -1436,6 +1602,7 @@ func _reset_runtime() -> void:
 	npc_livelihood_profiles = []
 	travel_routes = []
 	challenge_definitions = []
+	combat_encounter_definitions = []
 	return_echo_definitions = []
 	investigation_definitions = []
 	market_policies = []
@@ -1451,6 +1618,7 @@ func _reset_runtime() -> void:
 	travel_count = 0
 	challenge_count = 0
 	challenge_preparation_count = 0
+	combat_encounter_count = 0
 	return_echo_count = 0
 	investigation_count = 0
 	investigation_defer_count = 0
@@ -1695,6 +1863,7 @@ func _runtime_cursor_save_data() -> Dictionary:
 		"travel_count": travel_count,
 		"challenge_count": challenge_count,
 		"challenge_preparation_count": challenge_preparation_count,
+		"combat_encounter_count": combat_encounter_count,
 		"return_echo_count": return_echo_count,
 		"investigation_count": investigation_count,
 		"investigation_defer_count": investigation_defer_count,
@@ -1711,6 +1880,9 @@ func _restore_runtime_cursors(value: Variant) -> void:
 	challenge_count = maxi(int(cursors.get("challenge_count", 0)), 0)
 	challenge_preparation_count = maxi(int(cursors.get(
 		"challenge_preparation_count", 0
+	)), 0)
+	combat_encounter_count = maxi(int(cursors.get(
+		"combat_encounter_count", 0
 	)), 0)
 	return_echo_count = maxi(int(cursors.get("return_echo_count", 0)), 0)
 	investigation_count = maxi(int(cursors.get("investigation_count", 0)), 0)
@@ -1931,6 +2103,54 @@ func _find_challenge_option(option_id: String) -> Dictionary:
 		if str(option.get("option_id", "")) == option_id:
 			return option.duplicate(true)
 	return {}
+
+
+func _find_combat_encounter_option(option_id: String) -> Dictionary:
+	for option: Dictionary in get_combat_encounter_options():
+		if str(option.get("option_id", "")) == option_id:
+			return option.duplicate(true)
+	return {}
+
+
+func _find_combat_encounter_definition(encounter_id: String) -> Dictionary:
+	for encounter: Dictionary in combat_encounter_definitions:
+		if str(encounter.get("encounter_id", "")) == encounter_id:
+			return encounter.duplicate(true)
+	return {}
+
+
+func _combat_encounter_requirements_met(
+		encounter: Dictionary, snapshot: Variant
+) -> bool:
+	var facts: Array = snapshot.get_facts()
+	for fact_type: Variant in encounter.get("required_fact_types", []):
+		if not _facts_include_type(facts, str(fact_type)):
+			return false
+	for requirement_value: Variant in encounter.get("required_facts", []):
+		if not requirement_value is Dictionary:
+			continue
+		var requirement := requirement_value as Dictionary
+		if not _facts_include_type_for_target(
+			facts,
+			str(requirement.get("fact_type", "")),
+			str(requirement.get("target_id", ""))
+		):
+			return false
+	return true
+
+
+func _combat_encounter_resolved(
+		encounter: Dictionary, snapshot: Variant
+) -> bool:
+	var encounter_id := str(encounter.get("encounter_id", ""))
+	for fact: Dictionary in snapshot.get_facts():
+		if (
+			str(fact.get("fact_type", ""))
+				== "actor_resolved_combat_encounter"
+			and str(fact.get("encounter_id", "")) == encounter_id
+		):
+			return true
+	return false
 
 
 func _find_challenge_definition(challenge_id: String) -> Dictionary:
@@ -2277,6 +2497,20 @@ func _challenge_failure(error: String, option_id: String) -> Dictionary:
 	}
 
 
+func _combat_encounter_failure(
+		error: String, option_id: String
+) -> Dictionary:
+	return {
+		"success": false,
+		"error": error,
+		"fixture_id": fixture_id,
+		"option_id": option_id,
+		"combat_encounter_count": combat_encounter_count,
+		"time": get_time_summary(),
+		"world_tick_count": world_tick_count,
+	}
+
+
 func _return_echo_failure(error: String, option_id: String) -> Dictionary:
 	return {
 		"success": false,
@@ -2566,6 +2800,55 @@ func _build_challenge_log_entry(
 		"item_change_count": result.item_changes.size(),
 		"equipment_changes": result.equipment_changes.duplicate(true),
 		"equipment_change_count": result.equipment_changes.size(),
+		"narrative_summary": _narrative_summary(result.narrative_result),
+		"narrative_result": result.narrative_result.duplicate(true),
+	}
+
+
+func _build_combat_encounter_log_entry(
+		option: Dictionary,
+		result: Variant,
+		event_id: int,
+		roll: int
+) -> Dictionary:
+	return {
+		"entry_type": "combat_encounter",
+		"step_index": event_id - 1,
+		"step_id": "combat_encounter_%d" % event_id,
+		"encounter_id": str(option.get("encounter_id", "")),
+		"option_id": str(option.get("option_id", "")),
+		"approach_id": str(option.get("approach_id", "")),
+		"roll": roll,
+		"transaction_mode": str(result.transaction_mode),
+		"contract_status": str(result.contract_status),
+		"skip_reason": str(result.skip_reason),
+		"error_reason": str(result.error_reason),
+		"facts_added": _fact_types(result.facts_added),
+		"fact_ids": _fact_ids(result.facts_added),
+		"state_changes": result.state_changes.duplicate(true),
+		"state_change_count": result.state_changes.size(),
+		"relationship_change_count": result.relationship_changes.size(),
+		"memory_count": result.memories_added.size(),
+		"trace_count": result.traces_added.size(),
+		"rumor_seed_count": result.rumors_added.size(),
+		"pressure_change_count": result.pressure_changes.size(),
+		"obligation_count": result.obligations_added.size(),
+		"exchange_count": result.exchanges_added.size(),
+		"deferred_consequence_count": (
+			result.deferred_consequences_added.size()
+		),
+		"obligation_update_count": result.obligation_updates.size(),
+		"exchange_update_count": result.exchange_updates.size(),
+		"deferred_consequence_update_count": (
+			result.deferred_consequence_updates.size()
+		),
+		"item_changes": result.item_changes.duplicate(true),
+		"item_change_count": result.item_changes.size(),
+		"equipment_changes": result.equipment_changes.duplicate(true),
+		"equipment_change_count": result.equipment_changes.size(),
+		"character_feature_change_count": (
+			result.character_feature_changes.size()
+		),
 		"narrative_summary": _narrative_summary(result.narrative_result),
 		"narrative_result": result.narrative_result.duplicate(true),
 	}
