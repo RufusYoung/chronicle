@@ -238,10 +238,7 @@ func _isolated_resident_count(session: Variant, resident_ids: Array) -> int:
 func _required_products_exist(session: Variant) -> bool:
 	var definitions: Dictionary = {}
 	for item: Dictionary in session.stores["item_store"].list_items():
-		if str((item.get("holder", {}) as Dictionary).get("kind", "")) != (
-			"destroyed"
-		):
-			definitions[str(item.get("item_def_id", ""))] = true
+		definitions[str(item.get("item_def_id", ""))] = true
 	for item_def_id: String in REQUIRED_PRODUCT_DEFS:
 		if not definitions.has(item_def_id):
 			return false

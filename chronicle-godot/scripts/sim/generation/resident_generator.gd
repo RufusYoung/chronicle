@@ -73,6 +73,9 @@ func generate_fixture(
 	var resident_ids: Array[String] = []
 	var household_ids: Array[String] = []
 	var household_heads: Array[String] = []
+	var household_by_resident: Dictionary = {}
+	var household_by_head: Dictionary = {}
+	var workers_by_workplace: Dictionary = {}
 	var used_names: Dictionary = {}
 	var occupation_counts: Dictionary = {}
 	var required_occupations := _required_occupation_queue(occupations)
@@ -194,8 +197,10 @@ func generate_fixture(
 			resident_ids.append(resident_id)
 			household_members.append(resident_id)
 			household_member_ages[resident_id] = age
+			household_by_resident[resident_id] = household_id
 			if member_index == 0:
 				household_heads.append(resident_id)
+				household_by_head[resident_id] = household_id
 			facts.append({
 				"fact_id": "fact.generated_resident.%s" % resident_id,
 				"fact_type": "resident_generated",
@@ -209,6 +214,19 @@ func generate_fixture(
 			})
 			if livelihood_status in ["employed", "self_employed"]:
 				items.append(_coin_stack(resident_id, seed, rng))
+				if not workers_by_workplace.has(workplace_id):
+					workers_by_workplace[workplace_id] = []
+				(workers_by_workplace[workplace_id] as Array).append(resident_id)
+			if livelihood_status == "employed":
+				_append_employment_relationship(
+					facts,
+					relationships,
+					resident_id,
+					settlement_id,
+					workplace_id,
+					batch_fact_id,
+					rng
+				)
 		_link_household_members(relationships, household_members, rng)
 		_append_household_relationship_facts(
 			facts,
@@ -219,6 +237,21 @@ func generate_fixture(
 		)
 
 	_link_household_heads(relationships, household_heads, rng)
+	_append_neighbor_relationship_facts(
+		facts,
+		household_heads,
+		household_by_head,
+		settlement_id,
+		batch_fact_id
+	)
+	_link_workplace_peers(
+		facts,
+		relationships,
+		workers_by_workplace,
+		household_by_resident,
+		batch_fact_id,
+		rng
+	)
 	chronicles.append({
 		"entry_id": "chronicle.generated_residents.%s.%d" % [
 			str(fixture.get("fixture_id", "world")), seed
@@ -506,6 +539,134 @@ func _append_household_relationship_facts(
 			})
 
 
+func _append_neighbor_relationship_facts(
+		facts: Array,
+		head_ids: Array[String],
+		household_by_head: Dictionary,
+		settlement_id: String,
+		batch_fact_id: String
+) -> void:
+	if head_ids.size() < 2:
+		return
+	var seen: Dictionary = {}
+	for index: int in range(head_ids.size()):
+		var first_id := head_ids[index]
+		var second_id := head_ids[(index + 1) % head_ids.size()]
+		for pair: Array in [[first_id, second_id], [second_id, first_id]]:
+			var source_id := str(pair[0])
+			var target_id := str(pair[1])
+			var pair_key := "%s>%s" % [source_id, target_id]
+			if seen.has(pair_key):
+				continue
+			seen[pair_key] = true
+			facts.append({
+				"fact_id": "fact.generated_social_relation.neighbor.%s.%s" % [
+					_safe_id(source_id),
+					_safe_id(target_id),
+				],
+				"fact_type": "generated_social_relation",
+				"actor_id": source_id,
+				"target_id": target_id,
+				"source_household_id": str(household_by_head.get(source_id, "")),
+				"target_household_id": str(household_by_head.get(target_id, "")),
+				"settlement_id": settlement_id,
+				"relationship_kind": "settlement_neighbor",
+				"source_fact_ids": [batch_fact_id],
+			})
+
+
+func _link_workplace_peers(
+		facts: Array,
+		relationships: Dictionary,
+		workers_by_workplace: Dictionary,
+		household_by_resident: Dictionary,
+		batch_fact_id: String,
+		rng: RandomNumberGenerator
+) -> void:
+	for workplace_value: Variant in workers_by_workplace.keys():
+		var workplace_id := str(workplace_value)
+		var worker_ids: Array = workers_by_workplace[workplace_value].duplicate()
+		worker_ids.sort()
+		if worker_ids.size() < 2:
+			continue
+		var seen: Dictionary = {}
+		for index: int in range(worker_ids.size()):
+			var first_id := str(worker_ids[index])
+			var second_id := str(worker_ids[(index + 1) % worker_ids.size()])
+			for pair: Array in [[first_id, second_id], [second_id, first_id]]:
+				var source_id := str(pair[0])
+				var target_id := str(pair[1])
+				var pair_key := "%s>%s" % [source_id, target_id]
+				if seen.has(pair_key):
+					continue
+				seen[pair_key] = true
+				_set_relation_axes(relationships, source_id, target_id, {
+					"trust": rng.randi_range(0, 24),
+					"familiarity": rng.randi_range(18, 42),
+				})
+				facts.append({
+					"fact_id": "fact.generated_social_relation.workmate.%s.%s" % [
+						_safe_id(source_id),
+						_safe_id(target_id),
+					],
+					"fact_type": "generated_social_relation",
+					"actor_id": source_id,
+					"target_id": target_id,
+					"source_household_id": str(household_by_resident.get(
+						source_id, ""
+					)),
+					"target_household_id": str(household_by_resident.get(
+						target_id, ""
+					)),
+					"workplace_id": workplace_id,
+					"relationship_kind": "workmate",
+					"source_fact_ids": [batch_fact_id],
+				})
+
+
+func _append_employment_relationship(
+		facts: Array,
+		relationships: Dictionary,
+		resident_id: String,
+		settlement_id: String,
+		workplace_id: String,
+		batch_fact_id: String,
+		rng: RandomNumberGenerator
+) -> void:
+	_set_relation_axes(relationships, resident_id, settlement_id, {
+		"trust": rng.randi_range(-4, 18),
+		"familiarity": rng.randi_range(12, 30),
+	})
+	_set_relation_axes(relationships, settlement_id, resident_id, {
+		"trust": rng.randi_range(-4, 18),
+		"familiarity": rng.randi_range(12, 30),
+	})
+	for row: Dictionary in [
+		{
+			"actor_id": resident_id,
+			"target_id": settlement_id,
+			"relationship_kind": "employee_of",
+		},
+		{
+			"actor_id": settlement_id,
+			"target_id": resident_id,
+			"relationship_kind": "employer_of",
+		},
+	]:
+		facts.append({
+			"fact_id": "fact.generated_social_relation.employment.%s.%s" % [
+				_safe_id(str(row.get("actor_id", ""))),
+				_safe_id(str(row.get("target_id", ""))),
+			],
+			"fact_type": "generated_social_relation",
+			"actor_id": str(row.get("actor_id", "")),
+			"target_id": str(row.get("target_id", "")),
+			"workplace_id": workplace_id,
+			"relationship_kind": str(row.get("relationship_kind", "")),
+			"source_fact_ids": [batch_fact_id],
+		})
+
+
 func _set_relation_axes(
 		relationships: Dictionary,
 		source_id: String,
@@ -515,7 +676,16 @@ func _set_relation_axes(
 	if not relationships.has(source_id):
 		relationships[source_id] = {}
 	var targets: Dictionary = relationships[source_id]
-	targets[target_id] = axes.duplicate(true)
+	var merged: Dictionary = (targets.get(target_id, {}) as Dictionary).duplicate(
+		true
+	)
+	for axis: String in axes.keys():
+		var value := int(axes.get(axis, 0))
+		if merged.has(axis):
+			merged[axis] = maxi(int(merged.get(axis, 0)), value)
+		else:
+			merged[axis] = value
+	targets[target_id] = merged
 	relationships[source_id] = targets
 
 
