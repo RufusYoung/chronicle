@@ -76,6 +76,7 @@ func generate_fixture(
 	var household_by_resident: Dictionary = {}
 	var household_by_head: Dictionary = {}
 	var workers_by_workplace: Dictionary = {}
+	var age_by_resident: Dictionary = {}
 	var used_names: Dictionary = {}
 	var occupation_counts: Dictionary = {}
 	var required_occupations := _required_occupation_queue(occupations)
@@ -197,6 +198,7 @@ func generate_fixture(
 			resident_ids.append(resident_id)
 			household_members.append(resident_id)
 			household_member_ages[resident_id] = age
+			age_by_resident[resident_id] = age
 			household_by_resident[resident_id] = household_id
 			if member_index == 0:
 				household_heads.append(resident_id)
@@ -235,6 +237,13 @@ func generate_fixture(
 			household_member_ages,
 			batch_fact_id
 		)
+		_append_household_kinship_facts(
+			facts,
+			household_id,
+			household_members,
+			household_member_ages,
+			batch_fact_id
+		)
 
 	_link_household_heads(relationships, household_heads, rng)
 	_append_neighbor_relationship_facts(
@@ -249,6 +258,7 @@ func generate_fixture(
 		relationships,
 		workers_by_workplace,
 		household_by_resident,
+		age_by_resident,
 		batch_fact_id,
 		rng
 	)
@@ -539,6 +549,87 @@ func _append_household_relationship_facts(
 			})
 
 
+func _append_household_kinship_facts(
+		facts: Array,
+		household_id: String,
+		member_ids: Array[String],
+		member_ages: Dictionary,
+		batch_fact_id: String
+) -> void:
+	var adults: Array[String] = []
+	var minors: Array[String] = []
+	for member_id: String in member_ids:
+		if int(member_ages.get(member_id, 18)) >= 18:
+			adults.append(member_id)
+		else:
+			minors.append(member_id)
+	var source_fact_ids := [
+		batch_fact_id,
+		"fact.generated_household.%s" % household_id,
+	]
+	if adults.size() >= 2:
+		_append_social_fact(
+			facts, household_id, adults[0], adults[1], "partner",
+			source_fact_ids
+		)
+		_append_social_fact(
+			facts, household_id, adults[1], adults[0], "partner",
+			source_fact_ids
+		)
+	for minor_id: String in minors:
+		var parent_id := ""
+		var parent_age := -1
+		for adult_id: String in adults:
+			var adult_age := int(member_ages.get(adult_id, 18))
+			if (
+				adult_age - int(member_ages.get(minor_id, 0)) >= 18
+				and adult_age > parent_age
+			):
+				parent_id = adult_id
+				parent_age = adult_age
+		if parent_id == "":
+			continue
+		_append_social_fact(
+			facts, household_id, parent_id, minor_id, "parent_of",
+			source_fact_ids
+		)
+		_append_social_fact(
+			facts, household_id, minor_id, parent_id, "child_of",
+			source_fact_ids
+		)
+	for source_id: String in minors:
+		for target_id: String in minors:
+			if source_id != target_id:
+				_append_social_fact(
+					facts, household_id, source_id, target_id, "sibling",
+					source_fact_ids
+				)
+
+
+func _append_social_fact(
+		facts: Array,
+		household_id: String,
+		source_id: String,
+		target_id: String,
+		relationship_kind: String,
+		source_fact_ids: Array
+) -> void:
+	facts.append({
+		"fact_id": "fact.generated_social_relation.kinship.%s.%s.%s.%s" % [
+			_safe_id(household_id),
+			_safe_id(relationship_kind),
+			_safe_id(source_id),
+			_safe_id(target_id),
+		],
+		"fact_type": "generated_social_relation",
+		"actor_id": source_id,
+		"target_id": target_id,
+		"household_id": household_id,
+		"relationship_kind": relationship_kind,
+		"source_fact_ids": source_fact_ids.duplicate(),
+	})
+
+
 func _append_neighbor_relationship_facts(
 		facts: Array,
 		head_ids: Array[String],
@@ -580,6 +671,7 @@ func _link_workplace_peers(
 		relationships: Dictionary,
 		workers_by_workplace: Dictionary,
 		household_by_resident: Dictionary,
+		age_by_resident: Dictionary,
 		batch_fact_id: String,
 		rng: RandomNumberGenerator
 ) -> void:
@@ -622,6 +714,75 @@ func _link_workplace_peers(
 					"relationship_kind": "workmate",
 					"source_fact_ids": [batch_fact_id],
 				})
+		_append_workplace_mentorship(
+			facts,
+			relationships,
+			workplace_id,
+			worker_ids,
+			age_by_resident,
+			batch_fact_id
+		)
+
+
+func _append_workplace_mentorship(
+		facts: Array,
+		relationships: Dictionary,
+		workplace_id: String,
+		worker_ids: Array,
+		age_by_resident: Dictionary,
+		batch_fact_id: String
+) -> void:
+	if worker_ids.size() < 2:
+		return
+	var ordered: Array = worker_ids.duplicate()
+	ordered.sort_custom(func(a: Variant, b: Variant) -> bool:
+		var a_id := str(a)
+		var b_id := str(b)
+		var a_age := int(age_by_resident.get(a_id, 18))
+		var b_age := int(age_by_resident.get(b_id, 18))
+		return a_age > b_age if a_age != b_age else a_id < b_id
+	)
+	var mentor_id := str(ordered[0])
+	var apprentice_id := str(ordered.back())
+	if (
+		mentor_id == apprentice_id
+		or int(age_by_resident.get(mentor_id, 18))
+		- int(age_by_resident.get(apprentice_id, 18)) < 8
+	):
+		return
+	_set_relation_axes(relationships, mentor_id, apprentice_id, {
+		"trust": 12,
+		"familiarity": 28,
+	})
+	_set_relation_axes(relationships, apprentice_id, mentor_id, {
+		"trust": 16,
+		"familiarity": 28,
+	})
+	for row: Dictionary in [
+		{
+			"actor_id": mentor_id,
+			"target_id": apprentice_id,
+			"relationship_kind": "mentor_of",
+		},
+		{
+			"actor_id": apprentice_id,
+			"target_id": mentor_id,
+			"relationship_kind": "apprentice_of",
+		},
+	]:
+		facts.append({
+			"fact_id": "fact.generated_social_relation.mentorship.%s.%s.%s" % [
+				_safe_id(workplace_id),
+				_safe_id(str(row.get("actor_id", ""))),
+				_safe_id(str(row.get("target_id", ""))),
+			],
+			"fact_type": "generated_social_relation",
+			"actor_id": str(row.get("actor_id", "")),
+			"target_id": str(row.get("target_id", "")),
+			"workplace_id": workplace_id,
+			"relationship_kind": str(row.get("relationship_kind", "")),
+			"source_fact_ids": [batch_fact_id],
+		})
 
 
 func _append_employment_relationship(

@@ -14,6 +14,9 @@ const NpcNeedSystemModel = preload(
 const NpcLivelihoodSystemModel = preload(
 	"res://scripts/sim/npc/npc_livelihood_system.gd"
 )
+const NpcSocialFollowupSystemModel = preload(
+	"res://scripts/sim/npc/npc_social_followup_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -104,6 +107,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var observed_need_changes: Array = []
 	var livelihood_results: Array = []
 	var livelihood_events: Array = []
+	var social_followup_results: Array = []
+	var social_followup_events: Array = []
 	var autonomous_actor_ids: Dictionary = {}
 	var autonomous_actor_count := 0
 	var obligation_due_count := 0
@@ -213,6 +218,22 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			livelihood_results.append_array(support_results)
 			livelihood_events.append_array(support_data.get("events", []))
 
+			var followup_snapshot = snapshot_builder.build_snapshot(
+				context,
+				stores,
+				true
+			)
+			var followup_system = NpcSocialFollowupSystemModel.new()
+			var followup_data: Dictionary = followup_system.resolve_tick(
+				followup_snapshot,
+				round_event
+			)
+			var round_followup_results: Array = followup_data.get("results", [])
+			for followup_result: Variant in round_followup_results:
+				writer.apply_result(followup_result, stores)
+			social_followup_results.append_array(round_followup_results)
+			social_followup_events.append_array(followup_data.get("events", []))
+
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(
 				context,
@@ -251,6 +272,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	tick_log_results.append_array(due_results)
 	tick_log_results.append_array(need_results)
 	tick_log_results.append_array(livelihood_results)
+	tick_log_results.append_array(social_followup_results)
 	tick_log_results.append_array(autonomous_results)
 	world_log.append_entry(_build_tick_log_entry(
 		event,
@@ -315,6 +337,10 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"livelihood_results": _result_rows(livelihood_results),
 		"livelihood_event_count": livelihood_events.size(),
 		"livelihood_events": livelihood_events.duplicate(true),
+		"social_followup_result_count": social_followup_results.size(),
+		"social_followup_results": _result_rows(social_followup_results),
+		"social_followup_event_count": social_followup_events.size(),
+		"social_followup_events": social_followup_events.duplicate(true),
 		"autonomous_results": _result_rows(autonomous_results),
 		"observed_autonomous_results": _result_rows(
 			observed_autonomous_results

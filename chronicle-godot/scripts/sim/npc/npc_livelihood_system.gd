@@ -778,6 +778,8 @@ func _append_daily_social_chronicle(
 	var relevant_types := [
 		"npc_cross_household_shared_food",
 		"npc_cross_household_food_request_failed",
+		"npc_food_debt_repaid",
+		"npc_food_request_conflict",
 		"npc_household_food_unmet",
 	]
 	var source_facts: Array = []
@@ -798,6 +800,8 @@ func _append_daily_social_chronicle(
 	var source_fact_ids: Array[String] = []
 	var help_count := 0
 	var failed_count := 0
+	var repayment_count := 0
+	var conflict_count := 0
 	var unmet_count := 0
 	for fact: Dictionary in source_facts:
 		var fact_id := str(fact.get("fact_id", ""))
@@ -808,6 +812,10 @@ func _append_daily_social_chronicle(
 				help_count += 1
 			"npc_cross_household_food_request_failed":
 				failed_count += 1
+			"npc_food_debt_repaid":
+				repayment_count += 1
+			"npc_food_request_conflict":
+				conflict_count += 1
 			"npc_household_food_unmet":
 				unmet_count += 1
 	result.add_chronicle_entry({
@@ -815,8 +823,8 @@ func _append_daily_social_chronicle(
 		"entry_type": "settlement_daily_life",
 		"subject_id": settlement_id,
 		"title": "第%d天的邻里食物往来" % day,
-		"body": "这一天，聚落中有 %d 份食物跨过家门，有 %d 次求助空手而回，仍留下 %d 条没有解除的缺粮记录。" % [
-			help_count, failed_count, unmet_count,
+		"body": "这一天，聚落中有 %d 份食物跨过家门、%d 次实物偿还；%d 次求助空手而回，其中 %d 组关系发生争执，仍留下 %d 条没有解除的缺粮记录。" % [
+			help_count, repayment_count, failed_count, conflict_count, unmet_count,
 		],
 		"day": day,
 		"hour": 23,
