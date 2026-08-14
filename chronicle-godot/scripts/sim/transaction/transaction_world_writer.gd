@@ -23,6 +23,7 @@ const STORE_REQUIREMENTS := {
 	"deferred_consequences_added": "deferred_consequence_store",
 	"deferred_consequence_updates": "deferred_consequence_store",
 	"item_changes": "item_store",
+	"resource_changes": "resource_stock_store",
 	"equipment_changes": "equipment_store",
 	"character_feature_changes": "character_feature_store",
 	"chronicle_entries_added": "chronicle_store",
@@ -151,6 +152,14 @@ func _apply_to_stores(result: Variant, stores: Dictionary) -> Dictionary:
 		for item_change: Dictionary in result.item_changes:
 			if not item_store.apply_item_change(item_change):
 				return _store_failure("item_store", item_store)
+
+	var resource_stock_store: Variant = stores.get("resource_stock_store")
+	if resource_stock_store != null:
+		for resource_change: Dictionary in result.resource_changes:
+			if not resource_stock_store.apply_resource_change(resource_change):
+				return _store_failure(
+					"resource_stock_store", resource_stock_store
+				)
 
 	var equipment_store: Variant = stores.get("equipment_store")
 	if equipment_store != null:

@@ -27,6 +27,7 @@ func build_snapshot(
 		"deferred_consequence_store"
 	)
 	var item_store: Variant = stores.get("item_store")
+	var resource_stock_store: Variant = stores.get("resource_stock_store")
 	var equipment_store: Variant = stores.get("equipment_store")
 	var chronicle_store: Variant = stores.get("chronicle_store")
 	var investigation_store: Variant = stores.get("investigation_store")
@@ -106,6 +107,11 @@ func build_snapshot(
 			else deferred_consequence_store.list_deferred_consequences()
 		),
 		"items": [] if item_store == null else item_store.list_items(),
+		"resource_stocks": (
+			[]
+			if resource_stock_store == null
+			else resource_stock_store.list_stocks()
+		),
 		"equipment_loadouts": (
 			{} if equipment_store == null
 			else equipment_store.list_loadouts()

@@ -26,8 +26,8 @@ Action 提供候选，Fact 记录客观事实，State、Relationship、Memory、
 
 ## 当前状态
 
-已实现结构化 TransactionResult 与统一 Writer，支持 Fact、State、Relationship、Memory、Trace、Rumor、Pressure、Obligation、Exchange、Item、Equipment、CharacterFeature、Chronicle、Investigation 和 DeferredConsequence 等写入。
+已实现结构化 TransactionResult 与统一 Writer，支持 Fact、State、Relationship、Memory、Trace、Rumor、Pressure、Obligation、Exchange、Item、ResourceStock、Equipment、CharacterFeature、Chronicle、Investigation 和 DeferredConsequence 等写入。
 
 ItemStore 与 EquipmentLoadoutStore 会在真实写入前联合模拟最终状态。旅行和行动效果可按物品定义规划多个口粮堆叠的确定性消耗。
 
-当前仍缺少全 Store 原子预检与统一失败协议。步骤 3 需要保证任一域校验失败时，同笔事务的事实、状态、关系和其他 Store 均不留下半写。
+Writer 会克隆本次涉及的所有 Store 完成预检，再一次性提交。任一资源透支、物品、装备或状态校验失败时，同笔事务的事实、状态、关系和其他 Store 均不留下半写。

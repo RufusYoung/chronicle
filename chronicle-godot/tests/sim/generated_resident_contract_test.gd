@@ -39,8 +39,8 @@ func _run() -> void:
 	)
 	_check(
 		bool(first_start.get("success", false))
-		and int(first_start.get("definition_count", 0)) == 83,
-		"2. G2 夹具通过正式 SimSession 启动并注册 83 个定义"
+		and int(first_start.get("definition_count", 0)) == 88,
+		"2. G2 夹具通过正式 SimSession 启动并注册 88 个定义"
 	)
 	if not bool(first_start.get("success", false)):
 		_finish()

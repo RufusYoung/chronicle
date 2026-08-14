@@ -32,7 +32,7 @@ func _run() -> void:
 	_check(
 		bool(start.get("success", false))
 		and str(start.get("fixture_id", "")) == "core_system_contract"
-		and int(start.get("definition_count", 0)) == 83,
+		and int(start.get("definition_count", 0)) == 88,
 		"1. 最小合同 fixture 通过全部 Definition 与 Store 启动校验"
 	)
 	if not bool(start.get("success", false)):
@@ -185,13 +185,18 @@ func _run() -> void:
 		{}
 	) as Dictionary).get("required_definition_ids", [])
 	_check(
-		manifest.size() == 83
+		manifest.size() == 88
 		and manifest == _sorted_copy(manifest)
 		and "item:item.travel_ration" in manifest
 		and "item:item.field_repair_hammer" in manifest
 		and "talent:talent.steady_hands" in manifest
 		and "trait:trait.winter_work_callus" in manifest
 		and "trait:trait.fire_circle_belonging" in manifest
+		and "state:state.region.resource_strain" in manifest
+		and "state:state.region.migration_tendency" in manifest
+		and "state:state.object.resource_status" in manifest
+		and "state:state.object.facility_operational" in manifest
+		and "state:state.character.livelihood_blocked_count" in manifest
 		and "equipment_slot:slot.body_outer" in manifest,
 		"11. Definition manifest 完整且顺序稳定"
 	)

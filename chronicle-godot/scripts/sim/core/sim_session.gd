@@ -38,6 +38,9 @@ const MemoryStoreModel = preload("res://scripts/sim/memory/memory_store.gd")
 const TraceStoreModel = preload("res://scripts/sim/trace/trace_store.gd")
 const RumorStoreModel = preload("res://scripts/sim/rumor/rumor_store.gd")
 const PressureStoreModel = preload("res://scripts/sim/pressure/pressure_store.gd")
+const ResourceStockStoreModel = preload(
+	"res://scripts/sim/resource/resource_stock_store.gd"
+)
 const ObligationStoreModel = preload("res://scripts/sim/obligation/obligation_store.gd")
 const ExchangeStoreModel = preload("res://scripts/sim/exchange/exchange_store.gd")
 const ItemStoreModel = preload("res://scripts/sim/item/item_store.gd")
@@ -1330,6 +1333,9 @@ func get_store_summary() -> Dictionary:
 		"traces": stores["trace_store"].list_traces().size(),
 		"rumors": stores["rumor_store"].list_rumors().size(),
 		"pressures": stores["pressure_store"].list_pressures().size(),
+		"resource_stocks": stores[
+			"resource_stock_store"
+		].list_stocks().size(),
 		"obligations": stores["obligation_store"].list_obligations().size(),
 		"exchanges": stores["exchange_store"].list_exchanges().size(),
 		"items": stores["item_store"].list_items().size(),
@@ -1372,6 +1378,9 @@ func get_store_snapshots() -> Dictionary:
 		"traces": stores["trace_store"].list_traces(),
 		"rumors": stores["rumor_store"].list_rumors(),
 		"pressures": stores["pressure_store"].list_pressures(),
+		"resource_stocks": stores[
+			"resource_stock_store"
+		].list_stocks(),
 		"obligations": stores["obligation_store"].list_obligations(),
 		"exchanges": stores["exchange_store"].list_exchanges(),
 		"items": stores["item_store"].list_items(),
@@ -1787,6 +1796,9 @@ func _store_save_data() -> Dictionary:
 		"traces": stores["trace_store"].to_save_data(),
 		"rumors": stores["rumor_store"].to_save_data(),
 		"pressures": stores["pressure_store"].to_save_data(),
+		"resource_stocks": stores[
+			"resource_stock_store"
+		].to_save_data(),
 		"obligations": stores["obligation_store"].to_save_data(),
 		"exchanges": stores["exchange_store"].to_save_data(),
 		"deferred_consequences": stores[
@@ -1813,6 +1825,7 @@ func _load_store_save_data(data: Variant) -> Dictionary:
 		["trace_store", "traces"],
 		["rumor_store", "rumors"],
 		["pressure_store", "pressures"],
+		["resource_stock_store", "resource_stocks"],
 		["obligation_store", "obligations"],
 		["exchange_store", "exchanges"],
 		["deferred_consequence_store", "deferred_consequences"],
@@ -1826,6 +1839,8 @@ func _load_store_save_data(data: Variant) -> Dictionary:
 		var store_key := str(row[0])
 		var data_key := str(row[1])
 		if not source.has(data_key):
+			if data_key == "resource_stocks":
+				continue
 			return _save_failure(
 				"save_store_missing:%s" % data_key,
 				"stores"
@@ -1935,6 +1950,40 @@ func _validate_save_references() -> Dictionary:
 			if fact_id != "" and fact_store.get_fact(fact_id).is_empty():
 				return _save_failure(
 					"save_item_history_fact_unknown:%s" % fact_id,
+					"references"
+				)
+	var resource_store: Variant = stores["resource_stock_store"]
+	var resource_integrity: Dictionary = resource_store.validate_integrity()
+	if not bool(resource_integrity.get("ok", false)):
+		return _save_failure(
+			"save_resource_stocks_invalid:%s" % ",".join(
+				resource_integrity.get("errors", [])
+			),
+			"references"
+		)
+	for stock: Dictionary in resource_store.list_stocks():
+		var settlement_id := str(stock.get("settlement_id", ""))
+		if not entity_store.has_entity(settlement_id):
+			return _save_failure(
+				"save_resource_settlement_unknown:%s" % settlement_id,
+				"references"
+			)
+		var location_id := str(stock.get("location_id", ""))
+		if location_id != "" and not context.locations.has(location_id):
+			return _save_failure(
+				"save_resource_location_unknown:%s" % location_id,
+				"references"
+			)
+		for feature_id: Variant in stock.get("facility_entity_ids", []):
+			if not entity_store.has_entity(str(feature_id)):
+				return _save_failure(
+					"save_resource_facility_unknown:%s" % feature_id,
+					"references"
+				)
+		for fact_id: Variant in stock.get("source_fact_ids", []):
+			if fact_store.get_fact(str(fact_id)).is_empty():
+				return _save_failure(
+					"save_resource_fact_unknown:%s" % fact_id,
 					"references"
 				)
 	var equipment_report: Dictionary = stores[
@@ -2068,6 +2117,7 @@ func _create_stores(fixture: Dictionary) -> Dictionary:
 	var trace_store = TraceStoreModel.new()
 	var rumor_store = RumorStoreModel.new()
 	var pressure_store = PressureStoreModel.new()
+	var resource_stock_store = ResourceStockStoreModel.new()
 	var obligation_store = ObligationStoreModel.new()
 	var exchange_store = ExchangeStoreModel.new()
 	var chronicle_store = ChronicleStoreModel.new()
@@ -2083,6 +2133,7 @@ func _create_stores(fixture: Dictionary) -> Dictionary:
 		"trace_store": trace_store,
 		"rumor_store": rumor_store,
 		"pressure_store": pressure_store,
+		"resource_stock_store": resource_stock_store,
 		"obligation_store": obligation_store,
 		"exchange_store": exchange_store,
 		"item_store": item_store,
@@ -2102,6 +2153,9 @@ func _create_stores(fixture: Dictionary) -> Dictionary:
 		"rumors": rumor_store.load_save_data(fixture.get("initial_rumors", [])),
 		"pressures": pressure_store.load_save_data(
 			fixture.get("initial_pressures", [])
+		),
+		"resource_stocks": resource_stock_store.load_initial_stocks(
+			fixture.get("initial_resource_stocks", [])
 		),
 		"obligations": obligation_store.load_save_data(
 			fixture.get("initial_obligations", [])
@@ -3271,6 +3325,7 @@ func _empty_store_summary() -> Dictionary:
 		"traces": 0,
 		"rumors": 0,
 		"pressures": 0,
+		"resource_stocks": 0,
 		"obligations": 0,
 		"exchanges": 0,
 		"deferred_consequences": 0,

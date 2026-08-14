@@ -430,14 +430,78 @@
       "state_def_id": "state.institution.food_pressure",
       "definition_version": 1,
       "key": "food_pressure",
-      "owner_kinds": ["institution"],
+      "owner_kinds": ["institution", "region"],
       "value_type": "enum",
       "values": ["low", "medium", "high"],
       "default": "low",
       "allowed_operations": ["set", "degrade"],
       "persistence": "save",
       "ui_visibility": "summary",
-      "description": "地区粮食压力。"
+      "description": "地区或制度范围内的粮食压力。"
+    },
+    {
+      "state_def_id": "state.region.resource_strain",
+      "definition_version": 1,
+      "key": "resource_strain",
+      "owner_kinds": ["region"],
+      "value_type": "enum",
+      "values": ["low", "medium", "high"],
+      "default": "low",
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "summary",
+      "description": "地区生产资源相对当前消耗的紧张程度。"
+    },
+    {
+      "state_def_id": "state.region.migration_tendency",
+      "definition_version": 1,
+      "key": "migration_tendency",
+      "owner_kinds": ["region"],
+      "value_type": "enum",
+      "values": ["low", "medium", "high"],
+      "default": "low",
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "summary",
+      "description": "资源与粮食压力造成的居民迁离倾向。"
+    },
+    {
+      "state_def_id": "state.object.resource_status",
+      "definition_version": 1,
+      "key": "resource_status",
+      "owner_kinds": ["object"],
+      "value_type": "enum",
+      "values": ["abundant", "stable", "strained", "depleted"],
+      "default": "abundant",
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "summary",
+      "description": "生产设施所依赖资源的当前水位。"
+    },
+    {
+      "state_def_id": "state.object.facility_operational",
+      "definition_version": 1,
+      "key": "facility_operational",
+      "owner_kinds": ["object"],
+      "value_type": "bool",
+      "default": true,
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "summary",
+      "description": "生产设施是否拥有足够资源继续开工。"
+    },
+    {
+      "state_def_id": "state.character.livelihood_blocked_count",
+      "definition_version": 1,
+      "key": "livelihood_blocked_count",
+      "owner_kinds": ["character"],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": ["set", "add"],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "角色因资源不足未能完成生产的累计次数。"
     }
   ]
 }

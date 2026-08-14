@@ -76,6 +76,22 @@ func generate_fixture(
 	var settlement_id := "generated_settlement.%s" % site_token
 	var hub_id := "generated_location.%s.commons" % site_token
 	var settlement_name := _settlement_name(definition, terrain_profile, rng)
+	var generation_id := "%s:%d" % [
+		str(definition.get(
+			"generation_def_id", "generation.settlement"
+		)),
+		seed,
+	]
+	var batch_fact_id := "fact.generated_settlement.%s.%d" % [site_token, seed]
+	var resource_stocks := _resource_stock_rows(
+		resources,
+		traffic,
+		site_token,
+		settlement_id,
+		hub_id,
+		seed,
+		batch_fact_id
+	)
 	var locations := _location_dictionary(fixture.get("locations", {}))
 	var entities: Array = (fixture.get("entities", []) as Array).duplicate(true)
 	var facts: Array = (fixture.get("known_facts", []) as Array).duplicate(true)
@@ -89,6 +105,7 @@ func generate_fixture(
 	var generated_route_ids: Array[String] = []
 	var generated_entity_ids: Array[String] = [settlement_id]
 	var workplace_bindings := {}
+	var livelihood_resource_bindings := {}
 	var active_occupation_ids: Array[String] = []
 
 	locations[hub_id] = {
@@ -156,6 +173,16 @@ func generate_fixture(
 			settlement_name,
 			str(facility.get("name_suffix", industry.get("label", "作业地"))),
 		]
+		var feature_id := "generated_feature.%s.%s" % [site_token, industry_id]
+		var resource_binding := _bind_industry_resource(
+			industry,
+			resource_stocks,
+			facility_id,
+			feature_id
+		)
+		var bound_stock_ids: Array = []
+		if not resource_binding.is_empty():
+			bound_stock_ids.append(str(resource_binding.get("stock_id", "")))
 		var tags: Array = [
 			"workplace", "generated_location", "generated_facility",
 			"industry_%s" % industry_id,
@@ -173,10 +200,10 @@ func generate_fixture(
 				"industry_id": industry_id,
 				"industry_score": int(industry.get("score", 0)),
 				"source_ids": industry.get("source_ids", []).duplicate(true),
+				"resource_stock_ids": bound_stock_ids.duplicate(true),
 			},
 		}
 		generated_location_ids.append(facility_id)
-		var feature_id := "generated_feature.%s.%s" % [site_token, industry_id]
 		entities.append({
 			"id": feature_id,
 			"type": "trace",
@@ -186,12 +213,22 @@ func generate_fixture(
 			)),
 			"location_id": facility_id,
 			"tags": tags.duplicate(true),
-			"states": {"visible": true, "inspectable": true},
+			"states": {
+				"visible": true,
+				"inspectable": true,
+				"resource_status": "abundant",
+				"facility_operational": true,
+				"resource_stock_ids": bound_stock_ids.duplicate(true),
+			},
 		})
 		generated_entity_ids.append(feature_id)
 		for occupation_value: Variant in industry.get("occupation_ids", []):
 			var occupation_id := str(occupation_value)
 			workplace_bindings[occupation_id] = facility_id
+			if not resource_binding.is_empty():
+				livelihood_resource_bindings[occupation_id] = [
+					resource_binding.duplicate(true)
+				]
 			if occupation_id not in active_occupation_ids:
 				active_occupation_ids.append(occupation_id)
 		var route_pair := _facility_routes(
@@ -201,13 +238,6 @@ func generate_fixture(
 			routes.append(route)
 			generated_route_ids.append(str(route.get("route_id", "")))
 
-	var generation_id := "%s:%d" % [
-		str(definition.get(
-			"generation_def_id", "generation.settlement"
-		)),
-		seed,
-	]
-	var batch_fact_id := "fact.generated_settlement.%s.%d" % [site_token, seed]
 	facts.append({
 		"fact_id": batch_fact_id,
 		"fact_type": "settlement_generated",
@@ -223,6 +253,9 @@ func generate_fixture(
 		"source_ids": capacity_data.get("source_ids", []).duplicate(true),
 	})
 	for industry: Dictionary in industries:
+		var industry_stock_ids := _industry_stock_ids(
+			str(industry.get("industry_id", "")), resource_stocks
+		)
 		facts.append({
 			"fact_id": "fact.generated_industry.%s.%s" % [
 				site_token, str(industry.get("industry_id", ""))
@@ -234,7 +267,22 @@ func generate_fixture(
 			"industry_score": int(industry.get("score", 0)),
 			"settlement_name": settlement_name,
 			"source_ids": industry.get("source_ids", []).duplicate(true),
+			"resource_stock_ids": industry_stock_ids,
 			"source_fact_ids": [batch_fact_id],
+		})
+	for stock: Dictionary in resource_stocks:
+		facts.append({
+			"fact_id": str(stock.get("established_fact_id", "")),
+			"fact_type": "settlement_resource_stock_established",
+			"actor_id": settlement_id,
+			"target_id": settlement_id,
+			"stock_id": str(stock.get("stock_id", "")),
+			"source_id": str(stock.get("source_id", "")),
+			"resource_label": str(stock.get("label", "资源")),
+			"capacity": float(stock.get("capacity", 0.0)),
+			"recovery_per_hour": float(stock.get("recovery_per_hour", 0.0)),
+			"source_fact_ids": [batch_fact_id],
+			"generation_seed": seed,
 		})
 
 	var pressures := _derived_pressures(
@@ -290,6 +338,9 @@ func generate_fixture(
 		resident_config["settlement_id"] = settlement_id
 		resident_config["settlement_name"] = settlement_name
 		resident_config["workplace_bindings"] = workplace_bindings.duplicate(true)
+		resident_config["livelihood_resource_bindings"] = (
+			livelihood_resource_bindings.duplicate(true)
+		)
 		resident_config["active_occupation_ids"] = active_occupation_ids.duplicate(true)
 		resident_config["require_active_occupations"] = true
 
@@ -298,6 +349,7 @@ func generate_fixture(
 	fixture["entities"] = entities
 	fixture["known_facts"] = facts
 	fixture["initial_chronicle_entries"] = chronicles
+	fixture["initial_resource_stocks"] = resource_stocks
 	fixture["travel_routes"] = routes
 	fixture["region_state"] = region_state
 	fixture["institution"] = institution
@@ -323,9 +375,18 @@ func generate_fixture(
 		"generated_entity_ids": generated_entity_ids,
 		"workplace_bindings": workplace_bindings.duplicate(true),
 		"active_occupation_ids": active_occupation_ids.duplicate(true),
+		"resource_stock_ids": _resource_stock_ids(resource_stocks),
+		"resource_stock_summary": _resource_stock_summary(resource_stocks),
+		"livelihood_resource_bindings": (
+			livelihood_resource_bindings.duplicate(true)
+		),
 		"derived_pressures": pressures.duplicate(true),
 		"signature": _signature(
-			resident_capacity, industries, generated_location_ids, pressures
+			resident_capacity,
+			industries,
+			generated_location_ids,
+			pressures,
+			resource_stocks
 		),
 	}
 	var integrity := _validate_generated_fixture(fixture, report)
@@ -336,6 +397,214 @@ func generate_fixture(
 		))
 	fixture["settlement_generation_result"] = report.duplicate(true)
 	return {"ok": true, "fixture": fixture, "report": report}
+
+
+func _resource_stock_rows(
+		resources: Array[Dictionary],
+		traffic: Array[Dictionary],
+		site_token: String,
+		settlement_id: String,
+		hub_id: String,
+		seed: int,
+		batch_fact_id: String
+) -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	for resource: Dictionary in resources:
+		var abundance := clampi(int(resource.get("abundance", 0)), 0, 5)
+		var reliability := clampi(int(resource.get("reliability", 0)), 0, 5)
+		var source_id := str(resource.get("resource_id", "resource"))
+		var stock_id := "resource_stock.%s.%s" % [
+			site_token, _safe_id(source_id)
+		]
+		var capacity := float(maxi(abundance * 8 + reliability * 2, 4))
+		rows.append({
+			"stock_id": stock_id,
+			"source_id": source_id,
+			"source_kind": "natural_resource",
+			"settlement_id": settlement_id,
+			"location_id": hub_id,
+			"label": str(resource.get(
+				"label", _resource_label(resource.get("tags", []), source_id)
+			)),
+			"tags": (resource.get("tags", []) as Array).duplicate(true),
+			"capacity": capacity,
+			"current": capacity,
+			"recovery_per_hour": _rounded(maxf(
+				float(abundance * reliability) / 24.0, 0.04
+			)),
+			"operating_floor": 1.0,
+			"status": "abundant",
+			"abundance": abundance,
+			"reliability": reliability,
+			"industry_ids": [],
+			"facility_entity_ids": [],
+			"source_fact_ids": [batch_fact_id],
+			"established_fact_id": "fact.resource_stock.%s.%s" % [
+				site_token, _safe_id(source_id)
+			],
+			"generation_seed": seed,
+			"change_count": 0,
+			"last_tick": 0,
+		})
+	for route: Dictionary in traffic:
+		var route_capacity := clampi(int(route.get("capacity", 0)), 0, 5)
+		var reliability := clampi(int(route.get("reliability", 0)), 0, 5)
+		var source_id := str(route.get("traffic_id", "traffic"))
+		var mode := str(route.get("mode", "road"))
+		var stock_id := "resource_stock.%s.%s" % [
+			site_token, _safe_id(source_id)
+		]
+		var capacity := float(maxi(route_capacity * 8 + reliability * 2, 4))
+		rows.append({
+			"stock_id": stock_id,
+			"source_id": source_id,
+			"source_kind": "traffic_capacity",
+			"settlement_id": settlement_id,
+			"location_id": hub_id,
+			"label": str(route.get("label", "%s运力" % _traffic_label(mode))),
+			"tags": ["traffic", "transport", mode],
+			"capacity": capacity,
+			"current": capacity,
+			"recovery_per_hour": _rounded(maxf(
+				float(route_capacity * reliability) / 24.0, 0.04
+			)),
+			"operating_floor": 1.0,
+			"status": "abundant",
+			"abundance": route_capacity,
+			"reliability": reliability,
+			"industry_ids": [],
+			"facility_entity_ids": [],
+			"source_fact_ids": [batch_fact_id],
+			"established_fact_id": "fact.resource_stock.%s.%s" % [
+				site_token, _safe_id(source_id)
+			],
+			"generation_seed": seed,
+			"change_count": 0,
+			"last_tick": 0,
+		})
+	return rows
+
+
+func _bind_industry_resource(
+		industry: Dictionary,
+		stocks: Array[Dictionary],
+		facility_id: String,
+		feature_id: String
+) -> Dictionary:
+	var input: Dictionary = industry.get("stock_input", {})
+	if input.is_empty():
+		return {}
+	var source_kind := str(input.get("source_kind", "natural_resource"))
+	var tags_any: Array = input.get("tags_any", [])
+	var candidates: Array[Dictionary] = []
+	for stock: Dictionary in stocks:
+		if str(stock.get("source_kind", "")) != source_kind:
+			continue
+		if not tags_any.is_empty() and not _has_any_tag(
+			stock.get("tags", []), tags_any
+		):
+			continue
+		candidates.append(stock)
+	if candidates.is_empty():
+		return {}
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var left := int(a.get("reliability", 0)) * 10 + int(a.get("abundance", 0))
+		var right := int(b.get("reliability", 0)) * 10 + int(b.get("abundance", 0))
+		if left != right:
+			return left > right
+		return str(a.get("stock_id", "")) < str(b.get("stock_id", ""))
+	)
+	var selected_id := str(candidates[0].get("stock_id", ""))
+	var amount := maxf(float(input.get("amount_per_cycle", 1.0)), 0.1)
+	var selected_label := str(candidates[0].get("label", "生产资源"))
+	for index: int in range(stocks.size()):
+		if str(stocks[index].get("stock_id", "")) != selected_id:
+			continue
+		var updated := stocks[index].duplicate(true)
+		updated["location_id"] = facility_id
+		updated["operating_floor"] = maxf(
+			float(updated.get("operating_floor", 1.0)), amount
+		)
+		var industry_ids: Array = updated.get("industry_ids", [])
+		var industry_id := str(industry.get("industry_id", ""))
+		if industry_id not in industry_ids:
+			industry_ids.append(industry_id)
+		updated["industry_ids"] = industry_ids
+		var facility_ids: Array = updated.get("facility_entity_ids", [])
+		if feature_id not in facility_ids:
+			facility_ids.append(feature_id)
+		updated["facility_entity_ids"] = facility_ids
+		stocks[index] = updated
+		break
+	return {
+		"stock_id": selected_id,
+		"label": selected_label,
+		"amount_per_cycle": amount,
+	}
+
+
+func _has_any_tag(source: Variant, expected: Array) -> bool:
+	if not source is Array:
+		return false
+	for value: Variant in source:
+		if str(value) in expected:
+			return true
+	return false
+
+
+func _industry_stock_ids(
+		industry_id: String, stocks: Array[Dictionary]
+) -> Array[String]:
+	var ids: Array[String] = []
+	for stock: Dictionary in stocks:
+		if industry_id in (stock.get("industry_ids", []) as Array):
+			ids.append(str(stock.get("stock_id", "")))
+	return ids
+
+
+func _resource_stock_ids(stocks: Array[Dictionary]) -> Array[String]:
+	var ids: Array[String] = []
+	for stock: Dictionary in stocks:
+		ids.append(str(stock.get("stock_id", "")))
+	return ids
+
+
+func _resource_stock_summary(stocks: Array[Dictionary]) -> Array:
+	var rows: Array = []
+	for stock: Dictionary in stocks:
+		rows.append({
+			"stock_id": str(stock.get("stock_id", "")),
+			"label": str(stock.get("label", "资源")),
+			"source_kind": str(stock.get("source_kind", "")),
+			"capacity": float(stock.get("capacity", 0.0)),
+			"recovery_per_hour": float(stock.get("recovery_per_hour", 0.0)),
+			"industry_ids": (
+				stock.get("industry_ids", []) as Array
+			).duplicate(true),
+		})
+	return rows
+
+
+func _resource_label(tags_value: Variant, source_id: String) -> String:
+	var tags: Array = tags_value if tags_value is Array else []
+	for tag: String in ["fish", "soil", "reeds", "brine", "salt"]:
+		if tag in tags:
+			return {
+				"fish": "近岸鱼群",
+				"soil": "坡田地力",
+				"reeds": "泽岸苇草",
+				"brine": "浅层卤水",
+				"salt": "浅层卤水",
+			}.get(tag, source_id)
+	return source_id
+
+
+func _traffic_label(mode: String) -> String:
+	return {"road": "道路", "waterway": "水路"}.get(mode, mode)
+
+
+func _rounded(value: float) -> float:
+	return round(value * 1000.0) / 1000.0
 
 
 func _capacity_data(
@@ -663,13 +932,17 @@ func _signature(
 		capacity: int,
 		industries: Array[Dictionary],
 		location_ids: Array[String],
-		pressures: Dictionary
+		pressures: Dictionary,
+		resource_stocks: Array[Dictionary]
 ) -> String:
 	return "%d|%s|%s|%s" % [
 		capacity,
 		",".join(_industry_ids(industries)),
 		",".join(location_ids),
-		JSON.stringify(pressures, "", true),
+		"%s|%s" % [
+			JSON.stringify(pressures, "", true),
+			JSON.stringify(_resource_stock_summary(resource_stocks), "", true),
+		],
 	]
 
 
@@ -704,6 +977,37 @@ func _validate_generated_fixture(
 	var settlement_id := str(report.get("settlement_id", ""))
 	if settlement_id == "" or not entity_ids.has(settlement_id):
 		errors.append("settlement_entity_missing")
+	var resource_stock_ids := {}
+	for stock_value: Variant in fixture.get("initial_resource_stocks", []):
+		if not stock_value is Dictionary:
+			errors.append("resource_stock_not_dictionary")
+			continue
+		var stock := stock_value as Dictionary
+		var stock_id := str(stock.get("stock_id", ""))
+		if stock_id == "" or resource_stock_ids.has(stock_id):
+			errors.append("resource_stock_identity_invalid:%s" % stock_id)
+			continue
+		resource_stock_ids[stock_id] = true
+		if str(stock.get("settlement_id", "")) != settlement_id:
+			errors.append("resource_stock_settlement_invalid:%s" % stock_id)
+		if not locations.has(str(stock.get("location_id", ""))):
+			errors.append("resource_stock_location_missing:%s" % stock_id)
+		for feature_id: Variant in stock.get("facility_entity_ids", []):
+			if not entity_ids.has(str(feature_id)):
+				errors.append("resource_stock_facility_missing:%s" % feature_id)
+	for stock_id: Variant in report.get("resource_stock_ids", []):
+		if not resource_stock_ids.has(str(stock_id)):
+			errors.append("reported_resource_stock_missing:%s" % stock_id)
+	var resident_config: Dictionary = fixture.get("resident_generation", {})
+	var resource_bindings: Dictionary = resident_config.get(
+		"livelihood_resource_bindings", {}
+	)
+	for occupation_id: String in resource_bindings.keys():
+		for binding: Dictionary in resource_bindings[occupation_id]:
+			if not resource_stock_ids.has(str(binding.get("stock_id", ""))):
+				errors.append(
+					"livelihood_resource_stock_missing:%s" % occupation_id
+				)
 	if not locations.has(str(fixture.get("location_id", ""))):
 		errors.append("starting_location_missing")
 	if int(report.get("population_target", 0)) > int(

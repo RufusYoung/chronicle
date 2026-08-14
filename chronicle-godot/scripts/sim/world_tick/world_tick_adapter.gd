@@ -17,6 +17,9 @@ const NpcLivelihoodSystemModel = preload(
 const NpcSocialFollowupSystemModel = preload(
 	"res://scripts/sim/npc/npc_social_followup_system.gd"
 )
+const SettlementResourceSystemModel = preload(
+	"res://scripts/sim/resource/settlement_resource_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -107,6 +110,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var observed_need_changes: Array = []
 	var livelihood_results: Array = []
 	var livelihood_events: Array = []
+	var resource_results: Array = []
+	var resource_events: Array = []
 	var social_followup_results: Array = []
 	var social_followup_events: Array = []
 	var autonomous_actor_ids: Dictionary = {}
@@ -153,6 +158,29 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				round_absolute_hour / 24
 			)
 			round_event["hour"] = posmod(round_absolute_hour, 24)
+
+		var resource_store: Variant = stores.get("resource_stock_store")
+		if (
+			resource_store != null
+			and not resource_store.list_stocks().is_empty()
+		):
+			var resource_system = SettlementResourceSystemModel.new()
+			var recovery_snapshot = snapshot_builder.build_snapshot(
+				context,
+				stores,
+				true
+			)
+			var recovery_data: Dictionary = (
+				resource_system.resolve_recovery_tick(
+					recovery_snapshot,
+					round_event
+				)
+			)
+			var recovery_results: Array = recovery_data.get("results", [])
+			for recovery_result: Variant in recovery_results:
+				writer.apply_result(recovery_result, stores)
+			resource_results.append_array(recovery_results)
+			resource_events.append_array(recovery_data.get("events", []))
 
 		if not npc_need_profiles.is_empty():
 			var need_snapshot = snapshot_builder.build_snapshot(
@@ -234,6 +262,27 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			social_followup_results.append_array(round_followup_results)
 			social_followup_events.append_array(followup_data.get("events", []))
 
+		if (
+			resource_store != null
+			and not resource_store.list_stocks().is_empty()
+		):
+			var status_system = SettlementResourceSystemModel.new()
+			var status_snapshot = snapshot_builder.build_snapshot(
+				context,
+				stores,
+				true
+			)
+			var status_data: Dictionary = status_system.resolve_status_tick(
+				status_snapshot,
+				round_event,
+				str(context.region_entity_id)
+			)
+			var status_results: Array = status_data.get("results", [])
+			for status_result: Variant in status_results:
+				writer.apply_result(status_result, stores)
+			resource_results.append_array(status_results)
+			resource_events.append_array(status_data.get("events", []))
+
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(
 				context,
@@ -273,6 +322,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	tick_log_results.append_array(need_results)
 	tick_log_results.append_array(livelihood_results)
 	tick_log_results.append_array(social_followup_results)
+	tick_log_results.append_array(resource_results)
 	tick_log_results.append_array(autonomous_results)
 	world_log.append_entry(_build_tick_log_entry(
 		event,
@@ -337,6 +387,10 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"livelihood_results": _result_rows(livelihood_results),
 		"livelihood_event_count": livelihood_events.size(),
 		"livelihood_events": livelihood_events.duplicate(true),
+		"resource_result_count": resource_results.size(),
+		"resource_results": _result_rows(resource_results),
+		"resource_event_count": resource_events.size(),
+		"resource_events": resource_events.duplicate(true),
 		"social_followup_result_count": social_followup_results.size(),
 		"social_followup_results": _result_rows(social_followup_results),
 		"social_followup_event_count": social_followup_events.size(),
@@ -412,6 +466,10 @@ func _failure_result(
 		"livelihood_results": [],
 		"livelihood_event_count": 0,
 		"livelihood_events": [],
+		"resource_result_count": 0,
+		"resource_results": [],
+		"resource_event_count": 0,
+		"resource_events": [],
 		"autonomous_results": [],
 		"observed_autonomous_results": [],
 		"world_log_entries": world_log.list_entries(),
@@ -450,6 +508,7 @@ func _build_tick_log_entry(
 	var exchanges: Array = aggregate.get("exchanges", [])
 	var deferred_consequences: Array = aggregate.get("deferred_consequences", [])
 	var item_changes: Array = aggregate.get("item_changes", [])
+	var resource_changes: Array = aggregate.get("resource_changes", [])
 	var chronicle_entries: Array = aggregate.get("chronicle_entries", [])
 	var investigation_changes: Array = aggregate.get("investigation_changes", [])
 	var obligation_updates: Array = aggregate.get("obligation_updates", [])
@@ -519,6 +578,7 @@ func _build_tick_log_entry(
 		"obligation_update_count": obligation_updates.size(),
 		"exchange_update_count": exchange_updates.size(),
 		"item_change_count": item_changes.size(),
+		"resource_change_count": resource_changes.size(),
 		"chronicle_entry_count": chronicle_entries.size(),
 		"investigation_change_count": investigation_changes.size(),
 		"narrative_summary": _narrative_summaries(narrative_results),
@@ -628,6 +688,7 @@ func _aggregate_results(results: Array) -> Dictionary:
 	var exchange_updates: Array = []
 	var deferred_updates: Array = []
 	var item_changes: Array = []
+	var resource_changes: Array = []
 	var chronicle_entries: Array = []
 	var investigation_changes: Array = []
 	var narrative_results: Array = []
@@ -653,6 +714,7 @@ func _aggregate_results(results: Array) -> Dictionary:
 		exchange_updates.append_array(result.exchange_updates.duplicate(true))
 		deferred_updates.append_array(result.deferred_consequence_updates.duplicate(true))
 		item_changes.append_array(result.item_changes.duplicate(true))
+		resource_changes.append_array(result.resource_changes.duplicate(true))
 		chronicle_entries.append_array(
 			result.chronicle_entries_added.duplicate(true)
 		)
@@ -677,6 +739,7 @@ func _aggregate_results(results: Array) -> Dictionary:
 		"exchange_updates": exchange_updates,
 		"deferred_consequence_updates": deferred_updates,
 		"item_changes": item_changes,
+		"resource_changes": resource_changes,
 		"chronicle_entries": chronicle_entries,
 		"investigation_changes": investigation_changes,
 		"narrative_results": narrative_results,
@@ -743,6 +806,9 @@ func _store_summary(stores: Dictionary) -> Dictionary:
 		"traces": _list_size(stores.get("trace_store"), "list_traces"),
 		"rumors": _list_size(stores.get("rumor_store"), "list_rumors"),
 		"pressures": _list_size(stores.get("pressure_store"), "list_pressures"),
+		"resource_stocks": _list_size(
+			stores.get("resource_stock_store"), "list_stocks"
+		),
 		"obligations": _list_size(stores.get("obligation_store"), "list_obligations"),
 		"exchanges": _list_size(stores.get("exchange_store"), "list_exchanges"),
 		"deferred_consequences": _list_size(

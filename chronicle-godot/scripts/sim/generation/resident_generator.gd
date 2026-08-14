@@ -282,7 +282,8 @@ func generate_fixture(
 	fixture["initial_items"] = items
 	fixture["initial_chronicle_entries"] = chronicles
 	fixture["generated_livelihood_profiles"] = _livelihood_profiles(
-		occupations
+		occupations,
+		config.get("livelihood_resource_bindings", {})
 	)
 	var report := {
 		"ok": true,
@@ -905,14 +906,23 @@ func _coin_stack(
 	}
 
 
-func _livelihood_profiles(occupations: Array) -> Array:
+func _livelihood_profiles(
+		occupations: Array,
+		resource_bindings_value: Variant = {}
+) -> Array:
 	var rows: Array = []
+	var resource_bindings: Dictionary = (
+		(resource_bindings_value as Dictionary)
+		if resource_bindings_value is Dictionary
+		else {}
+	)
 	for occupation: Dictionary in occupations:
 		var products: Variant = occupation.get("products", [])
 		if not products is Array or (products as Array).is_empty():
 			continue
-		rows.append({
-			"occupation_id": str(occupation.get("occupation_id", "")),
+		var occupation_id := str(occupation.get("occupation_id", ""))
+		var profile := {
+			"occupation_id": occupation_id,
 			"actor_tags_all": ["generated_worker"],
 			"work_interval_hours": int(occupation.get(
 				"work_interval_hours", 8
@@ -921,7 +931,12 @@ func _livelihood_profiles(occupations: Array) -> Array:
 			"work_summary": str(occupation.get(
 				"work_summary", "一轮普通生计结束，产物进入了居民库存。"
 			)),
-		})
+		}
+		if resource_bindings.has(occupation_id):
+			var bindings: Variant = resource_bindings.get(occupation_id)
+			if bindings is Array:
+				profile["resource_inputs"] = (bindings as Array).duplicate(true)
+		rows.append(profile)
 	return rows
 
 

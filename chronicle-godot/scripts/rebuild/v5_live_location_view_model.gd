@@ -405,11 +405,11 @@ func _playtest_view(snapshot: Variant) -> Dictionary:
 				else "查看产业如何占据地点"
 			),
 			"summary": (
-				"聚落的规模、产业和道路来自地形、资源与交通。选择一处实际形成的设施前往。"
+				"聚落的规模、产业和道路来自地形、资源与交通；资源水位会随生产与恢复继续变化。选择一处实际形成的设施前往。"
 				if at_hub
-				else "这里的设施承接居民工作、物品生产和后续风险；沿内部道路可以返回集地。"
+				else "这里的设施会消耗真实资源库存；水位过低会停工并改变聚落压力。沿内部道路可以返回集地。"
 			),
-			"hint": "等待会让生成居民继续生活和生产。",
+			"hint": "等待会让居民生产、消耗资源，也让可靠资源逐步恢复。",
 		}
 	if _has_fact(
 			snapshot,
@@ -1030,6 +1030,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 		["public_order", snapshot.region_state],
 		["settlement_isolation", snapshot.region_state],
 		["resource_strain", snapshot.region_state],
+		["migration_tendency", snapshot.region_state],
 		["flood_risk", snapshot.region_state],
 		["market_order", snapshot.institution],
 		["local_guard_attention", snapshot.institution],
@@ -1045,8 +1046,31 @@ func _region_status_rows(snapshot: Variant) -> Array:
 			"value": _state_value_label(str(values.get(key, ""))),
 			"detail": _status_detail(key, str(values.get(key, ""))),
 		})
-	var shortage_pressure := 0
+	var at_hub := "public_space" in (
+		snapshot.location.get("tags", []) as Array
+	)
 	var location_id := str(snapshot.location.get("id", ""))
+	for stock: Dictionary in snapshot.get_resource_stocks():
+		if not at_hub and str(stock.get("location_id", "")) != location_id:
+			continue
+		var capacity := float(stock.get("capacity", 0.0))
+		var current := float(stock.get("current", 0.0))
+		var percent := 0 if capacity <= 0.0 else int(round(
+			current * 100.0 / capacity
+		))
+		var status := str(stock.get("status", "abundant"))
+		rows.append({
+			"key": "resource_stock:%s" % str(stock.get("stock_id", "")),
+			"label": str(stock.get("label", "本地资源")),
+			"value": "%d%% · %s" % [percent, _resource_status_label(status)],
+			"detail": "当前 %.1f / %.1f；按现有可靠性每天约恢复 %.1f。%s" % [
+				current,
+				capacity,
+				float(stock.get("recovery_per_hour", 0.0)) * 24.0,
+				_resource_stock_use_text(stock),
+			],
+		})
+	var shortage_pressure := 0
 	for pressure: Dictionary in snapshot.get_pressures():
 		if (
 			str(pressure.get("scope_id", "")) == location_id
@@ -1567,6 +1591,10 @@ func _tick_feedback_view() -> Dictionary:
 	if results.is_empty():
 		results = latest_result.get("observed_need_results", [])
 	if results.is_empty():
+		results = latest_result.get("resource_results", [])
+	if results.is_empty():
+		results = latest_result.get("livelihood_results", [])
+	if results.is_empty():
 		results = latest_result.get("results", [])
 	var result_data: Dictionary = results[0] if not results.is_empty() else {}
 	var narrative: Dictionary = result_data.get("narrative_result", {})
@@ -1613,6 +1641,8 @@ func _tick_narrative(result: Dictionary) -> String:
 	var results: Array = (
 		result.get("results", []) as Array
 	).duplicate(true)
+	results.append_array(result.get("resource_results", []))
+	results.append_array(result.get("livelihood_results", []))
 	results.append_array(result.get("observed_need_results", []))
 	results.append_array(result.get("observed_autonomous_results", []))
 	for result_value: Variant in results:
@@ -1638,6 +1668,21 @@ func _tick_detail_lines(result_data: Dictionary) -> Array:
 	for pressure: Dictionary in result_data.get("pressure_changes", []):
 		if str(pressure.get("pressure_type", "")) == "market_shortage":
 			rows.append("老陈铺子周围的粮食压力继续上升")
+	for change: Dictionary in result_data.get("resource_changes", []):
+		var stock: Dictionary = session.get_snapshot().get_resource_stock(str(
+			change.get("stock_id", "")
+		))
+		var label := str(stock.get(
+			"label", change.get("resource_label", "本地资源")
+		))
+		if str(change.get("operation", "")) == "consume":
+			rows.append("%s因生产消耗 %.1f" % [
+				label, float(change.get("amount", 0.0))
+			])
+		elif str(change.get("operation", "")) == "recover":
+			rows.append("%s自然恢复 %.1f" % [
+				label, float(change.get("amount", 0.0))
+			])
 	if not (result_data.get("facts_added", []) as Array).is_empty():
 		rows.append("这次变化已经成为可追溯的世界事实")
 	return rows
@@ -1682,6 +1727,8 @@ func _world_change_count(result: Dictionary) -> int:
 			"observed_autonomous_decision_count",
 			0
 		))
+		+ int(result.get("livelihood_event_count", 0))
+		+ int(result.get("resource_event_count", 0))
 	)
 
 
@@ -1965,6 +2012,27 @@ func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 		)
 		return "刚被再次改高　%s" % read_state if price_changed else read_state
 	if entity_type == "trace" and bool(states.get("inspectable", false)):
+		var stock_rows: Array[String] = []
+		for stock_id: Variant in states.get("resource_stock_ids", []):
+			var stock: Dictionary = snapshot.get_resource_stock(str(stock_id))
+			if stock.is_empty():
+				continue
+			var capacity := float(stock.get("capacity", 0.0))
+			var percent := 0 if capacity <= 0.0 else int(round(
+				float(stock.get("current", 0.0)) * 100.0 / capacity
+			))
+			stock_rows.append("%s %d%%（%s）" % [
+				str(stock.get("label", "资源")),
+				percent,
+				_resource_status_label(str(stock.get("status", "abundant"))),
+			])
+		if not stock_rows.is_empty():
+			return "资源水位：%s　%s" % [
+				"、".join(stock_rows),
+				"已经检查"
+				if _has_fact(snapshot, "actor_inspected_trace", "target_id", entity_id)
+				else "可以检查",
+			]
 		return (
 			"已经检查"
 			if _has_fact(snapshot, "actor_inspected_trace", "target_id", entity_id)
@@ -2079,6 +2147,7 @@ func _status_label(key: String) -> String:
 		"public_order": "街面秩序",
 		"settlement_isolation": "交通隔绝",
 		"resource_strain": "资源负担",
+		"migration_tendency": "迁离倾向",
 		"flood_risk": "水患风险",
 		"market_order": "市场状况",
 		"local_guard_attention": "守卫关注",
@@ -2097,6 +2166,10 @@ func _status_detail(key: String, value: String) -> String:
 		"settlement_isolation:low": "多条稳定来路维持着人员与物资交换。",
 		"resource_strain:medium": "现有人口接近场址资源能够长期支撑的边缘。",
 		"resource_strain:low": "场址资源对现有人口仍有余量。",
+		"resource_strain:high": "多项生产资源已经接近停产线，聚落难以维持现有人口。",
+		"migration_tendency:high": "持续短缺已经让部分家庭考虑离开。",
+		"migration_tendency:medium": "资源波动让居民开始权衡外出谋生。",
+		"migration_tendency:low": "当前资源水位尚未形成明显的迁离压力。",
 		"flood_risk:high": "主要住地与生产设施容易受到季节水位影响。",
 		"flood_risk:medium": "部分低地会受涨水影响，设施布局已经避开最危险水线。",
 		"flood_risk:low": "聚落主体位于通常洪水难以抵达的位置。",
@@ -2118,6 +2191,24 @@ func _state_value_label(value: String) -> String:
 		"stable": "稳定",
 		"informal": "非正式",
 	}.get(value, value)
+
+
+func _resource_status_label(value: String) -> String:
+	return {
+		"abundant": "充足",
+		"stable": "尚稳",
+		"strained": "吃紧",
+		"depleted": "不足以开工",
+	}.get(value, value)
+
+
+func _resource_stock_use_text(stock: Dictionary) -> String:
+	var industries: Array[String] = []
+	for value: Variant in stock.get("industry_ids", []):
+		industries.append(_generated_industry_label(str(value)))
+	if industries.is_empty():
+		return "目前没有固定产业持续占用这项容量。"
+	return "当前支撑%s。" % "、".join(industries)
 
 
 func _hunger_label(value: String) -> String:
@@ -2195,6 +2286,12 @@ func _fact_text(
 		return "%s形成了%s，来源是当地资源、地形或来路条件。" % [
 			settlement_label,
 			_generated_industry_label(str(fact.get("industry_id", ""))),
+		]
+	if fact_type == "settlement_resource_stock_established":
+		return "%s形成长期库存：容量 %.1f，每天约恢复 %.1f。" % [
+			str(fact.get("resource_label", "本地资源")),
+			float(fact.get("capacity", 0.0)),
+			float(fact.get("recovery_per_hour", 0.0)) * 24.0,
 		]
 	if fact_type == "resident_generation_completed":
 		var settlement_label := str(fact.get("settlement_name", target_name))

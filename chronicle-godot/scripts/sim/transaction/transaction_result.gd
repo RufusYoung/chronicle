@@ -19,6 +19,7 @@ var obligation_updates: Array = []
 var exchange_updates: Array = []
 var deferred_consequence_updates: Array = []
 var item_changes: Array = []
+var resource_changes: Array = []
 var equipment_changes: Array = []
 var character_feature_changes: Array = []
 var chronicle_entries_added: Array = []
@@ -51,6 +52,7 @@ func is_empty() -> bool:
 		and exchange_updates.is_empty()
 		and deferred_consequence_updates.is_empty()
 		and item_changes.is_empty()
+		and resource_changes.is_empty()
 		and equipment_changes.is_empty()
 		and character_feature_changes.is_empty()
 		and chronicle_entries_added.is_empty()
@@ -124,6 +126,10 @@ func add_item_change(change: Dictionary) -> void:
 	item_changes.append(change.duplicate(true))
 
 
+func add_resource_change(change: Dictionary) -> void:
+	resource_changes.append(change.duplicate(true))
+
+
 func add_equipment_change(change: Dictionary) -> void:
 	equipment_changes.append(change.duplicate(true))
 
@@ -185,6 +191,7 @@ func to_dict() -> Dictionary:
 		"exchange_updates": exchange_updates.duplicate(true),
 		"deferred_consequence_updates": deferred_consequence_updates.duplicate(true),
 		"item_changes": item_changes.duplicate(true),
+		"resource_changes": resource_changes.duplicate(true),
 		"equipment_changes": equipment_changes.duplicate(true),
 		"character_feature_changes": character_feature_changes.duplicate(true),
 		"chronicle_entries_added": chronicle_entries_added.duplicate(true),
@@ -214,6 +221,7 @@ func summary() -> Dictionary:
 		"exchange_update_count": exchange_updates.size(),
 		"deferred_consequence_update_count": deferred_consequence_updates.size(),
 		"item_change_count": item_changes.size(),
+		"resource_change_count": resource_changes.size(),
 		"equipment_change_count": equipment_changes.size(),
 		"character_feature_change_count": character_feature_changes.size(),
 		"chronicle_entry_count": chronicle_entries_added.size(),

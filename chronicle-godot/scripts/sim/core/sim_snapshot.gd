@@ -19,6 +19,7 @@ var obligations: Array = []
 var exchanges: Array = []
 var deferred_consequences: Array = []
 var items: Array = []
+var resource_stocks: Array = []
 var equipment_loadouts: Dictionary = {}
 var chronicle_entries: Array = []
 var investigation_leads: Array = []
@@ -48,6 +49,9 @@ func _init(data: Dictionary = {}) -> void:
 	exchanges = (data.get("exchanges", []) as Array).duplicate(true)
 	deferred_consequences = (data.get("deferred_consequences", []) as Array).duplicate(true)
 	items = (data.get("items", []) as Array).duplicate(true)
+	resource_stocks = (
+		data.get("resource_stocks", []) as Array
+	).duplicate(true)
 	equipment_loadouts = (
 		data.get("equipment_loadouts", {}) as Dictionary
 	).duplicate(true)
@@ -193,6 +197,17 @@ func get_pending_deferred_consequences() -> Array:
 
 func get_items() -> Array:
 	return items.duplicate(true)
+
+
+func get_resource_stocks() -> Array:
+	return resource_stocks.duplicate(true)
+
+
+func get_resource_stock(stock_id: String) -> Dictionary:
+	for stock: Dictionary in resource_stocks:
+		if str(stock.get("stock_id", "")) == stock_id:
+			return stock.duplicate(true)
+	return {}
 
 
 func get_item(item_id: String) -> Dictionary:
@@ -359,6 +374,7 @@ func to_dict() -> Dictionary:
 		"exchanges": exchanges.duplicate(true),
 		"deferred_consequences": deferred_consequences.duplicate(true),
 		"items": items.duplicate(true),
+		"resource_stocks": resource_stocks.duplicate(true),
 		"equipment_loadouts": equipment_loadouts.duplicate(true),
 		"chronicle_entries": chronicle_entries.duplicate(true),
 		"investigation_leads": investigation_leads.duplicate(true),

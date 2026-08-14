@@ -34,14 +34,14 @@
       "flood_exposure": 3
     },
     "resources": [
-      {"resource_id": "resource.north_lake_fish", "tags": ["fish", "food", "water"], "abundance": 4, "reliability": 4},
-      {"resource_id": "resource.margin_reeds", "tags": ["reeds", "fiber"], "abundance": 4, "reliability": 5},
-      {"resource_id": "resource.thin_slope_soil", "tags": ["soil", "roots", "food"], "abundance": 2, "reliability": 3},
-      {"resource_id": "resource.shallow_brine", "tags": ["salt", "brine"], "abundance": 1, "reliability": 2}
+      {"resource_id": "resource.north_lake_fish", "label": "近岸鱼群", "tags": ["fish", "food", "water"], "abundance": 4, "reliability": 4},
+      {"resource_id": "resource.margin_reeds", "label": "泽岸苇草", "tags": ["reeds", "fiber"], "abundance": 4, "reliability": 5},
+      {"resource_id": "resource.thin_slope_soil", "label": "坡田地力", "tags": ["soil", "roots", "food"], "abundance": 2, "reliability": 3},
+      {"resource_id": "resource.shallow_brine", "label": "浅层卤水", "tags": ["salt", "brine"], "abundance": 1, "reliability": 2}
     ],
     "traffic": [
-      {"traffic_id": "traffic.south_cart_track", "mode": "road", "capacity": 2, "reliability": 3, "risk": 2},
-      {"traffic_id": "traffic.lake_shore_boats", "mode": "waterway", "capacity": 3, "reliability": 3, "risk": 1}
+      {"traffic_id": "traffic.south_cart_track", "label": "南向车道运力", "mode": "road", "capacity": 2, "reliability": 3, "risk": 2},
+      {"traffic_id": "traffic.lake_shore_boats", "label": "湖岸舟路运力", "mode": "waterway", "capacity": 3, "reliability": 3, "risk": 1}
     ]
   },
   "resident_generation": {

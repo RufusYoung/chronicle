@@ -23,6 +23,8 @@ func resolve_work_tick(
 	var result = TransactionResultModel.new()
 	var events: Array = []
 	var produced_count := 0
+	var blocked_count := 0
+	var available_resources := _available_resource_amounts(snapshot)
 	for actor: Dictionary in _sorted_people(snapshot):
 		var actor_id := str(actor.get("id", ""))
 		var occupation_id := str(snapshot.get_entity_state(
@@ -45,13 +47,71 @@ func resolve_work_tick(
 			})
 			continue
 
-		var cycle_count := int(snapshot.get_entity_state(
-			actor_id, "livelihood_cycle_count", 0
-		)) + 1
 		var fact_id := "fact.npc_livelihood.%s.%s" % [
 			_safe_id(actor_id),
 			_safe_id(str(tick_event.get("tick_event_id", "tick"))),
 		]
+		var resource_plan := _resource_plan(profile, available_resources)
+		if not bool(resource_plan.get("ok", false)):
+			var blocked_resource: Dictionary = resource_plan.get("missing", {})
+			var blocked_count_for_actor := int(snapshot.get_entity_state(
+				actor_id, "livelihood_blocked_count", 0
+			)) + 1
+			result.add_fact({
+				"fact_id": fact_id,
+				"fact_type": "npc_livelihood_blocked_resource",
+				"actor_id": actor_id,
+				"location_id": str(snapshot.get_entity_state(
+					actor_id, "workplace_id", ""
+				)),
+				"occupation_id": occupation_id,
+				"stock_id": str(blocked_resource.get("stock_id", "")),
+				"resource_label": str(blocked_resource.get(
+					"label", "生产资源"
+				)),
+				"required": float(blocked_resource.get("amount", 0.0)),
+				"available": float(blocked_resource.get("available", 0.0)),
+				"day": int(tick_event.get("day", 0)),
+				"tick_event_id": str(tick_event.get("tick_event_id", "")),
+				"summary": "%s因为%s不足，没有完成这一轮生产。" % [
+					str(actor.get("display_name", actor_id)),
+					str(blocked_resource.get("label", "生产资源")),
+				],
+			})
+			result.add_state_change({
+				"entity_id": actor_id,
+				"key": "livelihood_elapsed_hours",
+				"to": elapsed - interval,
+			})
+			result.add_state_change({
+				"entity_id": actor_id,
+				"key": "livelihood_blocked_count",
+				"to": blocked_count_for_actor,
+			})
+			events.append({
+				"event_type": "livelihood_blocked_resource",
+				"actor_id": actor_id,
+				"occupation_id": occupation_id,
+				"stock_id": str(blocked_resource.get("stock_id", "")),
+				"resource_label": str(blocked_resource.get(
+					"label", "生产资源"
+				)),
+				"fact_id": fact_id,
+			})
+			blocked_count += 1
+			continue
+
+		var cycle_count := int(snapshot.get_entity_state(
+			actor_id, "livelihood_cycle_count", 0
+		)) + 1
+		var resource_inputs: Array = resource_plan.get("changes", [])
+		for input: Dictionary in resource_inputs:
+			var resource_change := input.duplicate(true)
+			resource_change["operation"] = "consume"
+			resource_change["source_fact_ids"] = [fact_id]
+			resource_change["tick"] = _tick_value(tick_event)
+			resource_change["reason"] = "livelihood_production"
+			result.add_resource_change(resource_change)
 		var products: Array = profile.get("products", [])
 		var product_rows: Array = []
 		for product_index: int in range(products.size()):
@@ -85,6 +145,7 @@ func resolve_work_tick(
 			"occupation_id": occupation_id,
 			"livelihood_cycle_count": cycle_count,
 			"products": product_rows,
+			"resource_inputs": resource_inputs.duplicate(true),
 			"day": int(tick_event.get("day", 0)),
 			"tick_event_id": str(tick_event.get("tick_event_id", "")),
 			"summary": str(profile.get(
@@ -125,8 +186,20 @@ func resolve_work_tick(
 	if produced_count > 0:
 		result.set_narrative_result({
 			"title": "聚落生计继续运转",
-			"summary": "%d 名居民完成了各自的一轮工作，产物已经进入真实物品库存。" % produced_count,
+			"summary": (
+				"%d 名居民完成了各自的一轮工作，产物进入物品库存；另有 %d 人因本地资源不足停工。" % [
+					produced_count, blocked_count
+				]
+				if blocked_count > 0
+				else "%d 名居民完成了各自的一轮工作，产物已经进入真实物品库存。" % produced_count
+			),
 			"tone": "ordinary_life",
+		})
+	elif blocked_count > 0:
+		result.set_narrative_result({
+			"title": "资源不足迫使生产停下",
+			"summary": "%d 名居民抵达工作地点后发现资源水位不足，没有凭空制造产物。" % blocked_count,
+			"tone": "resource_shortage",
 		})
 	result.mark_resolved("npc_livelihood_work")
 	return {"results": [result], "events": events}
@@ -444,6 +517,48 @@ func _append_product_changes(
 			"updated_tick": _tick_value(tick_event),
 		},
 	})
+
+
+func _available_resource_amounts(snapshot: Variant) -> Dictionary:
+	var rows := {}
+	for stock: Dictionary in snapshot.get_resource_stocks():
+		rows[str(stock.get("stock_id", ""))] = float(stock.get("current", 0.0))
+	return rows
+
+
+func _resource_plan(profile: Dictionary, available: Dictionary) -> Dictionary:
+	var changes: Array = []
+	for value: Variant in profile.get("resource_inputs", []):
+		if not value is Dictionary:
+			continue
+		var input := value as Dictionary
+		var stock_id := str(input.get("stock_id", ""))
+		var amount := float(input.get("amount_per_cycle", input.get("amount", 0.0)))
+		if stock_id == "" or amount <= 0.0:
+			continue
+		var current := float(available.get(stock_id, 0.0))
+		if current + 0.0001 < amount:
+			return {
+				"ok": false,
+				"changes": [],
+				"missing": {
+					"stock_id": stock_id,
+					"label": str(input.get("label", "生产资源")),
+					"amount": amount,
+					"available": current,
+				},
+			}
+		changes.append({
+			"stock_id": stock_id,
+			"amount": amount,
+			"resource_label": str(input.get("label", "生产资源")),
+		})
+	for change: Dictionary in changes:
+		var stock_id := str(change.get("stock_id", ""))
+		available[stock_id] = float(available.get(stock_id, 0.0)) - float(
+			change.get("amount", 0.0)
+		)
+	return {"ok": true, "changes": changes, "missing": {}}
 
 
 func _profiles_by_occupation(profiles: Array) -> Dictionary:
