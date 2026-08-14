@@ -250,6 +250,12 @@ func _refresh_actions(actions: Array) -> void:
 		and str((actions[0] as Dictionary).get("event_type", ""))
 			== "combat_encounter"
 	)
+	wait_button.disabled = combat_active
+	wait_button.tooltip_text = (
+		"先处理眼前的遭遇，不能用等待跳过。"
+		if combat_active
+		else "让世界时间推进一小时。"
+	)
 	action_heading.text = (
 		"眼前的遭遇　选择 1 种处理方式"
 		if combat_active

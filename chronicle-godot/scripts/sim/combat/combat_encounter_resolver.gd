@@ -154,6 +154,7 @@ func resolve_attempt(
 		"source_id": actor_id,
 		"target_id": str(enemy.get("entity_id", "")),
 		"encounter_id": str(encounter.get("encounter_id", "")),
+		"selection_group_id": str(encounter.get("selection_group_id", "")),
 		"approach_id": approach_id,
 		"roll": roll,
 		"score_target": str(preview_data.get("score_target", "")),
@@ -204,6 +205,7 @@ func resolve_attempt(
 		)),
 		"summary": str(consequence.get("narrative", default_summary)),
 		"encounter_id": str(encounter.get("encounter_id", "")),
+		"selection_group_id": str(encounter.get("selection_group_id", "")),
 		"approach_id": approach_id,
 		"outcome": outcome,
 		"roll": roll,
@@ -325,7 +327,8 @@ func _append_consequences(
 		result,
 		consequence.get("state_changes", []),
 		actor_id,
-		str(enemy.get("entity_id", ""))
+		str(enemy.get("entity_id", "")),
+		snapshot
 	)
 	_append_configured_facts(
 		result,
@@ -380,7 +383,8 @@ func _append_configured_state_changes(
 		result: Variant,
 		change_values: Variant,
 		actor_id: String,
-		enemy_id: String
+		enemy_id: String,
+		snapshot: Variant
 ) -> void:
 	if not change_values is Array:
 		return
@@ -398,6 +402,13 @@ func _append_configured_state_changes(
 		if not change.has("to") and not change.has("delta"):
 			continue
 		change["entity_id"] = entity_id
+		if (
+			change.has("to")
+			and snapshot.get_entity_state(
+				entity_id, str(change.get("key", "")), null
+			) == change.get("to")
+		):
+			continue
 		result.add_state_change(change)
 
 

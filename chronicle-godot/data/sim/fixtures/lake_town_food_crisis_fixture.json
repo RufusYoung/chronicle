@@ -552,6 +552,13 @@
     {
       "encounter_id": "mist_salt_well_claimant",
       "location_id": "mist_salt_well",
+      "selection_group_id": "mist_salt_well_entry",
+      "selection_order": 0,
+      "selection_weight": 1,
+      "required_location_tags": ["wilderness", "anomalous"],
+      "required_enemy_tags": ["combat_encounter_actor", "person"],
+      "required_region_states": {"food_pressure": "high"},
+      "required_fact_types": ["lu_huai_recorded_departure_for_mist_salt_well"],
       "title": "井雾里截路的人",
       "description": "一个裹着盐硬旧布的拾荒客从塌墙后跨出来，用带钩长杆拦住井口。他没有立刻扑上来，但也不肯让开。",
       "context_tags": ["dim_light", "mist_salt_well", "narrow_ground"],
@@ -707,6 +714,174 @@
             ],
             "narrative_title": "一句话没能放下钩杆",
             "narrative": "那人把你的提醒当成夺路的把戏。你们隔着钩杆和水囊僵持，直到井雾变浓；他终于不愿继续暴露在白丝旁，骂了一句便退向塌墙。"
+          }
+        }
+      ]
+    },
+    {
+      "encounter_id": "mist_salt_well_brine_boar",
+      "location_id": "mist_salt_well",
+      "selection_group_id": "mist_salt_well_entry",
+      "selection_order": 1,
+      "selection_weight": 1,
+      "required_location_tags": ["wilderness", "anomalous"],
+      "required_enemy_tags": ["combat_encounter_actor", "creature"],
+      "required_fact_types": ["lu_huai_recorded_departure_for_mist_salt_well"],
+      "title": "盐草里冲出的硬背兽",
+      "description": "塌墙后的盐草突然成片伏倒。一头背壳覆着白盐硬斑的獠豕刨开碎石，先盯住巡灯，又把獠牙转向井口。",
+      "context_tags": ["dim_light", "mist_salt_well", "narrow_ground"],
+      "enemy": {
+        "entity_id": "mist_salt_well_brine_boar",
+        "display_name": "盐壳獠豕",
+        "danger_label": "高",
+        "observable_features": [
+          "前蹄反复刨地，盐壳随着呼吸从肩背剥落",
+          "它每次准备冲撞前都会先偏头避开巡灯",
+          "右后腿拖着一道旧伤，转向比直冲更慢"
+        ],
+        "observable_tags": ["beast", "charging", "light_shy", "injured_hind_leg"],
+        "tags": ["beast", "charging", "territorial", "mist_salt_adapted"],
+        "attack": 17,
+        "defense": 18,
+        "pursuit": 17,
+        "resolve": 13
+      },
+      "approaches": [
+        {
+          "approach_id": "fight_balanced",
+          "option_id": "combat:mist_salt_well_brine_boar:fight_balanced",
+          "label": "守住石缝迎它冲撞",
+          "action_type": "danger",
+          "hours": 1,
+          "score_target": "combat.attack",
+          "difficulty_key": "defense",
+          "action_tags": ["combat_melee", "balanced_stance"],
+          "success": {
+            "fatigue_gain": 1,
+            "durability_loss": 2,
+            "durability_slot": "main_hand",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_brine_boar_driven_off",
+                "target_id": "enemy",
+                "summary": "你借石缝卸开冲势，盐壳獠豕拖着旧伤退进盐草。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "硬背擦过石缝",
+            "narrative": "你没有和獠牙正面角力，只让锤柄贴着石缝偏转它的肩背。盐壳撞碎一片，那头兽踉跄转身，拖着右后腿钻回伏倒的盐草。"
+          },
+          "failure": {
+            "base_health_loss": 4,
+            "fatigue_gain": 2,
+            "injury": "combat_bruising",
+            "injury_label": "战斗挫伤",
+            "durability_loss": 5,
+            "durability_slot": "main_hand",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_brine_boar_broke_guard",
+                "target_id": "enemy",
+                "summary": "盐壳獠豕撞开锤柄后没有折返，沿荒坡冲出了井墙。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "冲撞掀开了架势",
+            "narrative": "肩背的硬壳顶开锤柄，把你掀在盐墙上。它自己也收不住直冲，越过井口后一路闯下荒坡，没有再折回来。"
+          }
+        },
+        {
+          "approach_id": "retreat",
+          "option_id": "combat:mist_salt_well_brine_boar:retreat",
+          "label": "压低巡灯绕向它的伤腿",
+          "action_type": "retreat",
+          "hours": 1,
+          "score_target": "combat.escape",
+          "difficulty_key": "pursuit",
+          "action_tags": ["combat_retreat"],
+          "success": {
+            "fatigue_gain": 1,
+            "durability_loss": 1,
+            "durability_slot": "utility",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "actor_evaded_mist_salt_brine_boar",
+                "target_id": "enemy",
+                "summary": "你借巡灯逼它偏头，从伤腿一侧绕开了盐壳獠豕。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "灯光逼开一条弧线",
+            "narrative": "巡灯只抬到它眼角的高度。獠豕偏头避光，旧伤让转向慢了一拍；你贴着塌墙绕回高处，它则冲进另一侧盐草。"
+          },
+          "failure": {
+            "base_health_loss": 2,
+            "fatigue_gain": 2,
+            "durability_loss": 3,
+            "durability_slot": "utility",
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "actor_escaped_brine_boar_after_lantern_hit",
+                "target_id": "enemy",
+                "summary": "獠牙擦中巡灯后，你翻过塌墙避开了第二次冲撞。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "獠牙挑响了灯罩",
+            "narrative": "你低估了它直冲的距离。獠牙擦过灯罩，好在伤腿让它没能立即转身；你翻过塌墙时，它已经沿原方向撞进盐草。"
+          }
+        },
+        {
+          "approach_id": "negotiate",
+          "option_id": "combat:mist_salt_well_brine_boar:negotiate",
+          "label": "抖动空粮袋把它引离井口",
+          "action_type": "dialogue",
+          "hours": 1,
+          "score_target": "combat.influence",
+          "difficulty_key": "resolve",
+          "action_tags": ["combat_negotiate", "use_environment"],
+          "success": {
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_brine_boar_lured_from_well",
+                "target_id": "enemy",
+                "summary": "盐壳獠豕追着空粮袋的谷物气味离开了井口。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "谷物旧味盖过了井雾",
+            "narrative": "你把空粮袋沿风抖开，再扔向荒坡。獠豕的鼻翼先动，獠牙随即离开井口；它追着残留的谷物气味钻进盐草。"
+          },
+          "failure": {
+            "fatigue_gain": 1,
+            "state_changes": [
+              {"entity_id": "enemy", "key": "visible", "to": false}
+            ],
+            "additional_facts": [
+              {
+                "fact_type": "mist_salt_brine_boar_ignored_lure",
+                "target_id": "enemy",
+                "summary": "空粮袋没能引开獠豕；僵持后它因井雾变浓自行退走。",
+                "show_in_feedback": true
+              }
+            ],
+            "narrative_title": "空袋只换来一阵刨地声",
+            "narrative": "袋上剩的气味太淡，它仍守着井口。你们隔着塌墙耗到雾气变浓；白丝开始贴上蹄边时，它终于不安地退进盐草。"
           }
         }
       ]
@@ -1321,7 +1496,24 @@
         "combat_encounter_actor"
       ],
       "states": {
-        "visible": true
+        "visible": false
+      }
+    },
+    {
+      "id": "mist_salt_well_brine_boar",
+      "location_id": "mist_salt_well",
+      "display_name": "盐壳獠豕",
+      "description": "一头肩背覆着盐硬白斑的野兽，右后腿留有旧伤，直冲很快，转向却慢。",
+      "type": "creature",
+      "tags": [
+        "creature",
+        "beast",
+        "wilderness_animal",
+        "mist_salt_adapted",
+        "combat_encounter_actor"
+      ],
+      "states": {
+        "visible": false
       }
     },
     {

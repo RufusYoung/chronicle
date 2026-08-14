@@ -15,6 +15,9 @@ const ChallengeResolverModel = preload(
 const CombatEncounterResolverModel = preload(
 	"res://scripts/sim/combat/combat_encounter_resolver.gd"
 )
+const CombatEncounterDirectorModel = preload(
+	"res://scripts/sim/combat/combat_encounter_director.gd"
+)
 const ReturnEchoResolverModel = preload(
 	"res://scripts/sim/echo/return_echo_resolver.gd"
 )
@@ -92,6 +95,7 @@ var writer: Variant = null
 var travel_resolver: Variant = null
 var challenge_resolver: Variant = null
 var combat_encounter_resolver: Variant = null
+var combat_encounter_director: Variant = null
 var return_echo_resolver: Variant = null
 var investigation_resolver: Variant = null
 var world_tick_adapter: Variant = null
@@ -101,6 +105,9 @@ var npc_livelihood_profiles: Array = []
 var travel_routes: Array = []
 var challenge_definitions: Array = []
 var combat_encounter_definitions: Array = []
+var combat_encounter_seed: int = 1
+var combat_encounter_selections: Dictionary = {}
+var combat_encounter_selection_reports: Dictionary = {}
 var return_echo_definitions: Array = []
 var investigation_definitions: Array = []
 var market_policies: Array = []
@@ -196,6 +203,10 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	combat_encounter_definitions = (
 		fixture.get("combat_encounters", []) as Array
 	).duplicate(true)
+	combat_encounter_seed = int(fixture.get(
+		"combat_encounter_seed",
+		fixture.get("challenge_seed", 1)
+	))
 	return_echo_definitions = (
 		fixture.get("return_echoes", []) as Array
 	).duplicate(true)
@@ -270,6 +281,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"rule_count": rules.size(),
 		"challenge_definition_count": challenge_definitions.size(),
 		"combat_encounter_definition_count": combat_encounter_definitions.size(),
+		"combat_encounter_seed": combat_encounter_seed,
 		"return_echo_definition_count": return_echo_definitions.size(),
 		"investigation_definition_count": investigation_definitions.size(),
 		"autonomous_action_rule_count": autonomous_action_rules.size(),
@@ -524,12 +536,13 @@ func get_combat_encounter_options() -> Array:
 		return []
 	var snapshot: Variant = get_snapshot()
 	var rows: Array = []
-	for encounter: Dictionary in combat_encounter_definitions:
-		if str(encounter.get("location_id", "")) != context.location_id:
-			continue
+	for encounter: Dictionary in _active_combat_encounter_definitions(snapshot):
 		if not _combat_encounter_requirements_met(encounter, snapshot):
 			continue
-		if _combat_encounter_resolved(encounter, snapshot):
+		if (
+			_combat_encounter_resolved(encounter, snapshot)
+			or _combat_encounter_group_resolved(encounter, snapshot)
+		):
 			continue
 		var enemy: Dictionary = encounter.get("enemy", {})
 		if snapshot.get_entity(str(enemy.get("entity_id", ""))).is_empty():
@@ -553,6 +566,10 @@ func get_combat_encounter_options() -> Array:
 					]
 				)),
 				"encounter_id": str(encounter.get("encounter_id", "")),
+				"selection_group_id": str(encounter.get(
+					"selection_group_id", ""
+				)),
+				"selection_context": _combat_selection_context(encounter),
 				"encounter_title": str(encounter.get(
 					"title", "眼前的遭遇"
 				)),
@@ -568,6 +585,22 @@ func get_combat_encounter_options() -> Array:
 				"blocked_reason": str(preview.get("blocked_reason", "")),
 			})
 	return rows
+
+
+func get_combat_encounter_director_summary() -> Dictionary:
+	if not initialized:
+		return {}
+	var active := _active_combat_encounter_definitions(get_snapshot())
+	var active_ids: Array[String] = []
+	for encounter: Dictionary in active:
+		active_ids.append(str(encounter.get("encounter_id", "")))
+	return {
+		"seed": combat_encounter_seed,
+		"selections": combat_encounter_selections.duplicate(true),
+		"selection_count": combat_encounter_selections.size(),
+		"reports": combat_encounter_selection_reports.duplicate(true),
+		"active_encounter_ids": active_ids,
+	}
 
 
 func get_return_echo_options() -> Array:
@@ -927,6 +960,7 @@ func execute_combat_encounter_option(
 		"option_id": option_id,
 		"encounter_id": str(option.get("encounter_id", "")),
 		"approach_id": str(option.get("approach_id", "")),
+		"selection_group_id": str(option.get("selection_group_id", "")),
 		"outcome": str(narrative.get("outcome", "")),
 		"hours": hours,
 		"roll": roll,
@@ -936,6 +970,9 @@ func execute_combat_encounter_option(
 		"world_log_entry": log_entry.duplicate(true),
 		"time": get_time_summary(),
 		"combat_encounter_count": combat_encounter_count,
+		"combat_encounter_selections": (
+			combat_encounter_selections.duplicate(true)
+		),
 		"store_summary": get_store_summary(),
 	}
 
@@ -1348,6 +1385,10 @@ func build_save_envelope_seed() -> Dictionary:
 			"challenge_count": challenge_count,
 			"challenge_preparation_count": challenge_preparation_count,
 			"combat_encounter_count": combat_encounter_count,
+			"combat_encounter_seed": combat_encounter_seed,
+			"combat_encounter_selections": (
+				combat_encounter_selections.duplicate(true)
+			),
 			"return_echo_count": return_echo_count,
 			"investigation_count": investigation_count,
 			"investigation_defer_count": investigation_defer_count,
@@ -1559,6 +1600,9 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"challenges_resolved": challenge_count,
 		"challenge_preparations": challenge_preparation_count,
 		"combat_encounters_resolved": combat_encounter_count,
+		"combat_encounter_selections": (
+			combat_encounter_selections.duplicate(true)
+		),
 		"return_echoes_resolved": return_echo_count,
 		"investigations_resolved": investigation_count,
 		"investigations_deferred": investigation_defer_count,
@@ -1593,6 +1637,7 @@ func _reset_runtime() -> void:
 	challenge_resolver = ChallengeResolverModel.new()
 	combat_encounter_resolver = CombatEncounterResolverModel.new()
 	combat_encounter_resolver.configure(registry)
+	combat_encounter_director = CombatEncounterDirectorModel.new()
 	return_echo_resolver = ReturnEchoResolverModel.new()
 	investigation_resolver = InvestigationResolverModel.new()
 	world_tick_adapter = WorldTickAdapterModel.new()
@@ -1603,6 +1648,9 @@ func _reset_runtime() -> void:
 	travel_routes = []
 	challenge_definitions = []
 	combat_encounter_definitions = []
+	combat_encounter_seed = 1
+	combat_encounter_selections = {}
+	combat_encounter_selection_reports = {}
 	return_echo_definitions = []
 	investigation_definitions = []
 	market_policies = []
@@ -1864,6 +1912,10 @@ func _runtime_cursor_save_data() -> Dictionary:
 		"challenge_count": challenge_count,
 		"challenge_preparation_count": challenge_preparation_count,
 		"combat_encounter_count": combat_encounter_count,
+		"combat_encounter_seed": combat_encounter_seed,
+		"combat_encounter_selections": (
+			combat_encounter_selections.duplicate(true)
+		),
 		"return_echo_count": return_echo_count,
 		"investigation_count": investigation_count,
 		"investigation_defer_count": investigation_defer_count,
@@ -1884,6 +1936,18 @@ func _restore_runtime_cursors(value: Variant) -> void:
 	combat_encounter_count = maxi(int(cursors.get(
 		"combat_encounter_count", 0
 	)), 0)
+	combat_encounter_seed = int(cursors.get(
+		"combat_encounter_seed", combat_encounter_seed
+	))
+	var saved_encounter_selections: Variant = cursors.get(
+		"combat_encounter_selections", {}
+	)
+	combat_encounter_selections = (
+		(saved_encounter_selections as Dictionary).duplicate(true)
+		if saved_encounter_selections is Dictionary
+		else {}
+	)
+	combat_encounter_selection_reports = {}
 	return_echo_count = maxi(int(cursors.get("return_echo_count", 0)), 0)
 	investigation_count = maxi(int(cursors.get("investigation_count", 0)), 0)
 	investigation_defer_count = maxi(int(cursors.get(
@@ -2112,6 +2176,49 @@ func _find_combat_encounter_option(option_id: String) -> Dictionary:
 	return {}
 
 
+func _active_combat_encounter_definitions(snapshot: Variant) -> Array:
+	var selection: Dictionary = combat_encounter_director.select_for_location(
+		combat_encounter_definitions,
+		snapshot,
+		combat_encounter_seed,
+		combat_encounter_selections
+	)
+	var selection_value: Variant = selection.get("selections", {})
+	combat_encounter_selections = (
+		(selection_value as Dictionary).duplicate(true)
+		if selection_value is Dictionary
+		else {}
+	)
+	var reports_value: Variant = selection.get("reports", {})
+	combat_encounter_selection_reports = (
+		(reports_value as Dictionary).duplicate(true)
+		if reports_value is Dictionary
+		else {}
+	)
+	return (selection.get("encounters", []) as Array).duplicate(true)
+
+
+func _combat_selection_context(encounter: Dictionary) -> Dictionary:
+	var group_id := str(encounter.get("selection_group_id", ""))
+	if group_id == "":
+		return {}
+	var report: Dictionary = combat_encounter_selection_reports.get(
+		group_id, {}
+	)
+	return {
+		"group_id": group_id,
+		"seed": combat_encounter_seed,
+		"candidate_count": int(report.get("candidate_count", 0)),
+		"eligible_candidate_count": int(report.get(
+			"eligible_candidate_count", -1
+		)),
+		"selected_encounter_id": str(report.get(
+			"selected_encounter_id", ""
+		)),
+		"locked": bool(report.get("locked", false)),
+	}
+
+
 func _find_combat_encounter_definition(encounter_id: String) -> Dictionary:
 	for encounter: Dictionary in combat_encounter_definitions:
 		if str(encounter.get("encounter_id", "")) == encounter_id:
@@ -2149,6 +2256,23 @@ func _combat_encounter_resolved(
 				== "actor_resolved_combat_encounter"
 			and str(fact.get("encounter_id", "")) == encounter_id
 		):
+			return true
+	return false
+
+
+func _combat_encounter_group_resolved(
+		encounter: Dictionary, snapshot: Variant
+) -> bool:
+	var group_id := str(encounter.get("selection_group_id", ""))
+	if group_id == "":
+		return false
+	for fact: Dictionary in snapshot.get_facts():
+		if str(fact.get("fact_type", "")) != "actor_resolved_combat_encounter":
+			continue
+		var resolved := _find_combat_encounter_definition(str(
+			fact.get("encounter_id", "")
+		))
+		if str(resolved.get("selection_group_id", "")) == group_id:
 			return true
 	return false
 
@@ -2816,6 +2940,7 @@ func _build_combat_encounter_log_entry(
 		"step_index": event_id - 1,
 		"step_id": "combat_encounter_%d" % event_id,
 		"encounter_id": str(option.get("encounter_id", "")),
+		"selection_group_id": str(option.get("selection_group_id", "")),
 		"option_id": str(option.get("option_id", "")),
 		"approach_id": str(option.get("approach_id", "")),
 		"roll": roll,

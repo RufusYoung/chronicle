@@ -29,7 +29,8 @@ func _run() -> void:
 	)
 	_check(
 		bool(start.get("success", false))
-		and int(start.get("combat_encounter_definition_count", 0)) == 1
+		and int(start.get("combat_encounter_definition_count", 0)) == 2
+		and int(start.get("combat_encounter_seed", 0)) == 516
 		and str(session.get_snapshot().get_equipped_item(
 			"player", "main_hand"
 		).get("item_instance_id", "")) == HAMMER_ID

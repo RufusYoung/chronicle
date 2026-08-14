@@ -320,12 +320,29 @@ func build_view_data() -> Dictionary:
 	var location: Dictionary = snapshot.location
 	var visible_people: Array[Dictionary] = []
 	var visible_observations: Array[Dictionary] = []
+	var visible_entity_ids: Array[String] = []
 	for entity: Dictionary in snapshot.get_visible_entities():
 		var row := _entity_row(entity, snapshot)
+		visible_entity_ids.append(str(entity.get("id", "")))
 		if str(entity.get("type", "")) == "person":
 			visible_people.append(row)
 		else:
 			visible_observations.append(row)
+	var encounter_options: Array = session.get_combat_encounter_options()
+	if not encounter_options.is_empty():
+		var preview: Dictionary = (
+			(encounter_options[0] as Dictionary).get("preview", {})
+		)
+		var enemy_id := str((preview.get(
+			"enemy_observation", {}
+		) as Dictionary).get("entity_id", ""))
+		var enemy_entity: Dictionary = snapshot.get_entity(enemy_id)
+		if enemy_id != "" and enemy_id not in visible_entity_ids:
+			var enemy_row := _entity_row(enemy_entity, snapshot)
+			if str(enemy_entity.get("type", "")) == "person":
+				visible_people.append(enemy_row)
+			else:
+				visible_observations.append(enemy_row)
 	var observation_ids: Array[String] = []
 	for observation: Dictionary in visible_observations:
 		observation_ids.append(str(observation.get("id", "")))
@@ -789,6 +806,7 @@ func _combat_risk_view() -> Dictionary:
 	var first: Dictionary = options[0]
 	var preview: Dictionary = first.get("preview", {})
 	var enemy: Dictionary = preview.get("enemy_observation", {})
+	var selection_context: Dictionary = first.get("selection_context", {})
 	var features: Array[String] = []
 	for feature: Variant in enemy.get("observable_features", []):
 		features.append("• %s" % str(feature))
@@ -809,7 +827,14 @@ func _combat_risk_view() -> Dictionary:
 		],
 		"check_text": "d6 检定　%s" % "　/　".join(checks),
 		"prepared": true,
-		"preparation_text": "当前装备与伤势已经计入每个选择的有效数值。",
+		"preparation_text": (
+			"地点、地区状态与在场实体筛出 %d 个可用候选；本次选择已锁定并会随存档保留。\n当前装备与伤势已经计入每个选择的有效数值。"
+			% maxi(int(selection_context.get(
+				"eligible_candidate_count", 1
+			)), 1)
+			if not selection_context.is_empty()
+			else "当前装备与伤势已经计入每个选择的有效数值。"
+		),
 		"failure_hint": "选择会立刻推进 1 小时并只结算一次；失败会留下明确代价，但不会立即死亡。",
 	}
 
@@ -2105,6 +2130,12 @@ func _fact_text(
 			"actor_scrambled_away_from_mist_salt_claimant",
 			"mist_salt_claimant_shared_water_warning",
 			"mist_salt_claimant_refused_warning",
+			"mist_salt_brine_boar_driven_off",
+			"mist_salt_brine_boar_broke_guard",
+			"actor_evaded_mist_salt_brine_boar",
+			"actor_escaped_brine_boar_after_lantern_hit",
+			"mist_salt_brine_boar_lured_from_well",
+			"mist_salt_brine_boar_ignored_lure",
 			"actor_injured_during_combat",
 		]:
 			return summary
