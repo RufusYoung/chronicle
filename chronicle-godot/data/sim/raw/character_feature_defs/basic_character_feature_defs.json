@@ -132,6 +132,35 @@
       "modifiers": []
     },
     {
+      "trait_def_id": "trait.combat_bruising",
+      "definition_version": 1,
+      "display_name_key": "trait.combat_bruising.name",
+      "display_name": "战斗挫伤",
+      "tags": ["physical", "injury", "recoverable", "combat"],
+      "stage_order": ["fresh", "recovering", "healed"],
+      "terminal_stages": ["healed"],
+      "allow_multiple_instances": true,
+      "legacy_state_value": "combat_bruising",
+      "source_fact_rules": [
+        {
+          "fact_type": "actor_injured_during_combat",
+          "field_equals": {"injury": "combat_bruising"},
+          "stage_id": "fresh",
+          "severity": 1
+        }
+      ],
+      "modifiers": [
+        {
+          "modifier_id": "combat_bruising_guard_penalty",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": -1,
+          "when": [{"kind": "action_tag", "tag": "combat"}],
+          "explain_text": "新鲜挫伤让防守动作慢了半拍。"
+        }
+      ]
+    },
+    {
       "trait_def_id": "trait.mist_salt_throat_burn",
       "definition_version": 1,
       "display_name_key": "trait.mist_salt_throat_burn.name",

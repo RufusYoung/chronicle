@@ -97,6 +97,14 @@
           "value": -2,
           "when": [{"kind": "context_tag", "tag": "freezing"}],
           "explain_text": "上蜡冬衣挡住冻风，降低暴露风险。"
+        },
+        {
+          "modifier_id": "waxed_cloak_combat_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": 2,
+          "when": [{"kind": "action_tag", "tag": "combat"}],
+          "explain_text": "厚实的上蜡冬衣缓冲了擦碰和撕咬。"
         }
       ],
       "base_value": 24
@@ -162,8 +170,61 @@
       "equip_slots": ["main_hand"],
       "capabilities": ["equip", "trade", "repair"],
       "durability": {"maximum": 80},
-      "modifiers": [],
+      "modifiers": [
+        {
+          "modifier_id": "field_hammer_melee_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 2,
+          "when": [{"kind": "action_tag", "tag": "combat_melee"}],
+          "explain_text": "野战工锤沉重结实，可以当作笨拙的近身武器。"
+        },
+        {
+          "modifier_id": "field_hammer_combat_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": 1,
+          "when": [{"kind": "action_tag", "tag": "combat"}],
+          "explain_text": "工锤的长柄可以勉强格开一次扑击。"
+        }
+      ],
       "base_value": 15
+    },
+    {
+      "item_def_id": "item.outpost_boar_spear",
+      "definition_version": 1,
+      "display_name_key": "item.outpost_boar_spear.name",
+      "display_name": "哨站猎豕矛",
+      "item_kind": "weapon",
+      "tags": ["weapon", "main_hand", "spear", "melee_weapon", "outpost_gear"],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 2.2,
+      "equip_slots": ["main_hand"],
+      "capabilities": ["equip", "trade", "repair"],
+      "durability": {"maximum": 90},
+      "modifiers": [
+        {
+          "modifier_id": "boar_spear_melee_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 4,
+          "when": [{"kind": "action_tag", "tag": "combat_melee"}],
+          "explain_text": "猎豕矛提供了稳定的刺击距离。"
+        },
+        {
+          "modifier_id": "boar_spear_brace_against_charge",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {"kind": "action_tag", "tag": "combat_melee"},
+            {"kind": "context_tag", "tag": "enemy_charging"}
+          ],
+          "explain_text": "面对正在冲锋的敌人，矛尾抵地能把冲力反送回去。"
+        }
+      ],
+      "base_value": 28
     },
     {
       "item_def_id": "item.patrol_lantern",
@@ -186,6 +247,17 @@
           "value": -1,
           "when": [{"kind": "action_tag", "tag": "dim_light"}],
           "explain_text": "遮光巡灯照亮近处，又不把整个人暴露在雾里。"
+        },
+        {
+          "modifier_id": "patrol_lantern_dim_retreat",
+          "target": "combat.escape",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {"kind": "action_tag", "tag": "combat_retreat"},
+            {"kind": "context_tag", "tag": "dim_light"}
+          ],
+          "explain_text": "遮光巡灯照出退路，同时没有把身形完全暴露给追击者。"
         }
       ],
       "base_value": 12

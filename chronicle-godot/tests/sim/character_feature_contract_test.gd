@@ -33,10 +33,11 @@ func _run() -> void:
 	])
 	_check(
 		bool(definition_report.get("ok", false))
-		and int(definition_report.get("total_definition_count", 0)) == 62
+		and int(definition_report.get("total_definition_count", 0)) == 63
 		and registry.has_definition("talent", "talent.night_adapted_eyes")
 		and registry.has_definition("talent", "talent.steady_hands")
 		and registry.has_definition("trait", "trait.twisted_ankle")
+		and registry.has_definition("trait", "trait.combat_bruising")
 		and registry.has_definition("trait", "trait.winter_work_callus")
 		and registry.has_definition("trait", "trait.fire_circle_belonging")
 		and registry.has_definition("mark", "mark.mist_salt_echo")
@@ -329,7 +330,7 @@ func _run() -> void:
 	var snapshot: Variant = session.get_snapshot()
 	var progress: Dictionary = snapshot.get_character_progress()
 	_check(
-		int(start.get("definition_count", 0)) == 80
+		int(start.get("definition_count", 0)) == 82
 		and session.stores.has("character_feature_store")
 		and int((progress.get("attributes", {}) as Dictionary).get(
 			"perception",

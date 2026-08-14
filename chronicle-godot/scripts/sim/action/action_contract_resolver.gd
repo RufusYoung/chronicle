@@ -42,6 +42,9 @@ func evaluate(
 		"modifier_explanations": modifier_result.get(
 			"modifier_explanations", []
 		),
+		"modifier_evaluations": modifier_result.get(
+			"modifier_evaluations", []
+		),
 	}
 
 
@@ -130,20 +133,39 @@ func evaluate_modifiers(
 	)
 	var values := base_values.duplicate(true)
 	var explanations: Array[Dictionary] = []
+	var evaluations: Array[Dictionary] = []
 	for entry: Dictionary in collected:
 		var modifier: Dictionary = entry.get("modifier", {})
-		if not _modifier_matches(
+		var match_report := _modifier_match_report(
 			snapshot, modifier, contract, actor_id, target_id, entry
-		):
+		)
+		var evaluation := {
+			"modifier_id": str(modifier.get("modifier_id", "")),
+			"source_kind": str(entry.get("source_kind", "action")),
+			"source_id": str(entry.get("source_id", "")),
+			"source_label": str(entry.get("source_label", "未知来源")),
+			"target": str(modifier.get("target", "")),
+			"reason": str(modifier.get(
+				"explain_text",
+				modifier.get("player_facing_reason", "")
+			)),
+			"applied": bool(match_report.get("matches", false)),
+			"unmet_conditions": match_report.get("unmet_conditions", []),
+		}
+		if not bool(match_report.get("matches", false)):
+			evaluations.append(evaluation)
 			continue
 		var target := str(modifier.get("target", ""))
 		if target == "":
+			evaluation["applied"] = false
+			evaluation["unmet_conditions"] = ["修正没有目标数值"]
+			evaluations.append(evaluation)
 			continue
 		var before := float(values.get(target, 0.0))
 		var amount := float(modifier.get("value", 0.0))
 		var after := _apply_modifier(before, modifier)
 		values[target] = after
-		explanations.append({
+		var applied_row := {
 			"modifier_id": str(modifier.get("modifier_id", "")),
 			"source_kind": str(entry.get("source_kind", "action")),
 			"source_id": str(entry.get("source_id", "")),
@@ -157,11 +179,16 @@ func evaluate_modifiers(
 				"explain_text",
 				modifier.get("player_facing_reason", "")
 			)),
-		})
+		}
+		explanations.append(applied_row)
+		evaluation.merge(applied_row, true)
+		evaluation["applied"] = true
+		evaluations.append(evaluation)
 	return {
 		"base_values": base_values,
 		"modified_values": values,
 		"modifier_explanations": explanations,
+		"modifier_evaluations": evaluations,
 	}
 
 
@@ -486,19 +513,22 @@ func _append_modifier_rows(
 		rows.append(row)
 
 
-func _modifier_matches(
+func _modifier_match_report(
 		snapshot: Variant,
 		modifier: Dictionary,
 		contract: Dictionary,
 		actor_id: String,
 		target_id: String,
 		entry: Dictionary
-) -> bool:
+) -> Dictionary:
+	var unmet: Array[String] = []
 	var source_data: Dictionary = entry.get("source_data", {})
 	if entry.get("source_kind") == "skill" and int(source_data.get(
 		"rank", 0
 	)) < int(modifier.get("minimum_rank", 0)):
-		return false
+		unmet.append("技艺等级至少需要 %d" % int(modifier.get(
+			"minimum_rank", 0
+		)))
 	var action_tags: Array = contract.get("action_tags", [])
 	var context_tags: Array = snapshot.get_location_tags()
 	for tag: Variant in contract.get("context_tags", []):
@@ -506,21 +536,32 @@ func _modifier_matches(
 			context_tags.append(tag)
 	for condition_value: Variant in modifier.get("when", []):
 		if not condition_value is Dictionary:
-			return false
+			unmet.append("存在无法识别的触发条件")
+			continue
 		var condition := condition_value as Dictionary
 		match str(condition.get("kind", "")):
 			"action_tag":
 				if str(condition.get("tag", "")) not in action_tags:
-					return false
+					unmet.append("需要行动特征：%s" % str(
+						condition.get("tag", "")
+					))
 			"context_tag":
 				if str(condition.get("tag", "")) not in context_tags:
-					return false
+					unmet.append("需要环境或目标特征：%s" % str(
+						condition.get("tag", "")
+					))
 			_:
-				if not bool(_evaluate_condition(
+				var condition_result := _evaluate_condition(
 					snapshot, condition, actor_id, target_id
-				).get("met", false)):
-					return false
-	return true
+				)
+				if not bool(condition_result.get("met", false)):
+					unmet.append(str(condition_result.get(
+						"explanation", "条件未满足"
+					)))
+	return {
+		"matches": unmet.is_empty(),
+		"unmet_conditions": unmet,
+	}
 
 
 func _apply_modifier(current: float, modifier: Dictionary) -> float:
