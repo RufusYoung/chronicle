@@ -325,6 +325,22 @@
       "durability": {},
       "modifiers": [],
       "base_value": 4
+    },
+    {
+      "item_def_id": "item.raw_salt_portion",
+      "definition_version": 1,
+      "display_name_key": "item.raw_salt_portion.name",
+      "display_name": "浅盘原盐",
+      "item_kind": "trade_good",
+      "tags": ["salt", "preservative", "trade_good", "livelihood_product"],
+      "stackable": true,
+      "max_stack": 30,
+      "base_mass": 0.25,
+      "equip_slots": [],
+      "capabilities": ["trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 5
     }
   ]
 }

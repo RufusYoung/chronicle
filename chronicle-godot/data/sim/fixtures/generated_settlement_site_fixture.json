@@ -1,0 +1,50 @@
+{
+  "fixture_id": "generated_settlement_site",
+  "world_id": "world.generated_settlement_contract",
+  "actor_id": "player",
+  "challenge_seed": 73001,
+  "locations": {},
+  "region_state": {},
+  "institution": {},
+  "entities": [],
+  "player": {
+    "id": "player",
+    "type": "person",
+    "role": "traveler",
+    "display_name": "旅人",
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
+    "perception": 10,
+    "health": 100
+  },
+  "known_facts": [],
+  "initial_items": [],
+  "initial_relationships": {},
+  "initial_chronicle_entries": [],
+  "settlement_generation": {
+    "definition_path": "res://data/sim/raw/generation_defs/north_border_settlements_v1.json",
+    "site_id": "north_lake_margin",
+    "terrain": {
+      "terrain_id": "lake_marsh_edge",
+      "tags": ["waterside", "marsh", "slope"],
+      "habitable_area": 3,
+      "flood_exposure": 3
+    },
+    "resources": [
+      {"resource_id": "resource.north_lake_fish", "tags": ["fish", "food", "water"], "abundance": 4, "reliability": 4},
+      {"resource_id": "resource.margin_reeds", "tags": ["reeds", "fiber"], "abundance": 4, "reliability": 5},
+      {"resource_id": "resource.thin_slope_soil", "tags": ["soil", "roots", "food"], "abundance": 2, "reliability": 3},
+      {"resource_id": "resource.shallow_brine", "tags": ["salt", "brine"], "abundance": 1, "reliability": 2}
+    ],
+    "traffic": [
+      {"traffic_id": "traffic.south_cart_track", "mode": "road", "capacity": 2, "reliability": 3, "risk": 2},
+      {"traffic_id": "traffic.lake_shore_boats", "mode": "waterway", "capacity": 3, "reliability": 3, "risk": 1}
+    ]
+  },
+  "resident_generation": {
+    "definition_path": "res://data/sim/raw/generation_defs/north_border_residents_v1.json"
+  }
+}

@@ -25,6 +25,7 @@ var _playtest_end_state := ""
 @onready var risk_heading: Label = %RiskHeading
 @onready var risk_text: RichTextLabel = %RiskText
 @onready var travel_heading: Label = %TravelHeading
+@onready var travel_scroll: ScrollContainer = %TravelScroll
 @onready var travel_buttons: VBoxContainer = %TravelButtons
 @onready var feedback_title: Label = %FeedbackTitle
 @onready var feedback_body: RichTextLabel = %FeedbackBody
@@ -35,6 +36,7 @@ var _playtest_end_state := ""
 @onready var action_buttons: FlowContainer = %ActionButtons
 @onready var time_label: Label = %TimeLabel
 @onready var session_label: Label = %SessionLabel
+@onready var brand_subtitle: Label = %BrandSubtitle
 @onready var wait_button: Button = %WaitButton
 @onready var restart_button: Button = %RestartButton
 @onready var intro_dialog: AcceptDialog = %IntroDialog
@@ -124,7 +126,13 @@ func refresh_view() -> void:
 	location_title.text = str(location.get("title", "未知地点"))
 	location_context.text = str(location.get("context", ""))
 	location_description.text = str(location.get("description", ""))
-	_refresh_playtest(current_view_data.get("playtest", {}) as Dictionary)
+	var playtest: Dictionary = current_view_data.get("playtest", {})
+	brand_subtitle.text = (
+		"生成聚落现场 / INTERNAL PLAYTEST"
+		if str(playtest.get("mode", "")) == "generated_settlement"
+		else "湖湾镇垂直切片 / INTERNAL PLAYTEST"
+	)
+	_refresh_playtest(playtest)
 
 	var player: Dictionary = current_view_data.get("player", {})
 	player_summary.text = str(player.get("summary", ""))
@@ -426,6 +434,10 @@ func _refresh_right_panel_density(compact: bool) -> void:
 func _refresh_travel_options(options: Array) -> void:
 	_clear_children(travel_buttons)
 	travel_heading.text = "可以前往　%d 处" % options.size()
+	travel_scroll.custom_minimum_size.y = mini(
+		maxi(options.size(), 1) * 48,
+		150
+	)
 	for option_value: Variant in options:
 		var option := option_value as Dictionary
 		var button := Button.new()
@@ -455,6 +467,7 @@ func _refresh_feedback(feedback: Dictionary) -> void:
 
 func _refresh_history(history: Array) -> void:
 	if history.is_empty():
+		history_text.custom_minimum_size.y = 48
 		history_text.text = "还没有发生行动。"
 		return
 	var rows: Array[String] = []

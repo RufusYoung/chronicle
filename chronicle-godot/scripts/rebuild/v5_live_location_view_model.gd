@@ -389,6 +389,28 @@ func build_view_data() -> Dictionary:
 
 func _playtest_view(snapshot: Variant) -> Dictionary:
 	var location_id := str(snapshot.location.get("id", ""))
+	if _has_fact(snapshot, "settlement_generated"):
+		var at_hub: bool = (
+			"public_space" in (snapshot.location.get("tags", []) as Array)
+		)
+		return {
+			"mode": "generated_settlement",
+			"stage": 1 if at_hub else 2,
+			"stage_count": 3,
+			"completed": false,
+			"failed": false,
+			"title": (
+				"认识这座生成聚落"
+				if at_hub
+				else "查看产业如何占据地点"
+			),
+			"summary": (
+				"聚落的规模、产业和道路来自地形、资源与交通。选择一处实际形成的设施前往。"
+				if at_hub
+				else "这里的设施承接居民工作、物品生产和后续风险；沿内部道路可以返回集地。"
+			),
+			"hint": "等待会让生成居民继续生活和生产。",
+		}
 	if _has_fact(
 			snapshot,
 			"actor_traveled_route",
@@ -940,6 +962,14 @@ func _rumor_row(rumor: Dictionary) -> Dictionary:
 
 func _player_view(snapshot: Variant) -> Dictionary:
 	var role := str(snapshot.get_player_value("role", "traveler"))
+	var role_label := _role_label(role)
+	for fact: Dictionary in snapshot.get_facts():
+		if str(fact.get("fact_type", "")) != "settlement_generated":
+			continue
+		role_label = "途经%s的旅人" % str(fact.get(
+			"settlement_name", "这座聚落"
+		))
+		break
 	var strength := int(snapshot.get_player_value("strength", 0))
 	var dexterity := int(snapshot.get_player_value("dexterity", 0))
 	var wisdom := int(snapshot.get_player_value("wisdom", 0))
@@ -962,7 +992,7 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		)
 	return {
 		"title": "无名旅人",
-		"role": _role_label(role),
+		"role": role_label,
 		"food_count": int(snapshot.get_player_value("food_count", 0)),
 		"strength": strength,
 		"dexterity": dexterity,
@@ -976,7 +1006,7 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		"mist_salt_echo": mist_salt_echo,
 		"items": item_names,
 		"summary": "身份　%s%s\n力量 %d　敏捷 %d　智慧 %d\n魅力 %d　体质 %d　感知 %d\n食物　%d 份　健康　%d　疲劳　%d / 10\n伤势　%s\n随身物品　%s" % [
-			_role_label(role),
+			role_label,
 			long_term_line,
 			strength,
 			dexterity,
@@ -998,6 +1028,9 @@ func _region_status_rows(snapshot: Variant) -> Array:
 	var sources := [
 		["food_pressure", snapshot.region_state],
 		["public_order", snapshot.region_state],
+		["settlement_isolation", snapshot.region_state],
+		["resource_strain", snapshot.region_state],
+		["flood_risk", snapshot.region_state],
 		["market_order", snapshot.institution],
 		["local_guard_attention", snapshot.institution],
 	]
@@ -2044,6 +2077,9 @@ func _status_label(key: String) -> String:
 	return {
 		"food_pressure": "粮食压力",
 		"public_order": "街面秩序",
+		"settlement_isolation": "交通隔绝",
+		"resource_strain": "资源负担",
+		"flood_risk": "水患风险",
 		"market_order": "市场状况",
 		"local_guard_attention": "守卫关注",
 	}.get(key, key)
@@ -2052,9 +2088,23 @@ func _status_label(key: String) -> String:
 func _status_detail(key: String, value: String) -> String:
 	var details := {
 		"food_pressure:high": "存粮正在收紧，价格和人心都受到了挤压。",
+		"food_pressure:medium": "本地食物能维持多数家庭，但季节波动仍会造成缺口。",
+		"food_pressure:low": "本地食物来源目前足以覆盖日常消耗。",
 		"public_order:tense": "表面仍有秩序，但争执随时可能冒出来。",
+		"public_order:stable": "来路风险和聚落规模尚未压垮日常秩序。",
+		"settlement_isolation:high": "可用来路很少，交换和求援都容易中断。",
+		"settlement_isolation:medium": "聚落有固定来路，但运量和可靠性仍然有限。",
+		"settlement_isolation:low": "多条稳定来路维持着人员与物资交换。",
+		"resource_strain:medium": "现有人口接近场址资源能够长期支撑的边缘。",
+		"resource_strain:low": "场址资源对现有人口仍有余量。",
+		"flood_risk:high": "主要住地与生产设施容易受到季节水位影响。",
+		"flood_risk:medium": "部分低地会受涨水影响，设施布局已经避开最危险水线。",
+		"flood_risk:low": "聚落主体位于通常洪水难以抵达的位置。",
 		"market_order:tense": "商贩惜售，买粮的人不愿空手离开。",
+		"market_order:informal": "交换依靠熟人、集地和临时约定，还没有稳定市场规则。",
+		"market_order:stable": "稳定运量已经支撑起较固定的交换秩序。",
 		"local_guard_attention:medium": "守卫已经留意到异样，还没有正式介入。",
+		"local_guard_attention:low": "这里没有常备守卫，安全主要依赖居民轮值。",
 	}
 	return str(details.get("%s:%s" % [key, value], "局势仍在变化。"))
 
@@ -2066,6 +2116,7 @@ func _state_value_label(value: String) -> String:
 		"low": "低",
 		"tense": "紧张",
 		"stable": "稳定",
+		"informal": "非正式",
 	}.get(value, value)
 
 
@@ -2104,6 +2155,26 @@ func _location_tag_label(tag: String) -> String:
 		"subterranean": "地下遗构",
 		"anomalous": "异象区域",
 		"ancient": "年代不明",
+		"settlement": "聚落",
+		"generated_location": "生成地点",
+		"public_space": "公共集地",
+		"hamlet": "小村",
+		"village": "村镇",
+		"small_town": "小镇",
+		"workplace": "生产地点",
+		"generated_facility": "因地形成",
+		"fishery": "浅水渔业",
+		"food_source": "食物来源",
+		"farmland": "坡田",
+		"craft": "手工作坊",
+		"reeds": "泽苇资源",
+		"herbalism": "泽地药草",
+		"road": "道路运输",
+		"transport": "短途转运",
+		"market_access": "对外交换",
+		"watch": "道路守望",
+		"security": "聚落防护",
+		"resource_site": "资源采集地",
 	}.get(tag, "")
 
 
@@ -2112,6 +2183,26 @@ func _fact_text(
 		target_name: String,
 		fact: Dictionary = {}
 ) -> String:
+	if fact_type == "settlement_generated":
+		var settlement_label := str(fact.get("settlement_name", target_name))
+		return "%s由当前场址形成，可长期支撑约 %d 人，初始人口目标为 %d 人。" % [
+			settlement_label,
+			int(fact.get("resident_capacity", 0)),
+			int(fact.get("population_target", 0)),
+		]
+	if fact_type == "settlement_industry_selected":
+		var settlement_label := str(fact.get("settlement_name", target_name))
+		return "%s形成了%s，来源是当地资源、地形或来路条件。" % [
+			settlement_label,
+			_generated_industry_label(str(fact.get("industry_id", ""))),
+		]
+	if fact_type == "resident_generation_completed":
+		var settlement_label := str(fact.get("settlement_name", target_name))
+		return "%s的初册记录了 %d 名居民与 %d 个家庭。" % [
+			settlement_label,
+			int(fact.get("resident_count", 0)),
+			int(fact.get("household_count", 0)),
+		]
 	var summary := str(fact.get("summary", ""))
 	if summary != "":
 		if fact_type == "actor_read_object":
@@ -2174,6 +2265,8 @@ func _fact_text(
 
 
 func _travel_fact_text(fact: Dictionary) -> String:
+	if str(fact.get("route_id", "")).begins_with("generated_route."):
+		return "你走过聚落内部一段由实际设施形成的道路。"
 	match str(fact.get("route_id", "")):
 		"old_chen_shop_to_north_quay_record_house":
 			return "你乘白天的摆渡抵达过北埠旧档房。"
@@ -2185,6 +2278,17 @@ func _travel_fact_text(fact: Dictionary) -> String:
 			return "你从雾盐旧井沿北岸荒路返回了北埠旧档房。"
 		_:
 			return "你完成过一段需要时间和食物的旅程。"
+
+
+func _generated_industry_label(industry_id: String) -> String:
+	return {
+		"fishery": "浅水网渔",
+		"terrace_farming": "坡田耕作",
+		"reed_craft": "苇编与修具",
+		"road_carting": "短途转运",
+		"watch_service": "道路守望",
+		"salt_gathering": "浅盐采集",
+	}.get(industry_id, "一项本地生计")
 
 
 func _challenge_preparation_fact_text(fact: Dictionary) -> String:

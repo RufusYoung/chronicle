@@ -1,0 +1,145 @@
+{
+  "generation_def_id": "generation.settlements.north_border_v1",
+  "definition_version": 1,
+  "name_suffixes": ["村", "坞", "埠"],
+  "terrain_profiles": [
+    {
+      "terrain_id": "lake_marsh_edge",
+      "label": "湖泽交界的缓坡",
+      "description": "湖泽交界、略高于季节水线的缓坡上",
+      "base_capacity": 5,
+      "tags": ["waterside", "marsh", "slope"],
+      "name_stems": ["苇岸", "浅汀", "雾湾", "芦湾"]
+    },
+    {
+      "terrain_id": "river_terrace",
+      "label": "河谷台地",
+      "description": "不易被小洪水淹没的河谷台地上",
+      "base_capacity": 7,
+      "tags": ["riverside", "fertile", "roadside"],
+      "name_stems": ["石渡", "禾湾", "临川", "河阶"]
+    },
+    {
+      "terrain_id": "windy_upland",
+      "label": "多风高地",
+      "description": "水源有限但便于瞭望的多风高地上",
+      "base_capacity": 3,
+      "tags": ["upland", "windy", "defensible"],
+      "name_stems": ["风垭", "望岭", "白坡", "高石"]
+    }
+  ],
+  "size_bands": [
+    {"id": "hamlet", "label": "小村", "maximum_capacity": 17, "facility_count": 3},
+    {"id": "village", "label": "村镇", "maximum_capacity": 27, "facility_count": 4},
+    {"id": "small_town", "label": "小镇", "maximum_capacity": 36, "facility_count": 5}
+  ],
+  "industry_archetypes": [
+    {
+      "industry_id": "fishery",
+      "label": "浅水网渔",
+      "base_score": 1,
+      "required_any_resource_tags": ["fish"],
+      "terrain_tag_weights": {"waterside": 4, "riverside": 3, "marsh": 1},
+      "resource_tag_weights": {"fish": 4, "water": 1},
+      "traffic_mode_weights": {"waterway": 1},
+      "occupation_ids": ["net_fisher"],
+      "travel_hours": 1,
+      "facility": {
+        "id": "landing",
+        "name_suffix": "泊台",
+        "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+        "observation": "木台边挂着按水深分开的网具，今日鱼获会从这里进入家庭和交换。",
+        "tags": ["fishery", "waterside", "food_source"]
+      }
+    },
+    {
+      "industry_id": "terrace_farming",
+      "label": "坡田耕作",
+      "base_score": 1,
+      "required_any_resource_tags": ["soil", "roots"],
+      "terrain_tag_weights": {"slope": 3, "fertile": 4, "upland": 1},
+      "resource_tag_weights": {"soil": 4, "roots": 3, "food": 1},
+      "traffic_mode_weights": {"road": 1},
+      "occupation_ids": ["terrace_farmer"],
+      "travel_hours": 1,
+      "facility": {
+        "id": "terraces",
+        "name_suffix": "坡田",
+        "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+        "observation": "田垄顺坡分层，低处留着排水沟，高处堆放能过冬的块根筐。",
+        "tags": ["farmland", "food_source", "slope"]
+      }
+    },
+    {
+      "industry_id": "reed_craft",
+      "label": "苇编与修具",
+      "base_score": 1,
+      "required_any_resource_tags": ["reeds", "fiber"],
+      "terrain_tag_weights": {"marsh": 3, "waterside": 1},
+      "resource_tag_weights": {"reeds": 5, "fiber": 3, "herbs": 1},
+      "traffic_mode_weights": {"road": 1, "waterway": 1},
+      "occupation_ids": ["reed_weaver", "marsh_herbalist"],
+      "travel_hours": 1,
+      "facility": {
+        "id": "work_shed",
+        "name_suffix": "长工棚",
+        "description": "纤维与泽草容易取得，聚落因此搭起可编苇、修具和晾药的共用长棚。",
+        "observation": "棚梁上垂着湿苇与药束，案面同时留有编席压痕和修具铁屑。",
+        "tags": ["craft", "reeds", "herbalism"]
+      }
+    },
+    {
+      "industry_id": "road_carting",
+      "label": "短途转运",
+      "base_score": 0,
+      "required_any_traffic_modes": ["road"],
+      "terrain_tag_weights": {"roadside": 3, "slope": 1},
+      "resource_tag_weights": {"timber": 1},
+      "traffic_mode_weights": {"road": 5},
+      "occupation_ids": ["road_carter"],
+      "travel_hours": 1,
+      "facility": {
+        "id": "road_yard",
+        "name_suffix": "车坪",
+        "description": "道路运量足以支撑换绳、歇轮与短途转运，泥地被车辙压成了固定车坪。",
+        "observation": "车辙在这里重叠，备用轮、麻绳和过秤木架说明货物会稳定经过。",
+        "tags": ["road", "transport", "market_access"]
+      }
+    },
+    {
+      "industry_id": "watch_service",
+      "label": "道路守望",
+      "base_score": 1,
+      "terrain_tag_weights": {"defensible": 4, "upland": 3, "slope": 1},
+      "resource_tag_weights": {},
+      "traffic_mode_weights": {"road": 2, "waterway": 1},
+      "occupation_ids": ["watch_hand"],
+      "travel_hours": 1,
+      "facility": {
+        "id": "watch_post",
+        "name_suffix": "守望台",
+        "description": "地势和来路风险共同促成了守望点，值守者能提前看见靠近聚落的人与船。",
+        "observation": "矮台朝向主要来路，巡铃、遮雨火盆和换班刻痕都已投入使用。",
+        "tags": ["watch", "security", "high_ground"]
+      }
+    },
+    {
+      "industry_id": "salt_gathering",
+      "label": "浅盐采集",
+      "base_score": 0,
+      "required_any_resource_tags": ["salt", "brine"],
+      "terrain_tag_weights": {"marsh": 1, "waterside": 1},
+      "resource_tag_weights": {"salt": 5, "brine": 4},
+      "traffic_mode_weights": {"road": 1, "waterway": 1},
+      "occupation_ids": ["salt_gatherer"],
+      "travel_hours": 1,
+      "facility": {
+        "id": "salt_pans",
+        "name_suffix": "晒盐坪",
+        "description": "浅卤资源足够稳定，居民沿低地修出小片蒸晒盐坪。",
+        "observation": "浅盘边缘结着白壳，木耙和遮雨布说明这里并非偶然取盐。",
+        "tags": ["salt", "brine", "resource_site"]
+      }
+    }
+  ]
+}

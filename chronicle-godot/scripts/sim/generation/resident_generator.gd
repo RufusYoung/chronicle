@@ -39,7 +39,9 @@ func generate_fixture(
 	var settlement_id := str(config.get("settlement_id", ""))
 	if settlement_id == "" or not _fixture_has_entity(fixture, settlement_id):
 		return _failure("settlement_entity_missing")
-	var occupations: Array = definition.get("occupations", [])
+	var occupations := _configured_occupations(
+		definition.get("occupations", []), config
+	)
 	var occupation_error := _occupation_reference_error(occupations, locations)
 	if occupation_error != "":
 		return _failure(occupation_error)
@@ -90,6 +92,7 @@ func generate_fixture(
 		"actor_id": settlement_id,
 		"generation_id": generation_id,
 		"generation_seed": seed,
+		"settlement_name": str(config.get("settlement_name", settlement_id)),
 		"resident_count": count,
 		"household_count": household_count,
 		"definition_version": int(definition.get("definition_version", 1)),
@@ -336,6 +339,39 @@ func _occupation_reference_error(occupations: Array, locations: Dictionary) -> S
 				occupation.get("occupation_id", "")
 			)
 	return ""
+
+
+func _configured_occupations(
+		occupation_values: Variant, config: Dictionary
+) -> Array:
+	var rows: Array = []
+	if not occupation_values is Array:
+		return rows
+	var bindings: Dictionary = config.get("workplace_bindings", {})
+	var active_ids: Array = config.get("active_occupation_ids", [])
+	for occupation_value: Variant in occupation_values:
+		if not occupation_value is Dictionary:
+			continue
+		var occupation := (occupation_value as Dictionary).duplicate(true)
+		var occupation_id := str(occupation.get("occupation_id", ""))
+		if (
+			bool(occupation.get("generated_only", false))
+			and not bindings.has(occupation_id)
+		):
+			continue
+		if not active_ids.is_empty() and occupation_id not in active_ids:
+			continue
+		if bindings.has(occupation_id):
+			occupation["workplace_id"] = str(bindings[occupation_id])
+		if (
+			bool(config.get("require_active_occupations", false))
+			and occupation_id in active_ids
+		):
+			occupation["minimum_slots"] = maxi(
+				int(occupation.get("minimum_slots", 0)), 1
+			)
+		rows.append(occupation)
+	return rows
 
 
 func _household_sizes(

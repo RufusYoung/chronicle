@@ -62,6 +62,9 @@ const MarketServiceModel = preload(
 const ResidentGeneratorModel = preload(
 	"res://scripts/sim/generation/resident_generator.gd"
 )
+const SettlementGeneratorModel = preload(
+	"res://scripts/sim/generation/settlement_generator.gd"
+)
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -111,6 +114,7 @@ var combat_encounter_selection_reports: Dictionary = {}
 var return_echo_definitions: Array = []
 var investigation_definitions: Array = []
 var market_policies: Array = []
+var settlement_generation_report: Dictionary = {}
 var resident_generation_report: Dictionary = {}
 var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var save_envelope_service: Variant = SaveEnvelopeServiceModel.new()
@@ -152,7 +156,10 @@ func start_from_fixture_path(
 		))
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
-		if resident_generation_report.is_empty():
+		if (
+			settlement_generation_report.is_empty()
+			and resident_generation_report.is_empty()
+		):
 			fixture_source_path = fixture_path
 			fixture_source_data = {}
 	return result
@@ -163,6 +170,15 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if fixture.is_empty():
 		return _start_failure("fixture_not_loaded")
 	fixture = fixture.duplicate(true)
+	var settlement_result := _apply_settlement_generation(fixture)
+	if not bool(settlement_result.get("ok", false)):
+		var failed := _start_failure("settlement_generation_failed")
+		failed["generation_error"] = str(settlement_result.get("error", ""))
+		return failed
+	fixture = settlement_result.get("fixture", fixture)
+	settlement_generation_report = (
+		settlement_result.get("report", {}) as Dictionary
+	).duplicate(true)
 	var generation_result := _apply_resident_generation(fixture)
 	if not bool(generation_result.get("ok", false)):
 		var failed := _start_failure("resident_generation_failed")
@@ -286,6 +302,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"investigation_definition_count": investigation_definitions.size(),
 		"autonomous_action_rule_count": autonomous_action_rules.size(),
 		"npc_need_profile_count": npc_need_profiles.size(),
+		"settlement_generation": settlement_generation_report.duplicate(true),
 		"resident_generation": resident_generation_report.duplicate(true),
 		"candidate_count": get_action_candidates().size(),
 		"definition_count": int(definition_report.get(
@@ -1443,6 +1460,9 @@ func build_save_envelope(options: Dictionary = {}) -> Dictionary:
 			"fixture_id": fixture_id,
 			"actor_entity_id": str(context.actor_id),
 			"current_location_id": str(context.location_id),
+			"settlement_generation": (
+				settlement_generation_report.duplicate(true)
+			),
 			"resident_generation": resident_generation_report.duplicate(true),
 			"runtime_cursors": _runtime_cursor_save_data(),
 			"life_project_runtime": (
@@ -1533,10 +1553,15 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 		_reset_runtime()
 		return _save_failure("save_actor_id_mismatch", "session")
 	if not context.set_current_location(str(
-			session_data.get("current_location_id", "")
+		session_data.get("current_location_id", "")
 	)):
 		_reset_runtime()
 		return _save_failure("save_location_unknown", "session")
+	settlement_generation_report = (
+		session_data.get(
+			"settlement_generation", settlement_generation_report
+		) as Dictionary
+	).duplicate(true)
 	resident_generation_report = (
 		session_data.get(
 			"resident_generation", resident_generation_report
@@ -1603,6 +1628,8 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		"combat_encounter_selections": (
 			combat_encounter_selections.duplicate(true)
 		),
+		"settlement_generation": settlement_generation_report.duplicate(true),
+		"resident_generation": resident_generation_report.duplicate(true),
 		"return_echoes_resolved": return_echo_count,
 		"investigations_resolved": investigation_count,
 		"investigations_deferred": investigation_defer_count,
@@ -1654,6 +1681,7 @@ func _reset_runtime() -> void:
 	return_echo_definitions = []
 	investigation_definitions = []
 	market_policies = []
+	settlement_generation_report = {}
 	resident_generation_report = {}
 	challenge_rng = RandomNumberGenerator.new()
 	market_service = MarketServiceModel.new()
@@ -1675,6 +1703,23 @@ func _reset_runtime() -> void:
 	current_day = 1
 	current_hour = 8
 	elapsed_hours_since_start = 0
+
+
+func _apply_settlement_generation(fixture: Dictionary) -> Dictionary:
+	var config: Dictionary = fixture.get("settlement_generation", {})
+	if config.is_empty():
+		return {"ok": true, "fixture": fixture.duplicate(true), "report": {}}
+	var definition_path := str(config.get("definition_path", ""))
+	if definition_path == "":
+		return {"ok": false, "error": "generation_definition_path_missing"}
+	var definition: Dictionary = registry.load_json(definition_path)
+	if definition.is_empty():
+		return {"ok": false, "error": "generation_definition_not_loaded"}
+	fixture_source_path = ""
+	fixture_source_data = fixture.duplicate(true)
+	return SettlementGeneratorModel.new().generate_fixture(
+		fixture, config, definition
+	)
 
 
 func _apply_resident_generation(fixture: Dictionary) -> Dictionary:
