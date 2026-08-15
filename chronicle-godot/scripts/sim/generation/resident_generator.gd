@@ -60,6 +60,9 @@ func generate_fixture(
 	if surnames.is_empty() or given_names.is_empty():
 		return _failure("resident_name_pool_missing")
 	var culture_id := str(definition.get("culture_id", "culture.unknown"))
+	var id_namespace := _safe_id(str(config.get(
+		"id_namespace", fixture.get("fixture_id", "world")
+	)))
 	var generation_id := "%s:%d" % [
 		str(definition.get("generation_def_id", "generation.residents")), seed
 	]
@@ -86,7 +89,7 @@ func generate_fixture(
 
 	facts.append({
 		"fact_id": "fact.generated_resident_batch.%s.%d" % [
-			str(fixture.get("fixture_id", "world")), seed
+			id_namespace, seed
 		],
 		"fact_type": "resident_generation_completed",
 		"actor_id": settlement_id,
@@ -102,10 +105,10 @@ func generate_fixture(
 	for household_index: int in range(household_count):
 		var household_number := household_index + 1
 		var household_id := "generated_household.%s.%02d" % [
-			str(fixture.get("fixture_id", "world")), household_number
+			id_namespace, household_number
 		]
 		var home_id := "generated_home.%s.%02d" % [
-			str(fixture.get("fixture_id", "world")), household_number
+			id_namespace, household_number
 		]
 		var surname := str(surnames[rng.randi_range(0, surnames.size() - 1)])
 		locations[home_id] = {
@@ -138,7 +141,7 @@ func generate_fixture(
 		for member_index: int in range(int(household_sizes[household_index])):
 			resident_index += 1
 			var resident_id := "generated_resident.%s.%03d" % [
-				str(fixture.get("fixture_id", "world")), resident_index
+				id_namespace, resident_index
 			]
 			var display_name := _unique_name(
 				surname, given_names, used_names, rng, resident_index
@@ -267,7 +270,7 @@ func generate_fixture(
 	)
 	chronicles.append({
 		"entry_id": "chronicle.generated_residents.%s.%d" % [
-			str(fixture.get("fixture_id", "world")), seed
+			id_namespace, seed
 		],
 		"subject_id": settlement_id,
 		"title": "%s的人口初册" % str(config.get("settlement_name", settlement_id)),
@@ -281,14 +284,22 @@ func generate_fixture(
 	fixture["initial_relationships"] = relationships
 	fixture["initial_items"] = items
 	fixture["initial_chronicle_entries"] = chronicles
-	fixture["generated_livelihood_profiles"] = _livelihood_profiles(
+	var generated_profiles := _livelihood_profiles(
 		occupations,
-		config.get("livelihood_resource_bindings", {})
+		config.get("livelihood_resource_bindings", {}),
+		settlement_id
 	)
+	var accumulated_profiles: Array = (
+		fixture.get("generated_livelihood_profiles", []) as Array
+	).duplicate(true)
+	accumulated_profiles.append_array(generated_profiles)
+	fixture["generated_livelihood_profiles"] = accumulated_profiles
 	var report := {
 		"ok": true,
 		"generation_id": generation_id,
 		"generation_seed": seed,
+		"id_namespace": id_namespace,
+		"settlement_id": settlement_id,
 		"resident_count": resident_ids.size(),
 		"household_count": household_ids.size(),
 		"resident_ids": resident_ids,
@@ -908,7 +919,8 @@ func _coin_stack(
 
 func _livelihood_profiles(
 		occupations: Array,
-		resource_bindings_value: Variant = {}
+		resource_bindings_value: Variant = {},
+		settlement_id: String = ""
 ) -> Array:
 	var rows: Array = []
 	var resource_bindings: Dictionary = (
@@ -923,6 +935,7 @@ func _livelihood_profiles(
 		var occupation_id := str(occupation.get("occupation_id", ""))
 		var profile := {
 			"occupation_id": occupation_id,
+			"settlement_id": settlement_id,
 			"actor_tags_all": ["generated_worker"],
 			"work_interval_hours": int(occupation.get(
 				"work_interval_hours", 8

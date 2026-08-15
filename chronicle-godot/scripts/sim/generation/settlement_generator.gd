@@ -123,6 +123,7 @@ func generate_fixture(
 		],
 		"generation_source": {
 			"generation_seed": seed,
+			"settlement_id": settlement_id,
 			"terrain_id": terrain_id,
 			"resident_capacity": resident_capacity,
 		},
@@ -349,7 +350,11 @@ func generate_fixture(
 	fixture["entities"] = entities
 	fixture["known_facts"] = facts
 	fixture["initial_chronicle_entries"] = chronicles
-	fixture["initial_resource_stocks"] = resource_stocks
+	var accumulated_resource_stocks: Array = (
+		fixture.get("initial_resource_stocks", []) as Array
+	).duplicate(true)
+	accumulated_resource_stocks.append_array(resource_stocks)
+	fixture["initial_resource_stocks"] = accumulated_resource_stocks
 	fixture["travel_routes"] = routes
 	fixture["region_state"] = region_state
 	fixture["institution"] = institution
@@ -978,6 +983,9 @@ func _validate_generated_fixture(
 	if settlement_id == "" or not entity_ids.has(settlement_id):
 		errors.append("settlement_entity_missing")
 	var resource_stock_ids := {}
+	var reported_resource_stock_ids := {}
+	for reported_stock_id: Variant in report.get("resource_stock_ids", []):
+		reported_resource_stock_ids[str(reported_stock_id)] = true
 	for stock_value: Variant in fixture.get("initial_resource_stocks", []):
 		if not stock_value is Dictionary:
 			errors.append("resource_stock_not_dictionary")
@@ -988,7 +996,13 @@ func _validate_generated_fixture(
 			errors.append("resource_stock_identity_invalid:%s" % stock_id)
 			continue
 		resource_stock_ids[stock_id] = true
-		if str(stock.get("settlement_id", "")) != settlement_id:
+		var stock_settlement_id := str(stock.get("settlement_id", ""))
+		if not entity_ids.has(stock_settlement_id):
+			errors.append("resource_stock_settlement_missing:%s" % stock_id)
+		elif (
+			reported_resource_stock_ids.has(stock_id)
+			and stock_settlement_id != settlement_id
+		):
 			errors.append("resource_stock_settlement_invalid:%s" % stock_id)
 		if not locations.has(str(stock.get("location_id", ""))):
 			errors.append("resource_stock_location_missing:%s" % stock_id)

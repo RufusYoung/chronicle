@@ -443,7 +443,7 @@
       "state_def_id": "state.region.resource_strain",
       "definition_version": 1,
       "key": "resource_strain",
-      "owner_kinds": ["region"],
+      "owner_kinds": ["region", "institution"],
       "value_type": "enum",
       "values": ["low", "medium", "high"],
       "default": "low",
@@ -456,7 +456,7 @@
       "state_def_id": "state.region.migration_tendency",
       "definition_version": 1,
       "key": "migration_tendency",
-      "owner_kinds": ["region"],
+      "owner_kinds": ["region", "institution"],
       "value_type": "enum",
       "values": ["low", "medium", "high"],
       "default": "low",
@@ -464,6 +464,19 @@
       "persistence": "save",
       "ui_visibility": "summary",
       "description": "资源与粮食压力造成的居民迁离倾向。"
+    },
+    {
+      "state_def_id": "state.institution.migration_pressure_days",
+      "definition_version": 1,
+      "key": "migration_pressure_days",
+      "owner_kinds": ["institution"],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": ["set", "add"],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "聚落连续处于足以促成迁离的资源压力下的天数。"
     },
     {
       "state_def_id": "state.object.resource_status",

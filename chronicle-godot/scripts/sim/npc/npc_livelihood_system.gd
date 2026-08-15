@@ -16,8 +16,8 @@ func resolve_work_tick(
 ) -> Dictionary:
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
-	var profile_by_occupation := _profiles_by_occupation(profiles)
-	if profile_by_occupation.is_empty():
+	var profiles_by_scope := _profiles_by_scope(profiles)
+	if profiles_by_scope.is_empty():
 		return {"results": [], "events": []}
 
 	var result = TransactionResultModel.new()
@@ -30,9 +30,18 @@ func resolve_work_tick(
 		var occupation_id := str(snapshot.get_entity_state(
 			actor_id, "occupation_id", ""
 		))
-		if not profile_by_occupation.has(occupation_id):
+		var settlement_id := str(snapshot.get_entity_state(
+			actor_id, "settlement_id", ""
+		))
+		var profile_key := _profile_key(settlement_id, occupation_id)
+		var fallback_key := _profile_key("", occupation_id)
+		if not profiles_by_scope.has(profile_key) and not profiles_by_scope.has(
+			fallback_key
+		):
 			continue
-		var profile: Dictionary = profile_by_occupation[occupation_id]
+		var profile: Dictionary = profiles_by_scope.get(
+			profile_key, profiles_by_scope.get(fallback_key, {})
+		)
 		if not _actor_matches_profile(actor, profile):
 			continue
 		var interval := maxi(int(profile.get("work_interval_hours", 8)), 1)
@@ -561,13 +570,19 @@ func _resource_plan(profile: Dictionary, available: Dictionary) -> Dictionary:
 	return {"ok": true, "changes": changes, "missing": {}}
 
 
-func _profiles_by_occupation(profiles: Array) -> Dictionary:
+func _profiles_by_scope(profiles: Array) -> Dictionary:
 	var rows: Dictionary = {}
 	for profile: Dictionary in profiles:
 		var occupation_id := str(profile.get("occupation_id", ""))
 		if occupation_id != "":
-			rows[occupation_id] = profile.duplicate(true)
+			rows[_profile_key(
+				str(profile.get("settlement_id", "")), occupation_id
+			)] = profile.duplicate(true)
 	return rows
+
+
+func _profile_key(settlement_id: String, occupation_id: String) -> String:
+	return "%s::%s" % [settlement_id, occupation_id]
 
 
 func _actor_matches_profile(actor: Dictionary, profile: Dictionary) -> bool:

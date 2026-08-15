@@ -68,6 +68,9 @@ const ResidentGeneratorModel = preload(
 const SettlementGeneratorModel = preload(
 	"res://scripts/sim/generation/settlement_generator.gd"
 )
+const SettlementNetworkGeneratorModel = preload(
+	"res://scripts/sim/generation/settlement_network_generator.gd"
+)
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -108,6 +111,7 @@ var world_tick_adapter: Variant = null
 var autonomous_action_rules: Array = []
 var npc_need_profiles: Array = []
 var npc_livelihood_profiles: Array = []
+var settlement_network_runtime: Dictionary = {}
 var travel_routes: Array = []
 var challenge_definitions: Array = []
 var combat_encounter_definitions: Array = []
@@ -262,6 +266,12 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	).duplicate(true)
 	world_tick_adapter.configure_livelihood_profiles(
 		npc_livelihood_profiles
+	)
+	settlement_network_runtime = (
+		fixture.get("settlement_network_runtime", {}) as Dictionary
+	).duplicate(true)
+	world_tick_adapter.configure_settlement_network(
+		settlement_network_runtime
 	)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	var initial_store_report := _create_stores(fixture)
@@ -1354,6 +1364,10 @@ func get_store_summary() -> Dictionary:
 	}
 
 
+func get_settlement_network_summary() -> Dictionary:
+	return settlement_network_runtime.duplicate(true)
+
+
 func get_store_snapshots() -> Dictionary:
 	if not initialized:
 		return {}
@@ -1681,6 +1695,7 @@ func _reset_runtime() -> void:
 	autonomous_action_rules = []
 	npc_need_profiles = []
 	npc_livelihood_profiles = []
+	settlement_network_runtime = {}
 	travel_routes = []
 	challenge_definitions = []
 	combat_encounter_definitions = []
@@ -1715,6 +1730,25 @@ func _reset_runtime() -> void:
 
 
 func _apply_settlement_generation(fixture: Dictionary) -> Dictionary:
+	var network_config: Dictionary = fixture.get(
+		"settlement_network_generation", {}
+	)
+	if not network_config.is_empty():
+		var network_definition_path := str(network_config.get(
+			"definition_path", ""
+		))
+		if network_definition_path == "":
+			return {"ok": false, "error": "generation_definition_path_missing"}
+		var network_definition: Dictionary = registry.load_json(
+			network_definition_path
+		)
+		if network_definition.is_empty():
+			return {"ok": false, "error": "generation_definition_not_loaded"}
+		fixture_source_path = ""
+		fixture_source_data = fixture.duplicate(true)
+		return SettlementNetworkGeneratorModel.new().generate_fixture(
+			fixture, network_config, network_definition
+		)
 	var config: Dictionary = fixture.get("settlement_generation", {})
 	if config.is_empty():
 		return {"ok": true, "fixture": fixture.duplicate(true), "report": {}}
@@ -1732,6 +1766,67 @@ func _apply_settlement_generation(fixture: Dictionary) -> Dictionary:
 
 
 func _apply_resident_generation(fixture: Dictionary) -> Dictionary:
+	var configs: Array = fixture.get("resident_generations", [])
+	if not configs.is_empty():
+		if fixture.has("resident_network_generation_result"):
+			return {
+				"ok": true,
+				"fixture": fixture.duplicate(true),
+				"report": (
+					fixture.get("resident_network_generation_result", {}) as Dictionary
+				).duplicate(true),
+			}
+		var generated_fixture := fixture.duplicate(true)
+		var reports: Array = []
+		var resident_ids: Array = []
+		var household_ids: Array = []
+		for config_value: Variant in configs:
+			if not config_value is Dictionary:
+				return {"ok": false, "error": "resident_generation_config_invalid"}
+			var site_config := (config_value as Dictionary).duplicate(true)
+			var site_definition_path := str(site_config.get(
+				"definition_path", ""
+			))
+			if site_definition_path == "":
+				return {"ok": false, "error": "generation_definition_path_missing"}
+			var site_definition: Dictionary = registry.load_json(
+				site_definition_path
+			)
+			if site_definition.is_empty():
+				return {"ok": false, "error": "generation_definition_not_loaded"}
+			generated_fixture.erase("resident_generation_result")
+			var site_result: Dictionary = ResidentGeneratorModel.new().generate_fixture(
+				generated_fixture, site_config, site_definition
+			)
+			if not bool(site_result.get("ok", false)):
+				return site_result
+			generated_fixture = (
+				site_result.get("fixture", generated_fixture) as Dictionary
+			).duplicate(true)
+			var site_report: Dictionary = (
+				site_result.get("report", {}) as Dictionary
+			).duplicate(true)
+			reports.append(site_report)
+			resident_ids.append_array(site_report.get("resident_ids", []))
+			household_ids.append_array(site_report.get("household_ids", []))
+		generated_fixture.erase("resident_generation_result")
+		var network_report := {
+			"ok": true,
+			"site_count": reports.size(),
+			"resident_count": resident_ids.size(),
+			"household_count": household_ids.size(),
+			"resident_ids": resident_ids,
+			"household_ids": household_ids,
+			"site_reports": reports,
+		}
+		generated_fixture["resident_network_generation_result"] = (
+			network_report.duplicate(true)
+		)
+		return {
+			"ok": true,
+			"fixture": generated_fixture,
+			"report": network_report,
+		}
 	var config: Dictionary = fixture.get("resident_generation", {})
 	if config.is_empty():
 		return {"ok": true, "fixture": fixture, "report": {}}

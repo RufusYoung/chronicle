@@ -389,6 +389,24 @@ func build_view_data() -> Dictionary:
 
 func _playtest_view(snapshot: Variant) -> Dictionary:
 	var location_id := str(snapshot.location.get("id", ""))
+	if _has_fact(snapshot, "settlement_network_generated"):
+		var current_settlement_id := _current_settlement_id(snapshot)
+		var current_name := _entity_name(current_settlement_id)
+		var trade_seen := _has_fact(snapshot, "settlement_trade_shipment")
+		return {
+			"mode": "generated_settlement_network",
+			"stage": 2 if trade_seen else 1,
+			"stage_count": 3,
+			"completed": false,
+			"failed": false,
+			"title": "观察%s如何依赖邻近聚落" % current_name,
+			"summary": (
+				"道路已经产生真实货流。查看本地储备与最近运输，也可以沿区域道路前往另一个聚落比较资源和人口压力。"
+				if trade_seen
+				else "三个聚落拥有不同资源和承载力。等待会让居民生产、消耗储备，并让富余物资沿道路流向短缺地点。"
+			),
+			"hint": "连续短缺不会触发预写剧情，而会提高迁离压力并最终促成家庭搬迁。",
+		}
 	if _has_fact(snapshot, "settlement_generated"):
 		var at_hub: bool = (
 			"public_space" in (snapshot.location.get("tags", []) as Array)
@@ -1025,12 +1043,31 @@ func _player_view(snapshot: Variant) -> Dictionary:
 
 func _region_status_rows(snapshot: Variant) -> Array:
 	var rows: Array[Dictionary] = []
+	var pressure_rows: Array[Dictionary] = []
+	var current_settlement_id := _current_settlement_id(snapshot)
+	var settlement_state: Dictionary = {}
+	if current_settlement_id != "":
+		for key: String in [
+			"food_pressure", "resource_strain", "migration_tendency"
+		]:
+			settlement_state[key] = snapshot.get_entity_state(
+				current_settlement_id, key, "low"
+			)
 	var sources := [
-		["food_pressure", snapshot.region_state],
+		[
+			"food_pressure",
+			settlement_state if not settlement_state.is_empty() else snapshot.region_state,
+		],
 		["public_order", snapshot.region_state],
 		["settlement_isolation", snapshot.region_state],
-		["resource_strain", snapshot.region_state],
-		["migration_tendency", snapshot.region_state],
+		[
+			"resource_strain",
+			settlement_state if not settlement_state.is_empty() else snapshot.region_state,
+		],
+		[
+			"migration_tendency",
+			settlement_state if not settlement_state.is_empty() else snapshot.region_state,
+		],
 		["flood_risk", snapshot.region_state],
 		["market_order", snapshot.institution],
 		["local_guard_attention", snapshot.institution],
@@ -1040,7 +1077,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 		var values := source[1] as Dictionary
 		if not values.has(key):
 			continue
-		rows.append({
+		pressure_rows.append({
 			"key": key,
 			"label": _status_label(key),
 			"value": _state_value_label(str(values.get(key, ""))),
@@ -1050,7 +1087,48 @@ func _region_status_rows(snapshot: Variant) -> Array:
 		snapshot.location.get("tags", []) as Array
 	)
 	var location_id := str(snapshot.location.get("id", ""))
+	var network_rows := _settlement_network_rows(
+		snapshot, current_settlement_id
+	)
+	if current_settlement_id != "":
+		var capacity := _settlement_capacity(current_settlement_id)
+		var pressure_days := int(snapshot.get_entity_state(
+			current_settlement_id, "migration_pressure_days", 0
+		))
+		var neighbor_summary := "无"
+		var recent_summary := "尚无跨聚落变化"
+		for network_row: Dictionary in network_rows:
+			if str(network_row.get("key", "")) == "settlement_neighbors":
+				neighbor_summary = str(network_row.get("value", "无"))
+			elif str(network_row.get("key", "")) in [
+				"latest_settlement_trade", "latest_settlement_migration"
+			]:
+				recent_summary = "%s：%s" % [
+					str(network_row.get("label", "最近变化")),
+					str(network_row.get("value", "")),
+				]
+		rows.append({
+			"key": "settlement_population",
+			"label": "聚落人口",
+			"value": "%d / %d · 相邻聚落 %s" % [
+				_settlement_population(current_settlement_id),
+				capacity,
+				neighbor_summary,
+			],
+			"detail": (
+				"%s；连续迁离压力 %d 天。" % [recent_summary, pressure_days]
+				if pressure_days > 0
+				else "%s。" % recent_summary
+			),
+		})
+	rows.append_array(network_rows)
+	rows.append_array(pressure_rows)
 	for stock: Dictionary in snapshot.get_resource_stocks():
+		if (
+			current_settlement_id != ""
+			and str(stock.get("settlement_id", "")) != current_settlement_id
+		):
+			continue
 		if not at_hub and str(stock.get("location_id", "")) != location_id:
 			continue
 		var capacity := float(stock.get("capacity", 0.0))
@@ -1085,6 +1163,151 @@ func _region_status_rows(snapshot: Variant) -> Array:
 			"detail": "商铺开始提前关门，能买到粮食的时间正在缩短。",
 		})
 	return rows
+
+
+func _current_settlement_id(snapshot: Variant) -> String:
+	var location_id := str(snapshot.location.get("id", ""))
+	var runtime: Dictionary = session.get_settlement_network_summary()
+	for site: Dictionary in runtime.get("sites", []):
+		if str(site.get("hub_location_id", "")) == location_id:
+			return str(site.get("settlement_id", ""))
+	for stock: Dictionary in snapshot.get_resource_stocks():
+		if str(stock.get("location_id", "")) == location_id:
+			var stock_settlement_id := str(stock.get("settlement_id", ""))
+			if stock_settlement_id != "":
+				return stock_settlement_id
+	for entity: Dictionary in snapshot.get_entities():
+		if (
+			str(entity.get("type", "")) == "institution"
+			and "generated_settlement" in (entity.get("tags", []) as Array)
+			and str(snapshot.get_entity_state(
+				str(entity.get("id", "")), "location_id", ""
+			)) == location_id
+		):
+			return str(entity.get("id", ""))
+	return ""
+
+
+func _settlement_capacity(settlement_id: String) -> int:
+	for site: Dictionary in session.get_settlement_network_summary().get(
+		"sites", []
+	):
+		if str(site.get("settlement_id", "")) == settlement_id:
+			return int(site.get("resident_capacity", 0))
+	return int(session.get_snapshot().get_entity_state(
+		settlement_id, "resident_capacity", 0
+	))
+
+
+func _settlement_population(settlement_id: String) -> int:
+	var population := 0
+	var entity_store: Variant = session.stores.get("entity_store")
+	var state_store: Variant = session.stores.get("state_store")
+	if entity_store == null or state_store == null:
+		return population
+	for entity: Dictionary in entity_store.list_entity_rows():
+		if (
+			str(entity.get("type", "")) == "person"
+			and str(state_store.get_state(
+				str(entity.get("id", "")), "settlement_id", ""
+			)) == settlement_id
+		):
+			population += 1
+	return population
+
+
+func _settlement_network_rows(
+		snapshot: Variant,
+		settlement_id: String
+) -> Array:
+	var rows: Array[Dictionary] = []
+	var runtime: Dictionary = session.get_settlement_network_summary()
+	if settlement_id == "" or runtime.is_empty():
+		return rows
+	var site_names: Dictionary = {}
+	for site: Dictionary in runtime.get("sites", []):
+		site_names[str(site.get("settlement_id", ""))] = str(site.get(
+			"settlement_name", "相邻聚落"
+		))
+	var neighbor_names: Array[String] = []
+	var neighbor_details: Array[String] = []
+	for link: Dictionary in runtime.get("links", []):
+		var neighbor_id := ""
+		if str(link.get("settlement_a_id", "")) == settlement_id:
+			neighbor_id = str(link.get("settlement_b_id", ""))
+		elif str(link.get("settlement_b_id", "")) == settlement_id:
+			neighbor_id = str(link.get("settlement_a_id", ""))
+		if neighbor_id == "":
+			continue
+		var neighbor_name := str(site_names.get(neighbor_id, "相邻聚落"))
+		neighbor_names.append(neighbor_name)
+		neighbor_details.append("%s（%d 小时，日运力 %.1f）" % [
+			neighbor_name,
+			int(link.get("travel_hours", 0)),
+			float(link.get("capacity_per_day", 0.0)),
+		])
+	if not neighbor_names.is_empty():
+		rows.append({
+			"key": "settlement_neighbors",
+			"label": "相邻聚落",
+			"value": "、".join(neighbor_names),
+			"detail": "；".join(neighbor_details),
+		})
+
+	var facts: Array = snapshot.get_facts()
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		if str(fact.get("fact_type", "")) != "settlement_trade_shipment":
+			continue
+		var source_id := str(fact.get("source_settlement_id", ""))
+		var destination_id := str(fact.get(
+			"destination_settlement_id", ""
+		))
+		if settlement_id != source_id and settlement_id != destination_id:
+			continue
+		var incoming := settlement_id == destination_id
+		rows.append({
+			"key": "latest_settlement_trade",
+			"label": "最近货流",
+			"value": "%s %.1f 份%s" % [
+				"运入" if incoming else "运出",
+				float(fact.get("amount", 0.0)),
+				_good_label(str(fact.get("good_id", "物资"))),
+			],
+			"detail": str(fact.get("summary", "一批物资沿道路完成运输。")),
+		})
+		break
+
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		if str(fact.get("fact_type", "")) != "household_migrated":
+			continue
+		var source_id := str(fact.get("source_settlement_id", ""))
+		var destination_id := str(fact.get(
+			"destination_settlement_id", ""
+		))
+		if settlement_id != source_id and settlement_id != destination_id:
+			continue
+		var incoming := settlement_id == destination_id
+		rows.append({
+			"key": "latest_settlement_migration",
+			"label": "最近迁移",
+			"value": "%s %d 人" % [
+				"迁入" if incoming else "迁出",
+				(fact.get("member_ids", []) as Array).size(),
+			],
+			"detail": str(fact.get("summary", "一户居民迁往了相邻聚落。")),
+		})
+		break
+	return rows
+
+
+func _good_label(good_id: String) -> String:
+	return {
+		"food": "食物",
+		"fiber": "纤维",
+		"salt": "盐",
+	}.get(good_id, good_id)
 
 
 func _knowledge_rows(snapshot: Variant) -> Array:
@@ -1591,6 +1814,8 @@ func _tick_feedback_view() -> Dictionary:
 	if results.is_empty():
 		results = latest_result.get("observed_need_results", [])
 	if results.is_empty():
+		results = latest_result.get("network_results", [])
+	if results.is_empty():
 		results = latest_result.get("resource_results", [])
 	if results.is_empty():
 		results = latest_result.get("livelihood_results", [])
@@ -1642,6 +1867,7 @@ func _tick_narrative(result: Dictionary) -> String:
 		result.get("results", []) as Array
 	).duplicate(true)
 	results.append_array(result.get("resource_results", []))
+	results.append_array(result.get("network_results", []))
 	results.append_array(result.get("livelihood_results", []))
 	results.append_array(result.get("observed_need_results", []))
 	results.append_array(result.get("observed_autonomous_results", []))
@@ -1729,6 +1955,7 @@ func _world_change_count(result: Dictionary) -> int:
 		))
 		+ int(result.get("livelihood_event_count", 0))
 		+ int(result.get("resource_event_count", 0))
+		+ int(result.get("network_event_count", 0))
 	)
 
 

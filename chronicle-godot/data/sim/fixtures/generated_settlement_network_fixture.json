@@ -1,0 +1,104 @@
+{
+  "fixture_id": "generated_settlement_network",
+  "world_id": "world.generated_settlement_network",
+  "actor_id": "player",
+  "challenge_seed": 81001,
+  "locations": {},
+  "region_state": {},
+  "institution": {},
+  "entities": [],
+  "player": {
+    "id": "player",
+    "type": "person",
+    "role": "traveler",
+    "display_name": "旅人",
+    "strength": 7,
+    "dexterity": 8,
+    "wisdom": 9,
+    "charisma": 6,
+    "constitution": 8,
+    "perception": 10,
+    "health": 100
+  },
+  "known_facts": [],
+  "initial_items": [],
+  "initial_relationships": {},
+  "initial_chronicle_entries": [],
+  "settlement_network_generation": {
+    "definition_path": "res://data/sim/raw/generation_defs/north_border_settlements_v1.json",
+    "primary_site_id": "reed_bay",
+    "sites": [
+      {
+        "site_id": "reed_bay",
+        "seed_offset": 0,
+        "resident_count": 10,
+        "terrain": {
+          "terrain_id": "lake_marsh_edge",
+          "tags": ["waterside", "marsh", "slope"],
+          "habitable_area": 3,
+          "flood_exposure": 3
+        },
+        "resources": [
+          {"resource_id": "resource.reed_bay_fish", "label": "苇湾鱼群", "tags": ["fish", "food", "water"], "abundance": 4, "reliability": 4},
+          {"resource_id": "resource.reed_bay_reeds", "label": "苇湾长苇", "tags": ["reeds", "fiber"], "abundance": 5, "reliability": 5},
+          {"resource_id": "resource.reed_bay_brine", "label": "苇湾浅卤", "tags": ["salt", "brine"], "abundance": 2, "reliability": 2}
+        ],
+        "traffic": [
+          {"traffic_id": "traffic.reed_bay_road", "label": "苇湾土路运力", "mode": "road", "capacity": 2, "reliability": 3, "risk": 2},
+          {"traffic_id": "traffic.reed_bay_boats", "label": "苇湾舟路运力", "mode": "waterway", "capacity": 4, "reliability": 4, "risk": 1}
+        ]
+      },
+      {
+        "site_id": "river_steps",
+        "seed_offset": 997,
+        "resident_count": 10,
+        "terrain": {
+          "terrain_id": "river_terrace",
+          "tags": ["riverside", "fertile", "roadside", "slope"],
+          "habitable_area": 4,
+          "flood_exposure": 1
+        },
+        "resources": [
+          {"resource_id": "resource.river_steps_soil", "label": "河阶深土", "tags": ["soil", "roots", "food"], "abundance": 5, "reliability": 5},
+          {"resource_id": "resource.river_steps_fish", "label": "河汊鱼群", "tags": ["fish", "food", "water"], "abundance": 2, "reliability": 3},
+          {"resource_id": "resource.river_steps_timber", "label": "河岸杂木", "tags": ["timber", "fuel"], "abundance": 3, "reliability": 4}
+        ],
+        "traffic": [
+          {"traffic_id": "traffic.river_steps_road", "label": "河阶车道运力", "mode": "road", "capacity": 5, "reliability": 5, "risk": 1},
+          {"traffic_id": "traffic.river_steps_barges", "label": "河阶驳舟运力", "mode": "waterway", "capacity": 3, "reliability": 4, "risk": 1}
+        ]
+      },
+      {
+        "site_id": "wind_pass",
+        "seed_offset": 1994,
+        "resident_count": 10,
+        "terrain": {
+          "terrain_id": "windy_upland",
+          "tags": ["upland", "windy", "defensible", "roadside"],
+          "habitable_area": 3,
+          "flood_exposure": 0
+        },
+        "resources": [
+          {"resource_id": "resource.wind_pass_stone", "label": "风垭片石", "tags": ["stone", "building"], "abundance": 5, "reliability": 5},
+          {"resource_id": "resource.wind_pass_spring", "label": "高地细泉", "tags": ["water"], "abundance": 1, "reliability": 2},
+          {"resource_id": "resource.wind_pass_scrub", "label": "坡地灌木", "tags": ["timber", "fuel"], "abundance": 2, "reliability": 3}
+        ],
+        "traffic": [
+          {"traffic_id": "traffic.wind_pass_road", "label": "风垭山道运力", "mode": "road", "capacity": 3, "reliability": 3, "risk": 3}
+        ]
+      }
+    ],
+    "links": [
+      {"link_id": "reed_bay_river_steps", "site_a_id": "reed_bay", "site_b_id": "river_steps", "mode": "road", "travel_hours": 4, "capacity_per_day": 5, "risk": 1},
+      {"link_id": "river_steps_wind_pass", "site_a_id": "river_steps", "site_b_id": "wind_pass", "mode": "road", "travel_hours": 6, "capacity_per_day": 4, "risk": 3}
+    ],
+    "trade_goods": [
+      {"good_id": "food", "reserve_label": "外来口粮储备", "tags": ["food"], "reserve_capacity": 24, "daily_use_per_resident": 0.12, "base_unit_price": 2},
+      {"good_id": "fiber", "reserve_label": "外来纤维储备", "tags": ["fiber"], "reserve_capacity": 16, "daily_use_per_resident": 0.03, "base_unit_price": 2},
+      {"good_id": "salt", "reserve_label": "外来盐储备", "tags": ["salt"], "reserve_capacity": 12, "daily_use_per_resident": 0.02, "base_unit_price": 3}
+    ]
+  },
+  "resident_generation": {
+    "definition_path": "res://data/sim/raw/generation_defs/north_border_residents_v1.json"
+  }
+}

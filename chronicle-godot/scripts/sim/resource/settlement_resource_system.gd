@@ -135,8 +135,60 @@ func resolve_status_tick(
 			"fact_id": fact_id,
 		})
 
+	var stocks_by_settlement := _stocks_by_settlement(stocks)
+	for settlement_id: String in stocks_by_settlement.keys():
+		var settlement_stocks: Array = stocks_by_settlement[settlement_id]
+		var settlement_pressure := _pressure_state(settlement_stocks)
+		var settlement_changed := false
+		for key: String in [
+			"food_pressure", "resource_strain", "migration_tendency"
+		]:
+			var next_value := str(settlement_pressure.get(key, "low"))
+			if str(snapshot.get_entity_state(
+				settlement_id, key, ""
+			)) == next_value:
+				continue
+			result.add_state_change({
+				"entity_id": settlement_id,
+				"key": key,
+				"to": next_value,
+			})
+			settlement_changed = true
+		if settlement_changed:
+			var settlement_fact_id := "fact.resource_pressure.%s.%s" % [
+				_safe_id(settlement_id),
+				_safe_id(str(tick_event.get("tick_event_id", "tick"))),
+			]
+			result.add_fact({
+				"fact_id": settlement_fact_id,
+				"fact_type": "settlement_resource_pressure_changed",
+				"actor_id": settlement_id,
+				"target_id": settlement_id,
+				"food_pressure": str(settlement_pressure.get(
+					"food_pressure", "low"
+				)),
+				"resource_strain": str(settlement_pressure.get(
+					"resource_strain", "low"
+				)),
+				"migration_tendency": str(settlement_pressure.get(
+					"migration_tendency", "low"
+				)),
+				"food_ratio": float(settlement_pressure.get("food_ratio", 1.0)),
+				"resource_ratio": float(settlement_pressure.get(
+					"resource_ratio", 1.0
+				)),
+				"day": int(tick_event.get("day", 0)),
+				"tick_event_id": str(tick_event.get("tick_event_id", "")),
+				"summary": "本地资源水位改变了聚落自身的粮食压力、资源负担与迁移倾向。",
+			})
+			events.append({
+				"event_type": "resource_pressure_changed",
+				"settlement_id": settlement_id,
+				"fact_id": settlement_fact_id,
+			})
+
 	var pressure_state := _pressure_state(stocks)
-	var pressure_changed := false
+	var region_pressure_changed := false
 	if region_entity_id != "":
 		for key: String in [
 			"food_pressure", "resource_strain", "migration_tendency"
@@ -149,18 +201,17 @@ func resolve_status_tick(
 				"key": key,
 				"to": next_value,
 			})
-			pressure_changed = true
-	if pressure_changed:
+			region_pressure_changed = true
+	if region_pressure_changed:
 		var settlement_id := str((stocks[0] as Dictionary).get(
 			"settlement_id", ""
 		))
-		var fact_id := "fact.resource_pressure.%s.%s" % [
-			_safe_id(settlement_id),
+		var fact_id := "fact.resource_pressure.region.%s" % [
 			_safe_id(str(tick_event.get("tick_event_id", "tick"))),
 		]
 		result.add_fact({
 			"fact_id": fact_id,
-			"fact_type": "settlement_resource_pressure_changed",
+			"fact_type": "region_resource_pressure_changed",
 			"actor_id": settlement_id,
 			"target_id": settlement_id,
 			"food_pressure": str(pressure_state.get("food_pressure", "low")),
@@ -175,7 +226,7 @@ func resolve_status_tick(
 			"summary": "本地资源水位改变了粮食压力、资源负担与迁移倾向。",
 		})
 		events.append({
-			"event_type": "resource_pressure_changed",
+			"event_type": "region_resource_pressure_changed",
 			"settlement_id": settlement_id,
 			"fact_id": fact_id,
 		})
@@ -227,7 +278,9 @@ func _pressure_state(stocks: Array) -> Dictionary:
 			food_current += current
 			food_capacity += capacity
 	var resource_ratio := _ratio(total_current, total_capacity)
-	var food_ratio := _ratio(food_current, food_capacity)
+	var food_ratio := (
+		0.0 if food_capacity <= 0.0 else _ratio(food_current, food_capacity)
+	)
 	var food_pressure := _inverse_pressure(food_ratio)
 	var resource_strain := _inverse_pressure(resource_ratio)
 	var migration := "low"
@@ -242,6 +295,18 @@ func _pressure_state(stocks: Array) -> Dictionary:
 		"food_ratio": food_ratio,
 		"resource_ratio": resource_ratio,
 	}
+
+
+func _stocks_by_settlement(stocks: Array) -> Dictionary:
+	var rows: Dictionary = {}
+	for stock: Dictionary in stocks:
+		var settlement_id := str(stock.get("settlement_id", ""))
+		if settlement_id == "":
+			continue
+		if not rows.has(settlement_id):
+			rows[settlement_id] = []
+		(rows[settlement_id] as Array).append(stock.duplicate(true))
+	return rows
 
 
 func _inverse_pressure(ratio: float) -> String:

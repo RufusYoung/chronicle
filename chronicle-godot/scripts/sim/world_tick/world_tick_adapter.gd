@@ -20,6 +20,9 @@ const NpcSocialFollowupSystemModel = preload(
 const SettlementResourceSystemModel = preload(
 	"res://scripts/sim/resource/settlement_resource_system.gd"
 )
+const SettlementNetworkSystemModel = preload(
+	"res://scripts/sim/resource/settlement_network_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -29,6 +32,7 @@ const SOURCE := "WorldTickAdapter"
 var autonomous_action_rules: Array = []
 var npc_need_profiles: Array = []
 var npc_livelihood_profiles: Array = []
+var settlement_network_config: Dictionary = {}
 var registry: Variant = null
 
 
@@ -46,6 +50,10 @@ func configure_need_profiles(profiles: Array) -> void:
 
 func configure_livelihood_profiles(profiles: Array) -> void:
 	npc_livelihood_profiles = profiles.duplicate(true)
+
+
+func configure_settlement_network(config: Dictionary) -> void:
+	settlement_network_config = config.duplicate(true)
 
 
 func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictionary) -> Dictionary:
@@ -112,6 +120,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	var livelihood_events: Array = []
 	var resource_results: Array = []
 	var resource_events: Array = []
+	var network_results: Array = []
+	var network_events: Array = []
 	var social_followup_results: Array = []
 	var social_followup_events: Array = []
 	var autonomous_actor_ids: Dictionary = {}
@@ -283,6 +293,52 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			resource_results.append_array(status_results)
 			resource_events.append_array(status_data.get("events", []))
 
+		if not settlement_network_config.is_empty():
+			var network_system = SettlementNetworkSystemModel.new()
+			var consumption_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var consumption_data: Dictionary = (
+				network_system.resolve_daily_consumption(
+					consumption_snapshot,
+					round_event,
+					settlement_network_config
+				)
+			)
+			var consumption_results: Array = consumption_data.get("results", [])
+			for consumption_result: Variant in consumption_results:
+				writer.apply_result(consumption_result, stores)
+			network_results.append_array(consumption_results)
+			network_events.append_array(consumption_data.get("events", []))
+
+			var trade_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var trade_data: Dictionary = network_system.resolve_trade_tick(
+				trade_snapshot,
+				round_event,
+				settlement_network_config
+			)
+			var trade_results: Array = trade_data.get("results", [])
+			for trade_result: Variant in trade_results:
+				writer.apply_result(trade_result, stores)
+			network_results.append_array(trade_results)
+			network_events.append_array(trade_data.get("events", []))
+
+			var migration_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var migration_data: Dictionary = network_system.resolve_migration_tick(
+				migration_snapshot,
+				round_event,
+				settlement_network_config
+			)
+			var migration_results: Array = migration_data.get("results", [])
+			for migration_result: Variant in migration_results:
+				writer.apply_result(migration_result, stores)
+			network_results.append_array(migration_results)
+			network_events.append_array(migration_data.get("events", []))
+
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(
 				context,
@@ -323,6 +379,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 	tick_log_results.append_array(livelihood_results)
 	tick_log_results.append_array(social_followup_results)
 	tick_log_results.append_array(resource_results)
+	tick_log_results.append_array(network_results)
 	tick_log_results.append_array(autonomous_results)
 	world_log.append_entry(_build_tick_log_entry(
 		event,
@@ -391,6 +448,10 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		"resource_results": _result_rows(resource_results),
 		"resource_event_count": resource_events.size(),
 		"resource_events": resource_events.duplicate(true),
+		"network_result_count": network_results.size(),
+		"network_results": _result_rows(network_results),
+		"network_event_count": network_events.size(),
+		"network_events": network_events.duplicate(true),
 		"social_followup_result_count": social_followup_results.size(),
 		"social_followup_results": _result_rows(social_followup_results),
 		"social_followup_event_count": social_followup_events.size(),
@@ -470,6 +531,10 @@ func _failure_result(
 		"resource_results": [],
 		"resource_event_count": 0,
 		"resource_events": [],
+		"network_result_count": 0,
+		"network_results": [],
+		"network_event_count": 0,
+		"network_events": [],
 		"autonomous_results": [],
 		"observed_autonomous_results": [],
 		"world_log_entries": world_log.list_entries(),
