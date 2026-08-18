@@ -225,9 +225,12 @@ func _payload_hash(payload: Dictionary) -> String:
 
 
 func _canonical_json(payload: Dictionary) -> String:
-	var first_pass := JSON.stringify(payload, "", true, true)
+	# Godot 4.5 can shift the last binary digit when a full-precision decimal is
+	# parsed and stringified again. The shortest representation is stable across
+	# that disk round trip while retaining the value's practical precision.
+	var first_pass := JSON.stringify(payload, "", true, false)
 	var json_value: Variant = JSON.parse_string(first_pass)
-	return JSON.stringify(json_value, "", true, true)
+	return JSON.stringify(json_value, "", true, false)
 
 
 func _failure(error: String, phase: String) -> Dictionary:

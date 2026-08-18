@@ -14,6 +14,7 @@ const PROJECT := (
 	"res://data/sim/raw/life_projects/seventh_outpost_first_winter.json"
 )
 const SAVE_PATH := "user://tests/save_envelope_roundtrip.json"
+const DECIMAL_SAVE_PATH := "user://tests/save_envelope_decimal_roundtrip.json"
 
 var failures: Array[String] = []
 
@@ -163,6 +164,35 @@ func _run() -> void:
 		),
 		"10. 旧版容器类型损坏时返回迁移失败而不是触发脚本错误"
 	)
+	var decimal_envelope := envelope.duplicate(true)
+	var decimal_session: Dictionary = decimal_envelope.get("session", {})
+	decimal_session["decimal_roundtrip_probe"] = 0.03
+	decimal_envelope["session"] = decimal_session
+	decimal_envelope = service.finalize_envelope(decimal_envelope)
+	var decimal_save: Dictionary = service.save_to_path(
+		DECIMAL_SAVE_PATH, decimal_envelope
+	)
+	var decimal_load: Dictionary = service.load_from_path(DECIMAL_SAVE_PATH)
+	var loaded_decimal := float((decimal_load.get(
+		"envelope", {}
+	) as Dictionary).get("session", {}).get(
+		"decimal_roundtrip_probe", -1.0
+	))
+	var decimal_tampered := decimal_envelope.duplicate(true)
+	(decimal_tampered.get("session", {}) as Dictionary)[
+		"decimal_roundtrip_probe"
+	] = 0.0301
+	var decimal_tampered_report: Dictionary = service.validate_and_migrate(
+		decimal_tampered
+	)
+	_check(
+		bool(decimal_save.get("ok", false))
+		and bool(decimal_load.get("ok", false))
+		and is_equal_approx(loaded_decimal, 0.03)
+		and str(decimal_tampered_report.get("error", ""))
+		== "save_payload_hash_mismatch",
+		"11. 常用小数跨磁盘解析不误报哈希错误，真实小数篡改仍被拒绝"
+	)
 
 	var original_next: Dictionary = original.execute_duty("patrol_fog_line")
 	var restored_next: Dictionary = memory_restored.execute_duty("patrol_fog_line")
@@ -178,7 +208,7 @@ func _run() -> void:
 			original.session.get_time_summary(),
 			memory_restored.session.get_time_summary()
 		),
-		"11. 载入后继续承担同一职责会得到相同结果与后续世界状态"
+		"12. 载入后继续承担同一职责会得到相同结果与后续世界状态"
 	)
 	_cleanup_save()
 	_finish()
@@ -221,9 +251,10 @@ func _equivalent(left: Variant, right: Variant) -> bool:
 
 
 func _cleanup_save() -> void:
-	var absolute := ProjectSettings.globalize_path(SAVE_PATH)
-	if FileAccess.file_exists(SAVE_PATH):
-		DirAccess.remove_absolute(absolute)
+	for path: String in [SAVE_PATH, DECIMAL_SAVE_PATH]:
+		var absolute := ProjectSettings.globalize_path(path)
+		if FileAccess.file_exists(path):
+			DirAccess.remove_absolute(absolute)
 
 
 func _check(condition: bool, label: String) -> void:

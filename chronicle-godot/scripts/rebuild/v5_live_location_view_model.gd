@@ -1101,10 +1101,13 @@ func _region_status_rows(snapshot: Variant) -> Array:
 			current_settlement_id, "migration_pressure_days", 0
 		))
 		var neighbor_summary := "无"
+		var organization_summary := "尚未形成"
 		var recent_summary := "尚无跨聚落变化"
 		for network_row: Dictionary in network_rows:
 			if str(network_row.get("key", "")) == "settlement_neighbors":
 				neighbor_summary = str(network_row.get("value", "无"))
+			elif str(network_row.get("key", "")) == "settlement_organizations":
+				organization_summary = str(network_row.get("value", "尚未形成"))
 			elif str(network_row.get("key", "")) in [
 				"latest_settlement_trade", "latest_settlement_migration",
 				"latest_settlement_absorption",
@@ -1122,9 +1125,13 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				neighbor_summary,
 			],
 			"detail": (
-				"%s；连续迁离压力 %d 天。" % [recent_summary, pressure_days]
+				"当地组织 %s；%s；连续迁离压力 %d 天。" % [
+					organization_summary, recent_summary, pressure_days
+				]
 				if pressure_days > 0
-				else "%s。" % recent_summary
+				else "当地组织 %s；%s。" % [
+					organization_summary, recent_summary
+				]
 			),
 		})
 	rows.append_array(network_rows)
@@ -1261,6 +1268,59 @@ func _settlement_network_rows(
 			"label": "相邻聚落",
 			"value": "、".join(neighbor_names),
 			"detail": "；".join(neighbor_details),
+		})
+	var organization_names: Array[String] = []
+	var organization_details: Array[String] = []
+	for entity: Dictionary in snapshot.get_entities():
+		if (
+			"generated_organization" not in (entity.get("tags", []) as Array)
+			or str(entity.get("settlement_id", "")) != settlement_id
+		):
+			continue
+		var active_position_count := 0
+		var vacant_position_count := 0
+		var position_rows: Array[String] = []
+		for position_value: Variant in entity.get("positions", []):
+			if not position_value is Dictionary:
+				continue
+			var position: Dictionary = position_value
+			var founding_holder_id := str(position.get("founding_holder_id", ""))
+			var expected_role := "%s::%s" % [
+				str(entity.get("id", "")), str(position.get("position_id", ""))
+			]
+			var current_holder := (
+				_entity_name(founding_holder_id)
+				if str(snapshot.get_entity_state(
+					founding_holder_id, "institution_role", ""
+				)) == expected_role
+				else "空缺（原%s）" % _entity_name(founding_holder_id)
+			)
+			if current_holder.begins_with("空缺"):
+				vacant_position_count += 1
+			else:
+				active_position_count += 1
+			position_rows.append("%s：%s" % [
+				str(position.get("label", "成员")),
+				current_holder,
+			])
+		organization_names.append("%s · %s" % [
+			(
+				"空缺 %d" % vacant_position_count
+				if vacant_position_count > 0
+				else "任职 %d" % active_position_count
+			),
+			str(entity.get("display_name", "地方组织")),
+		])
+		organization_details.append("%s。%s" % [
+			str(entity.get("goal", "协调当地事务")),
+			"；".join(position_rows),
+		])
+	if not organization_names.is_empty():
+		rows.append({
+			"key": "settlement_organizations",
+			"label": "当地组织",
+			"value": "、".join(organization_names),
+			"detail": "\n".join(organization_details),
 		})
 
 	var facts: Array = snapshot.get_facts()

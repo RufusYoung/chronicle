@@ -1,0 +1,86 @@
+{
+  "generation_def_id": "generation.organizations.north_border_v1",
+  "definition_version": 1,
+  "prototypes": [
+    {
+      "prototype_id": "provision_circle",
+      "organization_kind": "provision_collective",
+      "name_suffix": "共食会",
+      "description": "由当地食物生产者与记账人组成，负责协调储备、缺粮家庭和迁入人口的基本供给。",
+      "goal": "维持本地口粮周转，并记录无法由家庭自行承担的供食需求。",
+      "base_score": 2,
+      "required_any_industry_ids": ["fishery", "terrace_farming"],
+      "industry_weights": {"fishery": 4, "terrace_farming": 4, "reed_craft": 1},
+      "need_weights": {"food_coordination": 5, "population_coordination": 2},
+      "resource_tags_any": ["food", "fish", "soil", "roots", "trade_reserve"],
+      "positions": [
+        {
+          "position_id": "provision_steward",
+          "label": "共食执事",
+          "preferred_occupation_ids": ["net_fisher", "terrace_farmer", "reed_weaver"],
+          "attribute_bias": {"wisdom": 3, "charisma": 2}
+        },
+        {
+          "position_id": "store_witness",
+          "label": "仓储见证人",
+          "preferred_occupation_ids": ["reed_weaver", "net_fisher", "terrace_farmer"],
+          "attribute_bias": {"perception": 3, "wisdom": 2}
+        }
+      ]
+    },
+    {
+      "prototype_id": "road_fellows",
+      "organization_kind": "trade_association",
+      "name_suffix": "行路同业会",
+      "description": "由车夫、修具人和熟悉沿途聚落的人组成，协调道路、货流和转运次序。",
+      "goal": "保持相邻聚落之间的道路与货流可用，并降低重复空驶和争抢运力。",
+      "base_score": 1,
+      "required_any_industry_ids": ["road_carting"],
+      "industry_weights": {"road_carting": 6, "reed_craft": 1},
+      "need_weights": {"trade_coordination": 6, "route_exposure": 1},
+      "resource_tags_any": ["traffic_capacity", "road", "trade_reserve"],
+      "positions": [
+        {
+          "position_id": "route_factor",
+          "label": "路货经办",
+          "preferred_occupation_ids": ["road_carter", "reed_weaver"],
+          "attribute_bias": {"charisma": 3, "wisdom": 2}
+        },
+        {
+          "position_id": "road_witness",
+          "label": "路况见证人",
+          "preferred_occupation_ids": ["road_carter", "watch_hand"],
+          "attribute_bias": {"perception": 3, "constitution": 1}
+        }
+      ]
+    },
+    {
+      "prototype_id": "pass_watch",
+      "organization_kind": "local_watch",
+      "name_suffix": "守路队",
+      "description": "由守望者和熟悉道路的人组成，在高风险来路上轮值、记名并传递警讯。",
+      "goal": "监看危险道路与迁入人流，在威胁抵达聚落之前留下可追溯警讯。",
+      "base_score": 1,
+      "required_any_industry_ids": ["watch_service"],
+      "required_all_terrain_tags": ["defensible"],
+      "industry_weights": {"watch_service": 7, "road_carting": 2},
+      "terrain_weights": {"defensible": 5, "upland": 3, "windy": 1},
+      "need_weights": {"security_coordination": 7, "route_exposure": 2},
+      "resource_tags_any": ["traffic_capacity", "road"],
+      "positions": [
+        {
+          "position_id": "watch_captain",
+          "label": "守路领班",
+          "preferred_occupation_ids": ["watch_hand", "road_carter"],
+          "attribute_bias": {"perception": 3, "constitution": 2}
+        },
+        {
+          "position_id": "signal_keeper",
+          "label": "警讯值守",
+          "preferred_occupation_ids": ["watch_hand", "road_carter"],
+          "attribute_bias": {"perception": 4, "wisdom": 1}
+        }
+      ]
+    }
+  ]
+}

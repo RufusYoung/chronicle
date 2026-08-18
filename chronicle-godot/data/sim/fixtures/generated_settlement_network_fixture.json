@@ -101,5 +101,9 @@
   },
   "resident_generation": {
     "definition_path": "res://data/sim/raw/generation_defs/north_border_residents_v1.json"
+  },
+  "organization_generation": {
+    "definition_path": "res://data/sim/raw/generation_defs/north_border_organizations_v1.json",
+    "maximum_resource_links": 3
   }
 }

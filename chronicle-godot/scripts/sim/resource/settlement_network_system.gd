@@ -599,6 +599,7 @@ func _append_migration_changes(
 	var fact_id := "fact.household_migrated.%s.day%d" % [
 		_safe_id(household_id), day
 	]
+	var vacated_positions: Array[Dictionary] = []
 	result.add_state_change({
 		"entity_id": household_id,
 		"key": "location_id",
@@ -632,6 +633,24 @@ func _append_migration_changes(
 				"key": "livelihood_status",
 				"to": "unemployed",
 			})
+		var institution_role := str(snapshot.get_entity_state(
+			member_id, "institution_role", ""
+		))
+		var role_parts := institution_role.split("::", false, 1)
+		if (
+			role_parts.size() == 2
+			and str(role_parts[0]).begins_with("generated_organization.")
+		):
+			result.add_state_change({
+				"entity_id": member_id,
+				"key": "institution_role",
+				"to": "",
+			})
+			vacated_positions.append({
+				"organization_id": str(role_parts[0]),
+				"position_id": str(role_parts[1]),
+				"member_id": member_id,
+			})
 	result.add_fact({
 		"fact_id": fact_id,
 		"fact_type": "household_migrated",
@@ -647,6 +666,25 @@ func _append_migration_changes(
 		"day": day,
 		"summary": str(migration.get("summary", "居民迁往了邻近聚落。")),
 	})
+	for vacancy: Dictionary in vacated_positions:
+		var organization_id := str(vacancy.get("organization_id", ""))
+		var member_id := str(vacancy.get("member_id", ""))
+		result.add_fact({
+			"fact_id": "fact.organization_position_vacated.%s.%s.day%d" % [
+				_safe_id(organization_id), _safe_id(member_id), day
+			],
+			"fact_type": "organization_position_vacated",
+			"actor_id": organization_id,
+			"target_id": member_id,
+			"organization_id": organization_id,
+			"position_id": str(vacancy.get("position_id", "")),
+			"household_id": household_id,
+			"source_settlement_id": source_id,
+			"destination_settlement_id": destination_id,
+			"source_fact_ids": [fact_id],
+			"day": day,
+			"summary": "成员随家庭迁出，原有地方组织职位因此空缺。",
+		})
 	result.add_pressure_change({
 		"pressure_id": "pressure.migration.%s.day%d" % [
 			_safe_id(household_id), day

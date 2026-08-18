@@ -71,6 +71,9 @@ const SettlementGeneratorModel = preload(
 const SettlementNetworkGeneratorModel = preload(
 	"res://scripts/sim/generation/settlement_network_generator.gd"
 )
+const OrganizationGeneratorModel = preload(
+	"res://scripts/sim/generation/organization_generator.gd"
+)
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -123,6 +126,7 @@ var investigation_definitions: Array = []
 var market_policies: Array = []
 var settlement_generation_report: Dictionary = {}
 var resident_generation_report: Dictionary = {}
+var organization_generation_report: Dictionary = {}
 var challenge_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var save_envelope_service: Variant = SaveEnvelopeServiceModel.new()
 var market_service: Variant = MarketServiceModel.new()
@@ -166,6 +170,7 @@ func start_from_fixture_path(
 		if (
 			settlement_generation_report.is_empty()
 			and resident_generation_report.is_empty()
+			and organization_generation_report.is_empty()
 		):
 			fixture_source_path = fixture_path
 			fixture_source_data = {}
@@ -194,6 +199,15 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	fixture = generation_result.get("fixture", fixture)
 	resident_generation_report = (
 		generation_result.get("report", {}) as Dictionary
+	).duplicate(true)
+	var organization_result := _apply_organization_generation(fixture)
+	if not bool(organization_result.get("ok", false)):
+		var failed := _start_failure("organization_generation_failed")
+		failed["generation_error"] = str(organization_result.get("error", ""))
+		return failed
+	fixture = organization_result.get("fixture", fixture)
+	organization_generation_report = (
+		organization_result.get("report", {}) as Dictionary
 	).duplicate(true)
 
 	var definition_report: Dictionary = registry.load_raw_definition_files([
@@ -317,6 +331,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		"npc_need_profile_count": npc_need_profiles.size(),
 		"settlement_generation": settlement_generation_report.duplicate(true),
 		"resident_generation": resident_generation_report.duplicate(true),
+		"organization_generation": organization_generation_report.duplicate(true),
 		"candidate_count": get_action_candidates().size(),
 		"definition_count": int(definition_report.get(
 			"total_definition_count",
@@ -1487,6 +1502,9 @@ func build_save_envelope(options: Dictionary = {}) -> Dictionary:
 				settlement_generation_report.duplicate(true)
 			),
 			"resident_generation": resident_generation_report.duplicate(true),
+			"organization_generation": (
+				organization_generation_report.duplicate(true)
+			),
 			"runtime_cursors": _runtime_cursor_save_data(),
 			"life_project_runtime": (
 				options.get("life_project_runtime", {}) as Dictionary
@@ -1590,6 +1608,11 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 			"resident_generation", resident_generation_report
 		) as Dictionary
 	).duplicate(true)
+	organization_generation_report = (
+		session_data.get(
+			"organization_generation", organization_generation_report
+		) as Dictionary
+	).duplicate(true)
 	_restore_runtime_cursors(session_data.get("runtime_cursors", {}))
 	var time_data: Dictionary = envelope.get("world_time", {})
 	current_day = maxi(int(time_data.get("day", 1)), 1)
@@ -1653,6 +1676,7 @@ func build_result_summary(extra: Dictionary = {}) -> Dictionary:
 		),
 		"settlement_generation": settlement_generation_report.duplicate(true),
 		"resident_generation": resident_generation_report.duplicate(true),
+		"organization_generation": organization_generation_report.duplicate(true),
 		"return_echoes_resolved": return_echo_count,
 		"investigations_resolved": investigation_count,
 		"investigations_deferred": investigation_defer_count,
@@ -1707,6 +1731,7 @@ func _reset_runtime() -> void:
 	market_policies = []
 	settlement_generation_report = {}
 	resident_generation_report = {}
+	organization_generation_report = {}
 	challenge_rng = RandomNumberGenerator.new()
 	market_service = MarketServiceModel.new()
 	fixture_source_path = ""
@@ -1841,6 +1866,31 @@ func _apply_resident_generation(fixture: Dictionary) -> Dictionary:
 		"seed", fixture.get("challenge_seed", 1)
 	))
 	return ResidentGeneratorModel.new().generate_fixture(
+		fixture, resolved_config, definition
+	)
+
+
+func _apply_organization_generation(fixture: Dictionary) -> Dictionary:
+	var config: Dictionary = fixture.get("organization_generation", {})
+	if config.is_empty():
+		return {"ok": true, "fixture": fixture, "report": {}}
+	var definition_path := str(config.get("definition_path", ""))
+	if definition_path == "":
+		return {
+			"ok": false,
+			"error": "organization_generation_definition_path_missing",
+		}
+	var definition: Dictionary = registry.load_json(definition_path)
+	if definition.is_empty():
+		return {
+			"ok": false,
+			"error": "organization_generation_definition_not_loaded",
+		}
+	var resolved_config := config.duplicate(true)
+	resolved_config["seed"] = int(config.get(
+		"seed", fixture.get("challenge_seed", 1)
+	))
+	return OrganizationGeneratorModel.new().generate_fixture(
 		fixture, resolved_config, definition
 	)
 
