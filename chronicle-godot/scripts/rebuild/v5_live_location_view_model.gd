@@ -1110,7 +1110,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				organization_summary = str(network_row.get("value", "尚未形成"))
 			elif str(network_row.get("key", "")) in [
 				"latest_settlement_trade", "latest_settlement_migration",
-				"latest_settlement_absorption",
+				"latest_settlement_absorption", "latest_organization_restaff",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
@@ -1288,11 +1288,12 @@ func _settlement_network_rows(
 			var expected_role := "%s::%s" % [
 				str(entity.get("id", "")), str(position.get("position_id", ""))
 			]
+			var current_holder_id := _organization_role_holder(
+				snapshot, settlement_id, expected_role
+			)
 			var current_holder := (
-				_entity_name(founding_holder_id)
-				if str(snapshot.get_entity_state(
-					founding_holder_id, "institution_role", ""
-				)) == expected_role
+				_entity_name(current_holder_id)
+				if current_holder_id != ""
 				else "空缺（原%s）" % _entity_name(founding_holder_id)
 			)
 			if current_holder.begins_with("空缺"):
@@ -1305,9 +1306,15 @@ func _settlement_network_rows(
 			])
 		organization_names.append("%s · %s" % [
 			(
-				"空缺 %d" % vacant_position_count
-				if vacant_position_count > 0
-				else "任职 %d" % active_position_count
+				"任职 %d / 空缺 %d" % [
+					active_position_count, vacant_position_count
+				]
+				if active_position_count > 0 and vacant_position_count > 0
+				else (
+					"空缺 %d" % vacant_position_count
+					if vacant_position_count > 0
+					else "任职 %d" % active_position_count
+				)
 			),
 			str(entity.get("display_name", "地方组织")),
 		])
@@ -1397,7 +1404,51 @@ func _settlement_network_rows(
 			)),
 		})
 		break
+
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		if (
+			str(fact.get("fact_type", ""))
+			!= "organization_position_filled"
+			or str(fact.get("settlement_id", "")) != settlement_id
+		):
+			continue
+		rows.append({
+			"key": "latest_organization_restaff",
+			"label": "组织补位",
+			"value": "%s · %s" % [
+				_entity_name(str(fact.get("target_id", ""))),
+				str(fact.get("position_label", "成员")),
+			],
+			"detail": str(fact.get(
+				"summary", "当地组织从居民中补入一名新成员。"
+			)),
+		})
+		break
 	return rows
+
+
+func _organization_role_holder(
+		_snapshot: Variant,
+		settlement_id: String,
+		expected_role: String
+) -> String:
+	for entity: Dictionary in session.stores[
+		"entity_store"
+	].list_entity_rows():
+		if str(entity.get("type", "")) != "person":
+			continue
+		var entity_id := str(entity.get("id", ""))
+		if (
+			str(session.stores["state_store"].get_state(
+				entity_id, "settlement_id", ""
+			)) == settlement_id
+			and str(session.stores["state_store"].get_state(
+				entity_id, "institution_role", ""
+			)) == expected_role
+		):
+			return entity_id
+	return ""
 
 
 func _good_label(good_id: String) -> String:

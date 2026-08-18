@@ -287,6 +287,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	world_tick_adapter.configure_settlement_network(
 		settlement_network_runtime
 	)
+	world_tick_adapter.configure_organization_runtime(
+		fixture.get("organization_runtime", {})
+	)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	var initial_store_report := _create_stores(fixture)
 	if not bool(initial_store_report.get("ok", false)):

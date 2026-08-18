@@ -105,5 +105,9 @@
   "organization_generation": {
     "definition_path": "res://data/sim/raw/generation_defs/north_border_organizations_v1.json",
     "maximum_resource_links": 3
+  },
+  "organization_runtime": {
+    "appointment_delay_days": 1,
+    "max_appointments_per_organization_per_day": 2
   }
 }

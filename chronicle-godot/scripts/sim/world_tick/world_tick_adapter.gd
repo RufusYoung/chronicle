@@ -26,6 +26,9 @@ const SettlementNetworkSystemModel = preload(
 const SettlementAbsorptionSystemModel = preload(
 	"res://scripts/sim/migration/settlement_absorption_system.gd"
 )
+const OrganizationRuntimeSystemModel = preload(
+	"res://scripts/sim/organization/organization_runtime_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -36,6 +39,7 @@ var autonomous_action_rules: Array = []
 var npc_need_profiles: Array = []
 var npc_livelihood_profiles: Array = []
 var settlement_network_config: Dictionary = {}
+var organization_runtime_config: Dictionary = {}
 var registry: Variant = null
 
 
@@ -57,6 +61,10 @@ func configure_livelihood_profiles(profiles: Array) -> void:
 
 func configure_settlement_network(config: Dictionary) -> void:
 	settlement_network_config = config.duplicate(true)
+
+
+func configure_organization_runtime(config: Dictionary) -> void:
+	organization_runtime_config = config.duplicate(true)
 
 
 func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictionary) -> Dictionary:
@@ -359,6 +367,23 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				writer.apply_result(absorption_result, stores)
 			network_results.append_array(absorption_results)
 			network_events.append_array(absorption_data.get("events", []))
+
+		if not organization_runtime_config.is_empty():
+			var organization_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var organization_data: Dictionary = (
+				OrganizationRuntimeSystemModel.new().resolve_tick(
+					organization_snapshot,
+					round_event,
+					organization_runtime_config
+				)
+			)
+			var organization_results: Array = organization_data.get("results", [])
+			for organization_result: Variant in organization_results:
+				writer.apply_result(organization_result, stores)
+			network_results.append_array(organization_results)
+			network_events.append_array(organization_data.get("events", []))
 
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(

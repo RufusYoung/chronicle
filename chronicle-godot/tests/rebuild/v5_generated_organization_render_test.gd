@@ -10,6 +10,9 @@ const OUTPUT_PATH := "user://tests/v5_generated_organization_wind_pass.png"
 const VACANCY_OUTPUT_PATH := (
 	"user://tests/v5_generated_organization_wind_pass_vacancy.png"
 )
+const RESTAFFED_OUTPUT_PATH := (
+	"user://tests/v5_generated_organization_wind_pass_restaffed.png"
+)
 const RULE_PATHS := [
 	"res://data/sim/raw/action_rules/basic_action_rules.json",
 	"res://data/sim/raw/action_rules/domain_action_rules.json",
@@ -86,7 +89,7 @@ func _run() -> void:
 		link["capacity_per_day"] = 0.0
 	session.settlement_network_runtime = runtime.duplicate(true)
 	session.world_tick_adapter.configure_settlement_network(runtime)
-	for _hour: int in range(60):
+	for _hour: int in range(36):
 		session.advance_time(1, "generated_organization_render_migration")
 	viewer.refresh_view()
 	await process_frame
@@ -105,6 +108,36 @@ func _run() -> void:
 		VACANCY_OUTPUT_PATH, "7. 白坡坞职位空缺截图已写入"
 	)
 
+	for _hour: int in range(24):
+		session.advance_time(1, "generated_organization_render_restaffing")
+	viewer.refresh_view()
+	await process_frame
+	await process_frame
+	var filled_facts: Array = session.stores[
+		"fact_store"
+	].find_facts_by_type("organization_position_filled")
+	if filled_facts.size() != 1:
+		print("[V5 ORGANIZATION RESTAFF DIAGNOSTIC] %s" % JSON.stringify({
+			"filled": filled_facts,
+			"evaluations": session.stores["fact_store"].find_facts_by_type(
+				"organization_recruitment_evaluated"
+			),
+			"roles": _wind_pass_roles(session),
+		}))
+	_check(
+		filled_facts.size() == 1
+		and "任职 1 / 空缺 1" in region_status.text
+		and "空缺 2" not in region_status.text
+		and "守路领班" in region_status.text
+		and "警讯值守" in region_status.text
+		and "组织补位" in region_status.text
+		and _has_staffing_pressure(session, 1),
+		"8. 持续迁出只剩一名成年候选时补入一人，并保留一个空缺压力"
+	)
+	await _save_viewport(
+		RESTAFFED_OUTPUT_PATH, "9. 白坡坞自主补位截图已写入"
+	)
+
 	viewer.queue_free()
 	await process_frame
 	_finish()
@@ -119,6 +152,41 @@ func _save_viewport(path: String, label: String) -> void:
 		print("[V5 GENERATED ORGANIZATION RENDER PATH] %s" % (
 			ProjectSettings.globalize_path(path)
 		))
+
+
+func _wind_pass_roles(session: Variant) -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	for entity: Dictionary in session.stores["entity_store"].list_entity_rows():
+		var entity_id := str(entity.get("id", ""))
+		if (
+			str(entity.get("type", "")) == "person"
+			and str(session.stores["state_store"].get_state(
+				entity_id, "settlement_id", ""
+			)) == "generated_settlement.wind_pass"
+		):
+			rows.append({
+				"id": entity_id,
+				"age": session.stores["state_store"].get_state(
+					entity_id, "age_years", 0
+				),
+				"role": session.stores["state_store"].get_state(
+					entity_id, "institution_role", ""
+				),
+			})
+	return rows
+
+
+func _has_staffing_pressure(session: Variant, value: int) -> bool:
+	for pressure: Dictionary in session.stores[
+		"pressure_store"
+	].list_pressures():
+		if (
+			str(pressure.get("pressure_type", ""))
+			== "organization_staffing_need"
+			and int(pressure.get("value", 0)) == value
+		):
+			return true
+	return false
 
 
 func _finish() -> void:

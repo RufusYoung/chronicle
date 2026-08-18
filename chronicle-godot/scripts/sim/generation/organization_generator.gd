@@ -350,6 +350,12 @@ func _assign_positions(
 			"label": str(position.get("label", "成员")),
 			"founding_holder_id": holder_id,
 			"selection_score": int(selected.get("selection_score", 0)),
+			"preferred_occupation_ids": (
+				position.get("preferred_occupation_ids", []) as Array
+			).duplicate(),
+			"attribute_bias": (
+				position.get("attribute_bias", {}) as Dictionary
+			).duplicate(true),
 		})
 	return rows
 

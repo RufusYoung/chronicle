@@ -131,7 +131,7 @@ func _run() -> void:
 	)
 
 	var migration_session = _start_with_isolated_network(81001)
-	for _hour: int in range(60):
+	for _hour: int in range(36):
 		migration_session.advance_time(1, "generated_organization_migration")
 	_check(
 		_position_vacancies_follow_migration(migration_session),
