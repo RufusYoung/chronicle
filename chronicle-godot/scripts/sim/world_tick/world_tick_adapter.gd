@@ -23,6 +23,9 @@ const SettlementResourceSystemModel = preload(
 const SettlementNetworkSystemModel = preload(
 	"res://scripts/sim/resource/settlement_network_system.gd"
 )
+const SettlementAbsorptionSystemModel = preload(
+	"res://scripts/sim/migration/settlement_absorption_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -338,6 +341,24 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				writer.apply_result(migration_result, stores)
 			network_results.append_array(migration_results)
 			network_events.append_array(migration_data.get("events", []))
+
+			var absorption_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var absorption_data: Dictionary = (
+				SettlementAbsorptionSystemModel.new().resolve_tick(
+					absorption_snapshot,
+					round_event,
+					settlement_network_config,
+					npc_livelihood_profiles,
+					context.get_locations()
+				)
+			)
+			var absorption_results: Array = absorption_data.get("results", [])
+			for absorption_result: Variant in absorption_results:
+				writer.apply_result(absorption_result, stores)
+			network_results.append_array(absorption_results)
+			network_events.append_array(absorption_data.get("events", []))
 
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(

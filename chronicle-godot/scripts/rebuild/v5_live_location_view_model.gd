@@ -393,17 +393,22 @@ func _playtest_view(snapshot: Variant) -> Dictionary:
 		var current_settlement_id := _current_settlement_id(snapshot)
 		var current_name := _entity_name(current_settlement_id)
 		var trade_seen := _has_fact(snapshot, "settlement_trade_shipment")
+		var absorption_seen := _has_fact(snapshot, "migrant_absorption_evaluated")
 		return {
 			"mode": "generated_settlement_network",
-			"stage": 2 if trade_seen else 1,
+			"stage": 3 if absorption_seen else (2 if trade_seen else 1),
 			"stage_count": 3,
 			"completed": false,
 			"failed": false,
 			"title": "观察%s如何依赖邻近聚落" % current_name,
 			"summary": (
-				"道路已经产生真实货流。查看本地储备与最近运输，也可以沿区域道路前往另一个聚落比较资源和人口压力。"
-				if trade_seen
-				else "三个聚落拥有不同资源和承载力。等待会让居民生产、消耗储备，并让富余物资沿道路流向短缺地点。"
+				"迁徙家庭正在面对真实住房容量与职业空缺。查看区域状态，可以确认他们已经入住就业，还是仍需临时安置。"
+				if absorption_seen
+				else (
+					"道路已经产生真实货流。查看本地储备与最近运输，也可以沿区域道路前往另一个聚落比较资源和人口压力。"
+					if trade_seen
+					else "三个聚落拥有不同资源和承载力。等待会让居民生产、消耗储备，并让富余物资沿道路流向短缺地点。"
+				)
 			),
 			"hint": "连续短缺不会触发预写剧情，而会提高迁离压力并最终促成家庭搬迁。",
 		}
@@ -1101,7 +1106,8 @@ func _region_status_rows(snapshot: Variant) -> Array:
 			if str(network_row.get("key", "")) == "settlement_neighbors":
 				neighbor_summary = str(network_row.get("value", "无"))
 			elif str(network_row.get("key", "")) in [
-				"latest_settlement_trade", "latest_settlement_migration"
+				"latest_settlement_trade", "latest_settlement_migration",
+				"latest_settlement_absorption",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
@@ -1166,6 +1172,9 @@ func _region_status_rows(snapshot: Variant) -> Array:
 
 
 func _current_settlement_id(snapshot: Variant) -> String:
+	var direct_settlement_id := str(snapshot.location.get("settlement_id", ""))
+	if direct_settlement_id != "":
+		return direct_settlement_id
 	var location_id := str(snapshot.location.get("id", ""))
 	var runtime: Dictionary = session.get_settlement_network_summary()
 	for site: Dictionary in runtime.get("sites", []):
@@ -1297,6 +1306,35 @@ func _settlement_network_rows(
 				(fact.get("member_ids", []) as Array).size(),
 			],
 			"detail": str(fact.get("summary", "一户居民迁往了相邻聚落。")),
+		})
+		break
+
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		if (
+			str(fact.get("fact_type", ""))
+			!= "migrant_absorption_evaluated"
+			or str(fact.get("destination_settlement_id", ""))
+			!= settlement_id
+		):
+			continue
+		var member_count := int(fact.get("member_count", 0))
+		var reemployed_count := int(fact.get("reemployed_count", 0))
+		var unresolved_count := int(fact.get("unresolved_job_count", 0))
+		var housed := str(fact.get("housing_status", "")) == "housed"
+		rows.append({
+			"key": "latest_settlement_absorption",
+			"label": "迁入安顿" if housed and unresolved_count == 0 else "吸纳压力",
+			"value": (
+				"%d 人入住 · %d 人就业" % [member_count, reemployed_count]
+				if housed
+				else "%d 人临时安置 · %d 人待就业" % [
+					member_count, unresolved_count
+				]
+			),
+			"detail": str(fact.get(
+				"summary", "迁入家庭的住房与生计已经完成一次真实评估。"
+			)),
 		})
 		break
 	return rows

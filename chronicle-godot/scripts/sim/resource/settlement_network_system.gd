@@ -485,7 +485,19 @@ func _select_migration(
 		var household_ids: Array[String] = []
 		for value: Variant in settlement_households.keys():
 			household_ids.append(str(value))
-		household_ids.sort()
+		household_ids.sort_custom(func(a: String, b: String) -> bool:
+			var a_has_worker := _household_has_worker(
+				snapshot, settlement_households.get(a, []) as Array
+			)
+			var b_has_worker := _household_has_worker(
+				snapshot, settlement_households.get(b, []) as Array
+			)
+			if a_has_worker != b_has_worker:
+				return a_has_worker
+			var a_size := (settlement_households.get(a, []) as Array).size()
+			var b_size := (settlement_households.get(b, []) as Array).size()
+			return a_size < b_size if a_size != b_size else a < b
+		)
 		for household_id: String in household_ids:
 			var members: Array = settlement_households[household_id]
 			if (
@@ -523,6 +535,14 @@ func _select_migration(
 				],
 			}
 	return {}
+
+
+func _household_has_worker(snapshot: Variant, member_ids: Array) -> bool:
+	for member_value: Variant in member_ids:
+		var member: Dictionary = snapshot.get_entity(str(member_value))
+		if "generated_worker" in (member.get("tags", []) as Array):
+			return true
+	return false
 
 
 func _best_migration_destination(

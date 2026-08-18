@@ -127,11 +127,13 @@ func refresh_view() -> void:
 	location_context.text = str(location.get("context", ""))
 	location_description.text = str(location.get("description", ""))
 	var playtest: Dictionary = current_view_data.get("playtest", {})
-	brand_subtitle.text = (
-		"生成聚落现场 / INTERNAL PLAYTEST"
-		if str(playtest.get("mode", "")) == "generated_settlement"
-		else "湖湾镇垂直切片 / INTERNAL PLAYTEST"
-	)
+	match str(playtest.get("mode", "")):
+		"generated_settlement_network":
+			brand_subtitle.text = "生成区域现场 / INTERNAL PLAYTEST"
+		"generated_settlement":
+			brand_subtitle.text = "生成聚落现场 / INTERNAL PLAYTEST"
+		_:
+			brand_subtitle.text = "湖湾镇垂直切片 / INTERNAL PLAYTEST"
 	_refresh_playtest(playtest)
 
 	var player: Dictionary = current_view_data.get("player", {})

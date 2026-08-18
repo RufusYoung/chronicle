@@ -92,6 +92,12 @@ func generate_fixture(
 			int(resident_config["minimum_households"]),
 			initial_resident_count / 3
 		)
+		resident_config["maximum_household_size"] = maxi(int(site.get(
+			"dwelling_capacity", 6
+		)), 2)
+		resident_config["reserve_dwelling_count"] = maxi(int(site.get(
+			"reserve_dwelling_count", 1
+		)), 0)
 		resident_configs.append(resident_config)
 		var site_row := {
 			"site_id": site_id,
@@ -101,6 +107,9 @@ func generate_fixture(
 			"resident_capacity": int(site_report.get("resident_capacity", 0)),
 			"population_target": int(site_report.get("population_target", 0)),
 			"terrain_id": str(site_report.get("terrain_id", "")),
+			"dwelling_capacity": maxi(int(site.get(
+				"dwelling_capacity", 6
+			)), 0),
 			"generation_seed": site_seed,
 		}
 		sites_by_id[site_id] = site_row
@@ -136,6 +145,9 @@ func generate_fixture(
 		"trade_goods": trade_goods.duplicate(true),
 		"migration_delay_days": maxi(int(config.get(
 			"migration_delay_days", 2
+		)), 1),
+		"absorption_delay_days": maxi(int(config.get(
+			"absorption_delay_days", 1
 		)), 1),
 	}
 	fixture["settlement_network_runtime"] = runtime

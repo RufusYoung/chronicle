@@ -27,6 +27,7 @@
   "settlement_network_generation": {
     "definition_path": "res://data/sim/raw/generation_defs/north_border_settlements_v1.json",
     "primary_site_id": "reed_bay",
+    "absorption_delay_days": 1,
     "sites": [
       {
         "site_id": "reed_bay",

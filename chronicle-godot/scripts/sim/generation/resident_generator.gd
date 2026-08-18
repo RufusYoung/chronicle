@@ -46,15 +46,28 @@ func generate_fixture(
 	if occupation_error != "":
 		return _failure(occupation_error)
 
-	var household_count := clampi(
-		rng.randi_range(
-			int(config.get("minimum_households", 3)),
-			int(config.get("maximum_households", 4))
-		),
+	var maximum_household_size := maxi(int(config.get(
+		"maximum_household_size", 6
+	)), 2)
+	var required_household_count := ceili(
+		float(count) / float(maximum_household_size)
+	)
+	var minimum_household_count := clampi(
+		maxi(int(config.get("minimum_households", 3)), required_household_count),
 		1,
 		maxi(count / 2, 1)
 	)
-	var household_sizes := _household_sizes(count, household_count, rng)
+	var maximum_household_count := clampi(
+		maxi(int(config.get("maximum_households", 4)), minimum_household_count),
+		minimum_household_count,
+		maxi(count / 2, 1)
+	)
+	var household_count := rng.randi_range(
+		minimum_household_count, maximum_household_count
+	)
+	var household_sizes := _household_sizes(
+		count, household_count, maximum_household_size, rng
+	)
 	var surnames: Array = definition.get("surnames", [])
 	var given_names: Array = definition.get("given_names", [])
 	if surnames.is_empty() or given_names.is_empty():
@@ -115,6 +128,7 @@ func generate_fixture(
 			"id": home_id,
 			"display_name": "%s家住屋" % surname,
 			"description": "芦苇岸聚落的一处普通住屋，居住者和家庭结构由世界种子生成。",
+			"settlement_id": settlement_id,
 			"tags": ["home", "generated_location", "settlement_dwelling"],
 		}
 		entities.append({
@@ -250,6 +264,33 @@ func generate_fixture(
 			household_member_ages,
 			batch_fact_id
 		)
+
+	var reserve_dwelling_count := maxi(int(config.get(
+		"reserve_dwelling_count", 0
+	)), 0)
+	for reserve_index: int in range(reserve_dwelling_count):
+		var reserve_number := reserve_index + 1
+		var reserve_home_id := "generated_home.%s.reserve.%02d" % [
+			id_namespace, reserve_number
+		]
+		locations[reserve_home_id] = {
+			"id": reserve_home_id,
+			"display_name": "空置住屋 %d" % reserve_number,
+			"description": "聚落中暂时无人居住的普通住屋，可以在迁徙后被真实占用。",
+			"settlement_id": settlement_id,
+			"tags": [
+				"home", "generated_location", "settlement_dwelling",
+				"reserve_dwelling",
+			],
+		}
+		facts.append({
+			"fact_id": "fact.generated_reserve_dwelling.%s" % reserve_home_id,
+			"fact_type": "reserve_dwelling_generated",
+			"actor_id": settlement_id,
+			"home_location_id": reserve_home_id,
+			"generation_seed": seed,
+			"source_fact_ids": [batch_fact_id],
+		})
 
 	_link_household_heads(relationships, household_heads, rng)
 	_append_neighbor_relationship_facts(
@@ -389,6 +430,7 @@ func _configured_occupations(
 func _household_sizes(
 		resident_count: int,
 		household_count: int,
+		maximum_household_size: int,
 		rng: RandomNumberGenerator
 ) -> Array[int]:
 	var sizes: Array[int] = []
@@ -396,7 +438,15 @@ func _household_sizes(
 		sizes.append(2)
 	var remaining := resident_count - household_count * 2
 	while remaining > 0:
-		var index := rng.randi_range(0, household_count - 1)
+		var available_indices: Array[int] = []
+		for candidate_index: int in range(household_count):
+			if sizes[candidate_index] < maximum_household_size:
+				available_indices.append(candidate_index)
+		if available_indices.is_empty():
+			break
+		var index := available_indices[rng.randi_range(
+			0, available_indices.size() - 1
+		)]
 		sizes[index] += 1
 		remaining -= 1
 	return sizes
@@ -936,6 +986,16 @@ func _livelihood_profiles(
 		var profile := {
 			"occupation_id": occupation_id,
 			"settlement_id": settlement_id,
+			"label": str(occupation.get("label", occupation_id)),
+			"workplace_id": str(occupation.get("workplace_id", "")),
+			"livelihood_status": str(occupation.get(
+				"livelihood_status", "self_employed"
+			)),
+			"minimum_slots": int(occupation.get("minimum_slots", 0)),
+			"maximum_slots": int(occupation.get("maximum_slots", 0)),
+			"attribute_bias": (
+				occupation.get("attribute_bias", {}) as Dictionary
+			).duplicate(true),
 			"actor_tags_all": ["generated_worker"],
 			"work_interval_hours": int(occupation.get(
 				"work_interval_hours", 8
