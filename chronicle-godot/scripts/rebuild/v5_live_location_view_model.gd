@@ -1111,7 +1111,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 			elif str(network_row.get("key", "")) in [
 				"latest_settlement_trade", "latest_settlement_migration",
 				"latest_settlement_absorption", "latest_organization_restaff",
-				"latest_organization_action",
+				"latest_organization_action", "latest_organization_lifecycle",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
@@ -1432,6 +1432,34 @@ func _settlement_network_rows(
 			],
 			"detail": str(fact.get(
 				"summary", "当地组织从居民中补入一名新成员。"
+			)),
+		})
+		break
+
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		var fact_type := str(fact.get("fact_type", ""))
+		if (
+			fact_type not in [
+				"organization_runtime_formed",
+				"organization_goal_changed",
+				"organization_goal_reactivated",
+				"organization_runtime_retired",
+			]
+			or str(fact.get("settlement_id", "")) != settlement_id
+		):
+			continue
+		rows.append({
+			"key": "latest_organization_lifecycle",
+			"label": {
+				"organization_runtime_formed": "组织成立",
+				"organization_goal_changed": "目标转向",
+				"organization_goal_reactivated": "目标恢复",
+				"organization_runtime_retired": "组织退场",
+			}.get(fact_type, "组织变化"),
+			"value": _entity_name(str(fact.get("organization_id", ""))),
+			"detail": str(fact.get(
+				"summary", "当地压力改变了组织的生命周期。"
 			)),
 		})
 		break
@@ -2102,6 +2130,10 @@ func _local_organization_response_result(result: Dictionary) -> Dictionary:
 					"organization_local_provisions_transferred",
 					"organization_trade_coordinated",
 					"organization_route_patrolled",
+					"organization_runtime_formed",
+					"organization_goal_changed",
+					"organization_goal_reactivated",
+					"organization_runtime_retired",
 				]
 				and str(fact.get("settlement_id", "")) == settlement_id
 			):

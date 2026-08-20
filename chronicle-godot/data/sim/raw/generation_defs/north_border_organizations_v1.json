@@ -20,6 +20,16 @@
         "trigger_food_pressure": ["medium", "high"],
         "amount_per_action": 2.0
       },
+      "lifecycle": {
+        "state_key": "food_pressure",
+        "formation_values": ["high"],
+        "recovery_values": ["low"],
+        "formation_delay_days": 2,
+        "retirement_delay_days": 2,
+        "cooldown_days": 3,
+        "active_goal": "优先协调本地口粮、缺粮家庭与公共储备。",
+        "recovery_goal": "核清余粮与未结供食记录，准备结束临时职责。"
+      },
       "positions": [
         {
           "position_id": "provision_steward",

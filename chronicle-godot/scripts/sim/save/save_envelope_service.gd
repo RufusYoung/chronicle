@@ -74,7 +74,7 @@ func save_to_path(path: String, envelope: Dictionary) -> Dictionary:
 			"save_file_open_failed:%d" % FileAccess.get_open_error(),
 			"write"
 		)
-	var encoded := JSON.stringify(normalized, "  ", true, true)
+	var encoded := JSON.stringify(normalized, "  ", true, false)
 	file.store_string(encoded)
 	file.close()
 	return {

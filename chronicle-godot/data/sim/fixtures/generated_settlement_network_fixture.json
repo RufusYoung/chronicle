@@ -108,6 +108,8 @@
   },
   "organization_runtime": {
     "appointment_delay_days": 1,
-    "max_appointments_per_organization_per_day": 2
+    "max_appointments_per_organization_per_day": 2,
+    "lifecycle_enabled": true,
+    "maximum_resource_links": 3
   }
 }

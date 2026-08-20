@@ -287,8 +287,27 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	world_tick_adapter.configure_settlement_network(
 		settlement_network_runtime
 	)
+	var organization_runtime_config := (
+		fixture.get("organization_runtime", {}) as Dictionary
+	).duplicate(true)
+	var organization_generation_config: Dictionary = fixture.get(
+		"organization_generation", {}
+	)
+	var organization_definition_path := str(
+		organization_generation_config.get("definition_path", "")
+	)
+	if (
+		bool(organization_runtime_config.get("lifecycle_enabled", false))
+		and organization_definition_path != ""
+	):
+		var organization_definition: Dictionary = registry.load_json(
+			organization_definition_path
+		)
+		organization_runtime_config["lifecycle_prototypes"] = (
+			organization_definition.get("prototypes", []) as Array
+		).duplicate(true)
 	world_tick_adapter.configure_organization_runtime(
-		fixture.get("organization_runtime", {})
+		organization_runtime_config
 	)
 	challenge_rng.seed = int(fixture.get("challenge_seed", 1))
 	var initial_store_report := _create_stores(fixture)

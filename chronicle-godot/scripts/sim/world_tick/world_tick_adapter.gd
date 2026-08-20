@@ -32,6 +32,9 @@ const OrganizationRuntimeSystemModel = preload(
 const OrganizationResponseSystemModel = preload(
 	"res://scripts/sim/organization/organization_response_system.gd"
 )
+const OrganizationLifecycleSystemModel = preload(
+	"res://scripts/sim/organization/organization_lifecycle_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -404,6 +407,22 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				writer.apply_result(response_result, stores)
 			network_results.append_array(response_results)
 			network_events.append_array(response_data.get("events", []))
+
+			var lifecycle_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var lifecycle_data: Dictionary = (
+				OrganizationLifecycleSystemModel.new().resolve_tick(
+					lifecycle_snapshot,
+					round_event,
+					organization_runtime_config
+				)
+			)
+			var lifecycle_results: Array = lifecycle_data.get("results", [])
+			for lifecycle_result: Variant in lifecycle_results:
+				writer.apply_result(lifecycle_result, stores)
+			network_results.append_array(lifecycle_results)
+			network_events.append_array(lifecycle_data.get("events", []))
 
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(
