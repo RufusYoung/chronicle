@@ -91,9 +91,15 @@ func resolve_trade_tick(
 	var events: Array = []
 	for link: Dictionary in _dictionary_rows(config.get("links", [])):
 		var link_id := str(link.get("link_id", ""))
-		var remaining_capacity := maxf(float(link.get(
+		var route_effect := _active_route_effect(snapshot, link, day)
+		var base_capacity := maxf(float(link.get(
 			"capacity_per_day", 0.0
 		)), 0.0)
+		var remaining_capacity := (
+			base_capacity + float(route_effect.get("capacity_bonus", 0.0))
+			if base_capacity > EPSILON
+			else 0.0
+		)
 		for good: Dictionary in goods:
 			if remaining_capacity <= EPSILON:
 				break
@@ -130,16 +136,25 @@ func resolve_trade_tick(
 					)), 0.1)
 				)
 			)
+			var required_traffic_cost := maxf(
+				0.25,
+				maxf(0.5, amount * 0.15) - float(route_effect.get(
+					"transport_cost_reduction", 0.0
+				))
+			)
 			var traffic_cost := minf(
 				float(available.get(traffic_stock_id, 0.0)),
-				maxf(0.5, amount * 0.15)
+				required_traffic_cost
 			)
-			if amount <= EPSILON or traffic_cost + EPSILON < maxf(
-				0.5, amount * 0.15
-			):
+			if amount <= EPSILON or traffic_cost + EPSILON < required_traffic_cost:
 				continue
+			var effective_risk := maxi(
+				int(link.get("risk", 0))
+				- int(route_effect.get("risk_reduction", 0)),
+				0
+			)
 			var unit_price := float(good.get("base_unit_price", 1.0)) + float(
-				link.get("risk", 0)
+				effective_risk
 			) * 0.25 + (1.0 - float(candidate.get(
 				"destination_ratio", 1.0
 			))) * 2.0
@@ -192,6 +207,17 @@ func resolve_trade_tick(
 				"destination_stock_id": destination_stock_id,
 				"transport_stock_id": traffic_stock_id,
 				"transport_cost": traffic_cost,
+				"base_route_risk": int(link.get("risk", 0)),
+				"effective_route_risk": effective_risk,
+				"organization_capacity_bonus": float(route_effect.get(
+					"capacity_bonus", 0.0
+				)),
+				"organization_transport_cost_reduction": float(
+					route_effect.get("transport_cost_reduction", 0.0)
+				),
+				"source_fact_ids": (route_effect.get(
+					"source_fact_ids", []
+				) as Array).duplicate(),
 				"day": day,
 				"summary": "%s沿道路向%s运送了 %.1f 份%s，成交价约为每份 %.1f 枚铜币。" % [
 					_entity_name(snapshot, source_id),
@@ -218,6 +244,10 @@ func resolve_trade_tick(
 				"good_id": good_id,
 				"amount": amount,
 				"unit_price": _rounded(unit_price),
+				"effective_route_risk": effective_risk,
+				"organization_capacity_bonus": float(route_effect.get(
+					"capacity_bonus", 0.0
+				)),
 				"fact_id": fact_id,
 			})
 	if result.is_empty():
@@ -229,6 +259,65 @@ func resolve_trade_tick(
 	})
 	result.mark_resolved("settlement_network_trade")
 	return {"results": [result], "events": events}
+
+
+func _active_route_effect(
+		snapshot: Variant,
+		link: Dictionary,
+		day: int
+) -> Dictionary:
+	var capacity_bonus := 0.0
+	var risk_reduction := 0
+	var transport_cost_reduction := 0.0
+	var source_fact_ids: Array[String] = []
+	for settlement_id: String in [
+		str(link.get("settlement_a_id", "")),
+		str(link.get("settlement_b_id", "")),
+	]:
+		var coordination: Variant = snapshot.get_entity_state(
+			settlement_id, "organization_trade_coordination", {}
+		)
+		if (
+			coordination is Dictionary
+			and str((coordination as Dictionary).get("link_id", ""))
+			== str(link.get("link_id", ""))
+			and int((coordination as Dictionary).get("until_day", 0)) >= day
+		):
+			capacity_bonus += maxf(float((coordination as Dictionary).get(
+				"capacity_bonus", 0.0
+			)), 0.0)
+			_append_unique(source_fact_ids, str((coordination as Dictionary).get(
+				"source_fact_id", ""
+			)))
+		var watch: Variant = snapshot.get_entity_state(
+			settlement_id, "organization_route_watch", {}
+		)
+		if (
+			watch is Dictionary
+			and str((watch as Dictionary).get("link_id", ""))
+			== str(link.get("link_id", ""))
+			and int((watch as Dictionary).get("until_day", 0)) >= day
+		):
+			risk_reduction += maxi(int((watch as Dictionary).get(
+				"risk_reduction", 0
+			)), 0)
+			transport_cost_reduction += maxf(float((watch as Dictionary).get(
+				"transport_cost_reduction", 0.0
+			)), 0.0)
+			_append_unique(source_fact_ids, str((watch as Dictionary).get(
+				"source_fact_id", ""
+			)))
+	return {
+		"capacity_bonus": capacity_bonus,
+		"risk_reduction": risk_reduction,
+		"transport_cost_reduction": transport_cost_reduction,
+		"source_fact_ids": source_fact_ids,
+	}
+
+
+func _append_unique(rows: Array[String], value: String) -> void:
+	if value != "" and value not in rows:
+		rows.append(value)
 
 
 func resolve_migration_tick(
@@ -523,12 +612,11 @@ func _select_migration(
 				"pressure_days": int((pressures[origin_id] as Dictionary).get(
 					"pressure_days", 0
 				)),
-				"summary": "%s的一户居民在连续 %d 天资源压力后，沿%s迁往%s。原有劳动者失去旧岗位，抵达后需要重新寻找生计。" % [
+				"summary": "%s的一户居民在连续 %d 天资源压力后，沿连接两地的道路迁往%s。原有劳动者失去旧岗位，抵达后需要重新寻找生计。" % [
 					_entity_name(snapshot, origin_id),
 					int((pressures[origin_id] as Dictionary).get(
 						"pressure_days", 0
 					)),
-					str(destination.get("link_id", "区域道路")),
 					_entity_name(snapshot, str(destination.get(
 						"settlement_id", ""
 					))),

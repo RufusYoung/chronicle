@@ -126,6 +126,9 @@ func generate_fixture(
 			"prototype_id": str(prototype.get("prototype_id", "")),
 			"goal": str(prototype.get("goal", "")),
 			"need_signals": needs.duplicate(true),
+			"runtime_response": (
+				prototype.get("runtime_response", {}) as Dictionary
+			).duplicate(true),
 			"positions": positions.duplicate(true),
 			"founding_member_ids": founding_member_ids.duplicate(),
 			"resource_stock_ids": resource_stock_ids.duplicate(),
@@ -145,6 +148,9 @@ func generate_fixture(
 			"prototype_id": str(prototype.get("prototype_id", "")),
 			"goal": str(prototype.get("goal", "")),
 			"need_signals": needs.duplicate(true),
+			"runtime_response": (
+				prototype.get("runtime_response", {}) as Dictionary
+			).duplicate(true),
 			"founding_member_ids": founding_member_ids.duplicate(),
 			"resource_stock_ids": resource_stock_ids.duplicate(),
 			"source_fact_ids": source_fact_ids.duplicate(),
@@ -201,6 +207,9 @@ func generate_fixture(
 			"settlement_id": settlement_id,
 			"prototype_id": str(prototype.get("prototype_id", "")),
 			"organization_kind": str(prototype.get("organization_kind", "")),
+			"action_kind": str((prototype.get(
+				"runtime_response", {}
+			) as Dictionary).get("action_kind", "")),
 			"founding_member_ids": founding_member_ids.duplicate(),
 			"resource_stock_ids": resource_stock_ids.duplicate(),
 			"need_signals": needs.duplicate(true),
@@ -548,6 +557,10 @@ func _validate_generated_fixture(
 			errors.append("organization_location_unknown:%s" % organization_id)
 		if str(organization.get("goal", "")) == "":
 			errors.append("organization_goal_missing:%s" % organization_id)
+		if str((organization.get(
+			"runtime_response", {}
+		) as Dictionary).get("action_kind", "")) == "":
+			errors.append("organization_runtime_response_missing:%s" % organization_id)
 		for member_id: Variant in organization.get("founding_member_ids", []):
 			if not entity_ids.has(str(member_id)):
 				errors.append("organization_member_unknown:%s" % organization_id)

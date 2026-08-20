@@ -29,6 +29,9 @@ const SettlementAbsorptionSystemModel = preload(
 const OrganizationRuntimeSystemModel = preload(
 	"res://scripts/sim/organization/organization_runtime_system.gd"
 )
+const OrganizationResponseSystemModel = preload(
+	"res://scripts/sim/organization/organization_response_system.gd"
+)
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 
@@ -384,6 +387,23 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				writer.apply_result(organization_result, stores)
 			network_results.append_array(organization_results)
 			network_events.append_array(organization_data.get("events", []))
+
+			var response_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var response_data: Dictionary = (
+				OrganizationResponseSystemModel.new().resolve_tick(
+					response_snapshot,
+					round_event,
+					organization_runtime_config,
+					settlement_network_config
+				)
+			)
+			var response_results: Array = response_data.get("results", [])
+			for response_result: Variant in response_results:
+				writer.apply_result(response_result, stores)
+			network_results.append_array(response_results)
+			network_events.append_array(response_data.get("events", []))
 
 		if not autonomous_action_rules.is_empty():
 			var decision_snapshot = snapshot_builder.build_snapshot(

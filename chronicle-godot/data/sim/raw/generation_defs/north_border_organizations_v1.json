@@ -11,8 +11,15 @@
       "base_score": 2,
       "required_any_industry_ids": ["fishery", "terrace_farming"],
       "industry_weights": {"fishery": 4, "terrace_farming": 4, "reed_craft": 1},
+      "terrain_weights": {"waterside": 8, "marsh": 4},
       "need_weights": {"food_coordination": 5, "population_coordination": 2},
       "resource_tags_any": ["food", "fish", "soil", "roots", "trade_reserve"],
+      "runtime_response": {
+        "action_kind": "local_provisioning",
+        "minimum_staffed_positions": 1,
+        "trigger_food_pressure": ["medium", "high"],
+        "amount_per_action": 2.0
+      },
       "positions": [
         {
           "position_id": "provision_steward",
@@ -39,6 +46,14 @@
       "industry_weights": {"road_carting": 6, "reed_craft": 1},
       "need_weights": {"trade_coordination": 6, "route_exposure": 1},
       "resource_tags_any": ["traffic_capacity", "road", "trade_reserve"],
+      "runtime_response": {
+        "action_kind": "trade_coordination",
+        "minimum_staffed_positions": 1,
+        "trigger_neighbor_food_pressure": ["medium", "high"],
+        "traffic_cost": 1.0,
+        "capacity_bonus": 2.0,
+        "duration_days": 1
+      },
       "positions": [
         {
           "position_id": "route_factor",
@@ -67,6 +82,15 @@
       "terrain_weights": {"defensible": 5, "upland": 3, "windy": 1},
       "need_weights": {"security_coordination": 7, "route_exposure": 2},
       "resource_tags_any": ["traffic_capacity", "road"],
+      "runtime_response": {
+        "action_kind": "route_patrol",
+        "minimum_staffed_positions": 1,
+        "minimum_route_risk": 2,
+        "traffic_cost": 1.0,
+        "risk_reduction": 1,
+        "transport_cost_reduction": 0.2,
+        "duration_days": 1
+      },
       "positions": [
         {
           "position_id": "watch_captain",

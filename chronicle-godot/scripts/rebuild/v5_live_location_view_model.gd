@@ -1111,6 +1111,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 			elif str(network_row.get("key", "")) in [
 				"latest_settlement_trade", "latest_settlement_migration",
 				"latest_settlement_absorption", "latest_organization_restaff",
+				"latest_organization_action",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
@@ -1318,9 +1319,17 @@ func _settlement_network_rows(
 			),
 			str(entity.get("display_name", "地方组织")),
 		])
-		organization_details.append("%s。%s" % [
+		var last_response_summary := str(snapshot.get_entity_state(
+			str(entity.get("id", "")), "last_response_summary", ""
+		))
+		organization_details.append("%s。%s%s" % [
 			str(entity.get("goal", "协调当地事务")),
 			"；".join(position_rows),
+			(
+				"\n最近行动：%s" % last_response_summary
+				if last_response_summary != ""
+				else ""
+			),
 		])
 	if not organization_names.is_empty():
 		rows.append({
@@ -1422,6 +1431,32 @@ func _settlement_network_rows(
 			],
 			"detail": str(fact.get(
 				"summary", "当地组织从居民中补入一名新成员。"
+			)),
+		})
+		break
+
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		var fact_type := str(fact.get("fact_type", ""))
+		if (
+			fact_type not in [
+				"organization_local_provisions_transferred",
+				"organization_trade_coordinated",
+				"organization_route_patrolled",
+			]
+			or str(fact.get("settlement_id", "")) != settlement_id
+		):
+			continue
+		rows.append({
+			"key": "latest_organization_action",
+			"label": {
+				"organization_local_provisions_transferred": "组织调粮",
+				"organization_trade_coordinated": "货路协调",
+				"organization_route_patrolled": "道路巡守",
+			}.get(fact_type, "组织行动"),
+			"value": _entity_name(str(fact.get("organization_id", ""))),
+			"detail": str(fact.get(
+				"summary", "当地组织依据当前压力采取了行动。"
 			)),
 		})
 		break
@@ -1956,21 +1991,23 @@ func _tick_feedback_view() -> Dictionary:
 			"details": [],
 		}
 
-	var results: Array = latest_result.get(
-		"observed_autonomous_results",
-		[]
-	)
-	if results.is_empty():
-		results = latest_result.get("observed_need_results", [])
-	if results.is_empty():
-		results = latest_result.get("network_results", [])
-	if results.is_empty():
-		results = latest_result.get("resource_results", [])
-	if results.is_empty():
-		results = latest_result.get("livelihood_results", [])
-	if results.is_empty():
-		results = latest_result.get("results", [])
-	var result_data: Dictionary = results[0] if not results.is_empty() else {}
+	var result_data := _local_organization_response_result(latest_result)
+	if result_data.is_empty():
+		var results: Array = latest_result.get(
+			"observed_autonomous_results",
+			[]
+		)
+		if results.is_empty():
+			results = latest_result.get("observed_need_results", [])
+		if results.is_empty():
+			results = latest_result.get("network_results", [])
+		if results.is_empty():
+			results = latest_result.get("resource_results", [])
+		if results.is_empty():
+			results = latest_result.get("livelihood_results", [])
+		if results.is_empty():
+			results = latest_result.get("results", [])
+		result_data = results[0] if not results.is_empty() else {}
 	var narrative: Dictionary = result_data.get("narrative_result", {})
 	var details := _tick_detail_lines(result_data)
 	details.append_array(_need_detail_lines(latest_result))
@@ -1978,7 +2015,9 @@ func _tick_feedback_view() -> Dictionary:
 	return {
 		"status": "world_tick",
 		"title": str(narrative.get("title", "时间带来了变化")),
-		"body": _tick_narrative(latest_result),
+		"body": str(narrative.get(
+			"summary", _tick_narrative(latest_result)
+		)),
 		"details": details,
 	}
 
@@ -2011,6 +2050,14 @@ func _ferry_wait_narrative() -> String:
 
 
 func _tick_narrative(result: Dictionary) -> String:
+	var local_response := _local_organization_response_result(result)
+	if not local_response.is_empty():
+		var local_narrative: Dictionary = local_response.get(
+			"narrative_result", {}
+		)
+		var local_summary := str(local_narrative.get("summary", ""))
+		if local_summary != "":
+			return local_summary
 	var summaries: Array[String] = []
 	var results: Array = (
 		result.get("results", []) as Array
@@ -2034,6 +2081,31 @@ func _tick_narrative(result: Dictionary) -> String:
 	if not entries.is_empty() and int(result.get("triggered_count", 0)) > 0:
 		return str((entries[0] as Dictionary).get("narrative_summary", ""))
 	return ""
+
+
+func _local_organization_response_result(result: Dictionary) -> Dictionary:
+	if session == null or not session.is_ready():
+		return {}
+	var settlement_id := _current_settlement_id(session.get_snapshot())
+	if settlement_id == "":
+		return {}
+	var network_results: Array = result.get("network_results", [])
+	for index: int in range(network_results.size() - 1, -1, -1):
+		var result_value: Variant = network_results[index]
+		if not result_value is Dictionary:
+			continue
+		var result_data: Dictionary = result_value
+		for fact: Dictionary in result_data.get("facts_added", []):
+			if (
+				str(fact.get("fact_type", "")) in [
+					"organization_local_provisions_transferred",
+					"organization_trade_coordinated",
+					"organization_route_patrolled",
+				]
+				and str(fact.get("settlement_id", "")) == settlement_id
+			):
+				return result_data
+	return {}
 
 
 func _tick_detail_lines(result_data: Dictionary) -> Array:
