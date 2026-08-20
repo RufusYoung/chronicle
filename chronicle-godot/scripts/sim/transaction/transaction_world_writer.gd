@@ -9,6 +9,7 @@ const EXTERNAL_PROJECTION_KEYS := [
 ]
 
 const STORE_REQUIREMENTS := {
+	"entity_changes": "entity_store",
 	"facts_added": "fact_store",
 	"state_changes": "state_store",
 	"relationship_changes": "relationship_store",
@@ -35,6 +36,9 @@ var last_report: Dictionary = {"ok": true, "error": ""}
 
 func apply_result(result: Variant, stores: Dictionary) -> bool:
 	last_report = _validate_store_coverage(result, stores)
+	if not bool(last_report.get("ok", false)):
+		return _reject(result, last_report)
+	last_report = _validate_entity_change_contract(result, stores)
 	if not bool(last_report.get("ok", false)):
 		return _reject(result, last_report)
 
@@ -72,6 +76,12 @@ func apply_result(result: Variant, stores: Dictionary) -> bool:
 
 
 func _apply_to_stores(result: Variant, stores: Dictionary) -> Dictionary:
+	var entity_store: Variant = stores.get("entity_store")
+	if entity_store != null:
+		for entity_change: Dictionary in result.entity_changes:
+			if not entity_store.apply_entity_change(entity_change):
+				return _store_failure("entity_store", entity_store)
+
 	var fact_store: Variant = stores.get("fact_store")
 	if fact_store != null:
 		for fact: Dictionary in result.facts_added:
@@ -207,6 +217,63 @@ func _validate_store_coverage(result: Variant, stores: Dictionary) -> Dictionary
 					"phase": "contract",
 				}
 	return {"ok": true, "error": "", "phase": "contract"}
+
+
+func _validate_entity_change_contract(
+		result: Variant, stores: Dictionary
+) -> Dictionary:
+	if result == null or result.entity_changes.is_empty():
+		return {"ok": true, "error": "", "phase": "entity_contract"}
+	var fact_store: Variant = stores.get("fact_store")
+	var available_fact_ids: Dictionary = {}
+	if fact_store != null:
+		for fact: Dictionary in fact_store.list_facts():
+			available_fact_ids[str(fact.get("fact_id", ""))] = true
+	for fact: Dictionary in result.facts_added:
+		var fact_id := str(fact.get("fact_id", ""))
+		if fact_id == "":
+			return _entity_contract_failure("entity_change_fact_id_missing")
+		available_fact_ids[fact_id] = true
+	for change: Dictionary in result.entity_changes:
+		var operation := str(change.get("operation", ""))
+		if operation not in ["create", "update", "retire"]:
+			return _entity_contract_failure(
+				"entity_change_operation_invalid:%s" % operation
+			)
+		var source_fact_ids: Variant = change.get("source_fact_ids", [])
+		if not source_fact_ids is Array or (source_fact_ids as Array).is_empty():
+			return _entity_contract_failure(
+				"entity_change_source_facts_missing:%s" % operation
+			)
+		for value: Variant in source_fact_ids:
+			var source_fact_id := str(value)
+			if source_fact_id == "" or not available_fact_ids.has(source_fact_id):
+				return _entity_contract_failure(
+					"entity_change_source_fact_unknown:%s" % source_fact_id
+				)
+		if operation == "create":
+			var entity: Variant = change.get("entity", {})
+			if (
+				not entity is Dictionary
+				or str((entity as Dictionary).get("id", "")) == ""
+				or str((entity as Dictionary).get("type", "")) == ""
+			):
+				return _entity_contract_failure("entity_create_contract_invalid")
+		elif str(change.get("entity_id", "")) == "":
+			return _entity_contract_failure(
+				"entity_change_target_missing:%s" % operation
+			)
+		if operation == "retire":
+			var retired_fact_id := str(change.get("retired_fact_id", ""))
+			if retired_fact_id == "" or retired_fact_id not in (source_fact_ids as Array):
+				return _entity_contract_failure(
+					"entity_retire_fact_invalid:%s" % retired_fact_id
+				)
+	return {"ok": true, "error": "", "phase": "entity_contract"}
+
+
+func _entity_contract_failure(error: String) -> Dictionary:
+	return {"ok": false, "error": error, "phase": "entity_contract"}
 
 
 func _build_preview_stores(stores: Dictionary) -> Dictionary:

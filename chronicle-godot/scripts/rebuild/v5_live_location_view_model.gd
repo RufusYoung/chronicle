@@ -1275,6 +1275,7 @@ func _settlement_network_rows(
 	for entity: Dictionary in snapshot.get_entities():
 		if (
 			"generated_organization" not in (entity.get("tags", []) as Array)
+			or str(entity.get("lifecycle_status", "active")) == "retired"
 			or str(entity.get("settlement_id", "")) != settlement_id
 		):
 			continue

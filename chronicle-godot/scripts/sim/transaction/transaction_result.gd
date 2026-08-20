@@ -3,6 +3,7 @@ class_name V5TransactionResult
 
 var facts: Array = []
 var facts_added: Array = []
+var entity_changes: Array = []
 var state_changes: Array = []
 var relationship_changes: Array = []
 var memories: Array = []
@@ -36,6 +37,7 @@ func is_empty() -> bool:
 	return (
 		facts.is_empty()
 		and facts_added.is_empty()
+		and entity_changes.is_empty()
 		and state_changes.is_empty()
 		and relationship_changes.is_empty()
 		and memories.is_empty()
@@ -66,6 +68,10 @@ func add_fact(fact: Dictionary) -> void:
 	var fact_copy := fact.duplicate(true)
 	facts.append(fact_copy)
 	facts_added.append(fact_copy)
+
+
+func add_entity_change(change: Dictionary) -> void:
+	entity_changes.append(change.duplicate(true))
 
 
 func add_state_change(change: Dictionary) -> void:
@@ -175,6 +181,7 @@ func to_dict() -> Dictionary:
 	return {
 		"facts": facts.duplicate(true),
 		"facts_added": facts_added.duplicate(true),
+		"entity_changes": entity_changes.duplicate(true),
 		"state_changes": state_changes.duplicate(true),
 		"relationship_changes": relationship_changes.duplicate(true),
 		"memories": memories.duplicate(true),
@@ -208,6 +215,7 @@ func to_dict() -> Dictionary:
 func summary() -> Dictionary:
 	return {
 		"fact_count": facts_added.size(),
+		"entity_change_count": entity_changes.size(),
 		"state_change_count": state_changes.size(),
 		"relationship_change_count": relationship_changes.size(),
 		"memory_count": memories_added.size(),

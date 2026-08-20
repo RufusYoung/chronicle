@@ -11,12 +11,21 @@ const PLAYER_STATIC_KEYS := [
 	"interactions",
 ]
 
+const MUTABLE_STATIC_KEYS := [
+	"display_name",
+	"description",
+	"goal",
+	"runtime_response",
+	"need_signals",
+]
+
 var entities: Dictionary = {}
 var entity_order: Array[String] = []
 var object_defs_by_type: Dictionary = {}
 var strict_definitions: bool = false
 var validation_errors: Array[String] = []
 var validation_warnings: Array[String] = []
+var last_error: String = ""
 
 
 func configure_definitions(
@@ -36,6 +45,7 @@ func load_from_context(context: Variant) -> Dictionary:
 	entity_order.clear()
 	validation_errors.clear()
 	validation_warnings.clear()
+	last_error = ""
 
 	for entity: Dictionary in context.entities:
 		add_entity(str(entity.get("id", "")), entity)
@@ -65,6 +75,7 @@ func load_from_context(context: Variant) -> Dictionary:
 
 
 func add_entity(entity_id: String, data: Dictionary = {}) -> bool:
+	last_error = ""
 	var normalized_id := entity_id.strip_edges()
 	if normalized_id == "":
 		return _reject("missing_entity_id")
@@ -90,6 +101,37 @@ func add_entity(entity_id: String, data: Dictionary = {}) -> bool:
 	entities[normalized_id] = entity_data
 	entity_order.append(normalized_id)
 	return true
+
+
+func apply_entity_change(change: Dictionary) -> bool:
+	last_error = ""
+	match str(change.get("operation", "")):
+		"create":
+			var entity: Variant = change.get("entity", {})
+			if not entity is Dictionary:
+				return _reject("entity_create_data_invalid")
+			var entity_id := str((entity as Dictionary).get(
+				"id", change.get("entity_id", "")
+			))
+			return add_entity(entity_id, entity as Dictionary)
+		"update":
+			return _update_entity(
+				str(change.get("entity_id", "")),
+				change.get("fields", {})
+			)
+		"retire":
+			return _retire_entity(change)
+	return _reject("entity_change_operation_invalid:%s" % str(
+		change.get("operation", "")
+	))
+
+
+func is_entity_active(entity_id: String) -> bool:
+	if not entities.has(entity_id):
+		return false
+	return str((entities[entity_id] as Dictionary).get(
+		"lifecycle_status", "active"
+	)) != "retired"
 
 
 func get_entity(entity_id: String) -> Dictionary:
@@ -135,6 +177,7 @@ func load_save_data(data: Variant) -> Dictionary:
 	entity_order.clear()
 	validation_errors.clear()
 	validation_warnings.clear()
+	last_error = ""
 	if not data is Dictionary:
 		_reject("save_entities_not_dictionary")
 		return get_contract_report()
@@ -155,6 +198,53 @@ func get_contract_report() -> Dictionary:
 		"errors": validation_errors.duplicate(),
 		"warnings": validation_warnings.duplicate(),
 	}
+
+
+func _update_entity(entity_id: String, fields_value: Variant) -> bool:
+	if entity_id == "" or not entities.has(entity_id):
+		return _reject("entity_update_unknown:%s" % entity_id)
+	if not is_entity_active(entity_id):
+		return _reject("entity_update_retired:%s" % entity_id)
+	if not fields_value is Dictionary or (fields_value as Dictionary).is_empty():
+		return _reject("entity_update_fields_invalid:%s" % entity_id)
+	var entity: Dictionary = (entities[entity_id] as Dictionary).duplicate(true)
+	for key_value: Variant in (fields_value as Dictionary).keys():
+		var key := str(key_value)
+		if key not in MUTABLE_STATIC_KEYS:
+			return _reject("entity_update_field_forbidden:%s:%s" % [
+				entity_id, key
+			])
+		var value: Variant = (fields_value as Dictionary).get(key_value)
+		if key == "tags" and not value is Array:
+			return _reject("entity_update_tags_invalid:%s" % entity_id)
+		if key in ["runtime_response", "need_signals"] and not value is Dictionary:
+			return _reject("entity_update_dictionary_invalid:%s:%s" % [
+				entity_id, key
+			])
+		entity[key] = value.duplicate(true) if value is Array or value is Dictionary else value
+	entities[entity_id] = entity
+	return true
+
+
+func _retire_entity(change: Dictionary) -> bool:
+	var entity_id := str(change.get("entity_id", ""))
+	if entity_id == "" or not entities.has(entity_id):
+		return _reject("entity_retire_unknown:%s" % entity_id)
+	if not is_entity_active(entity_id):
+		return _reject("entity_already_retired:%s" % entity_id)
+	var entity: Dictionary = (entities[entity_id] as Dictionary).duplicate(true)
+	if (
+		entity_id == "player"
+		or str(entity.get("type", "")) == "region"
+		or "player" in (entity.get("tags", []) as Array)
+	):
+		return _reject("entity_retire_protected:%s" % entity_id)
+	entity["lifecycle_status"] = "retired"
+	entity["retired_fact_id"] = str(change.get("retired_fact_id", ""))
+	entity["retired_day"] = int(change.get("day", 0))
+	entity["retirement_reason"] = str(change.get("reason", ""))
+	entities[entity_id] = entity
+	return true
 
 
 func _player_entity_data(player_id: String, source: Dictionary) -> Dictionary:
@@ -181,5 +271,6 @@ func _apply_default_tags(entity: Dictionary, definition: Dictionary) -> void:
 
 
 func _reject(message: String) -> bool:
+	last_error = message
 	validation_errors.append(message)
 	return false

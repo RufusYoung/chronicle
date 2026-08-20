@@ -629,6 +629,7 @@ func _build_tick_log_entry(
 	autonomous_decisions: Array = []
 ) -> Dictionary:
 	var aggregate := _aggregate_results(results)
+	var entity_changes: Array = aggregate.get("entity_changes", [])
 	var pressure_changes: Array = aggregate.get("pressure_changes", [])
 	var state_changes: Array = aggregate.get("state_changes", [])
 	var relationship_changes: Array = aggregate.get("relationship_changes", [])
@@ -694,6 +695,7 @@ func _build_tick_log_entry(
 		),
 		"facts_added": _fact_types(aggregate.get("facts", [])),
 		"fact_ids": _fact_ids(aggregate.get("facts", [])),
+		"entity_change_count": entity_changes.size(),
 		"state_change_count": state_changes.size(),
 		"relationship_change_count": relationship_changes.size(),
 		"memory_count": memories.size(),
@@ -806,6 +808,7 @@ func _result_rows(results: Array) -> Array:
 
 func _aggregate_results(results: Array) -> Dictionary:
 	var facts: Array = []
+	var entity_changes: Array = []
 	var state_changes: Array = []
 	var relationship_changes: Array = []
 	var memories: Array = []
@@ -828,6 +831,7 @@ func _aggregate_results(results: Array) -> Dictionary:
 		if result == null:
 			continue
 		facts.append_array(result.facts_added.duplicate(true))
+		entity_changes.append_array(result.entity_changes.duplicate(true))
 		state_changes.append_array(result.state_changes.duplicate(true))
 		relationship_changes.append_array(
 			result.relationship_changes.duplicate(true)
@@ -857,6 +861,7 @@ func _aggregate_results(results: Array) -> Dictionary:
 
 	return {
 		"facts": facts,
+		"entity_changes": entity_changes,
 		"state_changes": state_changes,
 		"relationship_changes": relationship_changes,
 		"memories": memories,

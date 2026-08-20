@@ -182,7 +182,10 @@ func resolve_tick(
 func _organizations(snapshot: Variant) -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
 	for entity: Dictionary in snapshot.get_entities():
-		if "generated_organization" in (entity.get("tags", []) as Array):
+		if (
+			"generated_organization" in (entity.get("tags", []) as Array)
+			and str(entity.get("lifecycle_status", "active")) != "retired"
+		):
 			rows.append(entity)
 	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return str(a.get("id", "")) < str(b.get("id", ""))

@@ -26,7 +26,6 @@ const WELL_RETURN := "mist_salt_well_to_north_quay_record_house"
 const WELL_TRACE := "inspect_visible_trace:mist_salt_well_mouth_crust"
 const WELL_WARNING := "read_visible_readable_object:mist_salt_well_warning_stone"
 const WELL_DESCENT := "descend_mist_salt_well_second_ring"
-const COMBAT_RETREAT := "combat:mist_salt_well_claimant:retreat"
 
 var viewer: Control
 var failures: Array[String] = []
@@ -219,14 +218,13 @@ func _run() -> void:
 		) == null,
 		"17. The well does not reveal consequences before the evidence"
 	)
-	await _press_combat(COMBAT_RETREAT)
+	var combat_retreat := _combat_option_id("retreat")
+	await _press_combat(combat_retreat)
 	_check(
 		"掷骰" in _text("%FeedbackBody")
 		and "耐久降至" in _text("%FeedbackBody")
 		and "原来的三个选择已从行动栏撤下" in _text("%FeedbackBody")
-		and _find_button(
-			"%ActionButtons", "combat_option_id", COMBAT_RETREAT
-		) == null,
+		and viewer.view_model.session.get_combat_encounter_options().is_empty(),
 		"17a. A real encounter explains its result and consumes every approach"
 	)
 	await _press_action(WELL_TRACE)
@@ -275,6 +273,16 @@ func _press_challenge(option_id: String) -> void:
 
 func _press_combat(option_id: String) -> void:
 	await _press("%ActionButtons", "combat_option_id", option_id)
+
+
+func _combat_option_id(action_type: String) -> String:
+	for option: Dictionary in viewer.view_model.session.get_combat_encounter_options():
+		if (
+			str(option.get("action_type", "")) == action_type
+			and bool(option.get("can_execute", false))
+		):
+			return str(option.get("option_id", ""))
+	return ""
 
 
 func _press_echo(option_id: String) -> void:
