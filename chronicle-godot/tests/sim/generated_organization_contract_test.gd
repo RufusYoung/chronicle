@@ -133,8 +133,15 @@ func _run() -> void:
 	var migration_session = _start_with_isolated_network(81001)
 	for _hour: int in range(36):
 		migration_session.advance_time(1, "generated_organization_migration")
+	var migration_vacancies_valid := _position_vacancies_follow_migration(
+		migration_session
+	)
+	if not migration_vacancies_valid:
+		print("[V5 GENERATED ORGANIZATION MIGRATION DIAGNOSTIC] %s" % (
+			JSON.stringify(_migration_vacancy_diagnostic(migration_session))
+		))
 	_check(
-		_position_vacancies_follow_migration(migration_session),
+		migration_vacancies_valid,
 		"10. 创始成员迁出时清空当前任职并留下职位离任事实，组织不保留伪现任成员"
 	)
 
@@ -357,31 +364,76 @@ func _position_vacancies_follow_migration(session: Variant) -> bool:
 	)
 	if migrations.is_empty() or vacancies.is_empty():
 		return false
+	var migration_fact_ids: Dictionary = {}
+	for migration: Dictionary in migrations:
+		migration_fact_ids[str(migration.get("fact_id", ""))] = true
+	var matched_vacancy_count := 0
 	for vacancy: Dictionary in vacancies:
+		var source_fact_ids: Array = vacancy.get("source_fact_ids", [])
+		var migration_source_id := ""
+		for source_value: Variant in source_fact_ids:
+			if migration_fact_ids.has(str(source_value)):
+				migration_source_id = str(source_value)
+				break
+		if migration_source_id == "":
+			continue
+		matched_vacancy_count += 1
 		var member_id := str(vacancy.get("target_id", ""))
 		var organization_id := str(vacancy.get("organization_id", ""))
 		var organization: Dictionary = session.stores[
 			"entity_store"
 		].get_entity(organization_id)
-		var source_fact_ids: Array = vacancy.get("source_fact_ids", [])
+		var current_role := str(session.stores["state_store"].get_state(
+			member_id, "institution_role", ""
+		))
 		if (
 			organization.is_empty()
 			or member_id not in (
 				organization.get("founding_member_ids", []) as Array
 			)
-			or str(session.stores["state_store"].get_state(
-				member_id, "institution_role", ""
-			)) != ""
+			or current_role.begins_with("%s::" % organization_id)
 			or str(session.stores["state_store"].get_state(
 				member_id, "settlement_id", ""
 			)) == str(organization.get("settlement_id", ""))
-			or source_fact_ids.is_empty()
 			or session.stores["fact_store"].get_fact(
-				str(source_fact_ids[0])
+				migration_source_id
 			).is_empty()
 		):
 			return false
-	return bool(session.validate_persistent_references().get("ok", false))
+	return (
+		matched_vacancy_count > 0
+		and bool(session.validate_persistent_references().get("ok", false))
+	)
+
+
+func _migration_vacancy_diagnostic(session: Variant) -> Dictionary:
+	var rows: Array[Dictionary] = []
+	for vacancy: Dictionary in session.stores[
+		"fact_store"
+	].find_facts_by_type("organization_position_vacated"):
+		var member_id := str(vacancy.get("target_id", ""))
+		var organization_id := str(vacancy.get("organization_id", ""))
+		rows.append({
+			"member_id": member_id,
+			"organization_id": organization_id,
+			"source_fact_ids": vacancy.get("source_fact_ids", []),
+			"institution_role": session.stores["state_store"].get_state(
+				member_id, "institution_role", ""
+			),
+			"member_settlement_id": session.stores["state_store"].get_state(
+				member_id, "settlement_id", ""
+			),
+			"organization_settlement_id": str(session.stores[
+				"entity_store"
+			].get_entity(organization_id).get("settlement_id", "")),
+		})
+	return {
+		"migrations": session.stores["fact_store"].find_facts_by_type(
+			"household_migrated"
+		),
+		"vacancies": rows,
+		"references": session.validate_persistent_references(),
+	}
 
 
 func _organization_kinds(organizations: Array[Dictionary]) -> Dictionary:

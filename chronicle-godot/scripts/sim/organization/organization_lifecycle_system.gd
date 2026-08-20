@@ -9,7 +9,8 @@ const TransactionResultModel = preload(
 func resolve_tick(
 		snapshot: Variant,
 		tick_event: Dictionary,
-		config: Dictionary
+		config: Dictionary,
+		network_config: Dictionary = {}
 ) -> Dictionary:
 	var day := int(tick_event.get("day", 0))
 	if (
@@ -27,7 +28,7 @@ func resolve_tick(
 	for settlement: Dictionary in _settlements(snapshot):
 		for prototype: Dictionary in prototypes:
 			var resolution := _resolve_pair(
-				snapshot, settlement, prototype, config, day
+				snapshot, settlement, prototype, config, network_config, day
 			)
 			results.append_array(resolution.get("results", []))
 			events.append_array(resolution.get("events", []))
@@ -39,22 +40,19 @@ func _resolve_pair(
 		settlement: Dictionary,
 		prototype: Dictionary,
 		config: Dictionary,
+		network_config: Dictionary,
 		day: int
 ) -> Dictionary:
 	var settlement_id := str(settlement.get("id", ""))
 	var prototype_id := str(prototype.get("prototype_id", ""))
 	var lifecycle: Dictionary = prototype.get("lifecycle", {})
-	var state_key := str(lifecycle.get("state_key", ""))
-	if settlement_id == "" or prototype_id == "" or state_key == "":
+	if settlement_id == "" or prototype_id == "" or lifecycle.is_empty():
 		return {"results": [], "events": []}
 
-	var signal_value := str(snapshot.get_entity_state(
-		settlement_id, state_key, ""
-	))
-	var source_fact := _latest_pressure_fact(
-		snapshot, settlement_id, state_key, signal_value
+	var signal_data := _evaluate_signal(
+		snapshot, settlement_id, lifecycle, network_config, day
 	)
-	if source_fact.is_empty():
+	if signal_data.is_empty():
 		return {"results": [], "events": []}
 
 	var active := _active_organization(
@@ -68,14 +66,15 @@ func _resolve_pair(
 			settlement,
 			prototype,
 			active,
-			signal_value,
-			source_fact,
+			signal_data,
 			day
 		)
 
-	if signal_value not in (lifecycle.get("formation_values", []) as Array):
+	if not bool(signal_data.get("formation", false)):
 		return {"results": [], "events": []}
-	if not _industry_requirements_met(snapshot, settlement_id, prototype):
+	if not _formation_requirements_met(
+		snapshot, settlement_id, prototype, lifecycle, network_config
+	):
 		return {"results": [], "events": []}
 	if _in_cooldown(snapshot, settlement_id, prototype_id, lifecycle, day):
 		return {"results": [], "events": []}
@@ -84,10 +83,10 @@ func _resolve_pair(
 		snapshot,
 		settlement_id,
 		prototype_id,
-		state_key,
-		signal_value,
+		str(signal_data.get("signal_key", "")),
+		signal_data.get("signal_value"),
 		"formation",
-		source_fact,
+		signal_data.get("source_fact_ids", []),
 		day
 	)
 	if observation.is_empty():
@@ -103,6 +102,7 @@ func _resolve_pair(
 			settlement,
 			prototype,
 			config,
+			signal_data,
 			str(observation.get("fact_id", "")),
 			int(observation.get("streak", 0)),
 			day
@@ -118,33 +118,39 @@ func _resolve_active(
 		settlement: Dictionary,
 		prototype: Dictionary,
 		organization: Dictionary,
-		signal_value: String,
-		source_fact: Dictionary,
+		signal_data: Dictionary,
 		day: int
 ) -> Dictionary:
 	var lifecycle: Dictionary = prototype.get("lifecycle", {})
-	var recovery_values: Array = lifecycle.get("recovery_values", [])
-	var formation_values: Array = lifecycle.get("formation_values", [])
 	var recovery_goal := str(lifecycle.get("recovery_goal", ""))
 	var active_goal := str(lifecycle.get(
 		"active_goal", prototype.get("goal", "")
 	))
 	var organization_goal := str(organization.get("goal", ""))
-	if signal_value in formation_values and organization_goal == recovery_goal:
+	var source_fact_id := _first_source_fact_id(signal_data)
+	if bool(signal_data.get("formation", false)) and organization_goal == recovery_goal:
 		var resumed := _goal_change_result(
 			settlement,
 			organization,
 			active_goal,
 			"organization_goal_reactivated",
-			"压力再次升高，临时组织恢复应急目标。",
-			str(source_fact.get("fact_id", "")),
+			str(lifecycle.get(
+				"reactivation_summary", "现实压力再次升高，临时组织恢复应急目标。"
+			)),
+			source_fact_id,
 			day
 		)
 		return {
 			"results": [resumed.get("result")],
 			"events": [resumed.get("event", {})],
 		}
-	if signal_value not in recovery_values:
+	if bool(signal_data.get("formation", false)):
+		var effectiveness := _resolve_effectiveness(
+			snapshot, settlement, prototype, organization, signal_data, day
+		)
+		if not (effectiveness.get("results", []) as Array).is_empty():
+			return effectiveness
+	if not bool(signal_data.get("recovery", false)):
 		return {"results": [], "events": []}
 
 	var settlement_id := str(settlement.get("id", ""))
@@ -153,10 +159,10 @@ func _resolve_active(
 		snapshot,
 		settlement_id,
 		prototype_id,
-		str(lifecycle.get("state_key", "")),
-		signal_value,
+		str(signal_data.get("signal_key", "")),
+		signal_data.get("signal_value"),
 		"recovery",
-		source_fact,
+		signal_data.get("source_fact_ids", []),
 		day
 	)
 	if observation.is_empty():
@@ -173,6 +179,13 @@ func _resolve_active(
 			settlement,
 			organization,
 			observation_fact_id,
+			str(lifecycle.get(
+				"retirement_reason", "现实压力持续缓解后临时职责结束"
+			)),
+			str(lifecycle.get(
+				"retirement_summary",
+				"现实压力持续缓解后，临时组织结束职责，既有历史保留。"
+			)),
 			day
 		)
 		results.append(retirement.get("result"))
@@ -183,7 +196,10 @@ func _resolve_active(
 			organization,
 			recovery_goal,
 			"organization_goal_changed",
-			"粮压已经缓解，临时组织转向核清余项并准备退出。",
+			str(lifecycle.get(
+				"recovery_summary",
+				"现实压力已经缓解，临时组织转向核清余项并准备退出。"
+			)),
 			observation_fact_id,
 			day
 		)
@@ -197,9 +213,9 @@ func _observation(
 		settlement_id: String,
 		prototype_id: String,
 		state_key: String,
-		signal_value: String,
+		signal_value: Variant,
 		phase: String,
-		source_fact: Dictionary,
+		source_fact_ids_value: Variant,
 		day: int
 ) -> Dictionary:
 	var fact_id := "fact.organization_lifecycle_signal.%s.%s.%s.day%d" % [
@@ -216,6 +232,9 @@ func _observation(
 		else 1
 	)
 	var result = TransactionResultModel.new()
+	var source_fact_ids := _valid_source_fact_ids(source_fact_ids_value)
+	if source_fact_ids.is_empty():
+		return {}
 	result.add_fact({
 		"fact_id": fact_id,
 		"fact_type": "organization_lifecycle_signal_observed",
@@ -228,7 +247,7 @@ func _observation(
 		"phase": phase,
 		"streak": streak,
 		"day": day,
-		"source_fact_ids": [str(source_fact.get("fact_id", ""))],
+		"source_fact_ids": source_fact_ids,
 		"summary": "%s已连续 %d 天处于%s阶段的组织压力条件。" % [
 			_entity_name(snapshot, settlement_id), streak,
 			"形成" if phase == "formation" else "收尾",
@@ -255,6 +274,7 @@ func _formation_result(
 		settlement: Dictionary,
 		prototype: Dictionary,
 		config: Dictionary,
+		signal_data: Dictionary,
 		observation_fact_id: String,
 		streak: int,
 		day: int
@@ -288,6 +308,9 @@ func _formation_result(
 		str(prototype.get("name_suffix", "议事会")),
 	]
 	var lifecycle: Dictionary = prototype.get("lifecycle", {})
+	var formation_reason := str(lifecycle.get(
+		"formation_reason", "持续现实压力"
+	))
 	var goal := str(lifecycle.get(
 		"active_goal", prototype.get("goal", "协调当前压力。")
 	))
@@ -359,8 +382,11 @@ func _formation_result(
 		"formation_streak": streak,
 		"day": day,
 		"source_fact_ids": [observation_fact_id],
-		"summary": "%s连续承受压力后，%s由 %d 名当地居民组成。" % [
+		"signal_key": str(signal_data.get("signal_key", "")),
+		"signal_value": signal_data.get("signal_value"),
+		"summary": "%s因%s，%s由 %d 名当地居民组成。" % [
 			str(settlement.get("display_name", "聚落")),
+			formation_reason,
 			organization_name,
 			founding_member_ids.size(),
 		],
@@ -439,17 +465,19 @@ func _formation_result(
 		),
 		"subject_id": organization_id,
 		"title": "%s成立" % organization_name,
-		"body": "%s连续承受现实压力后，当地居民临时承担职位。目标是%s" % [
-			str(settlement.get("display_name", "聚落")), goal
+		"body": "%s因%s，当地居民临时承担职位。目标是%s" % [
+			str(settlement.get("display_name", "聚落")), formation_reason, goal
 		],
 		"source_fact_ids": [formation_fact_id],
 		"day": day,
 	})
 	result.set_narrative_result({
 		"title": "%s成立" % organization_name,
-		"summary": "%d 名当地居民因持续粮压组成临时共食组织，开始协调口粮。" % (
-			founding_member_ids.size()
-		),
+		"summary": "%d 名当地居民因%s组成%s，开始执行临时职责。" % [
+			founding_member_ids.size(),
+			formation_reason,
+			str(prototype.get("name_suffix", "地方组织")),
+		],
 		"tone": "organization_formed",
 	})
 	result.mark_resolved("organization_runtime_formation")
@@ -521,6 +549,8 @@ func _retirement_result(
 		settlement: Dictionary,
 		organization: Dictionary,
 		observation_fact_id: String,
+		retirement_reason: String,
+		retirement_summary: String,
 		day: int
 ) -> Dictionary:
 	var organization_id := str(organization.get("id", ""))
@@ -536,7 +566,7 @@ func _retirement_result(
 		"entity_id": organization_id,
 		"retired_fact_id": fact_id,
 		"day": day,
-		"reason": "粮食压力连续缓解后临时职责结束",
+		"reason": retirement_reason,
 		"source_fact_ids": [fact_id],
 	})
 	result.add_fact({
@@ -549,9 +579,7 @@ func _retirement_result(
 		"prototype_id": str(organization.get("prototype_id", "")),
 		"day": day,
 		"source_fact_ids": [observation_fact_id],
-		"summary": "粮压持续缓解后，%s结束临时职责，但成员、关系和行动仍保留在历史中。" % (
-			organization_name
-		),
+		"summary": "%s：%s" % [organization_name, retirement_summary],
 	})
 	for position_value: Variant in organization.get("positions", []):
 		if not position_value is Dictionary:
@@ -591,13 +619,13 @@ func _retirement_result(
 		],
 		"subject_id": organization_id,
 		"title": "%s结束职责" % organization_name,
-		"body": "连续缓解的粮压让临时职责失去必要性。组织退出，既有事实与关系保留。",
+		"body": "%s 组织退出，既有事实与关系保留。" % retirement_summary,
 		"source_fact_ids": [fact_id],
 		"day": day,
 	})
 	result.set_narrative_result({
 		"title": "%s结束职责" % organization_name,
-		"summary": "粮压连续缓解后，这个临时组织退出；它留下的任职与行动仍属于世界历史。",
+		"summary": retirement_summary,
 		"tone": "organization_retired",
 	})
 	result.mark_resolved("organization_runtime_retirement")
@@ -610,6 +638,138 @@ func _retirement_result(
 			"day": day,
 		},
 	}
+
+
+func _resolve_effectiveness(
+		snapshot: Variant,
+		settlement: Dictionary,
+		prototype: Dictionary,
+		organization: Dictionary,
+		signal_data: Dictionary,
+		day: int
+) -> Dictionary:
+	var lifecycle: Dictionary = prototype.get("lifecycle", {})
+	var effectiveness: Dictionary = lifecycle.get("effectiveness", {})
+	if effectiveness.is_empty():
+		return {"results": [], "events": []}
+	var organization_id := str(organization.get("id", ""))
+	var review_goal := str(effectiveness.get("review_goal", ""))
+	var active_goal := str(lifecycle.get(
+		"active_goal", prototype.get("goal", "")
+	))
+	var organization_goal := str(organization.get("goal", ""))
+	var last_response_day := int(snapshot.get_entity_state(
+		organization_id, "last_response_day", 0
+	))
+	if last_response_day == day:
+		if review_goal != "" and organization_goal == review_goal:
+			var resumed := _goal_change_result(
+				settlement,
+				organization,
+				active_goal,
+				"organization_goal_reactivated",
+				"组织重新完成了现实行动，恢复原有临时目标。",
+				str(snapshot.get_entity_state(
+					organization_id, "last_response_fact_id", ""
+				)),
+				day
+			)
+			return {
+				"results": [resumed.get("result")],
+				"events": [resumed.get("event", {})],
+			}
+		return {"results": [], "events": []}
+
+	var fact_id := "fact.organization_effectiveness_evaluated.%s.day%d" % [
+		_safe_id(organization_id), day
+	]
+	if _fact_exists(snapshot, fact_id):
+		return {"results": [], "events": []}
+	var previous := _previous_effectiveness_observation(
+		snapshot, organization_id, day
+	)
+	var streak := (
+		int(previous.get("ineffective_streak", 0)) + 1
+		if int(previous.get("day", 0)) == day - 1
+		else 1
+	)
+	var source_fact_ids := _valid_source_fact_ids(
+		signal_data.get("source_fact_ids", [])
+	)
+	if source_fact_ids.is_empty():
+		return {"results": [], "events": []}
+	var result = TransactionResultModel.new()
+	result.add_fact({
+		"fact_id": fact_id,
+		"fact_type": "organization_effectiveness_evaluated",
+		"actor_id": organization_id,
+		"target_id": str(settlement.get("id", "")),
+		"organization_id": organization_id,
+		"settlement_id": str(settlement.get("id", "")),
+		"prototype_id": str(prototype.get("prototype_id", "")),
+		"effective": false,
+		"ineffective_streak": streak,
+		"day": day,
+		"source_fact_ids": source_fact_ids,
+		"summary": "%s连续 %d 天没有完成与当前压力对应的现实行动。" % [
+			str(organization.get("display_name", "临时组织")), streak
+		],
+	})
+	result.mark_resolved("organization_effectiveness_evaluation")
+	var results: Array = [result]
+	var events: Array = [{
+		"event_type": "organization_effectiveness_evaluated",
+		"organization_id": organization_id,
+		"settlement_id": str(settlement.get("id", "")),
+		"effective": false,
+		"ineffective_streak": streak,
+		"day": day,
+	}]
+	var retire_after := maxi(int(effectiveness.get(
+		"retire_after_days", 0
+	)), 0)
+	if retire_after > 0 and streak >= retire_after:
+		var retirement := _retirement_result(
+			snapshot,
+			settlement,
+			organization,
+			fact_id,
+			str(effectiveness.get(
+				"retirement_reason", "组织长期未能完成现实行动"
+			)),
+			str(effectiveness.get(
+				"retirement_summary",
+				"组织长期没有完成现实行动，因此结束临时职责。"
+			)),
+			day
+		)
+		results.append(retirement.get("result"))
+		events.append(retirement.get("event", {}))
+		return {"results": results, "events": events}
+	var review_after := maxi(int(effectiveness.get(
+		"review_after_days", 0
+	)), 0)
+	if (
+		review_after > 0
+		and streak >= review_after
+		and review_goal != ""
+		and organization_goal != review_goal
+	):
+		var changed := _goal_change_result(
+			settlement,
+			organization,
+			review_goal,
+			"organization_goal_changed",
+			str(effectiveness.get(
+				"review_summary",
+				"组织连续没有完成现实行动，转向补充人员与资源。"
+			)),
+			fact_id,
+			day
+		)
+		results.append(changed.get("result"))
+		events.append(changed.get("event", {}))
+	return {"results": results, "events": events}
 
 
 func _lifecycle_prototypes(config: Dictionary) -> Array[Dictionary]:
@@ -650,26 +810,232 @@ func _active_organization(
 	return {}
 
 
-func _latest_pressure_fact(
+func _evaluate_signal(
 		snapshot: Variant,
 		settlement_id: String,
-		state_key: String,
-		signal_value: String
+		lifecycle: Dictionary,
+		network_config: Dictionary,
+		day: int
+) -> Dictionary:
+	var definition: Dictionary = lifecycle.get("signal", {})
+	if definition.is_empty():
+		definition = {
+			"kind": "settlement_state",
+			"signal_key": str(lifecycle.get("state_key", "")),
+			"state_key": str(lifecycle.get("state_key", "")),
+			"formation_values": (
+				lifecycle.get("formation_values", []) as Array
+			).duplicate(),
+			"recovery_values": (
+				lifecycle.get("recovery_values", []) as Array
+			).duplicate(),
+			"source_fact_type": "settlement_resource_pressure_changed",
+		}
+	var settlement_ids: Array = definition.get("settlement_ids", [])
+	if not settlement_ids.is_empty() and settlement_id not in settlement_ids:
+		return {}
+	match str(definition.get("kind", "settlement_state")):
+		"settlement_state":
+			return _settlement_state_signal(
+				snapshot, settlement_id, definition
+			)
+		"recent_fact_count":
+			return _recent_fact_count_signal(
+				snapshot, settlement_id, definition, day
+			)
+		"adjacent_route_risk":
+			return _adjacent_route_risk_signal(
+				snapshot, settlement_id, definition, network_config, day
+			)
+	return {}
+
+
+func _settlement_state_signal(
+		snapshot: Variant,
+		settlement_id: String,
+		definition: Dictionary
+) -> Dictionary:
+	var state_key := str(definition.get("state_key", ""))
+	if state_key == "":
+		return {}
+	var signal_value: Variant = snapshot.get_entity_state(
+		settlement_id, state_key, ""
+	)
+	var source_fact := _latest_matching_fact(
+		snapshot,
+		str(definition.get(
+			"source_fact_type", "settlement_resource_pressure_changed"
+		)),
+		settlement_id,
+		str(definition.get("source_settlement_field", "target_id")),
+		state_key,
+		signal_value
+	)
+	if source_fact.is_empty():
+		return {}
+	return {
+		"signal_key": str(definition.get("signal_key", state_key)),
+		"signal_value": signal_value,
+		"formation": signal_value in (definition.get(
+			"formation_values", []
+		) as Array),
+		"recovery": signal_value in (definition.get(
+			"recovery_values", []
+		) as Array),
+		"source_fact_ids": [str(source_fact.get("fact_id", ""))],
+	}
+
+
+func _recent_fact_count_signal(
+		snapshot: Variant,
+		settlement_id: String,
+		definition: Dictionary,
+		day: int
+) -> Dictionary:
+	var fact_type := str(definition.get("fact_type", ""))
+	var settlement_field := str(definition.get(
+		"settlement_field", "settlement_id"
+	))
+	if fact_type == "" or settlement_field == "":
+		return {}
+	var window_days := maxi(int(definition.get("window_days", 1)), 1)
+	var first_day := day - window_days + 1
+	var matching: Array[Dictionary] = []
+	var latest: Dictionary = {}
+	for fact: Dictionary in snapshot.get_facts():
+		var fact_day := int(fact.get("day", 0))
+		if (
+			str(fact.get("fact_type", "")) != fact_type
+			or str(fact.get(settlement_field, "")) != settlement_id
+			or fact_day > day
+		):
+			continue
+		if latest.is_empty() or fact_day > int(latest.get("day", 0)):
+			latest = fact
+		if fact_day >= first_day:
+			matching.append(fact)
+	if latest.is_empty():
+		return {}
+	var source_fact_ids: Array[String] = []
+	for fact: Dictionary in matching:
+		_append_unique(source_fact_ids, str(fact.get("fact_id", "")))
+	if source_fact_ids.is_empty():
+		_append_unique(source_fact_ids, str(latest.get("fact_id", "")))
+	var count := matching.size()
+	return {
+		"signal_key": str(definition.get(
+			"signal_key", "recent_%s_count" % fact_type
+		)),
+		"signal_value": count,
+		"formation": count >= maxi(int(definition.get(
+			"formation_min", 1
+		)), 0),
+		"recovery": count <= maxi(int(definition.get(
+			"recovery_max", 0
+		)), 0),
+		"source_fact_ids": source_fact_ids,
+	}
+
+
+func _adjacent_route_risk_signal(
+		snapshot: Variant,
+		settlement_id: String,
+		definition: Dictionary,
+		network_config: Dictionary,
+		day: int
+) -> Dictionary:
+	var network_fact := _latest_fact_by_type(
+		snapshot, "settlement_network_generated", day
+	)
+	if network_fact.is_empty():
+		return {}
+	var maximum_risk := -1
+	var source_fact_ids: Array[String] = [str(network_fact.get("fact_id", ""))]
+	for link_value: Variant in network_config.get("links", []):
+		if not link_value is Dictionary:
+			continue
+		var link: Dictionary = link_value
+		if (
+			str(link.get("settlement_a_id", "")) != settlement_id
+			and str(link.get("settlement_b_id", "")) != settlement_id
+		):
+			continue
+		var reduction := 0
+		for endpoint_id: String in [
+			str(link.get("settlement_a_id", "")),
+			str(link.get("settlement_b_id", "")),
+		]:
+			var watch: Variant = snapshot.get_entity_state(
+				endpoint_id, "organization_route_watch", {}
+			)
+			if (
+				watch is Dictionary
+				and str((watch as Dictionary).get("link_id", ""))
+				== str(link.get("link_id", ""))
+				and int((watch as Dictionary).get("until_day", 0)) >= day
+			):
+				reduction += maxi(int((watch as Dictionary).get(
+					"risk_reduction", 0
+				)), 0)
+				_append_unique(source_fact_ids, str(
+					(watch as Dictionary).get("source_fact_id", "")
+				))
+		maximum_risk = maxi(
+			maximum_risk,
+			maxi(int(link.get("risk", 0)) - reduction, 0)
+		)
+	if maximum_risk < 0:
+		return {}
+	return {
+		"signal_key": str(definition.get(
+			"signal_key", "maximum_adjacent_route_risk"
+		)),
+		"signal_value": maximum_risk,
+		"formation": maximum_risk >= maxi(int(definition.get(
+			"formation_min", 3
+		)), 0),
+		"recovery": maximum_risk <= maxi(int(definition.get(
+			"recovery_max", 1
+		)), 0),
+		"source_fact_ids": source_fact_ids,
+	}
+
+
+func _latest_matching_fact(
+		snapshot: Variant,
+		fact_type: String,
+		settlement_id: String,
+		settlement_field: String,
+		value_field: String,
+		expected_value: Variant
 ) -> Dictionary:
 	var facts: Array = snapshot.get_facts()
 	for index: int in range(facts.size() - 1, -1, -1):
 		var fact: Dictionary = facts[index]
 		if (
-			str(fact.get("fact_type", ""))
-			== "settlement_resource_pressure_changed"
-			and str(fact.get("target_id", "")) == settlement_id
+			str(fact.get("fact_type", "")) == fact_type
+			and str(fact.get(settlement_field, "")) == settlement_id
+			and fact.get(value_field) == expected_value
 		):
-			return (
-				fact
-				if str(fact.get(state_key, "")) == signal_value
-				else {}
-			)
+			return fact
 	return {}
+
+
+func _latest_fact_by_type(
+		snapshot: Variant, fact_type: String, day: int
+) -> Dictionary:
+	var latest: Dictionary = {}
+	for fact: Dictionary in snapshot.get_facts():
+		if (
+			str(fact.get("fact_type", "")) != fact_type
+			or int(fact.get("day", 0)) > day
+		):
+			continue
+		if latest.is_empty() or int(fact.get("day", 0)) >= int(
+			latest.get("day", 0)
+		):
+			latest = fact
+	return latest
 
 
 func _previous_observation(
@@ -697,20 +1063,66 @@ func _previous_observation(
 	return latest
 
 
-func _industry_requirements_met(
-		snapshot: Variant, settlement_id: String, prototype: Dictionary
-) -> bool:
-	var required: Array = prototype.get("required_any_industry_ids", [])
-	if required.is_empty():
-		return true
+func _previous_effectiveness_observation(
+		snapshot: Variant, organization_id: String, day: int
+) -> Dictionary:
+	var latest: Dictionary = {}
 	for fact: Dictionary in snapshot.get_facts():
 		if (
-			str(fact.get("fact_type", "")) == "settlement_industry_selected"
-			and str(fact.get("actor_id", "")) == settlement_id
-			and str(fact.get("industry_id", "")) in required
+			str(fact.get("fact_type", ""))
+			!= "organization_effectiveness_evaluated"
+			or str(fact.get("organization_id", "")) != organization_id
+			or bool(fact.get("effective", true))
+			or int(fact.get("day", 0)) >= day
 		):
-			return true
-	return false
+			continue
+		if latest.is_empty() or int(fact.get("day", 0)) > int(
+			latest.get("day", 0)
+		):
+			latest = fact
+	return latest
+
+
+func _formation_requirements_met(
+		snapshot: Variant,
+		settlement_id: String,
+		prototype: Dictionary,
+		lifecycle: Dictionary,
+		network_config: Dictionary
+) -> bool:
+	var required: Array = prototype.get("required_any_industry_ids", [])
+	if not required.is_empty():
+		var industry_met := false
+		for fact: Dictionary in snapshot.get_facts():
+			if (
+				str(fact.get("fact_type", ""))
+				== "settlement_industry_selected"
+				and str(fact.get("actor_id", "")) == settlement_id
+				and str(fact.get("industry_id", "")) in required
+			):
+				industry_met = true
+				break
+		if not industry_met:
+			return false
+	var required_terrain: Array = lifecycle.get(
+		"required_all_terrain_tags",
+		prototype.get("required_all_terrain_tags", [])
+	)
+	if required_terrain.is_empty():
+		return true
+	var terrain_tags: Array = []
+	for site_value: Variant in network_config.get("sites", []):
+		if (
+			site_value is Dictionary
+			and str((site_value as Dictionary).get("settlement_id", ""))
+			== settlement_id
+		):
+			terrain_tags = (site_value as Dictionary).get("terrain_tags", [])
+			break
+	for tag_value: Variant in required_terrain:
+		if tag_value not in terrain_tags:
+			return false
+	return true
 
 
 func _in_cooldown(
@@ -910,6 +1322,27 @@ func _arrays_intersect(left_value: Variant, right_value: Variant) -> bool:
 		if value in right:
 			return true
 	return false
+
+
+func _first_source_fact_id(signal_data: Dictionary) -> String:
+	var source_fact_ids := _valid_source_fact_ids(
+		signal_data.get("source_fact_ids", [])
+	)
+	return "" if source_fact_ids.is_empty() else str(source_fact_ids[0])
+
+
+func _valid_source_fact_ids(values: Variant) -> Array[String]:
+	var rows: Array[String] = []
+	if not values is Array:
+		return rows
+	for value: Variant in values:
+		_append_unique(rows, str(value))
+	return rows
+
+
+func _append_unique(rows: Array[String], value: String) -> void:
+	if value != "" and value not in rows:
+		rows.append(value)
 
 
 func _fact_exists(snapshot: Variant, fact_id: String) -> bool:

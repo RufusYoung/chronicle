@@ -415,7 +415,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				OrganizationLifecycleSystemModel.new().resolve_tick(
 					lifecycle_snapshot,
 					round_event,
-					organization_runtime_config
+					organization_runtime_config,
+					settlement_network_config
 				)
 			)
 			var lifecycle_results: Array = lifecycle_data.get("results", [])

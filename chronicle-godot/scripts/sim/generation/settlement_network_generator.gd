@@ -107,6 +107,9 @@ func generate_fixture(
 			"resident_capacity": int(site_report.get("resident_capacity", 0)),
 			"population_target": int(site_report.get("population_target", 0)),
 			"terrain_id": str(site_report.get("terrain_id", "")),
+			"terrain_tags": (((site.get("terrain", {}) as Dictionary).get(
+				"tags", []
+			)) as Array).duplicate(),
 			"dwelling_capacity": maxi(int(site.get(
 				"dwelling_capacity", 6
 			)), 0),

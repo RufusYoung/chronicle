@@ -27,6 +27,10 @@
         "formation_delay_days": 2,
         "retirement_delay_days": 2,
         "cooldown_days": 3,
+        "formation_reason": "持续粮压",
+        "recovery_summary": "粮压已经缓解，临时组织转向核清余项并准备退出。",
+        "retirement_reason": "粮食压力连续缓解后临时职责结束",
+        "retirement_summary": "粮压连续缓解后，组织结束临时职责，但成员、关系和行动仍保留在历史中。",
         "active_goal": "优先协调本地口粮、缺粮家庭与公共储备。",
         "recovery_goal": "核清余粮与未结供食记录，准备结束临时职责。"
       },
@@ -64,6 +68,34 @@
         "capacity_bonus": 2.0,
         "duration_days": 1
       },
+      "lifecycle": {
+        "signal": {
+          "kind": "recent_fact_count",
+          "signal_key": "recent_incoming_households",
+          "fact_type": "household_migrated",
+          "settlement_field": "destination_settlement_id",
+          "window_days": 3,
+          "formation_min": 1,
+          "recovery_max": 0
+        },
+        "formation_delay_days": 2,
+        "retirement_delay_days": 2,
+        "cooldown_days": 3,
+        "formation_reason": "连续到来的迁入家庭与转运需求",
+        "recovery_summary": "近日没有新的迁入家庭，同业会转向核清未结转运并准备退出。",
+        "retirement_reason": "迁入与转运压力持续平息后临时职责结束",
+        "retirement_summary": "连续数日没有新的迁入家庭后，临时同业会结束职责，既有转运记录保留。",
+        "active_goal": "协调迁入家庭、道路运力与相邻聚落的货物流向。",
+        "recovery_goal": "核清未结转运与道路占用，准备结束临时职责。",
+        "effectiveness": {
+          "review_after_days": 2,
+          "retire_after_days": 4,
+          "review_goal": "公开征集可用车夫与道路运力，复盘未完成的转运。",
+          "review_summary": "连续两日没有完成转运协调，同业会转向补充人手与运力。",
+          "retirement_reason": "连续无法完成转运协调，临时同业会失去执行能力",
+          "retirement_summary": "同业会长期没有完成转运协调，成员结束临时职责，未解决的迁入压力仍留在世界中。"
+        }
+      },
       "positions": [
         {
           "position_id": "route_factor",
@@ -100,6 +132,32 @@
         "risk_reduction": 1,
         "transport_cost_reduction": 0.2,
         "duration_days": 1
+      },
+      "lifecycle": {
+        "required_all_terrain_tags": ["roadside"],
+        "signal": {
+          "kind": "adjacent_route_risk",
+          "signal_key": "maximum_adjacent_route_risk",
+          "formation_min": 3,
+          "recovery_max": 2
+        },
+        "formation_delay_days": 2,
+        "retirement_delay_days": 2,
+        "cooldown_days": 3,
+        "formation_reason": "相邻道路持续处于高风险",
+        "recovery_summary": "巡守已经压低相邻道路的有效风险，守路队转向核清警讯并准备退出。",
+        "retirement_reason": "相邻道路风险持续受控后临时职责结束",
+        "retirement_summary": "相邻道路风险连续受控后，临时守路队结束轮值，巡守记录仍保留在历史中。",
+        "active_goal": "巡守最高风险道路，留下可追溯警讯并压低运输风险。",
+        "recovery_goal": "核清警讯、轮值与道路记录，准备结束临时职责。",
+        "effectiveness": {
+          "review_after_days": 2,
+          "retire_after_days": 4,
+          "review_goal": "补充守望人手与道路运力，复盘未能执行的巡守。",
+          "review_summary": "连续两日没有完成道路巡守，守路队转向补充人手与运力。",
+          "retirement_reason": "连续无法完成道路巡守，临时守路队失去执行能力",
+          "retirement_summary": "守路队长期没有完成巡守，成员结束临时职责，高风险道路仍留在世界中。"
+        }
       },
       "positions": [
         {

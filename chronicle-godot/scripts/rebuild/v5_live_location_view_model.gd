@@ -1442,6 +1442,7 @@ func _settlement_network_rows(
 		if (
 			fact_type not in [
 				"organization_runtime_formed",
+				"organization_effectiveness_evaluated",
 				"organization_goal_changed",
 				"organization_goal_reactivated",
 				"organization_runtime_retired",
@@ -1453,6 +1454,7 @@ func _settlement_network_rows(
 			"key": "latest_organization_lifecycle",
 			"label": {
 				"organization_runtime_formed": "组织成立",
+				"organization_effectiveness_evaluated": "效能复盘",
 				"organization_goal_changed": "目标转向",
 				"organization_goal_reactivated": "目标恢复",
 				"organization_runtime_retired": "组织退场",
@@ -2131,6 +2133,7 @@ func _local_organization_response_result(result: Dictionary) -> Dictionary:
 					"organization_trade_coordinated",
 					"organization_route_patrolled",
 					"organization_runtime_formed",
+					"organization_effectiveness_evaluated",
 					"organization_goal_changed",
 					"organization_goal_reactivated",
 					"organization_runtime_retired",
