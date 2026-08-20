@@ -4,6 +4,9 @@ class_name V5SettlementNetworkSystem
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
+const RoutePressureQueryModel = preload(
+	"res://scripts/sim/resource/route_pressure_query.gd"
+)
 
 const EPSILON := 0.0001
 
@@ -96,7 +99,12 @@ func resolve_trade_tick(
 			"capacity_per_day", 0.0
 		)), 0.0)
 		var remaining_capacity := (
-			base_capacity + float(route_effect.get("capacity_bonus", 0.0))
+			maxf(
+				base_capacity
+				+ float(route_effect.get("capacity_bonus", 0.0))
+				- float(route_effect.get("capacity_penalty", 0.0)),
+				0.0
+			)
 			if base_capacity > EPSILON
 			else 0.0
 		)
@@ -150,6 +158,7 @@ func resolve_trade_tick(
 				continue
 			var effective_risk := maxi(
 				int(link.get("risk", 0))
+				+ int(route_effect.get("risk_increase", 0))
 				- int(route_effect.get("risk_reduction", 0)),
 				0
 			)
@@ -209,6 +218,12 @@ func resolve_trade_tick(
 				"transport_cost": traffic_cost,
 				"base_route_risk": int(link.get("risk", 0)),
 				"effective_route_risk": effective_risk,
+				"environment_risk_increase": int(route_effect.get(
+					"risk_increase", 0
+				)),
+				"environment_capacity_penalty": float(route_effect.get(
+					"capacity_penalty", 0.0
+				)),
 				"organization_capacity_bonus": float(route_effect.get(
 					"capacity_bonus", 0.0
 				)),
@@ -270,6 +285,11 @@ func _active_route_effect(
 	var risk_reduction := 0
 	var transport_cost_reduction := 0.0
 	var source_fact_ids: Array[String] = []
+	var pressure := RoutePressureQueryModel.new().active_pressure(
+		snapshot, str(link.get("link_id", "")), day
+	)
+	for value: Variant in pressure.get("source_fact_ids", []):
+		_append_unique(source_fact_ids, str(value))
 	for settlement_id: String in [
 		str(link.get("settlement_a_id", "")),
 		str(link.get("settlement_b_id", "")),
@@ -309,6 +329,8 @@ func _active_route_effect(
 			)))
 	return {
 		"capacity_bonus": capacity_bonus,
+		"capacity_penalty": float(pressure.get("capacity_penalty", 0.0)),
+		"risk_increase": int(pressure.get("risk_increase", 0)),
 		"risk_reduction": risk_reduction,
 		"transport_cost_reduction": transport_cost_reduction,
 		"source_fact_ids": source_fact_ids,

@@ -4,6 +4,9 @@ class_name V5OrganizationResponseSystem
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
+const RoutePressureQueryModel = preload(
+	"res://scripts/sim/resource/route_pressure_query.gd"
+)
 
 const EPSILON := 0.0001
 const PRESSURE_RANK := {"low": 0, "medium": 1, "high": 2}
@@ -331,9 +334,11 @@ func _resolve_route_patrol(
 ) -> Dictionary:
 	var settlement_id := str(organization.get("settlement_id", ""))
 	var link := _highest_risk_link(
+		snapshot,
 		settlement_id,
 		network_config.get("links", []),
-		maxi(int(response.get("minimum_route_risk", 1)), 0)
+		maxi(int(response.get("minimum_route_risk", 1)), 0),
+		int(tick_event.get("day", 0))
 	)
 	if link.is_empty():
 		return {}
@@ -358,6 +363,8 @@ func _resolve_route_patrol(
 	var source_fact_ids := _source_fact_ids(
 		snapshot, organization, settlement_id, [traffic_stock]
 	)
+	for source_value: Variant in link.get("pressure_source_fact_ids", []):
+		_append_unique(source_fact_ids, str(source_value))
 	var link_label := _link_label(snapshot, link)
 	var result = TransactionResultModel.new()
 	result.add_resource_change({
@@ -397,6 +404,12 @@ func _resolve_route_patrol(
 		"link_id": str(link.get("link_id", "")),
 		"link_label": link_label,
 		"base_risk": int(link.get("risk", 0)),
+		"environment_risk_increase": int(link.get(
+			"environment_risk_increase", 0
+		)),
+		"effective_risk_before_patrol": int(link.get(
+			"effective_risk", link.get("risk", 0)
+		)),
 		"traffic_stock_id": stock_id,
 		"traffic_cost": traffic_cost,
 		"risk_reduction": risk_reduction,
@@ -605,25 +618,39 @@ func _best_stressed_neighbor(
 
 
 func _highest_risk_link(
+		snapshot: Variant,
 		settlement_id: String,
 		link_values: Variant,
-		minimum_risk: int
+		minimum_risk: int,
+		day: int
 ) -> Dictionary:
 	var candidates: Array[Dictionary] = []
 	for link: Dictionary in _dictionary_rows(link_values):
+		var pressure := RoutePressureQueryModel.new().active_pressure(
+			snapshot, str(link.get("link_id", "")), day
+		)
+		var effective_risk := int(link.get("risk", 0)) + int(
+			pressure.get("risk_increase", 0)
+		)
 		if (
 			float(link.get("capacity_per_day", 0.0)) > EPSILON
 			and _neighbor_id(link, settlement_id) != ""
-			and int(
-			link.get("risk", 0)
-			) >= minimum_risk
+			and effective_risk >= minimum_risk
 		):
-			candidates.append(link)
+			var row := link.duplicate(true)
+			row["effective_risk"] = effective_risk
+			row["environment_risk_increase"] = int(pressure.get(
+				"risk_increase", 0
+			))
+			row["pressure_source_fact_ids"] = (
+				pressure.get("source_fact_ids", []) as Array
+			).duplicate()
+			candidates.append(row)
 	if candidates.is_empty():
 		return {}
 	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		if int(a.get("risk", 0)) != int(b.get("risk", 0)):
-			return int(a.get("risk", 0)) > int(b.get("risk", 0))
+		if int(a.get("effective_risk", 0)) != int(b.get("effective_risk", 0)):
+			return int(a.get("effective_risk", 0)) > int(b.get("effective_risk", 0))
 		return str(a.get("link_id", "")) < str(b.get("link_id", ""))
 	)
 	return candidates[0]

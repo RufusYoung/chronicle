@@ -116,13 +116,48 @@ func _run() -> void:
 		"8. 后续资源透支会让已预演的实体与事实整体回滚"
 	)
 
+	var failed_batch: Array = [
+		_batch_probe_result("rollback", "不应提交"),
+		_rollback_result(session),
+	]
+	_check(
+		not session.writer.apply_results(failed_batch, session.stores)
+		and str(session.stores["state_store"].get_state(
+			"player", "batch_atomic_probe", ""
+		)) == ""
+		and session.stores["fact_store"].get_fact(
+			"fact.batch_atomic_probe.rollback"
+		).is_empty(),
+		"9. 批量事务后项失败时，前项状态与事实不会部分提交"
+	)
+
+	var successful_batch: Array = [
+		_batch_probe_result("first", "第一项"),
+		_batch_probe_result("second", "第二项"),
+	]
+	_check(
+		session.writer.apply_results(successful_batch, session.stores)
+		and str(session.stores["state_store"].get_state(
+			"player", "batch_atomic_probe", ""
+		)) == "第二项"
+		and not session.stores["fact_store"].get_fact(
+			"fact.batch_atomic_probe.first"
+		).is_empty()
+		and not session.stores["fact_store"].get_fact(
+			"fact.batch_atomic_probe.second"
+		).is_empty()
+		and str(session.writer.last_report.get("phase", ""))
+		== "committed_batch",
+		"10. 合法批量事务按顺序提交全部结果，并报告批量原子提交"
+	)
+
 	var duplicate_result: Variant = _duplicate_create_result()
 	_check(
 		not session.writer.apply_result(duplicate_result, session.stores)
 		and session.stores["fact_store"].get_fact(
 			"fact.runtime_organization_duplicate"
 		).is_empty(),
-		"9. 重复实体 ID 在预演中拒绝，不提交配套事实"
+		"11. 重复实体 ID 在预演中拒绝，不提交配套事实"
 	)
 
 	var protected_result: Variant = _protected_retire_result()
@@ -137,7 +172,7 @@ func _run() -> void:
 		and session.stores["fact_store"].get_fact(
 			"fact.runtime_player_tags_removed"
 		).is_empty(),
-		"10. 玩家身份标签不可移除，实体也不能被通用退役操作撤销"
+		"12. 玩家身份标签不可移除，实体也不能被通用退役操作撤销"
 	)
 
 	var retire_result: Variant = _retire_result()
@@ -156,7 +191,7 @@ func _run() -> void:
 		and "苇岸临时粮议会" not in JSON.stringify(
 			view_model.build_view_data()
 		),
-		"11. 软退役保留实体和历史关系，但运行界面不再把它当作当前组织"
+		"13. 软退役保留实体和历史关系，但运行界面不再把它当作当前组织"
 	)
 
 	var save_before: Dictionary = session.get_save_store_data()
@@ -174,7 +209,7 @@ func _run() -> void:
 		and _equivalent(save_before, restored.get_save_store_data())
 		and not restored.stores["entity_store"].is_entity_active(ORGANIZATION_ID)
 		and bool(restored.validate_persistent_references().get("ok", false)),
-		"12. 磁盘存档精确保留创建、目标历史、软退役和跨 Store 引用"
+		"14. 磁盘存档精确保留创建、目标历史、软退役和跨 Store 引用"
 	)
 
 	print("[V5 ENTITY LIFECYCLE SAMPLE] %s" % JSON.stringify({
@@ -338,6 +373,25 @@ func _duplicate_create_result() -> Variant:
 		"target_id": ORGANIZATION_ID,
 	})
 	result.mark_resolved("entity_lifecycle_duplicate")
+	return result
+
+
+func _batch_probe_result(suffix: String, value: String) -> Variant:
+	var fact_id := "fact.batch_atomic_probe.%s" % suffix
+	var result = TransactionResultModel.new()
+	result.add_state_change({
+		"entity_id": "player",
+		"key": "batch_atomic_probe",
+		"to": value,
+	})
+	result.add_fact({
+		"fact_id": fact_id,
+		"fact_type": "batch_atomic_probe",
+		"actor_id": "player",
+		"target_id": "player",
+		"value": value,
+	})
+	result.mark_resolved("batch_atomic_probe")
 	return result
 
 

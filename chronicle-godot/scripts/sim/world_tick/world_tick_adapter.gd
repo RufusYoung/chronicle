@@ -23,6 +23,9 @@ const SettlementResourceSystemModel = preload(
 const SettlementNetworkSystemModel = preload(
 	"res://scripts/sim/resource/settlement_network_system.gd"
 )
+const SettlementEnvironmentSystemModel = preload(
+	"res://scripts/sim/resource/settlement_environment_system.gd"
+)
 const SettlementAbsorptionSystemModel = preload(
 	"res://scripts/sim/migration/settlement_absorption_system.gd"
 )
@@ -151,8 +154,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		if deferred_id == "":
 			continue
 		var result: Variant = trigger_system.trigger_deferred(snapshot, deferred_id)
-		writer.apply_result(result, stores)
 		transaction_results.append(result)
+	writer.apply_results(transaction_results, stores)
 
 	if include_due_checks:
 		var due_snapshot = snapshot_builder.build_snapshot(context, stores)
@@ -164,8 +167,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		exchange_due_count = int(due_result_data.get("exchange_due_count", exchange_results.size()))
 		due_results.append_array(obligation_results)
 		due_results.append_array(exchange_results)
-		for due_result: Variant in due_results:
-			writer.apply_result(due_result, stores)
+		writer.apply_results(due_results, stores)
 
 	var elapsed_hours := int(event.get("elapsed_hours", 0))
 	var simulation_round_count := maxi(elapsed_hours, 1)
@@ -185,6 +187,10 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				round_absolute_hour / 24
 			)
 			round_event["hour"] = posmod(round_absolute_hour, 24)
+		var run_network_day := (
+			not settlement_network_config.is_empty()
+			and _network_day_pending(stores, int(round_event.get("day", 0)))
+		)
 
 		var resource_store: Variant = stores.get("resource_stock_store")
 		if (
@@ -204,8 +210,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				)
 			)
 			var recovery_results: Array = recovery_data.get("results", [])
-			for recovery_result: Variant in recovery_results:
-				writer.apply_result(recovery_result, stores)
+			writer.apply_results(recovery_results, stores)
 			resource_results.append_array(recovery_results)
 			resource_events.append_array(recovery_data.get("events", []))
 
@@ -227,9 +232,9 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				"observed_result_indexes",
 				[]
 			)
+			writer.apply_results(round_need_results, stores)
 			for index: int in range(round_need_results.size()):
 				var need_result: Variant = round_need_results[index]
-				writer.apply_result(need_result, stores)
 				if index in observed_result_indexes:
 					observed_need_results.append(need_result)
 			for change: Dictionary in round_need_changes:
@@ -251,8 +256,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				round_event
 			)
 			var work_results: Array = work_data.get("results", [])
-			for work_result: Variant in work_results:
-				writer.apply_result(work_result, stores)
+			writer.apply_results(work_results, stores)
 			livelihood_results.append_array(work_results)
 			livelihood_events.append_array(work_data.get("events", []))
 
@@ -268,8 +272,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				)
 			)
 			var support_results: Array = support_data.get("results", [])
-			for support_result: Variant in support_results:
-				writer.apply_result(support_result, stores)
+			writer.apply_results(support_results, stores)
 			livelihood_results.append_array(support_results)
 			livelihood_events.append_array(support_data.get("events", []))
 
@@ -284,8 +287,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				round_event
 			)
 			var round_followup_results: Array = followup_data.get("results", [])
-			for followup_result: Variant in round_followup_results:
-				writer.apply_result(followup_result, stores)
+			writer.apply_results(round_followup_results, stores)
 			social_followup_results.append_array(round_followup_results)
 			social_followup_events.append_array(followup_data.get("events", []))
 
@@ -305,13 +307,27 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				str(context.region_entity_id)
 			)
 			var status_results: Array = status_data.get("results", [])
-			for status_result: Variant in status_results:
-				writer.apply_result(status_result, stores)
+			writer.apply_results(status_results, stores)
 			resource_results.append_array(status_results)
 			resource_events.append_array(status_data.get("events", []))
 
-		if not settlement_network_config.is_empty():
+		if run_network_day:
 			var network_system = SettlementNetworkSystemModel.new()
+			var environment_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var environment_data: Dictionary = (
+				SettlementEnvironmentSystemModel.new().resolve_daily_pressure(
+					environment_snapshot,
+					round_event,
+					settlement_network_config
+				)
+			)
+			var environment_results: Array = environment_data.get("results", [])
+			writer.apply_results(environment_results, stores)
+			network_results.append_array(environment_results)
+			network_events.append_array(environment_data.get("events", []))
+
 			var consumption_snapshot = snapshot_builder.build_snapshot(
 				context, stores, true
 			)
@@ -323,8 +339,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				)
 			)
 			var consumption_results: Array = consumption_data.get("results", [])
-			for consumption_result: Variant in consumption_results:
-				writer.apply_result(consumption_result, stores)
+			writer.apply_results(consumption_results, stores)
 			network_results.append_array(consumption_results)
 			network_events.append_array(consumption_data.get("events", []))
 
@@ -337,8 +352,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				settlement_network_config
 			)
 			var trade_results: Array = trade_data.get("results", [])
-			for trade_result: Variant in trade_results:
-				writer.apply_result(trade_result, stores)
+			writer.apply_results(trade_results, stores)
 			network_results.append_array(trade_results)
 			network_events.append_array(trade_data.get("events", []))
 
@@ -351,8 +365,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				settlement_network_config
 			)
 			var migration_results: Array = migration_data.get("results", [])
-			for migration_result: Variant in migration_results:
-				writer.apply_result(migration_result, stores)
+			writer.apply_results(migration_results, stores)
 			network_results.append_array(migration_results)
 			network_events.append_array(migration_data.get("events", []))
 
@@ -369,12 +382,14 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				)
 			)
 			var absorption_results: Array = absorption_data.get("results", [])
-			for absorption_result: Variant in absorption_results:
-				writer.apply_result(absorption_result, stores)
+			writer.apply_results(absorption_results, stores)
 			network_results.append_array(absorption_results)
 			network_events.append_array(absorption_data.get("events", []))
 
-		if not organization_runtime_config.is_empty():
+		if (
+			not organization_runtime_config.is_empty()
+			and (settlement_network_config.is_empty() or run_network_day)
+		):
 			var organization_snapshot = snapshot_builder.build_snapshot(
 				context, stores, true
 			)
@@ -386,8 +401,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				)
 			)
 			var organization_results: Array = organization_data.get("results", [])
-			for organization_result: Variant in organization_results:
-				writer.apply_result(organization_result, stores)
+			writer.apply_results(organization_results, stores)
 			network_results.append_array(organization_results)
 			network_events.append_array(organization_data.get("events", []))
 
@@ -403,8 +417,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				)
 			)
 			var response_results: Array = response_data.get("results", [])
-			for response_result: Variant in response_results:
-				writer.apply_result(response_result, stores)
+			writer.apply_results(response_results, stores)
 			network_results.append_array(response_results)
 			network_events.append_array(response_data.get("events", []))
 
@@ -420,8 +433,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				)
 			)
 			var lifecycle_results: Array = lifecycle_data.get("results", [])
-			for lifecycle_result: Variant in lifecycle_results:
-				writer.apply_result(lifecycle_result, stores)
+			writer.apply_results(lifecycle_results, stores)
 			network_results.append_array(lifecycle_results)
 			network_events.append_array(lifecycle_data.get("events", []))
 
@@ -440,9 +452,9 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			)
 			var round_results: Array = decision_data.get("results", [])
 			var round_decisions: Array = decision_data.get("decisions", [])
+			writer.apply_results(round_results, stores)
 			for index: int in range(round_results.size()):
 				var autonomous_result: Variant = round_results[index]
-				writer.apply_result(autonomous_result, stores)
 				if index < round_decisions.size():
 					var decision := round_decisions[index] as Dictionary
 					autonomous_actor_ids[str(decision.get("actor_id", ""))] = true
@@ -824,6 +836,17 @@ func _result_rows(results: Array) -> Array:
 		if result != null and result.has_method("to_dict"):
 			rows.append(result.to_dict())
 	return rows
+
+
+func _network_day_pending(stores: Dictionary, day: int) -> bool:
+	if day <= 0:
+		return false
+	var fact_store: Variant = stores.get("fact_store")
+	if fact_store == null:
+		return false
+	return fact_store.get_fact(
+		"fact.network_migration_tick.day%d" % day
+	).is_empty()
 
 
 func _aggregate_results(results: Array) -> Dictionary:

@@ -43,7 +43,9 @@ func _init(data: Dictionary = {}) -> void:
 	memories = (data.get("memories", []) as Array).duplicate(true)
 	traces = (data.get("traces", []) as Array).duplicate(true)
 	rumors = (data.get("rumors", []) as Array).duplicate(true)
-	facts = (data.get("facts", []) as Array).duplicate(true)
+	# Facts are append-only after entering FactStore, so snapshots only isolate the
+	# array container instead of cloning every immutable historical dictionary.
+	facts = (data.get("facts", []) as Array).duplicate()
 	pressures = (data.get("pressures", []) as Array).duplicate(true)
 	obligations = (data.get("obligations", []) as Array).duplicate(true)
 	exchanges = (data.get("exchanges", []) as Array).duplicate(true)
@@ -164,7 +166,7 @@ func get_visible_rumors() -> Array:
 
 
 func get_facts() -> Array:
-	return facts.duplicate(true)
+	return facts.duplicate()
 
 
 func get_pressures() -> Array:

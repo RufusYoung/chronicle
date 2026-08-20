@@ -28,6 +28,18 @@
     "definition_path": "res://data/sim/raw/generation_defs/north_border_settlements_v1.json",
     "primary_site_id": "reed_bay",
     "absorption_delay_days": 1,
+    "autonomous_pressure": {
+      "enabled": true,
+      "minimum_quiet_days": 4,
+      "maximum_quiet_days": 8,
+      "daily_start_chance_percent": 24,
+      "minimum_duration_days": 3,
+      "maximum_duration_days": 4,
+      "minimum_risk_increase": 2,
+      "maximum_risk_increase": 3,
+      "minimum_capacity_penalty": 1.0,
+      "maximum_capacity_penalty": 2.0
+    },
     "sites": [
       {
         "site_id": "reed_bay",

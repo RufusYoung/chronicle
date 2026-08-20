@@ -1576,10 +1576,10 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 	var start_result: Dictionary
 	var source_path := str(bootstrap.get("fixture_path", ""))
 	var source_data: Dictionary = bootstrap.get("fixture_data", {})
-	if source_path != "":
-		start_result = start_from_fixture_path(source_path, rule_paths)
-	elif not source_data.is_empty():
+	if not source_data.is_empty():
 		start_result = start_from_fixture_data(source_data, rule_paths)
+	elif source_path != "":
+		start_result = start_from_fixture_path(source_path, rule_paths)
 	else:
 		_reset_runtime()
 		return _save_failure("save_bootstrap_fixture_missing", "bootstrap")

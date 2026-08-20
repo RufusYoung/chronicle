@@ -4,6 +4,9 @@ class_name V5OrganizationLifecycleSystem
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
+const RoutePressureQueryModel = preload(
+	"res://scripts/sim/resource/route_pressure_query.gd"
+)
 
 
 func resolve_tick(
@@ -961,6 +964,11 @@ func _adjacent_route_risk_signal(
 		):
 			continue
 		var reduction := 0
+		var pressure := RoutePressureQueryModel.new().active_pressure(
+			snapshot, str(link.get("link_id", "")), day
+		)
+		for source_value: Variant in pressure.get("source_fact_ids", []):
+			_append_unique(source_fact_ids, str(source_value))
 		for endpoint_id: String in [
 			str(link.get("settlement_a_id", "")),
 			str(link.get("settlement_b_id", "")),
@@ -982,7 +990,12 @@ func _adjacent_route_risk_signal(
 				))
 		maximum_risk = maxi(
 			maximum_risk,
-			maxi(int(link.get("risk", 0)) - reduction, 0)
+			maxi(
+				int(link.get("risk", 0))
+				+ int(pressure.get("risk_increase", 0))
+				- reduction,
+				0
+			)
 		)
 	if maximum_risk < 0:
 		return {}

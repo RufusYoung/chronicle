@@ -143,9 +143,13 @@ func generate_fixture(
 	fixture["resident_generations"] = resident_configs
 	fixture["resident_generation"] = {}
 	var runtime := {
+		"generation_seed": base_seed,
 		"sites": _sorted_dictionary_values(sites_by_id),
 		"links": route_data.get("runtime_links", []).duplicate(true),
 		"trade_goods": trade_goods.duplicate(true),
+		"autonomous_pressure": (
+			config.get("autonomous_pressure", {}) as Dictionary
+		).duplicate(true),
 		"migration_delay_days": maxi(int(config.get(
 			"migration_delay_days", 2
 		)), 1),

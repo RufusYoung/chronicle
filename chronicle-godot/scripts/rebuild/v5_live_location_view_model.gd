@@ -6,6 +6,9 @@ const LifeStageTransitionServiceModel = preload(
 )
 
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
+const RoutePressureQueryModel = preload(
+	"res://scripts/sim/resource/route_pressure_query.gd"
+)
 
 const FIXTURE_PATH := "res://data/sim/fixtures/lake_town_food_crisis_fixture.json"
 const RULE_PATHS := [
@@ -1112,6 +1115,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				"latest_settlement_trade", "latest_settlement_migration",
 				"latest_settlement_absorption", "latest_organization_restaff",
 				"latest_organization_action", "latest_organization_lifecycle",
+				"latest_route_pressure",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
@@ -1248,6 +1252,10 @@ func _settlement_network_rows(
 		))
 	var neighbor_names: Array[String] = []
 	var neighbor_details: Array[String] = []
+	var pressure_names: Array[String] = []
+	var pressure_details: Array[String] = []
+	var current_day := int(session.current_day)
+	var pressure_query = RoutePressureQueryModel.new()
 	for link: Dictionary in runtime.get("links", []):
 		var neighbor_id := ""
 		if str(link.get("settlement_a_id", "")) == settlement_id:
@@ -1258,17 +1266,50 @@ func _settlement_network_rows(
 			continue
 		var neighbor_name := str(site_names.get(neighbor_id, "相邻聚落"))
 		neighbor_names.append(neighbor_name)
-		neighbor_details.append("%s（%d 小时，日运力 %.1f）" % [
-			neighbor_name,
-			int(link.get("travel_hours", 0)),
-			float(link.get("capacity_per_day", 0.0)),
-		])
+		var base_capacity := float(link.get("capacity_per_day", 0.0))
+		var base_risk := int(link.get("risk", 0))
+		var pressure: Dictionary = pressure_query.active_pressure(
+			snapshot, str(link.get("link_id", "")), current_day
+		)
+		if (pressure.get("source_fact_ids", []) as Array).is_empty():
+			neighbor_details.append("%s（%d 小时，日运力 %.1f，风险 %d）" % [
+				neighbor_name,
+				int(link.get("travel_hours", 0)),
+				base_capacity,
+				base_risk,
+			])
+			continue
+		var effective_capacity := maxf(
+			base_capacity - float(pressure.get("capacity_penalty", 0.0)), 0.0
+		)
+		var effective_risk := base_risk + int(pressure.get("risk_increase", 0))
+		neighbor_details.append(
+			"%s（%d 小时，有效日运力 %.1f / %.1f，风险 %d，受阻至第 %d 天）" % [
+				neighbor_name,
+				int(link.get("travel_hours", 0)),
+				effective_capacity,
+				base_capacity,
+				effective_risk,
+				int(pressure.get("until_day", current_day)),
+			]
+		)
+		pressure_names.append(neighbor_name)
+		pressure_details.append(str(pressure.get(
+			"summary", "通往%s的道路暂时受阻。" % neighbor_name
+		)))
 	if not neighbor_names.is_empty():
 		rows.append({
 			"key": "settlement_neighbors",
 			"label": "相邻聚落",
 			"value": "、".join(neighbor_names),
 			"detail": "；".join(neighbor_details),
+		})
+	if not pressure_names.is_empty():
+		rows.append({
+			"key": "latest_route_pressure",
+			"label": "道路受阻",
+			"value": "通往%s" % "、".join(pressure_names),
+			"detail": "\n".join(pressure_details),
 		})
 	var organization_names: Array[String] = []
 	var organization_details: Array[String] = []

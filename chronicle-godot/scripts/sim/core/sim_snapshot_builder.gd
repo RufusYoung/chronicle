@@ -98,7 +98,7 @@ func build_snapshot(
 		"memories": [] if memory_store == null else memory_store.memories.duplicate(true),
 		"traces": [] if trace_store == null else trace_store.list_traces(),
 		"rumors": [] if rumor_store == null else rumor_store.list_rumors(),
-		"facts": [] if fact_store == null else fact_store.list_facts(),
+		"facts": [] if fact_store == null else fact_store.snapshot_facts(),
 		"pressures": [] if pressure_store == null else pressure_store.list_pressures(),
 		"obligations": [] if obligation_store == null else obligation_store.list_obligations(),
 		"exchanges": [] if exchange_store == null else exchange_store.list_exchanges(),

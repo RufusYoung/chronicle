@@ -75,6 +75,58 @@ func apply_result(result: Variant, stores: Dictionary) -> bool:
 	return true
 
 
+func apply_results(results: Array, stores: Dictionary) -> bool:
+	if results.is_empty():
+		last_report = {
+			"ok": true,
+			"error": "",
+			"phase": "no_changes",
+			"result_count": 0,
+		}
+		return true
+	var preview_report := _build_preview_stores(stores)
+	if not bool(preview_report.get("ok", false)):
+		last_report = preview_report
+		return false
+	var preview_stores: Dictionary = preview_report.get("stores", {})
+	for result_index: int in range(results.size()):
+		var result: Variant = results[result_index]
+		last_report = _validate_store_coverage(result, preview_stores)
+		if not bool(last_report.get("ok", false)):
+			last_report["result_index"] = result_index
+			return _reject(result, last_report)
+		last_report = _validate_entity_change_contract(result, preview_stores)
+		if not bool(last_report.get("ok", false)):
+			last_report["result_index"] = result_index
+			return _reject(result, last_report)
+		var apply_report := _apply_to_stores(result, preview_stores)
+		if not bool(apply_report.get("ok", false)):
+			last_report = apply_report
+			last_report["result_index"] = result_index
+			return _reject(result, last_report)
+	var equipment_store: Variant = preview_stores.get("equipment_store")
+	if equipment_store != null:
+		var integrity: Dictionary = equipment_store.validate_integrity()
+		if not bool(integrity.get("ok", false)):
+			last_report = {
+				"ok": false,
+				"error": "equipment_integrity_failed:%s" % str(
+					(integrity.get("errors", ["unknown_error"]) as Array)[0]
+				),
+				"phase": "preflight",
+			}
+			return false
+	_commit_preview(preview_stores, stores)
+	last_report = {
+		"ok": true,
+		"error": "",
+		"phase": "committed_batch",
+		"store_count": preview_stores.size(),
+		"result_count": results.size(),
+	}
+	return true
+
+
 func _apply_to_stores(result: Variant, stores: Dictionary) -> Dictionary:
 	var entity_store: Variant = stores.get("entity_store")
 	if entity_store != null:

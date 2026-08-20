@@ -5,6 +5,7 @@ const FIXTURE_PATH := (
 	"res://data/sim/fixtures/generated_settlement_network_fixture.json"
 )
 const REED_BAY_OUTPUT := "user://tests/v5_network_reed_bay.png"
+const ROUTE_PRESSURE_OUTPUT := "user://tests/v5_network_route_pressure.png"
 const RIVER_STEPS_OUTPUT := "user://tests/v5_network_river_steps.png"
 const RULE_PATHS := [
 	"res://data/sim/raw/action_rules/basic_action_rules.json",
@@ -67,6 +68,46 @@ func _run() -> void:
 		"4. 试玩目标说明货流来自世界模拟而非预写事件"
 	)
 	await _save_viewport(REED_BAY_OUTPUT, "5. 苇岸埠网络截图已写入")
+
+	var pressure_tick: Dictionary = {}
+	for day_offset: int in range(1, 9):
+		var candidate: Dictionary = viewer.view_model.session.advance_time(
+			24,
+			"settlement_network_pressure_render_day%d" % day_offset,
+			{"scope_type": "global", "scope_id": ""}
+		)
+		if _has_local_route_pressure_event(
+			candidate, viewer.view_model.session, "generated_settlement.reed_bay"
+		):
+			pressure_tick = candidate
+			break
+	_check(
+		not pressure_tick.is_empty(),
+		"6. 无测试注入等待时，苇岸埠相邻道路会自主出现环境压力"
+	)
+	if not pressure_tick.is_empty():
+		viewer.view_model.latest_event_type = "world_tick"
+		viewer.view_model.latest_result = pressure_tick.duplicate(true)
+		viewer.refresh_view()
+		await process_frame
+		await process_frame
+		var feedback_title := viewer.get_node("%FeedbackTitle") as Label
+		var feedback_body := viewer.get_node("%FeedbackBody") as RichTextLabel
+		_check(
+			"道路受阻" in region_status.text
+			and "有效日运力" in region_status.text
+			and "受阻至第" in region_status.text,
+			"7. 地点面板显示受阻道路、当前有效运力与结束日期"
+		)
+		_check(
+			"道路通行受阻" in feedback_title.text
+			and "预计持续" in feedback_body.text
+			and "道路风险上升" in feedback_body.text,
+			"8. 时间推进反馈说明事故成因、持续时间与机械影响"
+		)
+		await _save_viewport(
+			ROUTE_PRESSURE_OUTPUT, "9. 自主道路压力截图已写入"
+		)
 	viewer.view_model.session.stores["fact_store"].add_fact({
 		"fact_id": "fact.test_injection.household_migrated",
 		"fact_type": "household_migrated",
@@ -83,7 +124,7 @@ func _run() -> void:
 	_check(
 		"最近迁移" in region_status.text
 		and "迁出 2 人" in region_status.text,
-		"6. 测试注入的迁移事实会显示方向与整户人数"
+		"10. 测试注入的迁移事实会显示方向与整户人数"
 	)
 
 	var target_hub := "generated_location.river_steps.commons"
@@ -93,7 +134,7 @@ func _run() -> void:
 			route_id = str(option.get("route_id", ""))
 			break
 	var route_button := _route_button_to(travel_buttons, route_id)
-	_check(route_button != null, "7. 生成道路允许从苇岸埠前往石渡坞")
+	_check(route_button != null, "11. 生成道路允许从苇岸埠前往石渡坞")
 	if route_button != null:
 		route_button.pressed.emit()
 		await process_frame
@@ -104,10 +145,10 @@ func _run() -> void:
 			and "苇岸埠" in region_status.text
 			and "白坡坞" in region_status.text
 			and "苇湾鱼群" not in region_status.text,
-			"8. 抵达石渡坞后切换为当地资源和两侧邻接关系"
+			"12. 抵达石渡坞后切换为当地资源和两侧邻接关系"
 		)
 		await _save_viewport(
-			RIVER_STEPS_OUTPUT, "9. 石渡坞网络截图已写入"
+			RIVER_STEPS_OUTPUT, "13. 石渡坞网络截图已写入"
 		)
 
 	viewer.queue_free()
@@ -120,6 +161,28 @@ func _route_button_to(container: VBoxContainer, route_id: String) -> Button:
 		if child is Button and str(child.get_meta("route_id", "")) == route_id:
 			return child as Button
 	return null
+
+
+func _has_local_route_pressure_event(
+		tick: Dictionary, session: Variant, settlement_id: String
+) -> bool:
+	var local_links: Dictionary = {}
+	for link: Dictionary in session.get_settlement_network_summary().get(
+		"links", []
+	):
+		if settlement_id in [
+			str(link.get("settlement_a_id", "")),
+			str(link.get("settlement_b_id", "")),
+		]:
+			local_links[str(link.get("link_id", ""))] = true
+	for event: Dictionary in tick.get("network_events", []):
+		if (
+			str(event.get("event_type", ""))
+			== "regional_route_pressure_started"
+			and local_links.has(str(event.get("link_id", "")))
+		):
+			return true
+	return false
 
 
 func _save_viewport(path: String, label: String) -> void:

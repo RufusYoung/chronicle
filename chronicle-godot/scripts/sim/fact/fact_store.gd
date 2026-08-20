@@ -2,40 +2,49 @@ extends RefCounted
 class_name V5FactStore
 
 var facts: Array = []
+var facts_by_id: Dictionary = {}
+var facts_by_type: Dictionary = {}
 
 
 func add_fact(fact: Dictionary) -> void:
 	var fact_id := str(fact.get("fact_id", ""))
+	if fact_id != "" and facts_by_id.has(fact_id):
+		return
+	var stored := fact.duplicate(true)
+	facts.append(stored)
 	if fact_id != "":
-		for existing: Dictionary in facts:
-			if str(existing.get("fact_id", "")) == fact_id:
-				return
-	facts.append(fact.duplicate(true))
+		facts_by_id[fact_id] = stored
+	var fact_type := str(stored.get("fact_type", stored.get("type", "")))
+	if fact_type != "":
+		if not facts_by_type.has(fact_type):
+			facts_by_type[fact_type] = []
+		(facts_by_type[fact_type] as Array).append(stored)
 
 
 func list_facts() -> Array:
 	return facts.duplicate(true)
 
 
+func snapshot_facts() -> Array:
+	return facts
+
+
 func get_fact(fact_id: String) -> Dictionary:
-	if fact_id == "":
+	if fact_id == "" or not facts_by_id.has(fact_id):
 		return {}
-	for fact: Dictionary in facts:
-		if str(fact.get("fact_id", "")) == fact_id:
-			return fact.duplicate(true)
-	return {}
+	return (facts_by_id[fact_id] as Dictionary).duplicate(true)
 
 
 func find_facts_by_type(fact_type: String) -> Array:
-	var rows: Array = []
-	for fact: Dictionary in facts:
-		if str(fact.get("fact_type", fact.get("type", ""))) == fact_type:
-			rows.append(fact.duplicate(true))
-	return rows
+	if not facts_by_type.has(fact_type):
+		return []
+	return (facts_by_type[fact_type] as Array).duplicate(true)
 
 
 func clear() -> void:
 	facts.clear()
+	facts_by_id.clear()
+	facts_by_type.clear()
 
 
 func to_save_data() -> Array:
