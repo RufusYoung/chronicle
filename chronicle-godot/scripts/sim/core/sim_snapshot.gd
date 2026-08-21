@@ -75,13 +75,25 @@ func get_entity(entity_id: String) -> Dictionary:
 	return {}
 
 
+func is_entity_active(entity_id: String) -> bool:
+	var entity := get_entity(entity_id)
+	return (
+		not entity.is_empty()
+		and str(entity.get("lifecycle_status", "active")) != "retired"
+	)
+
+
 func get_entities() -> Array:
-	return entities.duplicate(true)
+	var rows: Array = []
+	for entity: Dictionary in entities:
+		if str(entity.get("lifecycle_status", "active")) != "retired":
+			rows.append(entity.duplicate(true))
+	return rows
 
 
 func get_visible_entities() -> Array:
 	var rows: Array = []
-	for entity: Dictionary in entities:
+	for entity: Dictionary in get_entities():
 		if bool(get_entity_state(str(entity.get("id", "")), "visible", false)):
 			rows.append(entity.duplicate(true))
 	return rows
@@ -89,7 +101,7 @@ func get_visible_entities() -> Array:
 
 func get_entities_by_type(type_name: String) -> Array:
 	var rows: Array = []
-	for entity: Dictionary in entities:
+	for entity: Dictionary in get_entities():
 		if str(entity.get("type", "")) == type_name:
 			rows.append(entity.duplicate(true))
 	return rows

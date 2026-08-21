@@ -43,6 +43,10 @@ func _run() -> void:
 	root.add_child(viewer)
 	await process_frame
 	await process_frame
+	viewer.view_model.start({"challenge_seed_override": 516})
+	viewer.refresh_view()
+	await process_frame
+	await process_frame
 
 	var location_title := viewer.get_node("%LocationTitle") as Label
 	var location_context := viewer.get_node("%LocationContext") as Label
@@ -209,6 +213,17 @@ func _run() -> void:
 		trace_button != null and "试探盐壳白丝" in trace_button.text,
 		"9c. Ordinary exploration returns after the encounter is settled"
 	)
+	if trace_button == null:
+		print("[V5 MIST SALT TRACE DEBUG] %s" % JSON.stringify({
+			"encounter_result": encounter_result,
+			"action_options": viewer.view_model.session.get_action_options(),
+			"visible_traces": viewer.view_model.session.get_snapshot(
+			).get_visible_traces(),
+		}))
+		viewer.queue_free()
+		await process_frame
+		_finish()
+		return
 
 	trace_button.pressed.emit()
 	await process_frame

@@ -39,8 +39,8 @@ func _run() -> void:
 	)
 	_check(
 		bool(first_start.get("success", false))
-		and int(first_start.get("definition_count", 0)) == 89,
-		"2. G2 夹具通过正式 SimSession 启动并注册 89 个定义"
+		and int(first_start.get("definition_count", 0)) == 100,
+		"2. G2 夹具通过正式 SimSession 启动并注册 100 个定义"
 	)
 	if not bool(first_start.get("success", false)):
 		_finish()
@@ -219,6 +219,16 @@ func _resident_profile_report(
 		names[name] = true
 		if int(states.get("age_years", -1)) < 0:
 			return {"ok": false, "error": "resident_age_missing"}
+		var age := int(states.get("age_years", -1))
+		var birth_day := int(states.get("birth_day", 0))
+		if (
+			str(states.get("life_status", "")) != "alive"
+			or not bool(states.get("alive", false))
+			or int(states.get("life_expectancy_years", 0)) <= age
+			or int(floor(float(1 - birth_day) / 365.0)) != age
+			or str(states.get("life_stage", "")) == ""
+		):
+			return {"ok": false, "error": "resident_lifecycle_missing"}
 		for key: String in ATTRIBUTE_KEYS:
 			if int(states.get(key, 0)) < 2:
 				return {"ok": false, "error": "resident_attribute_missing"}

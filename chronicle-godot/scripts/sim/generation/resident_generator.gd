@@ -176,6 +176,20 @@ func generate_fixture(
 			if workplace_id == "":
 				workplace_id = home_id
 			var attributes := _attributes_for(age, occupation, rng)
+			var health := rng.randi_range(72, 100)
+			var fatigue := rng.randi_range(0, 3)
+			var hunger: String = str(
+				["low", "low", "medium"][rng.randi_range(0, 2)]
+			)
+			var age_progress_days := _stable_noise(
+				"%d:%s:age_progress" % [seed, resident_id]
+			) % 365
+			var life_expectancy_years := maxi(
+				age + 1,
+				72 + _stable_noise("%d:%s:life_expectancy" % [
+					seed, resident_id
+				]) % 21
+			)
 			var tags: Array = [
 				"generated_resident", "living_needs", culture_id,
 				"occupation_%s" % occupation_id,
@@ -186,6 +200,12 @@ func generate_fixture(
 				"visible": false,
 				"location_id": home_id,
 				"age_years": age,
+				"age_progress_days": age_progress_days,
+				"birth_day": 1 - age * 365 - age_progress_days,
+				"life_expectancy_years": life_expectancy_years,
+				"life_stage": _life_stage(age),
+				"life_status": "alive",
+				"alive": true,
 				"settlement_id": settlement_id,
 				"household_id": household_id,
 				"home_location_id": home_id,
@@ -193,9 +213,9 @@ func generate_fixture(
 				"occupation_id": occupation_id,
 				"livelihood_status": livelihood_status,
 				"temperament": temperament,
-				"health": rng.randi_range(72, 100),
-				"fatigue": rng.randi_range(0, 3),
-				"hunger": ["low", "low", "medium"][rng.randi_range(0, 2)],
+				"health": health,
+				"fatigue": fatigue,
+				"hunger": hunger,
 				"livelihood_elapsed_hours": 0,
 				"livelihood_cycle_count": 0,
 			}
@@ -1015,6 +1035,18 @@ func _livelihood_profiles(
 
 func _safe_id(value: String) -> String:
 	return value.replace(":", ".").replace("/", ".").replace(" ", "_")
+
+
+func _stable_noise(key: String) -> int:
+	return int(("0x" + key.sha256_text().substr(0, 8)).hex_to_int() % 1000000)
+
+
+func _life_stage(age: int) -> String:
+	if age < 18:
+		return "child"
+	if age >= 65:
+		return "elder"
+	return "adult"
 
 
 func _signature(

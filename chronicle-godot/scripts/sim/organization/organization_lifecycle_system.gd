@@ -1146,15 +1146,14 @@ func _in_cooldown(
 	day: int
 ) -> bool:
 	var latest_retired_day := -999999
-	for entity: Dictionary in snapshot.get_entities():
+	for fact: Dictionary in snapshot.get_facts():
 		if (
-			"runtime_organization" in (entity.get("tags", []) as Array)
-			and str(entity.get("lifecycle_status", "active")) == "retired"
-			and str(entity.get("settlement_id", "")) == settlement_id
-			and str(entity.get("prototype_id", "")) == prototype_id
+			str(fact.get("fact_type", "")) == "organization_runtime_retired"
+			and str(fact.get("settlement_id", "")) == settlement_id
+			and str(fact.get("prototype_id", "")) == prototype_id
 		):
 			latest_retired_day = maxi(
-				latest_retired_day, int(entity.get("retired_day", 0))
+				latest_retired_day, int(fact.get("day", 0))
 			)
 	return day - latest_retired_day < maxi(int(lifecycle.get(
 		"cooldown_days", 0

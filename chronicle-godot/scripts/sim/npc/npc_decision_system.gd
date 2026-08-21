@@ -156,7 +156,9 @@ func _evaluate_requirements(
 func _matching_actor_ids(rule: Dictionary, snapshot: Variant) -> Array:
 	var explicit_actor_id := str(rule.get("actor_id", ""))
 	if explicit_actor_id != "":
-		return [explicit_actor_id]
+		return [explicit_actor_id] if snapshot.is_entity_active(
+			explicit_actor_id
+		) else []
 
 	var rows: Array = []
 	var actor_query: Dictionary = rule.get("actor", {})

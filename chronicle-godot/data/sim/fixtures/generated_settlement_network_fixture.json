@@ -40,6 +40,12 @@
       "minimum_capacity_penalty": 1.0,
       "maximum_capacity_penalty": 2.0
     },
+    "population_lifecycle": {
+      "enabled": true,
+      "days_per_year": 365,
+      "adulthood_age": 18,
+      "elder_age": 65
+    },
     "sites": [
       {
         "site_id": "reed_bay",

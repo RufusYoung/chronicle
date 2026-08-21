@@ -1227,10 +1227,12 @@ func _settlement_population(settlement_id: String) -> int:
 	if entity_store == null or state_store == null:
 		return population
 	for entity: Dictionary in entity_store.list_entity_rows():
+		var entity_id := str(entity.get("id", ""))
 		if (
 			str(entity.get("type", "")) == "person"
+			and entity_store.is_entity_active(entity_id)
 			and str(state_store.get_state(
-				str(entity.get("id", "")), "settlement_id", ""
+				entity_id, "settlement_id", ""
 			)) == settlement_id
 		):
 			population += 1
@@ -1546,6 +1548,8 @@ func _organization_role_holder(
 		if str(entity.get("type", "")) != "person":
 			continue
 		var entity_id := str(entity.get("id", ""))
+		if not session.stores["entity_store"].is_entity_active(entity_id):
+			continue
 		if (
 			str(session.stores["state_store"].get_state(
 				entity_id, "settlement_id", ""

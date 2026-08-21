@@ -150,6 +150,9 @@ func generate_fixture(
 		"autonomous_pressure": (
 			config.get("autonomous_pressure", {}) as Dictionary
 		).duplicate(true),
+		"population_lifecycle": (
+			config.get("population_lifecycle", {}) as Dictionary
+		).duplicate(true),
 		"migration_delay_days": maxi(int(config.get(
 			"migration_delay_days", 2
 		)), 1),
