@@ -312,6 +312,33 @@ func generate_fixture(
 			"source_fact_ids": [batch_fact_id],
 		})
 
+	var construction_plot_count := maxi(int(config.get(
+		"construction_plot_count", 0
+	)), 0)
+	for plot_index: int in range(construction_plot_count):
+		var plot_number := plot_index + 1
+		var plot_id := "generated_plot.%s.%02d" % [
+			id_namespace, plot_number
+		]
+		locations[plot_id] = {
+			"id": plot_id,
+			"display_name": "可建地块 %d" % plot_number,
+			"description": "聚落边缘已经丈量但尚未建成住屋的地块。",
+			"settlement_id": settlement_id,
+			"tags": [
+				"generated_location", "settlement_construction_plot",
+			],
+		}
+		facts.append({
+			"fact_id": "fact.generated_construction_plot.%s" % plot_id,
+			"fact_type": "settlement_construction_plot_generated",
+			"actor_id": settlement_id,
+			"target_id": settlement_id,
+			"plot_location_id": plot_id,
+			"generation_seed": seed,
+			"source_fact_ids": [batch_fact_id],
+		})
+
 	_link_household_heads(relationships, household_heads, rng)
 	_append_neighbor_relationship_facts(
 		facts,

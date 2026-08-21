@@ -479,7 +479,7 @@ func _home_data(snapshot: Variant, location_by_id: Dictionary) -> Dictionary:
 	var homes_by_settlement: Dictionary = {}
 	for home_value: Variant in location_by_id.values():
 		var home: Dictionary = home_value
-		if not "settlement_dwelling" in (home.get("tags", []) as Array):
+		if not _is_dwelling(snapshot, home):
 			continue
 		var home_id := str(home.get("id", ""))
 		var settlement_id := str(home.get("settlement_id", ""))
@@ -501,8 +501,8 @@ func _home_data(snapshot: Variant, location_by_id: Dictionary) -> Dictionary:
 		if (
 			settlement_id == ""
 			or not location_by_id.has(home_id)
-			or not "settlement_dwelling" in (
-				(location_by_id[home_id] as Dictionary).get("tags", []) as Array
+			or not _is_dwelling(
+				snapshot, location_by_id[home_id] as Dictionary
 			)
 		):
 			continue
@@ -550,9 +550,17 @@ func _profile_data(snapshot: Variant, profiles: Array) -> Dictionary:
 		if key == "::":
 			continue
 		by_scope[key] = profile
-		open_slots[key] = maxi(
+		var settlement_id := str(profile.get("settlement_id", ""))
+		var occupation_id := str(profile.get("occupation_id", ""))
+		var capacity := maxi(
 			int(profile.get("maximum_slots", 0))
-			- int(current_counts.get(key, 0)),
+			+ _occupation_capacity_delta(
+				snapshot, settlement_id, occupation_id
+			),
+			0
+		)
+		open_slots[key] = maxi(
+			capacity - int(current_counts.get(key, 0)),
 			0
 		)
 	return {"profiles": by_scope, "open_slots": open_slots}
@@ -608,8 +616,8 @@ func _current_household_home(
 			return {}
 		if (
 			not location_by_id.has(candidate)
-			or not "settlement_dwelling" in (
-				(location_by_id[candidate] as Dictionary).get("tags", []) as Array
+			or not _is_dwelling(
+				snapshot, location_by_id[candidate] as Dictionary
 			)
 		):
 			return {}
@@ -780,6 +788,33 @@ func _entity_name(snapshot: Variant, entity_id: String) -> String:
 
 func _profile_key(settlement_id: String, occupation_id: String) -> String:
 	return "%s::%s" % [settlement_id, occupation_id]
+
+
+func _occupation_capacity_delta(
+		snapshot: Variant, settlement_id: String, occupation_id: String
+) -> int:
+	var delta := 0
+	for fact: Dictionary in snapshot.get_facts():
+		if (
+			str(fact.get("fact_type", "")) == "settlement_work_capacity_changed"
+			and str(fact.get("settlement_id", "")) == settlement_id
+			and str(fact.get("occupation_id", "")) == occupation_id
+		):
+			delta += int(fact.get("capacity_delta", 0))
+	return delta
+
+
+func _is_dwelling(snapshot: Variant, location: Dictionary) -> bool:
+	if "settlement_dwelling" in (location.get("tags", []) as Array):
+		return true
+	var location_id := str(location.get("id", ""))
+	for fact: Dictionary in snapshot.get_facts():
+		if (
+			str(fact.get("fact_type", "")) == "settlement_dwelling_constructed"
+			and str(fact.get("home_location_id", "")) == location_id
+		):
+			return true
+	return false
 
 
 func _fact_exists(snapshot: Variant, fact_id: String) -> bool:

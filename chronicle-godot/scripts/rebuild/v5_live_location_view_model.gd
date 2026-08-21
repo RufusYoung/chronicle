@@ -1116,6 +1116,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				"latest_settlement_absorption", "latest_organization_restaff",
 				"latest_organization_action", "latest_organization_lifecycle",
 				"latest_route_pressure", "latest_resident_employment",
+				"latest_settlement_capacity_adaptation",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
@@ -1130,25 +1131,25 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				capacity,
 			],
 			"detail": (
-				"在业 %d · 求职 %d · 受扶养 %d · 退休 %d。\n相邻聚落 %s；当地组织 %s；%s；连续迁离压力 %d 天。" % [
+				"在业 %d · 求职 %d · 受扶养 %d · 退休 %d。\n%s。\n相邻聚落 %s；当地组织 %s；连续迁离压力 %d 天。" % [
 					int(workforce.get("employed", 0)),
 					int(workforce.get("unemployed", 0)),
 					int(workforce.get("dependent", 0)),
 					int(workforce.get("retired", 0)),
+					recent_summary,
 					neighbor_summary,
 					organization_summary,
-					recent_summary,
 					pressure_days,
 				]
 				if pressure_days > 0
-				else "在业 %d · 求职 %d · 受扶养 %d · 退休 %d。\n相邻聚落 %s；当地组织 %s；%s。" % [
+				else "在业 %d · 求职 %d · 受扶养 %d · 退休 %d。\n%s。\n相邻聚落 %s；当地组织 %s。" % [
 					int(workforce.get("employed", 0)),
 					int(workforce.get("unemployed", 0)),
 					int(workforce.get("dependent", 0)),
 					int(workforce.get("retired", 0)),
+					recent_summary,
 					neighbor_summary,
 					organization_summary,
-					recent_summary,
 				]
 			),
 		})
@@ -1223,14 +1224,17 @@ func _current_settlement_id(snapshot: Variant) -> String:
 
 
 func _settlement_capacity(settlement_id: String) -> int:
+	var runtime_capacity := int(session.get_snapshot().get_entity_state(
+		settlement_id, "resident_capacity", 0
+	))
+	if runtime_capacity > 0:
+		return runtime_capacity
 	for site: Dictionary in session.get_settlement_network_summary().get(
 		"sites", []
 	):
 		if str(site.get("settlement_id", "")) == settlement_id:
 			return int(site.get("resident_capacity", 0))
-	return int(session.get_snapshot().get_entity_state(
-		settlement_id, "resident_capacity", 0
-	))
+	return 0
 
 
 func _settlement_population(settlement_id: String) -> int:
@@ -1432,6 +1436,50 @@ func _settlement_network_rows(
 		})
 
 	var facts: Array = snapshot.get_facts()
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		var fact_type := str(fact.get("fact_type", ""))
+		if (
+			fact_type not in [
+				"settlement_dwelling_constructed",
+				"settlement_work_capacity_changed",
+				"resident_laid_off",
+			]
+			or str(fact.get("settlement_id", "")) != settlement_id
+		):
+			continue
+		var label := "聚落扩建"
+		var value := "住宅承载 +%d" % int(fact.get(
+			"resident_capacity_delta", 0
+		))
+		if fact_type == "settlement_work_capacity_changed":
+			var delta := int(fact.get("capacity_delta", 0))
+			label = {
+				"resource_depleted": "设施关停",
+				"resource_recovered": "设施复工",
+				"labor_pressure_expansion": "设施扩岗",
+			}.get(str(fact.get("reason", "")), "岗位变化")
+			value = "%s %s%d · 当前 %d" % [
+				str(fact.get("occupation_label", "本地岗位")),
+				"+" if delta >= 0 else "",
+				delta,
+				int(fact.get("capacity_after", 0)),
+			]
+		elif fact_type == "resident_laid_off":
+			label = "最近失业"
+			value = "%s · %s" % [
+				_entity_name(str(fact.get("resident_id", ""))),
+				str(fact.get("occupation_label", "本地岗位")),
+			]
+		rows.append({
+			"key": "latest_settlement_capacity_adaptation",
+			"label": label,
+			"value": value,
+			"detail": str(fact.get(
+				"summary", "聚落容量按照人口、就业和资源条件发生了变化。"
+			)),
+		})
+		break
 	for index: int in range(facts.size() - 1, -1, -1):
 		var fact: Dictionary = facts[index]
 		if (
@@ -2850,6 +2898,8 @@ func _location_tag_label(tag: String) -> String:
 		"small_town": "小镇",
 		"workplace": "生产地点",
 		"generated_facility": "因地形成",
+		"settlement_construction_plot": "可建地块",
+		"runtime_dwelling": "新建住屋",
 		"fishery": "浅水渔业",
 		"food_source": "食物来源",
 		"farmland": "坡田",

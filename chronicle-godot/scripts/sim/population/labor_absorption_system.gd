@@ -174,7 +174,7 @@ func _append_employment(
 	var tags: Array = []
 	for value: Variant in entity.get("tags", []):
 		var tag := str(value)
-		if not tag.begins_with("occupation_"):
+		if not tag.begins_with("occupation_") and tag != "unemployed_resident":
 			tags.append(tag)
 	if "generated_worker" not in tags:
 		tags.append("generated_worker")
@@ -318,9 +318,15 @@ func _profile_data(
 		):
 			continue
 		by_scope[key] = profile
-		open_slots[key] = maxi(
+		var capacity := maxi(
 			int(profile.get("maximum_slots", 0))
-			- int(current_counts.get(key, 0)),
+			+ _occupation_capacity_delta(
+				snapshot, settlement_id, occupation_id
+			),
+			0
+		)
+		open_slots[key] = maxi(
+			capacity - int(current_counts.get(key, 0)),
 			0
 		)
 	return {"profiles": by_scope, "open_slots": open_slots}
@@ -427,7 +433,8 @@ func _search_started_day(snapshot: Variant, resident_id: String) -> int:
 		if (
 			str(fact.get("target_id", "")) == resident_id
 			and str(fact.get("fact_type", "")) in [
-				"resident_reached_adulthood", "resident_employment_search_unmet"
+				"resident_reached_adulthood", "resident_employment_search_unmet",
+				"resident_laid_off",
 			]
 		):
 			started_day = maxi(started_day, int(fact.get("day", 0)))
@@ -588,6 +595,20 @@ func _entity_name(snapshot: Variant, entity_id: String) -> String:
 
 func _profile_key(settlement_id: String, occupation_id: String) -> String:
 	return "%s::%s" % [settlement_id, occupation_id]
+
+
+func _occupation_capacity_delta(
+		snapshot: Variant, settlement_id: String, occupation_id: String
+) -> int:
+	var delta := 0
+	for fact: Dictionary in snapshot.get_facts():
+		if (
+			str(fact.get("fact_type", "")) == "settlement_work_capacity_changed"
+			and str(fact.get("settlement_id", "")) == settlement_id
+			and str(fact.get("occupation_id", "")) == occupation_id
+		):
+			delta += int(fact.get("capacity_delta", 0))
+	return delta
 
 
 func _safe_id(value: String) -> String:

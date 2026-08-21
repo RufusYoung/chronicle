@@ -98,6 +98,15 @@ func generate_fixture(
 		resident_config["reserve_dwelling_count"] = maxi(int(site.get(
 			"reserve_dwelling_count", 1
 		)), 0)
+		var capacity_adaptation: Dictionary = config.get(
+			"capacity_adaptation", {}
+		)
+		resident_config["construction_plot_count"] = maxi(int(site.get(
+			"construction_plot_count",
+			capacity_adaptation.get(
+				"construction_plot_count_per_settlement", 0
+			)
+		)), 0)
 		resident_configs.append(resident_config)
 		var site_row := {
 			"site_id": site_id,
@@ -158,6 +167,9 @@ func generate_fixture(
 		).duplicate(true),
 		"labor_absorption": (
 			config.get("labor_absorption", {}) as Dictionary
+		).duplicate(true),
+		"capacity_adaptation": (
+			config.get("capacity_adaptation", {}) as Dictionary
 		).duplicate(true),
 		"migration_delay_days": maxi(int(config.get(
 			"migration_delay_days", 2

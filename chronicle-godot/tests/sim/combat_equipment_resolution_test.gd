@@ -33,7 +33,7 @@ func _run() -> void:
 	)
 	_check(
 		bool(start.get("success", false))
-		and int(start.get("definition_count", 0)) == 101,
+		and int(start.get("definition_count", 0)) == 105,
 		"1. 装备战斗合同随正式定义和第七哨站世界启动"
 	)
 	if not bool(start.get("success", false)):

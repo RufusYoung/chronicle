@@ -72,6 +72,27 @@
       "household_occupation_bonus": 12,
       "coworker_familiarity_divisor": 10
     },
+    "capacity_adaptation": {
+      "enabled": true,
+      "evaluation_interval_days": 1,
+      "construction_plot_count_per_settlement": 6,
+      "housing_pressure_ratio_percent": 85,
+      "housing_pressure_days_required": 30,
+      "housing_capacity_per_dwelling": 4,
+      "housing_construction_cost": 4.0,
+      "housing_construction_cooldown_days": 90,
+      "labor_pressure_days_required": 14,
+      "minimum_organization_members_for_coordination": 1,
+      "organization_coordination_days_per_member": 2,
+      "organization_coordination_max_reduction_days": 8,
+      "minimum_unemployed_for_expansion": 1,
+      "work_slots_per_expansion": 2,
+      "maximum_extra_slots_per_occupation": 4,
+      "facility_expansion_cost": 3.0,
+      "facility_expansion_cooldown_days": 30,
+      "resource_recovery_ratio_percent": 35,
+      "unmet_pressure_fact_interval_days": 30
+    },
     "sites": [
       {
         "site_id": "reed_bay",

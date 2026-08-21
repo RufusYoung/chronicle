@@ -421,7 +421,7 @@ func _append_conceptions(
 		if last_birth_day > 0 and day - last_birth_day < cooldown_days:
 			continue
 		var resident_capacity := _site_value(
-			network_config, settlement_id, "resident_capacity", 0
+			snapshot, network_config, settlement_id, "resident_capacity", 0
 		)
 		if (
 			resident_capacity > 0
@@ -429,7 +429,7 @@ func _append_conceptions(
 		):
 			continue
 		var dwelling_capacity := _site_value(
-			network_config, settlement_id, "dwelling_capacity", 6
+			snapshot, network_config, settlement_id, "dwelling_capacity", 6
 		)
 		if _household_members(snapshot, household_id).size() >= dwelling_capacity:
 			continue
@@ -1029,7 +1029,7 @@ func _partnership_placement(
 		var home_id := str(location.get("id", ""))
 		if (
 			str(location.get("settlement_id", "")) == settlement_id
-			and "settlement_dwelling" in (location.get("tags", []) as Array)
+			and _is_dwelling(snapshot, location)
 			and int(occupancy.get(home_id, 0)) == 0
 			and not reserved_homes.has(home_id)
 		):
@@ -1049,7 +1049,7 @@ func _partnership_placement(
 			"created_household": true,
 		}
 	var dwelling_capacity := _site_value(
-		network_config, settlement_id, "dwelling_capacity", 6
+		snapshot, network_config, settlement_id, "dwelling_capacity", 6
 	)
 	var options: Array[Dictionary] = []
 	for row: Dictionary in [
@@ -1277,11 +1277,17 @@ func _household_members(snapshot: Variant, household_id: String) -> Array[String
 
 
 func _site_value(
+		snapshot: Variant,
 		network_config: Dictionary,
 		settlement_id: String,
 		key: String,
 		default_value: int
 ) -> int:
+	var runtime_value: Variant = snapshot.get_entity_state(
+		settlement_id, key, null
+	)
+	if runtime_value != null:
+		return int(runtime_value)
 	for site_value: Variant in network_config.get("sites", []):
 		if (
 			site_value is Dictionary
@@ -1290,6 +1296,19 @@ func _site_value(
 		):
 			return int((site_value as Dictionary).get(key, default_value))
 	return default_value
+
+
+func _is_dwelling(snapshot: Variant, location: Dictionary) -> bool:
+	if "settlement_dwelling" in (location.get("tags", []) as Array):
+		return true
+	var location_id := str(location.get("id", ""))
+	for fact: Dictionary in snapshot.get_facts():
+		if (
+			str(fact.get("fact_type", "")) == "settlement_dwelling_constructed"
+			and str(fact.get("home_location_id", "")) == location_id
+		):
+			return true
+	return false
 
 
 func _facts_on_day(
