@@ -46,6 +46,22 @@
       "adulthood_age": 18,
       "elder_age": 65
     },
+    "family_generation": {
+      "enabled": true,
+      "partnership_interval_days": 365,
+      "partnership_chance_percent": 42,
+      "maximum_partnerships_per_settlement_per_cycle": 1,
+      "minimum_partnership_age": 18,
+      "maximum_partnership_age": 60,
+      "maximum_partner_age_gap": 20,
+      "conception_interval_days": 90,
+      "conception_chance_percent": 18,
+      "maximum_conceptions_per_settlement_per_cycle": 1,
+      "gestation_days": 280,
+      "birth_cooldown_days": 365,
+      "maximum_parent_age": 45,
+      "maximum_children_per_pair": 3
+    },
     "sites": [
       {
         "site_id": "reed_bay",

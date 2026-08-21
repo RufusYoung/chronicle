@@ -29,6 +29,9 @@ const SettlementEnvironmentSystemModel = preload(
 const PopulationLifecycleSystemModel = preload(
 	"res://scripts/sim/population/population_lifecycle_system.gd"
 )
+const FamilyGenerationSystemModel = preload(
+	"res://scripts/sim/population/family_generation_system.gd"
+)
 const SettlementAbsorptionSystemModel = preload(
 	"res://scripts/sim/migration/settlement_absorption_system.gd"
 )
@@ -332,6 +335,22 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			writer.apply_results(population_results, stores)
 			network_results.append_array(population_results)
 			network_events.append_array(population_data.get("events", []))
+
+			var family_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var family_data: Dictionary = (
+				FamilyGenerationSystemModel.new().resolve_daily_tick(
+					family_snapshot,
+					round_event,
+					settlement_network_config,
+					context.get_locations()
+				)
+			)
+			var family_results: Array = family_data.get("results", [])
+			writer.apply_results(family_results, stores)
+			network_results.append_array(family_results)
+			network_events.append_array(family_data.get("events", []))
 
 			var environment_snapshot = snapshot_builder.build_snapshot(
 				context, stores, true

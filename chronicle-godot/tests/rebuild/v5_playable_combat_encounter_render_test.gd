@@ -23,7 +23,14 @@ func _run() -> void:
 	root.add_child(viewer)
 	await process_frame
 	await process_frame
-	_check(_reach_well(viewer.view_model.session), "1. Render state reaches encounter")
+	var start: Dictionary = viewer.view_model.start({
+		"challenge_seed_override": 516,
+	})
+	_check(
+		bool(start.get("success", false))
+		and _reach_well(viewer.view_model.session),
+		"1. Seed 516 render state reaches encounter"
+	)
 	viewer.refresh_view()
 	await process_frame
 	await process_frame

@@ -303,6 +303,20 @@
       "description": "角色生成时在当前岁数中已经度过的天数，用于形成可复现的出生日。"
     },
     {
+      "state_def_id": "state.character.generation_index",
+      "definition_version": 1,
+      "key": "generation_index",
+      "owner_kinds": ["character"],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100,
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "角色相对开局生成居民的代际编号；开局居民为零，运行期出生者按父母代际递增。"
+    },
+    {
       "state_def_id": "state.character.birth_day",
       "definition_version": 1,
       "key": "birth_day",

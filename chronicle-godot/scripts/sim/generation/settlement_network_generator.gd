@@ -153,6 +153,9 @@ func generate_fixture(
 		"population_lifecycle": (
 			config.get("population_lifecycle", {}) as Dictionary
 		).duplicate(true),
+		"family_generation": (
+			config.get("family_generation", {}) as Dictionary
+		).duplicate(true),
 		"migration_delay_days": maxi(int(config.get(
 			"migration_delay_days", 2
 		)), 1),

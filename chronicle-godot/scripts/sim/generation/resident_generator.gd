@@ -345,6 +345,7 @@ func generate_fixture(
 	fixture["initial_relationships"] = relationships
 	fixture["initial_items"] = items
 	fixture["initial_chronicle_entries"] = chronicles
+	_enrich_family_generation_identity(fixture, definition)
 	var generated_profiles := _livelihood_profiles(
 		occupations,
 		config.get("livelihood_resource_bindings", {}),
@@ -1035,6 +1036,36 @@ func _livelihood_profiles(
 
 func _safe_id(value: String) -> String:
 	return value.replace(":", ".").replace("/", ".").replace(" ", "_")
+
+
+func _enrich_family_generation_identity(
+		fixture: Dictionary,
+		definition: Dictionary
+) -> void:
+	var runtime: Dictionary = fixture.get("settlement_network_runtime", {})
+	if runtime.is_empty():
+		return
+	var family: Dictionary = runtime.get("family_generation", {})
+	if not bool(family.get("enabled", false)):
+		return
+	family["culture_id"] = str(definition.get(
+		"culture_id", "culture.unknown"
+	))
+	family["culture_label"] = str(definition.get(
+		"culture_label", "本地"
+	))
+	family["given_names"] = (
+		definition.get("given_names", []) as Array
+	).duplicate(true)
+	var temperament_ids: Array[String] = []
+	for value: Variant in definition.get("temperaments", []):
+		if value is Dictionary:
+			var temperament_id := str((value as Dictionary).get("id", ""))
+			if temperament_id != "":
+				temperament_ids.append(temperament_id)
+	family["temperament_ids"] = temperament_ids
+	runtime["family_generation"] = family
+	fixture["settlement_network_runtime"] = runtime
 
 
 func _stable_noise(key: String) -> int:
