@@ -14,6 +14,7 @@ const PLAYER_STATIC_KEYS := [
 const MUTABLE_STATIC_KEYS := [
 	"display_name",
 	"description",
+	"tags",
 	"goal",
 	"runtime_response",
 	"need_signals",
@@ -217,6 +218,16 @@ func _update_entity(entity_id: String, fields_value: Variant) -> bool:
 		var value: Variant = (fields_value as Dictionary).get(key_value)
 		if key == "tags" and not value is Array:
 			return _reject("entity_update_tags_invalid:%s" % entity_id)
+		if key == "tags":
+			var current_tags: Array = entity.get("tags", [])
+			var updated_tags: Array = value as Array
+			var protected_player := (
+				entity_id == "player" or "player" in current_tags
+			)
+			if protected_player and "player" not in updated_tags:
+				return _reject("entity_update_player_tag_removed:%s" % entity_id)
+			if not protected_player and "player" in updated_tags:
+				return _reject("entity_update_player_tag_granted:%s" % entity_id)
 		if key in ["runtime_response", "need_signals"] and not value is Dictionary:
 			return _reject("entity_update_dictionary_invalid:%s:%s" % [
 				entity_id, key

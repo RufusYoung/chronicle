@@ -35,6 +35,9 @@ const FamilyGenerationSystemModel = preload(
 const SettlementAbsorptionSystemModel = preload(
 	"res://scripts/sim/migration/settlement_absorption_system.gd"
 )
+const LaborAbsorptionSystemModel = preload(
+	"res://scripts/sim/population/labor_absorption_system.gd"
+)
 const OrganizationRuntimeSystemModel = preload(
 	"res://scripts/sim/organization/organization_runtime_system.gd"
 )
@@ -424,6 +427,22 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			writer.apply_results(absorption_results, stores)
 			network_results.append_array(absorption_results)
 			network_events.append_array(absorption_data.get("events", []))
+
+			var labor_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var labor_data: Dictionary = LaborAbsorptionSystemModel.new(
+			).resolve_daily_tick(
+				labor_snapshot,
+				round_event,
+				settlement_network_config,
+				npc_livelihood_profiles,
+				context.get_locations()
+			)
+			var labor_results: Array = labor_data.get("results", [])
+			writer.apply_results(labor_results, stores)
+			network_results.append_array(labor_results)
+			network_events.append_array(labor_data.get("events", []))
 
 		if (
 			not organization_runtime_config.is_empty()

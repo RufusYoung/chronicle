@@ -56,12 +56,14 @@ func _run() -> void:
 	_check(
 		"苇岸埠" in location_title.text
 		and "聚落人口" in region_status.text
+		and "劳动力" in region_status.text
+		and "在业" in region_status.text
 		and "苇湾鱼群" in region_status.text
 		and "相邻聚落" in region_status.text
 		and "石渡坞" in region_status.text
 		and "最近货流" in region_status.text
 		and "日运力 5.0" in region_status.text,
-		"3. 苇岸埠面板显示本地人口、资源、邻居与最近货流"
+		"3. 苇岸埠面板显示人口、劳动力、资源、邻居与最近货流"
 	)
 	_check(
 		"道路已经产生真实货流" in goal_summary.text,

@@ -1115,27 +1115,40 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				"latest_settlement_trade", "latest_settlement_migration",
 				"latest_settlement_absorption", "latest_organization_restaff",
 				"latest_organization_action", "latest_organization_lifecycle",
-				"latest_route_pressure",
+				"latest_route_pressure", "latest_resident_employment",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
 					str(network_row.get("value", "")),
 				]
+		var workforce := _settlement_workforce(current_settlement_id)
 		rows.append({
 			"key": "settlement_population",
-			"label": "聚落人口",
-			"value": "%d / %d · 相邻聚落 %s" % [
+			"label": "聚落人口 / 劳动力",
+			"value": "%d / %d" % [
 				_settlement_population(current_settlement_id),
 				capacity,
-				neighbor_summary,
 			],
 			"detail": (
-				"当地组织 %s；%s；连续迁离压力 %d 天。" % [
-					organization_summary, recent_summary, pressure_days
+				"在业 %d · 求职 %d · 受扶养 %d · 退休 %d。\n相邻聚落 %s；当地组织 %s；%s；连续迁离压力 %d 天。" % [
+					int(workforce.get("employed", 0)),
+					int(workforce.get("unemployed", 0)),
+					int(workforce.get("dependent", 0)),
+					int(workforce.get("retired", 0)),
+					neighbor_summary,
+					organization_summary,
+					recent_summary,
+					pressure_days,
 				]
 				if pressure_days > 0
-				else "当地组织 %s；%s。" % [
-					organization_summary, recent_summary
+				else "在业 %d · 求职 %d · 受扶养 %d · 退休 %d。\n相邻聚落 %s；当地组织 %s；%s。" % [
+					int(workforce.get("employed", 0)),
+					int(workforce.get("unemployed", 0)),
+					int(workforce.get("dependent", 0)),
+					int(workforce.get("retired", 0)),
+					neighbor_summary,
+					organization_summary,
+					recent_summary,
 				]
 			),
 		})
@@ -1237,6 +1250,41 @@ func _settlement_population(settlement_id: String) -> int:
 		):
 			population += 1
 	return population
+
+
+func _settlement_workforce(settlement_id: String) -> Dictionary:
+	var counts := {
+		"employed": 0,
+		"unemployed": 0,
+		"dependent": 0,
+		"retired": 0,
+	}
+	var entity_store: Variant = session.stores.get("entity_store")
+	var state_store: Variant = session.stores.get("state_store")
+	if entity_store == null or state_store == null:
+		return counts
+	for entity: Dictionary in entity_store.list_entity_rows():
+		var entity_id := str(entity.get("id", ""))
+		if (
+			str(entity.get("type", "")) != "person"
+			or not entity_store.is_entity_active(entity_id)
+			or str(state_store.get_state(
+				entity_id, "settlement_id", ""
+			)) != settlement_id
+		):
+			continue
+		var status := str(state_store.get_state(
+			entity_id, "livelihood_status", "dependent"
+		))
+		if status in ["employed", "self_employed"]:
+			counts["employed"] = int(counts["employed"]) + 1
+		elif status == "unemployed":
+			counts["unemployed"] = int(counts["unemployed"]) + 1
+		elif status == "retired":
+			counts["retired"] = int(counts["retired"]) + 1
+		else:
+			counts["dependent"] = int(counts["dependent"]) + 1
+	return counts
 
 
 func _settlement_network_rows(
@@ -1384,6 +1432,25 @@ func _settlement_network_rows(
 		})
 
 	var facts: Array = snapshot.get_facts()
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		if (
+			str(fact.get("fact_type", "")) != "resident_employed"
+			or str(fact.get("settlement_id", "")) != settlement_id
+		):
+			continue
+		rows.append({
+			"key": "latest_resident_employment",
+			"label": "最近就业",
+			"value": "%s · %s" % [
+				_entity_name(str(fact.get("resident_id", ""))),
+				str(fact.get("occupation_label", "本地生计")),
+			],
+			"detail": str(fact.get(
+				"summary", "一名居民依据岗位容量进入了本地生计。"
+			)),
+		})
+		break
 	for index: int in range(facts.size() - 1, -1, -1):
 		var fact: Dictionary = facts[index]
 		if str(fact.get("fact_type", "")) != "settlement_trade_shipment":

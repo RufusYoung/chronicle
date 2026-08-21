@@ -62,6 +62,16 @@
       "maximum_parent_age": 45,
       "maximum_children_per_pair": 3
     },
+    "labor_absorption": {
+      "enabled": true,
+      "evaluation_interval_days": 1,
+      "minimum_search_days": 1,
+      "maximum_hires_per_settlement_per_day": 2,
+      "unmet_search_fact_interval_days": 30,
+      "open_slot_score_weight": 3,
+      "household_occupation_bonus": 12,
+      "coworker_familiarity_divisor": 10
+    },
     "sites": [
       {
         "site_id": "reed_bay",
