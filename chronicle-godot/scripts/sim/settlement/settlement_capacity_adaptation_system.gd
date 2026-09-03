@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5SettlementCapacityAdaptationSystem
 
+const Access = preload("res://scripts/sim/resource/resource_access.gd")
+
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 
 const TransactionResultModel = preload(
@@ -129,7 +131,7 @@ func _resolve_housing(
 		return
 	var cost := maxf(float(config.get("housing_construction_cost", 4.0)), 0.1)
 	var stock := _select_construction_stock(
-		snapshot, settlement_id, cost, available_resources
+		snapshot, settlement_id, cost, available_resources, "settlement_dwelling_construction"
 	)
 	if stock.is_empty():
 		_append_unmet_capacity_fact(
@@ -222,6 +224,8 @@ func _resolve_housing(
 		"source_fact_ids": [fact_id],
 		"tick": day * 24,
 		"reason": "settlement_dwelling_construction",
+		"actor_id": settlement_id,
+		"day": day,
 	})
 	result.add_chronicle_entry({
 		"entry_id": "chronicle.settlement_dwelling_constructed.%s.day%d" % [
@@ -379,7 +383,7 @@ func _resolve_labor_capacity(
 		return
 	var cost := maxf(float(config.get("facility_expansion_cost", 3.0)), 0.1)
 	var stock := _select_construction_stock(
-		snapshot, settlement_id, cost, available_resources
+		snapshot, settlement_id, cost, available_resources, "settlement_facility_expansion"
 	)
 	if stock.is_empty():
 		_append_unmet_capacity_fact(
@@ -422,6 +426,8 @@ func _resolve_labor_capacity(
 		"source_fact_ids": [capacity_fact_id],
 		"tick": day * 24,
 		"reason": "settlement_facility_expansion",
+		"actor_id": settlement_id,
+		"day": day,
 	})
 	result.add_state_change({
 		"entity_id": settlement_id,
@@ -803,7 +809,8 @@ func _select_construction_stock(
 		snapshot: Variant,
 		settlement_id: String,
 		cost: float,
-		available_resources: Dictionary
+		available_resources: Dictionary,
+		purpose: String = "industry_construction"
 ) -> Dictionary:
 	var candidates: Array[Dictionary] = []
 	for stock: Dictionary in snapshot.get_resource_stocks():
@@ -813,6 +820,7 @@ func _select_construction_stock(
 			or str(stock.get("source_kind", "")) != "natural_resource"
 			or float(available_resources.get(stock_id, 0.0)) + 0.0001 < cost
 			or not _has_any_tag(stock.get("tags", []), CONSTRUCTION_TAGS)
+			or not Access.manager_allows(stock, settlement_id, purpose)
 		):
 			continue
 		var row := stock.duplicate(true)

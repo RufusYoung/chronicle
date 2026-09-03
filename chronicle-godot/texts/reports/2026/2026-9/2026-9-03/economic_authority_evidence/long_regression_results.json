@@ -1,0 +1,8 @@
+{
+  "Test": "tests/sim/generated_world_30_day_health_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 4163.99,
+  "UnexpectedErrors": []
+}

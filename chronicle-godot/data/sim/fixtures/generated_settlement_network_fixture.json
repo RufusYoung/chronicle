@@ -3,6 +3,7 @@
   "world_id": "world.generated_settlement_network",
   "actor_id": "player",
   "challenge_seed": 81001,
+  "economic_contract": {"version": 1, "settlement_initial_coins": 120, "organization_seed_grant": 12, "treasury_reserve": 12},
   "locations": {},
   "region_state": {},
   "institution": {},

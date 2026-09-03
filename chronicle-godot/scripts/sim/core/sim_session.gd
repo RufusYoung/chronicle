@@ -75,6 +75,8 @@ const OrganizationGeneratorModel = preload(
 	"res://scripts/sim/generation/organization_generator.gd"
 )
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+const EconomicSetup = preload("res://scripts/sim/economy/economic_world_setup.gd")
+const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -210,6 +212,10 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	organization_generation_report = (
 		organization_result.get("report", {}) as Dictionary
 	).duplicate(true)
+	var economic_result := EconomicSetup.configure_fixture(fixture)
+	if not bool(economic_result.get("ok", false)):
+		return _start_failure(str(economic_result.get("error", "economic_setup_failed")))
+	fixture = economic_result.get("fixture", fixture)
 
 	var definition_report: Dictionary = registry.load_raw_definition_files([
 		STATE_DEFS_PATH,
@@ -340,6 +346,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		failed["equipment_report"] = equipment_report
 		return failed
 	context.release_runtime_sources()
+	var economic_error := _validate_economic_references()
+	if economic_error != "":
+		return _start_failure(economic_error)
 	initialized = true
 	return {
 		"success": true,
@@ -2091,6 +2100,9 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 
 
 func _validate_save_references() -> Dictionary:
+	var economic_error := _validate_economic_references()
+	if economic_error != "":
+		return _save_failure(economic_error, "references")
 	var entity_store: Variant = stores["entity_store"]
 	var fact_store: Variant = stores["fact_store"]
 	var item_store: Variant = stores["item_store"]
@@ -2217,6 +2229,21 @@ func _validate_save_references() -> Dictionary:
 	return {"ok": true, "error": "", "phase": "references"}
 
 
+func _validate_economic_references() -> String:
+	var error := ResourceAccess.validate_references(stores)
+	if error != "":
+		return "economic_resource_" + error
+	if not stores["item_store"].conserve_currency:
+		return ""
+	var expected := int(fixture_source_data.get("economic_generation_result", {}).get("initial_currency_total", -1))
+	if expected < 0 or TransactionWorldWriterModel._currency_total(stores["item_store"]) != expected:
+		return "economic_currency_total_mismatch"
+	for site: Dictionary in settlement_network_runtime.get("sites", []):
+		if int(stores["state_store"].get_state(str(site["settlement_id"]), "economic_contract_version", 0)) != 1:
+			return "economic_settlement_contract_missing"
+	return ""
+
+
 func _runtime_cursor_save_data() -> Dictionary:
 	return {
 		"action_count": action_count,
@@ -2303,6 +2330,7 @@ func _create_stores(fixture: Dictionary) -> Dictionary:
 	for fact: Dictionary in fixture.get("known_facts", []):
 		fact_store.add_fact(fact)
 	var item_store = ItemStoreModel.new()
+	item_store.conserve_currency = int(fixture.get("economic_contract", {}).get("version", 0)) == 1
 	item_store.configure(
 		registry.list_definitions("item"),
 		entity_store,
@@ -2336,6 +2364,7 @@ func _create_stores(fixture: Dictionary) -> Dictionary:
 	var rumor_store = RumorStoreModel.new()
 	var pressure_store = PressureStoreModel.new()
 	var resource_stock_store = ResourceStockStoreModel.new()
+	resource_stock_store.access_version = int(fixture.get("economic_contract", {}).get("version", 0))
 	var obligation_store = ObligationStoreModel.new()
 	var exchange_store = ExchangeStoreModel.new()
 	var chronicle_store = ChronicleStoreModel.new()

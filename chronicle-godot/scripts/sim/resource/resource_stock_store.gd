@@ -2,9 +2,11 @@ extends RefCounted
 class_name V5ResourceStockStore
 
 const EPSILON := 0.0001
+const Access = preload("res://scripts/sim/resource/resource_access.gd")
 
 var stocks: Dictionary = {}
 var last_error: String = ""
+var access_version: int = 0
 
 
 func load_initial_stocks(data: Variant) -> Dictionary:
@@ -48,9 +50,18 @@ func apply_resource_change(change: Dictionary) -> bool:
 	if stock_id == "" or not stocks.has(stock_id):
 		return _reject("resource_stock_unknown:%s" % stock_id)
 	var operation := str(change.get("operation", ""))
-	if operation not in ["consume", "recover", "adjust", "set"]:
+	if operation not in ["consume", "recover", "adjust", "set", "grant_access", "revoke_access"]:
 		return _reject("resource_operation_invalid:%s" % operation)
 	var stock: Dictionary = (stocks[stock_id] as Dictionary).duplicate(true)
+	if operation in ["grant_access", "revoke_access"]:
+		if not stock.has("access"):
+			return _reject("resource_access_policy_missing")
+		Access.apply_metadata(stock, change)
+		var error := Access.shape_error(stock, true)
+		if error != "":
+			return _reject(error)
+		stocks[stock_id] = stock
+		return true
 	var current := float(stock.get("current", 0.0))
 	var capacity := float(stock.get("capacity", 0.0))
 	var amount := float(change.get("amount", 0.0))
@@ -88,6 +99,7 @@ func apply_resource_change(change: Dictionary) -> bool:
 		if change.get("source_fact_ids", []) is Array
 		else []
 	)
+	Access.apply_metadata(stock, change)
 	stocks[stock_id] = stock
 	return true
 
@@ -157,6 +169,9 @@ static func status_for(
 
 
 func _stock_error(stock: Dictionary) -> String:
+	var access_error := Access.shape_error(stock, access_version > 0)
+	if access_error != "":
+		return "resource_access_" + access_error
 	var stock_id := str(stock.get("stock_id", ""))
 	if stock_id == "":
 		return "resource_stock_id_missing"

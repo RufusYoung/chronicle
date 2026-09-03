@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5TransactionWorldWriter
 
+const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
+
 const EXTERNAL_PROJECTION_KEYS := [
 	"food_count",
 	"injury",
@@ -128,6 +130,10 @@ func apply_results(results: Array, stores: Dictionary) -> bool:
 
 
 func _apply_to_stores(result: Variant, stores: Dictionary) -> Dictionary:
+	for change: Dictionary in result.item_changes:
+		var payment_id := str(change.get("payment_fact_id", ""))
+		if payment_id != "" and not stores["fact_store"].get_fact(payment_id).is_empty():
+			return {"ok": false, "error": "payment_already_recorded", "phase": "preflight"}
 	var entity_store: Variant = stores.get("entity_store")
 	if entity_store != null:
 		for entity_change: Dictionary in result.entity_changes:
@@ -211,13 +217,24 @@ func _apply_to_stores(result: Variant, stores: Dictionary) -> Dictionary:
 
 	var item_store: Variant = stores.get("item_store")
 	if item_store != null:
+		var currency_before := _currency_total(item_store) if item_store.conserve_currency and not result.item_changes.is_empty() else -1
 		for item_change: Dictionary in result.item_changes:
+			if item_change.has("expected_holder") and item_store.get_item(str(item_change.get("item_instance_id", ""))).get("holder", {}) != item_change["expected_holder"]:
+				return {"ok": false, "error": "payment_holder_changed", "phase": "preflight"}
 			if not item_store.apply_item_change(item_change):
 				return _store_failure("item_store", item_store)
+		if currency_before >= 0 and _currency_total(item_store) != currency_before:
+			return {"ok": false, "error": "currency_supply_changed", "phase": "preflight"}
 
 	var resource_stock_store: Variant = stores.get("resource_stock_store")
 	if resource_stock_store != null:
+		var transfer_error := ResourceAccess.validate_transfers(result.resource_changes, stores)
+		if transfer_error != "":
+			return {"ok": false, "error": "resource_access_" + transfer_error, "phase": "preflight"}
 		for resource_change: Dictionary in result.resource_changes:
+			var error := ResourceAccess.validate_change(resource_change, stores)
+			if error != "":
+				return {"ok": false, "error": "resource_access_" + error, "phase": "preflight"}
 			if not resource_stock_store.apply_resource_change(resource_change):
 				return _store_failure(
 					"resource_stock_store", resource_stock_store
@@ -238,7 +255,30 @@ func _apply_to_stores(result: Variant, stores: Dictionary) -> Dictionary:
 	if investigation_store != null:
 		for change: Dictionary in result.investigation_changes:
 			investigation_store.apply_change(change)
+	if item_store != null and item_store.conserve_currency:
+		for change: Dictionary in result.entity_changes:
+			var entity_id := str(change.get("entity_id", ""))
+			var entity: Dictionary = entity_store.get_entity(entity_id)
+			if str(entity.get("type", "")) != "institution" or entity_store.is_entity_active(entity_id):
+				continue
+			for item: Dictionary in item_store.items.values():
+				if item.get("holder", {}) == {"kind": "entity", "id": entity_id}:
+					return {"ok": false, "error": "retirement_assets_unresolved", "phase": "preflight"}
+			for exchange: Dictionary in exchange_store.find_open_exchanges():
+				if entity_id in [str(exchange.get("party_a", "")), str(exchange.get("party_b", ""))]:
+					return {"ok": false, "error": "retirement_exchange_unresolved", "phase": "preflight"}
+			var error := ResourceAccess.validate_references(stores)
+			if error != "":
+				return {"ok": false, "error": "resource_access_" + error, "phase": "preflight"}
 	return {"ok": true, "error": "", "phase": "preflight"}
+
+
+static func _currency_total(item_store: Variant) -> int:
+	var total := 0
+	for item: Dictionary in item_store.items.values():
+		if str(item.get("item_def_id", "")) == "item.copper_coin":
+			total += int(item.get("quantity", 0))
+	return total
 
 
 func _validate_store_coverage(result: Variant, stores: Dictionary) -> Dictionary:

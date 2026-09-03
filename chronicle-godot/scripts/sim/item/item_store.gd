@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5ItemStore
 
+var conserve_currency: bool = false
+
 const HOLDER_KINDS := ["entity", "location", "container", "escrow", "destroyed"]
 
 var items: Dictionary = {}

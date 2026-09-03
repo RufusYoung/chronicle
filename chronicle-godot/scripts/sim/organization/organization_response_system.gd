@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5OrganizationResponseSystem
 
+const Access = preload("res://scripts/sim/resource/resource_access.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -38,13 +40,14 @@ func resolve_tick(
 			_safe_id(action_kind),
 			day,
 		]
-		if _fact_exists(snapshot, fact_id):
+		if _fact_exists(snapshot, fact_id) or _fact_exists(snapshot, fact_id + ".denied"):
 			continue
+		var planned_available := available.duplicate()
 		var resolution: Dictionary = {}
 		match action_kind:
 			"local_provisioning":
 				resolution = _resolve_local_provisioning(
-					snapshot, organization, response, tick_event, fact_id, available
+					snapshot, organization, response, tick_event, fact_id, planned_available
 				)
 			"trade_coordination":
 				resolution = _resolve_trade_coordination(
@@ -53,7 +56,7 @@ func resolve_tick(
 					response,
 					tick_event,
 					fact_id,
-					available,
+					planned_available,
 					network_config
 				)
 			"route_patrol":
@@ -63,12 +66,29 @@ func resolve_tick(
 					response,
 					tick_event,
 					fact_id,
-					available,
+					planned_available,
 					network_config
 				)
 		if resolution.is_empty():
 			continue
 		var result: Variant = resolution.get("result")
+		var denied := ""
+		for change: Dictionary in result.resource_changes:
+			change["actor_id"] = str(organization["id"])
+			change["day"] = day
+			denied = Access.denial(snapshot, snapshot.get_resource_stock(str(change.get("stock_id", ""))),
+				str(organization["id"]), str(change.get("reason", "")), float(change.get("amount", 0)), day)
+			if denied != "":
+				break
+		if denied != "":
+			var blocked = TransactionResultModel.new()
+			blocked.add_fact({"fact_id": fact_id + ".denied", "fact_type": "organization_resource_access_blocked",
+				"actor_id": str(organization["id"]), "target_id": str(organization.get("settlement_id", "")),
+				"day": day, "reason": denied, "summary": "%s未能执行计划：资源使用许可或当天额度不足。" % organization.get("display_name", "组织")})
+			blocked.mark_resolved("organization_resource_access_blocked")
+			results.append(blocked)
+			continue
+		available = planned_available
 		var summary := str(resolution.get("summary", "地方组织完成了例行响应。"))
 		for change: Dictionary in [
 			{"key": "last_response_day", "to": day},

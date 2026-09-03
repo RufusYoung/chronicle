@@ -1,0 +1,988 @@
+{
+  "total": 121,
+  "passed": 121,
+  "short_count": 120,
+  "render_count": 15,
+  "autonomous_seeds": [
+    81001,
+    82002,
+    83003
+  ],
+  "autonomous_days": 30,
+  "results": [
+    {
+      "Test": "tests/lake_town_branch_closure_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.86,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/lake_town_food_chain_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.97,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/lake_town_history_variation_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.87,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/lake_town_hunger_closure_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.94,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/lake_town_living_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 10.2,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/lake_town_reaction_system_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 2.72,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/lake_town_recovery_system_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.5,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/lake_town_world_viewer_data_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.98,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/local_story_module_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 44.04,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/micro_action_resolver_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.88,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/project_cleanup_smoke.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.87,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_attribute_affordance_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.56,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_deferred_granary_investigation_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.61,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_dynamic_settlement_resource_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 32.2,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_economic_authority_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 16.49,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_emergent_combat_encounter_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.29,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_first_quarter_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 8.23,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_first_year_close_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.55,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_first_year_close_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.33,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_generated_organization_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 34.23,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_generated_settlement_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.16,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_granary_risk_discovery_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.1,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_industry_lifecycle_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 158.67,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_internal_playable_build_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 17.27,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_life_incident_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 8.38,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_life_incident_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.89,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_live_location_viewer_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 11.77,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_live_travel_loop_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.78,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_location_foundation_state_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.14,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_location_foundation_viewer_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.33,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_location_ui_fix_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.35,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_mist_salt_well_expedition_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 16.12,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_north_quay_record_house_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 16.62,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_organization_lifecycle_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 8.41,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_playable_combat_encounter_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.09,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_player_agency_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.38,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_player_attribute_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.31,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_playtest_ux_regression_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 14.4,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_returning_relic_echo_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.37,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_second_year_reception_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.09,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_second_year_reception_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.04,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_settlement_absorption_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 32.65,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_settlement_capacity_adaptation_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.5,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_settlement_network_render_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 156.21,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_seventh_outpost_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.69,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/rebuild/v5_world_time_surface_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.2,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/candidate_effect_template_batch1_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.75,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/character_feature_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.27,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/combat_encounter_director_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.74,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/combat_equipment_resolution_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.97,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/consequence_trigger_settlement_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.87,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/deferred_granary_investigation_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.73,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/definition_entity_state_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.91,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/domain_pressure_deferred_foundation_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.77,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/due_resolution_policy_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.26,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/dynamic_settlement_resource_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 110.87,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/economic_authority_treasury_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 19.66,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/entity_lifecycle_transaction_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.11,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/equipment_loadout_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.89,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_quarter_life_project_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.95,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_winter_growth_candidate_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.09,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_winter_growth_confirmation_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.17,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_winter_growth_reward_matrix_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.01,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_winter_growth_transition_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.01,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_winter_market_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.89,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_winter_resource_duty_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.19,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_winter_risk_outcome_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.06,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/first_year_close_life_project_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.11,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_family_generation_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 113.01,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_industry_history_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 432.04,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_industry_lifecycle_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 74.47,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_labor_absorption_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 251.09,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_livelihood_network_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 60.5,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_multi_signal_organization_lifecycle_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 12.99,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_organization_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 18.23,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_organization_lifecycle_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.43,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_organization_response_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 17.05,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_organization_runtime_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 117.81,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_population_lifecycle_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 34.29,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_resident_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.5,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_settlement_absorption_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 145.87,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_settlement_capacity_adaptation_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 9.67,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_settlement_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 36.6,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_settlement_network_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 78.47,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_social_followup_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 98.35,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_social_pressure_network_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 60.11,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/generated_world_30_day_health_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4163.99,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/granary_risk_discovery_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.12,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/item_instance_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.28,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/life_incident_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.76,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/live_sim_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.17,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/live_travel_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.55,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/live_world_time_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.27,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/mini_world_tick_adapter_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 2.97,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/minimum_contract_fixture_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.81,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/mist_salt_well_expedition_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 10.84,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/north_quay_record_house_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.77,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/npc_autonomous_decision_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.3,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/npc_emergent_life_loop_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.03,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/npc_resident_network_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.23,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/obligation_exchange_due_trigger_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.16,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/playable_combat_encounter_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 6.02,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/player_action_time_receipt_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.3,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/raw_rule_effect_binding_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.41,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/raw_rule_prototype_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.5,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/relationship_trace_rumor_narrative_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.57,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/returning_relic_echo_session_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.64,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/save_envelope_roundtrip_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.29,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/second_year_reception_life_project_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 7.94,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/seventh_outpost_life_project_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 5.3,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/sim_architecture_skeleton_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.51,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/sim_runner_world_log_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.17,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/sim_snapshot_candidate_context_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.09,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/snapshot_transaction_effect_template_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.99,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/tick_event_schema_scoped_result_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.09,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/transaction_contract_cleanup_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 3.99,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/transaction_state_memory_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.49,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/sim/unified_action_contract_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 4.16,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/world_news_digest_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.86,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/world_sim_lead_adapter_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 1.94,
+      "UnexpectedErrors": []
+    },
+    {
+      "Test": "tests/world_sim_observer_test.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "TimedOut": false,
+      "Seconds": 2.44,
+      "UnexpectedErrors": []
+    }
+  ],
+  "notes": [
+    "The full short run passed 120 of 120 scripts. Final economic UI wording and quota-refusal projection were rechecked separately.",
+    "The final long run started after payment identity hardening; the earlier manually stopped run is excluded from coverage.",
+    "The early contract attempt predates final replay and malformed-permission checks and is retained only as development context.",
+    "Short regression and part of the long run overlapped. Durations are not an isolated UI performance benchmark."
+  ]
+}

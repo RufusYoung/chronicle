@@ -2,6 +2,8 @@ extends RefCounted
 class_name V5NpcLivelihoodSystem
 
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+const Access = preload("res://scripts/sim/resource/resource_access.gd")
+const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
@@ -27,6 +29,7 @@ func resolve_work_tick(
 	var produced_count := 0
 	var blocked_count := 0
 	var available_resources := _available_resource_amounts(snapshot)
+	var treasury = Treasury.new(snapshot)
 	for actor: Dictionary in _sorted_people(snapshot):
 		var actor_id := str(actor.get("id", ""))
 		var occupation_id := str(snapshot.get_entity_state(
@@ -62,7 +65,11 @@ func resolve_work_tick(
 			_safe_id(actor_id),
 			_safe_id(str(tick_event.get("tick_event_id", "tick"))),
 		]
-		var resource_plan := _resource_plan(profile, available_resources)
+		var wage := int(profile.get("wage_amount", 0))
+		var reserve := int(snapshot.get_entity_state(settlement_id, "treasury_reserve", 0))
+		var wage_missing := wage > 0 and treasury.balance(settlement_id) - reserve < wage
+		var resource_plan := {"ok": false, "missing": {"label": "可支付薪酬", "amount": wage,
+			"available": maxi(treasury.balance(settlement_id) - reserve, 0), "denial": "treasury_insufficient"}} if wage_missing else _resource_plan(profile, available_resources, snapshot, actor_id)
 		if not bool(resource_plan.get("ok", false)):
 			var blocked_resource: Dictionary = resource_plan.get("missing", {})
 			var blocked_count_for_actor := int(snapshot.get_entity_state(
@@ -70,8 +77,9 @@ func resolve_work_tick(
 			)) + 1
 			result.add_fact({
 				"fact_id": fact_id,
-				"fact_type": "npc_livelihood_blocked_resource",
+				"fact_type": "npc_wage_work_declined" if wage_missing else "npc_livelihood_blocked_resource",
 				"actor_id": actor_id,
+				"settlement_id": settlement_id,
 				"location_id": str(snapshot.get_entity_state(
 					actor_id, "workplace_id", ""
 				)),
@@ -82,11 +90,12 @@ func resolve_work_tick(
 				)),
 				"required": float(blocked_resource.get("amount", 0.0)),
 				"available": float(blocked_resource.get("available", 0.0)),
+				"blocked_reason": str(blocked_resource.get("denial", "resource_shortage")),
 				"day": int(tick_event.get("day", 0)),
 				"tick_event_id": str(tick_event.get("tick_event_id", "")),
-				"summary": "%s因为%s不足，没有完成这一轮生产。" % [
+				"summary": "%s未开工：%s。没有扣取生产投入或发放物品。" % [
 					str(actor.get("display_name", actor_id)),
-					str(blocked_resource.get("label", "生产资源")),
+					"聚落可支付的薪酬不足" if wage_missing else ("没有该资源的生产使用权" if str(blocked_resource.get("denial", "")) != "" else str(blocked_resource.get("label", "生产资源")) + "不足"),
 				],
 			})
 			result.add_state_change({
@@ -122,7 +131,18 @@ func resolve_work_tick(
 			resource_change["source_fact_ids"] = [fact_id]
 			resource_change["tick"] = _tick_value(tick_event)
 			resource_change["reason"] = "livelihood_production"
+			resource_change["actor_id"] = actor_id
+			resource_change["day"] = int(tick_event.get("day", 0))
 			result.add_resource_change(resource_change)
+		if wage > 0:
+			treasury.append_payment(result, settlement_id, actor_id, wage, fact_id, _tick_value(tick_event), reserve)
+			result.add_fact({"fact_id": fact_id + ".wage", "fact_type": "npc_wage_paid", "actor_id": settlement_id,
+				"target_id": actor_id, "settlement_id": settlement_id, "amount": wage, "source_fact_ids": [fact_id], "day": int(tick_event.get("day", 0)),
+				"summary": "%s从聚落金库实际领取 %d 枚铜币。" % [actor.get("display_name", actor_id), wage]})
+			result.add_exchange({"exchange_id": "exchange." + fact_id, "exchange_type": "service_wage_payment",
+				"status": "settled", "party_a": settlement_id, "party_b": actor_id,
+				"terms": {"amount": wage, "currency_item_def_id": Treasury.CURRENCY}, "source_fact_ids": [fact_id],
+				"created_tick": _tick_value(tick_event), "settled_tick": _tick_value(tick_event)})
 		var products: Array = profile.get("products", [])
 		var product_rows: Array = []
 		for product_index: int in range(products.size()):
@@ -159,12 +179,12 @@ func resolve_work_tick(
 			"resource_inputs": resource_inputs.duplicate(true),
 			"day": int(tick_event.get("day", 0)),
 			"tick_event_id": str(tick_event.get("tick_event_id", "")),
-			"summary": str(profile.get(
+			"summary": ("%s完成一轮%s，聚落实际支付 %d 枚铜币。" % [actor.get("display_name", actor_id), profile.get("label", "服务"), wage]) if wage > 0 else str(profile.get(
 				"work_summary",
 				"%s完成了一轮日常生计。" % str(actor.get(
 					"display_name", actor_id
 				))
-			)),
+			)) + ("（旧版薪酬模型：铜币由规则生成，尚未实际付款。）" if _contains_currency_product(products) else ""),
 		})
 		result.add_state_change({
 			"entity_id": actor_id,
@@ -198,19 +218,19 @@ func resolve_work_tick(
 		result.set_narrative_result({
 			"title": "聚落生计继续运转",
 			"summary": (
-				"%d 名居民完成了各自的一轮工作，产物进入物品库存；另有 %d 人因本地资源不足停工。" % [
+					"%d 名居民完成了工作，实际产物或薪酬进入库存；另有 %d 人因资源、权限或薪酬条件未满足而停工。" % [
 					produced_count, blocked_count
 				]
 				if blocked_count > 0
-				else "%d 名居民完成了各自的一轮工作，产物已经进入真实物品库存。" % produced_count
+				else "%d 名居民完成了工作，实际产物或薪酬已进入物品库存。" % produced_count
 			),
 			"tone": "ordinary_life",
 		})
 	elif blocked_count > 0:
 		result.set_narrative_result({
-			"title": "资源不足迫使生产停下",
-			"summary": "%d 名居民抵达工作地点后发现资源水位不足，没有凭空制造产物。" % blocked_count,
-			"tone": "resource_shortage",
+			"title": "开工条件尚未满足",
+			"summary": "%d 名居民因资源、使用权限或可支付薪酬不足而未开工；具体原因已留下记录，没有扣取生产投入。" % blocked_count,
+			"tone": "work_blocked",
 		})
 	result.mark_resolved("npc_livelihood_work")
 	return {"results": [result], "events": events}
@@ -537,7 +557,7 @@ func _available_resource_amounts(snapshot: Variant) -> Dictionary:
 	return rows
 
 
-func _resource_plan(profile: Dictionary, available: Dictionary) -> Dictionary:
+func _resource_plan(profile: Dictionary, available: Dictionary, snapshot: Variant = null, actor_id: String = "") -> Dictionary:
 	var changes: Array = []
 	for value: Variant in profile.get("resource_inputs", []):
 		if not value is Dictionary:
@@ -548,7 +568,8 @@ func _resource_plan(profile: Dictionary, available: Dictionary) -> Dictionary:
 		if stock_id == "" or amount <= 0.0:
 			continue
 		var current := float(available.get(stock_id, 0.0))
-		if current + 0.0001 < amount:
+		var denial := "" if snapshot == null else Access.denial(snapshot, snapshot.get_resource_stock(stock_id), actor_id, "livelihood_production", amount)
+		if current + 0.0001 < amount or denial != "":
 			return {
 				"ok": false,
 				"changes": [],
@@ -557,6 +578,7 @@ func _resource_plan(profile: Dictionary, available: Dictionary) -> Dictionary:
 					"label": str(input.get("label", "生产资源")),
 					"amount": amount,
 					"available": current,
+					"denial": denial,
 				},
 			}
 		changes.append({
@@ -570,6 +592,13 @@ func _resource_plan(profile: Dictionary, available: Dictionary) -> Dictionary:
 			change.get("amount", 0.0)
 		)
 	return {"ok": true, "changes": changes, "missing": {}}
+
+
+func _contains_currency_product(products: Array) -> bool:
+	for product: Dictionary in products:
+		if str(product.get("item_def_id", "")) == Treasury.CURRENCY:
+			return true
+	return false
 
 
 func _profiles_by_scope(profiles: Array) -> Dictionary:

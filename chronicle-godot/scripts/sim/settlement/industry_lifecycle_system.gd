@@ -6,6 +6,7 @@ const Catalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.g
 const Capacity = preload("res://scripts/sim/settlement/settlement_capacity_adaptation_system.gd")
 const Labor = preload("res://scripts/sim/population/labor_absorption_system.gd")
 const RoutePressure = preload("res://scripts/sim/resource/route_pressure_query.gd")
+const Access = preload("res://scripts/sim/resource/resource_access.gd")
 
 
 func resolve_daily_tick(
@@ -231,6 +232,7 @@ func _candidate(
 				or str(stock.get("source_kind", "")) != str(input_rule.get("source_kind", ""))
 				or not capacity._has_any_tag(stock.get("tags", []), input_rule.get("tags_any", []))
 				or amount < required * 2
+				or Access.denial(snapshot, stock, str(founder.get("resident_id", "")), "livelihood_production", required) != ""
 			):
 				continue
 			inputs.append(
@@ -475,7 +477,8 @@ func _found(
 			"amount": row.get("construction_cost", 0),
 			"source_fact_ids": [fact_id],
 			"tick": day * 24,
-			"reason": "industry_construction"
+			"reason": "industry_construction",
+			"actor_id": settlement, "day": day
 		}
 	)
 	var employment_sources: Array[String] = [fact_id, str(founder.get("source_fact_id", ""))]

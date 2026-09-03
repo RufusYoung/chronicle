@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5SettlementNetworkSystem
 
+const Access = preload("res://scripts/sim/resource/resource_access.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -30,6 +32,8 @@ func resolve_daily_consumption(
 		if good_id == "" or not goods_by_id.has(good_id):
 			continue
 		var settlement_id := str(stock.get("settlement_id", ""))
+		if not Access.manager_allows(stock, settlement_id, "settlement_daily_consumption"):
+			continue
 		var fact_id := "fact.network_consumption.%s.%s.day%d" % [
 			_safe_id(settlement_id), _safe_id(good_id), day
 		]
@@ -50,6 +54,8 @@ func resolve_daily_consumption(
 			"amount": amount,
 			"tick": _tick_value(tick_event),
 			"reason": "settlement_daily_consumption",
+			"actor_id": settlement_id,
+			"day": day,
 			"source_fact_ids": [fact_id],
 		})
 		result.add_fact({
@@ -173,6 +179,8 @@ func resolve_trade_tick(
 				"amount": amount,
 				"tick": _tick_value(tick_event),
 				"reason": "network_trade_export",
+				"actor_id": source_id,
+				"day": day,
 				"source_fact_ids": [fact_id],
 			})
 			result.add_resource_change({
@@ -181,6 +189,8 @@ func resolve_trade_tick(
 				"amount": amount,
 				"tick": _tick_value(tick_event),
 				"reason": "network_trade_import",
+				"actor_id": destination_id,
+				"day": day,
 				"source_fact_ids": [fact_id],
 			})
 			result.add_resource_change({
@@ -189,6 +199,8 @@ func resolve_trade_tick(
 				"amount": traffic_cost,
 				"tick": _tick_value(tick_event),
 				"reason": "network_trade_transport",
+				"actor_id": source_id,
+				"day": day,
 				"source_fact_ids": [fact_id],
 			})
 			available[source_stock_id] = float(
@@ -234,7 +246,7 @@ func resolve_trade_tick(
 					"source_fact_ids", []
 				) as Array).duplicate(),
 				"day": day,
-				"summary": "%s沿道路向%s运送了 %.1f 份%s，成交价约为每份 %.1f 枚铜币。" % [
+				"summary": "%s沿道路向%s调拨了 %.1f 份%s，参考估价每份 %.1f 枚铜币；本批未结算货币。" % [
 					_entity_name(snapshot, source_id),
 					_entity_name(snapshot, destination_id),
 					amount,
@@ -507,6 +519,7 @@ func _best_export_stock(
 		if (
 			str(stock.get("settlement_id", "")) != settlement_id
 			or str(stock.get("source_kind", "")) != "natural_resource"
+			or not Access.manager_allows(stock, settlement_id, "network_trade_export")
 			or not _has_any_tag(stock.get("tags", []), tags)
 		):
 			continue
@@ -536,6 +549,7 @@ func _trade_reserve_stock(
 		if (
 			str(stock.get("settlement_id", "")) == settlement_id
 			and str(stock.get("source_kind", "")) == "trade_reserve"
+			and Access.manager_allows(stock, settlement_id, "network_trade_import")
 			and good_id in (stock.get("tags", []) as Array)
 		):
 			return stock.duplicate(true)
@@ -553,6 +567,7 @@ func _traffic_stock(
 		if (
 			str(stock.get("settlement_id", "")) == settlement_id
 			and str(stock.get("source_kind", "")) == "traffic_capacity"
+			and Access.manager_allows(stock, settlement_id, "network_trade_transport")
 			and mode in (stock.get("tags", []) as Array)
 			and float(available.get(str(stock.get("stock_id", "")), 0.0)) >= 0.5
 		):

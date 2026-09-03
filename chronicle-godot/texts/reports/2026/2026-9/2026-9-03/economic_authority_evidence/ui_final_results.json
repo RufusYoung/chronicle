@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_economic_authority_render_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 16.49,
+  "UnexpectedErrors": []
+}

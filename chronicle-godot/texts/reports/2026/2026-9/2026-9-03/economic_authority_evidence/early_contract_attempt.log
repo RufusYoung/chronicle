@@ -1,0 +1,76 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[ECONOMIC AUTHORITY PASS] new economic world starts: ""
+[ECONOMIC AUTHORITY PASS] initial ownership and funding references are valid
+[ECONOMIC AUTHORITY PASS] one full day advances
+[ECONOMIC AUTHORITY PASS] a day of wages cannot mint currency
+[ECONOMIC AUTHORITY PASS] service workers receive actual treasury payments
+[ECONOMIC AUTHORITY PASS] post-tick ownership references are valid
+[ECONOMIC AUTHORITY SAMPLE] {"current_currency":440,"initial_currency":440,"paid_wages":20}
+[ECONOMIC AUTHORITY PASS] test world starts
+[ECONOMIC TRANSACTION] {"error":"resource_access_actor_unavailable","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] missing or foreign actor cannot use another commons
+[ECONOMIC TRANSACTION] {"error":"resource_access_actor_unavailable","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] missing or foreign actor cannot use another commons
+[ECONOMIC TRANSACTION] {"error":"resource_access_operation_not_authorized","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] permission cannot authorize arbitrary operation set
+[ECONOMIC TRANSACTION] {"error":"resource_access_operation_not_authorized","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] permission cannot authorize arbitrary operation adjust
+[ECONOMIC TRANSACTION] {"error":"resource_access_recovery_not_natural","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] permission cannot authorize arbitrary operation recover
+[ECONOMIC AUTHORITY PASS] mixed transaction payment is affordable
+[ECONOMIC TRANSACTION] {"error":"resource_access_actor_unavailable","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] resource denial rolls back money and facts too
+[ECONOMIC AUTHORITY PASS] authorized use consumes actual resource
+[ECONOMIC TRANSACTION] {"error":"resource_access_organization_daily_limit","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] daily resource quota blocks a second over-budget use
+[ECONOMIC AUTHORITY PASS] usage allowance resets on the next world day
+[ECONOMIC AUTHORITY PASS] batch cannot double-spend a daily quota and rolls back both uses
+[ECONOMIC TRANSACTION] {"error":"resource_access_grant_fact_mismatch","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] unrelated fact cannot serve as an authorization
+[ECONOMIC AUTHORITY PASS] manager can revoke actual local permission
+[ECONOMIC TRANSACTION] {"error":"resource_access_organization_not_authorized","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] revoked permission cannot be used
+[ECONOMIC TRANSACTION] {"error":"resource_access_transfer_unbalanced","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] authorized import cannot create supply without a matching export
+[ECONOMIC TRANSACTION] {"error":"resource_access_recovery_not_natural","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] finished reserves cannot naturally regenerate
+[ECONOMIC AUTHORITY PASS] authorization history and usage references remain valid
+[ECONOMIC AUTHORITY PASS] test world starts
+[ECONOMIC AUTHORITY PASS] partial stack payment plans
+[ECONOMIC AUTHORITY PASS] partial stack transfers real coins
+[ECONOMIC TRANSACTION] {"error":"item_store:item.treasury.generated_settlement.river_steps:invalid_split_identity","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] replaying a partial payment cannot pay twice
+[ECONOMIC AUTHORITY PASS] test injection restores split coins as a second payer stack
+[ECONOMIC AUTHORITY PASS] payment spans multiple actual stacks
+[ECONOMIC AUTHORITY PASS] payer debit equals recipient credit
+[ECONOMIC TRANSACTION] {"error":"payment_holder_changed","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] stale whole-stack payment cannot transfer recipient property again
+[ECONOMIC AUTHORITY PASS] insufficient funds plan no payment
+[ECONOMIC AUTHORITY PASS] required reserve cannot be spent
+[ECONOMIC TRANSACTION] {"error":"currency_supply_changed","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] ordinary transaction cannot mint copper
+[ECONOMIC AUTHORITY PASS] empty treasury records unavailable funding without creating coins
+[ECONOMIC AUTHORITY PASS] test world starts
+[ECONOMIC AUTHORITY PASS] generated service occupations have wages rather than copper recipes
+[ECONOMIC AUTHORITY PASS] test injection empties treasuries by transfer, not deletion
+[ECONOMIC AUTHORITY PASS] unfunded work has no fabricated wage, product or input cost
+[ECONOMIC AUTHORITY PASS] workers decline unfunded shifts with recorded reasons and money conserved
+[ECONOMIC AUTHORITY PASS] production candidate refuses withdrawn commons permission before writing
+[ECONOMIC AUTHORITY PASS] test world starts
+[ECONOMIC AUTHORITY PASS] test injection gives retiring organization an open commitment
+[ECONOMIC TRANSACTION] {"error":"retirement_assets_unresolved","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] retirement cannot strand actual treasury assets
+[ECONOMIC AUTHORITY PASS] actual lifecycle retires organization and settles its boundaries atomically
+[ECONOMIC AUTHORITY PASS] retirement returns exact remaining coins to manager
+[ECONOMIC AUTHORITY PASS] retirement closes outstanding commitment
+[ECONOMIC AUTHORITY PASS] retired organization has no active grant or dangling references
+[ECONOMIC TRANSACTION] {"error":"entity_store:entity_already_retired:generated_organization.reed_bay.provision_circle","ok":false,"phase":"preflight"}
+[ECONOMIC AUTHORITY PASS] retirement replay cannot reclaim assets twice
+[ECONOMIC AUTHORITY PASS] save roundtrip preserves real money and resource permissions
+[ECONOMIC AUTHORITY PASS] load retains strict economic mode without new endowments
+[ECONOMIC AUTHORITY PASS] unknown commons source is invalid
+[ECONOMIC AUTHORITY PASS] legacy world gets no forced ownership or retroactive currency grant
+[ECONOMIC AUTHORITY PASS] actual pre-economic 30-day save loads unchanged in legacy mode
+[ECONOMIC LEGACY SAMPLE] {"currency":1550,"endowments":0,"load_success":true,"path":"C:\\Users\\x4473\\AppData\\Local\\Temp/chronicle-pre-economic-51e51a7.save.json"}
+[ECONOMIC AUTHORITY RESULT] PASS

@@ -1,6 +1,7 @@
 extends SceneTree
 
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
+const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 
 const FIXTURE_PATH := (
 	"res://data/sim/fixtures/generated_settlement_network_fixture.json"
@@ -46,6 +47,10 @@ func _run() -> void:
 		var activity: Dictionary = report.get("autonomous_activity", {})
 		var organization: Dictionary = report.get("organization", {})
 		var industry: Dictionary = report.get("industry", {})
+		var economy: Dictionary = report.get("economy", {})
+		_check(int(economy.get("currency", -1)) == int(economy.get("initial_currency", -2))
+			and int(economy.get("wages_paid", 0)) > 0,
+			"seed %d 的工资与组织拨款均使用实际铜币且总量守恒" % seed)
 		_check(
 			int(industry.get("founded_count", 0)) > 0
 			and int(industry.get("rope_production_count", 0)) > 0,
@@ -161,6 +166,7 @@ func _simulate_seed(seed: int) -> Dictionary:
 		"checkpoints": checkpoints,
 		"organization": organization_report,
 		"industry": _industry_report(session),
+		"economy": _economy_report(session),
 		"migration": migration_report,
 		"autonomous_activity": _autonomous_activity_report(session),
 		"history_signature": history_signature,
@@ -183,6 +189,27 @@ func _industry_report(session: Variant) -> Dictionary:
 		"retired_count": _facts(session, "settlement_industry_retired").size(),
 		"rope_production_count": _facts(session, "npc_livelihood_produced").filter(func(fact: Dictionary) -> bool:
 			return str(fact.get("occupation_id", "")) == "cordage_maker").size(), "history": history}
+
+
+func _economy_report(session: Variant) -> Dictionary:
+	var total := 0
+	var balances: Dictionary = {}
+	for item: Dictionary in session.stores["item_store"].items.values():
+		if str(item.get("item_def_id", "")) != Treasury.CURRENCY:
+			continue
+		total += int(item.get("quantity", 0))
+		var holder := str(item.get("holder", {}).get("id", ""))
+		balances[holder] = int(balances.get(holder, 0)) + int(item.get("quantity", 0))
+	var treasuries: Dictionary = {}
+	for site: Dictionary in session.get_settlement_network_summary().get("sites", []):
+		var id := str(site["settlement_id"])
+		treasuries[id] = int(balances.get(id, 0))
+	return {"currency": total, "initial_currency": session.fixture_source_data.get("economic_generation_result", {}).get("initial_currency_total", -1),
+		"wages_paid": _facts(session, "npc_wage_paid").size(), "unfunded_shifts": _facts(session, "npc_wage_work_declined").size(),
+		"funding_count": _facts(session, "organization_treasury_funded").size(),
+		"funding_unavailable": _facts(session, "organization_funding_unavailable").size(),
+		"assets_reclaimed": _facts(session, "organization_assets_reclaimed").size(),
+		"permission_denied": _facts(session, "organization_resource_access_blocked").size(), "treasuries": treasuries}
 
 
 func _audit_world(session: Variant, day_index: int) -> Dictionary:
@@ -216,6 +243,7 @@ func _audit_world(session: Variant, day_index: int) -> Dictionary:
 				"chronicle_store"
 			].to_save_data().size(),
 			"item_count": session.stores["item_store"].to_save_data().size(),
+			"economy": _economy_report(session),
 			"population_by_settlement": _population_counts(session),
 			"active_runtime_organization_count": _active_runtime_organizations(
 				session

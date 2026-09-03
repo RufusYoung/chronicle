@@ -13,6 +13,7 @@ const OrganizationResponseSystemModel = preload(
 const LiveLocationViewModel = preload(
 	"res://scripts/rebuild/v5_live_location_view_model.gd"
 )
+const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 
 const FIXTURE_PATH := (
 	"res://data/sim/fixtures/generated_settlement_network_fixture.json"
@@ -50,6 +51,7 @@ func _run() -> void:
 		_finish()
 		return
 	var adapter: Variant = _isolated_adapter(session)
+	var initial_treasury := _balance(session, SETTLEMENT_ID)
 
 	_inject_food_level(session, false)
 	var day1 := _apply_tick(adapter, session, 1, "high_pressure_day1")
@@ -72,6 +74,9 @@ func _run() -> void:
 
 	var day2 := _apply_tick(adapter, session, 2, "high_pressure_day2")
 	var organization := _entity(session, ORGANIZATION_ID)
+	_check(_balance(session, SETTLEMENT_ID) == initial_treasury - 12
+		and _balance(session, ORGANIZATION_ID) == 12,
+		"W1-A. 运行期组织成立从实际聚落金库拨款，不刷新货币")
 	var founder_ids: Array = organization.get("founding_member_ids", [])
 	_check(
 		bool(day2.get("success", false))
@@ -133,6 +138,9 @@ func _run() -> void:
 
 	var day4 := _apply_tick(adapter, session, 4, "recovery_day2")
 	var retired := _entity(session, ORGANIZATION_ID)
+	_check(_balance(session, ORGANIZATION_ID) == 0
+		and _balance(session, SETTLEMENT_ID) == initial_treasury,
+		"W1-A. 实际生命周期退场归还未用拨款")
 	_check(
 		bool(day4.get("success", false))
 		and str(retired.get("lifecycle_status", "")) == "retired"
@@ -158,6 +166,9 @@ func _run() -> void:
 	)
 	_apply_tick(adapter, session, 7, "second_cycle_day1")
 	_apply_tick(adapter, session, 8, "second_cycle_day2")
+	_check(_balance(session, SETTLEMENT_ID) == initial_treasury - 12
+		and _balance(session, SECOND_ORGANIZATION_ID) == 12,
+		"W1-A. 重建组织仍从同一有限金库付款")
 	_check(
 		_facts(session, "organization_runtime_formed").size() == 2
 		and str(_entity(session, SECOND_ORGANIZATION_ID).get(
@@ -219,6 +230,10 @@ func _start(seed: int) -> Variant:
 		print("[V5 ORGANIZATION LIFECYCLE START FAILURE] %s" % JSON.stringify(start))
 		return null
 	return session
+
+
+func _balance(session: Variant, holder: String) -> int:
+	return Treasury.new(SnapshotBuilderModel.new().build_snapshot(session.context, session.stores, true)).balance(holder)
 
 
 func _isolated_adapter(session: Variant) -> Variant:

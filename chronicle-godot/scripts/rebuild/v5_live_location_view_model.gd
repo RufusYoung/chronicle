@@ -869,6 +869,12 @@ func _decision_view(snapshot: Variant) -> Dictionary:
 			relevant_rows = relevant_rows.slice(0, 1)
 			relevant_rows.append(row)
 			break
+	if not relevant_rows.any(func(row: Dictionary) -> bool: return str(row.get("key", "")) == "latest_industry_lifecycle"):
+		for row: Dictionary in status_rows:
+			if str(row.get("key", "")) == "latest_economic_work" and bool(row.get("blocked", false)) and int(row.get("day", 0)) >= int(session.current_day) - 1:
+				relevant_rows = relevant_rows.slice(0, 1)
+				relevant_rows.append(row)
+				break
 	for row: Dictionary in relevant_rows:
 		stakes.append("%s %s" % [
 			str(row.get("label", "局势")),
@@ -1476,6 +1482,39 @@ func _settlement_workforce(settlement_id: String) -> Dictionary:
 	return counts
 
 
+func _treasury_balance(holder: String) -> int:
+	var amount := 0
+	for item: Dictionary in session.stores["item_store"].items.values():
+		if str(item.get("item_def_id", "")) == "item.copper_coin" and item.get("holder", {}) == {"kind": "entity", "id": holder}:
+			amount += int(item.get("quantity", 0))
+	return amount
+
+
+func _economic_status_rows(snapshot: Variant, settlement_id: String) -> Array:
+	if int(snapshot.get_entity_state(settlement_id, "economic_contract_version", 0)) != 1:
+		return []
+	var balance := _treasury_balance(settlement_id)
+	var reserve := int(snapshot.get_entity_state(settlement_id, "treasury_reserve", 0))
+	var spendable := maxi(balance - reserve, 0)
+	var rows: Array = [{"key": "settlement_treasury", "label": "公共金库",
+		"value": "%d 枚铜币 · 可支出 %d · 预留 %d" % [balance, spendable, reserve],
+		"detail": "余额来自聚落实际持有的铜币。工资和组织拨款从这里支出；资金不足时本轮有薪工作不开工，不自动补钱。跨镇聚合货流目前仍是未结算货币的调拨。"}]
+	var facts: Array = snapshot.get_facts()
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		var kind := str(fact.get("fact_type", ""))
+		if str(fact.get("settlement_id", fact.get("target_id", ""))) != settlement_id or kind not in ["npc_wage_paid", "npc_wage_work_declined", "npc_livelihood_blocked_resource", "organization_resource_access_blocked"]:
+			continue
+		var blocked := kind != "npc_wage_paid"
+		var value := "薪酬不足，本轮未开工" if kind == "npc_wage_work_declined" else ("生产条件不足，本轮未开工" if blocked else "已实际支付 %d 枚铜币" % int(fact.get("amount", 0)))
+		if kind == "organization_resource_access_blocked":
+			value = "当日额度不足，计划未执行" if str(fact.get("reason", "")) == "organization_daily_limit" else "资源许可不足，计划未执行"
+		rows.append({"key": "latest_economic_work", "label": "组织计划" if kind == "organization_resource_access_blocked" else "本地开工", "value": value,
+			"detail": str(fact.get("summary", "")), "day": int(fact.get("day", 0)), "blocked": blocked})
+		break
+	return rows
+
+
 func _settlement_network_rows(
 		snapshot: Variant,
 		settlement_id: String
@@ -1484,6 +1523,7 @@ func _settlement_network_rows(
 	var runtime: Dictionary = session.get_settlement_network_summary()
 	if settlement_id == "" or runtime.is_empty():
 		return rows
+	rows.append_array(_economic_status_rows(snapshot, settlement_id))
 	var site_names: Dictionary = {}
 	for site: Dictionary in runtime.get("sites", []):
 		site_names[str(site.get("settlement_id", ""))] = str(site.get(
@@ -1603,6 +1643,8 @@ func _settlement_network_rows(
 		var last_response_summary := str(snapshot.get_entity_state(
 			str(entity.get("id", "")), "last_response_summary", ""
 		))
+		if int(snapshot.get_entity_state(settlement_id, "economic_contract_version", 0)) == 1:
+			position_rows.append("持有 %d 枚铜币；公共资源需授权并受每日额度限制" % _treasury_balance(str(entity["id"])))
 		organization_details.append("%s。%s%s" % [
 			str(entity.get("goal", "协调当地事务")),
 			"；".join(position_rows),

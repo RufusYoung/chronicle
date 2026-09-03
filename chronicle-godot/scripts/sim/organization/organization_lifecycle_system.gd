@@ -1,6 +1,9 @@
 extends RefCounted
 class_name V5OrganizationLifecycleSystem
 
+const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
+const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -483,6 +486,8 @@ func _formation_result(
 		],
 		"tone": "organization_formed",
 	})
+	ResourceAccess.append_organization_access(result, snapshot, settlement_id, organization_id, resource_stock_ids, formation_fact_id, day)
+	Treasury.new(snapshot).append_funding(result, snapshot, settlement_id, organization_id, formation_fact_id, day)
 	result.mark_resolved("organization_runtime_formation")
 	return {
 		"result": result,
@@ -631,6 +636,8 @@ func _retirement_result(
 		"summary": retirement_summary,
 		"tone": "organization_retired",
 	})
+	ResourceAccess.append_organization_access(result, snapshot, str(settlement["id"]), organization_id, organization.get("resource_stock_ids", []), fact_id, day, true)
+	Treasury.append_retirement(result, snapshot, str(settlement["id"]), organization_id, fact_id, day)
 	result.mark_resolved("organization_runtime_retirement")
 	return {
 		"result": result,
