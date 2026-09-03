@@ -862,7 +862,14 @@ func _decision_view(snapshot: Variant) -> Dictionary:
 	elif not travel.is_empty():
 		question = "继续处理眼前的人和事，还是把物资投入下一段路？"
 	var stakes: Array[String] = []
-	for row: Dictionary in _region_status_rows(snapshot).slice(0, 2):
+	var status_rows := _region_status_rows(snapshot)
+	var relevant_rows := status_rows.slice(0, 2)
+	for row: Dictionary in status_rows:
+		if str(row.get("key", "")) == "latest_industry_lifecycle" and int(row.get("day", 0)) >= int(session.current_day) - 3:
+			relevant_rows = relevant_rows.slice(0, 1)
+			relevant_rows.append(row)
+			break
+	for row: Dictionary in relevant_rows:
 		stakes.append("%s %s" % [
 			str(row.get("label", "局势")),
 			str(row.get("value", "")),
@@ -1294,6 +1301,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				"latest_organization_action", "latest_organization_lifecycle",
 				"latest_route_pressure", "latest_resident_employment",
 				"latest_settlement_capacity_adaptation",
+				"latest_industry_lifecycle",
 			]:
 				recent_summary = "%s：%s" % [
 					str(network_row.get("label", "最近变化")),
@@ -1354,7 +1362,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 				current,
 				capacity,
 				float(stock.get("recovery_per_hour", 0.0)) * 24.0,
-				_resource_stock_use_text(stock),
+				_resource_stock_use_text(stock, snapshot),
 			],
 		})
 	var shortage_pressure := 0
@@ -1615,6 +1623,15 @@ func _settlement_network_rows(
 	var facts: Array = snapshot.get_facts()
 	for index: int in range(facts.size() - 1, -1, -1):
 		var fact: Dictionary = facts[index]
+		if str(fact.get("fact_type", "")) not in ["settlement_industry_founded", "settlement_industry_retired"] or str(fact.get("settlement_id", "")) != settlement_id:
+			continue
+		rows.append({"key": "latest_industry_lifecycle", "label": "产业变化",
+			"day": int(fact.get("day", 0)),
+			"value": "%s · %s" % [fact.get("industry_label", "本地产业"), "新成立" if str(fact.get("fact_type", "")) == "settlement_industry_founded" else "已退场"],
+			"detail": str(fact.get("summary", ""))})
+		break
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
 		var fact_type := str(fact.get("fact_type", ""))
 		if (
 			fact_type not in [
@@ -1864,6 +1881,7 @@ func _good_label(good_id: String) -> String:
 
 func _knowledge_rows(snapshot: Variant) -> Array:
 	var rows: Array[String] = []
+	var names: Dictionary = {}
 	for fact: Dictionary in snapshot.get_facts():
 		if fact.has("observed_by_player") and not bool(
 			fact.get("observed_by_player", false)
@@ -1872,7 +1890,10 @@ func _knowledge_rows(snapshot: Variant) -> Array:
 		var fact_type := str(fact.get("fact_type", ""))
 		var target_name := str(fact.get("target_display_name", ""))
 		if target_name == "":
-			target_name = _entity_name(str(fact.get("target_id", "")))
+			var target_id := str(fact.get("target_id", ""))
+			if not names.has(target_id):
+				names[target_id] = _entity_name(target_id, snapshot)
+			target_name = str(names[target_id])
 		var text := _fact_text(fact_type, target_name, fact)
 		if text not in rows:
 			rows.append(text)
@@ -2852,12 +2873,17 @@ func _find_investigation_option(option_id: String) -> Dictionary:
 	return {}
 
 
-func _entity_name(entity_id: String) -> String:
+func _entity_name(entity_id: String, snapshot: Variant = null) -> String:
 	if entity_id == "player":
 		return "你"
-	if not is_ready():
+	if entity_id == "" or not is_ready():
 		return "某个对象"
-	var entity: Dictionary = session.get_snapshot().get_entity(entity_id)
+	var source_snapshot: Variant = session.get_snapshot() if snapshot == null else snapshot
+	var entity: Dictionary = source_snapshot.get_entity(entity_id)
+	if entity.is_empty():
+		for site: Dictionary in session.get_settlement_network_summary().get("sites", []):
+			if str(site.get("settlement_id", "")) == entity_id:
+				return str(site.get("settlement_name", "聚落"))
 	return str(entity.get("display_name", "某个对象"))
 
 
@@ -3092,9 +3118,20 @@ func _resource_status_label(value: String) -> String:
 	}.get(value, value)
 
 
-func _resource_stock_use_text(stock: Dictionary) -> String:
+func _resource_stock_use_text(stock: Dictionary, snapshot: Variant) -> String:
+	var industry_ids: Array = (stock.get("industry_ids", []) as Array).duplicate()
+	for fact: Dictionary in snapshot.get_facts():
+		if str(fact.get("settlement_id", "")) != str(stock.get("settlement_id", "")):
+			continue
+		var industry := str(fact.get("industry_id", ""))
+		if str(fact.get("fact_type", "")) == "settlement_industry_retired":
+			industry_ids.erase(industry)
+		elif str(fact.get("fact_type", "")) == "settlement_industry_founded":
+			for input: Dictionary in fact.get("resource_inputs", []):
+				if str(input.get("stock_id", "")) == str(stock.get("stock_id", "")) and industry not in industry_ids:
+					industry_ids.append(industry)
 	var industries: Array[String] = []
-	for value: Variant in stock.get("industry_ids", []):
+	for value: Variant in industry_ids:
 		industries.append(_generated_industry_label(str(value)))
 	if industries.is_empty():
 		return "目前没有固定产业持续占用这项容量。"
@@ -3277,6 +3314,7 @@ func _generated_industry_label(industry_id: String) -> String:
 		"road_carting": "短途转运",
 		"watch_service": "道路守望",
 		"salt_gathering": "浅盐采集",
+		"cordage": "纤维制绳",
 	}.get(industry_id, "一项本地生计")
 
 

@@ -3,6 +3,7 @@ param(
     [string]$Filter = '*',
     [switch]$Render,
     [switch]$LongRun,
+    [ValidateRange(1, 86400)][int]$LongRunTimeoutSeconds = 7200,
     [string]$OutputDirectory = (Join-Path $env:TEMP 'chronicle-agency-regression')
 )
 $ErrorActionPreference = 'Stop'
@@ -28,10 +29,10 @@ $results = foreach ($test in $tests) {
     }
     $timer = [Diagnostics.Stopwatch]::StartNew()
     $process = Start-Process -FilePath $Godot -ArgumentList $arguments -PassThru -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr
-    $timeout = if ($test.Name -eq 'generated_world_30_day_health_test.gd') { 1800000 } else { 600000 }
+    $timeout = if ($test.Name -eq 'generated_world_30_day_health_test.gd') { $LongRunTimeoutSeconds * 1000 } else { 600000 }
     $finished = $process.WaitForExit($timeout)
     if (-not $finished) {
-        Stop-Process -Id $process.Id -Force
+        & taskkill.exe /PID $process.Id /T /F | Out-Null
         $process.WaitForExit()
     }
     $output = (Get-Content -LiteralPath $stdout -Raw) + (Get-Content -LiteralPath $stderr -Raw)

@@ -99,6 +99,35 @@ func _run() -> void:
 	)
 
 	var service = SaveEnvelopeServiceModel.new()
+	var previous_pack := envelope.duplicate(true)
+	previous_pack["definition_manifest"]["content_pack_version"] = 1
+	previous_pack["definition_manifest"]["required_definition_ids"].erase("item:item.fiber_rope")
+	previous_pack = service.finalize_envelope(previous_pack)
+	var previous_pack_path := "user://tests/save_previous_content_pack.json"
+	var previous_save: Dictionary = service.save_to_path(previous_pack_path, previous_pack)
+	var previous_restored = ControllerModel.new()
+	var previous_report: Dictionary = previous_restored.load_from_path(previous_pack_path)
+	_check(
+		bool(previous_save.get("ok", false))
+		and bool(previous_report.get("success", false))
+		and "base_v1_to_v2_fiber_rope" in previous_report.get("migrations", [])
+		and _equivalent(previous_restored.session.get_save_store_data(), before_store)
+		and _equivalent(previous_restored.day_history, before_history)
+		and int(previous_restored.build_save_envelope()["definition_manifest"]["content_pack_version"]) == 2,
+		"5B. Previous 105-definition base pack migrates from disk without changing world history"
+	)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(previous_pack_path))
+	for version: int in [1, 2]:
+		var broken_manifest := previous_pack.duplicate(true)
+		broken_manifest["definition_manifest"]["content_pack_version"] = version
+		if version == 1:
+			broken_manifest["definition_manifest"]["required_definition_ids"].erase("item:item.travel_ration")
+		broken_manifest = service.finalize_envelope(broken_manifest)
+		var manifest_report: Dictionary = ControllerModel.new().load_from_save_envelope(broken_manifest)
+		_check(
+			str(manifest_report.get("error", "")) == "save_definition_manifest_mismatch",
+			"5C. Missing definitions are still rejected outside the exact previous manifest: v%d" % version
+		)
 	var legacy := envelope.duplicate(true)
 	legacy["schema_version"] = 0
 	legacy["payload_kind"] = "save_envelope_v0"

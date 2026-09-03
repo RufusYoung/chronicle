@@ -171,6 +171,12 @@ func generate_fixture(
 		"capacity_adaptation": (
 			config.get("capacity_adaptation", {}) as Dictionary
 		).duplicate(true),
+		"industry_lifecycle": (
+			config.get("industry_lifecycle", {}) as Dictionary
+		).duplicate(true),
+		"industry_archetypes": (
+			definition.get("industry_archetypes", []) as Array
+		).duplicate(true),
 		"migration_delay_days": maxi(int(config.get(
 			"migration_delay_days", 2
 		)), 1),

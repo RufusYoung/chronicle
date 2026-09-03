@@ -35,6 +35,17 @@
   ],
   "industry_archetypes": [
     {
+      "industry_id": "cordage",
+      "label": "纤维制绳",
+      "requires_work_history": true,
+      "stock_input": {"source_kind": "natural_resource", "tags_any": ["reeds", "fiber"], "amount_per_cycle": 1.0},
+      "occupation_ids": ["cordage_maker"],
+      "facility": {
+        "name_suffix": "制绳棚",
+        "observation": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。"
+      }
+    },
+    {
       "industry_id": "fishery",
       "label": "浅水网渔",
       "base_score": 1,

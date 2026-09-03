@@ -323,7 +323,7 @@ func generate_fixture(
 		locations[plot_id] = {
 			"id": plot_id,
 			"display_name": "可建地块 %d" % plot_number,
-			"description": "聚落边缘已经丈量但尚未建成住屋的地块。",
+			"description": "聚落边缘已经丈量、可用于住屋或生产设施的地块。",
 			"settlement_id": settlement_id,
 			"tags": [
 				"generated_location", "settlement_construction_plot",
@@ -373,6 +373,11 @@ func generate_fixture(
 	fixture["initial_items"] = items
 	fixture["initial_chronicle_entries"] = chronicles
 	_enrich_family_generation_identity(fixture, definition)
+	var network_runtime: Dictionary = fixture.get("settlement_network_runtime", {})
+	if not network_runtime.is_empty():
+		network_runtime["industry_occupation_templates"] = _livelihood_profiles(
+			definition.get("occupations", [])
+		)
 	var generated_profiles := _livelihood_profiles(
 		occupations,
 		config.get("livelihood_resource_bindings", {}),

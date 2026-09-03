@@ -93,6 +93,26 @@
       "resource_recovery_ratio_percent": 35,
       "unmet_pressure_fact_interval_days": 30
     },
+    "industry_lifecycle": {
+      "enabled": true,
+      "entry_days_required": 6,
+      "exit_days_required": 30,
+      "reentry_cooldown_days": 30,
+      "minimum_experience_cycles": 6,
+      "construction_cost": 4.0,
+      "initial_slots": 2,
+      "organization_coordination_days_per_member": 1,
+      "organization_coordination_max_reduction_days": 3,
+      "conditions": {
+        "cordage": {"demand_kind": "transport", "entry_demand_at_least": 3, "exit_demand_below": 1, "experience_occupations": ["cordage_maker", "reed_weaver", "net_fisher"]},
+        "fishery": {"demand_tags": ["food"], "entry_demand_at_least": 4, "exit_demand_below": 0.5, "experience_occupations": ["net_fisher", "salt_gatherer"]},
+        "terrace_farming": {"demand_tags": ["food"], "entry_demand_at_least": 4, "exit_demand_below": 0.5, "experience_occupations": ["terrace_farmer", "road_carter"]},
+        "reed_craft": {"demand_tags": ["fiber"], "entry_demand_at_least": 4, "exit_demand_below": 0.5, "experience_occupations": ["reed_weaver", "net_fisher"]},
+        "salt_gathering": {"demand_tags": ["salt"], "entry_demand_at_least": 4, "exit_demand_below": 0.5, "experience_occupations": ["salt_gatherer", "net_fisher"]},
+        "watch_service": {"demand_kind": "route_risk", "entry_demand_at_least": 3, "exit_demand_below": 2, "experience_occupations": ["watch_hand", "road_carter"]},
+        "road_carting": {"demand_kind": "transport", "entry_demand_at_least": 3, "exit_demand_below": 1, "experience_occupations": ["road_carter", "watch_hand"]}
+      }
+    },
     "sites": [
       {
         "site_id": "reed_bay",

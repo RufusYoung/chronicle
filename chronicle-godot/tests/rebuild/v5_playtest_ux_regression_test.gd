@@ -301,9 +301,9 @@ func _press(container_path: String, meta_key: String, meta_value: String) -> voi
 	)
 	if button == null or button.disabled:
 		return
-	if container_path == "%ActionButtons":
-		var next := viewer.get_node("%NextActions") as Button
-		var previous := viewer.get_node("%PreviousActions") as Button
+	if container_path in ["%ActionButtons", "%TravelButtons"]:
+		var next := viewer.get_node("%NextActions" if container_path == "%ActionButtons" else "%NextTravel") as Button
+		var previous := viewer.get_node("%PreviousActions" if container_path == "%ActionButtons" else "%PreviousTravel") as Button
 		while not previous.disabled:
 			previous.pressed.emit()
 		while not button.is_visible_in_tree() and not next.disabled:

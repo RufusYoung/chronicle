@@ -1,0 +1,245 @@
+{
+	"passed": true,
+	"runs": [
+		{
+			"days": 7,
+			"history": [
+				{
+					"actor_id": "generated_resident.reed_bay.002",
+					"coordinator_organization_id": "generated_organization.reed_bay.provision_circle",
+					"day": 6,
+					"demand": {
+						"kind": "transport",
+						"source_fact_ids": [
+							"fact.network_trade.reed_bay_river_steps.food.day1",
+							"fact.network_trade.reed_bay_river_steps.food.day2",
+							"fact.network_trade.reed_bay_river_steps.food.day3",
+							"fact.network_trade.reed_bay_river_steps.food.day4",
+							"fact.network_trade.reed_bay_river_steps.food.day5",
+							"fact.network_trade.reed_bay_river_steps.food.day6"
+						],
+						"value": 6.0
+					},
+					"experience_cycles": 9,
+					"experience_days": 5,
+					"facility_description": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。\n林川利用已有劳动经验，在苇岸埠办起纤维制绳，先投入 2 个岗位。",
+					"facility_entity_id": "runtime_industry.generated_settlement.reed_bay.cordage.day6",
+					"facility_name": "苇岸埠制绳棚",
+					"fact_id": "fact.industry_founded.generated_settlement.reed_bay.cordage.day6",
+					"fact_type": "settlement_industry_founded",
+					"former_occupation_id": "reed_weaver",
+					"founder_attribute_contributions": {
+						"dexterity": 18,
+						"wisdom": 9
+					},
+					"founder_initiative_score": 32,
+					"hub_location_id": "generated_location.reed_bay.commons",
+					"industry_id": "cordage",
+					"industry_label": "纤维制绳",
+					"occupation_id": "cordage_maker",
+					"qualifying_days": 4,
+					"required_days": 4,
+					"resource_cost": 4.0,
+					"resource_inputs": [
+						{
+							"amount_per_cycle": 1.0,
+							"label": "苇湾长苇",
+							"stock_id": "resource_stock.reed_bay.resource_reed_bay_reeds"
+						}
+					],
+					"resource_stock_id": "resource_stock.reed_bay.resource_reed_bay_reeds",
+					"settlement_id": "generated_settlement.reed_bay",
+					"source_fact_ids": [
+						"fact.generated_settlement.reed_bay.81001",
+						"fact.generated_construction_plot.generated_plot.reed_bay.01",
+						"fact.resource_stock.reed_bay.resource_reed_bay_reeds",
+						"fact.npc_livelihood.generated_resident.reed_bay.002.generated_settlement_network_time_5.hour_12",
+						"fact.network_trade.reed_bay_river_steps.food.day1",
+						"fact.network_trade.reed_bay_river_steps.food.day2",
+						"fact.network_trade.reed_bay_river_steps.food.day3",
+						"fact.network_trade.reed_bay_river_steps.food.day4",
+						"fact.network_trade.reed_bay_river_steps.food.day5",
+						"fact.network_trade.reed_bay_river_steps.food.day6",
+						"fact.generated_settlement.reed_bay.81001",
+						"fact.generated_organization.generated_organization.reed_bay.provision_circle"
+					],
+					"summary": "林川利用已有劳动经验，在苇岸埠办起纤维制绳，先投入 2 个岗位。",
+					"target_id": "generated_settlement.reed_bay",
+					"workplace_id": "generated_plot.reed_bay.01"
+				}
+			],
+			"injected_behavior_count": 0,
+			"rope_count": 4,
+			"seed": 81001,
+			"store_signature": "fe586799af7c7b8156aac4bceaf76db43fd5521965a80ee9cf8a90f957803edc",
+			"structural_history": [
+				[
+					"cordage",
+					6,
+					"generated_resident.reed_bay.002",
+					"reed_weaver"
+				]
+			]
+		},
+		{
+			"days": 7,
+			"history": [
+				{
+					"actor_id": "generated_resident.reed_bay.002",
+					"coordinator_organization_id": "generated_organization.reed_bay.provision_circle",
+					"day": 6,
+					"demand": {
+						"kind": "transport",
+						"source_fact_ids": [
+							"fact.network_trade.reed_bay_river_steps.food.day1",
+							"fact.network_trade.reed_bay_river_steps.food.day2",
+							"fact.network_trade.reed_bay_river_steps.food.day3",
+							"fact.network_trade.reed_bay_river_steps.food.day4",
+							"fact.network_trade.reed_bay_river_steps.food.day5",
+							"fact.network_trade.reed_bay_river_steps.food.day6"
+						],
+						"value": 6.0
+					},
+					"experience_cycles": 9,
+					"experience_days": 5,
+					"facility_description": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。\n林川利用已有劳动经验，在苇岸埠办起纤维制绳，先投入 2 个岗位。",
+					"facility_entity_id": "runtime_industry.generated_settlement.reed_bay.cordage.day6",
+					"facility_name": "苇岸埠制绳棚",
+					"fact_id": "fact.industry_founded.generated_settlement.reed_bay.cordage.day6",
+					"fact_type": "settlement_industry_founded",
+					"former_occupation_id": "reed_weaver",
+					"founder_attribute_contributions": {
+						"dexterity": 18,
+						"wisdom": 9
+					},
+					"founder_initiative_score": 32,
+					"hub_location_id": "generated_location.reed_bay.commons",
+					"industry_id": "cordage",
+					"industry_label": "纤维制绳",
+					"occupation_id": "cordage_maker",
+					"qualifying_days": 4,
+					"required_days": 4,
+					"resource_cost": 4.0,
+					"resource_inputs": [
+						{
+							"amount_per_cycle": 1.0,
+							"label": "苇湾长苇",
+							"stock_id": "resource_stock.reed_bay.resource_reed_bay_reeds"
+						}
+					],
+					"resource_stock_id": "resource_stock.reed_bay.resource_reed_bay_reeds",
+					"settlement_id": "generated_settlement.reed_bay",
+					"source_fact_ids": [
+						"fact.generated_settlement.reed_bay.81001",
+						"fact.generated_construction_plot.generated_plot.reed_bay.01",
+						"fact.resource_stock.reed_bay.resource_reed_bay_reeds",
+						"fact.npc_livelihood.generated_resident.reed_bay.002.generated_settlement_network_time_5.hour_12",
+						"fact.network_trade.reed_bay_river_steps.food.day1",
+						"fact.network_trade.reed_bay_river_steps.food.day2",
+						"fact.network_trade.reed_bay_river_steps.food.day3",
+						"fact.network_trade.reed_bay_river_steps.food.day4",
+						"fact.network_trade.reed_bay_river_steps.food.day5",
+						"fact.network_trade.reed_bay_river_steps.food.day6",
+						"fact.generated_settlement.reed_bay.81001",
+						"fact.generated_organization.generated_organization.reed_bay.provision_circle"
+					],
+					"summary": "林川利用已有劳动经验，在苇岸埠办起纤维制绳，先投入 2 个岗位。",
+					"target_id": "generated_settlement.reed_bay",
+					"workplace_id": "generated_plot.reed_bay.01"
+				}
+			],
+			"injected_behavior_count": 0,
+			"rope_count": 4,
+			"seed": 81001,
+			"store_signature": "fe586799af7c7b8156aac4bceaf76db43fd5521965a80ee9cf8a90f957803edc",
+			"structural_history": [
+				[
+					"cordage",
+					6,
+					"generated_resident.reed_bay.002",
+					"reed_weaver"
+				]
+			]
+		},
+		{
+			"days": 7,
+			"history": [
+				{
+					"actor_id": "generated_resident.reed_bay.001",
+					"coordinator_organization_id": "generated_organization.reed_bay.provision_circle",
+					"day": 6,
+					"demand": {
+						"kind": "transport",
+						"source_fact_ids": [
+							"fact.network_trade.reed_bay_river_steps.food.day1",
+							"fact.network_trade.reed_bay_river_steps.food.day2",
+							"fact.network_trade.reed_bay_river_steps.food.day3",
+							"fact.network_trade.reed_bay_river_steps.food.day4",
+							"fact.network_trade.reed_bay_river_steps.food.day5",
+							"fact.network_trade.reed_bay_river_steps.food.day6"
+						],
+						"value": 6.0
+					},
+					"experience_cycles": 14,
+					"experience_days": 6,
+					"facility_description": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。\n陶禾利用已有劳动经验，在苇岸坞办起纤维制绳，先投入 2 个岗位。",
+					"facility_entity_id": "runtime_industry.generated_settlement.reed_bay.cordage.day6",
+					"facility_name": "苇岸坞制绳棚",
+					"fact_id": "fact.industry_founded.generated_settlement.reed_bay.cordage.day6",
+					"fact_type": "settlement_industry_founded",
+					"former_occupation_id": "net_fisher",
+					"founder_attribute_contributions": {
+						"dexterity": 24,
+						"wisdom": 8
+					},
+					"founder_initiative_score": 38,
+					"hub_location_id": "generated_location.reed_bay.commons",
+					"industry_id": "cordage",
+					"industry_label": "纤维制绳",
+					"occupation_id": "cordage_maker",
+					"qualifying_days": 4,
+					"required_days": 4,
+					"resource_cost": 4.0,
+					"resource_inputs": [
+						{
+							"amount_per_cycle": 1.0,
+							"label": "苇湾长苇",
+							"stock_id": "resource_stock.reed_bay.resource_reed_bay_reeds"
+						}
+					],
+					"resource_stock_id": "resource_stock.reed_bay.resource_reed_bay_reeds",
+					"settlement_id": "generated_settlement.reed_bay",
+					"source_fact_ids": [
+						"fact.generated_settlement.reed_bay.82002",
+						"fact.generated_construction_plot.generated_plot.reed_bay.01",
+						"fact.resource_stock.reed_bay.resource_reed_bay_reeds",
+						"fact.npc_livelihood.generated_resident.reed_bay.001.generated_settlement_network_time_5.hour_16",
+						"fact.network_trade.reed_bay_river_steps.food.day1",
+						"fact.network_trade.reed_bay_river_steps.food.day2",
+						"fact.network_trade.reed_bay_river_steps.food.day3",
+						"fact.network_trade.reed_bay_river_steps.food.day4",
+						"fact.network_trade.reed_bay_river_steps.food.day5",
+						"fact.network_trade.reed_bay_river_steps.food.day6",
+						"fact.generated_settlement.reed_bay.82002",
+						"fact.generated_organization.generated_organization.reed_bay.provision_circle"
+					],
+					"summary": "陶禾利用已有劳动经验，在苇岸坞办起纤维制绳，先投入 2 个岗位。",
+					"target_id": "generated_settlement.reed_bay",
+					"workplace_id": "generated_plot.reed_bay.01"
+				}
+			],
+			"injected_behavior_count": 0,
+			"rope_count": 4,
+			"seed": 82002,
+			"store_signature": "d0c1064ad8e25971918b1e5c6285066067a9690052fb7e0c8e1e590dd00ce92d",
+			"structural_history": [
+				[
+					"cordage",
+					6,
+					"generated_resident.reed_bay.001",
+					"net_fisher"
+				]
+			]
+		}
+	]
+}

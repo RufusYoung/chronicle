@@ -295,6 +295,22 @@
       "base_value": 2
     },
     {
+      "item_def_id": "item.fiber_rope",
+      "definition_version": 1,
+      "display_name_key": "item.fiber_rope.name",
+      "display_name": "纤维绳索",
+      "item_kind": "craft_good",
+      "tags": ["craft_good", "rope", "livelihood_product"],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 1.0,
+      "equip_slots": [],
+      "capabilities": ["trade", "split_stack"],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 5
+    },
+    {
       "item_def_id": "item.woven_reed_mat",
       "definition_version": 1,
       "display_name_key": "item.woven_reed_mat.name",

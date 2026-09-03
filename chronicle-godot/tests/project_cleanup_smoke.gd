@@ -19,6 +19,8 @@ func _find_action_button(node: Node) -> Button:
 	if node.is_queued_for_deletion() or (node is Control and not node.is_visible_in_tree()):
 		return null
 	for child in node.get_children():
+		if child.is_queued_for_deletion() or (child is Control and not child.is_visible_in_tree()):
+			continue
 		if child is Button:
 			var button := child as Button
 			if not button.disabled and button.custom_minimum_size.y >= 70:
@@ -29,8 +31,10 @@ func _find_action_button(node: Node) -> Button:
 	return null
 
 
-func _wait_for_action_guard() -> void:
-	await create_timer(0.12).timeout
+func _wait_for_action_guard(story_player: Node) -> void:
+	# The UI guard uses wall time, not the simulated frame delta of SceneTreeTimer.
+	while Time.get_ticks_msec() - int(story_player.get("_last_action_ms")) < 90:
+		await process_frame
 
 
 func _story_has_content(story_box: RichTextLabel) -> bool:
@@ -70,7 +74,7 @@ func _run() -> void:
 	var initial_world: Node = story_player.get("world") as Node
 	_check(initial_world != null, "world runtime is created")
 
-	await _wait_for_action_guard()
+	await _wait_for_action_guard(story_player)
 	continue_button.pressed.emit()
 	await process_frame
 	_check(_story_has_content(story_box), "continue action runs without clearing the story")
@@ -78,7 +82,7 @@ func _run() -> void:
 	var action_button := _find_action_button(choices_box)
 	_check(action_button != null, "at least one selectable action is rendered")
 	if action_button != null:
-		await _wait_for_action_guard()
+		await _wait_for_action_guard(story_player)
 		var text_before_choice := story_box.get_parsed_text()
 		action_button.pressed.emit()
 		await process_frame
@@ -91,7 +95,7 @@ func _run() -> void:
 			"selecting an action enters a choice or renders its resolved result"
 		)
 
-	await _wait_for_action_guard()
+	await _wait_for_action_guard(story_player)
 	restart_button.pressed.emit()
 	await process_frame
 	var world_after_restart: Node = story_player.get("world") as Node
@@ -100,7 +104,7 @@ func _run() -> void:
 		"restart creates a fresh world runtime"
 	)
 
-	await _wait_for_action_guard()
+	await _wait_for_action_guard(story_player)
 	new_run_button.pressed.emit()
 	await process_frame
 	var world_after_new_run: Node = story_player.get("world") as Node

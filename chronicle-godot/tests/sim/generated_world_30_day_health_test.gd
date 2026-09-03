@@ -45,6 +45,12 @@ func _run() -> void:
 		)
 		var activity: Dictionary = report.get("autonomous_activity", {})
 		var organization: Dictionary = report.get("organization", {})
+		var industry: Dictionary = report.get("industry", {})
+		_check(
+			int(industry.get("founded_count", 0)) > 0
+			and int(industry.get("rope_production_count", 0)) > 0,
+			"seed %d 的运输与劳动历史自然催生产业并进入真实生产" % seed
+		)
 		_check(
 			int(activity.get("route_pressure_count", 0)) > 0
 			and int(activity.get("organization_response_count", 0)) > 0,
@@ -89,6 +95,7 @@ func _run() -> void:
 
 
 func _simulate_seed(seed: int) -> Dictionary:
+	var started := Time.get_ticks_msec()
 	var session = SimSessionModel.new()
 	var start: Dictionary = session.start_from_fixture_path(
 		FIXTURE_PATH,
@@ -131,6 +138,8 @@ func _simulate_seed(seed: int) -> Dictionary:
 		integrity_errors.append_array(audit.get("errors", []))
 		if day_index in CHECKPOINT_DAYS:
 			checkpoints.append(audit.get("metrics", {}))
+			print("[V5 GENERATED WORLD 30 DAY CHECKPOINT] seed=%d day=%d seconds=%.2f" % [
+				seed, day_index, float(Time.get_ticks_msec() - started) / 1000.0])
 
 	var organization_report := _organization_report(session)
 	var final_world_day := int(session.get_time_summary().get("day", 0))
@@ -151,6 +160,7 @@ func _simulate_seed(seed: int) -> Dictionary:
 		"integrity_errors": integrity_errors,
 		"checkpoints": checkpoints,
 		"organization": organization_report,
+		"industry": _industry_report(session),
 		"migration": migration_report,
 		"autonomous_activity": _autonomous_activity_report(session),
 		"history_signature": history_signature,
@@ -160,6 +170,19 @@ func _simulate_seed(seed: int) -> Dictionary:
 			"continuation_ok", false
 		)),
 	}
+
+
+func _industry_report(session: Variant) -> Dictionary:
+	var history: Array = []
+	for fact: Dictionary in session.stores["fact_store"].list_facts():
+		if str(fact.get("fact_type", "")) in ["settlement_industry_founded", "settlement_industry_retired"]:
+			history.append({"type": fact.get("fact_type", ""), "day": fact.get("day", 0),
+				"industry_id": fact.get("industry_id", ""), "settlement_id": fact.get("settlement_id", ""),
+				"actor_id": fact.get("actor_id", ""), "summary": fact.get("summary", "")})
+	return {"founded_count": _facts(session, "settlement_industry_founded").size(),
+		"retired_count": _facts(session, "settlement_industry_retired").size(),
+		"rope_production_count": _facts(session, "npc_livelihood_produced").filter(func(fact: Dictionary) -> bool:
+			return str(fact.get("occupation_id", "")) == "cordage_maker").size(), "history": history}
 
 
 func _audit_world(session: Variant, day_index: int) -> Dictionary:

@@ -41,6 +41,9 @@ const LaborAbsorptionSystemModel = preload(
 const SettlementCapacityAdaptationSystemModel = preload(
 	"res://scripts/sim/settlement/settlement_capacity_adaptation_system.gd"
 )
+const IndustryLifecycleSystemModel = preload(
+	"res://scripts/sim/settlement/industry_lifecycle_system.gd"
+)
 const OrganizationRuntimeSystemModel = preload(
 	"res://scripts/sim/organization/organization_runtime_system.gd"
 )
@@ -417,6 +420,16 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			writer.apply_results(capacity_results, stores)
 			network_results.append_array(capacity_results)
 			network_events.append_array(capacity_data.get("events", []))
+
+			var industry_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			var industry_data: Dictionary = IndustryLifecycleSystemModel.new().resolve_daily_tick(
+				industry_snapshot, round_event, settlement_network_config,
+				npc_livelihood_profiles, context.get_locations()
+			)
+			var industry_results: Array = industry_data.get("results", [])
+			writer.apply_results(industry_results, stores)
+			network_results.append_array(industry_results)
+			network_events.append_array(industry_data.get("events", []))
 
 			var migration_snapshot = snapshot_builder.build_snapshot(
 				context, stores, true

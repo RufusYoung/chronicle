@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5SettlementCapacityAdaptationSystem
 
+const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -17,6 +19,7 @@ func resolve_daily_tick(
 		profiles: Array,
 		locations: Array
 ) -> Dictionary:
+	profiles = IndustryCatalog.profiles(snapshot, profiles)
 	var config: Dictionary = network_config.get("capacity_adaptation", {})
 	var day := int(tick_event.get("day", 0))
 	var interval := maxi(int(config.get("evaluation_interval_days", 1)), 1)
@@ -520,7 +523,7 @@ func _append_work_capacity_change(
 			organization_support.get("pressure_day_reduction", 0)
 		)
 	result.add_fact(fact)
-	var facility_id := _facility_entity_id(snapshot, workplace_id)
+	var facility_id := str(profile.get("facility_entity_id", _facility_entity_id(snapshot, workplace_id)))
 	if facility_id != "":
 		var local_delta := int(facility_delta_changes.get(facility_id, 0)) + delta
 		facility_delta_changes[facility_id] = local_delta
@@ -548,7 +551,8 @@ func _append_layoffs(
 		capacity_fact_id: String,
 		day: int,
 		events: Array,
-		counts: Dictionary
+		counts: Dictionary,
+		reason: String = "resource_depleted"
 ) -> void:
 	var occupation_id := str(profile.get("occupation_id", ""))
 	var workers := _workers(snapshot, settlement_id, occupation_id)
@@ -578,10 +582,10 @@ func _append_layoffs(
 			"occupation_id": occupation_id,
 			"occupation_label": str(profile.get("label", occupation_id)),
 			"former_workplace_id": str(profile.get("workplace_id", "")),
-			"reason": "resource_depleted",
+			"reason": reason,
 			"source_fact_ids": [capacity_fact_id],
 			"day": day,
-			"summary": "%s因生产资源无法维持设施运转而失去%s岗位。" % [
+			"summary": "%s因设施停止经营而失去%s岗位。" % [
 				_entity_name(snapshot, resident_id),
 				str(profile.get("label", occupation_id)),
 			],
@@ -611,7 +615,7 @@ func _append_layoffs(
 			"entity_id": resident_id,
 			"fields": {
 				"tags": tags,
-				"description": "%d 岁的生成居民，因本地资源衰退正在重新寻找生计。" % int(
+				"description": "%d 岁的生成居民，原设施停止经营，正在重新寻找生计。" % int(
 					snapshot.get_entity_state(resident_id, "age_years", 18)
 				),
 			},
@@ -627,7 +631,7 @@ func _append_layoffs(
 				_entity_name(snapshot, resident_id),
 				str(profile.get("label", occupation_id)),
 			],
-			"body": "设施所依赖的资源跌破开工水位，岗位被真实关闭，居民转为求职状态。",
+			"body": "设施停止经营，岗位被真实关闭，居民转为求职状态。具体原因保留在来源事实中。",
 			"source_fact_ids": [fact_id],
 			"day": day,
 		})
@@ -858,6 +862,8 @@ func _built_plots(snapshot: Variant) -> Dictionary:
 	for fact: Dictionary in snapshot.get_facts():
 		if str(fact.get("fact_type", "")) == "settlement_dwelling_constructed":
 			rows[str(fact.get("home_location_id", ""))] = true
+		elif str(fact.get("fact_type", "")) == "settlement_industry_founded":
+			rows[str(fact.get("workplace_id", ""))] = true
 	rows.erase("")
 	return rows
 
@@ -1268,6 +1274,14 @@ func _capacity_change_summary(
 		"label", profile.get("occupation_id", "岗位")
 	))
 	match reason:
+		"industry_founded":
+			return "%s因新产业开办而新设 %d 个%s岗位。" % [
+				settlement_name, capacity_after, occupation_label,
+			]
+		"industry_retired":
+			return "%s的%s设施停止经营，该产业岗位关闭至 %d 个。" % [
+				settlement_name, occupation_label, capacity_after,
+			]
 		"resource_depleted":
 			return "%s的生产资源跌破开工水位，%s岗位关闭至 %d 个。" % [
 				settlement_name, occupation_label, capacity_after,

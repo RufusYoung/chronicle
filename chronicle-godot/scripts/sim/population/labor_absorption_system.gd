@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5LaborAbsorptionSystem
 
+const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -13,6 +15,7 @@ func resolve_daily_tick(
 		profiles: Array,
 		locations: Array
 ) -> Dictionary:
+	profiles = IndustryCatalog.profiles(snapshot, profiles)
 	var config: Dictionary = network_config.get("labor_absorption", {})
 	var day := int(tick_event.get("day", 0))
 	var interval := maxi(int(config.get("evaluation_interval_days", 1)), 1)
@@ -120,6 +123,9 @@ func _append_employment(
 		day: int,
 		events: Array
 ) -> void:
+	var industry_source := str(profile.get("industry_source_fact_id", ""))
+	if industry_source != "" and industry_source not in source_fact_ids:
+		source_fact_ids.append(industry_source)
 	var occupation_id := str(profile.get("occupation_id", ""))
 	var workplace_id := str(profile.get("workplace_id", ""))
 	var livelihood_status := str(profile.get(

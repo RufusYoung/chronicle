@@ -74,6 +74,7 @@ const SettlementNetworkGeneratorModel = preload(
 const OrganizationGeneratorModel = preload(
 	"res://scripts/sim/generation/organization_generator.gd"
 )
+const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -376,7 +377,9 @@ func is_ready() -> bool:
 func get_snapshot() -> Variant:
 	if not initialized:
 		return null
-	return snapshot_builder.build_snapshot(context, stores, false, get_time_summary())
+	var snapshot = snapshot_builder.build_snapshot(context, stores, false, get_time_summary())
+	snapshot.location = IndustryCatalog.location(snapshot, snapshot.location)
+	return snapshot
 
 
 func get_market_stock_view(
@@ -435,13 +438,14 @@ func get_travel_options() -> Array:
 	var rows: Array = []
 	var snapshot: Variant = get_snapshot()
 	var food_count := int(snapshot.get_player_value("food_count", 0))
-	for route: Dictionary in travel_routes:
+	for route: Dictionary in _current_travel_routes(snapshot):
 		if str(route.get("from_location_id", "")) != context.location_id:
 			continue
 		if not _route_discovery_requirements_met(route, snapshot):
 			continue
 		var to_location_id := str(route.get("to_location_id", ""))
 		var destination: Dictionary = context.get_location(to_location_id)
+		destination = IndustryCatalog.location(snapshot, destination)
 		var route_food_cost := int(route.get("food_cost", 0))
 		var food_cost := maxi(route_food_cost, 0)
 		var access_contract_valid := _route_access_contract_valid(route)
@@ -1565,7 +1569,7 @@ func build_save_envelope(options: Dictionary = {}) -> Dictionary:
 		"world_log": world_log.to_save_data(),
 		"definition_manifest": {
 			"content_pack_id": "chronicle.base",
-			"content_pack_version": 1,
+			"content_pack_version": 2,
 			"required_definition_ids": _registered_definition_ids(),
 		},
 	}
@@ -1586,7 +1590,11 @@ func load_from_path(path: String) -> Dictionary:
 		return read_report
 	var result := load_from_save_envelope(read_report.get("envelope", {}))
 	result["path"] = path
-	result["migrations"] = read_report.get("migrations", [])
+	var migrations: Array = (read_report.get("migrations", []) as Array).duplicate()
+	for migration: Variant in result.get("migrations", []):
+		if migration not in migrations:
+			migrations.append(migration)
+	result["migrations"] = migrations
 	return result
 
 
@@ -1695,7 +1703,8 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 		"life_project_runtime": (
 			session_data.get("life_project_runtime", {}) as Dictionary
 		).duplicate(true),
-		"migrations": envelope_report.get("migrations", []),
+		"migrations": (envelope_report.get("migrations", []) as Array)
+			+ (manifest_report.get("migrations", []) as Array),
 	}
 
 
@@ -2067,6 +2076,16 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 	var actual := (required as Array).duplicate(true)
 	actual.sort()
 	if actual != expected:
+		# Only the exact previous base manifest can acquire the newly added item.
+		var previous := expected.duplicate()
+		previous.erase("item:item.fiber_rope")
+		if (
+			str(value.get("content_pack_id", "")) == "chronicle.base"
+			and int(value.get("content_pack_version", 0)) == 1
+			and actual == previous
+		):
+			return {"ok": true, "error": "", "phase": "definitions",
+				"migrations": ["base_v1_to_v2_fiber_rope"]}
 		return _save_failure("save_definition_manifest_mismatch", "definitions")
 	return {"ok": true, "error": "", "phase": "definitions"}
 
@@ -2075,6 +2094,9 @@ func _validate_save_references() -> Dictionary:
 	var entity_store: Variant = stores["entity_store"]
 	var fact_store: Variant = stores["fact_store"]
 	var item_store: Variant = stores["item_store"]
+	var industry_error := IndustryCatalog.validate_references(stores, context.locations, registry)
+	if industry_error != "":
+		return _save_failure("save_industry_" + industry_error, "references")
 	for entity_id: String in stores["state_store"].states.keys():
 		var entity_states: Dictionary = stores["state_store"].states[entity_id]
 		for state_key: String in ["household_id", "settlement_id"]:
@@ -2448,13 +2470,19 @@ func _find_candidate_by_action_id(candidates: Array, action_id: String) -> Varia
 
 
 func _find_travel_route(route_id: String, from_location_id: String) -> Dictionary:
-	for route: Dictionary in travel_routes:
+	for route: Dictionary in _current_travel_routes(get_snapshot()):
 		if str(route.get("route_id", "")) != route_id:
 			continue
 		if str(route.get("from_location_id", "")) != from_location_id:
 			continue
 		return route.duplicate(true)
 	return {}
+
+
+func _current_travel_routes(snapshot: Variant) -> Array:
+	var rows := travel_routes.duplicate(true)
+	rows.append_array(IndustryCatalog.routes(snapshot))
+	return rows
 
 
 func _find_challenge_option(option_id: String) -> Dictionary:

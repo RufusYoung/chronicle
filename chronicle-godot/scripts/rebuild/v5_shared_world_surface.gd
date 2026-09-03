@@ -3,6 +3,7 @@ class_name V5SharedWorldSurface
 
 const Style = preload("res://scripts/rebuild/v5_shared_interface_style.gd")
 const ACTION_PAGE_SIZE := 4
+const TRAVEL_PAGE_SIZE := 3
 
 
 static func install(
@@ -146,6 +147,51 @@ static func update_receipt(surface: Dictionary, feedback: Dictionary) -> void:
 	for detail: Variant in feedback.get("details", []):
 		lines.append("• %s" % str(detail))
 	(surface["receipt"] as RichTextLabel).text = "\n".join(lines)
+
+
+static func paginate_travel(surface: Dictionary, viewer: Control, buttons: VBoxContainer) -> void:
+	if not surface.has("travel_paging"):
+		var pager := HBoxContainer.new()
+		pager.add_theme_constant_override("separation", 8)
+		buttons.get_parent().get_parent().add_child(pager)
+		var paging := {"page": 0, "signature": [], "pager": pager}
+		for direction: int in [-1, 1]:
+			var button := Button.new()
+			button.name = "PreviousTravel" if direction < 0 else "NextTravel"
+			button.text = "上一页" if direction < 0 else "下一页"
+			button.add_theme_font_size_override("font_size", 13)
+			pager.add_child(button)
+			button.owner = viewer
+			button.unique_name_in_owner = true
+			Style.apply_decision_button(button, "normal")
+			paging["previous" if direction < 0 else "next"] = button
+			button.pressed.connect(_step_travel_page.bind(paging, buttons, direction))
+			if direction < 0:
+				var label := Label.new()
+				label.add_theme_font_size_override("font_size", 13)
+				pager.add_child(label)
+				paging["label"] = label
+		surface["travel_paging"] = paging
+	var paging: Dictionary = surface["travel_paging"]
+	var signature: Array = buttons.get_children().map(func(button: Button) -> String:
+		return str(button.get_meta("route_id", "")))
+	if signature != paging["signature"]:
+		paging["page"] = 0
+		paging["signature"] = signature
+	_step_travel_page(paging, buttons, 0)
+
+
+static func _step_travel_page(paging: Dictionary, buttons: VBoxContainer, delta: int) -> void:
+	var count := buttons.get_child_count()
+	var pages := maxi(ceili(float(count) / TRAVEL_PAGE_SIZE), 1)
+	var page := clampi(int(paging["page"]) + delta, 0, pages - 1)
+	paging["page"] = page
+	(paging["pager"] as Control).visible = pages > 1
+	(paging["previous"] as Button).disabled = page == 0
+	(paging["next"] as Button).disabled = page == pages - 1
+	(paging["label"] as Label).text = "路线 %d-%d / %d" % [page * TRAVEL_PAGE_SIZE + 1, mini((page + 1) * TRAVEL_PAGE_SIZE, count), count]
+	for index: int in count:
+		(buttons.get_child(index) as Control).visible = index >= page * TRAVEL_PAGE_SIZE and index < (page + 1) * TRAVEL_PAGE_SIZE
 
 
 static func compact_feedback(feedback: Dictionary, max_details: int = 3) -> String:

@@ -330,7 +330,7 @@ func _run() -> void:
 	var snapshot: Variant = session.get_snapshot()
 	var progress: Dictionary = snapshot.get_character_progress()
 	_check(
-		int(start.get("definition_count", 0)) == 105
+		int(start.get("definition_count", 0)) == 106
 		and session.stores.has("character_feature_store")
 		and int((progress.get("attributes", {}) as Dictionary).get(
 			"perception",

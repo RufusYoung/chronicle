@@ -673,6 +673,8 @@ func _industry_rows(
 		if not archetype_value is Dictionary:
 			continue
 		var archetype := (archetype_value as Dictionary).duplicate(true)
+		if bool(archetype.get("requires_work_history", false)):
+			continue
 		if not _industry_inputs_available(archetype, resources, traffic):
 			continue
 		var score := int(archetype.get("base_score", 0))

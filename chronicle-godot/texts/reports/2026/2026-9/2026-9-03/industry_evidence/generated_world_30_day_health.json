@@ -1,0 +1,426 @@
+{
+  "injected_behavior_count": 0,
+  "seeds": [
+    {
+      "autonomous_activity": {
+        "organization_response_count": 51,
+        "provisioning_count": 0,
+        "route_patrol_count": 48,
+        "route_pressure_causes": {
+          "crosswind": 2,
+          "road_washout": 4,
+          "slope_fall": 5
+        },
+        "route_pressure_count": 11,
+        "trade_coordination_count": 3
+      },
+      "checkpoints": [
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 0,
+          "chronicle_count": 11,
+          "day": 1,
+          "fact_count": 586,
+          "item_count": 28,
+          "migration_count": 0,
+          "organization_response_count": 4,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 0
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 22,
+          "day": 7,
+          "fact_count": 1677,
+          "item_count": 86,
+          "migration_count": 0,
+          "organization_response_count": 14,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 2
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 36,
+          "day": 14,
+          "fact_count": 2975,
+          "item_count": 152,
+          "migration_count": 0,
+          "organization_response_count": 24,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 4
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 0,
+          "chronicle_count": 46,
+          "day": 21,
+          "fact_count": 4297,
+          "item_count": 217,
+          "migration_count": 0,
+          "organization_response_count": 38,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 6
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 75,
+          "day": 30,
+          "fact_count": 5969,
+          "item_count": 292,
+          "migration_count": 0,
+          "organization_response_count": 51,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 11
+        }
+      ],
+      "final_day": 31,
+      "final_hour": 9,
+      "history_signature": "6cc20109a84fc3b2945466e73e2f90cf5bad6afd2571f0740a9d9256db22fbd7",
+      "industry": {
+        "founded_count": 1,
+        "history": [
+          {
+            "actor_id": "generated_resident.reed_bay.002",
+            "day": 6,
+            "industry_id": "cordage",
+            "settlement_id": "generated_settlement.reed_bay",
+            "summary": "林川利用已有劳动经验，在苇岸埠办起纤维制绳，先投入 2 个岗位。",
+            "type": "settlement_industry_founded"
+          }
+        ],
+        "retired_count": 0,
+        "rope_production_count": 50
+      },
+      "integrity_errors": [],
+      "migration": {
+        "absorbed_count": 0,
+        "migration_count": 0,
+        "stale_unabsorbed": []
+      },
+      "organization": {
+        "active_count": 1,
+        "cooldown_errors": [],
+        "cycles_by_pair": {
+          "generated_settlement.river_steps::pass_watch": 3
+        },
+        "effectiveness_review_count": 0,
+        "formed_count": 3,
+        "goal_changed_count": 4,
+        "goal_reactivated_count": 2,
+        "retired_count": 2
+      },
+      "route_pressure_signature": "b913196cac7e4327612f691ca1a12a93d6b0c5cabfdacede08428c8b39065452",
+      "save_continuation_ok": true,
+      "save_roundtrip_ok": true,
+      "seed": 81001,
+      "start_ok": true,
+      "tick_errors": [],
+      "transaction_errors": [],
+      "world_tick_count": 31
+    },
+    {
+      "autonomous_activity": {
+        "organization_response_count": 56,
+        "provisioning_count": 0,
+        "route_patrol_count": 53,
+        "route_pressure_causes": {
+          "crosswind": 1,
+          "road_washout": 7,
+          "slope_fall": 2
+        },
+        "route_pressure_count": 10,
+        "trade_coordination_count": 3
+      },
+      "checkpoints": [
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 0,
+          "chronicle_count": 11,
+          "day": 1,
+          "fact_count": 583,
+          "item_count": 27,
+          "migration_count": 0,
+          "organization_response_count": 4,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 0
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 22,
+          "day": 7,
+          "fact_count": 1653,
+          "item_count": 80,
+          "migration_count": 0,
+          "organization_response_count": 14,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 2
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 34,
+          "day": 14,
+          "fact_count": 2773,
+          "item_count": 128,
+          "migration_count": 0,
+          "organization_response_count": 28,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 4
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 45,
+          "day": 21,
+          "fact_count": 3913,
+          "item_count": 175,
+          "migration_count": 0,
+          "organization_response_count": 38,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 6
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 58,
+          "day": 30,
+          "fact_count": 5382,
+          "item_count": 235,
+          "migration_count": 0,
+          "organization_response_count": 56,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 10
+        }
+      ],
+      "final_day": 31,
+      "final_hour": 9,
+      "history_signature": "13425d26724d84bd8ac8c362b8fab626359450da55456f2dd3c883f91e8bd007",
+      "industry": {
+        "founded_count": 1,
+        "history": [
+          {
+            "actor_id": "generated_resident.reed_bay.001",
+            "day": 6,
+            "industry_id": "cordage",
+            "settlement_id": "generated_settlement.reed_bay",
+            "summary": "陶禾利用已有劳动经验，在苇岸坞办起纤维制绳，先投入 2 个岗位。",
+            "type": "settlement_industry_founded"
+          }
+        ],
+        "retired_count": 0,
+        "rope_production_count": 50
+      },
+      "integrity_errors": [],
+      "migration": {
+        "absorbed_count": 0,
+        "migration_count": 0,
+        "stale_unabsorbed": []
+      },
+      "organization": {
+        "active_count": 1,
+        "cooldown_errors": [],
+        "cycles_by_pair": {
+          "generated_settlement.river_steps::pass_watch": 2
+        },
+        "effectiveness_review_count": 0,
+        "formed_count": 2,
+        "goal_changed_count": 4,
+        "goal_reactivated_count": 3,
+        "retired_count": 1
+      },
+      "route_pressure_signature": "cbbaa20ad6001df699bc0d795b9538e3cda0e06735a201d2f5707145094e9f62",
+      "save_continuation_ok": true,
+      "save_roundtrip_ok": true,
+      "seed": 82002,
+      "start_ok": true,
+      "tick_errors": [],
+      "transaction_errors": [],
+      "world_tick_count": 31
+    },
+    {
+      "autonomous_activity": {
+        "organization_response_count": 50,
+        "provisioning_count": 0,
+        "route_patrol_count": 47,
+        "route_pressure_causes": {
+          "crosswind": 2,
+          "road_washout": 2,
+          "slope_fall": 5
+        },
+        "route_pressure_count": 9,
+        "trade_coordination_count": 3
+      },
+      "checkpoints": [
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 0,
+          "chronicle_count": 11,
+          "day": 1,
+          "fact_count": 578,
+          "item_count": 31,
+          "migration_count": 0,
+          "organization_response_count": 4,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 0
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 22,
+          "day": 7,
+          "fact_count": 1676,
+          "item_count": 89,
+          "migration_count": 0,
+          "organization_response_count": 13,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 2
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 36,
+          "day": 14,
+          "fact_count": 3000,
+          "item_count": 170,
+          "migration_count": 0,
+          "organization_response_count": 23,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 4
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 47,
+          "day": 21,
+          "fact_count": 4297,
+          "item_count": 241,
+          "migration_count": 0,
+          "organization_response_count": 33,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 6
+        },
+        {
+          "absorbed_household_count": 0,
+          "active_runtime_organization_count": 1,
+          "chronicle_count": 73,
+          "day": 30,
+          "fact_count": 5892,
+          "item_count": 314,
+          "migration_count": 0,
+          "organization_response_count": 50,
+          "population_by_settlement": {
+            "generated_settlement.reed_bay": 10,
+            "generated_settlement.river_steps": 10,
+            "generated_settlement.wind_pass": 10
+          },
+          "route_pressure_count": 9
+        }
+      ],
+      "final_day": 31,
+      "final_hour": 9,
+      "history_signature": "f2e116f5bcd0abf2913657adf132478df3918a1c74c4e351a96273adc1ba74d7",
+      "industry": {
+        "founded_count": 1,
+        "history": [
+          {
+            "actor_id": "generated_resident.reed_bay.002",
+            "day": 6,
+            "industry_id": "cordage",
+            "settlement_id": "generated_settlement.reed_bay",
+            "summary": "高牧利用已有劳动经验，在芦湾村办起纤维制绳，先投入 2 个岗位。",
+            "type": "settlement_industry_founded"
+          }
+        ],
+        "retired_count": 0,
+        "rope_production_count": 50
+      },
+      "integrity_errors": [],
+      "migration": {
+        "absorbed_count": 0,
+        "migration_count": 0,
+        "stale_unabsorbed": []
+      },
+      "organization": {
+        "active_count": 1,
+        "cooldown_errors": [],
+        "cycles_by_pair": {
+          "generated_settlement.river_steps::pass_watch": 3
+        },
+        "effectiveness_review_count": 0,
+        "formed_count": 3,
+        "goal_changed_count": 3,
+        "goal_reactivated_count": 1,
+        "retired_count": 2
+      },
+      "route_pressure_signature": "c7ba6bcaa9672f5923b2c3f9b2db0da565d1c6c9ee2e2ff71f8e66a47263144e",
+      "save_continuation_ok": true,
+      "save_roundtrip_ok": true,
+      "seed": 83003,
+      "start_ok": true,
+      "tick_errors": [],
+      "transaction_errors": [],
+      "world_tick_count": 31
+    }
+  ],
+  "simulation_days": 30
+}

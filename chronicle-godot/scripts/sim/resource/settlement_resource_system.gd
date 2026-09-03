@@ -51,6 +51,8 @@ func resolve_status_tick(
 	var events: Array = []
 	var facility_rows := _facility_status_rows(stocks)
 	for feature_id: String in facility_rows.keys():
+		if str(snapshot.get_entity_state(feature_id, "industry_status", "")) == "retired":
+			continue
 		var row: Dictionary = facility_rows[feature_id]
 		var status := str(row.get("status", "abundant"))
 		var previous := str(snapshot.get_entity_state(

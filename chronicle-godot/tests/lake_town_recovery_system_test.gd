@@ -7,10 +7,7 @@ const ObserverModel = preload("res://scripts/dev/world_sim_observer.gd")
 
 const SEED_PATH := "res://data/world_seed_mirror_lake.json"
 const SCENE_ID := "chen_mi_hiding_spoiled_grain_scene"
-const OUTPUT_PATH := (
-	"res://texts/reports/2026/2026-6/2026-6-15/"
-	+ "2026-06-15_world_sim_observer_output.md"
-)
+const OUTPUT_PATH := "user://tests/lake_town_recovery_system_output.md"
 const RELATIONSHIP_FIELDS: Array[String] = [
 	"trust",
 	"fear",

@@ -503,6 +503,7 @@ func _refresh_travel_options(options: Array) -> void:
 			perform_travel.bind(str(option.get("route_id", "")))
 		)
 		travel_buttons.add_child(button)
+	SharedSurface.paginate_travel(surface, self, travel_buttons)
 
 
 func _refresh_feedback(feedback: Dictionary) -> void:

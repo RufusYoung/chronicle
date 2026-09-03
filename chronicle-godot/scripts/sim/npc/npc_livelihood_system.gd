@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5NpcLivelihoodSystem
 
+const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -16,7 +18,7 @@ func resolve_work_tick(
 ) -> Dictionary:
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
-	var profiles_by_scope := _profiles_by_scope(profiles)
+	var profiles_by_scope := _profiles_by_scope(IndustryCatalog.profiles(snapshot, profiles))
 	if profiles_by_scope.is_empty():
 		return {"results": [], "events": []}
 

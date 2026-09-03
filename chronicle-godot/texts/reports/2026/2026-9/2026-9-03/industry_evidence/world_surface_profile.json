@@ -1,0 +1,92 @@
+{
+  "final_time": {
+    "day": 31,
+    "elapsed_hours": 730,
+    "hour": 18,
+    "world_tick_count": 40
+  },
+  "initial_time": {
+    "day": 31,
+    "elapsed_hours": 720,
+    "hour": 8,
+    "world_tick_count": 30
+  },
+  "measurements": [
+    {
+      "refresh_ms": 2361,
+      "simulation_ms": 0,
+      "step": 0,
+      "success": true
+    },
+    {
+      "refresh_ms": 2367,
+      "simulation_ms": 3167,
+      "step": 1,
+      "success": true
+    },
+    {
+      "refresh_ms": 2698,
+      "simulation_ms": 2999,
+      "step": 2,
+      "success": true
+    },
+    {
+      "refresh_ms": 2377,
+      "simulation_ms": 2928,
+      "step": 3,
+      "success": true
+    },
+    {
+      "refresh_ms": 2648,
+      "simulation_ms": 2955,
+      "step": 4,
+      "success": true
+    },
+    {
+      "refresh_ms": 2368,
+      "simulation_ms": 2944,
+      "step": 5,
+      "success": true
+    },
+    {
+      "refresh_ms": 2659,
+      "simulation_ms": 3378,
+      "step": 6,
+      "success": true
+    },
+    {
+      "refresh_ms": 2384,
+      "simulation_ms": 3013,
+      "step": 7,
+      "success": true
+    },
+    {
+      "refresh_ms": 2884,
+      "simulation_ms": 3431,
+      "step": 8,
+      "success": true
+    },
+    {
+      "refresh_ms": 2522,
+      "simulation_ms": 2681,
+      "step": 9,
+      "success": true
+    },
+    {
+      "refresh_ms": 2846,
+      "simulation_ms": 2792,
+      "step": 10,
+      "success": true
+    }
+  ],
+  "method": "Automated one-hour wait and refresh calls; source save is never rewritten.",
+  "passed": true,
+  "references": {
+    "error": "",
+    "ok": true,
+    "phase": "references"
+  },
+  "renderer": "Windows",
+  "save_path": "user://tests/generated_world_30_day_health_81001.save.json",
+  "steps": 10
+}

@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5SettlementAbsorptionSystem
 
+const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -524,6 +526,7 @@ func _home_data(snapshot: Variant, location_by_id: Dictionary) -> Dictionary:
 
 
 func _profile_data(snapshot: Variant, profiles: Array) -> Dictionary:
+	profiles = IndustryCatalog.profiles(snapshot, profiles)
 	var by_scope: Dictionary = {}
 	var open_slots: Dictionary = {}
 	var current_counts: Dictionary = {}
