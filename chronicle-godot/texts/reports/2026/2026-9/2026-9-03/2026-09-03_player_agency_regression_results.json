@@ -1,0 +1,960 @@
+[
+  {
+    "Test": "tests/lake_town_branch_closure_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.0,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/lake_town_food_chain_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.19,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/lake_town_history_variation_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.99,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/lake_town_hunger_closure_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.08,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/lake_town_living_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 19.18,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/lake_town_reaction_system_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.9,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/lake_town_recovery_system_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.58,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/lake_town_world_viewer_data_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 15.81,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/local_story_module_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 63.78,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/micro_action_resolver_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.01,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/project_cleanup_smoke.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.05,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-smoke-verified"
+  },
+  {
+    "Test": "tests/rebuild/v5_attribute_affordance_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.49,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-attribute-verified"
+  },
+  {
+    "Test": "tests/rebuild/v5_deferred_granary_investigation_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 13.54,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_dynamic_settlement_resource_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 40.65,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_emergent_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.76,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_first_quarter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.72,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_first_year_close_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.2,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_first_year_close_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.14,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_organization_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 39.23,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_settlement_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.72,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_granary_risk_discovery_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.74,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_internal_playable_build_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 17.69,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_life_incident_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.9,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_life_incident_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.55,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_live_location_viewer_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 11.96,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_live_travel_loop_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.54,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_location_foundation_state_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.22,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_location_foundation_viewer_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.41,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_location_ui_fix_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.37,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_mist_salt_well_expedition_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 18.81,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_north_quay_record_house_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 18.92,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_organization_lifecycle_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 10.3,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_playable_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.86,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_player_agency_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.98,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_player_attribute_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.17,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_playtest_ux_regression_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 32.22,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_returning_relic_echo_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 10.01,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_second_year_reception_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.54,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_second_year_reception_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.92,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_absorption_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 31.31,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_capacity_adaptation_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.32,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_network_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 144.29,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_seventh_outpost_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 10.86,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/rebuild/v5_world_time_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.91,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-final"
+  },
+  {
+    "Test": "tests/sim/candidate_effect_template_batch1_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.82,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/character_feature_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.23,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/combat_encounter_director_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.59,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/combat_equipment_resolution_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.9,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/consequence_trigger_settlement_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.85,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/deferred_granary_investigation_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.73,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/definition_entity_state_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.86,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/domain_pressure_deferred_foundation_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.75,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/due_resolution_policy_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.21,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/dynamic_settlement_resource_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 111.42,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/entity_lifecycle_transaction_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.97,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/equipment_loadout_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.85,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_quarter_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.01,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_winter_growth_candidate_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.05,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_winter_growth_confirmation_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.15,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_winter_growth_reward_matrix_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.99,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_winter_growth_transition_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.98,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_winter_market_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.85,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_winter_resource_duty_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.12,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_winter_risk_outcome_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.05,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/first_year_close_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.98,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_family_generation_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 99.31,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_labor_absorption_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 235.92,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-absorption-verified"
+  },
+  {
+    "Test": "tests/sim/generated_livelihood_network_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 71.37,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_multi_signal_organization_lifecycle_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 13.17,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_organization_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 32.11,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-organization-verified"
+  },
+  {
+    "Test": "tests/sim/generated_organization_lifecycle_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.9,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_organization_response_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 16.89,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_organization_runtime_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 103.04,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_population_lifecycle_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 30.16,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_resident_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.31,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_settlement_absorption_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 124.44,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-absorption-verified"
+  },
+  {
+    "Test": "tests/sim/generated_settlement_capacity_adaptation_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 10.87,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_settlement_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 37.22,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_settlement_network_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 60.35,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_social_followup_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 111.92,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/generated_social_pressure_network_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 60.73,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/granary_risk_discovery_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.05,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/item_instance_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.32,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/life_incident_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.73,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/live_sim_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.24,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/live_travel_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.58,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/live_world_time_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.12,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/mini_world_tick_adapter_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.92,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/minimum_contract_fixture_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.84,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/mist_salt_well_expedition_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 10.85,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/north_quay_record_house_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.31,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/npc_autonomous_decision_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.89,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/npc_emergent_life_loop_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.52,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/npc_resident_network_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.67,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/obligation_exchange_due_trigger_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.77,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/playable_combat_encounter_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.6,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/player_action_time_receipt_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.5,
+    "UnexpectedErrors": [],
+    "Batch": "chronicle-agency-receipt-verified"
+  },
+  {
+    "Test": "tests/sim/raw_rule_effect_binding_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.4,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/raw_rule_prototype_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.38,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/relationship_trace_rumor_narrative_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.56,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/returning_relic_echo_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.34,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/save_envelope_roundtrip_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.53,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/second_year_reception_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.42,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/seventh_outpost_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.9,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/sim_architecture_skeleton_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.36,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/sim_runner_world_log_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.79,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/sim_snapshot_candidate_context_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.77,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/snapshot_transaction_effect_template_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.72,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/tick_event_schema_scoped_result_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.77,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/transaction_contract_cleanup_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.69,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/transaction_state_memory_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.47,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/sim/unified_action_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.79,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/world_news_digest_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.88,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/world_sim_lead_adapter_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 1.99,
+    "Batch": "chronicle-agency-regression"
+  },
+  {
+    "Test": "tests/world_sim_observer_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.43,
+    "Batch": "chronicle-agency-regression"
+  }
+]

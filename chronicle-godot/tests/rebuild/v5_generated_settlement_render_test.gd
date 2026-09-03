@@ -96,9 +96,10 @@ func _run() -> void:
 			report.get("industry_ids", []) as Array
 		).size()
 		and travel_buttons.get_child_count() >= 4
-		and travel_scroll.get_v_scroll_bar().visible
+		and not travel_scroll.get_v_scroll_bar().visible
+		and travel_scroll.get_global_rect().encloses(travel_buttons.get_global_rect())
 		and _inside_viewport(travel_scroll.get_global_rect(), viewport_size),
-		"6. 多设施旅行列表在 1280x720 内使用局部滚动，不挤掉其他信息"
+		"6. 多设施旅行列表在 1280x720 内完整展开，不需要局部滚动"
 	)
 	await _save_viewport(HUB_OUTPUT, "7. 生成聚落集地截图已写入")
 

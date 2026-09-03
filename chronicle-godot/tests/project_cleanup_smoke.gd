@@ -16,6 +16,8 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _find_action_button(node: Node) -> Button:
+	if node.is_queued_for_deletion() or (node is Control and not node.is_visible_in_tree()):
+		return null
 	for child in node.get_children():
 		if child is Button:
 			var button := child as Button
@@ -77,12 +79,16 @@ func _run() -> void:
 	_check(action_button != null, "at least one selectable action is rendered")
 	if action_button != null:
 		await _wait_for_action_guard()
+		var text_before_choice := story_box.get_parsed_text()
 		action_button.pressed.emit()
 		await process_frame
 		var world_after_choice: Node = story_player.get("world") as Node
 		_check(
-			world_after_choice != null and world_after_choice.has_pending_choice(),
-			"selecting an action enters a pending multi-stage choice"
+			world_after_choice != null and (
+				world_after_choice.has_pending_choice()
+				or story_box.get_parsed_text() != text_before_choice
+			),
+			"selecting an action enters a choice or renders its resolved result"
 		)
 
 	await _wait_for_action_guard()

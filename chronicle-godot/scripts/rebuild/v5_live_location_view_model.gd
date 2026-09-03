@@ -41,6 +41,7 @@ var start_result: Dictionary = {}
 var latest_result: Dictionary = {}
 var action_history: Array[Dictionary] = []
 var latest_event_type: String = ""
+var last_player_impact: Dictionary = {}
 
 
 func _init(source_session: Variant = null) -> void:
@@ -53,6 +54,7 @@ func start(options: Dictionary = {}) -> Dictionary:
 	action_history.clear()
 	latest_result = {}
 	latest_event_type = ""
+	last_player_impact = {}
 	var start_options := options.duplicate(true)
 	if (
 		not start_options.has("challenge_seed_override")
@@ -93,7 +95,7 @@ func perform_action(action_id: String) -> Dictionary:
 		return latest_result.duplicate(true)
 
 	var option := _find_action_option(action_id)
-	latest_result = session.execute_action(action_id, {
+	latest_result = session.execute_timed_action(action_id, {
 		"source": "v5_live_location_surface",
 	})
 	if bool(latest_result.get("success", false)):
@@ -103,7 +105,9 @@ func perform_action(action_id: String) -> Dictionary:
 			"label": str(option.get("label", "采取行动")),
 			"contract_status": str(latest_result.get("contract_status", "")),
 			"narrative": _result_narrative(latest_result),
+			"cause_kind": "player",
 		})
+		_capture_player_impact(str(option.get("label", "采取行动")))
 	return latest_result.duplicate(true)
 
 
@@ -127,6 +131,7 @@ func advance_time(hours: int = 1) -> Dictionary:
 			"label": "等待一小时",
 			"triggered_count": _world_change_count(latest_result),
 			"narrative": _tick_narrative(latest_result),
+			"cause_kind": "world",
 		})
 	return latest_result.duplicate(true)
 
@@ -153,6 +158,7 @@ func wait_until_north_quay_ferry() -> Dictionary:
 		"source": "v5_live_location_surface",
 	})
 	latest_result["waited_hours"] = hours
+	latest_result["hours"] = hours
 	if bool(latest_result.get("success", false)):
 		action_history.append({
 			"index": action_history.size() + 1,
@@ -160,7 +166,9 @@ func wait_until_north_quay_ferry() -> Dictionary:
 			"label": "在铺里歇到北埠早船",
 			"triggered_count": _world_change_count(latest_result),
 			"narrative": _ferry_wait_narrative(),
+			"cause_kind": "player",
 		})
+		_capture_player_impact("在铺里歇到北埠早船")
 	return latest_result.duplicate(true)
 
 
@@ -187,7 +195,9 @@ func perform_travel(route_id: String) -> Dictionary:
 			"route_id": route_id,
 			"label": str(option.get("label", "前往新的地点")),
 			"narrative": _result_narrative(latest_result),
+			"cause_kind": "player",
 		})
+		_capture_player_impact(str(option.get("label", "前往新的地点")))
 	return latest_result.duplicate(true)
 
 
@@ -221,7 +231,9 @@ func perform_challenge(
 			"label": str(option.get("label", "面对眼前的危险")),
 			"outcome": str(latest_result.get("outcome", "")),
 			"narrative": _result_narrative(latest_result),
+			"cause_kind": "player",
 		})
+		_capture_player_impact(str(option.get("label", "面对眼前的危险")))
 	return latest_result.duplicate(true)
 
 
@@ -254,7 +266,9 @@ func perform_combat_encounter(
 			"label": str(option.get("label", "处理眼前的遭遇")),
 			"outcome": str(latest_result.get("outcome", "")),
 			"narrative": _result_narrative(latest_result),
+			"cause_kind": "player",
 		})
+		_capture_player_impact(str(option.get("label", "处理眼前的遭遇")))
 	return latest_result.duplicate(true)
 
 
@@ -279,7 +293,9 @@ func perform_return_echo(option_id: String) -> Dictionary:
 			"option_id": option_id,
 			"label": str(option.get("label", "请人辨认旧物")),
 			"narrative": _result_narrative(latest_result),
+			"cause_kind": "player",
 		})
+		_capture_player_impact(str(option.get("label", "请人辨认旧物")))
 	return latest_result.duplicate(true)
 
 
@@ -307,7 +323,9 @@ func perform_investigation(option_id: String) -> Dictionary:
 			),
 			"label": str(option.get("label", "处理调查方向")),
 			"narrative": _result_narrative(latest_result),
+			"cause_kind": "player",
 		})
+		_capture_player_impact(str(option.get("label", "处理调查方向")))
 	return latest_result.duplicate(true)
 
 
@@ -379,6 +397,8 @@ func build_view_data() -> Dictionary:
 		"visible_people": visible_people,
 		"visible_observations": visible_observations,
 		"actions": _action_rows(),
+		"decision": _decision_view(snapshot),
+		"agency": _agency_view(),
 		"risk": _risk_view(),
 		"travel_options": _travel_rows(),
 		"knowledge": _knowledge_rows(snapshot),
@@ -670,13 +690,11 @@ func _action_rows() -> Array:
 	var combat_rows := _combat_action_rows()
 	if not combat_rows.is_empty():
 		return combat_rows
-	var ambient_trace_ids := _ambient_trace_ids(snapshot)
-	var surfaced_ambient_trace_count := 0
 	for option: Dictionary in session.get_investigation_options():
 		var action_type := str(
 			option.get("action_type", "investigation")
 		)
-		rows.append({
+		var row := {
 			"action_id": str(option.get("option_id", "")),
 			"investigation_option_id": str(
 				option.get("option_id", "")
@@ -687,24 +705,26 @@ func _action_rows() -> Array:
 			"kind": _action_kind(action_type),
 			"hint": str(option.get("hint", "")),
 			"can_execute": bool(option.get("can_execute", false)),
-		})
+		}
+		row.merge(_structured_decision_metadata(option, action_type), true)
+		rows.append(row)
 	for option: Dictionary in session.get_action_options():
 		var action_type := str(option.get("action_type", "normal"))
 		var target_id := str(option.get("target_id", ""))
-		if target_id in ambient_trace_ids:
-			if surfaced_ambient_trace_count >= 3:
-				continue
-			surfaced_ambient_trace_count += 1
 		var can_execute := bool(option.get("can_execute", true))
-		rows.append({
+		var row := {
 			"action_id": str(option.get("action_id", "")),
 			"event_type": "player_action",
 			"label": _action_label(option, can_execute),
+			"rule_id": str(option.get("rule_id", "")),
+			"target_id": target_id,
 			"action_type": action_type,
 			"kind": _action_kind(action_type),
 			"hint": _action_hint(option),
 			"can_execute": can_execute,
-		})
+		}
+		row.merge(_candidate_decision_metadata(option), true)
+		rows.append(row)
 	for option: Dictionary in session.get_challenge_options():
 		if not _surface_requirements_met(
 			str(option.get("challenge_id", "")),
@@ -712,7 +732,7 @@ func _action_rows() -> Array:
 		):
 			continue
 		var action_type := str(option.get("action_type", "danger"))
-		rows.append({
+		var row := {
 			"action_id": str(option.get("option_id", "")),
 			"challenge_option_id": str(option.get("option_id", "")),
 			"event_type": "challenge",
@@ -721,9 +741,11 @@ func _action_rows() -> Array:
 			"kind": _action_kind(action_type),
 			"hint": _challenge_action_hint(option),
 			"can_execute": bool(option.get("can_execute", false)),
-		})
+		}
+		row.merge(_structured_decision_metadata(option, action_type), true)
+		rows.append(row)
 	for option: Dictionary in session.get_return_echo_options():
-		rows.append({
+		var row := {
 			"action_id": str(option.get("option_id", "")),
 			"return_echo_option_id": str(
 				option.get("option_id", "")
@@ -734,7 +756,9 @@ func _action_rows() -> Array:
 			"kind": _action_kind("relic"),
 			"hint": str(option.get("hint", "")),
 			"can_execute": bool(option.get("can_execute", false)),
-		})
+		}
+		row.merge(_structured_decision_metadata(option, "relic"), true)
+		rows.append(row)
 	if _should_offer_north_quay_ferry_wait(snapshot):
 		rows.append({
 			"action_id": "wait_until_north_quay_ferry",
@@ -743,9 +767,158 @@ func _action_rows() -> Array:
 			"action_type": "life",
 			"kind": _action_kind("life"),
 			"hint": "一次推进到下一个 06:00；期间世界状态照常变化。",
+			"cost": "等待 %d 小时至 06:00" % _hours_until_north_quay_ferry(),
+			"known_effect": "等到摆渡恢复，同时让所有人物与局势继续运行",
+			"tradeoff": "等待期间可能错过商铺、人物或局势的当前状态",
 			"can_execute": true,
 		})
-	return rows
+	# Put the current dilemma before optional conversations; every other action stays reachable.
+	var focused: Array[Dictionary] = []
+	var ordinary: Array[Dictionary] = []
+	for row: Dictionary in rows:
+		if str(row.get("event_type", "")) == "player_action":
+			ordinary.append(row)
+		else:
+			focused.append(row)
+	focused.append_array(ordinary)
+	return focused
+
+
+func _candidate_hours(option: Dictionary) -> int:
+	var extra: Dictionary = option.get("extra", {})
+	return maxi(int(extra.get("hours", 1)), 0)
+
+
+func _candidate_decision_metadata(option: Dictionary) -> Dictionary:
+	var extra: Dictionary = option.get("extra", {})
+	var hours := _candidate_hours(option)
+	var cost := str(extra.get("known_cost", ""))
+	if cost == "":
+		cost = "花费 %d 小时" % hours if hours > 0 else "不推进时间"
+	var known_effect := str(extra.get("known_effect", ""))
+	if known_effect == "":
+		known_effect = "由当前人物、物品与世界状态即时结算"
+	var tradeoff := str(extra.get("tradeoff", ""))
+	if tradeoff == "":
+		tradeoff = "行动期间，其他人物与世界局势仍会推进"
+	return {
+		"decision_intent": str(extra.get(
+			"decision_intent", _action_kind(str(option.get("action_type", "normal")))
+		)),
+		"hours": hours,
+		"cost": cost,
+		"known_effect": known_effect,
+		"tradeoff": tradeoff,
+	}
+
+
+func _structured_decision_metadata(
+		option: Dictionary,
+		action_type: String
+) -> Dictionary:
+	var hours := maxi(int(option.get("hours", 1)), 0)
+	var effect := "推进当前局面"
+	var tradeoff := "行动期间，其他人物与世界局势仍会推进"
+	if action_type == "preparation":
+		effect = "降低随后行动的风险，或补齐远行条件"
+		tradeoff = "准备会消耗时间，也可能让眼前局势继续恶化"
+	elif action_type == "danger":
+		effect = "立即结算当前危险并改变后续局面"
+		tradeoff = str(option.get(
+			"failure_hint", "失败会留下身体、物品或机会代价"
+		))
+	elif action_type == "investigation":
+		effect = "追查或保留当前调查方向"
+		tradeoff = "继续追查会占用时间；搁置则让世界先向前运行"
+	elif action_type == "relic":
+		effect = "让真实人物辨认物品来历，并产生关系与历史回声"
+		tradeoff = "对方只能依据自己的记忆与处境回应"
+	return {
+		"decision_intent": _action_kind(action_type),
+		"hours": hours,
+		"cost": "花费 %d 小时" % hours if hours > 0 else "不推进时间",
+		"known_effect": effect,
+		"tradeoff": tradeoff,
+	}
+
+
+func _decision_view(snapshot: Variant) -> Dictionary:
+	var actions := _action_rows()
+	var travel := _travel_rows()
+	var executable_count := 0
+	for row: Dictionary in actions:
+		if bool(row.get("can_execute", true)):
+			executable_count += 1
+	for row: Dictionary in travel:
+		if bool(row.get("can_travel", false)):
+			executable_count += 1
+	var question := "你愿意先把时间用在哪里？"
+	if not session.get_combat_encounter_options().is_empty():
+		question = "你要用哪种方式处理眼前威胁？"
+	elif bool(_risk_view().get("active", false)):
+		question = "先准备、直接承担风险，还是离开这里？"
+	elif bool(_investigation_view(snapshot).get("active", false)):
+		question = "现在追查到底，还是让这条线索留到以后？"
+	elif not travel.is_empty():
+		question = "继续处理眼前的人和事，还是把物资投入下一段路？"
+	var stakes: Array[String] = []
+	for row: Dictionary in _region_status_rows(snapshot).slice(0, 2):
+		stakes.append("%s %s" % [
+			str(row.get("label", "局势")),
+			str(row.get("value", "")),
+		])
+	return {
+		"question": question,
+		"rule": "现场行动会消耗真实时间。你不必点完所有选项；选择你愿意承担后果的目标。",
+		"stakes": stakes,
+		"option_count": executable_count,
+	}
+
+
+func _capture_player_impact(action_label: String) -> void:
+	var feedback := _base_feedback_view()
+	var details: Array = feedback.get("details", [])
+	var direct_details: Array[String] = []
+	for value: Variant in details:
+		var text := str(value)
+		if text != "" and text not in direct_details:
+			direct_details.append(text)
+	var tick_result: Dictionary = latest_result.get("tick_result", {})
+	var world_summary := _tick_narrative(tick_result)
+	last_player_impact = {
+		"action_label": action_label,
+		"summary": str(feedback.get("body", "这项行动已经写入世界。")),
+		"details": direct_details,
+		"hours": int(latest_result.get("hours", 0)),
+		"world_change_count": _world_change_count(tick_result),
+		"world_summary": world_summary,
+		"day": int(session.current_day),
+		"hour": int(session.current_hour),
+	}
+	if not action_history.is_empty():
+		action_history.back()["impact"] = last_player_impact.duplicate(true)
+
+
+func _agency_view() -> Dictionary:
+	var current_world_summary := ""
+	var current_world_change_count := 0
+	var current_world_kind := ""
+	if latest_event_type in ["world_tick", "ferry_wait"]:
+		current_world_summary = _tick_narrative(latest_result)
+		current_world_change_count = _world_change_count(latest_result)
+		current_world_kind = "independent"
+	elif not latest_result.is_empty():
+		var tick_result: Dictionary = latest_result.get("tick_result", {})
+		current_world_summary = _tick_narrative(tick_result)
+		current_world_change_count = _world_change_count(tick_result)
+		current_world_kind = "during_action"
+	return {
+		"has_player_impact": not last_player_impact.is_empty(),
+		"player_impact": last_player_impact.duplicate(true),
+		"world_kind": current_world_kind,
+		"world_change_count": current_world_change_count,
+		"world_summary": current_world_summary,
+	}
 
 
 func _combat_action_rows() -> Array:
@@ -754,7 +927,10 @@ func _combat_action_rows() -> Array:
 		var preview: Dictionary = option.get("preview", {})
 		var approach_id := str(option.get("approach_id", ""))
 		var approach_label := _combat_approach_label(approach_id)
-		rows.append({
+		var costs: Array[String] = []
+		for description: Variant in (preview.get("possible_costs", {}) as Dictionary).get("descriptions", []):
+			costs.append(_combat_cost_text(str(description)))
+		var row := {
 			"action_id": str(option.get("option_id", "")),
 			"combat_option_id": str(option.get("option_id", "")),
 			"event_type": "combat_encounter",
@@ -767,18 +943,14 @@ func _combat_action_rows() -> Array:
 			"kind": approach_label,
 			"hint": _combat_action_hint(option),
 			"can_execute": bool(option.get("can_execute", false)),
-		})
-	return rows
-
-
-func _ambient_trace_ids(snapshot: Variant) -> Array:
-	var rows: Array = []
-	for trace: Dictionary in snapshot.get_visible_traces():
-		if str(trace.get("actor_id", "")) == "":
-			continue
-		var trace_id := str(trace.get("id", trace.get("trace_id", "")))
-		if trace_id != "":
-			rows.append(trace_id)
+			"cost": "%d 小时" % int(option.get("hours", 1)),
+			"known_effect": "d6 + %s %d / 难度 %d" % [
+				_combat_score_label(str(preview.get("score_target", ""))),
+				int(preview.get("effective_score", 0)), int(preview.get("difficulty", 0)),
+			],
+			"tradeoff": "失败可能%s" % "、".join(costs) if not costs.is_empty() else "此次未预见身体或装备损耗",
+		}
+		rows.append(row)
 	return rows
 
 
@@ -830,6 +1002,7 @@ func _risk_view() -> Dictionary:
 		"active": true,
 		"title": "眼前的风险　%s" % str(attempt.get("risk_label", "未知")),
 		"description": str(attempt.get("risk_description", "")),
+		"decision_evidence": str(attempt.get("risk_description", "")),
 		"check_text": str(attempt.get("check_text", "")),
 		"prepared": prepared,
 		"preparation_text": (
@@ -854,7 +1027,6 @@ func _combat_risk_view() -> Dictionary:
 	var first: Dictionary = options[0]
 	var preview: Dictionary = first.get("preview", {})
 	var enemy: Dictionary = preview.get("enemy_observation", {})
-	var selection_context: Dictionary = first.get("selection_context", {})
 	var features: Array[String] = []
 	for feature: Variant in enemy.get("observable_features", []):
 		features.append("• %s" % str(feature))
@@ -868,6 +1040,7 @@ func _combat_risk_view() -> Dictionary:
 	return {
 		"active": true,
 		"title": "眼前的遭遇　%s" % str(enemy.get("danger_label", "未知")),
+		"decision_evidence": "\n".join(features),
 		"description": "%s\n%s\n%s" % [
 			str(first.get("encounter_description", "")),
 			str(enemy.get("display_name", "未知对手")),
@@ -875,14 +1048,7 @@ func _combat_risk_view() -> Dictionary:
 		],
 		"check_text": "d6 检定　%s" % "　/　".join(checks),
 		"prepared": true,
-		"preparation_text": (
-			"地点、地区状态与在场实体筛出 %d 个可用候选；本次选择已锁定并会随存档保留。\n当前装备与伤势已经计入每个选择的有效数值。"
-			% maxi(int(selection_context.get(
-				"eligible_candidate_count", 1
-			)), 1)
-			if not selection_context.is_empty()
-			else "当前装备与伤势已经计入每个选择的有效数值。"
-		),
+		"preparation_text": "当前装备与伤势已经计入每个选择的有效数值。",
 		"failure_hint": "选择会立刻推进 1 小时并只结算一次；失败会留下明确代价，但不会立即死亡。",
 	}
 
@@ -933,6 +1099,11 @@ func _travel_rows() -> Array:
 			"food_cost": food_cost,
 			"can_travel": can_travel,
 			"hint": hint,
+			"cost": cost_text,
+			"known_effect": "离开当前地点并抵达%s" % str(
+				option.get("destination_name", "新的地点")
+			),
+			"tradeoff": "路上人物、组织、资源与其他地点照常变化",
 		})
 	return rows
 
@@ -953,10 +1124,14 @@ func _surface_requirements_met(key: String, snapshot: Variant) -> bool:
 func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 	var states: Dictionary = entity.get("states", {})
 	var entity_type := str(entity.get("type", ""))
+	var entity_id := str(entity.get("id", ""))
+	var already_known := _has_fact(snapshot, "actor_read_object", "target_id", entity_id) or _has_fact(
+		snapshot, "actor_inspected_trace", "target_id", entity_id)
 	return {
 		"id": str(entity.get("id", "")),
 		"name": str(entity.get("display_name", "未命名")),
 		"description": str(entity.get("description", "")),
+		"surface_priority": 2 if already_known else 0,
 		"state_text": (
 			_person_state_text(states)
 			if entity_type == "person"
@@ -967,6 +1142,7 @@ func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 
 func _trace_row(trace: Dictionary) -> Dictionary:
 	return {
+		"surface_priority": 1,
 		"id": str(trace.get("trace_id", "")),
 		"name": str(trace.get("display_name", trace.get("title", "现场痕迹"))),
 		"description": str(trace.get("description", "这里留下了此前行动的痕迹。")),
@@ -976,6 +1152,7 @@ func _trace_row(trace: Dictionary) -> Dictionary:
 
 func _rumor_row(rumor: Dictionary) -> Dictionary:
 	return {
+		"surface_priority": 1,
 		"id": str(rumor.get("rumor_id", "")),
 		"name": "传闻：%s" % str(rumor.get("title", "附近发生过一件事")),
 		"description": str(rumor.get(
@@ -1753,6 +1930,42 @@ func _chronicle_view(snapshot: Variant) -> Dictionary:
 
 
 func _feedback_view() -> Dictionary:
+	var feedback := _base_feedback_view()
+	if not feedback.has("summary_details"):
+		feedback["summary_details"] = (feedback.get("details", []) as Array).duplicate()
+	var status := str(feedback.get("status", ""))
+	if status == "error":
+		feedback["eyebrow"] = "没有结算 · 世界状态未重复写入"
+		return feedback
+	if latest_result.is_empty():
+		feedback["eyebrow"] = "当前局势 · 尚未介入"
+		return feedback
+	if latest_event_type == "world_tick":
+		feedback["eyebrow"] = "世界自行发生 · 非你的直接结果"
+		return feedback
+	if latest_event_type == "ferry_wait":
+		feedback["eyebrow"] = "你的选择 · 等待期间世界照常运行"
+		return feedback
+	feedback["eyebrow"] = "你的选择 · 已写回人物与世界"
+	if not bool(latest_result.get("time_advanced", true)):
+		feedback["eyebrow"] = "行动已写回 · 世界计时失败，请查看记录"
+		feedback["details"] = ["行动已经生效，但本次世界推进失败；请勿重复执行以免重复消耗。"] + feedback.get("details", [])
+		feedback["summary_details"] = [feedback["details"][0]]
+		return feedback
+	var hours := int(latest_result.get("hours", 0))
+	if hours > 0:
+		feedback["eyebrow"] = "你的选择 · 耗时 %d 小时 · 已写回世界" % hours
+	var tick_result: Dictionary = latest_result.get("tick_result", {})
+	var world_summary := _tick_narrative(tick_result)
+	if world_summary != "":
+		var details: Array = feedback.get("details", [])
+		details.append("同期世界变化（不全由你造成）：%s" % world_summary)
+		details.append_array(_decision_detail_lines(tick_result))
+		feedback["details"] = details
+	return feedback
+
+
+func _base_feedback_view() -> Dictionary:
 	if latest_result.is_empty():
 		return {
 			"status": "idle",
@@ -1807,11 +2020,21 @@ func _feedback_view() -> Dictionary:
 			if contract_status == "candidate_only"
 			else "行动已经发生。"
 		)
+	var summary_details: Array[String] = []
+	for change: Dictionary in transaction.get("item_changes", []):
+		var text := _item_change_text(change)
+		if text != "":
+			summary_details.append(text)
+	for change: Dictionary in transaction.get("relationship_changes", []):
+		summary_details.append(_relationship_change_text(change))
+	if summary_details.is_empty():
+		summary_details.assign(_result_detail_lines(transaction, candidate, false))
 	return {
 		"status": contract_status,
 		"title": title,
 		"body": body,
 		"details": _result_detail_lines(transaction, candidate),
+		"summary_details": summary_details,
 	}
 
 
@@ -1883,6 +2106,7 @@ func _combat_encounter_feedback_view() -> Dictionary:
 	details.append("这次遭遇已经结算，原来的三个选择已从行动栏撤下。")
 	return {
 		"status": str(narrative.get("outcome", "combat_encounter")),
+		"summary_details": [],
 		"title": str(narrative.get("title", "遭遇结果")),
 		"body": "%s（%s）\n%s\n\n%s" % [
 			formula,
@@ -2110,11 +2334,31 @@ func _challenge_feedback_view() -> Dictionary:
 			var consequence_text := _state_change_text(change)
 			if consequence_text not in details:
 				details.append(consequence_text)
+	var summary_details: Array[String] = []
+	if option_type != "prepare" and not details.is_empty():
+		summary_details.append(details[0])
+	var consequences: Array[String] = []
+	for change: Dictionary in transaction.get("state_changes", []):
+		if str(change.get("entity_id", "")) == "player" and str(change.get("key", "")) in [
+			"food_count", "health", "fatigue", "injury", "mist_salt_echo"]:
+			consequences.append(_state_change_text(change))
+	for change: Dictionary in transaction.get("item_changes", []):
+		var item: Dictionary = change.get("item", {})
+		if str(item.get("item_def_id", "")) == "item.travel_ration":
+			if not consequences.any(func(line: String) -> bool: return "随身食物" in line):
+				consequences.append("随身食物 +%d 份" % int(item.get("quantity", 1)))
+			continue
+		var item_text := _item_change_text(change)
+		if item_text != "":
+			consequences.append(item_text)
+	if not consequences.is_empty():
+		summary_details.append("；".join(consequences))
 	return {
 		"status": str(narrative.get("outcome", "challenge")),
 		"title": str(narrative.get("title", "冒险结果")),
 		"body": str(narrative.get("summary", "局面已经产生结果。")),
 		"details": details,
+		"summary_details": summary_details,
 	}
 
 
@@ -2162,6 +2406,7 @@ func _travel_feedback_view() -> Dictionary:
 		"title": str(narrative.get("title", "抵达新的地点")),
 		"body": str(narrative.get("summary", "你抵达了新的地点。")),
 		"details": details,
+		"summary_details": [travel_cost_text],
 	}
 
 
@@ -2388,7 +2633,8 @@ func _result_narrative(result: Dictionary) -> String:
 
 func _result_detail_lines(
 		transaction: Dictionary,
-		candidate: Dictionary = {}
+		candidate: Dictionary = {},
+		include_fact_count: bool = true
 ) -> Array:
 	var rows: Array[String] = []
 	for requirement: Dictionary in candidate.get("player_requirements", []):
@@ -2408,7 +2654,7 @@ func _result_detail_lines(
 		if item_text != "":
 			rows.append(item_text)
 	var facts: Array = transaction.get("facts_added", [])
-	if not facts.is_empty():
+	if include_fact_count and not facts.is_empty():
 		rows.append("形成了 %d 条可追溯事实" % facts.size())
 	return rows
 

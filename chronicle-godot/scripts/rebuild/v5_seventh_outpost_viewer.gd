@@ -4,11 +4,13 @@ class_name V5SeventhOutpostViewer
 const ViewModelModel = preload(
 	"res://scripts/rebuild/v5_seventh_outpost_view_model.gd"
 )
+const SharedSurface = preload("res://scripts/rebuild/v5_shared_world_surface.gd")
 
 var view_model: Variant = null
 var current_view_data: Dictionary = {}
 var completion_was_shown: bool = false
 var pending_growth_candidate_id: String = ""
+var surface: Dictionary = {}
 
 @onready var subtitle: Label = %Subtitle
 @onready var day_label: Label = %DayLabel
@@ -23,6 +25,7 @@ var pending_growth_candidate_id: String = ""
 @onready var status_text: RichTextLabel = %StatusText
 @onready var feedback_title: Label = %FeedbackTitle
 @onready var feedback_body: RichTextLabel = %FeedbackBody
+@onready var feedback_eyebrow: Label = $Margin/Root/Main/Center/Content/Feedback/Box/Eyebrow
 @onready var history_text: RichTextLabel = %HistoryText
 @onready var action_heading: Label = %ActionHeading
 @onready var action_hint: Label = %ActionHint
@@ -35,6 +38,27 @@ var pending_growth_candidate_id: String = ""
 
 func _ready() -> void:
 	view_model = ViewModelModel.new()
+	surface = SharedSurface.install(self, $Margin/Root, $Margin/Root/Main,
+		$Margin/Root/Dock, {
+		"scene": [ritual_title, ritual_body],
+		"feedback": [feedback_eyebrow, feedback_title, feedback_body],
+		"people": [people_text.get_parent().get_node("PeopleHeading"), people_text],
+		"decision": [objective_text, status_text.get_parent().get_node("StatusHeading"), status_text],
+		"character": [
+			[player_text.get_parent().get_node("PlayerHeading"), player_text,
+			feature_text.get_parent().get_node("FeatureHeading"), feature_text],
+			[market_text.get_parent().get_node("MarketHeading"), market_text, market_buttons],
+		],
+		"records": [history_text.get_parent().get_node("HistoryHeading"), history_text],
+	})
+	$Margin/Root/Dock.custom_minimum_size.y = 0
+	$Margin/Root/Header.custom_minimum_size.y = 58
+	subtitle.add_theme_font_size_override("font_size", 12)
+	day_label.add_theme_font_size_override("font_size", 14)
+	action_hint.add_theme_font_size_override("font_size", 12)
+	action_heading.add_theme_font_size_override("font_size", 16)
+	feedback_body.bbcode_enabled = true
+	action_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	restart_button.pressed.connect(_restart_current_phase)
 	growth_confirmation_dialog.confirmed.connect(_confirm_pending_growth)
 	var transition: Dictionary = {}
@@ -185,6 +209,12 @@ func refresh_view() -> void:
 	player_text.text = str(player.get("summary", ""))
 	feature_text.text = str(player.get("features", ""))
 	objective_text.text = str(current_view_data.get("objective", ""))
+	var decision: Dictionary = current_view_data.get("decision", {})
+	var market: Dictionary = current_view_data.get("market", {})
+	(surface["situation"] as RichTextLabel).text = "[b]随身[/b] 口粮 %d · 铜币 %d · 疲劳 %d/10\n%s" % [
+		market.get("ration_count", 0), market.get("coin_count", 0), player.get("fatigue", 0),
+		"；".join(decision.get("stakes", [])),
+	]
 	match phase_id:
 		"first_quarter":
 			restart_button.text = "重来第一季度"
@@ -198,6 +228,12 @@ func refresh_view() -> void:
 	ritual_title.text = str(ritual.get("title", "清晨点名"))
 	ritual_body.text = str(ritual.get("body", ""))
 	people_text.text = _format_people(current_view_data.get("people", []))
+	var person_records: Array[String] = [ritual_body.text]
+	for person: Dictionary in current_view_data.get("people", []):
+		person_records.append("[b]%s[/b] %s\n%s" % [
+			person.get("name", ""), person.get("description", ""), person.get("state_summary", ""),
+		])
+	(surface["scene_record"] as RichTextLabel).text = "\n\n".join(person_records)
 	status_text.text = _format_status(
 		current_view_data.get("status", {}) as Dictionary
 	)
@@ -222,6 +258,14 @@ func refresh_view() -> void:
 			_refresh_growth_actions(growth_candidates)
 	else:
 		_refresh_actions(current_view_data.get("actions", []))
+	var live_buttons: Array[Node] = []
+	for child: Node in action_buttons.get_children():
+		if child is Button and not child.is_queued_for_deletion():
+			live_buttons.append(child)
+	for button: Button in live_buttons:
+		button.custom_minimum_size = Vector2(SharedSurface.action_width(self, live_buttons.size()), 82)
+		SharedSurface.style_action(button, "life")
+	SharedSurface.paginate_actions(surface, self, action_buttons)
 	if (
 		bool(current_view_data.get("complete", false))
 		and not completion_was_shown
@@ -236,6 +280,7 @@ func get_current_view_data() -> Dictionary:
 
 func _refresh_actions(actions: Array) -> void:
 	for child: Node in action_buttons.get_children():
+		action_buttons.remove_child(child)
 		child.queue_free()
 	var executable := 0
 	var blocked := 0
@@ -244,11 +289,12 @@ func _refresh_actions(actions: Array) -> void:
 			executable += 1
 		else:
 			blocked += 1
-	action_heading.text = "今日职责　可承担 %d 项" % executable
+	var decision: Dictionary = current_view_data.get("decision", {})
+	action_heading.text = str(decision.get("question", "今日职责"))
 	if blocked > 0:
 		action_heading.text += "　·　受限 %d 项" % blocked
 	action_hint.text = (
-		"每项职责已直接列出条件、消耗与影响；选择后推进到次日点名。"
+		str(decision.get("rule", "每项职责直接列出条件、消耗与影响。"))
 		if not actions.is_empty()
 		else "第一轮值勤已经结束，查看右侧小结。"
 	)
@@ -258,8 +304,9 @@ func _refresh_actions(actions: Array) -> void:
 			270 if actions.size() <= 4 else 300,
 			88
 		)
-		button.text = "%s\n%s" % [
+		button.text = "%s　[%s]\n%s" % [
 			str(action.get("label", "承担值勤")),
+			str(action.get("cost", "推进 1 天")),
 			str(action.get("hint", "")),
 		]
 		button.disabled = not bool(action.get("can_execute", true))
@@ -278,6 +325,7 @@ func _refresh_actions(actions: Array) -> void:
 
 func _refresh_life_incident(incident: Dictionary) -> void:
 	for child: Node in action_buttons.get_children():
+		action_buttons.remove_child(child)
 		child.queue_free()
 	action_heading.text = "途中插曲 · %s" % str(
 		incident.get("title", "一件小事")
@@ -311,6 +359,7 @@ func _refresh_life_incident(incident: Dictionary) -> void:
 
 func _refresh_growth_actions(candidates: Array) -> void:
 	for child: Node in action_buttons.get_children():
+		action_buttons.remove_child(child)
 		child.queue_free()
 	var confirmed: Dictionary = {}
 	for candidate: Dictionary in candidates:
@@ -351,6 +400,7 @@ func _refresh_growth_actions(candidates: Array) -> void:
 
 func _refresh_quarter_completion_actions() -> void:
 	for child: Node in action_buttons.get_children():
+		action_buttons.remove_child(child)
 		child.queue_free()
 	action_heading.text = "第一季度已经结束"
 	action_hint.text = "八十四天的状态、人物变化、物品履历与纪事已经写入。现在可以进入第一年余下九个月。"
@@ -365,6 +415,7 @@ func _refresh_quarter_completion_actions() -> void:
 
 func _refresh_milestone_actions(milestone: Dictionary) -> void:
 	for child: Node in action_buttons.get_children():
+		action_buttons.remove_child(child)
 		child.queue_free()
 	var outcomes: Array = milestone.get("outcomes", [])
 	if bool(milestone.get("resolved", false)):
@@ -406,6 +457,7 @@ func _refresh_milestone_actions(milestone: Dictionary) -> void:
 
 func _refresh_second_year_completion_actions() -> void:
 	for child: Node in action_buttons.get_children():
+		action_buttons.remove_child(child)
 		child.queue_free()
 	action_heading.text = "第二年接收已经完成"
 	action_hint.text = "跨年职责、仪式和 NPC 自主行为已经由第一年事实改写。年度手写扩展到此停止，下一开发阶段转入人物生成合同。"
@@ -476,11 +528,10 @@ func _refresh_market(market: Dictionary) -> void:
 
 
 func _refresh_feedback(feedback: Dictionary) -> void:
+	feedback_eyebrow.text = str(feedback.get("eyebrow", "当前局势"))
 	feedback_title.text = str(feedback.get("title", "值勤结果"))
-	var lines: Array[String] = [str(feedback.get("body", ""))]
-	for detail: Variant in feedback.get("details", []):
-		lines.append("\n• %s" % str(detail))
-	feedback_body.text = "".join(lines)
+	SharedSurface.update_receipt(surface, feedback)
+	feedback_body.text = SharedSurface.compact_feedback(feedback, 1)
 
 
 func _refresh_history(history: Array) -> void:
@@ -488,7 +539,7 @@ func _refresh_history(history: Array) -> void:
 		history_text.text = "还没有完成值勤。"
 		return
 	var rows: Array[String] = []
-	var first := maxi(history.size() - 4, 0)
+	var first := 0
 	for entry: Dictionary in history.slice(first):
 		var unit_label := str(entry.get("progress_unit_label", "天"))
 		var calendar_text := ""
@@ -497,15 +548,18 @@ func _refresh_history(history: Array) -> void:
 				int(entry.get("calendar_day_start", 0)),
 				int(entry.get("calendar_day_end", 0)),
 			]
-		rows.append("[b]第 %d %s　%s[/b]%s\n[color=#9aa29d]%s[/color]" % [
+		rows.append("[color=#8db08e]你的职责[/color]　[b]第 %d %s　%s[/b]%s\n[color=#9aa29d]%s[/color]" % [
 			int(entry.get("day", 0)),
 			unit_label,
 			str(entry.get("label", "值勤")),
 			calendar_text,
 			str(entry.get("summary", "")),
 		])
+		for narrative: Variant in entry.get("npc_narratives", []):
+			rows.append("同袍随后：%s" % str(narrative))
+		for note: Variant in entry.get("settlement_notes", []):
+			rows.append("日常结算：%s" % str(note))
 	history_text.text = "\n\n".join(rows)
-	call_deferred("_scroll_history_to_latest")
 
 
 func _format_people(people: Array) -> String:
@@ -517,21 +571,15 @@ func _format_people(people: Array) -> String:
 				str(person.get("relation_label", "关系")),
 				int(person.get("relation_value", 0)),
 			]
-		rows.append("[b]%s[/b]%s\n%s" % [
+		rows.append("[b]%s[/b]%s　[color=#8fa09b]%s[/color]" % [
 			str(person.get("name", "")),
 			relation,
-			"%s%s" % [
-				str(person.get("description", "")),
-				(
-					"\n[color=#8fa09b]%s[/color]" % str(
-						person.get("state_summary", "")
-					)
-					if str(person.get("state_summary", "")) != ""
-					else ""
-				),
-			],
+			str(person.get("state_summary", "")),
 		])
-	return "\n\n".join(rows)
+	var lines: Array[String] = []
+	for index: int in range(0, rows.size(), 2):
+		lines.append("　　".join(rows.slice(index, index + 2)))
+	return "\n".join(lines)
 
 
 func _format_status(status: Dictionary) -> String:
@@ -543,7 +591,10 @@ func _format_status(status: Dictionary) -> String:
 			str(row.get("label", "状态")),
 			int(row.get("value", 0)),
 		])
-	return "\n".join(rows)
+	var lines: Array[String] = []
+	for index: int in range(0, rows.size(), 2):
+		lines.append("　".join(rows.slice(index, index + 2)))
+	return "\n".join(lines)
 
 
 func _show_intro() -> void:
@@ -581,7 +632,3 @@ func _show_completion() -> void:
 			])
 	completion_dialog.dialog_text = "\n".join(lines)
 	completion_dialog.popup_centered_clamped(Vector2i(820, 520), 0.9)
-
-
-func _scroll_history_to_latest() -> void:
-	history_text.scroll_to_line(maxi(history_text.get_line_count() - 1, 0))

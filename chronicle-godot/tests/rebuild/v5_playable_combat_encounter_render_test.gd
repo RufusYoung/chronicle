@@ -82,7 +82,7 @@ func _run() -> void:
 		and not _has_combat_button(action_buttons)
 		and "掷骰 4 + 影响 10 = 14 / 难度 14" in feedback_body.text
 		and feedback_body.text.begins_with("掷骰 4 + 影响 10")
-		and "原来的三个选择已从行动栏撤下" in feedback_body.text
+		and "原来的三个选择已从行动栏撤下" in (viewer.get_node("%ResultReceipt") as RichTextLabel).text
 		and _inside_viewport(feedback_body.get_global_rect(), viewport_size),
 		"4. Resolved feedback is visible and encounter buttons stay consumed"
 	)

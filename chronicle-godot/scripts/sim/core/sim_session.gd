@@ -1243,6 +1243,35 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 	}
 
 
+func execute_timed_action(action_id: String, metadata: Dictionary = {}) -> Dictionary:
+	if not initialized:
+		return _execution_failure("session_not_initialized", action_id)
+	var snapshot: Variant = get_snapshot()
+	var candidates: Array = affordance_system.generate_candidates(snapshot, rules)
+	candidate_generation_count += 1
+	var candidate: Variant = _find_candidate_by_action_id(candidates, action_id)
+	if candidate == null:
+		return _candidate_not_found(action_id, "", "", candidates)
+	if not bool(candidate.can_execute):
+		return _candidate_blocked(candidate, candidates.size())
+	var hours := maxi(int(candidate.extra.get("hours", 1)), 0)
+	var result := _execute_candidate(snapshot, candidate, candidates.size(), metadata)
+	if not bool(result.get("success", false)):
+		return result
+	result["hours"] = hours
+	if hours > 0:
+		result["tick_result"] = advance_time(hours, "after_player_action", {
+			"label": str(candidate.label),
+			"source": str(metadata.get("source", "SimSession.execute_timed_action")),
+		})
+		result["time_advanced"] = bool(result["tick_result"].get("success", false))
+	else:
+		result["time_advanced"] = true
+	result["time"] = get_time_summary()
+	return result
+
+
+# Transaction-only entry point for injected simulations and low-level contract tests.
 func execute_action(action_id: String, metadata: Dictionary = {}) -> Dictionary:
 	if not initialized:
 		return _execution_failure("session_not_initialized", action_id)

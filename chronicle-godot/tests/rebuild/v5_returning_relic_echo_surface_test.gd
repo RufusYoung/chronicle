@@ -36,6 +36,7 @@ func _run() -> void:
 	var knowledge := viewer.get_node("%KnowledgeText") as RichTextLabel
 	var feedback_title := viewer.get_node("%FeedbackTitle") as Label
 	var feedback_body := viewer.get_node("%FeedbackBody") as RichTextLabel
+	var receipt := viewer.get_node("%ResultReceipt") as RichTextLabel
 	var history := viewer.get_node("%HistoryText") as RichTextLabel
 	var chronicle_heading := viewer.get_node("%ChronicleHeading") as Label
 	var chronicle_text := viewer.get_node("%ChronicleText") as RichTextLabel
@@ -100,7 +101,7 @@ func _run() -> void:
 	)
 	_check(
 		location_title.text == "老陈铺子"
-		and "20:00" in time_label.text
+		and "23:00" in time_label.text
 		and echo_button != null
 		and "旧物" in echo_button.text
 		and "陈米" in echo_button.tooltip_text,
@@ -115,7 +116,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"21:00" in time_label.text
+		"第 2 天　00:00" in time_label.text
 		and feedback_title.text == "铜牌背后的旧粮仓"
 		and "霉粮被查出后封了门" in feedback_body.text,
 		"6. Recognition takes an hour and gives concrete local-history feedback"
@@ -123,9 +124,9 @@ func _run() -> void:
 	_check(
 		"信任 +12" in feedback_body.text
 		and "熟悉 +15" in feedback_body.text
-		and "新线索" in feedback_body.text
-		and "个人纪事新增" in feedback_body.text
-		and "物品履历" in feedback_body.text,
+		and "新线索" in receipt.text
+		and "个人纪事新增" in receipt.text
+		and "物品履历" in receipt.text,
 		"7. Feedback exposes relationship, clue, chronicle, and item history"
 	)
 	_check(
@@ -137,7 +138,7 @@ func _run() -> void:
 		chronicle_heading.visible
 		and chronicle_text.visible
 		and "被认出的验粮铜牌" in chronicle_heading.text
-		and "第1天21:00" in chronicle_text.text
+		and "第2天00:00" in chronicle_text.text
 		and "废弃粮仓" in chronicle_text.text
 		and "依据 7 条事实、1 件物品" in chronicle_text.text,
 		"9. Personal chronicle shows its real event and evidence count"

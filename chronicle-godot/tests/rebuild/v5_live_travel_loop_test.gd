@@ -69,7 +69,7 @@ func _run() -> void:
 	await process_frame
 	_check(
 		location_title.text == "废弃粮仓"
-		and "14:00" in time_label.text
+		and "17:00" in time_label.text
 		and "食物　1 份" in player_summary.text,
 		"4. Outbound travel switches location and refreshes time and food"
 	)
@@ -81,8 +81,8 @@ func _run() -> void:
 	)
 	_check(
 		feedback_title.text == "镇外小路"
-		and "原来的地方也发生了变化" in feedback_body.text
-		and "决定再做一阵生意" in feedback_body.text,
+		and "同期世界变化" in (viewer.get_node("%ResultReceipt") as RichTextLabel).text
+		and "决定再做一阵生意" in history.text,
 		"6. Travel feedback includes the world change that happened en route"
 	)
 	_check(
@@ -117,13 +117,13 @@ func _run() -> void:
 	await process_frame
 	_check(
 		location_title.text == "老陈铺子"
-		and "18:00" in time_label.text
+		and "22:00" in time_label.text
 		and "食物　0 份" in player_summary.text,
 		"10. Return trip restores the shop projection and consumes resources"
 	)
 	_check(
 		"半掩的门板" in observations.text
-		and "刚被再次改高" in observations.text
+		and "刚被再次改高" in (viewer.get_node("%SceneDetailsRecord") as RichTextLabel).text
 		and "裂开的粮仓门" not in observations.text,
 		"11. Renewed hunger closes the shop during the long round trip"
 	)
@@ -137,7 +137,7 @@ func _run() -> void:
 	)
 	_check(
 		viewer.view_model.session.travel_count == 2
-		and viewer.view_model.session.world_tick_count == 2
+		and viewer.view_model.session.world_tick_count == 6
 		and viewer.view_model.session.action_count == 4,
 		"13. UI keeps journeys, world ticks, and actions as separate events"
 	)

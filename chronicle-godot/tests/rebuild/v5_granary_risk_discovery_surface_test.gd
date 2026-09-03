@@ -96,7 +96,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"15:00" in time_label.text
+		"18:00" in time_label.text
 		and feedback_title.text == "在门外做好准备"
 		and "白灰圈了出来" in feedback_body.text,
 		"6. Preparation advances time and gives concrete scene feedback"
@@ -114,7 +114,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"16:00" in time_label.text
+		"19:00" in time_label.text
 		and feedback_title.text == "梁柱后的旧物"
 		and "掷骰" in feedback_body.text
 		and "准备 12" in feedback_body.text
@@ -148,7 +148,7 @@ func _run() -> void:
 	_check(
 		str(provenance.get("discovered_at", ""))
 			== "abandoned_granary"
-		and int(provenance.get("discovered_hour", 0)) == 16,
+		and int(provenance.get("discovered_hour", 0)) == 19,
 		"12. UI result is backed by stored item provenance"
 	)
 
@@ -158,7 +158,7 @@ func _run() -> void:
 	await process_frame
 	_check(
 		location_title.text == "老陈铺子"
-		and "20:00" in time_label.text
+		and "23:00" in time_label.text
 		and "旧粮仓验粮铜牌" in player_summary.text
 		and "半掩的门板" in observations.text,
 		"13. Discovery returns to the changed shop in the same world"
@@ -167,7 +167,7 @@ func _run() -> void:
 		viewer.view_model.session.challenge_preparation_count == 1
 		and viewer.view_model.session.challenge_count == 1
 		and viewer.view_model.session.travel_count == 2
-		and viewer.view_model.session.world_tick_count == 4,
+		and viewer.view_model.session.world_tick_count == 7,
 		"14. UI keeps preparation, check, travel, and ticks distinct"
 	)
 

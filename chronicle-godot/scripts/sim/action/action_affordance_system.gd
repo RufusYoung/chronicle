@@ -67,6 +67,7 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 		rule.get("label_template", rule_id)
 	))
 	label = label.replace("{target_display_name}", target_display_name)
+	var hours := maxi(int(interaction.get("hours", rule.get("hours", 1))), 0)
 	var extra := {
 		"repeat_policy": str(interaction.get(
 			"repeat_policy",
@@ -81,6 +82,19 @@ func _build_candidate(context: Variant, rule: Dictionary, target: Dictionary) ->
 			rule.get("result_summary", "")
 		), target_display_name, target),
 		"hint": str(interaction.get("hint", rule.get("hint", ""))),
+		"hours": hours,
+		"decision_intent": str(interaction.get(
+			"decision_intent", rule.get("decision_intent", "")
+		)),
+		"known_cost": str(interaction.get(
+			"known_cost", rule.get("known_cost", "")
+		)).replace("{hours}", str(hours)),
+		"known_effect": str(interaction.get(
+			"known_effect", rule.get("known_effect", "")
+		)),
+		"tradeoff": str(interaction.get(
+			"tradeoff", rule.get("tradeoff", "")
+		)),
 		"player_requirements": requirement_summaries,
 		"requirement_groups": requirement_groups,
 		"base_values": requirement_status.get("base_values", {}),

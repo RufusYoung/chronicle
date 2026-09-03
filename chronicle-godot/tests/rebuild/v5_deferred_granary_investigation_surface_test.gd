@@ -43,6 +43,10 @@ func _run() -> void:
 	var chronicle_text := viewer.get_node("%ChronicleText") as RichTextLabel
 	var action_dock := viewer.get_node("%ActionDock") as PanelContainer
 	var investigation_bar := viewer.get_node("%InvestigationBar") as RichTextLabel
+	var goal_title := viewer.get_node("%GoalTitle") as Label
+	var goal_summary := viewer.get_node("%GoalSummary") as RichTextLabel
+	var receipt := viewer.get_node("%ResultReceipt") as RichTextLabel
+	var scene_record := viewer.get_node("%SceneDetailsRecord") as RichTextLabel
 	var travel_buttons := viewer.get_node("%TravelButtons") as VBoxContainer
 	var action_buttons := viewer.get_node("%ActionButtons") as FlowContainer
 	var wait_button := viewer.get_node("%WaitButton") as Button
@@ -71,10 +75,9 @@ func _run() -> void:
 		DEFER_OPTION
 	)
 	_check(
-		investigation_bar.visible
-		and action_dock.custom_minimum_size.y == 142.0
-		and "调查方向　公仓封存记录" in investigation_bar.text
-		and "等待决定" in investigation_bar.text,
+		goal_title.is_visible_in_tree()
+		and "可追查：公仓封存记录" in goal_title.text
+		and "等待决定" in goal_summary.text,
 		"3. Token recognition opens a visible investigation direction"
 	)
 	_check(
@@ -89,8 +92,8 @@ func _run() -> void:
 		"4. UI presents investigation and daily-life time choices together"
 	)
 	_check(
-		"新的调查方向：公仓封存记录" in feedback_body.text
-		and "旧税契" in investigation_bar.text,
+		"新的调查方向：公仓封存记录" in receipt.text
+		and "旧税契" in goal_summary.text,
 		"5. Recognition feedback explains where the new choice came from"
 	)
 
@@ -98,14 +101,14 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"22:00" in time_label.text
+		"第 2 天　01:00" in time_label.text
 		and feedback_title.text == "把旧事留到以后"
 		and "没有消失" in feedback_body.text,
 		"6. Deferring consumes an hour and confirms the lead remains"
 	)
 	_check(
-		investigation_bar.visible
-		and "已搁置，仍可追查" in investigation_bar.text
+		goal_summary.is_visible_in_tree()
+		and "已搁置，仍可追查" in goal_summary.text
 		and _find_investigation_button(
 			action_buttons,
 			DEFER_OPTION
@@ -119,7 +122,7 @@ func _run() -> void:
 	_check(
 		"旧事：替你留着税契匣" in visible_people.text
 		and "留到以后追查的旧事" in chronicle_heading.text
-		and "第1天22:00" in chronicle_text.text,
+		and "第2天01:00" in chronicle_text.text,
 		"8. Chen Mi stance and defer chronicle are visible in the scene"
 	)
 
@@ -129,8 +132,8 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"第 2 天　00:00" in time_label.text
-		and investigation_bar.visible
+		"第 2 天　03:00" in time_label.text
+		and "已搁置，仍可追查" in goal_summary.text
 		and _find_investigation_button(
 			action_buttons,
 			INVESTIGATE_OPTION
@@ -146,7 +149,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"第 2 天　03:00" in time_label.text
+		"第 2 天　06:00" in time_label.text
 		and feedback_title.text == "重新翻开的税契匣"
 		and "一直留在柜台下" in feedback_body.text,
 		"10. Resumed search consumes three hours and recalls the defer path"
@@ -160,8 +163,8 @@ func _run() -> void:
 	)
 	_check(
 		"夹在税契里的公仓封印抄件" in observations.text
-		and "陆槐" in observations.text
-		and "北埠档房移存" in observations.text,
+		and "陆槐" in scene_record.text
+		and "北埠档房移存" in scene_record.text,
 		"12. Investigation reveals a concrete readable record in the scene"
 	)
 	_check(
@@ -172,13 +175,13 @@ func _run() -> void:
 	)
 	_check(
 		not investigation_bar.visible
-		and action_dock.custom_minimum_size.y == 142.0
+		and "可追查：公仓封存记录" not in goal_title.text
 		and _find_investigation_button(
 			action_buttons,
 			INVESTIGATE_OPTION
 		) == null
 		and "税契夹页上的名字" in chronicle_heading.text
-		and "第2天03:00" in chronicle_text.text
+		and "第2天06:00" in chronicle_text.text
 		and "搁置线索后" in chronicle_text.text,
 		"14. Resolved lead disappears and shows the resumed chronicle branch"
 	)

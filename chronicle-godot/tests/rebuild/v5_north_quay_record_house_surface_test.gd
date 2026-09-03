@@ -91,7 +91,7 @@ func _run() -> void:
 	viewer.perform_travel(NORTH_QUAY_OUTBOUND)
 	await process_frame
 	_check(
-		"第 2 天　00:00" in time_label.text
+		"第 2 天　04:00" in time_label.text
 		and feedback_title.text == "没有动身"
 		and "摆渡已经停船" in feedback_body.text,
 		"4. Trying the closed route explains the time gate without advancing time"
@@ -140,9 +140,9 @@ func _run() -> void:
 		and "齐腰深的湖水" in risk_text.text
 		and "d20 + 力量 7 / 难度 19" in risk_text.text
 		and "不会死亡" in risk_text.text
-		and chronicle_text.custom_minimum_size.y == 58.0
-		and risk_text.custom_minimum_size.y == 64.0
-		and history.custom_minimum_size.y == 96.0,
+		and chronicle_text.fit_content and not chronicle_text.scroll_active
+		and risk_text.fit_content and not risk_text.scroll_active
+		and history.fit_content and not history.scroll_active,
 		"8. Flooded stacks explain their formula and concrete failure cost"
 	)
 
@@ -166,7 +166,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"第 2 天　09:00" in time_label.text
+		"第 2 天　11:00" in time_label.text
 		and feedback_title.text == "等潮线退到旧刻痕下"
 		and "罩灯" in feedback_body.text
 		and "准备 11" in risk_text.text
@@ -185,7 +185,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(
-		"第 2 天　10:00" in time_label.text
+		"第 2 天　12:00" in time_label.text
 		and feedback_title.text == "没有归档的最后一页"
 		and "陆槐最后一页验粮簿" in feedback_body.text
 		and "不是霉" in feedback_body.text
@@ -197,8 +197,8 @@ func _run() -> void:
 		and "陆槐最后一页验粮簿" in player_summary.text
 		and "旧粮仓验粮铜牌" in player_summary.text
 		and not risk_heading.visible
-		and chronicle_text.custom_minimum_size.y == 112.0
-		and history.custom_minimum_size.y == 132.0,
+		and chronicle_text.fit_content
+		and history.fit_content,
 		"12. Discovery changes the scene, inventory, and resolved danger"
 	)
 	_check(
@@ -248,7 +248,7 @@ func _run() -> void:
 	await process_frame
 	_check(
 		location_title.text == "老陈铺子"
-		and "第 2 天　12:00" in time_label.text
+		and "第 2 天　14:00" in time_label.text
 		and "陆槐最后一页验粮簿" in player_summary.text,
 		"17. The archive record returns to the continuing ordinary world"
 	)

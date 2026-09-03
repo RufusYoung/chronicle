@@ -93,7 +93,7 @@ func _run() -> void:
 	_check(
 		prepare_button != null
 		and "帮闻简晒卷" in prepare_button.text
-		and "2小时" in prepare_button.text
+		and "2 小时" in prepare_button.text
 		and "四份" not in player_summary.text
 		and not risk_heading.visible,
 		"3. Archive work appears as preparation instead of a fake danger check"
@@ -195,7 +195,7 @@ func _run() -> void:
 		and "第 2 天　19:00" in time_label.text
 		and feedback_title.text == "钩杆先移开了半尺"
 		and "掷骰 4 + 影响 10 = 14 / 难度 14" in feedback_body.text
-		and "原来的三个选择已从行动栏撤下" in feedback_body.text,
+		and "原来的三个选择已从行动栏撤下" in (viewer.get_node("%ResultReceipt") as RichTextLabel).text,
 		"9a. Negotiation resolves once and explains the full check immediately"
 	)
 	_check(
@@ -276,7 +276,7 @@ func _run() -> void:
 	_check(
 		bool(deep_result.get("success", false))
 		and str(deep_result.get("outcome", "")) == "success"
-		and "第 2 天　21:00" in time_label.text
+		and "第 2 天　23:00" in time_label.text
 		and feedback_title.text == "逆着渗水弯曲的白丝"
 		and "长期痕迹：雾盐回响·微弱" in feedback_body.text
 		and "逆水白丝样本" in feedback_body.text,
@@ -312,7 +312,7 @@ func _run() -> void:
 	await process_frame
 	_check(
 		location_title.text == "北埠旧档房"
-		and "第 3 天　03:00" in time_label.text
+		and "第 3 天　05:00" in time_label.text
 		and "长期痕迹　雾盐回响·微弱" in player_summary.text
 		and "逆水白丝样本" in player_summary.text,
 		"15. Returning to the archive preserves the expedition's long tail"

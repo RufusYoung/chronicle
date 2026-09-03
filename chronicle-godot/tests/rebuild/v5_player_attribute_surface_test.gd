@@ -59,9 +59,14 @@ func _run() -> void:
 		and "伤势　无" in player_summary.text,
 		"3. Left summary exposes all attributes and survival state"
 	)
+	(viewer.get_node("%WorldSurfacePages") as TabContainer).current_tab = 1
+	await process_frame
+	await process_frame
 	_check(
-		player_summary.custom_minimum_size.y >= 126.0,
-		"4. Attribute summary reserves enough vertical reading space"
+		player_summary.is_visible_in_tree() and player_summary.fit_content
+		and not player_summary.scroll_active
+		and player_summary.get_content_height() <= player_summary.size.y + 1,
+		"4. Character page exposes the complete attribute sheet without a nested scrollbar"
 	)
 
 	var challenge_stats := {}

@@ -174,7 +174,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 10
 
 [node name="LeftPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea"]
-custom_minimum_size = Vector2(244, 0)
+custom_minimum_size = Vector2(270, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.72
@@ -199,16 +199,17 @@ text = "旅人"
 
 [node name="PlayerSummary" type="RichTextLabel" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 126)
+custom_minimum_size = Vector2(0, 102)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = false
+scroll_active = false
 
 [node name="DividerA" type="HSeparator" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
 layout_mode = 2
 
 [node name="GoalPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
-custom_minimum_size = Vector2(0, 128)
+custom_minimum_size = Vector2(0, 112)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleGoal")
 
@@ -245,7 +246,7 @@ theme_override_colors/default_color = Color(0.76, 0.77, 0.71, 1)
 theme_override_font_sizes/normal_font_size = 12
 bbcode_enabled = true
 fit_content = false
-scroll_active = true
+scroll_active = false
 
 [node name="GoalDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/LeftPanel/LeftMargin/LeftLayout"]
 layout_mode = 2
@@ -262,10 +263,10 @@ layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = false
-scroll_active = true
+scroll_active = false
 
 [node name="CenterPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea"]
-custom_minimum_size = Vector2(492, 0)
+custom_minimum_size = Vector2(520, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.52
@@ -303,9 +304,10 @@ layout_mode = 2
 theme_override_colors/default_color = Color(0.78, 0.79, 0.74, 1)
 bbcode_enabled = true
 fit_content = false
+scroll_active = false
 
 [node name="FeedbackPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 126)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleFeedback")
 
@@ -321,6 +323,7 @@ layout_mode = 2
 theme_override_constants/separation = 3
 
 [node name="FeedbackEyebrow" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout/FeedbackPanel/FeedbackMargin/FeedbackLayout"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.57, 0.54, 1)
 theme_override_font_sizes/font_size = 11
@@ -339,7 +342,7 @@ layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = false
-scroll_active = true
+scroll_active = false
 
 [node name="SceneDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
 layout_mode = 2
@@ -355,6 +358,7 @@ custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = false
+scroll_active = false
 
 [node name="ObservationHeading" type="Label" parent="Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"]
 layout_mode = 2
@@ -368,10 +372,10 @@ layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = false
-scroll_active = true
+scroll_active = false
 
 [node name="RightPanel" type="PanelContainer" parent="Margin/RootLayout/MainArea"]
-custom_minimum_size = Vector2(260, 0)
+custom_minimum_size = Vector2(310, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.8
@@ -389,6 +393,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="KnowledgeHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.82, 0.74, 0.58, 1)
 theme_override_font_sizes/font_size = 16
@@ -400,7 +405,7 @@ layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = false
-scroll_active = true
+scroll_active = false
 
 [node name="ChronicleHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 unique_name_in_owner = true
@@ -413,13 +418,13 @@ text = "个人纪事"
 [node name="ChronicleText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(0, 112)
+custom_minimum_size = Vector2(0, 82)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.78, 0.75, 0.67, 1)
 theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 fit_content = false
-scroll_active = true
+scroll_active = false
 
 [node name="RiskHeading" type="Label" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 unique_name_in_owner = true
@@ -432,13 +437,13 @@ text = "眼前的风险"
 [node name="RiskText" type="RichTextLabel" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(0, 108)
+custom_minimum_size = Vector2(0, 82)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.75, 0.73, 0.67, 1)
 theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 fit_content = false
-scroll_active = true
+scroll_active = false
 
 [node name="TravelDivider" type="HSeparator" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout"]
 layout_mode = 2
@@ -455,6 +460,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 0
 
 [node name="TravelButtons" type="VBoxContainer" parent="Margin/RootLayout/MainArea/RightPanel/RightMargin/RightLayout/TravelScroll"]
 unique_name_in_owner = true
@@ -481,7 +487,7 @@ scroll_active = true
 
 [node name="ActionDock" type="PanelContainer" parent="Margin/RootLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 142)
+custom_minimum_size = Vector2(0, 176)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleActionDock")
 
@@ -520,11 +526,13 @@ theme_override_colors/default_color = Color(0.78, 0.75, 0.67, 1)
 theme_override_font_sizes/normal_font_size = 13
 bbcode_enabled = true
 fit_content = false
+scroll_active = false
 
 [node name="ActionScroll" type="ScrollContainer" parent="Margin/RootLayout/ActionDock/ActionMargin/ActionLayout"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 0
 
 [node name="ActionButtons" type="FlowContainer" parent="Margin/RootLayout/ActionDock/ActionMargin/ActionLayout/ActionScroll"]
 unique_name_in_owner = true

@@ -47,6 +47,7 @@ var latest_result: Dictionary = {}
 var start_result: Dictionary = {}
 var current_phase_id: String = FIRST_WINTER_PHASE_ID
 var phase_start_transition: Dictionary = {}
+var latest_event_type: String = ""
 
 
 func start(
@@ -76,6 +77,7 @@ func start(
 	current_phase_id = next_phase_id
 	phase_start_transition = transition.duplicate(true)
 	latest_result = {}
+	latest_event_type = ""
 	start_result = start_report.duplicate(true)
 	return start_report
 
@@ -144,6 +146,7 @@ func perform_duty(
 ) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "error": "project_not_ready"}
+	latest_event_type = "duty"
 	latest_result = controller.execute_duty(duty_id, options)
 	return latest_result.duplicate(true)
 
@@ -151,6 +154,7 @@ func perform_duty(
 func resolve_life_incident(response_id: String) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "error": "project_not_ready"}
+	latest_event_type = "incident"
 	latest_result = controller.resolve_life_incident(response_id)
 	return latest_result.duplicate(true)
 
@@ -163,12 +167,14 @@ func purchase_market_offer(
 	if not is_ready():
 		return {"success": false, "error": "project_not_ready"}
 	if controller.has_pending_incident():
+		latest_event_type = "market"
 		latest_result = {
 			"success": false,
 			"error": "life_incident_pending",
 			"blocked_reason": "先回应眼前的途中插曲，再处理补给交易。",
 		}
 		return latest_result.duplicate(true)
+	latest_event_type = "market"
 	var trade: Dictionary = controller.session.execute_market_trade(
 		MARKET_POLICY_ID,
 		{
@@ -202,6 +208,7 @@ func purchase_market_offer(
 func confirm_growth_candidate(candidate_id: String) -> Dictionary:
 	if not is_ready():
 		return {"success": false, "error": "project_not_ready"}
+	latest_event_type = "growth"
 	latest_result = controller.confirm_growth_candidate(candidate_id)
 	if not bool(latest_result.get("success", false)):
 		latest_result["blocked_reason"] = _growth_error_text(latest_result)
@@ -211,6 +218,7 @@ func confirm_growth_candidate(candidate_id: String) -> Dictionary:
 func resolve_milestone() -> Dictionary:
 	if not is_ready():
 		return {"success": false, "error": "project_not_ready"}
+	latest_event_type = "milestone"
 	latest_result = controller.resolve_milestone()
 	return latest_result.duplicate(true)
 
@@ -224,6 +232,7 @@ func save_to_path(path: String, options: Dictionary = {}) -> Dictionary:
 func load_from_path(path: String) -> Dictionary:
 	controller = ControllerModel.new()
 	latest_result = {}
+	latest_event_type = ""
 	var result: Dictionary = controller.load_from_path(path)
 	if (
 		bool(result.get("success", false))
@@ -240,6 +249,10 @@ func load_from_path(path: String) -> Dictionary:
 		current_phase_id = _phase_id_for_project(controller.project_id)
 		phase_start_transition = controller.get_entry_transition()
 		latest_result = controller.latest_result.duplicate(true)
+		if latest_result.has("duty_transaction"):
+			latest_event_type = "duty"
+		elif latest_result.has("incident_transaction"):
+			latest_event_type = "incident"
 	return result
 
 
@@ -271,6 +284,8 @@ func build_view_data() -> Dictionary:
 		"market": _market_view(snapshot),
 		"people": _people_view(snapshot),
 		"actions": _action_rows(),
+		"decision": _decision_view(),
+		"agency": _agency_view(snapshot),
 		"incident": controller.get_pending_incident(),
 		"feedback": _feedback_view(),
 		"history": controller.day_history.duplicate(true),
@@ -326,7 +341,9 @@ func _feature_lines(snapshot: Variant) -> String:
 		)
 		mark_names.append("%s %s（%d）" % [
 			str(definition.get("display_name", mark.get("mark_def_id", ""))),
-			str(mark.get("stage_id", "")),
+			{"noticed": "初显", "ingrained": "固化", "integrated": "融入",
+				"faint": "微弱", "resonant": "共鸣", "forming": "形成中", "hardened": "定型"
+			}.get(str(mark.get("stage_id", "")), "当前阶段"),
 			int(mark.get("progress", 0)),
 		])
 	var trait_names: Array[String] = []
@@ -493,6 +510,13 @@ func _action_rows() -> Array:
 			"label": label,
 			"kind": str(option.get("kind", "值勤")),
 			"hint": hint,
+			"cost": "推进 %d 天" % int(option.get(
+				"calendar_days", controller.get_calendar_days_per_step()
+			)),
+			"known_effect": str(option.get("known_effect", hint)),
+			"tradeoff": str(option.get(
+				"tradeoff", "结算后，其他人物和哨站局势继续自行变化"
+			)),
 			"can_execute": can_execute,
 			"requirements": option.get("requirements", []),
 			"modifier_explanations": option.get("modifier_explanations", []),
@@ -502,7 +526,122 @@ func _action_rows() -> Array:
 	return rows
 
 
+func _decision_view() -> Dictionary:
+	var status: Dictionary = controller.get_status()
+	var stakes: Array[String] = []
+	var values: Dictionary = {}
+	for row: Dictionary in status.get("rows", []):
+		values[str(row.get("key", ""))] = int(row.get("value", 0))
+		if bool(row.get("warning", false)):
+			stakes.append("%s %d / 12" % [row.get("label", ""), row.get("value", 0)])
+	var question := "这一轮先守住补给、防线、同袍，还是自己的体力？"
+	if int(status.get("fatigue", 0)) >= 6:
+		question = "先让身体恢复，还是继续承担一轮重岗？"
+	elif int(values.get("supply", 12)) <= 3:
+		question = "补给正在见底，这一轮先保口粮还是守防线？"
+	elif int(values.get("border_pressure", 0)) >= 8:
+		question = "边境动静逼近，先压住外线还是补内部短板？"
+	return {
+		"question": question,
+		"rule": "每项职责直接列出条件、消耗与影响。只能承担本轮的一项；其余事务由世界和同袍继续处理。",
+		"stakes": stakes,
+	}
+
+
+func _agency_view(snapshot: Variant) -> Dictionary:
+	if latest_result.is_empty() or not bool(latest_result.get("success", false)):
+		return {"has_player_impact": false, "direct_lines": [], "world_lines": []}
+	var direct: Dictionary = latest_result.get(
+		"duty_transaction", latest_result.get("incident_transaction", {})
+	)
+	var direct_lines := _transaction_impact_lines(direct, snapshot)
+	var world_lines := _transaction_impact_lines(
+		latest_result.get("settlement_transaction", {}), snapshot
+	)
+	return {
+		"has_player_impact": true,
+		"direct_lines": direct_lines,
+		"world_lines": world_lines,
+		"npc_reactions": (latest_result.get("npc_narratives", []) as Array).duplicate(true),
+		"status_before": (latest_result.get("status_before", {}) as Dictionary).duplicate(true),
+		"status_after": (latest_result.get("status", {}) as Dictionary).duplicate(true),
+		"calendar_days": maxi(int(latest_result.get("calendar_day_end", 0)) - int(
+			latest_result.get("calendar_day_start", 0)
+		), 0),
+	}
+
+
+func _transaction_impact_lines(transaction: Dictionary, snapshot: Variant) -> Array[String]:
+	var rows: Array[String] = []
+	var labels := {
+		"supply": "补给", "morale": "士气", "discipline": "军纪",
+		"wall_integrity": "哨墙", "border_pressure": "边境压力",
+		"readiness": "战备", "fatigue": "疲劳", "training": "训练",
+		"trust": "信任", "discipline_respect": "军纪认可",
+		"familiarity": "熟悉", "gratitude": "感激",
+	}
+	for change: Dictionary in transaction.get("state_changes", []):
+		var key := str(change.get("key", ""))
+		if not labels.has(key) or not change.has("delta"):
+			continue
+		var name := "你" if str(change.get("entity_id", "")) == "player" else ""
+		if name == "" and str(change.get("entity_id", "")) != "seventh_outpost":
+			name = str(snapshot.get_entity(str(change.get("entity_id", ""))).get(
+				"display_name", "同袍"
+			))
+		rows.append("%s%s %s" % [name, labels[key], _signed_change(change.get("delta", 0))])
+	for change: Dictionary in transaction.get("relationship_changes", []):
+		var name := str(snapshot.get_entity(str(change.get("source_id", ""))).get(
+			"display_name", "同袍"
+		))
+		rows.append("%s%s %s" % [
+			name, labels.get(str(change.get("axis", "")), "关系"),
+			_signed_change(change.get("delta", 0)),
+		])
+	for change: Dictionary in transaction.get("item_changes", []):
+		if str(change.get("operation", "")) == "consume":
+			rows.append("消耗物资 %d 份" % int(change.get("quantity", 1)))
+		elif str(change.get("operation", "")) == "adjust_durability":
+			rows.append("装备耐久 %s" % _signed_change(change.get("delta", 0)))
+	return rows
+
+
+func _signed_change(value: Variant) -> String:
+	var number := float(value)
+	return ("+" if number > 0 else "") + _number_text(number)
+
+
 func _feedback_view() -> Dictionary:
+	var feedback := _base_feedback_view()
+	if not bool(latest_result.get("success", true)):
+		feedback["eyebrow"] = "没有结算 · 世界状态未重复写入"
+		return feedback
+	if latest_result.is_empty():
+		feedback["eyebrow"] = "当前局势 · 世界先于你的选择存在"
+		return feedback
+	feedback["eyebrow"] = {
+		"duty": "你的职责 · 随后世界与人物各自结算",
+		"incident": "你的回应 · 已写回人物与世界",
+		"market": "你的交易 · 库存与价格已经写回",
+		"growth": "你的成长 · 来自已经发生的经历",
+		"milestone": "阶段结算 · 长期事实开始生效",
+	}.get(latest_event_type, "你的选择 · 已写回世界")
+	var risk: Dictionary = latest_result.get("risk_outcome", {})
+	if not risk.is_empty():
+		feedback["eyebrow"] += " · 掷骰 %d / 风险 %d" % [risk.get("roll", 0), risk.get("risk", 0)]
+	var agency := _agency_view(controller.session.get_snapshot())
+	var details: Array = feedback.get("details", [])
+	var direct_lines: Array = agency.get("direct_lines", [])
+	if not direct_lines.is_empty():
+		details.push_front("你的直接影响：%s" % "；".join(direct_lines))
+	var world_lines: Array = agency.get("world_lines", [])
+	if not world_lines.is_empty():
+		details.append("同期世界变化：%s" % "；".join(world_lines))
+	feedback["details"] = details
+	return feedback
+
+
+func _base_feedback_view() -> Dictionary:
 	if latest_result.is_empty():
 		if current_phase_id == SECOND_YEAR_RECEPTION_PHASE_ID:
 			return {

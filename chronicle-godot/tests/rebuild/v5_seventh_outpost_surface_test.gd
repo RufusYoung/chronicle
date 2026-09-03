@@ -125,12 +125,12 @@ func _run() -> void:
 		day_label.text.begins_with("第 3 / 7 天")
 		and feedback_title.text == "雾线外没有脚印"
 		and "今晚少了一块盲区" in feedback_body.text
-		and "掷骰" in feedback_body.text
-		and "上蜡冬衣 -2 风险" in feedback_body.text
+		and "掷骰" in viewer.feedback_eyebrow.text
+		and "上蜡冬衣 -2 风险" in (viewer.get_node("%ResultReceipt") as RichTextLabel).text
 		and "雾线守望" in feature_text.text
 		and "侦察 0级·16经验" in feature_text.text
 		and "第 2 天" in history_text.text
-		and "直接列出条件、消耗与影响" in (
+		and "世界" in (
 			viewer.get_node("%ActionHint") as Label
 		).text
 		and _find_duty_button(action_buttons, "rest_in_infirmary") != null,
@@ -187,7 +187,7 @@ func _run() -> void:
 	_check(
 		"感知 11" in player_text.text
 		and "雾线读迹者" in feature_text.text
-		and "雾线守望 integrated（11）" in feature_text.text
+		and "雾线守望 融入（11）" in feature_text.text
 		and "侦察 2级·60经验" in feature_text.text
 		and "遮光巡灯 52/60 · 1 条履历" in feature_text.text
 		and action_buttons.get_child_count() == 1

@@ -82,7 +82,7 @@ func _run() -> void:
 	_check(
 		"戒备已经没有先前那么重" in feedback_body.text
 		and "随身食物 -1" in feedback_body.text
-		and "感激 +15" in feedback_body.text,
+		and "感激 +15" in (viewer.get_node("%ResultReceipt") as RichTextLabel).text,
 		"8. 结算叙事与关键状态、关系变化一起反馈"
 	)
 	_check(
@@ -90,12 +90,13 @@ func _run() -> void:
 		"9. 陈米不再严重饥饿后，过期的给食物按钮消失"
 	)
 
+	var log_count: int = viewer.view_model.session.get_world_log_entries().size()
 	var stale_result: Dictionary = viewer.perform_action(GIVE_FOOD_ACTION)
 	await process_frame
 	_check(
 		not bool(stale_result.get("success", true))
 		and "局面已经变化" in feedback_body.text
-		and viewer.view_model.session.get_world_log_entries().size() == 1,
+		and viewer.view_model.session.get_world_log_entries().size() == log_count,
 		"10. 旧行动即使被外部重复调用也不会污染世界日志"
 	)
 
@@ -152,7 +153,7 @@ func _run() -> void:
 		and "闻简来找吃的" in feedback_title.text
 		and "北埠旧档房" in feedback_body.text
 		and "north_quay_record_house" not in feedback_body.text
-		and "自行作出的决定" in feedback_body.text,
+		and "自行作出的决定" in (viewer.get_node("%ResultReceipt") as RichTextLabel).text,
 		"15. 需求变化会让异地 NPC 走进当前地点，并说明来意与自主原因"
 	)
 	viewer.advance_time()
@@ -160,8 +161,8 @@ func _run() -> void:
 	_check(
 		_find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) != null
 		and "没买到食物后的求助" in feedback_title.text
-		and "传闻：没买到食物后有人求助" in visible_observations.text
-		and "翻空的食物袋" in visible_observations.text
+		and "传闻：没买到食物后有人求助" in (viewer.get_node("%SceneDetailsRecord") as RichTextLabel).text
+		and "翻空的食物袋" in (viewer.get_node("%SceneDetailsRecord") as RichTextLabel).text
 		and "low" not in feedback_body.text
 		and "medium" not in feedback_body.text,
 		"16. 交易受阻后出现可介入的求助、传闻和现场痕迹"
@@ -185,19 +186,31 @@ func _run() -> void:
 		) == null,
 		"18. 听取后显示完整信息、写入认知并移除同一按钮"
 	)
-	(_find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) as Button).pressed.emit()
+	_check(_find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) == null,
+		"18a. 花时间打听消息时，闻简不会暂停自己的行程等待玩家")
+	viewer.restart_session()
+	for hour: int in 4:
+		viewer.advance_time()
+	await process_frame
+	var help_button := _find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD)
+	_check(help_button != null, "18b. 对照流程先帮助闻简，机会仍在")
+	if help_button == null:
+		viewer.queue_free()
+		_finish()
+		return
+	help_button.pressed.emit()
 	await process_frame
 	_check(
-		"饥饿：缓和" in visible_people.text
+		str(viewer.view_model.session.get_snapshot().get_entity_state(
+			"north_quay_record_keeper", "hunger", "")) == "medium"
 		and _find_action_button(action_buttons, GIVE_WEN_JIAN_FOOD) == null,
 		"19. 玩家介入会缓解闻简的饥饿，并立即移除过期选项"
 	)
-	viewer.advance_time()
-	await process_frame
+	var receipt := viewer.get_node("%ResultReceipt") as RichTextLabel
 	_check(
-		"闻简赶回去做事" in feedback_title.text
-		and "北埠旧档房" in feedback_body.text
-		and "north_quay_record_house" not in feedback_body.text
+		"闻简" in receipt.text
+		and "北埠旧档房" in receipt.text
+		and "north_quay_record_house" not in receipt.text
 		and "闻简" not in visible_people.text,
 		"20. 闻简返岗后离开本地投影，反馈只使用玩家可读地点名"
 	)

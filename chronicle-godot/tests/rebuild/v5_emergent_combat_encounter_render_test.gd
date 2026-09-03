@@ -59,7 +59,7 @@ func _run() -> void:
 	_check(
 		"盐壳獠豕" in visible_observations.text
 		and "前蹄反复刨地" in risk_text.text
-		and "筛出 2 个可用候选" in risk_text.text
+		and "筛出" not in risk_text.text
 		and _all_combat_buttons(action_buttons, BOAR_ID),
 		"3. 界面只显示被导演选中的野兽、证据和三个处理方式"
 	)

@@ -28,6 +28,7 @@ func _run() -> void:
 	var region_status := viewer.get_node("%RegionStatus") as RichTextLabel
 	var feedback_title := viewer.get_node("%FeedbackTitle") as Label
 	var feedback_body := viewer.get_node("%FeedbackBody") as RichTextLabel
+	var receipt := viewer.get_node("%ResultReceipt") as RichTextLabel
 	var knowledge_text := viewer.get_node("%KnowledgeText") as RichTextLabel
 	var history_text := viewer.get_node("%HistoryText") as RichTextLabel
 	var action_buttons := viewer.get_node("%ActionButtons") as FlowContainer
@@ -55,9 +56,9 @@ func _run() -> void:
 	_check(
 		feedback_title.text == "铺子提前收门"
 		and "老陈从后屋拖出门板" in feedback_body.text
-		and "粮食压力继续上升" in feedback_body.text
-		and "老陈根据当前处境自行作出的决定" in feedback_body.text
-		and "陈米仍在挨饿" in feedback_body.text,
+		and "粮食压力继续上升" in receipt.text
+		and "老陈根据当前处境自行作出的决定" in receipt.text
+		and "陈米仍在挨饿" in receipt.text,
 		"5. 玩家在现场收到世界自主变化的叙事和原因"
 	)
 	_check(
@@ -105,15 +106,13 @@ func _run() -> void:
 	if give_food_button != null:
 		give_food_button.pressed.emit()
 		await process_frame
-		wait_button.pressed.emit()
-		await process_frame
 		_check(
 			"11:00" in time_label.text
-			and feedback_title.text == "门板留在后屋"
-			and "决定再做一阵生意" in feedback_body.text
-			and "陈米的饥饿已经缓和" in feedback_body.text
+			and "门板" in (viewer.get_node("%DecisionSituation") as RichTextLabel).text
+			and "决定再做一阵生意" in receipt.text
+			and "陈米的饥饿已经缓和" in receipt.text
 			and "半掩的门板" not in observations.text,
-			"12. 同一次等待会因共享状态不同而呈现继续营业"
+			"12. 同样经过一小时，给食物改变了老陈读取的处境并促成继续营业"
 		)
 		_check(
 			viewer.view_model.session.stores["fact_store"]

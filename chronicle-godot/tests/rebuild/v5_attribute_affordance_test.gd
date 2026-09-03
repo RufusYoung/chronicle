@@ -159,7 +159,7 @@ func _run() -> void:
 	charisma_button.pressed.emit()
 	await process_frame
 	_check(
-		"魅力 6，满足行动要求 6" in feedback_body.text
+		"魅力 6，满足行动要求 6" in (viewer.get_node("%ResultReceipt") as RichTextLabel).text
 		and _find_action_button(action_buttons, CHARISMA_ACTION) == null
 		and int(relationship_store.get_relation(
 			"chen_mi", "player", "debt", 0

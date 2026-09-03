@@ -36,6 +36,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	root.content_scale_size = Vector2i(1280, 720)
 	viewer = (load(VIEWER_SCENE) as PackedScene).instantiate()
 	root.add_child(viewer)
 	await process_frame
@@ -46,12 +47,9 @@ func _run() -> void:
 		and _find_button("%TravelButtons", "route_id", GRANARY_OUTBOUND) == null,
 		"1. The first screen has safe resources and no premature granary shortcut"
 	)
-	var center := viewer.get_node(
-		"Margin/RootLayout/MainArea/CenterPanel/CenterMargin/CenterLayout"
-	)
 	_check(
-		center.get_node("FeedbackPanel").get_index()
-			< center.get_node("PeopleHeading").get_index(),
+		(viewer.get_node("%FeedbackBody") as Control).get_global_rect().end.y
+			<= (viewer.get_node("%VisiblePeople") as Control).get_global_rect().position.y,
 		"2. Immediate feedback sits above secondary scene details"
 	)
 
@@ -85,7 +83,7 @@ func _run() -> void:
 		and not granary_button.disabled
 		and _find_button("%ActionButtons", "action_id", READ_NOTICE) == null
 		and _find_button("%ActionButtons", "action_id", SHOP_TRACE) == null
-		and "已经读过" in _text("%VisibleObservations")
+		and "已经读过" in _text("%SceneDetailsRecord")
 		and "已经检查" in _text("%VisibleObservations"),
 		"5. Two specific observations unlock travel and then disappear"
 	)
@@ -141,7 +139,7 @@ func _run() -> void:
 		"验粮吏陆槐" in _text("%FeedbackBody")
 		and "北埠档房移存" in _text("%FeedbackBody")
 		and "验粮吏陆槐" in _text("%KnowledgeText")
-		and "已经读过" in _text("%VisibleObservations")
+		and "已经读过" in _text("%SceneDetailsRecord")
 		and _find_button("%ActionButtons", "action_id", READ_TAX_DEED) == null,
 		"10. Reading exposes the actual clue, records it, and removes the choice"
 	)
@@ -164,7 +162,6 @@ func _run() -> void:
 		"12. Re-clicking the spent favor cannot duplicate facts or history"
 	)
 
-	await _press_action(WAIT_FOR_FERRY)
 	var ferry_button := _find_button(
 		"%TravelButtons",
 		"route_id",
@@ -172,11 +169,10 @@ func _run() -> void:
 	)
 	_check(
 		int(viewer.view_model.session.get_time_summary().get("hour", -1)) == 6
-		and "第一班摆渡已经开始载客" in _text("%FeedbackBody")
 		and ferry_button != null
 		and not ferry_button.disabled
 		and _find_button("%ActionButtons", "action_id", WAIT_FOR_FERRY) == null,
-		"13. One rest action advances to 06:00 and opens the ferry"
+		"13. Earlier conversations consume time: by 06:00 the ferry opens without an extra waiting step"
 	)
 	var stale_wait: Dictionary = viewer.wait_until_north_quay_ferry()
 	_check(
@@ -223,7 +219,7 @@ func _run() -> void:
 	_check(
 		"掷骰" in _text("%FeedbackBody")
 		and "耐久降至" in _text("%FeedbackBody")
-		and "原来的三个选择已从行动栏撤下" in _text("%FeedbackBody")
+		and "原来的三个选择已从行动栏撤下" in _text("%ResultReceipt")
 		and viewer.view_model.session.get_combat_encounter_options().is_empty(),
 		"17a. A real encounter explains its result and consumes every approach"
 	)
@@ -305,9 +301,44 @@ func _press(container_path: String, meta_key: String, meta_value: String) -> voi
 	)
 	if button == null or button.disabled:
 		return
+	if container_path == "%ActionButtons":
+		var next := viewer.get_node("%NextActions") as Button
+		var previous := viewer.get_node("%PreviousActions") as Button
+		while not previous.disabled:
+			previous.pressed.emit()
+		while not button.is_visible_in_tree() and not next.disabled:
+			next.pressed.emit()
+		for frame: int in 4:
+			await process_frame
+	_check(button.is_visible_in_tree(), "Choice is reachable on a visible page: %s" % meta_value)
 	button.pressed.emit()
-	await process_frame
-	await process_frame
+	for frame: int in 4:
+		await process_frame
+	var layout_errors: Array[String] = []
+	_audit_layout(viewer, layout_errors)
+	_check(layout_errors.is_empty(), "Layout after %s: %s" % [meta_value, "; ".join(layout_errors)])
+	if not layout_errors.is_empty() and DisplayServer.get_name() != "headless":
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
+		root.get_texture().get_image().save_png("user://tests/agency_route_%d.png" % failures.size())
+	if DisplayServer.get_name() != "headless" and meta_value in [
+		READ_TAX_DEED, ARCHIVE_TIDE, WELL_WARNING, WELL_RETURN]:
+		var name: String = {READ_TAX_DEED: "tax_deed", ARCHIVE_TIDE: "archive_risk",
+			WELL_WARNING: "well_risk", WELL_RETURN: "return"}[meta_value]
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
+		root.get_texture().get_image().save_png("user://tests/agency_playthrough_%s.png" % name)
+
+
+func _audit_layout(node: Node, errors: Array[String]) -> void:
+	if node is Control and not node.is_visible_in_tree():
+		return
+	if node is RichTextLabel:
+		if node.scroll_active or node.get_content_height() > node.size.y + 2:
+			errors.append("clipped_or_scroll:%s" % node.name)
+	if node is RichTextLabel or node is Button:
+		if not Rect2(Vector2.ZERO, root.get_visible_rect().size).grow(1).encloses(node.get_global_rect()):
+			errors.append("outside_viewport:%s" % node.name)
+	for child: Node in node.get_children():
+		_audit_layout(child, errors)
 
 
 func _find_button(

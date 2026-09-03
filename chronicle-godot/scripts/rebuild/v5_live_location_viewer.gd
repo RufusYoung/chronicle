@@ -4,10 +4,15 @@ class_name V5LiveLocationViewer
 const ViewModelModel = preload(
 	"res://scripts/rebuild/v5_live_location_view_model.gd"
 )
+const SharedInterfaceStyle = preload(
+	"res://scripts/rebuild/v5_shared_interface_style.gd"
+)
+const SharedSurface = preload("res://scripts/rebuild/v5_shared_world_surface.gd")
 
 var view_model: Variant = null
 var current_view_data: Dictionary = {}
 var _playtest_end_state := ""
+var surface: Dictionary = {}
 
 @onready var location_title: Label = %LocationTitle
 @onready var location_context: Label = %LocationContext
@@ -19,6 +24,7 @@ var _playtest_end_state := ""
 @onready var region_status: RichTextLabel = %RegionStatus
 @onready var visible_people: RichTextLabel = %VisiblePeople
 @onready var visible_observations: RichTextLabel = %VisibleObservations
+@onready var knowledge_heading: Label = %KnowledgeHeading
 @onready var knowledge_text: RichTextLabel = %KnowledgeText
 @onready var chronicle_heading: Label = %ChronicleHeading
 @onready var chronicle_text: RichTextLabel = %ChronicleText
@@ -28,12 +34,14 @@ var _playtest_end_state := ""
 @onready var travel_scroll: ScrollContainer = %TravelScroll
 @onready var travel_buttons: VBoxContainer = %TravelButtons
 @onready var feedback_title: Label = %FeedbackTitle
+@onready var feedback_eyebrow: Label = %FeedbackEyebrow
 @onready var feedback_body: RichTextLabel = %FeedbackBody
 @onready var history_text: RichTextLabel = %HistoryText
 @onready var action_heading: Label = %ActionHeading
 @onready var action_hint: Label = %ActionHint
 @onready var investigation_bar: RichTextLabel = %InvestigationBar
 @onready var action_buttons: FlowContainer = %ActionButtons
+@onready var action_dock: PanelContainer = %ActionDock
 @onready var time_label: Label = %TimeLabel
 @onready var session_label: Label = %SessionLabel
 @onready var brand_subtitle: Label = %BrandSubtitle
@@ -47,6 +55,18 @@ var _playtest_end_state := ""
 
 func _ready() -> void:
 	view_model = ViewModelModel.new()
+	surface = SharedSurface.install(self, $Margin/RootLayout,
+		$Margin/RootLayout/MainArea, action_dock, {
+		"scene": [location_title, location_context, location_description],
+		"feedback": [feedback_eyebrow, feedback_title, feedback_body],
+		"people": [visible_people.get_parent().get_node("PeopleHeading"), visible_people],
+		"observations": [visible_observations.get_parent().get_node("ObservationHeading"), visible_observations],
+		"decision": [goal_progress, goal_title, goal_summary, risk_heading, risk_text, travel_heading, travel_scroll],
+		"character": [[player_summary.get_parent().get_node("PlayerHeading"), player_summary]],
+		"records": [region_status.get_parent().get_node("RegionHeading"), region_status,
+			knowledge_heading, knowledge_text, chronicle_heading, chronicle_text,
+			history_text.get_parent().get_node("HistoryHeading"), history_text],
+	})
 	wait_button.pressed.connect(advance_time)
 	restart_button.pressed.connect(_request_restart)
 	restart_dialog.confirmed.connect(restart_session)
@@ -125,6 +145,7 @@ func refresh_view() -> void:
 	var location: Dictionary = current_view_data.get("location", {})
 	location_title.text = str(location.get("title", "未知地点"))
 	location_context.text = str(location.get("context", ""))
+	location_context.hide()
 	location_description.text = str(location.get("description", ""))
 	var playtest: Dictionary = current_view_data.get("playtest", {})
 	match str(playtest.get("mode", "")):
@@ -148,15 +169,25 @@ func refresh_view() -> void:
 	)
 	visible_people.text = _format_entity_rows(
 		current_view_data.get("visible_people", []) as Array,
-		"这里没有值得留意的人。"
+		"这里没有值得留意的人。", true
 	)
 	visible_observations.text = _format_entity_rows(
 		current_view_data.get("visible_observations", []) as Array,
-		"眼前没有明显的物件或痕迹。"
+		"眼前没有明显的物件或痕迹。", true
 	)
-	knowledge_text.text = _format_bullets(
-		current_view_data.get("knowledge", []) as Array
-	)
+	(surface["scene_record"] as RichTextLabel).text = "%s\n%s\n\n[b]在场的人[/b]\n%s\n\n[b]进入视线的东西[/b]\n%s" % [
+		location_title.text + " · " + location_context.text, location_description.text,
+		_format_entity_rows(current_view_data.get("visible_people", []), "此处无人"),
+		_format_entity_rows(current_view_data.get("visible_observations", []), "没有明显痕迹"),
+	]
+	knowledge_heading.text = "已经确认的事"
+	knowledge_text.text = _format_bullets(current_view_data.get("knowledge", []))
+	(surface["situation"] as RichTextLabel).text = "[b]随身[/b] 食物 %d · 健康 %d · 疲劳 %d/10\n%s" % [
+		player.get("food_count", 0), player.get("health", 100), player.get("fatigue", 0),
+		_format_decision_context(
+		current_view_data.get("decision", {}) as Dictionary,
+		current_view_data.get("agency", {}) as Dictionary
+	)]
 	_refresh_chronicle(
 		current_view_data.get("chronicle", {}) as Dictionary
 	)
@@ -166,7 +197,10 @@ func refresh_view() -> void:
 	_refresh_risk(current_view_data.get("risk", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []) as Array)
-	_refresh_actions(current_view_data.get("actions", []) as Array)
+	_refresh_actions(
+		current_view_data.get("actions", []) as Array,
+		current_view_data.get("decision", {}) as Dictionary
+	)
 	_refresh_travel_options(
 		current_view_data.get("travel_options", []) as Array
 	)
@@ -203,10 +237,7 @@ func _refresh_playtest(playtest: Dictionary) -> void:
 		]
 		session_label.text = "● 试玩进行中"
 	goal_title.text = str(playtest.get("title", "当前目标"))
-	goal_summary.text = "%s\n[color=#8f9c98]%s[/color]" % [
-		str(playtest.get("summary", "")),
-		str(playtest.get("hint", "")),
-	]
+	goal_summary.text = str(playtest.get("summary", ""))
 	goal_progress.add_theme_color_override(
 		"font_color",
 		accent_color
@@ -247,7 +278,7 @@ func _enter_seventh_outpost() -> void:
 	)
 
 
-func _refresh_actions(actions: Array) -> void:
+func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 	_clear_children(action_buttons)
 	var executable_count := 0
 	for action_value: Variant in actions:
@@ -266,35 +297,52 @@ func _refresh_actions(actions: Array) -> void:
 		if combat_active
 		else "让世界时间推进一小时。"
 	)
-	action_heading.text = (
-		"眼前的遭遇　选择 1 种处理方式"
+	action_heading.text = str(decision.get(
+		"question",
+		"眼前的遭遇，选一种处理方式。"
 		if combat_active
-		else "此刻可做　%d 项" % executable_count
-	)
+		else "你愿意先把时间用在哪里？"
+	))
+	action_heading.text += "　%d 项可选" % executable_count
 	if blocked_count > 0:
 		action_heading.text += "　·　受限 %d 项" % blocked_count
-	action_hint.text = (
-		"三个选择只会结算一个。按钮已写明最低骰点；移入或聚焦可查看有效数值、装备修正和失败代价。"
-		if combat_active
-		else (
-			"把鼠标移到选择上，先看清它会做什么。执行后，完成的调查会从这里消失。"
-			if not actions.is_empty()
-			else "这里暂时没有可执行的现场行动。查看当前目标或可前往的地点。"
-		)
+	action_hint.text = str(decision.get(
+		"rule",
+		"只结算一个选择；行动期间，其他人物和局势不会暂停。"
+	)) if not actions.is_empty() else (
+		"这里暂时没有可执行的现场行动。比较当前局势和可前往地点。"
 	)
+	action_dock.custom_minimum_size.y = 0
 	for action_value: Variant in actions:
 		var action := action_value as Dictionary
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(
-			270 if str(action.get("event_type", "")) == "combat_encounter" else 210,
-			52 if str(action.get("event_type", "")) == "combat_encounter" else 48
-		)
-		button.text = str(action.get("label", "采取行动"))
+		button.custom_minimum_size = Vector2(SharedSurface.action_width(self, actions.size()), 86)
 		var kind := str(action.get("kind", "行动"))
 		var hint := str(action.get("hint", ""))
-		button.tooltip_text = "%s：%s" % [
+		var cost := str(action.get("cost", "花费 1 小时"))
+		var known_effect := str(action.get(
+			"known_effect", "让当前人物与局面产生一次结算"
+		))
+		var tradeoff := str(action.get(
+			"tradeoff", "这段时间里，世界仍会继续运行"
+		))
+		var caption := str(action.get("label", "采取行动"))
+		if str(action.get("event_type", "")) == "challenge":
+			caption = caption.trim_suffix("%d小时" % int(action.get("hours", 1))).strip_edges()
+		button.text = "%s　[%s]\n%s\n取舍：%s" % [
+			caption,
+			cost,
+			known_effect,
+			tradeoff,
+		]
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.add_theme_font_size_override("font_size", 13)
+		button.tooltip_text = "%s：%s\n花费：%s\n取舍：%s" % [
 			kind,
 			hint,
+			cost,
+			tradeoff,
 		]
 		button.mouse_entered.connect(_show_action_hint.bind(kind, hint))
 		button.focus_entered.connect(_show_action_hint.bind(kind, hint))
@@ -352,6 +400,7 @@ func _refresh_actions(actions: Array) -> void:
 					)
 				)
 		action_buttons.add_child(button)
+	SharedSurface.paginate_actions(surface, self, action_buttons)
 
 
 func _show_action_hint(kind: String, hint: String) -> void:
@@ -359,24 +408,22 @@ func _show_action_hint(kind: String, hint: String) -> void:
 
 
 func _restore_action_hint() -> void:
-	var actions: Array = current_view_data.get("actions", [])
-	if (
-		not actions.is_empty()
-		and str((actions[0] as Dictionary).get("event_type", ""))
-			== "combat_encounter"
-	):
-		action_hint.text = "三个选择只会结算一个；先比较最低骰点、装备修正和失败代价。"
-		return
-	action_hint.text = "选择一个行动查看说明；完成的调查不会继续占着选项栏。"
+	var decision: Dictionary = current_view_data.get("decision", {})
+	action_hint.text = str(decision.get(
+		"rule", "行动期间，其他人物和世界局势不会暂停。"
+	))
 
 
 func _refresh_investigation(investigation: Dictionary) -> void:
 	var active := bool(investigation.get("active", false))
-	action_hint.visible = not active
-	investigation_bar.visible = active
+	action_hint.visible = true
+	investigation_bar.visible = false
 	if not active:
 		investigation_bar.text = ""
 		return
+	goal_title.text = "可追查：%s" % str(investigation.get("title", ""))
+	goal_summary.text = "%s\n%s" % [
+		str(investigation.get("status", "")), str(investigation.get("summary", ""))]
 	investigation_bar.text = "[color=#d6b66e][b]调查方向　%s[/b][/color]　%s\n[color=#8f9c98]%s[/color]" % [
 		str(investigation.get("title", "")),
 		str(investigation.get("status", "")),
@@ -403,49 +450,52 @@ func _refresh_chronicle(chronicle: Dictionary) -> void:
 
 func _refresh_risk(risk: Dictionary) -> void:
 	var active := bool(risk.get("active", false))
-	var compact := active and chronicle_heading.visible
+	goal_progress.visible = not active
+	goal_title.visible = not active
+	goal_summary.visible = not active
 	risk_heading.visible = active
 	risk_text.visible = active
-	_refresh_right_panel_density(compact)
+	_refresh_right_panel_density()
 	if not active:
 		risk_text.text = ""
 		return
 	risk_heading.text = str(risk.get("title", "眼前的风险"))
-	if compact:
-		risk_text.text = "[color=#d1b76f]%s[/color]\n%s\n%s\n[color=#b8a8a0]%s[/color]" % [
-			str(risk.get("check_text", "")),
-			str(risk.get("description", "")),
-			str(risk.get("preparation_text", "")),
-			str(risk.get("failure_hint", "")),
-		]
-	else:
-		risk_text.text = "%s\n[color=#d1b76f]%s[/color]\n%s\n[color=#b8a8a0]%s[/color]" % [
-			str(risk.get("description", "")),
-			str(risk.get("check_text", "")),
-			str(risk.get("preparation_text", "")),
-			str(risk.get("failure_hint", "")),
-		]
+	risk_text.text = "[color=#d1b76f]%s[/color]\n%s\n[color=#b8a8a0]%s[/color]" % [
+		str(risk.get("check_text", "")), str(risk.get("preparation_text", "")),
+		str(risk.get("failure_hint", "")),
+	]
+	var evidence := str(risk.get("decision_evidence", ""))
+	if evidence != "":
+		risk_text.text = evidence + "\n" + risk_text.text
+	(surface["scene_record"] as RichTextLabel).text += "\n\n[b]风险依据[/b]\n%s\n%s" % [
+		str(risk.get("description", "")), risk_text.text,
+	]
 
 
-func _refresh_right_panel_density(compact: bool) -> void:
-	chronicle_text.custom_minimum_size.y = 58.0 if compact else 112.0
-	risk_text.custom_minimum_size.y = 64.0 if compact else 108.0
-	history_text.custom_minimum_size.y = 96.0 if compact else 132.0
+func _refresh_right_panel_density() -> void:
+	chronicle_text.custom_minimum_size.y = 0
+	risk_text.custom_minimum_size.y = 0
+	history_text.custom_minimum_size.y = 0
 
 
 func _refresh_travel_options(options: Array) -> void:
 	_clear_children(travel_buttons)
 	travel_heading.text = "可以前往　%d 处" % options.size()
-	travel_scroll.custom_minimum_size.y = mini(
-		maxi(options.size(), 1) * 48,
-		150
-	)
+	travel_scroll.custom_minimum_size.y = 0
+	travel_heading.visible = not options.is_empty()
+	travel_scroll.visible = not options.is_empty()
 	for option_value: Variant in options:
 		var option := option_value as Dictionary
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(0, 42)
+		button.custom_minimum_size = Vector2(0, 44)
 		button.text = str(option.get("label", "前往新的地点"))
-		button.tooltip_text = str(option.get("hint", ""))
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.add_theme_font_size_override("font_size", 12)
+		button.tooltip_text = "%s\n取舍：%s" % [
+			str(option.get("hint", "")),
+			str(option.get("tradeoff", "路上世界照常变化")),
+		]
 		button.disabled = not bool(option.get("can_travel", false))
 		button.set_meta("route_id", str(option.get("route_id", "")))
 		_apply_action_button_style(button, "travel")
@@ -456,15 +506,10 @@ func _refresh_travel_options(options: Array) -> void:
 
 
 func _refresh_feedback(feedback: Dictionary) -> void:
+	feedback_eyebrow.text = str(feedback.get("eyebrow", "当前局势"))
 	feedback_title.text = str(feedback.get("title", "局面"))
-	var lines: Array[String] = [str(feedback.get("body", ""))]
-	var details: Array = feedback.get("details", [])
-	if not details.is_empty():
-		lines.append("")
-		for detail: Variant in details:
-			lines.append("• %s" % str(detail))
-	feedback_body.text = "\n".join(lines)
-	feedback_body.scroll_to_line(0)
+	SharedSurface.update_receipt(surface, feedback)
+	feedback_body.text = SharedSurface.compact_feedback(feedback, 2)
 
 
 func _refresh_history(history: Array) -> void:
@@ -473,17 +518,28 @@ func _refresh_history(history: Array) -> void:
 		history_text.text = "还没有发生行动。"
 		return
 	var rows: Array[String] = []
-	var first_index := maxi(history.size() - 3, 0)
+	var first_index := 0
 	for item_value: Variant in history.slice(first_index):
 		var item := item_value as Dictionary
 		var narrative := str(item.get("narrative", ""))
 		if narrative == "":
 			narrative = "局面已经更新。"
-		rows.append("[b]%02d　%s[/b]\n[color=#8f9c98]%s[/color]" % [
+		var cause_label := (
+			"你的选择"
+			if str(item.get("cause_kind", "player")) == "player"
+			else "世界自行发生"
+		)
+		rows.append("[color=#718b84]%s[/color]　[b]%02d　%s[/b]\n[color=#8f9c98]%s[/color]" % [
+			cause_label,
 			int(item.get("index", 0)),
 			str(item.get("label", "行动")),
 			narrative,
 		])
+		var impact: Dictionary = item.get("impact", {})
+		if not impact.is_empty():
+			rows.append("行动结算：%s" % "；".join(impact.get("details", [])))
+			if str(impact.get("world_summary", "")) != "":
+				rows.append("同期世界变化：%s" % impact.get("world_summary", ""))
 	history_text.text = "\n\n".join(rows)
 
 
@@ -491,76 +547,71 @@ func _format_status_rows(rows: Array) -> String:
 	var output: Array[String] = []
 	for row_value: Variant in rows:
 		var row := row_value as Dictionary
-		output.append("[b]%s　%s[/b]\n[color=#9aa6a3]%s[/color]" % [
+		output.append("[b]%s　%s[/b]　[color=#9aa6a3]%s[/color]" % [
 			str(row.get("label", "状态")),
 			str(row.get("value", "")),
-			str(row.get("detail", "")),
+			str(row.get("detail", "")).replace("\n", " "),
 		])
-	return "\n\n".join(output)
+	return "\n".join(output)
 
 
-func _format_entity_rows(rows: Array, empty_text: String) -> String:
+func _format_entity_rows(rows: Array, empty_text: String, compact: bool = false) -> String:
 	if rows.is_empty():
 		return empty_text
 	var output: Array[String] = []
-	for row_value: Variant in rows:
+	var display_rows: Array = []
+	if compact:
+		for priority: int in 3:
+			for row: Dictionary in rows:
+				if int(row.get("surface_priority", 0)) == priority:
+					display_rows.append(row)
+		display_rows = display_rows.slice(0, 4)
+	else:
+		display_rows = rows
+	for row_value: Variant in display_rows:
 		var row := row_value as Dictionary
 		var text := "[b]%s[/b]" % str(row.get("name", "未命名"))
 		var state_text := str(row.get("state_text", ""))
 		if state_text != "":
 			text += "　[color=#d7b86e]%s[/color]" % state_text
 		var description := str(row.get("description", ""))
-		if description != "":
-			text += "\n[color=#aeb6b3]%s[/color]" % description
+		if description != "" and not compact:
+			text += "　[color=#aeb6b3]%s[/color]" % description
 		output.append(text)
-	return "\n\n".join(output)
+	if compact and rows.size() > 4:
+		output.append("[color=#8f9c98]另有 %d 项现场信息，完整内容见「记录」。[/color]" % (rows.size() - 4))
+	return "\n".join(output)
 
 
 func _format_bullets(rows: Array) -> String:
 	var output: Array[String] = []
 	for row: Variant in rows:
 		output.append("• %s" % str(row))
-	return "\n\n".join(output)
+	return "\n".join(output)
+
+
+func _format_decision_context(
+		decision: Dictionary,
+		agency: Dictionary
+) -> String:
+	var rows: Array[String] = []
+	var stakes: Array = decision.get("stakes", [])
+	if not stakes.is_empty():
+		rows.append("[color=#d1b76f][b]眼前要紧[/b][/color]　%s" % (
+			"；".join(stakes)
+		))
+	var world_summary := str(agency.get("world_summary", ""))
+	if world_summary != "":
+		var first_event := world_summary.split(" | ")[0]
+		rows.append("[b]%s[/b] %s" % [
+			"世界自行发生" if str(agency.get("world_kind", "")) == "independent" else "行动期间",
+			first_event,
+		])
+	return "\n".join(rows)
 
 
 func _apply_action_button_style(button: Button, action_type: String) -> void:
-	var accent := Color("#a98452")
-	if action_type == "dialogue":
-		accent = Color("#668c91")
-	elif action_type == "clue":
-		accent = Color("#8a7450")
-	elif action_type == "relationship":
-		accent = Color("#8c6477")
-	elif action_type == "travel":
-		accent = Color("#6f8264")
-	elif action_type == "preparation":
-		accent = Color("#6e8392")
-	elif action_type == "danger":
-		accent = Color("#9b5d4f")
-	elif action_type == "retreat":
-		accent = Color("#6e8392")
-	elif action_type == "relic":
-		accent = Color("#a57b4d")
-	elif action_type == "investigation":
-		accent = Color("#b18146")
-	elif action_type == "life":
-		accent = Color("#71836d")
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color("#222a2b")
-	normal.border_color = accent
-	normal.set_border_width_all(1)
-	normal.set_corner_radius_all(4)
-	normal.content_margin_left = 12.0
-	normal.content_margin_right = 12.0
-	var hover := normal.duplicate()
-	hover.bg_color = Color("#303a3a")
-	hover.border_color = accent.lightened(0.2)
-	var pressed := normal.duplicate()
-	pressed.bg_color = Color("#171d1e")
-	button.add_theme_stylebox_override("normal", normal)
-	button.add_theme_stylebox_override("hover", hover)
-	button.add_theme_stylebox_override("pressed", pressed)
-	button.add_theme_color_override("font_color", Color("#e9e3d5"))
+	SharedInterfaceStyle.apply_decision_button(button, action_type)
 
 
 func _show_load_error(message: String) -> void:

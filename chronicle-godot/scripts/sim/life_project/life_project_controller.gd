@@ -244,6 +244,14 @@ func get_duty_options() -> Array:
 			"label": str(duty.get("label", "承担值勤")),
 			"kind": str(duty.get("kind", "值勤")),
 			"hint": str(duty.get("hint", "")),
+			"calendar_days": get_calendar_days_per_step(),
+			"known_effect": str(duty.get(
+				"known_effect", duty.get("hint", "改变当前局势")
+			)),
+			"tradeoff": str(duty.get(
+				"tradeoff",
+				"结算后，补给、边境压力与其他人物仍按各自规则变化"
+			)),
 			"can_execute": bool(eligibility.get("can_execute", true)),
 			"blocked_reason": str(eligibility.get("blocked_reason", "")),
 			"requirements": eligibility.get("requirements", []),
@@ -277,6 +285,7 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	var day := get_day()
 	var calendar_day_start := int(session.current_day)
 	var calendar_days := get_calendar_days_per_step()
+	var status_before := get_status()
 	var tick_event := _day_tick_event(day, calendar_days)
 	var tick_validation: Dictionary = TickEventSchemaModel.new().validate(
 		tick_event
@@ -327,6 +336,7 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 	session.stores["state_store"].set_state(
 		"player", "service_day", next_day
 	)
+	var status_after := get_status()
 	var row := {
 		"day": day,
 		"progress_unit_label": get_progress_unit_label(),
@@ -346,7 +356,11 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 			tick_result.get("observed_autonomous_decisions", []) as Array
 		).duplicate(true),
 		"npc_narratives": _observed_npc_narratives(tick_result),
-		"status": get_status(),
+		"status_before": status_before.duplicate(true),
+		"status": status_after.duplicate(true),
+		"duty_transaction": duty_result.to_dict(),
+		"settlement_transaction": settlement_result.to_dict(),
+		"tick_result": tick_result.duplicate(true),
 	}
 	day_history.append(row)
 	var queued_incident := _try_queue_life_incident(duty, day, options)
@@ -363,7 +377,11 @@ func execute_duty(duty_id: String, options: Dictionary = {}) -> Dictionary:
 		"risk_outcome": row["risk_outcome"],
 		"settlement_notes": row["settlement_notes"],
 		"npc_narratives": row["npc_narratives"],
+		"status_before": row["status_before"],
 		"status": row["status"],
+		"duty_transaction": row["duty_transaction"],
+		"settlement_transaction": row["settlement_transaction"],
+		"tick_result": row["tick_result"],
 		"complete": is_complete(),
 		"completion": get_completion_summary(),
 		"incident_pending": not queued_incident.is_empty(),
@@ -433,6 +451,7 @@ func resolve_life_incident(response_id: String) -> Dictionary:
 		))
 		return blocked
 	var story_role := str(incident.get("story_role", "incidental"))
+	var status_before := get_status()
 	var effects: Dictionary = response.get("effects", {}).duplicate(true)
 	if story_role == "incidental" and not _incidental_effects_are_bounded(effects):
 		return _failure("incidental_effect_opens_storyline")
@@ -524,7 +543,9 @@ func resolve_life_incident(response_id: String) -> Dictionary:
 			response.get("outcome_notes", []) as Array
 		).duplicate(true),
 		"npc_narratives": [],
+		"status_before": status_before.duplicate(true),
 		"status": get_status(),
+		"incident_transaction": result.to_dict(),
 		"complete": is_complete(),
 		"completion": get_completion_summary(),
 		"base_values": {},
