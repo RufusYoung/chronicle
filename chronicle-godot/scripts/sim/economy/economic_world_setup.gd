@@ -52,6 +52,17 @@ static func configure_fixture(source: Dictionary) -> Dictionary:
 			if str(entity.get("type", "")) != "institution" or str(entity.get("settlement_id", "")) != manager:
 				continue
 			var organization := str(entity["id"])
+			var organization_states: Dictionary = entity.get("states", {})
+			organization_states.merge({
+				"economic_contract_version": 1,
+				"procurement_spending_limit": maxi(int(config.get(
+					"organization_procurement_limit", 5
+				)), 0),
+				"procurement_treasury_reserve": maxi(int(config.get(
+					"organization_treasury_reserve", 2
+				)), 0),
+			}, true)
+			entity["states"] = organization_states
 			var grant_id := "fact.resource_access." + organization + ".initial"
 			var authorized: Array = []
 			for stock: Dictionary in stocks:

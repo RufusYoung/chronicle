@@ -44,6 +44,9 @@ const SettlementCapacityAdaptationSystemModel = preload(
 const IndustryLifecycleSystemModel = preload(
 	"res://scripts/sim/settlement/industry_lifecycle_system.gd"
 )
+const LocalProcurementSystemModel = preload(
+	"res://scripts/sim/economy/local_procurement_system.gd"
+)
 const OrganizationRuntimeSystemModel = preload(
 	"res://scripts/sim/organization/organization_runtime_system.gd"
 )
@@ -430,6 +433,22 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			writer.apply_results(industry_results, stores)
 			network_results.append_array(industry_results)
 			network_events.append_array(industry_data.get("events", []))
+
+			var procurement_snapshot = snapshot_builder.build_snapshot(
+				context, stores, true
+			)
+			var procurement_data: Dictionary = (
+				LocalProcurementSystemModel.new().resolve_daily_tick(
+					procurement_snapshot,
+					round_event,
+					settlement_network_config,
+					stores
+				)
+			)
+			var procurement_results: Array = procurement_data.get("results", [])
+			writer.apply_results(procurement_results, stores)
+			network_results.append_array(procurement_results)
+			network_events.append_array(procurement_data.get("events", []))
 
 			var migration_snapshot = snapshot_builder.build_snapshot(
 				context, stores, true

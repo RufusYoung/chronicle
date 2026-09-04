@@ -1,0 +1,64 @@
+{
+  "date": "2026-09-04",
+  "scope": "W1-B local rope procurement",
+  "result": "pass",
+  "totals": {
+    "passed": 122,
+    "total": 122,
+    "failed": 0
+  },
+  "suites": [
+    {
+      "name": "non_render",
+      "passed": 106,
+      "total": 106,
+      "seconds": 2742.64
+    },
+    {
+      "name": "real_render",
+      "passed": 15,
+      "total": 15,
+      "seconds": 526.64
+    },
+    {
+      "name": "three_seed_30_day_health",
+      "passed": 1,
+      "total": 1,
+      "seconds": 3955.86,
+      "simulation_hours": 2160,
+      "injected_behavior_count": 0
+    }
+  ],
+  "natural_procurement": [
+    {
+      "seed": 81001,
+      "quantity": 1,
+      "coins_spent": 5,
+      "buyer_id": "generated_organization.reed_bay.provision_circle",
+      "seller_id": "generated_resident.reed_bay.002",
+      "route_id": "reed_bay_river_steps",
+      "currency_total": 440,
+      "initial_currency_total": 440
+    },
+    {
+      "seed": 82002,
+      "quantity": 1,
+      "coins_spent": 5,
+      "buyer_id": "generated_organization.reed_bay.provision_circle",
+      "seller_id": "generated_resident.reed_bay.001",
+      "route_id": "reed_bay_river_steps",
+      "currency_total": 432,
+      "initial_currency_total": 432
+    },
+    {
+      "seed": 83003,
+      "quantity": 1,
+      "coins_spent": 5,
+      "buyer_id": "generated_organization.reed_bay.provision_circle",
+      "seller_id": "generated_resident.reed_bay.002",
+      "route_id": "reed_bay_river_steps",
+      "currency_total": 429,
+      "initial_currency_total": 429
+    }
+  ]
+}

@@ -3,7 +3,7 @@
   "world_id": "world.generated_settlement_network",
   "actor_id": "player",
   "challenge_seed": 81001,
-  "economic_contract": {"version": 1, "settlement_initial_coins": 120, "organization_seed_grant": 12, "treasury_reserve": 12},
+  "economic_contract": {"version": 1, "settlement_initial_coins": 120, "organization_seed_grant": 12, "treasury_reserve": 12, "organization_procurement_limit": 5, "organization_treasury_reserve": 2},
   "locations": {},
   "region_state": {},
   "institution": {},
@@ -113,6 +113,22 @@
         "watch_service": {"demand_kind": "route_risk", "entry_demand_at_least": 3, "exit_demand_below": 2, "experience_occupations": ["watch_hand", "road_carter"]},
         "road_carting": {"demand_kind": "transport", "entry_demand_at_least": 3, "exit_demand_below": 1, "experience_occupations": ["road_carter", "watch_hand"]}
       }
+    },
+    "local_procurement": {
+      "enabled": true,
+      "item_def_id": "item.fiber_rope",
+      "currency_item_def_id": "item.copper_coin",
+      "seller_occupation_ids": ["cordage_maker"],
+      "buyer_purposes": {
+        "road_fellows": "route_maintenance_reserve",
+        "pass_watch": "patrol_supply_reserve",
+        "provision_circle": "shipment_lashing_reserve"
+      },
+      "buyer_priority": ["road_fellows", "pass_watch", "provision_circle"],
+      "recent_shipment_days": 7,
+      "target_quantity": 1,
+      "maximum_quantity_per_purchase": 1,
+      "seller_retained_quantity": 1
     },
     "sites": [
       {

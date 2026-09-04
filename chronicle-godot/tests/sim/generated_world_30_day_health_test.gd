@@ -48,6 +48,7 @@ func _run() -> void:
 		var organization: Dictionary = report.get("organization", {})
 		var industry: Dictionary = report.get("industry", {})
 		var economy: Dictionary = report.get("economy", {})
+		var procurement: Dictionary = report.get("procurement", {})
 		_check(int(economy.get("currency", -1)) == int(economy.get("initial_currency", -2))
 			and int(economy.get("wages_paid", 0)) > 0,
 			"seed %d 的工资与组织拨款均使用实际铜币且总量守恒" % seed)
@@ -55,6 +56,14 @@ func _run() -> void:
 			int(industry.get("founded_count", 0)) > 0
 			and int(industry.get("rope_production_count", 0)) > 0,
 			"seed %d 的运输与劳动历史自然催生产业并进入真实生产" % seed
+		)
+		_check(
+			int(procurement.get("completed_count", 0)) > 0
+			and int(procurement.get("settled_exchange_count", 0))
+				== int(procurement.get("completed_count", 0))
+			and int(procurement.get("total_coins_spent", 0)) > 0
+			and (procurement.get("integrity_errors", []) as Array).is_empty(),
+			"seed %d 的货运需求自然触发有来源、用途、双方和实付铜币的本地绳索采购" % seed
 		)
 		_check(
 			int(activity.get("route_pressure_count", 0)) > 0
@@ -167,6 +176,7 @@ func _simulate_seed(seed: int) -> Dictionary:
 		"organization": organization_report,
 		"industry": _industry_report(session),
 		"economy": _economy_report(session),
+		"procurement": _procurement_report(session),
 		"migration": migration_report,
 		"autonomous_activity": _autonomous_activity_report(session),
 		"history_signature": history_signature,
@@ -212,6 +222,60 @@ func _economy_report(session: Variant) -> Dictionary:
 		"permission_denied": _facts(session, "organization_resource_access_blocked").size(), "treasuries": treasuries}
 
 
+func _procurement_report(session: Variant) -> Dictionary:
+	var purchases: Array = _facts(session, "local_rope_procured")
+	var settled_exchange_count := 0
+	var total_coins_spent := 0
+	var buyers: Dictionary = {}
+	var sellers: Dictionary = {}
+	var routes: Dictionary = {}
+	var integrity_errors: Array[String] = []
+	var fact_store: Variant = session.stores["fact_store"]
+	var exchange_store: Variant = session.stores["exchange_store"]
+	for fact: Dictionary in purchases:
+		var fact_id := str(fact.get("fact_id", ""))
+		var buyer_id := str(fact.get("actor_id", ""))
+		var seller_id := str(fact.get("target_id", ""))
+		var purpose_id := str(fact.get("purpose_id", ""))
+		var route_id := str(fact.get("purpose_target_id", ""))
+		var has_shipment_source := false
+		for source_value: Variant in fact.get("source_fact_ids", []):
+			var source: Dictionary = fact_store.get_fact(str(source_value))
+			if str(source.get("fact_type", "")) == "settlement_trade_shipment":
+				has_shipment_source = true
+				break
+		if not has_shipment_source:
+			integrity_errors.append("%s:shipment_source_missing" % fact_id)
+		if buyer_id == "" or seller_id == "" or purpose_id == "" or route_id == "":
+			integrity_errors.append("%s:trade_context_incomplete" % fact_id)
+		buyers[buyer_id] = int(buyers.get(buyer_id, 0)) + 1
+		sellers[seller_id] = int(sellers.get(seller_id, 0)) + 1
+		routes[route_id] = int(routes.get(route_id, 0)) + 1
+		total_coins_spent += int(fact.get("fields", {}).get("total_price", 0))
+		var exchange: Dictionary = exchange_store.find_exchange(
+			fact_id.trim_prefix("fact.")
+		)
+		if (
+			str(exchange.get("status", "")) == "settled"
+			and str(exchange.get("exchange_type", ""))
+				== "local_spot_procurement"
+			and str(exchange.get("party_a", "")) == buyer_id
+			and str(exchange.get("party_b", "")) == seller_id
+		):
+			settled_exchange_count += 1
+		else:
+			integrity_errors.append("%s:settled_exchange_missing" % fact_id)
+	return {
+		"completed_count": purchases.size(),
+		"settled_exchange_count": settled_exchange_count,
+		"total_coins_spent": total_coins_spent,
+		"buyers": buyers,
+		"sellers": sellers,
+		"routes": routes,
+		"integrity_errors": integrity_errors,
+	}
+
+
 func _audit_world(session: Variant, day_index: int) -> Dictionary:
 	var errors: Array[String] = []
 	var reference_report: Dictionary = session.validate_persistent_references()
@@ -234,6 +298,8 @@ func _audit_world(session: Variant, day_index: int) -> Dictionary:
 		errors.append("day%d:population:%s" % [day_index, error])
 	for error: String in _active_organization_errors(session):
 		errors.append("day%d:organization:%s" % [day_index, error])
+	for error: String in _procurement_report(session).get("integrity_errors", []):
+		errors.append("day%d:procurement:%s" % [day_index, error])
 	return {
 		"errors": errors,
 		"metrics": {
@@ -244,6 +310,7 @@ func _audit_world(session: Variant, day_index: int) -> Dictionary:
 			].to_save_data().size(),
 			"item_count": session.stores["item_store"].to_save_data().size(),
 			"economy": _economy_report(session),
+			"procurement": _procurement_report(session),
 			"population_by_settlement": _population_counts(session),
 			"active_runtime_organization_count": _active_runtime_organizations(
 				session
@@ -563,6 +630,7 @@ func _history_signature(session: Variant) -> String:
 		"organization_goal_changed",
 		"organization_goal_reactivated",
 		"organization_runtime_retired",
+		"local_rope_procured",
 	]:
 		for fact: Dictionary in _facts(session, fact_type):
 			rows.append({
