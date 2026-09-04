@@ -9,6 +9,9 @@ const TransactionResultModel = preload(
 const RoutePressureQueryModel = preload(
 	"res://scripts/sim/resource/route_pressure_query.gd"
 )
+const OperationalMaterialServiceModel = preload(
+	"res://scripts/sim/economy/operational_material_service.gd"
+)
 
 const EPSILON := 0.0001
 
@@ -98,6 +101,14 @@ func resolve_trade_tick(
 	var available := _available_amounts(stocks)
 	var result = TransactionResultModel.new()
 	var events: Array = []
+	var shipment_count := 0
+	var material_service = OperationalMaterialServiceModel.new()
+	material_service.configure(
+		snapshot,
+		config.get("operational_material_uses", []),
+		day,
+		_tick_value(tick_event)
+	)
 	for link: Dictionary in _dictionary_rows(config.get("links", [])):
 		var link_id := str(link.get("link_id", ""))
 		var route_effect := _active_route_effect(snapshot, link, day)
@@ -150,12 +161,27 @@ func resolve_trade_tick(
 					)), 0.1)
 				)
 			)
+			var material_plans: Array[Dictionary] = material_service.plan_uses(
+				"settlement_trade_shipment", link_id, source_id
+			)
+			var organization_transport_reduction := float(route_effect.get(
+				"transport_cost_reduction", 0.0
+			))
+			var transport_cost_without_material := maxf(
+				0.25,
+				maxf(0.5, amount * 0.15) - organization_transport_reduction
+			)
 			var required_traffic_cost := maxf(
 				0.25,
-				maxf(0.5, amount * 0.15) - float(route_effect.get(
-					"transport_cost_reduction", 0.0
-				))
+				transport_cost_without_material
+					- material_service.transport_cost_reduction(material_plans)
 			)
+			var material_transport_reduction := (
+				transport_cost_without_material - required_traffic_cost
+			)
+			if material_transport_reduction <= EPSILON:
+				material_plans.clear()
+				material_transport_reduction = 0.0
 			var traffic_cost := minf(
 				float(available.get(traffic_stock_id, 0.0)),
 				required_traffic_cost
@@ -213,6 +239,20 @@ func resolve_trade_tick(
 				available.get(traffic_stock_id, 0.0)
 			) - traffic_cost
 			remaining_capacity -= amount
+			var shipment_source_fact_ids: Array[String] = []
+			for source_fact_id: Variant in route_effect.get(
+				"source_fact_ids", []
+			):
+				_append_unique(shipment_source_fact_ids, str(source_fact_id))
+			for source_fact_id: String in material_service.plan_source_fact_ids(
+				material_plans
+			):
+				_append_unique(shipment_source_fact_ids, source_fact_id)
+			var material_clause := ""
+			if material_transport_reduction > EPSILON:
+				material_clause = "；实物作业材料使本批少消耗 %.2f 份道路运力" % (
+					material_transport_reduction
+				)
 			result.add_fact({
 				"fact_id": fact_id,
 				"fact_type": "settlement_trade_shipment",
@@ -228,6 +268,11 @@ func resolve_trade_tick(
 				"destination_stock_id": destination_stock_id,
 				"transport_stock_id": traffic_stock_id,
 				"transport_cost": traffic_cost,
+				"transport_cost_without_material": transport_cost_without_material,
+				"material_transport_cost_reduction": material_transport_reduction,
+				"operational_material_item_ids": material_service.plan_item_ids(
+					material_plans
+				),
 				"base_route_risk": int(link.get("risk", 0)),
 				"effective_route_risk": effective_risk,
 				"environment_risk_increase": int(route_effect.get(
@@ -242,18 +287,32 @@ func resolve_trade_tick(
 				"organization_transport_cost_reduction": float(
 					route_effect.get("transport_cost_reduction", 0.0)
 				),
-				"source_fact_ids": (route_effect.get(
-					"source_fact_ids", []
-				) as Array).duplicate(),
+				"source_fact_ids": shipment_source_fact_ids,
 				"day": day,
-				"summary": "%s沿道路向%s调拨了 %.1f 份%s，参考估价每份 %.1f 枚铜币；本批未结算货币。" % [
+				"summary": "%s沿道路向%s调拨了 %.1f 份%s，参考估价每份 %.1f 枚铜币；本批未结算货币%s。" % [
 					_entity_name(snapshot, source_id),
 					_entity_name(snapshot, destination_id),
 					amount,
 					str(good.get("reserve_label", good_id)),
 					unit_price,
+					material_clause,
 				],
 			})
+			var material_use_data: Dictionary = material_service.append_uses(
+				result,
+				material_plans,
+				fact_id,
+				material_transport_reduction
+			)
+			var material_demand_events: Array = (
+				material_service.append_next_demands(
+					result,
+					"settlement_trade_shipment",
+					link_id,
+					source_id,
+					fact_id
+				)
+			)
 			result.add_pressure_change({
 				"pressure_id": "pressure.network_trade.%s.%s.day%d" % [
 					_safe_id(link_id), _safe_id(good_id), day
@@ -275,13 +334,20 @@ func resolve_trade_tick(
 				"organization_capacity_bonus": float(route_effect.get(
 					"capacity_bonus", 0.0
 				)),
+				"material_transport_cost_reduction": material_transport_reduction,
+				"operational_material_item_ids": material_use_data.get(
+					"item_instance_ids", []
+				),
 				"fact_id": fact_id,
 			})
+			shipment_count += 1
+			events.append_array(material_use_data.get("events", []))
+			events.append_array(material_demand_events)
 	if result.is_empty():
 		return {"results": [], "events": events}
 	result.set_narrative_result({
 		"title": "聚落间出现了真实货流",
-		"summary": "%d 批物资沿区域道路从富余聚落流向短缺聚落，来源库存、目的库存和运力同时发生变化。" % events.size(),
+		"summary": "%d 批物资沿区域道路从富余聚落流向短缺聚落，来源库存、目的库存和运力同时发生变化。" % shipment_count,
 		"tone": "regional_trade",
 	})
 	result.mark_resolved("settlement_network_trade")

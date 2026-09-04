@@ -298,9 +298,30 @@ func _test_save_and_legacy(session: Variant) -> void:
 		var original: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(old_path))
 		var old = Session.new()
 		var old_result: Dictionary = old.load_from_path(old_path)
+		var expected_stores := _with_migrated_rope_durability(original["stores"])
 		_check(old_result.get("success", false) and not old.stores["item_store"].conserve_currency and old.validate_persistent_references().get("ok", false)
-			and _equivalent(original["stores"], old.get_save_store_data()), "actual pre-economic 30-day save loads with every Store unchanged in legacy mode")
+			and "base_v2_to_v3_fiber_rope_durability" in old_result.get("migrations", [])
+			and _equivalent(expected_stores, old.get_save_store_data()), "actual pre-economic 30-day save explicitly migrates only old rope durability in legacy mode")
 		print("[ECONOMIC LEGACY SAMPLE] ", JSON.stringify({"path": old_path, "load_success": old_result.get("success", false), "endowments": _facts(old, "initial_treasury_endowment").size(), "currency": _currency(old)}))
+
+
+func _with_migrated_rope_durability(source: Dictionary) -> Dictionary:
+	var migrated := source.duplicate(true)
+	var items: Array = migrated.get("items", []).duplicate(true)
+	for index: int in range(items.size()):
+		var item: Dictionary = (items[index] as Dictionary).duplicate(true)
+		if str(item.get("item_def_id", "")) != "item.fiber_rope":
+			continue
+		var condition: Dictionary = item.get("condition", {}).duplicate(true)
+		if condition.has("maximum_durability") or condition.has("durability"):
+			continue
+		condition["maximum_durability"] = 4
+		condition["durability"] = 4
+		condition["quality"] = str(condition.get("quality", "serviceable"))
+		item["condition"] = condition
+		items[index] = item
+	migrated["items"] = items
+	return migrated
 
 
 func _currency(session: Variant) -> int:

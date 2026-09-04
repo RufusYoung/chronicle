@@ -101,6 +101,23 @@ func plan_trade(
 	var party_error := _party_error(stores, buyer_entity_id, seller_entity_id)
 	if party_error != "":
 		return _failure(party_error)
+	var purpose_id := str(intent.get("purpose_id", ""))
+	var purpose_target_id := str(intent.get("purpose_target_id", ""))
+	var purpose_obligation_id := str(intent.get("purpose_obligation_id", ""))
+	var purpose_obligation: Dictionary = {}
+	if purpose_obligation_id != "":
+		var obligation_store: Variant = stores.get("obligation_store")
+		if obligation_store == null:
+			return _failure("purpose_obligation_store_missing")
+		purpose_obligation = obligation_store.find_obligation(
+			purpose_obligation_id
+		)
+		if purpose_obligation.is_empty():
+			return _failure("purpose_obligation_missing")
+		if str(purpose_obligation.get("status", "open")) != "open":
+			return _failure("purpose_obligation_closed")
+		if str(purpose_obligation.get("material_status", "needed")) != "needed":
+			return _failure("purpose_obligation_already_acquired")
 
 	var stock_view := build_stock_view(policy, stores, buyer_entity_id)
 	if str(stock_view.get("error", "")) != "":
@@ -108,6 +125,21 @@ func plan_trade(
 	var offer := _find_offer(stock_view, item_instance_id)
 	if offer.is_empty():
 		return _failure("offer_no_longer_available")
+	if not purpose_obligation.is_empty():
+		var required_item_def_id := str(purpose_obligation.get("item_def_id", ""))
+		if (
+			required_item_def_id != ""
+			and required_item_def_id != str(offer.get("item_def_id", ""))
+		):
+			return _failure("purpose_obligation_item_mismatch")
+		var required_target_id := str(purpose_obligation.get("scope_id", ""))
+		if required_target_id != "" and required_target_id != purpose_target_id:
+			return _failure("purpose_obligation_target_mismatch")
+		var accepted_purpose_ids: Array = purpose_obligation.get(
+			"accepted_purpose_ids", []
+		)
+		if not accepted_purpose_ids.is_empty() and purpose_id not in accepted_purpose_ids:
+			return _failure("purpose_obligation_purpose_mismatch")
 	if quantity > int(offer.get("available_quantity", 0)):
 		return _failure("insufficient_stock")
 	var unit_price := int(offer.get("unit_price", 0))
@@ -146,8 +178,6 @@ func plan_trade(
 	if not source_value is Array:
 		return _failure("source_fact_ids_invalid")
 	var source_fact_ids: Array = (source_value as Array).duplicate(true)
-	var purpose_id := str(intent.get("purpose_id", ""))
-	var purpose_target_id := str(intent.get("purpose_target_id", ""))
 	var transaction = TransactionResultModel.new()
 	transaction.add_fact({
 		"fact_id": fact_id,
@@ -159,6 +189,7 @@ func plan_trade(
 		"day": int(world_time.get("day", 0)),
 		"purpose_id": purpose_id,
 		"purpose_target_id": purpose_target_id,
+		"purpose_obligation_id": purpose_obligation_id,
 		"source_fact_ids": source_fact_ids,
 		"summary": str(intent.get("summary", "")),
 		"fields": {
@@ -170,6 +201,7 @@ func plan_trade(
 			"currency_item_def_id": currency_item_def_id,
 			"purpose_id": purpose_id,
 			"purpose_target_id": purpose_target_id,
+			"purpose_obligation_id": purpose_obligation_id,
 		},
 	})
 	_add_stack_transfer(
@@ -230,6 +262,7 @@ func plan_trade(
 			"currency_item_def_id": currency_item_def_id,
 			"purpose_id": purpose_id,
 			"purpose_target_id": purpose_target_id,
+			"purpose_obligation_id": purpose_obligation_id,
 		},
 	})
 	transaction.mark_resolved("market_trade")

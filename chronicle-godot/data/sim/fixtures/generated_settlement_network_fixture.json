@@ -116,20 +116,43 @@
     },
     "local_procurement": {
       "enabled": true,
-      "item_def_id": "item.fiber_rope",
       "currency_item_def_id": "item.copper_coin",
-      "seller_occupation_ids": ["cordage_maker"],
       "buyer_purposes": {
         "road_fellows": "route_maintenance_reserve",
         "pass_watch": "patrol_supply_reserve",
         "provision_circle": "shipment_lashing_reserve"
       },
       "buyer_priority": ["road_fellows", "pass_watch", "provision_circle"],
-      "recent_shipment_days": 7,
-      "target_quantity": 1,
-      "maximum_quantity_per_purchase": 1,
-      "seller_retained_quantity": 1
+      "maximum_quantity_per_purchase": 1
     },
+    "operational_material_uses": [
+      {
+        "enabled": true,
+        "use_id": "shipment_lashing",
+        "trigger_fact_type": "settlement_trade_shipment",
+        "scope_type": "route",
+        "work_label": "货运捆扎与装卸",
+        "item_def_id": "item.fiber_rope",
+        "item_display_name": "纤维绳索",
+        "quantity_label": "捆",
+        "seller_occupation_ids": ["cordage_maker"],
+        "seller_retained_quantity": 1,
+        "procurement_fact_type": "local_rope_procured",
+        "procurement_exchange_type": "local_spot_procurement",
+        "quantity_required": 1,
+        "lead_days": 1,
+        "durability_loss_per_cycle": 1,
+        "consume_when_worn_out": true,
+        "transport_cost_reduction": 0.25,
+        "require_acquisition_purpose": true,
+        "purchase_fact_types": ["local_rope_procured"],
+        "accepted_purpose_ids": [
+          "route_maintenance_reserve",
+          "patrol_supply_reserve",
+          "shipment_lashing_reserve"
+        ]
+      }
+    ],
     "sites": [
       {
         "site_id": "reed_bay",

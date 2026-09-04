@@ -296,7 +296,7 @@
     },
     {
       "item_def_id": "item.fiber_rope",
-      "definition_version": 1,
+      "definition_version": 2,
       "display_name_key": "item.fiber_rope.name",
       "display_name": "纤维绳索",
       "item_kind": "craft_good",
@@ -305,8 +305,8 @@
       "max_stack": 20,
       "base_mass": 1.0,
       "equip_slots": [],
-      "capabilities": ["trade", "split_stack"],
-      "durability": {},
+      "capabilities": ["consume", "trade", "split_stack"],
+      "durability": {"maximum": 4},
       "modifiers": [],
       "base_value": 5
     },

@@ -177,6 +177,9 @@ func generate_fixture(
 		"local_procurement": (
 			config.get("local_procurement", {}) as Dictionary
 		).duplicate(true),
+		"operational_material_uses": (
+			config.get("operational_material_uses", []) as Array
+		).duplicate(true),
 		"industry_archetypes": (
 			definition.get("industry_archetypes", []) as Array
 		).duplicate(true),

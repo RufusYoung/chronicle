@@ -111,13 +111,53 @@ func _run() -> void:
 		bool(previous_save.get("ok", false))
 		and bool(previous_report.get("success", false))
 		and "base_v1_to_v2_fiber_rope" in previous_report.get("migrations", [])
+		and "base_v2_to_v3_fiber_rope_durability" in previous_report.get(
+			"migrations", []
+		)
 		and _equivalent(previous_restored.session.get_save_store_data(), before_store)
 		and _equivalent(previous_restored.day_history, before_history)
-		and int(previous_restored.build_save_envelope()["definition_manifest"]["content_pack_version"]) == 2,
+		and int(previous_restored.build_save_envelope()["definition_manifest"]["content_pack_version"]) == 3,
 		"5B. Previous 105-definition base pack migrates from disk without changing world history"
 	)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(previous_pack_path))
-	for version: int in [1, 2]:
+	var v2_pack := envelope.duplicate(true)
+	v2_pack["definition_manifest"]["content_pack_version"] = 2
+	var v2_stores: Dictionary = v2_pack.get("stores", {}).duplicate(true)
+	var v2_items: Array = v2_stores.get("items", []).duplicate(true)
+	var v2_facts: Array = v2_stores.get("facts", [])
+	var source_fact_id := str((v2_facts[0] as Dictionary).get("fact_id", ""))
+	v2_items.append({
+		"item_instance_id": "item_instance.test.v2_fiber_rope",
+		"item_def_id": "item.fiber_rope",
+		"holder": {"kind": "entity", "id": "player"},
+		"quantity": 1,
+		"condition": {},
+		"custom_tags": ["content_pack_v2_probe"],
+		"provenance": {"created_by_fact_id": source_fact_id},
+		"history": [],
+		"created_tick": 0,
+		"updated_tick": 0,
+	})
+	v2_stores["items"] = v2_items
+	v2_pack["stores"] = v2_stores
+	v2_pack = service.finalize_envelope(v2_pack)
+	var v2_restored = ControllerModel.new()
+	var v2_report: Dictionary = v2_restored.load_from_save_envelope(v2_pack)
+	var migrated_rope: Dictionary = v2_restored.session.stores[
+		"item_store"
+	].get_item("item_instance.test.v2_fiber_rope")
+	_check(
+		bool(v2_report.get("success", false))
+		and "base_v2_to_v3_fiber_rope_durability" in v2_report.get(
+			"migrations", []
+		)
+		and int(migrated_rope.get("condition", {}).get("durability", 0)) == 4
+		and int(migrated_rope.get("condition", {}).get(
+			"maximum_durability", 0
+		)) == 4,
+		"5C. Content pack v2 rope receives explicit full durability during v3 migration"
+	)
+	for version: int in [1, 2, 3]:
 		var broken_manifest := previous_pack.duplicate(true)
 		broken_manifest["definition_manifest"]["content_pack_version"] = version
 		if version == 1:
@@ -126,7 +166,7 @@ func _run() -> void:
 		var manifest_report: Dictionary = ControllerModel.new().load_from_save_envelope(broken_manifest)
 		_check(
 			str(manifest_report.get("error", "")) == "save_definition_manifest_mismatch",
-			"5C. Missing definitions are still rejected outside the exact previous manifest: v%d" % version
+			"5D. Missing definitions are still rejected outside the exact previous manifest: v%d" % version
 		)
 	var legacy := envelope.duplicate(true)
 	legacy["schema_version"] = 0

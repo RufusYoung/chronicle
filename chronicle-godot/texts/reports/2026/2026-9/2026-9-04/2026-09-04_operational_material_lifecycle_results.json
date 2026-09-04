@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-04",
+  "scope": "W1-C operational material lifecycle",
+  "focused_natural_run": {
+    "passed": true,
+    "first_procurement_day": 7,
+    "uses_before_worn_out": 4,
+    "worn_out": true,
+    "replacement_procurement_count": 2,
+    "currency_conserved": true
+  },
+  "full_regression": {
+    "passed": 121,
+    "total": 121,
+    "summed_process_seconds": 3518.26,
+    "includes_vulkan_render_tests": true
+  },
+  "long_run": {
+    "passed": true,
+    "test_count": 1,
+    "simulation_days_per_seed": 30,
+    "total_world_hours": 2160,
+    "summed_process_seconds": 5387.44,
+    "seeds": [
+      {
+        "seed": 81001,
+        "simulation_seconds": 2497.15,
+        "demand_count": 11,
+        "use_count": 8,
+        "worn_out_count": 2,
+        "procurement_count": 2,
+        "transport_cost_saved": 1.64,
+        "open_demand_count": 3,
+        "currency": 440
+      },
+      {
+        "seed": 82002,
+        "simulation_seconds": 1412.28,
+        "demand_count": 11,
+        "use_count": 8,
+        "worn_out_count": 2,
+        "procurement_count": 2,
+        "transport_cost_saved": 2.0,
+        "open_demand_count": 3,
+        "currency": 432
+      },
+      {
+        "seed": 83003,
+        "simulation_seconds": 1410.43,
+        "demand_count": 11,
+        "use_count": 8,
+        "worn_out_count": 2,
+        "procurement_count": 2,
+        "transport_cost_saved": 2.0,
+        "open_demand_count": 3,
+        "currency": 429
+      }
+    ],
+    "failed_transactions": 0,
+    "material_integrity_errors": 0,
+    "save_roundtrip": true,
+    "deterministic_continuation": true,
+    "test_injection_count": 0
+  },
+  "seven_day_ablation": {
+    "seed": 81001,
+    "disabled_ms": 147638,
+    "demand_only_ms": 147839,
+    "full_lifecycle_ms": 148924,
+    "demand_only_delta_percent": 0.136,
+    "full_lifecycle_delta_percent": 0.871,
+    "method": "same fixture, seed and code revision; simulation timing only; one final reference validation per variant"
+  },
+  "scope_limits": [
+    "only rope shipment-lashing is enabled",
+    "rope is an efficiency material rather than a hard shipment prerequisite",
+    "normal revenue and aggregate product freight settlement are not implemented",
+    "industry demand and profit feedback are not implemented",
+    "player-facing material history is not exposed"
+  ]
+}

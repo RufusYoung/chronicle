@@ -49,6 +49,7 @@ func _run() -> void:
 		var industry: Dictionary = report.get("industry", {})
 		var economy: Dictionary = report.get("economy", {})
 		var procurement: Dictionary = report.get("procurement", {})
+		var materials: Dictionary = report.get("operational_materials", {})
 		_check(int(economy.get("currency", -1)) == int(economy.get("initial_currency", -2))
 			and int(economy.get("wages_paid", 0)) > 0,
 			"seed %d 的工资与组织拨款均使用实际铜币且总量守恒" % seed)
@@ -64,6 +65,14 @@ func _run() -> void:
 			and int(procurement.get("total_coins_spent", 0)) > 0
 			and (procurement.get("integrity_errors", []) as Array).is_empty(),
 			"seed %d 的货运需求自然触发有来源、用途、双方和实付铜币的本地绳索采购" % seed
+		)
+		_check(
+			int(materials.get("demand_count", 0)) > 0
+			and int(materials.get("use_count", 0)) > 0
+			and int(materials.get("worn_out_count", 0)) > 0
+			and float(materials.get("transport_cost_saved", 0.0)) > 0.0
+			and (materials.get("integrity_errors", []) as Array).is_empty(),
+			"seed %d 的作业需求、采购绳索、货运使用、磨损报废与运力效果形成自然闭环" % seed
 		)
 		_check(
 			int(activity.get("route_pressure_count", 0)) > 0
@@ -177,6 +186,7 @@ func _simulate_seed(seed: int) -> Dictionary:
 		"industry": _industry_report(session),
 		"economy": _economy_report(session),
 		"procurement": _procurement_report(session),
+		"operational_materials": _operational_material_report(session),
 		"migration": migration_report,
 		"autonomous_activity": _autonomous_activity_report(session),
 		"history_signature": history_signature,
@@ -238,6 +248,10 @@ func _procurement_report(session: Variant) -> Dictionary:
 		var seller_id := str(fact.get("target_id", ""))
 		var purpose_id := str(fact.get("purpose_id", ""))
 		var route_id := str(fact.get("purpose_target_id", ""))
+		var obligation_id := str(fact.get("purpose_obligation_id", ""))
+		var obligation: Dictionary = session.stores[
+			"obligation_store"
+		].find_obligation(obligation_id)
 		var has_shipment_source := false
 		for source_value: Variant in fact.get("source_fact_ids", []):
 			var source: Dictionary = fact_store.get_fact(str(source_value))
@@ -248,6 +262,12 @@ func _procurement_report(session: Variant) -> Dictionary:
 			integrity_errors.append("%s:shipment_source_missing" % fact_id)
 		if buyer_id == "" or seller_id == "" or purpose_id == "" or route_id == "":
 			integrity_errors.append("%s:trade_context_incomplete" % fact_id)
+		if (
+			str(obligation.get("obligation_type", ""))
+				!= "operational_material_demand"
+			or str(obligation.get("procurement_fact_id", "")) != fact_id
+		):
+			integrity_errors.append("%s:demand_obligation_missing" % fact_id)
 		buyers[buyer_id] = int(buyers.get(buyer_id, 0)) + 1
 		sellers[seller_id] = int(sellers.get(seller_id, 0)) + 1
 		routes[route_id] = int(routes.get(route_id, 0)) + 1
@@ -276,6 +296,88 @@ func _procurement_report(session: Variant) -> Dictionary:
 	}
 
 
+func _operational_material_report(session: Variant) -> Dictionary:
+	var demands: Array = _facts(session, "operational_material_demand_opened")
+	var uses: Array = _facts(session, "operational_material_used")
+	var worn_out: Array = _facts(session, "operational_material_worn_out")
+	var fact_store: Variant = session.stores["fact_store"]
+	var obligation_store: Variant = session.stores["obligation_store"]
+	var item_store: Variant = session.stores["item_store"]
+	var integrity_errors: Array[String] = []
+	var transport_cost_saved := 0.0
+	for use: Dictionary in uses:
+		var fact_id := str(use.get("fact_id", ""))
+		var work_fact: Dictionary = fact_store.get_fact(str(use.get(
+			"work_fact_id", ""
+		)))
+		var procurement_fact: Dictionary = fact_store.get_fact(str(use.get(
+			"procurement_fact_id", ""
+		)))
+		var obligation: Dictionary = obligation_store.find_obligation(str(
+			use.get("demand_obligation_id", "")
+		))
+		var reduction := float(use.get("transport_cost_reduction", 0.0))
+		transport_cost_saved += reduction
+		if str(work_fact.get("fact_type", "")) != "settlement_trade_shipment":
+			integrity_errors.append("%s:work_shipment_missing" % fact_id)
+		if str(procurement_fact.get("fact_type", "")) != "local_rope_procured":
+			integrity_errors.append("%s:procurement_missing" % fact_id)
+		if (
+			str(obligation.get("status", "")) != "fulfilled"
+			or str(obligation.get("fulfilled_by_fact_id", "")) != fact_id
+		):
+			integrity_errors.append("%s:demand_not_fulfilled" % fact_id)
+		if (
+			reduction <= 0.0
+			or not is_equal_approx(
+				float(work_fact.get("transport_cost_without_material", 0.0))
+					- float(work_fact.get("transport_cost", 0.0)),
+				reduction
+			)
+		):
+			integrity_errors.append("%s:transport_effect_missing" % fact_id)
+		if not _item_history_contains_fact(
+			item_store.get_item(str(use.get("item_instance_id", ""))), fact_id
+		):
+			integrity_errors.append("%s:item_history_missing" % fact_id)
+	for fact: Dictionary in worn_out:
+		var item: Dictionary = item_store.get_item(str(fact.get(
+			"item_instance_id", ""
+		)))
+		if (
+			int(item.get("quantity", -1)) != 0
+			or str(item.get("holder", {}).get("kind", "")) != "destroyed"
+			or int(item.get("condition", {}).get("durability", -1)) != 0
+		):
+			integrity_errors.append(
+				"%s:worn_item_still_usable" % fact.get("fact_id", "")
+			)
+	var open_demand_count := 0
+	for obligation: Dictionary in session.stores[
+		"obligation_store"
+	].find_open_obligations():
+		if (
+			str(obligation.get("obligation_type", ""))
+				== "operational_material_demand"
+		):
+			open_demand_count += 1
+	return {
+		"demand_count": demands.size(),
+		"use_count": uses.size(),
+		"worn_out_count": worn_out.size(),
+		"open_demand_count": open_demand_count,
+		"transport_cost_saved": transport_cost_saved,
+		"integrity_errors": integrity_errors,
+	}
+
+
+func _item_history_contains_fact(item: Dictionary, fact_id: String) -> bool:
+	for entry: Dictionary in item.get("history", []):
+		if str(entry.get("fact_id", "")) == fact_id:
+			return true
+	return false
+
+
 func _audit_world(session: Variant, day_index: int) -> Dictionary:
 	var errors: Array[String] = []
 	var reference_report: Dictionary = session.validate_persistent_references()
@@ -300,6 +402,10 @@ func _audit_world(session: Variant, day_index: int) -> Dictionary:
 		errors.append("day%d:organization:%s" % [day_index, error])
 	for error: String in _procurement_report(session).get("integrity_errors", []):
 		errors.append("day%d:procurement:%s" % [day_index, error])
+	for error: String in _operational_material_report(session).get(
+		"integrity_errors", []
+	):
+		errors.append("day%d:operational_material:%s" % [day_index, error])
 	return {
 		"errors": errors,
 		"metrics": {
@@ -311,6 +417,7 @@ func _audit_world(session: Variant, day_index: int) -> Dictionary:
 			"item_count": session.stores["item_store"].to_save_data().size(),
 			"economy": _economy_report(session),
 			"procurement": _procurement_report(session),
+			"operational_materials": _operational_material_report(session),
 			"population_by_settlement": _population_counts(session),
 			"active_runtime_organization_count": _active_runtime_organizations(
 				session
@@ -631,6 +738,9 @@ func _history_signature(session: Variant) -> String:
 		"organization_goal_reactivated",
 		"organization_runtime_retired",
 		"local_rope_procured",
+		"operational_material_demand_opened",
+		"operational_material_used",
+		"operational_material_worn_out",
 	]:
 		for fact: Dictionary in _facts(session, fact_type):
 			rows.append({

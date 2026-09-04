@@ -64,13 +64,26 @@ func _test_natural_procurement() -> void:
 	)
 	var buyer_id := str(purchase.get("actor_id", ""))
 	var seller_id := str(purchase.get("target_id", ""))
+	var obligation_id := str(purchase.get("purpose_obligation_id", ""))
 	var exchange_id := str(purchase.get("fact_id", "")).trim_prefix("fact.")
 	var exchange: Dictionary = session.stores["exchange_store"].find_exchange(exchange_id)
+	var demand: Dictionary = session.stores["obligation_store"].find_obligation(
+		obligation_id
+	)
 	_check(
 		str(source.get("fact_type", "")) == "settlement_trade_shipment"
 		and str(purchase.get("purpose_id", "")) != ""
 		and str(purchase.get("purpose_target_id", "")) == str(source.get("link_id", "")),
 		"purchase cites the actual freight fact, route, and organization-specific purpose"
+	)
+	_check(
+		obligation_id != ""
+		and str(demand.get("obligation_type", ""))
+			== "operational_material_demand"
+		and str(demand.get("material_status", "")) == "acquired"
+		and str(demand.get("procurement_fact_id", ""))
+			== str(purchase.get("fact_id", "")),
+		"purchase fulfills the acquisition stage of a real route-work demand"
 	)
 	_check(
 		str(exchange.get("status", "")) == "settled"
@@ -102,6 +115,98 @@ func _test_natural_procurement() -> void:
 		"buyer state retains a compact procurement receipt"
 	)
 	_check(session.validate_persistent_references().get("ok", false), "natural purchase keeps all persistent references valid")
+	var first_use: Dictionary = {}
+	var worn_out: Dictionary = {}
+	var lifecycle_events: Array = []
+	for _day: int in range(12):
+		var advanced: Dictionary = session.advance_time(
+			24, "local_procurement_material_lifecycle"
+		)
+		_check(advanced.get("success", false), "natural material lifecycle advances a full day")
+		lifecycle_events.append_array(advanced.get("network_events", []))
+		var uses := _facts(session, "operational_material_used")
+		if first_use.is_empty() and not uses.is_empty():
+			first_use = uses[0]
+		var retired := _facts(session, "operational_material_worn_out")
+		if not retired.is_empty():
+			worn_out = retired[0]
+			break
+	_check(not first_use.is_empty(), "a later real shipment uses the purchased rope")
+	if not first_use.is_empty():
+		var work_fact: Dictionary = session.stores["fact_store"].get_fact(
+			str(first_use.get("work_fact_id", ""))
+		)
+		var fulfilled_demand: Dictionary = session.stores[
+			"obligation_store"
+		].find_obligation(str(first_use.get("demand_obligation_id", "")))
+		_check(
+			str(work_fact.get("fact_type", "")) == "settlement_trade_shipment"
+			and str(first_use.get("procurement_fact_id", ""))
+				== str(purchase.get("fact_id", ""))
+			and float(first_use.get("transport_cost_reduction", 0.0)) > 0.0
+			and is_equal_approx(
+				float(work_fact.get("transport_cost_without_material", 0.0))
+					- float(work_fact.get("transport_cost", 0.0)),
+				float(first_use.get("transport_cost_reduction", 0.0))
+			),
+			"rope use cites the procurement, demand, actual shipment, and applied effect"
+		)
+		_check(
+			int(first_use.get("durability_before", 0)) == 4
+			and int(first_use.get("durability_after", 0)) == 3
+			and str(fulfilled_demand.get("status", "")) == "fulfilled"
+			and str(fulfilled_demand.get("fulfilled_by_fact_id", ""))
+				== str(first_use.get("fact_id", "")),
+			"one coarse work cycle wears one durability and fulfills one demand"
+		)
+	_check(not worn_out.is_empty(), "four supported work cycles naturally wear out the rope")
+	if not worn_out.is_empty():
+		var retired_item: Dictionary = session.stores["item_store"].get_item(
+			str(worn_out.get("item_instance_id", ""))
+		)
+		_check(
+			int(retired_item.get("quantity", -1)) == 0
+			and str(retired_item.get("holder", {}).get("kind", "")) == "destroyed"
+			and int(retired_item.get("condition", {}).get("durability", -1)) == 0,
+			"a fully worn rope exits usable inventory instead of blocking replacement"
+		)
+		_check(
+			_has_open_material_demand(
+				session,
+				str(worn_out.get("scope_id", "")),
+				"item.fiber_rope"
+			),
+			"continued route work opens replacement demand after the rope is retired"
+		)
+	var replacement: Dictionary = {}
+	var replacement_demand: Dictionary = {}
+	for candidate: Dictionary in _facts(session, "local_rope_procured"):
+		if (
+			str(candidate.get("fact_id", "")) != str(purchase.get("fact_id", ""))
+			and str(candidate.get("purpose_target_id", ""))
+				== str(purchase.get("purpose_target_id", ""))
+			and int(candidate.get("day", 0)) >= int(worn_out.get("day", 0))
+		):
+			replacement = candidate
+			replacement_demand = session.stores[
+				"obligation_store"
+			].find_obligation(str(candidate.get(
+				"purpose_obligation_id", ""
+			)))
+			break
+	_check(
+		not replacement.is_empty()
+		and str(replacement.get("purpose_obligation_id", ""))
+			!= obligation_id
+		and str(replacement_demand.get("owner_id", ""))
+			== str(worn_out.get("target_id", ""))
+		and _currency(session) == initial_currency,
+		"worn stock causes a newly demanded and fully funded replacement purchase"
+	)
+	_check(
+		session.validate_persistent_references().get("ok", false),
+		"demand, use, wear, and retirement keep persistent references valid"
+	)
 	print("[LOCAL PROCUREMENT SAMPLE] ", JSON.stringify({
 		"day": purchase.get("day", 0),
 		"buyer": buyer_id,
@@ -109,6 +214,10 @@ func _test_natural_procurement() -> void:
 		"purpose": purchase.get("purpose_id", ""),
 		"route": purchase.get("purpose_target_id", ""),
 		"price": purchase.get("fields", {}).get("total_price", 0),
+		"uses": _facts(session, "operational_material_used").size(),
+		"worn_out": not worn_out.is_empty(),
+		"purchase_count": _facts(session, "local_rope_procured").size(),
+		"lifecycle_event_count": lifecycle_events.size(),
 	}))
 
 
@@ -127,6 +236,28 @@ func _test_trade_boundaries() -> void:
 		"stock view exposes only rope above the producer's self-retained unit"
 	)
 	var before: Dictionary = session.get_save_store_data()
+	var wrong_target_intent := intent.duplicate(true)
+	wrong_target_intent["purpose_target_id"] = "route.test.wrong"
+	var wrong_target := Market.new().plan_trade(
+		policy, wrong_target_intent, session.stores, session.get_time_summary()
+	)
+	_check(
+		str(wrong_target.get("error", ""))
+			== "purpose_obligation_target_mismatch"
+		and before == session.get_save_store_data(),
+		"a work-material purchase cannot bind an unrelated route demand"
+	)
+	var wrong_purpose_intent := intent.duplicate(true)
+	wrong_purpose_intent["purpose_id"] = "personal_resale"
+	var wrong_purpose := Market.new().plan_trade(
+		policy, wrong_purpose_intent, session.stores, session.get_time_summary()
+	)
+	_check(
+		str(wrong_purpose.get("error", ""))
+			== "purpose_obligation_purpose_mismatch"
+		and before == session.get_save_store_data(),
+		"a work-material purchase cannot relabel the demand as another purpose"
+	)
 	var over_budget_intent := intent.duplicate(true)
 	over_budget_intent["maximum_total_price"] = 4
 	var over_budget := Market.new().plan_trade(
@@ -252,6 +383,24 @@ func _prepared_trade() -> Dictionary:
 			"summary": "测试注入：一批货物抵达哨站。",
 		},
 	]
+	data["initial_obligations"] = [{
+		"obligation_id": "obligation.test.local_procurement.route_material",
+		"owner_id": "seventh_outpost",
+		"target_id": "seventh_outpost",
+		"obligation_type": "operational_material_demand",
+		"status": "open",
+		"material_status": "needed",
+		"scope_type": "route",
+		"scope_id": "route.test.outpost_supply",
+		"use_id": "shipment_lashing",
+		"item_def_id": "item.fiber_rope",
+		"quantity_required": 1,
+		"accepted_purpose_ids": ["route_maintenance_reserve"],
+		"opened_day": 1,
+		"needed_from_day": 2,
+		"opened_by_fact_id": "fact.test.local_procurement.shipment",
+		"source_fact_ids": ["fact.test.local_procurement.shipment"],
+	}]
 	var items: Array = data.get("initial_items", [])
 	items.append({
 		"item_instance_id": "item_instance.test.local_procurement.rope",
@@ -318,6 +467,9 @@ func _prepared_trade() -> Dictionary:
 		"exchange_id": "exchange.test.local_procurement",
 		"purpose_id": "route_maintenance_reserve",
 		"purpose_target_id": "route.test.outpost_supply",
+		"purpose_obligation_id": (
+			"obligation.test.local_procurement.route_material"
+		),
 		"source_fact_ids": ["fact.test.local_procurement.shipment"],
 		"summary": "测试注入：本地组织采购实际绳索。",
 	}
@@ -417,6 +569,24 @@ func _item_history_has_fact(session: Variant, item_def_id: String, fact_id: Stri
 		for entry: Dictionary in item.get("history", []):
 			if str(entry.get("fact_id", "")) == fact_id:
 				return true
+	return false
+
+
+func _has_open_material_demand(
+		session: Variant,
+		scope_id: String,
+		item_def_id: String
+) -> bool:
+	for obligation: Dictionary in session.stores[
+		"obligation_store"
+	].find_open_obligations():
+		if (
+			str(obligation.get("obligation_type", ""))
+				== "operational_material_demand"
+			and str(obligation.get("scope_id", "")) == scope_id
+			and str(obligation.get("item_def_id", "")) == item_def_id
+		):
+			return true
 	return false
 
 

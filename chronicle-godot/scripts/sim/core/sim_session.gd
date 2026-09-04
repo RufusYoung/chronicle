@@ -78,6 +78,10 @@ const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_c
 const EconomicSetup = preload("res://scripts/sim/economy/economic_world_setup.gd")
 const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
 
+const CONTENT_PACK_ID := "chronicle.base"
+const CONTENT_PACK_VERSION := 3
+const FIBER_ROPE_DURABILITY_MIGRATION := "base_v2_to_v3_fiber_rope_durability"
+
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
 )
@@ -1577,8 +1581,8 @@ func build_save_envelope(options: Dictionary = {}) -> Dictionary:
 		"stores": _store_save_data(),
 		"world_log": world_log.to_save_data(),
 		"definition_manifest": {
-			"content_pack_id": "chronicle.base",
-			"content_pack_version": 2,
+			"content_pack_id": CONTENT_PACK_ID,
+			"content_pack_version": CONTENT_PACK_VERSION,
 			"required_definition_ids": _registered_definition_ids(),
 		},
 	}
@@ -1644,7 +1648,10 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 	if not bool(manifest_report.get("ok", false)):
 		_reset_runtime()
 		return manifest_report
-	var store_report := _load_store_save_data(envelope.get("stores", {}))
+	var migrated_store_data: Variant = _migrate_store_save_data(
+		envelope.get("stores", {}), manifest_report.get("migrations", [])
+	)
+	var store_report := _load_store_save_data(migrated_store_data)
 	if not bool(store_report.get("ok", false)):
 		_reset_runtime()
 		return store_report
@@ -2084,19 +2091,75 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 	var expected := _registered_definition_ids()
 	var actual := (required as Array).duplicate(true)
 	actual.sort()
-	if actual != expected:
-		# Only the exact previous base manifest can acquire the newly added item.
-		var previous := expected.duplicate()
-		previous.erase("item:item.fiber_rope")
-		if (
-			str(value.get("content_pack_id", "")) == "chronicle.base"
-			and int(value.get("content_pack_version", 0)) == 1
-			and actual == previous
-		):
-			return {"ok": true, "error": "", "phase": "definitions",
-				"migrations": ["base_v1_to_v2_fiber_rope"]}
+	var pack_id := str(value.get("content_pack_id", ""))
+	var pack_version := int(value.get("content_pack_version", 0))
+	if pack_id != CONTENT_PACK_ID:
 		return _save_failure("save_definition_manifest_mismatch", "definitions")
-	return {"ok": true, "error": "", "phase": "definitions"}
+	if actual == expected:
+		if pack_version == CONTENT_PACK_VERSION:
+			return {"ok": true, "error": "", "phase": "definitions"}
+		if pack_version == 2:
+			return {
+				"ok": true,
+				"error": "",
+				"phase": "definitions",
+				"migrations": [FIBER_ROPE_DURABILITY_MIGRATION],
+			}
+		return _save_failure("save_definition_manifest_mismatch", "definitions")
+	# Only the exact v1 base manifest can acquire the newly added rope definition.
+	var previous := expected.duplicate()
+	previous.erase("item:item.fiber_rope")
+	if pack_version == 1 and actual == previous:
+		return {
+			"ok": true,
+			"error": "",
+			"phase": "definitions",
+			"migrations": [
+				"base_v1_to_v2_fiber_rope",
+				FIBER_ROPE_DURABILITY_MIGRATION,
+			],
+		}
+	return _save_failure("save_definition_manifest_mismatch", "definitions")
+
+
+func _migrate_store_save_data(value: Variant, migrations: Variant) -> Variant:
+	if not value is Dictionary or not migrations is Array:
+		return value
+	var migrated: Dictionary = (value as Dictionary).duplicate(true)
+	if FIBER_ROPE_DURABILITY_MIGRATION not in (migrations as Array):
+		return migrated
+	var item_rows: Variant = migrated.get("items", [])
+	if not item_rows is Array:
+		return migrated
+	var definition: Dictionary = stores["item_store"].get_item_definition(
+		"item.fiber_rope"
+	)
+	var maximum := int((definition.get("durability", {}) as Dictionary).get(
+		"maximum", 0
+	))
+	if maximum < 1:
+		return migrated
+	var migrated_items: Array = (item_rows as Array).duplicate(true)
+	for index: int in range(migrated_items.size()):
+		var row_value: Variant = migrated_items[index]
+		if not row_value is Dictionary:
+			continue
+		var item: Dictionary = (row_value as Dictionary).duplicate(true)
+		if str(item.get("item_def_id", "")) != "item.fiber_rope":
+			continue
+		var condition_value: Variant = item.get("condition", {})
+		if not condition_value is Dictionary:
+			continue
+		var condition: Dictionary = (condition_value as Dictionary).duplicate(true)
+		if condition.has("maximum_durability") or condition.has("durability"):
+			continue
+		condition["maximum_durability"] = maximum
+		condition["durability"] = maximum
+		condition["quality"] = str(condition.get("quality", "serviceable"))
+		item["condition"] = condition
+		migrated_items[index] = item
+	migrated["items"] = migrated_items
+	return migrated
 
 
 func _validate_save_references() -> Dictionary:
