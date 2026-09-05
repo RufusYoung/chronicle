@@ -11,6 +11,7 @@ func add_fact(fact: Dictionary) -> void:
 	if fact_id != "" and facts_by_id.has(fact_id):
 		return
 	var stored := fact.duplicate(true)
+	_freeze(stored)
 	facts.append(stored)
 	if fact_id != "":
 		facts_by_id[fact_id] = stored
@@ -26,7 +27,28 @@ func list_facts() -> Array:
 
 
 func snapshot_facts() -> Array:
-	return facts
+	return facts.duplicate()
+
+
+func copy_runtime_to(target: Variant) -> void:
+	# Transactions own their containers; only recursively frozen facts are shared.
+	target.facts = facts.duplicate()
+	target.facts_by_id = facts_by_id.duplicate()
+	var types := {}
+	for key: String in facts_by_type:
+		types[key] = (facts_by_type[key] as Array).duplicate()
+	target.facts_by_type = types
+
+
+func _freeze(value: Variant) -> void:
+	if value is Dictionary:
+		for key: Variant in value:
+			_freeze(value[key])
+		value.make_read_only()
+	elif value is Array:
+		for child: Variant in value:
+			_freeze(child)
+		value.make_read_only()
 
 
 func get_fact(fact_id: String) -> Dictionary:

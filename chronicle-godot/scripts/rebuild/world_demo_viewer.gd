@@ -11,6 +11,8 @@ var busy := false
 var last_operation: Dictionary = {}
 var _worker: Thread
 var _operation_name := ""
+var _operation_started_usec := 0
+var _displayed_wait_seconds := -1
 var _disabled_buttons: Dictionary = {}
 var _save_dialog: ConfirmationDialog
 var _load_dialog: ConfirmationDialog
@@ -97,6 +99,8 @@ func _begin_operation(method: String, arguments: Array = []) -> Dictionary:
 		return {"success": false, "error": "operation_in_progress"}
 	busy = true
 	_operation_name = method
+	_operation_started_usec = Time.get_ticks_usec()
+	_displayed_wait_seconds = -1
 	_disabled_buttons.clear()
 	for node: Node in find_children("*", "BaseButton", true, false):
 		_disabled_buttons[node] = node.disabled
@@ -124,7 +128,13 @@ func _execute_model(method: String, arguments: Array) -> Dictionary:
 
 
 func _process(_delta: float) -> void:
-	if _worker == null or _worker.is_alive():
+	if _worker == null:
+		return
+	if _worker.is_alive():
+		var seconds := int((Time.get_ticks_usec() - _operation_started_usec) / 1000000)
+		if seconds != _displayed_wait_seconds:
+			_displayed_wait_seconds = seconds
+			_status.text = "正在处理，已用时 %d 秒。请稍候，不会接受第二次行动。" % seconds
 		return
 	last_operation = _worker.wait_to_finish()
 	_worker = null

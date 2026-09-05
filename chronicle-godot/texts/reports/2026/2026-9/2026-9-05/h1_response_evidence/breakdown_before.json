@@ -1,0 +1,225 @@
+{
+  "counts": {
+    "character_features": 0,
+    "chronicle_entries": 22,
+    "deferred_consequences": 0,
+    "entities": 63,
+    "equipment_loadouts": 1,
+    "exchanges": 148,
+    "facts": 1823,
+    "investigation_leads": 0,
+    "items": 221,
+    "memories": 0,
+    "obligations": 4,
+    "pressures": 76,
+    "relationships": 352,
+    "resource_stocks": 23,
+    "rumors": 0,
+    "states": 1046,
+    "traces": 23
+  },
+  "rows": [
+    {
+      "phase": "snapshot",
+      "samples_ms": [
+        11.717,
+        12.604,
+        11.517,
+        11.254,
+        11.732
+      ]
+    },
+    {
+      "phase": "world_projection",
+      "samples_ms": [
+        274.158,
+        283.854,
+        274.359,
+        238.919,
+        236.036
+      ]
+    },
+    {
+      "phase": "transaction_preview_all_stores",
+      "samples_ms": [
+        22.408,
+        21.9,
+        23.837,
+        19.78,
+        22.162
+      ]
+    },
+    {
+      "phase": "transaction_copy/entity_store",
+      "samples_ms": [
+        0.163,
+        0.141,
+        0.125,
+        0.123,
+        0.115
+      ]
+    },
+    {
+      "phase": "transaction_copy/fact_store",
+      "samples_ms": [
+        8.784,
+        14.302,
+        12.694,
+        14.456,
+        15.381
+      ]
+    },
+    {
+      "phase": "transaction_copy/state_store",
+      "samples_ms": [
+        0.402,
+        0.325,
+        0.261,
+        0.238,
+        0.249
+      ]
+    },
+    {
+      "phase": "transaction_copy/character_feature_store",
+      "samples_ms": [
+        0.102,
+        0.08,
+        0.078,
+        0.078,
+        0.078
+      ]
+    },
+    {
+      "phase": "transaction_copy/relationship_store",
+      "samples_ms": [
+        0.13,
+        0.119,
+        0.11,
+        0.101,
+        0.1
+      ]
+    },
+    {
+      "phase": "transaction_copy/memory_store",
+      "samples_ms": [
+        0.008,
+        0.006,
+        0.006,
+        0.006,
+        0.006
+      ]
+    },
+    {
+      "phase": "transaction_copy/trace_store",
+      "samples_ms": [
+        0.061,
+        0.045,
+        0.044,
+        0.045,
+        0.044
+      ]
+    },
+    {
+      "phase": "transaction_copy/rumor_store",
+      "samples_ms": [
+        0.007,
+        0.006,
+        0.006,
+        0.006,
+        0.006
+      ]
+    },
+    {
+      "phase": "transaction_copy/pressure_store",
+      "samples_ms": [
+        0.123,
+        0.072,
+        0.069,
+        0.07,
+        0.069
+      ]
+    },
+    {
+      "phase": "transaction_copy/resource_stock_store",
+      "samples_ms": [
+        0.138,
+        0.12,
+        0.109,
+        0.116,
+        0.109
+      ]
+    },
+    {
+      "phase": "transaction_copy/obligation_store",
+      "samples_ms": [
+        0.029,
+        0.016,
+        0.014,
+        0.015,
+        0.014
+      ]
+    },
+    {
+      "phase": "transaction_copy/exchange_store",
+      "samples_ms": [
+        0.348,
+        0.32,
+        0.481,
+        0.701,
+        0.283
+      ]
+    },
+    {
+      "phase": "transaction_copy/item_store",
+      "samples_ms": [
+        1.588,
+        1.635,
+        1.295,
+        1.105,
+        0.987
+      ]
+    },
+    {
+      "phase": "transaction_copy/equipment_store",
+      "samples_ms": [
+        0.036,
+        0.024,
+        0.024,
+        0.023,
+        0.022
+      ]
+    },
+    {
+      "phase": "transaction_copy/chronicle_store",
+      "samples_ms": [
+        0.085,
+        0.055,
+        0.051,
+        0.049,
+        0.05
+      ]
+    },
+    {
+      "phase": "transaction_copy/investigation_store",
+      "samples_ms": [
+        0.007,
+        0.006,
+        0.006,
+        0.006,
+        0.006
+      ]
+    },
+    {
+      "phase": "transaction_copy/deferred_consequence_store",
+      "samples_ms": [
+        0.007,
+        0.006,
+        0.006,
+        0.006,
+        0.006
+      ]
+    }
+  ],
+  "scope": "Warm microprobes; overlapping costs, not tick attribution.",
+  "unchanged": true
+}

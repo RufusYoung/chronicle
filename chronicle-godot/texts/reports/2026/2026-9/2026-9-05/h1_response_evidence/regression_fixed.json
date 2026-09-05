@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_deferred_granary_investigation_surface_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 2.31,
+  "UnexpectedErrors": []
+}

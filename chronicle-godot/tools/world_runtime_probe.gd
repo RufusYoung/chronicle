@@ -12,6 +12,8 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	if not OS.get_cmdline_user_args().is_empty():
+		output += "." + OS.get_cmdline_user_args()[0].validate_filename()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var model := Live.new()
 	var began := Time.get_ticks_usec()

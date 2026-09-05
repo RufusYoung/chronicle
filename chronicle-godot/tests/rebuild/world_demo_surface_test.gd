@@ -138,15 +138,19 @@ func _run() -> void:
 
 func _settle(viewer: Variant) -> int:
 	var frames := 0
+	var progress_visible := false
 	var deadline := Time.get_ticks_msec() + 120000
 	while viewer.busy and Time.get_ticks_msec() < deadline:
 		await process_frame
 		frames += 1
+		progress_visible = progress_visible or "已用时" in viewer._status.text
 	_check(not viewer.busy, "bounded worker completion")
 	if viewer.busy:
 		quit(1)
 		return frames
 	_check(viewer.last_operation.result.get("success", false), "formal operation succeeds: " + str(viewer.last_operation.method))
+	if frames > 2:
+		_check(progress_visible, "multi-frame operation shows actual elapsed wait time")
 	var sample: Dictionary = viewer.last_operation.duplicate()
 	sample.erase("view")
 	sample.erase("result")

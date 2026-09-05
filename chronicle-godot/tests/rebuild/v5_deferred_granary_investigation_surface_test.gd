@@ -106,6 +106,8 @@ func _run() -> void:
 		and "没有消失" in feedback_body.text,
 		"6. Deferring consumes an hour and confirms the lead remains"
 	)
+	(viewer.find_child("OpenResultReceipt", true, false) as LinkButton).pressed.emit()
+	await process_frame
 	_check(
 		goal_summary.is_visible_in_tree()
 		and "已搁置，仍可追查" in goal_summary.text
@@ -117,8 +119,11 @@ func _run() -> void:
 			action_buttons,
 			INVESTIGATE_OPTION
 		) != null,
-		"7. Deferred state removes repeat defer but preserves investigation"
+		"7. Records expose deferred status; repeat defer is removed and investigation remains"
 	)
+	(viewer.find_child("BackToScene", true, false) as Button).pressed.emit()
+	await process_frame
+	_check(action_dock.is_visible_in_tree(), "7b. Returning from records restores the investigation controls")
 	_check(
 		"旧事：替你留着税契匣" in visible_people.text
 		and "留到以后追查的旧事" in chronicle_heading.text

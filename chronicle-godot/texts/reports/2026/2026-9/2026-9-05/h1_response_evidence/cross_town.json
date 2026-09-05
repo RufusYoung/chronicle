@@ -1,0 +1,1273 @@
+{
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "renderer": "gl_compatibility",
+  "rows": [
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.layout"
+        ],
+        "method": "perform_action"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 1,
+        "hour": 9,
+        "world_tick_count": 1
+      },
+      "frames": 32,
+      "from": "generated_location.reed_bay.commons",
+      "index": 0,
+      "operation_ms": 169.961,
+      "projection_ms": 51.026,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 0,
+        "hour": 8,
+        "world_tick_count": 0
+      },
+      "state_sha256": "7b27de0b884738e71d6cef32784a218f7fe8da472f35d8da11e78c90dddbd329",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 254.984,
+      "view_sha256": "4b38ecdc6d9bcf6467a7ee7fa09e4233096e8e75d1572590be6b8fd70b2b535b",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 5,
+        "hour": 13,
+        "world_tick_count": 2
+      },
+      "frames": 29,
+      "from": "generated_location.reed_bay.commons",
+      "index": 1,
+      "operation_ms": 151.178,
+      "projection_ms": 43.819,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 1,
+        "hour": 9,
+        "world_tick_count": 1
+      },
+      "state_sha256": "2bd90e9a917f65248f048c9a788acc1a1e81c5a2df8dbec703fa5eac08b32ee7",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 217.846,
+      "view_sha256": "810eb94e39eed402f73df611431e9d08f6b074079d078452751e3e48e514e10b",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 6,
+        "hour": 14,
+        "world_tick_count": 3
+      },
+      "frames": 20,
+      "from": "generated_location.river_steps.commons",
+      "index": 2,
+      "operation_ms": 65.356,
+      "projection_ms": 50.359,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 5,
+        "hour": 13,
+        "world_tick_count": 2
+      },
+      "state_sha256": "4fe80b53d30c0ee515188e56fb736f849b7ad7fba05f32a5ed04cd0a7a1f4855",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 136.817,
+      "view_sha256": "517a48ad50434a0b5d46669a42e43383b0668d1e664867e6e8945126c2f765fa",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.river_steps.layout"
+        ],
+        "method": "perform_action"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 7,
+        "hour": 15,
+        "world_tick_count": 4
+      },
+      "frames": 19,
+      "from": "generated_location.river_steps.commons",
+      "index": 3,
+      "operation_ms": 65.462,
+      "projection_ms": 44.912,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 6,
+        "hour": 14,
+        "world_tick_count": 3
+      },
+      "state_sha256": "dccb9c2b848aed7cb002302e8adb63338d8d7ceec21f78200c575ed9e21a82d8",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 133.046,
+      "view_sha256": "3836eaa9ff081822cad6161eefb94ac01ad4f97e19e937fcf5da212d24285dd6",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.b_to_a"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 11,
+        "hour": 19,
+        "world_tick_count": 5
+      },
+      "frames": 36,
+      "from": "generated_location.river_steps.commons",
+      "index": 4,
+      "operation_ms": 203.847,
+      "projection_ms": 53.464,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 7,
+        "hour": 15,
+        "world_tick_count": 4
+      },
+      "state_sha256": "f6ea12111908fb098e2e8dd87a64a4a04a04bcfd344963ee8e1fcebba4371741",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 275.053,
+      "view_sha256": "99ec22d13c0aa25b0c3e7c848bb75070b11f65bc20ee521cc9dad1d6c3a86e99",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 12,
+        "hour": 20,
+        "world_tick_count": 6
+      },
+      "frames": 28,
+      "from": "generated_location.reed_bay.commons",
+      "index": 5,
+      "operation_ms": 117.25,
+      "projection_ms": 64.65,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 11,
+        "hour": 19,
+        "world_tick_count": 5
+      },
+      "state_sha256": "056f89382abab074a7265d126b9af4460af8843af69679312a61dc178cf85500",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 206.349,
+      "view_sha256": "86a16234dff124a1f496294dc0047a14b16f1a3a02785717ec1df95be570c215",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 13,
+        "hour": 21,
+        "world_tick_count": 7
+      },
+      "frames": 22,
+      "from": "generated_location.reed_bay.commons",
+      "index": 6,
+      "operation_ms": 86.904,
+      "projection_ms": 54.446,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 12,
+        "hour": 20,
+        "world_tick_count": 6
+      },
+      "state_sha256": "c802d8038d3f1972d3ed7a2e815e646384cb89182f05beb9c678e42fc86cee65",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 161.284,
+      "view_sha256": "2748f43d35d13b38b3ddd388b1d3230c1d345d0e1d4568918de95f5c0f51ec03",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 17,
+        "hour": 1,
+        "world_tick_count": 8
+      },
+      "frames": 70,
+      "from": "generated_location.reed_bay.commons",
+      "index": 7,
+      "operation_ms": 475.305,
+      "projection_ms": 61.673,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 13,
+        "hour": 21,
+        "world_tick_count": 7
+      },
+      "state_sha256": "ba040ef7cac1fc3bfc8b62c49109933b672c7c0392122b5c1395afc56a6f26b1",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 557.706,
+      "view_sha256": "71c98cb6b149f2cf0d1f4c07edbf97886f61ad5386f51d4eca98d3aef58bc40f",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 18,
+        "hour": 2,
+        "world_tick_count": 9
+      },
+      "frames": 27,
+      "from": "generated_location.river_steps.commons",
+      "index": 8,
+      "operation_ms": 108.606,
+      "projection_ms": 73.943,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 17,
+        "hour": 1,
+        "world_tick_count": 8
+      },
+      "state_sha256": "d8c7c8dcdb7c7832f40a577c7cf672415c44c14feb7f94717ad9c1c9c1824de4",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 202.028,
+      "view_sha256": "c114fb3914f5c2632d274a9154ad80c7690fad15dbadaf491252ec509381b0bf",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 19,
+        "hour": 3,
+        "world_tick_count": 10
+      },
+      "frames": 23,
+      "from": "generated_location.river_steps.commons",
+      "index": 9,
+      "operation_ms": 88.545,
+      "projection_ms": 55.194,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 18,
+        "hour": 2,
+        "world_tick_count": 9
+      },
+      "state_sha256": "b6369964d84924f79e3274ed4db4c63faaaad3db3414ee84542cda43261b34f7",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 164.897,
+      "view_sha256": "873f5f66472cab2a26fea17e4ec7237c67bcc87e2695c9cec2d53e12953ff625",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.b_to_a"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 23,
+        "hour": 7,
+        "world_tick_count": 11
+      },
+      "frames": 57,
+      "from": "generated_location.river_steps.commons",
+      "index": 10,
+      "operation_ms": 359.879,
+      "projection_ms": 64.227,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 19,
+        "hour": 3,
+        "world_tick_count": 10
+      },
+      "state_sha256": "4523d029eb457bab56f6d810361b365a45a99ee87cfff9d33a32265cfc5dc4e7",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 448.209,
+      "view_sha256": "04b62475fcf30c41cdd6cfd2582fce4f8264f87f5029fd0c350a8e5b162a745a",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 24,
+        "hour": 8,
+        "world_tick_count": 12
+      },
+      "frames": 31,
+      "from": "generated_location.reed_bay.commons",
+      "index": 11,
+      "operation_ms": 135.894,
+      "projection_ms": 79.666,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 23,
+        "hour": 7,
+        "world_tick_count": 11
+      },
+      "state_sha256": "2ddaf8650cbd1d1f4ecfa305bd39b277e88d77490da8e9df0d7432895ca50f7a",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 237.402,
+      "view_sha256": "f4a0e45ace7e60854bfd5b6ddefae0af40a4e975055105dd192be5bf6bf28ceb",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 25,
+        "hour": 9,
+        "world_tick_count": 13
+      },
+      "frames": 30,
+      "from": "generated_location.reed_bay.commons",
+      "index": 12,
+      "operation_ms": 130.169,
+      "projection_ms": 76.975,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 24,
+        "hour": 8,
+        "world_tick_count": 12
+      },
+      "state_sha256": "eb7cbbe8120bbe713a6529a7fb0bb1da278d45260383e0c797d1a6e5e750ae86",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 227.441,
+      "view_sha256": "e4154144f20205f4aeb26bc43008977e73f5a45545b445b981cb2100c258c7e0",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 29,
+        "hour": 13,
+        "world_tick_count": 14
+      },
+      "frames": 72,
+      "from": "generated_location.reed_bay.commons",
+      "index": 13,
+      "operation_ms": 482.418,
+      "projection_ms": 70.831,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 25,
+        "hour": 9,
+        "world_tick_count": 13
+      },
+      "state_sha256": "a3f6150014dc4534d4290c40f640656481e13399aeeeff12f896617a93a1b2dd",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 576.634,
+      "view_sha256": "62e3ddcdd281432a7860ca2ed65e8f6c46f5c5af781fda98548149b342fd72d8",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 30,
+        "hour": 14,
+        "world_tick_count": 15
+      },
+      "frames": 30,
+      "from": "generated_location.river_steps.commons",
+      "index": 14,
+      "operation_ms": 128.489,
+      "projection_ms": 72.861,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 29,
+        "hour": 13,
+        "world_tick_count": 14
+      },
+      "state_sha256": "0b072009585649dc7f002572b6119d1921b66a4bf0f02124168dd84ee81fa462",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 223.867,
+      "view_sha256": "3791110d440e65a9a44285f11dfc380ea31627f38ee583e0620c99460959bb79",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 31,
+        "hour": 15,
+        "world_tick_count": 16
+      },
+      "frames": 28,
+      "from": "generated_location.river_steps.commons",
+      "index": 15,
+      "operation_ms": 123.331,
+      "projection_ms": 66.311,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 30,
+        "hour": 14,
+        "world_tick_count": 15
+      },
+      "state_sha256": "b99a2f45c0554ccfbccb70e857c8537dbc9dcb0605ca3019e4240db032c86712",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 213.093,
+      "view_sha256": "36ca34af14e05bd2b10ef42ab6702cfefa25a8396ea821981dfbda2b020e0757",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.b_to_a"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 35,
+        "hour": 19,
+        "world_tick_count": 17
+      },
+      "frames": 64,
+      "from": "generated_location.river_steps.commons",
+      "index": 16,
+      "operation_ms": 420.992,
+      "projection_ms": 73.966,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 31,
+        "hour": 15,
+        "world_tick_count": 16
+      },
+      "state_sha256": "3f8d065bbab7317f32e86cb2916f9221e361fc7f0d8e9d5e1bffe24f087622dc",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 513.014,
+      "view_sha256": "9f1ce44d578ddfb59a0c20162c4ce18b0d50f728701d3ae41e358c8c86e66711",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 36,
+        "hour": 20,
+        "world_tick_count": 18
+      },
+      "frames": 34,
+      "from": "generated_location.reed_bay.commons",
+      "index": 17,
+      "operation_ms": 158.479,
+      "projection_ms": 84.638,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 35,
+        "hour": 19,
+        "world_tick_count": 17
+      },
+      "state_sha256": "ed8cf79f1a9ba639eaaa03187d9e68bbc1850960f856310a53b7ed39c58c70de",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 262.898,
+      "view_sha256": "096850b58e6943733fbde860be72c74d6275b3294138ce5b522abcb68b5d8b59",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 37,
+        "hour": 21,
+        "world_tick_count": 19
+      },
+      "frames": 30,
+      "from": "generated_location.reed_bay.commons",
+      "index": 18,
+      "operation_ms": 139.722,
+      "projection_ms": 70.11,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 36,
+        "hour": 20,
+        "world_tick_count": 18
+      },
+      "state_sha256": "e768e3646630aabd6c25d8f33c3ed7c8da530558903632684cc590e19424cd9e",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 229.74,
+      "view_sha256": "32d98d010bf8b8693bacfd6d3a72a42485f86354b669a951f4174bde3ce65fc9",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 3,
+        "elapsed_hours": 41,
+        "hour": 1,
+        "world_tick_count": 20
+      },
+      "frames": 99,
+      "from": "generated_location.reed_bay.commons",
+      "index": 19,
+      "operation_ms": 704.869,
+      "projection_ms": 81.35,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 37,
+        "hour": 21,
+        "world_tick_count": 19
+      },
+      "state_sha256": "d5bc672f02aa7fcf4d724cffd9429a3195088ae91449c4067e13cb136eacd578",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 805.096,
+      "view_sha256": "339682b100775df0a7ba303d68a1a2432595f11adf370d09a4532bba1fa11439",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.layout"
+        ],
+        "method": "perform_action"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 169,
+        "hour": 9,
+        "world_tick_count": 8
+      },
+      "frames": 77,
+      "from": "generated_location.reed_bay.commons",
+      "index": 0,
+      "operation_ms": 419.571,
+      "projection_ms": 194.622,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 168,
+        "hour": 8,
+        "world_tick_count": 7
+      },
+      "state_sha256": "573b85150cc2f7b40a288e1b31765cfdbafe75989e484cdef2478d148ab842d5",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 633.448,
+      "view_sha256": "cb7ad81d7bbebdc3364bf0f8ac8c918b058c864693e615fe056dca7f65a57585",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 173,
+        "hour": 13,
+        "world_tick_count": 9
+      },
+      "frames": 240,
+      "from": "generated_location.reed_bay.commons",
+      "index": 1,
+      "operation_ms": 1682.114,
+      "projection_ms": 275.076,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 169,
+        "hour": 9,
+        "world_tick_count": 8
+      },
+      "state_sha256": "6ab098f7441512a5c116009a7e031680e38a18feafa81a79244b81430cbe6315",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 1980.902,
+      "view_sha256": "3182bdd5227798f22a25ad5dd07f09e09ad60b447d973674ca59e21b79bc8bdf",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 174,
+        "hour": 14,
+        "world_tick_count": 10
+      },
+      "frames": 85,
+      "from": "generated_location.river_steps.commons",
+      "index": 2,
+      "operation_ms": 440.24,
+      "projection_ms": 230.92,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 173,
+        "hour": 13,
+        "world_tick_count": 9
+      },
+      "state_sha256": "0faae88fa539322ce63f05f935e7a5a590b22ced47139e43701291625908b728",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 689.179,
+      "view_sha256": "08592f4a3d488104fccfddb502ce1b2ac15e65eb99d4c47f91ce5da3d23e6bb6",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.river_steps.layout"
+        ],
+        "method": "perform_action"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 175,
+        "hour": 15,
+        "world_tick_count": 11
+      },
+      "frames": 82,
+      "from": "generated_location.river_steps.commons",
+      "index": 3,
+      "operation_ms": 432.894,
+      "projection_ms": 207.026,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 174,
+        "hour": 14,
+        "world_tick_count": 10
+      },
+      "state_sha256": "3b6ae0613e6dbf82ffec43e3772382d9fa84882851663718eb60b5ea24a9f31c",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 658.642,
+      "view_sha256": "a9e9c6853d461b35a4b1943ba975a21d66dc9d706376394e032019457717b8a4",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.b_to_a"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 179,
+        "hour": 19,
+        "world_tick_count": 12
+      },
+      "frames": 211,
+      "from": "generated_location.river_steps.commons",
+      "index": 4,
+      "operation_ms": 1458.919,
+      "projection_ms": 253.827,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 175,
+        "hour": 15,
+        "world_tick_count": 11
+      },
+      "state_sha256": "52b427eedd931824ca045867ba6862f3149f38f5402b4b5019ff3f5ca1d0856b",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 1733.321,
+      "view_sha256": "90b588f960ff67c38f460dab6111218d4a95061114d97b8ca210c8adc69b9f36",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 180,
+        "hour": 20,
+        "world_tick_count": 13
+      },
+      "frames": 93,
+      "from": "generated_location.reed_bay.commons",
+      "index": 5,
+      "operation_ms": 494.868,
+      "projection_ms": 232.504,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 179,
+        "hour": 19,
+        "world_tick_count": 12
+      },
+      "state_sha256": "d6638c509d44003bb219807119e20c90d1223e1144e72a9275487b91a695b1db",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 749.229,
+      "view_sha256": "26bc36e9b5d2310e75643ec350411aa0216dfa459a5f1f3d2ea7f2357b44f0d5",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 181,
+        "hour": 21,
+        "world_tick_count": 14
+      },
+      "frames": 82,
+      "from": "generated_location.reed_bay.commons",
+      "index": 6,
+      "operation_ms": 444.399,
+      "projection_ms": 196.191,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 180,
+        "hour": 20,
+        "world_tick_count": 13
+      },
+      "state_sha256": "9489792aafe90e8950d919f470c8f02cd4eaa4415a1c7d133e6379f0b2fe7acb",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 659.627,
+      "view_sha256": "8f679dab08f930a3e9e8e133121def68df2feb6e46daa4e30538b150600eccca",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 185,
+        "hour": 1,
+        "world_tick_count": 15
+      },
+      "frames": 280,
+      "from": "generated_location.reed_bay.commons",
+      "index": 7,
+      "operation_ms": 2066.068,
+      "projection_ms": 222.928,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 181,
+        "hour": 21,
+        "world_tick_count": 14
+      },
+      "state_sha256": "370c73c26a9d6d0e2c3ab4a07e001d3c138178a0dfd3baf492cb03c910897d63",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 2309.77,
+      "view_sha256": "5db30f84a2ebd6d4abaf1724c950d3b193c78a40af8e7358a794d584740785d1",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 186,
+        "hour": 2,
+        "world_tick_count": 16
+      },
+      "frames": 89,
+      "from": "generated_location.river_steps.commons",
+      "index": 8,
+      "operation_ms": 417.218,
+      "projection_ms": 280.645,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 185,
+        "hour": 1,
+        "world_tick_count": 15
+      },
+      "state_sha256": "165dc168613a3319099c23a890b562dde76261be5dbebaa16970d5189ba1a47c",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 722.159,
+      "view_sha256": "d8b9ec66f82574f4a869d56b4daadb15641cc535f77f95270f2a475474394073",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 187,
+        "hour": 3,
+        "world_tick_count": 17
+      },
+      "frames": 76,
+      "from": "generated_location.river_steps.commons",
+      "index": 9,
+      "operation_ms": 390.315,
+      "projection_ms": 199.127,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 186,
+        "hour": 2,
+        "world_tick_count": 16
+      },
+      "state_sha256": "f932bcc8a81b8b613d3de9c5153cdb999e0b52657aaf1d0415f77972630130b7",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 609.509,
+      "view_sha256": "bedd9e1496bd051a617371ad1767f0c17728e1ac2cc7dae07503c5d00ccc3715",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.b_to_a"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 191,
+        "hour": 7,
+        "world_tick_count": 18
+      },
+      "frames": 222,
+      "from": "generated_location.river_steps.commons",
+      "index": 10,
+      "operation_ms": 1569.413,
+      "projection_ms": 243.533,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 187,
+        "hour": 3,
+        "world_tick_count": 17
+      },
+      "state_sha256": "ce7c10356686521b7af309b2f2db0ae895ef0e9990185bd1b9d2bff8cd2d4e72",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 1831.856,
+      "view_sha256": "2532ad80ac5334ed6b536d8ed7cea9f42e92334033282c31456951daba976c70",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 192,
+        "hour": 8,
+        "world_tick_count": 19
+      },
+      "frames": 97,
+      "from": "generated_location.reed_bay.commons",
+      "index": 11,
+      "operation_ms": 501.565,
+      "projection_ms": 261.583,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 191,
+        "hour": 7,
+        "world_tick_count": 18
+      },
+      "state_sha256": "c3b3d8e943599d0a1a0f4b5432e578056b7ca8c228932ac73bb03ab502883717",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 784.593,
+      "view_sha256": "011c9d05fa9a4adb22f63dee97d57f157b1d36d191f70b5de0d63306a2547d4c",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 193,
+        "hour": 9,
+        "world_tick_count": 20
+      },
+      "frames": 83,
+      "from": "generated_location.reed_bay.commons",
+      "index": 12,
+      "operation_ms": 427.035,
+      "projection_ms": 215.871,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 192,
+        "hour": 8,
+        "world_tick_count": 19
+      },
+      "state_sha256": "ddfc5a0a3ff0b6a96223bceabe33983a1e38cf81cacb14b6b22c30a23d28f42f",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 667.612,
+      "view_sha256": "5e6ef29e120ead417706128369bade251ae417d06839fcc7ea3b67b0412aec8c",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 197,
+        "hour": 13,
+        "world_tick_count": 21
+      },
+      "frames": 235,
+      "from": "generated_location.reed_bay.commons",
+      "index": 13,
+      "operation_ms": 1669.873,
+      "projection_ms": 242.169,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 193,
+        "hour": 9,
+        "world_tick_count": 20
+      },
+      "state_sha256": "4ac829ebda5711fca412cc25a1888f08544e11807b74efe6a53184ca853e6d0d",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 1936.339,
+      "view_sha256": "6505b0949e84cec0f63dda2962044c92a708d21cf87c905c13489dc976513852",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 198,
+        "hour": 14,
+        "world_tick_count": 22
+      },
+      "frames": 90,
+      "from": "generated_location.river_steps.commons",
+      "index": 14,
+      "operation_ms": 461.946,
+      "projection_ms": 244.131,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 197,
+        "hour": 13,
+        "world_tick_count": 21
+      },
+      "state_sha256": "af1408591d0001b2fdbeac6d98d5a8076ce4534d5cd0d3d15ae6f27873f6d889",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 726.163,
+      "view_sha256": "9e3187dcad24cf8931a1f5e97e34ff58b368c4f64b3ee5582c6f2f06593e7177",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 199,
+        "hour": 15,
+        "world_tick_count": 23
+      },
+      "frames": 83,
+      "from": "generated_location.river_steps.commons",
+      "index": 15,
+      "operation_ms": 436.151,
+      "projection_ms": 207.266,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 198,
+        "hour": 14,
+        "world_tick_count": 22
+      },
+      "state_sha256": "4b3abdba6152f1838a86a8b5d34a0709476bb7cdf660ea769c6363810a2835b7",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 664.652,
+      "view_sha256": "565f002b75d06861969d5cb65bad031a59b40f59c61d6bec489cc02b4af9ec95",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.b_to_a"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 203,
+        "hour": 19,
+        "world_tick_count": 24
+      },
+      "frames": 214,
+      "from": "generated_location.river_steps.commons",
+      "index": 16,
+      "operation_ms": 1493.166,
+      "projection_ms": 241.341,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 199,
+        "hour": 15,
+        "world_tick_count": 23
+      },
+      "state_sha256": "83a3ea1296fbfd21cac734497ef5127ece702b4c79b218b7e1e18c0e631746d7",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 1757.144,
+      "view_sha256": "e2d17a4ac9959dced01c6ac52dd943658d114654128407b2d5e7fd3d708db719",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 204,
+        "hour": 20,
+        "world_tick_count": 25
+      },
+      "frames": 100,
+      "from": "generated_location.reed_bay.commons",
+      "index": 17,
+      "operation_ms": 529.491,
+      "projection_ms": 257.447,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 203,
+        "hour": 19,
+        "world_tick_count": 24
+      },
+      "state_sha256": "36507f02e3a9a917e23b71e7ac79b87918bbd97f88b8673bd7cceb7435198b23",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 810.267,
+      "view_sha256": "4c15b4ab0d76fe418c09ce59dd51e2bf80ceefa6578be75b2fe178a100008108",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 205,
+        "hour": 21,
+        "world_tick_count": 26
+      },
+      "frames": 91,
+      "from": "generated_location.reed_bay.commons",
+      "index": 18,
+      "operation_ms": 491.754,
+      "projection_ms": 221.646,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 204,
+        "hour": 20,
+        "world_tick_count": 25
+      },
+      "state_sha256": "4e87be343fddf3c4a4d959a4071e753af84b151062fd734d49d6e21c939dbada",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 733.257,
+      "view_sha256": "13c3dfbdfdd5293b8f181cc237d8765fb11b1d4815708d16ec802f3e7b741071",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.network.reed_bay_river_steps.a_to_b"
+        ],
+        "method": "perform_travel"
+      },
+      "elapsed_hours": 4,
+      "end_time": {
+        "day": 10,
+        "elapsed_hours": 209,
+        "hour": 1,
+        "world_tick_count": 27
+      },
+      "frames": 293,
+      "from": "generated_location.reed_bay.commons",
+      "index": 19,
+      "operation_ms": 2159.803,
+      "projection_ms": 238.902,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 205,
+        "hour": 21,
+        "world_tick_count": 26
+      },
+      "state_sha256": "653cf49563f7894cd0af8d326bf9ef218589c48380050e3c4d463657dea8170a",
+      "to": "generated_location.river_steps.commons",
+      "total_ms": 2418.312,
+      "view_sha256": "61bb019dcbf3501cb10c3d474d7ef2bc73d3e2518a3f25ec4cee80202c0553dd",
+      "world": "day7"
+    }
+  ],
+  "scope": "Program-driven legal rendered UI operations; no human gameplay acceptance. Multi-hour travel reported without dividing by hours.",
+  "summaries": {
+    "day7": {
+      "count": 20,
+      "max_ms": 2418.312,
+      "p50_ms": 733.257,
+      "p95_ms": 2309.77
+    },
+    "initial": {
+      "count": 20,
+      "max_ms": 805.096,
+      "p50_ms": 227.441,
+      "p95_ms": 576.634
+    }
+  }
+}

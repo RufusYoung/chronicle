@@ -1,0 +1,7 @@
+{
+  "compared": 40,
+  "differences": [],
+  "match": true,
+  "precision": "full-precision Godot JSON of Stores, session, time, RNG and world log; complete view checked separately",
+  "before_commit": "fd0489a6f18eec559a6de0319be6ebd613fabb8b"
+}

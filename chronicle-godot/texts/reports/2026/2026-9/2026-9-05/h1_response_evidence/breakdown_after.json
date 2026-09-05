@@ -1,0 +1,225 @@
+{
+  "counts": {
+    "character_features": 0,
+    "chronicle_entries": 22,
+    "deferred_consequences": 0,
+    "entities": 63,
+    "equipment_loadouts": 1,
+    "exchanges": 148,
+    "facts": 1823,
+    "investigation_leads": 0,
+    "items": 221,
+    "memories": 0,
+    "obligations": 4,
+    "pressures": 76,
+    "relationships": 352,
+    "resource_stocks": 23,
+    "rumors": 0,
+    "states": 1046,
+    "traces": 23
+  },
+  "rows": [
+    {
+      "phase": "snapshot",
+      "samples_ms": [
+        9.164,
+        9.449,
+        8.31,
+        9.305,
+        9.125
+      ]
+    },
+    {
+      "phase": "world_projection",
+      "samples_ms": [
+        175.363,
+        180.538,
+        179.957,
+        200.471,
+        203.506
+      ]
+    },
+    {
+      "phase": "transaction_preview_all_stores",
+      "samples_ms": [
+        5.296,
+        3.431,
+        5.289,
+        4.348,
+        4.019
+      ]
+    },
+    {
+      "phase": "transaction_copy/entity_store",
+      "samples_ms": [
+        0.114,
+        0.119,
+        0.114,
+        0.11,
+        0.109
+      ]
+    },
+    {
+      "phase": "transaction_copy/fact_store",
+      "samples_ms": [
+        0.381,
+        0.328,
+        0.294,
+        0.288,
+        0.288
+      ]
+    },
+    {
+      "phase": "transaction_copy/state_store",
+      "samples_ms": [
+        0.228,
+        0.243,
+        0.235,
+        0.246,
+        0.249
+      ]
+    },
+    {
+      "phase": "transaction_copy/character_feature_store",
+      "samples_ms": [
+        0.094,
+        0.129,
+        0.096,
+        0.086,
+        0.086
+      ]
+    },
+    {
+      "phase": "transaction_copy/relationship_store",
+      "samples_ms": [
+        0.168,
+        0.138,
+        0.117,
+        0.117,
+        0.119
+      ]
+    },
+    {
+      "phase": "transaction_copy/memory_store",
+      "samples_ms": [
+        0.011,
+        0.006,
+        0.007,
+        0.007,
+        0.007
+      ]
+    },
+    {
+      "phase": "transaction_copy/trace_store",
+      "samples_ms": [
+        0.069,
+        0.053,
+        0.049,
+        0.05,
+        0.049
+      ]
+    },
+    {
+      "phase": "transaction_copy/rumor_store",
+      "samples_ms": [
+        0.008,
+        0.079,
+        0.029,
+        0.011,
+        0.01
+      ]
+    },
+    {
+      "phase": "transaction_copy/pressure_store",
+      "samples_ms": [
+        0.145,
+        0.097,
+        0.083,
+        0.084,
+        0.08
+      ]
+    },
+    {
+      "phase": "transaction_copy/resource_stock_store",
+      "samples_ms": [
+        0.227,
+        0.148,
+        0.125,
+        0.12,
+        0.114
+      ]
+    },
+    {
+      "phase": "transaction_copy/obligation_store",
+      "samples_ms": [
+        0.027,
+        0.015,
+        0.015,
+        0.015,
+        0.015
+      ]
+    },
+    {
+      "phase": "transaction_copy/exchange_store",
+      "samples_ms": [
+        0.437,
+        0.377,
+        0.317,
+        0.289,
+        0.254
+      ]
+    },
+    {
+      "phase": "transaction_copy/item_store",
+      "samples_ms": [
+        1.137,
+        1.375,
+        1.363,
+        1.366,
+        1.079
+      ]
+    },
+    {
+      "phase": "transaction_copy/equipment_store",
+      "samples_ms": [
+        0.038,
+        0.025,
+        0.023,
+        0.023,
+        0.023
+      ]
+    },
+    {
+      "phase": "transaction_copy/chronicle_store",
+      "samples_ms": [
+        0.088,
+        0.065,
+        0.053,
+        0.052,
+        0.051
+      ]
+    },
+    {
+      "phase": "transaction_copy/investigation_store",
+      "samples_ms": [
+        0.007,
+        0.006,
+        0.006,
+        0.006,
+        0.006
+      ]
+    },
+    {
+      "phase": "transaction_copy/deferred_consequence_store",
+      "samples_ms": [
+        0.007,
+        0.009,
+        0.007,
+        0.006,
+        0.007
+      ]
+    }
+  ],
+  "scope": "Warm microprobes; overlapping costs, not tick attribution.",
+  "unchanged": true
+}

@@ -1,0 +1,30 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] start
+[PASS] advance_day_1
+[PASS] projection_day_1
+[PASS] reference_audit_day_1
+[PASS] save_day_1
+WORLD_RUNTIME_DAY 1
+[PASS] advance_day_2
+WORLD_RUNTIME_DAY 2
+[PASS] advance_day_3
+WORLD_RUNTIME_DAY 3
+[PASS] advance_day_4
+WORLD_RUNTIME_DAY 4
+[PASS] advance_day_5
+WORLD_RUNTIME_DAY 5
+[PASS] advance_day_6
+WORLD_RUNTIME_DAY 6
+[PASS] advance_day_7
+[PASS] projection_day_7
+[PASS] reference_audit_day_7
+[PASS] save_day_7
+WORLD_RUNTIME_DAY 7
+[PASS] load_day7
+[PASS] uninterrupted_hour
+[PASS] restored_hour
+[PASS] day7_disk_continuation_native_precision
+[PASS] no_actor_actions
+WORLD_RUNTIME_RESULT PASS
+WORLD_RUNTIME_EVIDENCE C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/world_runtime_probe.history_optimized

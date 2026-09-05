@@ -2,6 +2,7 @@ extends RefCounted
 class_name V5TransactionWorldWriter
 
 const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
+const FactStore = preload("res://scripts/sim/fact/fact_store.gd")
 
 const EXTERNAL_PROJECTION_KEYS := [
 	"food_count",
@@ -406,6 +407,9 @@ func _copy_script_properties(
 		skip_object_references: bool,
 		object_map: Dictionary
 ) -> void:
+	if source.get_script() == FactStore and target.get_script() == FactStore:
+		source.copy_runtime_to(target)
+		return
 	for property: Dictionary in source.get_property_list():
 		if int(property.get("usage", 0)) & PROPERTY_USAGE_SCRIPT_VARIABLE == 0:
 			continue

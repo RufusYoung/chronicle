@@ -433,7 +433,7 @@ func _playtest_view(snapshot: Variant) -> Dictionary:
 	var location_id := str(snapshot.location.get("id", ""))
 	if _has_fact(snapshot, "settlement_network_generated"):
 		var current_settlement_id := _current_settlement_id(snapshot)
-		var current_name := _entity_name(current_settlement_id)
+		var current_name := _entity_name(current_settlement_id, snapshot)
 		var trade_seen := _has_fact(snapshot, "settlement_trade_shipment")
 		var absorption_seen := _has_fact(snapshot, "migrant_absorption_evaluated")
 		return {
@@ -1637,9 +1637,9 @@ func _settlement_network_rows(
 				snapshot, settlement_id, expected_role
 			)
 			var current_holder := (
-				_entity_name(current_holder_id)
+				_entity_name(current_holder_id, snapshot)
 				if current_holder_id != ""
-				else "空缺（原%s）" % _entity_name(founding_holder_id)
+				else "空缺（原%s）" % _entity_name(founding_holder_id, snapshot)
 			)
 			if current_holder.begins_with("空缺"):
 				vacant_position_count += 1
@@ -1727,7 +1727,7 @@ func _settlement_network_rows(
 		elif fact_type == "resident_laid_off":
 			label = "最近失业"
 			value = "%s · %s" % [
-				_entity_name(str(fact.get("resident_id", ""))),
+				_entity_name(str(fact.get("resident_id", "")), snapshot),
 				str(fact.get("occupation_label", "本地岗位")),
 			]
 		rows.append({
@@ -1750,7 +1750,7 @@ func _settlement_network_rows(
 			"key": "latest_resident_employment",
 			"label": "最近就业",
 			"value": "%s · %s" % [
-				_entity_name(str(fact.get("resident_id", ""))),
+				_entity_name(str(fact.get("resident_id", "")), snapshot),
 				str(fact.get("occupation_label", "本地生计")),
 			],
 			"detail": str(fact.get(
@@ -1844,7 +1844,7 @@ func _settlement_network_rows(
 			"key": "latest_organization_restaff",
 			"label": "组织补位",
 			"value": "%s · %s" % [
-				_entity_name(str(fact.get("target_id", ""))),
+				_entity_name(str(fact.get("target_id", "")), snapshot),
 				str(fact.get("position_label", "成员")),
 			],
 			"detail": str(fact.get(
@@ -1876,7 +1876,7 @@ func _settlement_network_rows(
 				"organization_goal_reactivated": "目标恢复",
 				"organization_runtime_retired": "组织退场",
 			}.get(fact_type, "组织变化"),
-			"value": _entity_name(str(fact.get("organization_id", ""))),
+			"value": _entity_name(str(fact.get("organization_id", "")), snapshot),
 			"detail": str(fact.get(
 				"summary", "当地压力改变了组织的生命周期。"
 			)),
@@ -1902,7 +1902,7 @@ func _settlement_network_rows(
 				"organization_trade_coordinated": "货路协调",
 				"organization_route_patrolled": "道路巡守",
 			}.get(fact_type, "组织行动"),
-			"value": _entity_name(str(fact.get("organization_id", ""))),
+			"value": _entity_name(str(fact.get("organization_id", "")), snapshot),
 			"detail": str(fact.get(
 				"summary", "当地组织依据当前压力采取了行动。"
 			)),
