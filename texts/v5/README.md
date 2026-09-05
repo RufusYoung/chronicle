@@ -1,5 +1,17 @@
 # Chronicle v5 文档索引
 
+## 2026-09-05 当前入口
+
+| 用途 | 文档 | 状态边界 |
+| --- | --- | --- |
+| 创作目标 | [创作方向指导](../CHRONICLE_CREATIVE_DIRECTION_GUIDE.md) | 五个灵感来源与体验约束，不以模块完成数替代 |
+| 设计依据 | [用户保存的主 GDD](Chronicle%20Game%20Design%20Document.md)、[v5.1 GDD](CHRONICLE_GDD_v5.1_REBUILD.md) | 两份均保留为有效设计依据 |
+| 活动计划 | [玩家能动性与世界真实感计划](CHRONICLE_PLAYER_AGENCY_SYSTEM_PLAN_v5.1.md) | 截至 2026-09-04，W1-C 进行中；收入、货运与产业反馈未完整接通 |
+| 经济边界 | [经济权属合同](CHRONICLE_ECONOMIC_OWNERSHIP_CONTRACT_v5.1.md) | 最小合同验收不等于完整经济与文明摩擦 |
+| 本轮审阅 | [方向、实现与开发计划](CHRONICLE_PROJECT_REVIEW_2026-09-05.md) | 建议待采纳，没有改动活动步骤和旧验收状态 |
+
+下文的阶段记录与推荐顺序保留其历史语境；其中旧测试数和完成度估算不作为当前项目进度。
+
 ## 1. 当前文档定位
 
 ### Chronicle Game Design Document.md
@@ -59,7 +71,7 @@
 
 ### CHRONICLE_CORE_SYSTEM_CONTRACT_PLAN_v5.1.md
 
-当前优先执行的系统合同前置计划。
+阶段 5.5 的系统合同前置计划，保留已完成阶段的合同与验收依据；当前活动步骤以本页顶部链接为准。
 
 用于定义成长、天赋、特质、印记、技艺、物品装备、经济、统一结算与存档的最小边界。
 

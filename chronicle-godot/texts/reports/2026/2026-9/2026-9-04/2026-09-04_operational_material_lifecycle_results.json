@@ -14,7 +14,12 @@
     "passed": 121,
     "total": 121,
     "summed_process_seconds": 3518.26,
-    "includes_vulkan_render_tests": true
+    "includes_vulkan_render_tests": false,
+    "includes_compatibility_render_tests": true,
+    "metadata_correction": {
+      "date": "2026-09-05",
+      "reason": "The regression runner and all 15 retained render logs identify OpenGL Compatibility, not Vulkan. Historical counts and timings are unchanged; no tests were rerun for this correction."
+    }
   },
   "long_run": {
     "passed": true,

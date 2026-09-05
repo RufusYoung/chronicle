@@ -1,0 +1,106 @@
+{
+	"baseline_commit": "52de618",
+	"date": "2026-09-05",
+	"evidence_kind": "test_injection",
+	"probes_completed": true,
+	"purpose": "Reproduce review findings; reproduced defects are not passing gameplay contracts.",
+	"reports": [
+		{
+			"assigned_items": [
+				"item.review.rope",
+				"item.review.rope"
+			],
+			"durability_changes": [
+				{
+					"expected_holder": {
+						"id": "town",
+						"kind": "entity"
+					},
+					"item_instance_id": "item.review.rope",
+					"operation": "adjust_durability",
+					"source_fact_ids": [
+						"fact.obligation.review.a.road.fulfilled"
+					],
+					"to": 3,
+					"updated_tick": 72
+				},
+				{
+					"expected_holder": {
+						"id": "town",
+						"kind": "entity"
+					},
+					"item_instance_id": "item.review.rope",
+					"operation": "adjust_durability",
+					"source_fact_ids": [
+						"fact.obligation.review.b.road.fulfilled"
+					],
+					"to": 3,
+					"updated_tick": 72
+				}
+			],
+			"expected": "Reserve each item while planning, or explicitly compose multiple uses and cumulative wear.",
+			"id": "shared_item_double_assignment",
+			"probe_completed": true,
+			"reproduced": true,
+			"use_fact_count": 2
+		},
+		{
+			"actual_consumption_change": 1,
+			"available_quantity": 1,
+			"expected": "Reject inconsistent material rules or require enough stock before granting the full effect.",
+			"fact_consumed_quantity": 2,
+			"id": "partial_consumption_full_effect",
+			"probe_completed": true,
+			"reproduced": true,
+			"required_consumption": 2
+		},
+		{
+			"boundary": "This probe demonstrates candidate starvation before buyer availability; it does not claim a funded natural purchase failed.",
+			"first_road_usable_quantity": 1,
+			"id": "old_demand_hides_later_demand",
+			"probe_completed": true,
+			"reproduced": true,
+			"second_road_usable_quantity": 0,
+			"selected_scope": "first_road",
+			"with_both_demands_events": [
+				{
+					"buyer_entity_id": "",
+					"day": 3,
+					"event_type": "local_procurement_blocked",
+					"obligation_id": "obligation.review.lashing.first_road",
+					"purpose_target_id": "first_road",
+					"reason": "buyer_unavailable",
+					"seller_entity_id": "",
+					"settlement_id": "town",
+					"source_fact_id": "",
+					"status": "blocked"
+				}
+			],
+			"with_only_second_demand_events": [
+				{
+					"buyer_entity_id": "",
+					"day": 3,
+					"event_type": "local_procurement_blocked",
+					"obligation_id": "obligation.review.lashing.second_road",
+					"purpose_target_id": "second_road",
+					"reason": "buyer_unavailable",
+					"seller_entity_id": "",
+					"settlement_id": "town",
+					"source_fact_id": "",
+					"status": "blocked"
+				}
+			]
+		},
+		{
+			"acquired_without_usable_item_error": "purpose_obligation_already_acquired",
+			"boundary": "Direct market boundary with injected obligation status; no natural theft or loss is claimed.",
+			"buyer": "seventh_outpost",
+			"id": "foreign_obligation_purchase",
+			"obligation_owner": "cook_marta",
+			"probe_completed": true,
+			"reproduced": true,
+			"unrelated_owner_plan_accepted": true,
+			"unrelated_owner_plan_error": ""
+		}
+	]
+}
