@@ -16,6 +16,27 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_family_provisioning_in_actual_process(self):
+        with client(timeout=60) as game:
+            self.assertTrue(game.request("start", mode="world", scenario="echo_realm", seed=81001)["ok"])
+            for _ in range(2):
+                self.assertTrue(game.request("advance", hours=24)["ok"])
+            facts = []
+            offset = 0
+            while True:
+                page = game.request("inspect", kind="facts", offset=offset, limit=100)
+                self.assertTrue(page["ok"], page)
+                facts.extend(page["rows"])
+                offset += len(page["rows"])
+                if offset >= page["total"]:
+                    break
+            deliveries = {row["fact_id"] for row in facts if row.get("fact_type") == "household_food_delivered"}
+            self.assertTrue(deliveries, "No autonomous family delivery in actual process")
+            meals = [row for row in facts if row.get("fact_type") in
+                     {"npc_self_meal", "npc_household_shared_food", "npc_cross_household_shared_food"}]
+            self.assertTrue(any(deliveries.intersection(row.get("source_fact_ids", [])) for row in meals),
+                            "Delivered goods never reached a real meal")
+
     def test_canon_world_and_play_entry(self):
         for mode in ("world", "play"):
             with self.subTest(mode=mode), client(timeout=60) as game:
