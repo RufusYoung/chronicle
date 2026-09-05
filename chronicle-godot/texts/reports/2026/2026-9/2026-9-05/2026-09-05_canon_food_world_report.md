@@ -76,6 +76,8 @@
 
 完整常规回归 **132/132 通过**，包含实际渲染测试。原设定合同随后补测同种子完整状态复现，最终 **106/106**；食品合同 **59/59**。源码真实进程协议 **8/8**，包括原设定的旁观推进、合法等待及存读档。最终 Windows 包验收另列证据；没有独立人类试玩。
 
+运行代码提交 `559d196` 的 Windows 包内协议 **8/8 通过**，实际进程关闭、中文分帧、异常输入和新旧场景均有覆盖，见 [包内记录](canon_food_evidence/agent_packaged.log)。新进程到可控绘制帧：原设定初始世界三次约 **1.94 至 2.40 秒**；旧 H1 七日存档三次约 **2.65 至 3.06 秒**。后者是旧档兼容验证，不是新回音港七日启动性能。未清空操作系统缓存、未在独立机器验收。详细数据见 [Windows 启动](canon_food_evidence/windows_startup.json)。最终交付的完整提交号及包哈希以 `builds/h1-windows/build_manifest.json` 为准。
+
 ```powershell
 .\chronicle-godot\tests\run_regression.ps1 -Godot (Get-Command Godot_v4.6.3-stable_win64_console.exe).Source -Render -OutputDirectory builds/validation/canon_food_regression
 Godot_v4.6.3-stable_win64_console.exe --headless --path chronicle-godot --script res://tools/food_economy_probe.gd -- canon 81001 7

@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "rows": [
+    {
+      "elapsed_hours": 0,
+      "ok": true,
+      "profile": "initial",
+      "renderer": "gl_compatibility",
+      "save_exists": false,
+      "save_path": "user://tests/startup_probe/absent_347beed61da7458a.json",
+      "startup_message": "",
+      "process_to_frame_ms": 2399.9726000183728,
+      "output": [
+        "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+        "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+        "",
+        "CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.commons",
+        "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":0,\"ok\":true,\"profile\":\"initial\",\"renderer\":\"gl_compatibility\",\"save_exists\":false,\"save_path\":\"user://tests/startup_probe/absent_347beed61da7458a.json\",\"startup_message\":\"\"}"
+      ]
+    },
+    {
+      "elapsed_hours": 0,
+      "ok": true,
+      "profile": "initial",
+      "renderer": "gl_compatibility",
+      "save_exists": false,
+      "save_path": "user://tests/startup_probe/absent_81b908a7db4e4059.json",
+      "startup_message": "",
+      "process_to_frame_ms": 1954.7236999787856,
+      "output": [
+        "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+        "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+        "",
+        "CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.commons",
+        "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":0,\"ok\":true,\"profile\":\"initial\",\"renderer\":\"gl_compatibility\",\"save_exists\":false,\"save_path\":\"user://tests/startup_probe/absent_81b908a7db4e4059.json\",\"startup_message\":\"\"}"
+      ]
+    },
+    {
+      "elapsed_hours": 0,
+      "ok": true,
+      "profile": "initial",
+      "renderer": "gl_compatibility",
+      "save_exists": false,
+      "save_path": "user://tests/startup_probe/absent_7d9fa24abbe97739.json",
+      "startup_message": "",
+      "process_to_frame_ms": 1943.2710999972187,
+      "output": [
+        "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+        "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+        "",
+        "CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.commons",
+        "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":0,\"ok\":true,\"profile\":\"initial\",\"renderer\":\"gl_compatibility\",\"save_exists\":false,\"save_path\":\"user://tests/startup_probe/absent_7d9fa24abbe97739.json\",\"startup_message\":\"\"}"
+      ]
+    },
+    {
+      "elapsed_hours": 168,
+      "ok": true,
+      "profile": "day7",
+      "renderer": "gl_compatibility",
+      "save_exists": true,
+      "save_path": "user://tests/world_runtime_probe/day7.json",
+      "startup_message": "已继续上次保存的世界。这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。",
+      "process_to_frame_ms": 2854.6796000155155,
+      "output": [
+        "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+        "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+        "",
+        "CHRONICLE_WORLD_READY seed=81001 location=generated_location.reed_bay.commons",
+        "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":168,\"ok\":true,\"profile\":\"day7\",\"renderer\":\"gl_compatibility\",\"save_exists\":true,\"save_path\":\"user://tests/world_runtime_probe/day7.json\",\"startup_message\":\"已继续上次保存的世界。这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。\"}"
+      ]
+    },
+    {
+      "elapsed_hours": 168,
+      "ok": true,
+      "profile": "day7",
+      "renderer": "gl_compatibility",
+      "save_exists": true,
+      "save_path": "user://tests/world_runtime_probe/day7.json",
+      "startup_message": "已继续上次保存的世界。这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。",
+      "process_to_frame_ms": 3059.8862000042573,
+      "output": [
+        "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+        "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+        "",
+        "CHRONICLE_WORLD_READY seed=81001 location=generated_location.reed_bay.commons",
+        "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":168,\"ok\":true,\"profile\":\"day7\",\"renderer\":\"gl_compatibility\",\"save_exists\":true,\"save_path\":\"user://tests/world_runtime_probe/day7.json\",\"startup_message\":\"已继续上次保存的世界。这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。\"}"
+      ]
+    },
+    {
+      "elapsed_hours": 168,
+      "ok": true,
+      "profile": "day7",
+      "renderer": "gl_compatibility",
+      "save_exists": true,
+      "save_path": "user://tests/world_runtime_probe/day7.json",
+      "startup_message": "已继续上次保存的世界。这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。",
+      "process_to_frame_ms": 2650.5707000033,
+      "output": [
+        "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+        "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+        "",
+        "CHRONICLE_WORLD_READY seed=81001 location=generated_location.reed_bay.commons",
+        "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":168,\"ok\":true,\"profile\":\"day7\",\"renderer\":\"gl_compatibility\",\"save_exists\":true,\"save_path\":\"user://tests/world_runtime_probe/day7.json\",\"startup_message\":\"已继续上次保存的世界。这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。\"}"
+      ]
+    }
+  ],
+  "scope": "Fresh process through actual first drawn, enabled UI; OS file/shader caches not flushed. Same development machine, not clean-machine acceptance."
+}
