@@ -32,6 +32,13 @@ def audit(path: Path) -> dict:
     cross_purchases = [row for row in purchases if row.get("buyer_settlement_id") and
                        row.get("buyer_settlement_id") != row.get("seller_settlement_id")]
     purchase_ids = {row["fact_id"] for row in purchases}
+    deliveries = [row for row in facts if row.get("fact_type") == "household_food_delivered"]
+    delivery_ids = {row["fact_id"] for row in deliveries}
+    meal_counts = Counter(row.get("target_id") for row in meals)
+    wages = Counter()
+    for row in facts:
+        if row.get("fact_type") == "npc_wage_paid":
+            wages[row.get("target_id")] += row.get("amount", 0)
     currency = sum(row["quantity"] for row in stores["items"] if row["item_def_id"] == "item.copper_coin")
     return {
         "checkpoint": str(path), "sha256": hashlib.sha256(content).hexdigest(),
@@ -51,6 +58,9 @@ def audit(path: Path) -> dict:
         "cross_settlement_purchased_portions": sum(row.get("fields", {}).get("quantity", 0) for row in cross_purchases),
         "food_sales_income": sum(row.get("fields", {}).get("total_price", 0) for row in purchases),
         "meals_citing_purchases": sum(bool(set(row.get("source_fact_ids", [])) & purchase_ids) for row in meals),
+        "family_deliveries": len(deliveries),
+        "deliveries_citing_purchases": sum(bool(set(row.get("source_fact_ids", [])) & purchase_ids) for row in deliveries),
+        "meals_citing_deliveries": sum(bool(set(row.get("source_fact_ids", [])) & delivery_ids) for row in meals),
         "purchasing_failures": dict(Counter(row.get("reason") for row in facts if row.get("fact_type") == "resident_food_purchase_unmet")),
         "steady_meals_per_day_reference": sum(24 / (max(row.get("hunger_interval_hours", 6), 1) * 2) for row in states),
         "demand_scope": "Reference only: one hunger step per configured interval, two relieved per meal. Not observed consumption.",
@@ -59,6 +69,16 @@ def audit(path: Path) -> dict:
                        "location": state.get("location_id"), "home": state.get("home_location_id"),
                        "workplace": state.get("workplace_id"), "occupation": state.get("occupation_id"),
                        "activity": state.get("daily_activity"), "hunger": state.get("hunger"),
+                       "temperament": state.get("temperament"), "household_id": state.get("household_id"),
+                       "meals": meal_counts[person["id"]],
+                       "wages_received": wages[person["id"]],
+                       "food_purchase_spend": sum(row.get("fields", {}).get("total_price", 0) for row in purchases
+                                                  if row.get("actor_id") == person["id"]),
+                       "food": sum(row["quantity"] for row in stores["items"] if row["item_def_id"] in food_ids and
+                                   row.get("holder") == {"kind": "entity", "id": person["id"]}),
+                       "coins": sum(row["quantity"] for row in stores["items"] if row["item_def_id"] == "item.copper_coin" and
+                                    row.get("holder") == {"kind": "entity", "id": person["id"]}),
+                       "family_deliveries_received": sum(row.get("target_id") == person["id"] for row in deliveries),
                        "production_cycles": state.get("livelihood_cycle_count", 0)}
                       for person, state in zip(people, states)]}
 

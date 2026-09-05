@@ -13,6 +13,10 @@ const TransactionResultModel = preload(
 const HUNGRY_LEVELS := ["high", "extreme"]
 const MAX_FATIGUE := 10
 var food_access_enabled := false
+const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
+var family_reservations: Dictionary = {}
+var family_food_enabled := false
+var physical_social := false
 
 
 func resolve_work_tick(
@@ -261,6 +265,10 @@ func resolve_household_support(
 		daily_life_config: Dictionary = {}
 ) -> Dictionary:
 	food_access_enabled = DailyLife.enabled(daily_life_config) and int(daily_life_config.get("food_access", {}).get("version", 0)) == 1
+	family_reservations = FamilyFood.reservations(snapshot, tick_event,
+		daily_life_config.get("food_access", {}).get("household_provisioning", {}))
+	family_food_enabled = FamilyFood.enabled(daily_life_config.get("food_access", {}).get("household_provisioning", {}))
+	physical_social = family_food_enabled and int(daily_life_config.get("food_access", {}).get("household_provisioning", {}).get("social_presence_version", 0)) == 1
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
 	var households := _households(snapshot)
@@ -305,7 +313,8 @@ func resolve_household_support(
 				snapshot,
 				household_id,
 				households[household_id],
-				external_links
+				external_links,
+				recipient_id
 			)
 			if not contact.is_empty() and _append_failed_food_request(
 				result,
@@ -711,6 +720,8 @@ func _find_food(
 	for holder_id: Variant in ordered_members:
 		if not _can_share_here(snapshot, recipient_id, str(holder_id)):
 			continue
+		if not _can_spare_food(snapshot, str(holder_id), recipient_id, available_quantity):
+			continue
 		for item: Dictionary in snapshot.get_items():
 			var item_id := str(item.get("item_instance_id", ""))
 			var holder: Dictionary = item.get("holder", {})
@@ -728,6 +739,14 @@ func _find_food(
 
 
 func _can_share_here(snapshot: Variant, recipient_id: String, holder_id: String) -> bool:
+	if physical_social:
+		if not bool(snapshot.get_entity_state(recipient_id, "alive", false)) or not bool(snapshot.get_entity_state(holder_id, "alive", false)):
+			return false
+		if recipient_id == holder_id:
+			return true
+		return str(snapshot.get_entity_state(recipient_id, "daily_route_id", "")) == "" \
+			and str(snapshot.get_entity_state(holder_id, "daily_route_id", "")) == "" \
+			and str(snapshot.get_entity_state(recipient_id, "location_id", "")) == str(snapshot.get_entity_state(holder_id, "location_id", ""))
 	if int(snapshot.get_entity_state(recipient_id, "daily_life_version", 0)) != 1:
 		return true
 	if food_access_enabled and recipient_id == holder_id:
@@ -736,6 +755,19 @@ func _can_share_here(snapshot: Variant, recipient_id: String, holder_id: String)
 		and str(snapshot.get_entity_state(recipient_id, "daily_route_id", "")) == "" \
 		and str(snapshot.get_entity_state(holder_id, "daily_route_id", "")) == "" \
 		and str(snapshot.get_entity_state(recipient_id, "location_id", "")) == str(snapshot.get_entity_state(holder_id, "location_id", ""))
+
+
+func _can_spare_food(snapshot: Variant, holder: String, recipient: String, available: Dictionary) -> bool:
+	if holder == recipient or not family_food_enabled:
+		return true
+	var retained := int(family_reservations.get(holder, 0))
+	if snapshot.get_entity_state(holder, "hunger", "none") in HUNGRY_LEVELS:
+		retained = maxi(retained, 1)
+	var quantity := 0
+	for item: Dictionary in snapshot.get_items():
+		if item.get("holder", {}) == {"kind": "entity", "id": holder} and "food" in item.get("tags", []):
+			quantity += int(available.get(str(item.item_instance_id), 0))
+	return quantity > retained
 
 
 func _external_support_links(snapshot: Variant) -> Dictionary:
@@ -823,6 +855,10 @@ func _find_external_food(
 		var contact_id := str(contact.get("contact_id", ""))
 		if not _can_share_here(snapshot, recipient_id, contact_id):
 			continue
+		if not _can_spare_food(snapshot, contact_id, recipient_id, available_quantity):
+			continue
+		if physical_social and not _can_share_here(snapshot, str(contact.get("requester_id", recipient_id)), contact_id):
+			continue
 		if int(snapshot.get_relation(
 			str(contact.get("requester_id", recipient_id)),
 			contact_id,
@@ -854,7 +890,8 @@ func _best_external_contact(
 		snapshot: Variant,
 		recipient_household_id: String,
 		household_members: Array,
-		external_links: Dictionary
+		external_links: Dictionary,
+		recipient_id: String = ""
 ) -> Dictionary:
 	var contacts := _external_contacts(
 		snapshot,
@@ -862,6 +899,10 @@ func _best_external_contact(
 		household_members,
 		external_links
 	)
+	if physical_social:
+		contacts = contacts.filter(func(contact: Dictionary) -> bool:
+			return _can_share_here(snapshot, recipient_id, str(contact.contact_id)) \
+				and _can_share_here(snapshot, str(contact.requester_id), str(contact.contact_id)))
 	return {} if contacts.is_empty() else (contacts[0] as Dictionary).duplicate(
 		true
 	)
@@ -942,6 +983,10 @@ func _append_failed_food_request(
 		"freshness": "fresh",
 		"tags": ["food_request", "social_strain", "generated_trace"],
 	})
+	if physical_social:
+		result.facts_added.back()["location_id"] = str(snapshot.get_entity_state(recipient_id, "location_id", ""))
+		result.traces_added.back()["location_id"] = str(snapshot.get_entity_state(recipient_id, "location_id", ""))
+		result.traces_added.back()["description"] = "这里曾有一次当面的食物求助，未能得到口粮。"
 	result.add_relationship_change({
 		"source_id": requester_id,
 		"target_id": contact_id,

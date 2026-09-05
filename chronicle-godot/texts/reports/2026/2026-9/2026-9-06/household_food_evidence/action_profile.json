@@ -1,0 +1,1314 @@
+{
+  "checkpoint": "user://tests/food_economy_probe/canon_family_final_81001/day7.json",
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "renderer": "gl_compatibility",
+  "rows": [
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.echo_landing.layout"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 1,
+        "hour": 9,
+        "world_tick_count": 1
+      },
+      "frames": 17,
+      "from": "generated_location.echo_landing.commons",
+      "index": 0,
+      "operation_ms": 77.035,
+      "projection_ms": 26.188,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 0,
+        "hour": 8,
+        "world_tick_count": 0
+      },
+      "state_sha256": "739ed9a05f58e2eb3eb3aa95954641047211bc326645d8527816dcdea5a48a4e",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 125.182,
+      "view_sha256": "381a574d1a281668a1fef6b81e3167de3bb867b2b7259c01697c073e746e94e4",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_reed_craft"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 2,
+        "hour": 10,
+        "world_tick_count": 2
+      },
+      "frames": 16,
+      "from": "generated_location.echo_landing.commons",
+      "index": 1,
+      "operation_ms": 57.599,
+      "projection_ms": 27.411,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 1,
+        "hour": 9,
+        "world_tick_count": 1
+      },
+      "state_sha256": "1a33177c05f6f5e49938a0b9a81ffa0d9d83befc56d7e6d4bf2e523f9bacc1da",
+      "to": "generated_location.echo_landing.work_shed",
+      "total_ms": 104.698,
+      "view_sha256": "919f890808e7bc341c3aea6630f2822aeddd8b150d2df8613facc3188c33d009",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 3,
+        "hour": 11,
+        "world_tick_count": 3
+      },
+      "frames": 15,
+      "from": "generated_location.echo_landing.work_shed",
+      "index": 2,
+      "operation_ms": 44.721,
+      "projection_ms": 28.631,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 2,
+        "hour": 10,
+        "world_tick_count": 2
+      },
+      "state_sha256": "56b611cc353c5c54b5c306b80a808ac2e6641e167b30972532e0e627a3899603",
+      "to": "generated_location.echo_landing.work_shed",
+      "total_ms": 97.715,
+      "view_sha256": "cecffb83f8bcfed3e6ad104f00ab0dd61d34a2d6d831fed0628d0218ab9a1d2d",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.echo_landing.reed_craft"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 4,
+        "hour": 12,
+        "world_tick_count": 4
+      },
+      "frames": 15,
+      "from": "generated_location.echo_landing.work_shed",
+      "index": 3,
+      "operation_ms": 50.116,
+      "projection_ms": 27.116,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 3,
+        "hour": 11,
+        "world_tick_count": 3
+      },
+      "state_sha256": "3207536495cb728235dc912ba3bf15342c7560af815a41d54ad5eab359cce549",
+      "to": "generated_location.echo_landing.work_shed",
+      "total_ms": 96.351,
+      "view_sha256": "81c54291c0c3523167b8bb62d16986a19358819f6647dae12e4d0b00c4f2d539",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.reed_craft_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 5,
+        "hour": 13,
+        "world_tick_count": 5
+      },
+      "frames": 15,
+      "from": "generated_location.echo_landing.work_shed",
+      "index": 4,
+      "operation_ms": 55.707,
+      "projection_ms": 28.559,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 4,
+        "hour": 12,
+        "world_tick_count": 4
+      },
+      "state_sha256": "83e786e71c3921c40931778cf6c77e50bb99b9545ed9ef66871693137f3d3821",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 103.692,
+      "view_sha256": "227e975840ff4a2ac1c81acc096c151fdef9845d1d2d694d35bc5c2e7579425c",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 6,
+        "hour": 14,
+        "world_tick_count": 6
+      },
+      "frames": 15,
+      "from": "generated_location.echo_landing.commons",
+      "index": 5,
+      "operation_ms": 46.095,
+      "projection_ms": 38.179,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 5,
+        "hour": 13,
+        "world_tick_count": 5
+      },
+      "state_sha256": "de3d119c47703f36304c5e059e16f78a29bc59a6c29f54c2901c33639abbb6a5",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 103.077,
+      "view_sha256": "3b48440ac6c0c35cd305219c12c2a6ba8289d3077d0a3f599253ea8e6ea7e896",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 7,
+        "hour": 15,
+        "world_tick_count": 7
+      },
+      "frames": 14,
+      "from": "generated_location.echo_landing.commons",
+      "index": 6,
+      "operation_ms": 47.346,
+      "projection_ms": 27.763,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 6,
+        "hour": 14,
+        "world_tick_count": 6
+      },
+      "state_sha256": "21dbfb431ab02f371bd121883b84488da9fea542d336161b266378f82f540827",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 93.557,
+      "view_sha256": "e78a20f3cb077cfb4e7dc4807b536974a14f994fccbb3bb67aabae7b2191f4df",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_fishery"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 8,
+        "hour": 16,
+        "world_tick_count": 8
+      },
+      "frames": 16,
+      "from": "generated_location.echo_landing.commons",
+      "index": 7,
+      "operation_ms": 57.235,
+      "projection_ms": 31.92,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 7,
+        "hour": 15,
+        "world_tick_count": 7
+      },
+      "state_sha256": "7b8a17b1e2905b8639eeab8dbb797b4ce9c16f899c91c9505fe8d5d5af60a6be",
+      "to": "generated_location.echo_landing.landing",
+      "total_ms": 111.863,
+      "view_sha256": "d8a2fd6ee4fb0b677722ba281c0e5222698b330614e2806f75cf8dce306432b7",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 9,
+        "hour": 17,
+        "world_tick_count": 9
+      },
+      "frames": 14,
+      "from": "generated_location.echo_landing.landing",
+      "index": 8,
+      "operation_ms": 43.288,
+      "projection_ms": 26.88,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 8,
+        "hour": 16,
+        "world_tick_count": 8
+      },
+      "state_sha256": "594b44ec2ed43acf1d40e80e9c55a286e96fd1f749f73998c86b7c74222b8585",
+      "to": "generated_location.echo_landing.landing",
+      "total_ms": 89.177,
+      "view_sha256": "12859fae7f5c985cedc856a3fc0d59e07e7a58fec073d1838fa7b66fc5617c03",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.echo_landing.001"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 10,
+        "hour": 18,
+        "world_tick_count": 10
+      },
+      "frames": 14,
+      "from": "generated_location.echo_landing.landing",
+      "index": 9,
+      "operation_ms": 49.729,
+      "projection_ms": 29.058,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 9,
+        "hour": 17,
+        "world_tick_count": 9
+      },
+      "state_sha256": "b6df0be66e4bb299e7b8edf68f45335198df7efbfacc616eef94249e0c35c31b",
+      "to": "generated_location.echo_landing.landing",
+      "total_ms": 96.459,
+      "view_sha256": "83f7721fef76ce9651108f9e8c7c20e4bf24cfecc5392029634955ff517f7ad0",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.fishery_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 11,
+        "hour": 19,
+        "world_tick_count": 11
+      },
+      "frames": 16,
+      "from": "generated_location.echo_landing.landing",
+      "index": 10,
+      "operation_ms": 56.225,
+      "projection_ms": 31.374,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 10,
+        "hour": 18,
+        "world_tick_count": 10
+      },
+      "state_sha256": "85b6da427c622d20244ddf558f904651ff40c09d6ea4513366dbbdb2ae8e038d",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 108.103,
+      "view_sha256": "ce9bdc7ddc97f91912af66754807d482995e00848b4f25b02d1aae12db044617",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 12,
+        "hour": 20,
+        "world_tick_count": 12
+      },
+      "frames": 18,
+      "from": "generated_location.echo_landing.commons",
+      "index": 11,
+      "operation_ms": 67.324,
+      "projection_ms": 36.661,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 11,
+        "hour": 19,
+        "world_tick_count": 11
+      },
+      "state_sha256": "f9f9ea03628e71fdbb8822f8a06ef8545513de756274a88650f5a63705efc0d4",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 127.009,
+      "view_sha256": "0c5442e8f25efec8c7378633329e4cf6f3233e4b04ada2aab280b91162b26e41",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.echo_landing.002"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 13,
+        "hour": 21,
+        "world_tick_count": 13
+      },
+      "frames": 18,
+      "from": "generated_location.echo_landing.commons",
+      "index": 12,
+      "operation_ms": 58.591,
+      "projection_ms": 39.779,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 12,
+        "hour": 20,
+        "world_tick_count": 12
+      },
+      "state_sha256": "9949d54f186958d3e850ac8bccfb97cd0491fd9f9cef6a5314a9ef03d434ebe1",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 123.681,
+      "view_sha256": "828011218e019207ab7ea53f36e486c971afb83a59f5433d92cbabd1c3d2cf4f",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_road_carting"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 14,
+        "hour": 22,
+        "world_tick_count": 14
+      },
+      "frames": 17,
+      "from": "generated_location.echo_landing.commons",
+      "index": 13,
+      "operation_ms": 62.789,
+      "projection_ms": 34.46,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 13,
+        "hour": 21,
+        "world_tick_count": 13
+      },
+      "state_sha256": "2d60a7b76caf043c7750c5de6df835b93e9d918cf218ffede759ea7cbf53a953",
+      "to": "generated_location.echo_landing.road_yard",
+      "total_ms": 118.059,
+      "view_sha256": "42bb475575dd37980fa8b6bb47221cf1f97c20c433f8de0ba5945b4a76940cce",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 15,
+        "hour": 23,
+        "world_tick_count": 15
+      },
+      "frames": 16,
+      "from": "generated_location.echo_landing.road_yard",
+      "index": 14,
+      "operation_ms": 54.877,
+      "projection_ms": 32.716,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 14,
+        "hour": 22,
+        "world_tick_count": 14
+      },
+      "state_sha256": "7bfa777f06d4504c15fd814f5c36901e2b0486f28045acc93721f137209d7b2f",
+      "to": "generated_location.echo_landing.road_yard",
+      "total_ms": 111.647,
+      "view_sha256": "dddaad677f61abf659d125c84a99c2bf24cd1dcd2ac03bc515c2a1c45a5c6a0e",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.echo_landing.road_carting"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 16,
+        "hour": 0,
+        "world_tick_count": 16
+      },
+      "frames": 20,
+      "from": "generated_location.echo_landing.road_yard",
+      "index": 15,
+      "operation_ms": 87.773,
+      "projection_ms": 33.516,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 15,
+        "hour": 23,
+        "world_tick_count": 15
+      },
+      "state_sha256": "d09714c34d240fdb50c87582a9a0be46b94c0e9d0b071718c7cc832a95364e1b",
+      "to": "generated_location.echo_landing.road_yard",
+      "total_ms": 140.335,
+      "view_sha256": "294ba210846b7d9b3577390aa8404f2f8ada567f6d90d607afc6b5f2bc43e5f3",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.road_carting_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 17,
+        "hour": 1,
+        "world_tick_count": 17
+      },
+      "frames": 18,
+      "from": "generated_location.echo_landing.road_yard",
+      "index": 16,
+      "operation_ms": 64.446,
+      "projection_ms": 35.131,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 16,
+        "hour": 0,
+        "world_tick_count": 16
+      },
+      "state_sha256": "db2c7360a2fae72c8b11bfb95c0704b01de85874b45d9117c2c0f0ecfe24b3ec",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 123.131,
+      "view_sha256": "c7723ec003be3934943d25e4c588d380a72ab6c05163357205d666cdda269199",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 18,
+        "hour": 2,
+        "world_tick_count": 18
+      },
+      "frames": 17,
+      "from": "generated_location.echo_landing.commons",
+      "index": 17,
+      "operation_ms": 59.05,
+      "projection_ms": 37.583,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 17,
+        "hour": 1,
+        "world_tick_count": 17
+      },
+      "state_sha256": "366b91e9dcc291e3e68c03b781f287890676db41a847934e4810f7aa96351e57",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 115.02,
+      "view_sha256": "ebaaec2fbe648f9891435200f077066c0db07d0e4296e4f1e9ba6a7aad27b6f8",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 19,
+        "hour": 3,
+        "world_tick_count": 19
+      },
+      "frames": 15,
+      "from": "generated_location.echo_landing.commons",
+      "index": 18,
+      "operation_ms": 48.015,
+      "projection_ms": 31.786,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 18,
+        "hour": 2,
+        "world_tick_count": 18
+      },
+      "state_sha256": "9ac0e02ed7f0fe1ddd38ca7d67ac13085e9a8fc7ca98d80da4f0f9e97856edb9",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 101.324,
+      "view_sha256": "c47305d973eb3b46af5030d6decc135120ecb5bb23a0e8e06bc50702e059fc33",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_watch_service"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 20,
+        "hour": 4,
+        "world_tick_count": 20
+      },
+      "frames": 16,
+      "from": "generated_location.echo_landing.commons",
+      "index": 19,
+      "operation_ms": 62.167,
+      "projection_ms": 30.927,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 19,
+        "hour": 3,
+        "world_tick_count": 19
+      },
+      "state_sha256": "f8879151caecff0d386c9a43aa1154244895caf14fcaa05e05bcaec16a1331a3",
+      "to": "generated_location.echo_landing.watch_post",
+      "total_ms": 111.733,
+      "view_sha256": "06f22f48033744fa4bca8737a2bd04f0f7cb7e145bb2aa3da34fbb967519a133",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.echo_landing.001"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 169,
+        "hour": 9,
+        "world_tick_count": 169
+      },
+      "frames": 57,
+      "from": "generated_location.echo_landing.commons",
+      "index": 0,
+      "operation_ms": 222.856,
+      "projection_ms": 222.068,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 168,
+        "hour": 8,
+        "world_tick_count": 168
+      },
+      "state_sha256": "f907c47b5a153fc60532a437f1f44f10ad34980958f9a502a5a1b52392813c25",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 466.159,
+      "view_sha256": "d274b005fdfae41cc487c4c9c9d44e0d27f21f574b8212dcc6fbaab04e4d72f9",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_reed_craft"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 170,
+        "hour": 10,
+        "world_tick_count": 170
+      },
+      "frames": 63,
+      "from": "generated_location.echo_landing.commons",
+      "index": 1,
+      "operation_ms": 298.357,
+      "projection_ms": 183.841,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 169,
+        "hour": 9,
+        "world_tick_count": 169
+      },
+      "state_sha256": "7307a9abf4cd1041fc835182f7d20aa23ac5f90e1b6d5c8d8e81c213696cc089",
+      "to": "generated_location.echo_landing.work_shed",
+      "total_ms": 506.874,
+      "view_sha256": "934f2a6326dd7e5cc8359cf5a0246a2226652aefd2312580b5f144ca577f2fd1",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 171,
+        "hour": 11,
+        "world_tick_count": 171
+      },
+      "frames": 48,
+      "from": "generated_location.echo_landing.work_shed",
+      "index": 2,
+      "operation_ms": 190.032,
+      "projection_ms": 173.053,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 170,
+        "hour": 10,
+        "world_tick_count": 170
+      },
+      "state_sha256": "b34e27a9b183518afcfd0ada7489a6d5a3ea18024c7372d8e7999f77d840e5b1",
+      "to": "generated_location.echo_landing.work_shed",
+      "total_ms": 382.024,
+      "view_sha256": "b4ecc56bd0c3de8e1bd38759f39714d34d4cd365d5092c4ef741e135808dff6c",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.echo_landing.002"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 172,
+        "hour": 12,
+        "world_tick_count": 172
+      },
+      "frames": 47,
+      "from": "generated_location.echo_landing.work_shed",
+      "index": 3,
+      "operation_ms": 184.295,
+      "projection_ms": 162.09,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 171,
+        "hour": 11,
+        "world_tick_count": 171
+      },
+      "state_sha256": "5a8053f7d6d02df2fb760a739914a359ee6d55341d5833e05277875cf0a967e3",
+      "to": "generated_location.echo_landing.work_shed",
+      "total_ms": 371.526,
+      "view_sha256": "92815f80d3365612d02b56a76cb19d7a1bc1f961f46a015a4d2d43e00728b7c3",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.reed_craft_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 173,
+        "hour": 13,
+        "world_tick_count": 173
+      },
+      "frames": 51,
+      "from": "generated_location.echo_landing.work_shed",
+      "index": 4,
+      "operation_ms": 212.532,
+      "projection_ms": 166.575,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 172,
+        "hour": 12,
+        "world_tick_count": 172
+      },
+      "state_sha256": "585fd331b4b82a3b3269405577cf31c023bf1282b99977bd1ba844ba7dd7f265",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 401.498,
+      "view_sha256": "693065f44f17abcf633f773b180a5805e829aa5c404c2d54d521bb75a62b82f8",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 174,
+        "hour": 14,
+        "world_tick_count": 174
+      },
+      "frames": 51,
+      "from": "generated_location.echo_landing.commons",
+      "index": 5,
+      "operation_ms": 209.841,
+      "projection_ms": 172.153,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 173,
+        "hour": 13,
+        "world_tick_count": 173
+      },
+      "state_sha256": "e5381dc315e1e326561f33c3160cc9f865276c066c28b9b6011ea5e293f359b1",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 403.494,
+      "view_sha256": "6cb0f4dad5871970c601896ae6e8899386236ad772a6ffc4aa04c2979f4c62df",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.echo_landing.layout"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 175,
+        "hour": 15,
+        "world_tick_count": 175
+      },
+      "frames": 54,
+      "from": "generated_location.echo_landing.commons",
+      "index": 6,
+      "operation_ms": 229.533,
+      "projection_ms": 184.239,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 174,
+        "hour": 14,
+        "world_tick_count": 174
+      },
+      "state_sha256": "aa97a71ab779d1b5727ea48c57b6ce77f64793776666715d5a24b88dcda53408",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 431.946,
+      "view_sha256": "aa76c24a4d98a2276151955da40f933b5d4d1719748150c89357f3de190c8d14",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_fishery"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 176,
+        "hour": 16,
+        "world_tick_count": 176
+      },
+      "frames": 58,
+      "from": "generated_location.echo_landing.commons",
+      "index": 7,
+      "operation_ms": 255.361,
+      "projection_ms": 187.161,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 175,
+        "hour": 15,
+        "world_tick_count": 175
+      },
+      "state_sha256": "b78faa865f8151de55e32d52b9a5a3e3dc306bd6e14cb730c1317ba89cf391ae",
+      "to": "generated_location.echo_landing.landing",
+      "total_ms": 459.562,
+      "view_sha256": "411694b9c26740e818521cb37113f899b56c6a22d4f344f1919ae7ae65526b61",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 177,
+        "hour": 17,
+        "world_tick_count": 177
+      },
+      "frames": 49,
+      "from": "generated_location.echo_landing.landing",
+      "index": 8,
+      "operation_ms": 191.337,
+      "projection_ms": 173.174,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 176,
+        "hour": 16,
+        "world_tick_count": 176
+      },
+      "state_sha256": "38431818eb8f260446a8fcfd9d9e3f00e9b6baa19a6025269d97e2a6ac0de852",
+      "to": "generated_location.echo_landing.landing",
+      "total_ms": 384.717,
+      "view_sha256": "328358abdb31ab4ec60c56aae144f424984679ebaf18faa35635acb1f5b3013b",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.echo_landing.006"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 178,
+        "hour": 18,
+        "world_tick_count": 178
+      },
+      "frames": 50,
+      "from": "generated_location.echo_landing.landing",
+      "index": 9,
+      "operation_ms": 211.302,
+      "projection_ms": 163.656,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 177,
+        "hour": 17,
+        "world_tick_count": 177
+      },
+      "state_sha256": "15aea36c9a808b8073723faa7cf70de3b74502b4163ebb4e1f00e87d61323eab",
+      "to": "generated_location.echo_landing.landing",
+      "total_ms": 393.049,
+      "view_sha256": "ca48d83fd505565ce180d7f2f3e0f6f366ac9cd9687107d723e732b2b3a441d9",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.fishery_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 179,
+        "hour": 19,
+        "world_tick_count": 179
+      },
+      "frames": 55,
+      "from": "generated_location.echo_landing.landing",
+      "index": 10,
+      "operation_ms": 232.453,
+      "projection_ms": 175.745,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 178,
+        "hour": 18,
+        "world_tick_count": 178
+      },
+      "state_sha256": "9bb4c2d3bd38c3c2ba145c4d67076ef2b81dc8f1a911459a9a20fcec75c9f54f",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 432.167,
+      "view_sha256": "7ff57097500676eba879a8bd2141e38e2cdbebb1f3c56d0bba61ec7fe3635dd4",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 180,
+        "hour": 20,
+        "world_tick_count": 180
+      },
+      "frames": 62,
+      "from": "generated_location.echo_landing.commons",
+      "index": 11,
+      "operation_ms": 278.305,
+      "projection_ms": 194.021,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 179,
+        "hour": 19,
+        "world_tick_count": 179
+      },
+      "state_sha256": "760fcab0d356f615b944f48d05af4fca32ccd29952d53b5620e2a487b430451e",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 500.476,
+      "view_sha256": "f5fecd6876546aa0e7563b7c32083a54920898c3151704c3a32cebcd293f70bc",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.echo_landing.004"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 181,
+        "hour": 21,
+        "world_tick_count": 181
+      },
+      "frames": 57,
+      "from": "generated_location.echo_landing.commons",
+      "index": 12,
+      "operation_ms": 240.401,
+      "projection_ms": 194.032,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 180,
+        "hour": 20,
+        "world_tick_count": 180
+      },
+      "state_sha256": "cf951e88f77698df77ae71e9099e643cdad952c71784adcefafb3da329858d48",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 452.513,
+      "view_sha256": "fd538c90b7272120da93a99b0753f749a8cfe458b4e7882ed4b1dc7fbb188f8a",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_road_carting"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 182,
+        "hour": 22,
+        "world_tick_count": 182
+      },
+      "frames": 61,
+      "from": "generated_location.echo_landing.commons",
+      "index": 13,
+      "operation_ms": 278.901,
+      "projection_ms": 182.557,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 181,
+        "hour": 21,
+        "world_tick_count": 181
+      },
+      "state_sha256": "ea89cdeb8274932e171eb2d687de966827153b1830b37c957841568f80248b24",
+      "to": "generated_location.echo_landing.road_yard",
+      "total_ms": 484.584,
+      "view_sha256": "724f289254551f5d107b3b559e2d2925b58c918f7b4d9365cf49f5d7c28b3789",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 183,
+        "hour": 23,
+        "world_tick_count": 183
+      },
+      "frames": 54,
+      "from": "generated_location.echo_landing.road_yard",
+      "index": 14,
+      "operation_ms": 219.001,
+      "projection_ms": 191.924,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 182,
+        "hour": 22,
+        "world_tick_count": 182
+      },
+      "state_sha256": "8e1454eb07cd26bf31dc3d9aafbcd65757e739e702e48990af62f1f847395349",
+      "to": "generated_location.echo_landing.road_yard",
+      "total_ms": 429.441,
+      "view_sha256": "ccf96a74774568dfc522cdd12abdabc956715b12f2b2ca186b97ca5ae4cdb781",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.echo_landing.road_carting"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 184,
+        "hour": 0,
+        "world_tick_count": 184
+      },
+      "frames": 65,
+      "from": "generated_location.echo_landing.road_yard",
+      "index": 15,
+      "operation_ms": 336.57,
+      "projection_ms": 164.333,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 183,
+        "hour": 23,
+        "world_tick_count": 183
+      },
+      "state_sha256": "0c1025e81e5f86e113f6a847bcbef1561e0aa301e916c1b02650a411702702c2",
+      "to": "generated_location.echo_landing.road_yard",
+      "total_ms": 523.594,
+      "view_sha256": "e622add37e8ec9befe3cbc8c485ead0ff43f7bc2d6a9aea6b825a5bc28be96bb",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.road_carting_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 185,
+        "hour": 1,
+        "world_tick_count": 185
+      },
+      "frames": 54,
+      "from": "generated_location.echo_landing.road_yard",
+      "index": 16,
+      "operation_ms": 233.184,
+      "projection_ms": 180.651,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 184,
+        "hour": 0,
+        "world_tick_count": 184
+      },
+      "state_sha256": "fe3a425f50c6aa3d2b8a9cdf0079bc149394859eca5bb9cb5704eb4f96f0b28a",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 432.486,
+      "view_sha256": "930807c2e6430e6884fc71444fbce4be1276839bbbb08d8867dbbe1a3a8f0baa",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 186,
+        "hour": 2,
+        "world_tick_count": 186
+      },
+      "frames": 60,
+      "from": "generated_location.echo_landing.commons",
+      "index": 17,
+      "operation_ms": 250.967,
+      "projection_ms": 205.875,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 185,
+        "hour": 1,
+        "world_tick_count": 185
+      },
+      "state_sha256": "6e532b7fc3bec01c417fab10f1ee2f608ef4aa32eddb819b5164b92d27c731f3",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 480.093,
+      "view_sha256": "4f2af845a12cae8bb710625d2d4fd844d7fcd0b0f5201f06adfc51ae4a9a121d",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 187,
+        "hour": 3,
+        "world_tick_count": 187
+      },
+      "frames": 58,
+      "from": "generated_location.echo_landing.commons",
+      "index": 18,
+      "operation_ms": 227.711,
+      "projection_ms": 217.921,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 186,
+        "hour": 2,
+        "world_tick_count": 186
+      },
+      "state_sha256": "a195b823a0ba0ab59d8fc25723a86d1180ef7d84340b8e9f94cfa07ab6a633d4",
+      "to": "generated_location.echo_landing.commons",
+      "total_ms": 464.28,
+      "view_sha256": "58999bcccf7c512c6d03178441425074391c9a8ea11f217724331aa1d6fa93dd",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.echo_landing.commons_to_watch_service"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 188,
+        "hour": 4,
+        "world_tick_count": 188
+      },
+      "frames": 61,
+      "from": "generated_location.echo_landing.commons",
+      "index": 19,
+      "operation_ms": 277.872,
+      "projection_ms": 190.392,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 187,
+        "hour": 3,
+        "world_tick_count": 187
+      },
+      "state_sha256": "275a0dafa783b2b63d4f835b558f675c8e33fc9d4dc1746a6f4e1c5a22398ddf",
+      "to": "generated_location.echo_landing.watch_post",
+      "total_ms": 490.026,
+      "view_sha256": "56ddbab2a4d41dab52f2e363b01e31df1dd20d90eb74994ff3f4728c90e7eb15",
+      "world": "day7"
+    }
+  ],
+  "scope": "Program-driven legal rendered UI operations; no human gameplay acceptance. Multi-hour travel reported without dividing by hours.",
+  "summaries": {
+    "day7": {
+      "count": 20,
+      "max_ms": 523.594,
+      "p50_ms": 432.486,
+      "p95_ms": 506.874
+    },
+    "initial": {
+      "count": 20,
+      "max_ms": 140.335,
+      "p50_ms": 108.103,
+      "p95_ms": 127.009
+    }
+  }
+}

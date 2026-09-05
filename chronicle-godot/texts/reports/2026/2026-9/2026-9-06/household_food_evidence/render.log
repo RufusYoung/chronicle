@@ -1,0 +1,43 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.commons
+[PASS] legal route to generated_location.echo_terrace.commons
+[PASS] UI operation succeeds
+[PASS] legal route to generated_location.echo_terrace.terraces
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] UI operation succeeds
+[PASS] purchase identifies who needs the goods
+[PASS] purchase reveals real goods and cost
+[PASS] UI operation succeeds
+[PASS] formal UI shows autonomous family purchase and purposeful departure
+[PASS] actions stay within 720p
+[PASS] program-driven observer uses travel and wait, no NPC injection
+[PASS] observed world keeps valid references
+HOUSEHOLD_PROVISIONING_RENDER_RESULT PASS

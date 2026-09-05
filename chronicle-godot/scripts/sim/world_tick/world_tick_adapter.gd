@@ -60,6 +60,7 @@ const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/trans
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
+const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
@@ -273,6 +274,13 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 
 		if DailyLife.enabled(daily_life_config):
 			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			var observations := FamilyFood.new().observe(activity_snapshot, round_event,
+				daily_life_config.get("food_access", {}).get("household_provisioning", {}))
+			if not observations.results.is_empty():
+				if not writer.apply_results(observations.results, stores):
+					return _failure_result(event, "household_observation_rejected", stores)
+				livelihood_results.append_array(observations.results)
+				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var activity_data: Dictionary = DailyLife.new().resolve_tick(activity_snapshot, round_event,
 				daily_life_config, settlement_network_config, context.locations, daily_life_routes,
 				IndustryCatalog.profiles(activity_snapshot, npc_livelihood_profiles))
@@ -299,6 +307,19 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			livelihood_results.append_array(work_results)
 			livelihood_events.append_array(work_data.get("events", []))
 
+			var family_config: Dictionary = daily_life_config.get("food_access", {}).get("household_provisioning", {})
+			if FamilyFood.enabled(family_config):
+				var delivery_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+				var carriers: Array = delivery_snapshot.get_entities_by_type("person")
+				carriers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.id) < str(b.id))
+				for carrier: Dictionary in carriers:
+					var delivery := FamilyFood.new().plan_delivery(delivery_snapshot, carrier, round_event, family_config, stores)
+					if not delivery.has("transaction"):
+						continue
+					if not writer.apply_result(delivery.transaction, stores):
+						return _failure_result(event, "household_delivery_rejected", stores)
+					livelihood_results.append(delivery.transaction)
+					livelihood_events.append_array(delivery.events)
 			var support_snapshot = snapshot_builder.build_snapshot(
 				context,
 				stores,
@@ -320,10 +341,12 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			if FoodAccess.enabled(food_config):
 				var food_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 				var buyers: Array = food_snapshot.get_entities_by_type("person")
+				var food_reservations := FamilyFood.reservations(food_snapshot, round_event, family_config)
 				buyers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.id) < str(b.id))
 				for buyer: Dictionary in buyers:
 					# Plan against current item ownership after each previous settlement.
-					var purchase := FoodAccess.new().plan_purchase(food_snapshot, buyer, round_event, food_config, context.locations, stores)
+					var family_request := FamilyFood.request(food_snapshot, buyer, round_event, family_config)
+					var purchase := FoodAccess.new().plan_purchase(food_snapshot, buyer, round_event, food_config, context.locations, stores, family_request, food_reservations)
 					if purchase.has("transaction"):
 						var transaction: Variant = purchase.transaction
 						if not writer.apply_result(transaction, stores):
@@ -341,7 +364,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			var followup_system = NpcSocialFollowupSystemModel.new()
 			var followup_data: Dictionary = followup_system.resolve_tick(
 				followup_snapshot,
-				round_event
+				round_event,
+				daily_life_config
 			)
 			var round_followup_results: Array = followup_data.get("results", [])
 			writer.apply_results(round_followup_results, stores)

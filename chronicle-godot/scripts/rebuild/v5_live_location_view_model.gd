@@ -68,6 +68,9 @@ func start(options: Dictionary = {}) -> Dictionary:
 	if scenario in ["generated_network", "echo_realm"] and int(start_options.get("resident_daily_life_version", 0)) == 1 \
 			and not start_options.has("resident_food_access_version"):
 		start_options["resident_food_access_version"] = 1
+	if scenario in ["generated_network", "echo_realm"] and int(start_options.get("resident_food_access_version", 0)) == 1 \
+			and not start_options.has("household_provisioning_version"):
+		start_options["household_provisioning_version"] = 1
 	if (
 		not start_options.has("challenge_seed_override")
 		and not "--script" in OS.get_cmdline_args()
@@ -2567,7 +2570,7 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 	var lines: Array[String] = []
 	var food_lines: Array[String] = []
 	for event: Dictionary in result.get("livelihood_events", []):
-		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet"]:
+		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet", "household_food_delivered"]:
 			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
 			if str(fact.get("summary", "")) != "":
 				food_lines.append(str(fact.summary))
@@ -2593,7 +2596,7 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 			"seeking_work":
 				lines.append("%s在集地寻找可以接手的工作。" % name)
 			"seeking_food":
-				lines.append("%s在这里打听能买到的口粮。" % name)
+				lines.append("%s：%s。" % [name, event.get("reason", "在这里打听能买到的口粮")])
 	lines = food_lines + lines
 	if lines.is_empty():
 		return {}

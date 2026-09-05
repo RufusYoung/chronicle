@@ -80,6 +80,7 @@ const EconomicSetup = preload("res://scripts/sim/economy/economic_world_setup.gd
 const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
+const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 4
@@ -190,6 +191,12 @@ func start_from_fixture_path(
 		if not DailyLife.enabled(fixture.get("resident_daily_life", {})):
 			return _start_failure("food_access_requires_daily_life")
 		fixture.resident_daily_life["food_access"] = FoodAccess.PROFILE.duplicate(true)
+	if int(options.get("household_provisioning_version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_household_provisioning_version")
+	if int(options.get("household_provisioning_version", 0)) == 1:
+		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
+			return _start_failure("household_provisioning_requires_food_access")
+		fixture.resident_daily_life.food_access["household_provisioning"] = FamilyFood.PROFILE.duplicate(true)
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -215,6 +222,22 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if int(fixture.get("resident_daily_life", {}).get("food_access", {}).get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_resident_food_access_version")
 	var food_config: Dictionary = fixture.get("resident_daily_life", {}).get("food_access", {})
+	var family_config: Dictionary = food_config.get("household_provisioning", {})
+	if int(family_config.get("version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_household_provisioning_version")
+	if FamilyFood.enabled(family_config):
+		if int(family_config.get("social_presence_version", 0)) not in [0, 1]:
+			return _start_failure("unsupported_household_social_presence_version")
+		if not FoodAccess.enabled(food_config):
+			return _start_failure("household_provisioning_requires_food_access")
+		if int(family_config.get("memory_hours", 0)) < 1 or int(family_config.get("maximum_recipients", 0)) not in range(1, 9) \
+				or int(family_config.get("self_reserve", -1)) < 0 or int(family_config.get("minimum_support", -1)) < 0:
+			return _start_failure("invalid_household_provisioning_config")
+		if not family_config.get("travel_hours") is Dictionary:
+			return _start_failure("invalid_household_provisioning_travel")
+		for value: Variant in family_config.travel_hours.values():
+			if not (value is int or value is float) or int(value) < 1:
+				return _start_failure("invalid_household_provisioning_travel")
 	if FoodAccess.enabled(food_config) and not DailyLife.enabled(fixture.get("resident_daily_life", {})):
 		return _start_failure("food_access_requires_daily_life")
 	var food_batch: Dictionary = food_config.get("production_batch", {})
@@ -2270,6 +2293,9 @@ func _validate_save_references() -> Dictionary:
 					"references"
 				)
 	for memory: Dictionary in stores["memory_store"].to_save_data():
+		var family_memory_error := FamilyFood.validate_memory(memory, stores, context.locations)
+		if family_memory_error != "":
+			return _save_failure(family_memory_error, "references")
 		if not entity_store.has_entity(str(memory.get("owner_id", ""))):
 			return _save_failure("save_memory_owner_unknown", "references")
 		for fact_id: Variant in memory.get("source_fact_ids", []):

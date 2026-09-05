@@ -125,18 +125,19 @@ static func recently_failed(snapshot: Variant, actor: String, location: String, 
 
 
 func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
-		config: Dictionary, locations: Dictionary, stores: Dictionary) -> Dictionary:
+		config: Dictionary, locations: Dictionary, stores: Dictionary,
+		family_request: Dictionary = {}, reservations: Dictionary = {}) -> Dictionary:
 	if not enabled(config):
 		return {}
 	var buyer := str(actor.id)
 	var states: Dictionary = actor.get("states", {})
 	var location := str(states.get("location_id", ""))
-	if "generated_resident" not in actor.get("tags", []) or str(states.get("hunger", "none")) not in ["high", "extreme"] \
+	if "generated_resident" not in actor.get("tags", []) or not bool(states.get("alive", true)) \
 			or str(states.get("daily_route_id", "")) != "" \
 			or not locations.has(location) or "home" in locations[location].get("tags", []):
 		return {}
 	var items: Array = stores.item_store.list_items_for_owner(buyer)
-	if not needs_food(actor, items):
+	if not needs_food(actor, items) and (family_request.is_empty() or food_quantity(items, buyer) > 0):
 		return {}
 	var money := balance(items, buyer)
 	var offers: Array = []
@@ -149,7 +150,7 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 				or str(seller_states.get("daily_route_id", "")) != "":
 			continue
 		var total_food := food_quantity(stores.item_store.list_items_for_owner(id), id)
-		var retained := maxi(int(config.get("seller_retained_portions", 2)), 0)
+		var retained := maxi(int(config.get("seller_retained_portions", 2)), int(reservations.get(id, 0)))
 		if total_food <= retained:
 			continue
 		var policy := {"market_policy_id": "resident_food." + id, "seller_entity_id": id,
@@ -178,8 +179,8 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 		if recently_failed(snapshot, buyer, location, tick, config):
 			return {}
 		return _unmet(actor, location, "unaffordable", tick, {"available_coins": money, "unit_price": price})
-	var quantity := mini(int(config.get("target_portions", 2)), mini(int(offer.surplus), int(money / price)))
-	var source_ids: Array = []
+	var quantity := mini(int(family_request.get("target_portions", config.get("target_portions", 2))), mini(int(offer.surplus), int(money / price)))
+	var source_ids: Array = family_request.get("source_fact_ids", []).duplicate()
 	for id: String in [str(states.get("daily_presence_fact_id", "")),
 		str(snapshot.get_entity_state(str(offer.policy.seller_entity_id), "daily_presence_fact_id", ""))]:
 		if id != "" and id not in source_ids:
@@ -187,6 +188,8 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 	var summary := "%s在%s向%s支付 %d 枚铜币，买下 %d 份%s；食物已实际交到手中。" % [
 		actor.get("display_name", buyer), locations[location].get("display_name", location),
 		offer.seller_name, price * quantity, quantity, offer.get("display_name", "食物")]
+	if not family_request.is_empty():
+		summary += "这批口粮准备带回给记忆中缺粮的%s。" % family_request.names
 	var plan := Market.new().plan_trade(offer.policy, {"buyer_entity_id": buyer,
 		"item_instance_id": offer.item_instance_id, "quantity": quantity, "quoted_unit_price": price,
 		"maximum_total_price": money, "exchange_id": "exchange.resident_food.%s.%d" % [buyer, _hour(tick)],
@@ -200,6 +203,8 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 	plan.transaction.facts_added.back()["buyer_settlement_id"] = str(states.get("settlement_id", ""))
 	plan.transaction.facts_added.back()["seller_settlement_id"] = str(snapshot.get_entity_state(str(offer.policy.seller_entity_id), "settlement_id", ""))
 	plan.transaction.facts_added.back()["goods_source_item_instance_id"] = str(offer.item_instance_id)
+	if not family_request.is_empty():
+		plan.transaction.facts_added.back()["household_recipient_ids"] = family_request.targets.map(func(row: Dictionary) -> String: return str(row.target_id))
 	plan.transaction.facts_added.back()["received_item_instance_id"] = str(plan.transaction.item_changes[0].get("new_item_instance_id", offer.item_instance_id))
 	plan.transaction.set_narrative_result({"title": "居民买到了食物", "summary": summary, "tone": "ordinary_life"})
 	return {"transaction": plan.transaction, "event": {"event_type": "resident_food_purchased", "actor_id": buyer,

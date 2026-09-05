@@ -1,0 +1,22 @@
+[
+  {
+    "Part": "stores",
+    "Equal": true
+  },
+  {
+    "Part": "session",
+    "Equal": true
+  },
+  {
+    "Part": "world_time",
+    "Equal": true
+  },
+  {
+    "Part": "rng_states",
+    "Equal": true
+  },
+  {
+    "Part": "world_log",
+    "Equal": true
+  }
+]

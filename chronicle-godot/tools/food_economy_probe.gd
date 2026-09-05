@@ -14,8 +14,11 @@ func _run() -> void:
 	var seed := int(args[1]) if args.size() > 1 else 81001
 	var days := int(args[2]) if args.size() > 2 else 7
 	var model := Live.new()
-	var scenario := "echo_realm" if mode == "canon" else "generated_network"
-	_check(model.start({"scenario": scenario, "challenge_seed_override": seed}).success, "start")
+	var scenario := "echo_realm" if mode.begins_with("canon") else "generated_network"
+	var options := {"scenario": scenario, "challenge_seed_override": seed}
+	if mode == "canon_without_family":
+		options["household_provisioning_version"] = 0
+	_check(model.start(options).success, "start")
 	if not model.is_ready():
 		quit(1)
 		return
@@ -58,7 +61,7 @@ func _run() -> void:
 	var file := FileAccess.open(output + "/result.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"mode": mode, "scenario": scenario, "seed": seed, "elapsed_days": days, "rows": rows,
 		"extreme_person_hours": extreme_person_hours, "failures": failures,
-		"scope": "Configuration experiment" if mode.begins_with("batch") else ("Test injection: only local supply knowledge" if mode == "local_only" else "Passive formal new world"),
+		"scope": "Configuration experiment" if mode.begins_with("batch") else ("Test injection: household provisioning disabled" if mode == "canon_without_family" else ("Test injection: only local supply knowledge" if mode == "local_only" else "Passive formal new world")),
 		"boundary": "Not human play or sustainable economy acceptance."}, "  "))
 	file.close()
 	print("FOOD_ECONOMY_RESULT " + ("PASS" if failures.is_empty() else "FAIL"))

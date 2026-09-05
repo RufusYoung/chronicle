@@ -1,0 +1,40 @@
+{
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 7,
+  "extreme_person_hours": 372,
+  "failures": [],
+  "mode": "canon_without_family",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 1352.971
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 1729.885
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 2340.021
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 2093.973
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 2188.334
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 2254.857
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 2707.429
+    }
+  ],
+  "scenario": "echo_realm",
+  "scope": "Test injection: household provisioning disabled",
+  "seed": 82002
+}

@@ -10,9 +10,12 @@ const CONFLICT_HOUR := 20
 const MINIMUM_REPAYMENT_DEBT := 4
 const MINIMUM_CONFLICT_FAILURES := 2
 const MINIMUM_CONFLICT_RESENTMENT := 3
+const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
+var family_config: Dictionary = {}
 
 
-func resolve_tick(snapshot: Variant, tick_event: Dictionary) -> Dictionary:
+func resolve_tick(snapshot: Variant, tick_event: Dictionary, daily_life_config: Dictionary = {}) -> Dictionary:
+	family_config = daily_life_config.get("food_access", {}).get("household_provisioning", {})
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
 	var result = TransactionResultModel.new()
@@ -20,7 +23,7 @@ func resolve_tick(snapshot: Variant, tick_event: Dictionary) -> Dictionary:
 	var repayment_count := 0
 	var conflict_count := 0
 	var hour := int(tick_event.get("hour", 0))
-	if hour == REPAYMENT_HOUR:
+	if hour == REPAYMENT_HOUR or _physical_social():
 		repayment_count = _append_debt_repayments(
 			result, snapshot, tick_event, events
 		)
@@ -71,8 +74,15 @@ func _append_debt_repayments(
 		))
 		if household_id == "" or not households.has(household_id):
 			continue
+		var payers: Array = households[household_id]
+		if _physical_social():
+			if not _co_present(snapshot, debtor_id, creditor_id):
+				continue
+			if not FamilyFood.request(snapshot, snapshot.get_entity(debtor_id), tick_event, family_config).is_empty():
+				continue
+			payers = [debtor_id]
 		var item := _repayment_item(
-			snapshot, households[household_id], available_quantity
+			snapshot, payers, available_quantity
 		)
 		if item.is_empty():
 			continue
@@ -111,6 +121,10 @@ func _append_debt_repayments(
 				_entity_name(snapshot, creditor_id),
 			],
 		})
+		if _physical_social():
+			result.facts_added.back()["location_id"] = str(snapshot.get_entity_state(debtor_id, "location_id", ""))
+			result.facts_added.back()["summary"] = "%s在碰面时拿出自己的一份%s还给%s。" % [
+				_entity_name(snapshot, debtor_id), item.get("display_name", "财物"), _entity_name(snapshot, creditor_id)]
 		_append_item_transfer(
 			result, item, creditor_id, fact_id, tick_event
 		)
@@ -193,6 +207,8 @@ func _append_food_conflicts(
 	for pair: Dictionary in _failed_request_pairs(snapshot):
 		var actor_id := str(pair.get("actor_id", ""))
 		var target_id := str(pair.get("target_id", ""))
+		if _physical_social() and not _co_present(snapshot, actor_id, target_id):
+			continue
 		var source_fact_ids: Array = pair.get("source_fact_ids", [])
 		var fact_id := "fact.npc_food_request_conflict.%s.%s.day_%d" % [
 			_safe_id(actor_id), _safe_id(target_id), day,
@@ -277,6 +293,19 @@ func _append_food_conflicts(
 		})
 		count += 1
 	return count
+
+
+func _physical_social() -> bool:
+	return FamilyFood.enabled(family_config) and int(family_config.get("social_presence_version", 0)) == 1
+
+
+func _co_present(snapshot: Variant, first: String, second: String) -> bool:
+	for id: String in [first, second]:
+		if not bool(snapshot.get_entity_state(id, "alive", false)) \
+				or str(snapshot.get_entity_state(id, "daily_route_id", "")) != "":
+			return false
+	var location := str(snapshot.get_entity_state(first, "location_id", ""))
+	return location != "" and location == str(snapshot.get_entity_state(second, "location_id", ""))
 
 
 func _food_debt_pairs(snapshot: Variant) -> Array:

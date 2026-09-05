@@ -1,0 +1,88 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] formal canonical world starts
+[PASS] explicit new-world family contract
+[PASS] controlled test fixture starts
+[PASS] no omniscient family intent before conversation
+[PASS] test injection: local observation commits
+[PASS] co-present conversation records two needs
+[PASS] own hunger is not required to care for family
+[PASS] test injection: local observation commits
+[PASS] unchanged conversation is not repeated every tick
+[PASS] remembered need saves natively
+[PASS] remembered need restores
+[PASS] same decision after memory restore at native precision
+[PASS] unknown remembered person rejected
+[PASS] memory cannot claim a date different from its evidence
+[PASS] memory must keep its auditable evidence reference
+[PASS] 48-hour-old need expires instead of remote tracking
+[PASS] controlled test fixture starts
+[PASS] test injection: local observation commits
+[PASS] remote need cannot be discovered
+[PASS] controlled test fixture starts
+[PASS] absent neighbors are not blamed for a conversation that never occurred
+[PASS] controlled test fixture starts
+[PASS] test injection: local observation commits
+[PASS] traveling past endpoint is not co-presence
+[PASS] controlled test fixture starts
+[PASS] test injection: local observation commits
+[PASS] already fed family needs no trip
+[PASS] controlled test fixture starts
+[PASS] test injection: local observation commits
+[PASS] known need does not guarantee help across hostile relations
+[PASS] controlled test fixture starts
+[PASS] test injection: local observation commits
+[PASS] distant recovery does not magically update memory
+[PASS] controlled test fixture starts
+[PASS] test injection: local observation commits
+[PASS] return conversation cancels obsolete request
+[PASS] controlled test fixture starts
+[PASS] fed resident purchases for two family members plus own reserve
+[PASS] family purchase uses market transaction
+[PASS] buyer pays own real coins
+[PASS] purchase does not create food
+[PASS] carried food prevents another purchase
+[PASS] cannot deliver from market to distant home
+[PASS] carried paid goods save
+[PASS] controlled test fixture starts
+[PASS] arrival allows two physical handovers
+[PASS] delivery commits atomically
+[PASS] recipients own food and hungry carrier retains one
+[PASS] fulfilled request does not deliver repeatedly
+[PASS] receiving help changes real relationship
+[PASS] delivered food can be eaten
+[PASS] elders actually eat rather than lose their portion to earlier actor order
+[PASS] meal cites actual handover provenance
+[PASS] all observation, trade, delivery and memory references valid
+[PASS] full causal chain saves
+[PASS] full causal chain restores
+[PASS] native stores and memories equal after restore
+[PASS] both worlds continue one hour
+[PASS] native precision continuation equal
+[PASS] controlled test fixture starts
+[PASS] absent and dead family cannot receive a remote handover
+[PASS] controlled test fixture starts
+[PASS] family love does not mint purchasing power
+[PASS] controlled test fixture starts
+[PASS] no goods means no handover
+[PASS] controlled test fixture starts
+[PASS] same need and road, temperament changes travel tolerance: cautious
+[PASS] broken road cannot be overcome by willingness
+[PASS] controlled test fixture starts
+[PASS] same need and road, temperament changes travel tolerance: bold
+[PASS] broken road cannot be overcome by willingness
+[PASS] controlled test fixture starts
+[PASS] remote creditor cannot receive automatic repayment
+[PASS] legacy social rule remains unchanged without new version
+[PASS] controlled test fixture starts
+[PASS] co-present debtor can repay with owned goods
+[PASS] physical repayment uses real transfer
+[PASS] controlled test fixture starts
+[PASS] cannot seize another household member's coins to repay
+[PASS] previous food-only rule can still start
+[PASS] legacy rule saves
+[PASS] legacy rule restores
+[PASS] save loading does not inject the new rule
+[PASS] invalid memory duration rejected
+[PASS] unknown family rule version rejected
+HOUSEHOLD_PROVISIONING_RESULT PASS 85/85

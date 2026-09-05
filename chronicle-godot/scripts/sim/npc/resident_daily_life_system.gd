@@ -4,6 +4,7 @@ class_name V5ResidentDailyLifeSystem
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Industry = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
+const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const STATE_KEYS := ["daily_life_version", "daily_activity", "daily_activity_reason", "daily_goal_id",
 	"daily_workplace_id", "daily_route_id", "daily_destination_id", "daily_travel_remaining",
 	"daily_departure_fact_id", "daily_presence_fact_id"]
@@ -62,6 +63,7 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 		var goal := home
 		var activity := "home"
 		var reason := "日常在家"
+		var decision_sources: Array = []
 		if must_rest or not on_shift:
 			activity = "resting"
 			reason = "身体需要休息" if must_rest else "班次结束，回家休息"
@@ -74,11 +76,19 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 			activity = "seeking_work"
 			reason = "前往集地寻找工作"
 		if FoodAccess.enabled(food_config) and not must_rest:
-			var supply := _food_goal(snapshot, actor, routes, profiles, tick, food_config, network, locations, food_items, known_supply_cache)
+			var family := FamilyFood.request(snapshot, actor, tick, food_config.get("household_provisioning", {}))
+			var carried := FoodAccess.food_quantity(food_items, id)
+			var supply := _food_goal(snapshot, actor, routes, profiles, tick, food_config, network, locations, food_items, known_supply_cache, family)
 			if supply != "":
 				goal = supply
 				activity = "seeking_food"
-				reason = "没有口粮，带钱寻找已知供给"
+				reason = "没有口粮，带钱寻找已知供给" if family.is_empty() else "记得%s缺粮，带自己的钱去采购" % family.names
+				decision_sources = family.get("source_fact_ids", [])
+			if not family.is_empty() and carried > 0:
+				goal = str(family.home_location_id)
+				activity = "home"
+				reason = "给%s带粮回家" % family.names
+				decision_sources = family.source_fact_ids
 		_change(result, id, states, "daily_goal_id", goal)
 		if goal == "" or not locations.has(goal):
 			_transition(result, events, actor, states, "blocked", "没有可到达的去处", tick)
@@ -93,13 +103,17 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 			_change(result, id, states, "daily_destination_id", str(route.to_location_id))
 			_change(result, id, states, "daily_travel_remaining", int(route.hours))
 			_change(result, id, states, "visible", false)
-			var fact := _transition(result, events, actor, states, "traveling", reason, tick, {
+			var journey := {
 				"route_id": route.route_id, "from_location_id": location,
 				"to_location_id": route.to_location_id, "goal_location_id": goal,
-				"travel_hours": route.hours})
+				"travel_hours": route.hours}
+			if not decision_sources.is_empty():
+				journey["source_fact_ids"] = decision_sources
+			var fact := _transition(result, events, actor, states, "traveling", reason, tick, journey)
 			_change(result, id, states, "daily_departure_fact_id", fact)
 			continue
-		_transition(result, events, actor, states, activity, reason, tick)
+		_transition(result, events, actor, states, activity, reason, tick,
+			{"source_fact_ids": decision_sources} if not decision_sources.is_empty() else {})
 		_change(result, id, states, "visible", _public_place(locations, location))
 		if activity == "resting" and fatigue > 0:
 			_change(result, id, states, "fatigue", fatigue - 1)
@@ -187,7 +201,10 @@ func _next_edge(routes: Array, start: String, goal: String) -> Dictionary:
 		if next == "":
 			return {}
 		if next == goal:
-			return first_edges.get(next, {})
+			var edge: Dictionary = first_edges.get(next, {}).duplicate()
+			if not edge.is_empty():
+				edge["total_hours"] = int(costs[next])
+			return edge
 		visited[next] = true
 		for edge: Dictionary in routes:
 			if str(edge.from_location_id) != next:
@@ -202,9 +219,9 @@ func _next_edge(routes: Array, start: String, goal: String) -> Dictionary:
 
 func _food_goal(snapshot: Variant, actor: Dictionary, routes: Array, profiles: Array,
 		tick: Dictionary, config: Dictionary, network: Dictionary, locations: Dictionary,
-		items: Array, known_supply_cache: Dictionary) -> String:
+		items: Array, known_supply_cache: Dictionary, family: Dictionary = {}) -> String:
 	var hour := int(tick.get("hour", 0))
-	if not FoodAccess.needs_food(actor, items) or FoodAccess.balance(items, str(actor.id)) <= 0:
+	if (not FoodAccess.needs_food(actor, items) and family.is_empty()) or FoodAccess.balance(items, str(actor.id)) <= 0:
 		return ""
 	var states: Dictionary = actor.get("states", {})
 	var location := str(states.get("location_id", ""))
@@ -229,7 +246,8 @@ func _food_goal(snapshot: Variant, actor: Dictionary, routes: Array, profiles: A
 			return site
 		if FoodAccess.recently_failed(snapshot, str(actor.id), site, tick, config):
 			continue
-		if not _next_edge(routes, location, site).is_empty():
+		var edge := _next_edge(routes, location, site)
+		if not edge.is_empty() and (family.is_empty() or int(edge.total_hours) <= int(family.travel_hours)):
 			return site
 	return ""
 
