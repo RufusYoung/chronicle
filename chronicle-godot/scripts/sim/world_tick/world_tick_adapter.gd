@@ -58,6 +58,7 @@ const OrganizationLifecycleSystemModel = preload(
 )
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
+const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
 const SOURCE := "WorldTickAdapter"
@@ -68,6 +69,13 @@ var npc_livelihood_profiles: Array = []
 var settlement_network_config: Dictionary = {}
 var organization_runtime_config: Dictionary = {}
 var registry: Variant = null
+var daily_life_config: Dictionary = {}
+var daily_life_routes: Array = []
+
+
+func configure_daily_life(config: Dictionary, routes: Array) -> void:
+	daily_life_config = config.duplicate(true)
+	daily_life_routes = routes.duplicate(true)
 
 
 func configure_registry(source_registry: Variant) -> void:
@@ -261,6 +269,15 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			need_results.append_array(round_need_results)
 			need_changes.append_array(round_need_changes)
 
+		if DailyLife.enabled(daily_life_config):
+			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			var activity_data: Dictionary = DailyLife.new().resolve_tick(activity_snapshot, round_event,
+				daily_life_config, settlement_network_config, context.locations, daily_life_routes)
+			var activity_results: Array = activity_data.get("results", [])
+			writer.apply_results(activity_results, stores)
+			livelihood_results.append_array(activity_results)
+			livelihood_events.append_array(activity_data.get("events", []))
+
 		if not npc_livelihood_profiles.is_empty():
 			var livelihood_system = NpcLivelihoodSystemModel.new()
 			var work_snapshot = snapshot_builder.build_snapshot(
@@ -271,7 +288,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			var work_data: Dictionary = livelihood_system.resolve_work_tick(
 				work_snapshot,
 				npc_livelihood_profiles,
-				round_event
+				round_event,
+				daily_life_config
 			)
 			var work_results: Array = work_data.get("results", [])
 			writer.apply_results(work_results, stores)

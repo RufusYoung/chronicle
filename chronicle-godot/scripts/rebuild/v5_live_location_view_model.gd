@@ -62,6 +62,8 @@ func start(options: Dictionary = {}) -> Dictionary:
 	latest_event_type = ""
 	last_player_impact = {}
 	var start_options := options.duplicate(true)
+	if scenario == "generated_network" and not start_options.has("resident_daily_life_version"):
+		start_options["resident_daily_life_version"] = 1
 	if (
 		not start_options.has("challenge_seed_override")
 		and not "--script" in OS.get_cmdline_args()
@@ -1110,6 +1112,8 @@ func _travel_rows() -> Array:
 		var hint := "旅行会推进世界时间，沿途的事情也会继续发展。"
 		if blocked_reason == "insufficient_food":
 			hint = "随身食物不足，暂时无法走这条路。"
+		elif blocked_reason == "route_closed":
+			hint = "道路目前不通，居民和旅人都不能沿此路抵达。"
 		elif blocked_reason == "missing_required_item":
 			hint = str(
 				option.get(
@@ -2454,6 +2458,8 @@ func _travel_feedback_view() -> Dictionary:
 		var body := "当前无法沿这条路线出发。"
 		if error == "insufficient_food":
 			body = "你带的食物不够走完这段路。"
+		elif error == "route_closed":
+			body = "这条路目前不通，你没有出发，也没有消耗旅行时间。"
 		elif error == "missing_required_item":
 			body = "这段路不能空手出发；你还缺少防盐面罩等必要防护。"
 		elif error == "outside_access_window":
@@ -2515,6 +2521,9 @@ func _tick_feedback_view() -> Dictionary:
 
 	var result_data := _local_organization_response_result(latest_result)
 	if result_data.is_empty():
+		var activity_feedback := _local_resident_activity_feedback(latest_result)
+		if not activity_feedback.is_empty():
+			return activity_feedback
 		var results: Array = latest_result.get(
 			"observed_autonomous_results",
 			[]
@@ -2542,6 +2551,37 @@ func _tick_feedback_view() -> Dictionary:
 		)),
 		"details": details,
 	}
+
+
+func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
+	var here := str(session.context.location_id)
+	var lines: Array[String] = []
+	for event: Dictionary in result.get("livelihood_events", []):
+		if event.get("fact_type") != "resident_activity_changed" or str(event.get("location_id", "")) != here:
+			continue
+		var activity := str(event.get("activity", ""))
+		if activity not in ["arrived", "traveling", "working", "seeking_work"]:
+			continue
+		var actor_id := str(event.get("actor_id", ""))
+		var person: Dictionary = session.stores.entity_store.get_entity(actor_id)
+		var name := str(person.get("display_name", actor_id))
+		match activity:
+			"arrived":
+				lines.append("%s沿着来路抵达这里。" % name)
+			"traveling":
+				# Only departure is observable at this endpoint; continuation remains in transit.
+				if str(event.get("to_location_id", "")) != "":
+					var destination: Dictionary = session.context.get_location(str(event.to_location_id))
+					lines.append("%s动身前往%s，%s。" % [name, destination.get("display_name", "下一处地点"), event.get("reason", "继续日常生活")])
+			"working":
+				lines.append("%s开始在这里做工。" % name)
+			"seeking_work":
+				lines.append("%s在集地寻找可以接手的工作。" % name)
+	if lines.is_empty():
+		return {}
+	return {"status": "world_tick", "title": "眼前的人有了动静",
+		"body": "\n".join(lines.slice(0, 3)), "details": lines,
+		"summary": "人物按自己的作息行动，不是等待操作的奖励。"}
 
 
 func _ferry_wait_feedback_view() -> Dictionary:
@@ -2966,6 +3006,12 @@ func _location_context(location: Dictionary, snapshot: Variant) -> String:
 
 func _person_state_text(states: Dictionary) -> String:
 	var rows: Array[String] = []
+	if int(states.get("daily_life_version", 0)) == 1:
+		var labels := {"working": "在岗做工", "seeking_work": "在集地找工作", "arrived": "刚刚抵达",
+			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上"}
+		rows.append(str(labels.get(str(states.get("daily_activity", "")), "日常生活")))
+		if str(states.get("daily_activity", "")) == "blocked":
+			rows.append(str(states.get("daily_activity_reason", "")))
 	if states.has("hunger"):
 		rows.append("饥饿：%s" % _hunger_label(str(states.get("hunger", ""))))
 	if states.has("fear"):

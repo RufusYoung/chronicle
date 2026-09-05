@@ -7,6 +7,7 @@ var failures: Array[String] = []
 var rows: Array = []
 var tag := "sample"
 var long_travel := false
+var checkpoint := "user://tests/world_runtime_probe/day7.json"
 
 
 func _initialize() -> void:
@@ -21,6 +22,9 @@ func _run() -> void:
 	if not OS.get_cmdline_user_args().is_empty():
 		tag = OS.get_cmdline_user_args()[0].validate_filename()
 	long_travel = "--long-travel" in OS.get_cmdline_user_args()
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--checkpoint="):
+			checkpoint = argument.trim_prefix("--checkpoint=")
 	root.content_scale_size = Vector2i(1280, 720)
 	root.size = Vector2i(1280, 720)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
@@ -29,7 +33,7 @@ func _run() -> void:
 		viewer.save_path = output + "/absent_" + Crypto.new().generate_random_bytes(8).hex_encode() + ".json"
 		root.add_child(viewer)
 		if phase == "day7":
-			var loaded: Dictionary = viewer.view_model.load_from_path("user://tests/world_runtime_probe/day7.json")
+			var loaded: Dictionary = viewer.view_model.load_from_path(checkpoint)
 			if not loaded.get("success", false):
 				failures.append("Missing day7 checkpoint: " + str(loaded))
 				viewer.queue_free()
@@ -64,6 +68,7 @@ func _run() -> void:
 				failures.append(phase + ": illegal/failed operation " + str(choice))
 			var end_time: Dictionary = viewer.view_model.session.get_time_summary()
 			rows.append({"world": phase, "index": index, "choice": choice,
+				"daily_life_version": viewer.view_model.session.world_tick_adapter.daily_life_config.get("version", 0),
 				"from": here, "to": viewer.current_view_data.location.id,
 				"start_time": start_time, "end_time": end_time,
 				"elapsed_hours": int(end_time.elapsed_hours) - int(start_time.elapsed_hours),
@@ -125,6 +130,7 @@ func _flush() -> void:
 				"p95_ms": durations[ceili(durations.size() * 0.95) - 1], "max_ms": durations[-1]}
 	var file := FileAccess.open(output + "/" + tag + ".json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"engine": Engine.get_version_info(), "processor": OS.get_processor_name(),
+		"checkpoint": checkpoint,
 		"renderer": RenderingServer.get_current_rendering_method(), "rows": rows, "summaries": summaries,
 		"failures": failures, "scope": "Program-driven legal rendered UI operations; no human gameplay acceptance. Multi-hour travel reported without dividing by hours."}, "  "))
 	file.close()

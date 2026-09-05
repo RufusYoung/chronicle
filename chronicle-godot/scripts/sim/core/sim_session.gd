@@ -77,10 +77,12 @@ const OrganizationGeneratorModel = preload(
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const EconomicSetup = preload("res://scripts/sim/economy/economic_world_setup.gd")
 const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
+const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
-const CONTENT_PACK_VERSION := 3
+const CONTENT_PACK_VERSION := 4
 const FIBER_ROPE_DURABILITY_MIGRATION := "base_v2_to_v3_fiber_rope_durability"
+const RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION := "base_v3_to_v4_resident_activity_definitions"
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -172,6 +174,13 @@ func start_from_fixture_path(
 		fixture["challenge_seed"] = int(options.get(
 			"challenge_seed_override", fixture.get("challenge_seed", 1)
 		))
+	if options.has("resident_daily_life_version"):
+		var version := int(options.resident_daily_life_version)
+		if version not in [0, 1]:
+			_reset_runtime()
+			return _start_failure("unsupported_resident_daily_life_version")
+		if version == 1:
+			fixture["resident_daily_life"] = DailyLife.PROFILE.duplicate(true)
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -189,6 +198,8 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if fixture.is_empty():
 		return _start_failure("fixture_not_loaded")
 	fixture = fixture.duplicate(true)
+	if int(fixture.get("resident_daily_life", {}).get("version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_resident_daily_life_version")
 	var settlement_result := _apply_settlement_generation(fixture)
 	if not bool(settlement_result.get("ok", false)):
 		var failed := _start_failure("settlement_generation_failed")
@@ -298,6 +309,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	world_tick_adapter.configure_settlement_network(
 		settlement_network_runtime
 	)
+	world_tick_adapter.configure_daily_life(fixture.get("resident_daily_life", {}), travel_routes)
 	var organization_runtime_config := (
 		fixture.get("organization_runtime", {}) as Dictionary
 	).duplicate(true)
@@ -469,6 +481,7 @@ func get_travel_options() -> Array:
 		)
 		var can_travel := (
 			not destination.is_empty()
+			and bool(route.get("enabled", true))
 			and int(route.get("hours", 0)) > 0
 			and route_food_cost >= 0
 			and food_count >= food_cost
@@ -1172,6 +1185,8 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 	var route := _find_travel_route(route_id, context.location_id)
 	if route.is_empty():
 		return _travel_failure("route_not_found", route_id)
+	if not bool(route.get("enabled", true)):
+		return _travel_failure("route_closed", route_id)
 	if not _route_discovery_requirements_met(route, get_snapshot()):
 		return _travel_failure("route_not_discovered", route_id)
 
@@ -2098,16 +2113,16 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 	if actual == expected:
 		if pack_version == CONTENT_PACK_VERSION:
 			return {"ok": true, "error": "", "phase": "definitions"}
-		if pack_version == 2:
-			return {
-				"ok": true,
-				"error": "",
-				"phase": "definitions",
-				"migrations": [FIBER_ROPE_DURABILITY_MIGRATION],
-			}
 		return _save_failure("save_definition_manifest_mismatch", "definitions")
-	# Only the exact v1 base manifest can acquire the newly added rope definition.
+	# Upgrade exact historical manifests, not arbitrary subsets of current definitions.
 	var previous := expected.duplicate()
+	for key: String in DailyLife.STATE_KEYS:
+		previous.erase("state:state.character." + key)
+	if pack_version in [2, 3] and actual == previous:
+		var migrations := [RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION]
+		if pack_version == 2:
+			migrations.push_front(FIBER_ROPE_DURABILITY_MIGRATION)
+		return {"ok": true, "error": "", "phase": "definitions", "migrations": migrations}
 	previous.erase("item:item.fiber_rope")
 	if pack_version == 1 and actual == previous:
 		return {
@@ -2117,6 +2132,7 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 			"migrations": [
 				"base_v1_to_v2_fiber_rope",
 				FIBER_ROPE_DURABILITY_MIGRATION,
+				RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION,
 			],
 		}
 	return _save_failure("save_definition_manifest_mismatch", "definitions")
@@ -2200,6 +2216,21 @@ func _validate_save_references() -> Dictionary:
 					],
 					"references"
 				)
+		for state_key: String in ["daily_goal_id", "daily_workplace_id", "daily_destination_id"]:
+			var target := str(entity_states.get(state_key, ""))
+			if target != "" and not context.locations.has(target):
+				return _save_failure("save_daily_location_unknown:%s:%s" % [entity_id, state_key], "references")
+		for state_key: String in ["daily_departure_fact_id", "daily_presence_fact_id"]:
+			var source := str(entity_states.get(state_key, ""))
+			if source != "" and fact_store.get_fact(source).get("actor_id", "") != entity_id:
+				return _save_failure("save_daily_fact_unknown:%s:%s" % [entity_id, state_key], "references")
+		var pending_route := str(entity_states.get("daily_route_id", ""))
+		if pending_route != "":
+			var departure: Dictionary = fact_store.get_fact(str(entity_states.get("daily_departure_fact_id", "")))
+			if int(entity_states.get("daily_travel_remaining", 0)) <= 0 \
+					or str(departure.get("route_id", "")) != pending_route \
+					or str(departure.get("to_location_id", "")) != str(entity_states.get("daily_destination_id", "")):
+				return _save_failure("save_daily_journey_invalid:%s" % entity_id, "references")
 	for source_id: String in stores["relationship_store"].relations.keys():
 		if not entity_store.has_entity(source_id):
 			return _save_failure(
@@ -3085,6 +3116,8 @@ func _travel_blocked_reason(
 		food_cost: int,
 		snapshot: Variant
 ) -> String:
+	if not bool(route.get("enabled", true)):
+		return "route_closed"
 	if destination.is_empty():
 		return "destination_not_found"
 	if hours <= 0:

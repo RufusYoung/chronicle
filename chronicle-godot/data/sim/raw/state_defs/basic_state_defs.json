@@ -721,6 +721,177 @@
       "persistence": "save",
       "ui_visibility": "detail",
       "description": "角色因资源不足未能完成生产的累计次数。"
+    },
+    {
+      "state_def_id": "state.character.daily_life_version",
+      "definition_version": 1,
+      "key": "daily_life_version",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "int",
+      "default": 0,
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "人物日常生活规则版本。",
+      "minimum": 0
+    },
+    {
+      "state_def_id": "state.character.daily_activity",
+      "definition_version": 1,
+      "key": "daily_activity",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "enum",
+      "default": "home",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "当前有位置和时间约束的日常活动。",
+      "values": [
+        "home",
+        "resting",
+        "working",
+        "seeking_work",
+        "traveling",
+        "arrived",
+        "blocked"
+      ]
+    },
+    {
+      "state_def_id": "state.character.daily_activity_reason",
+      "definition_version": 1,
+      "key": "daily_activity_reason",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "选择当前日常活动的原因。"
+    },
+    {
+      "state_def_id": "state.character.daily_goal_id",
+      "definition_version": 1,
+      "key": "daily_goal_id",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "当前日常行动的最终地点。"
+    },
+    {
+      "state_def_id": "state.character.daily_workplace_id",
+      "definition_version": 1,
+      "key": "daily_workplace_id",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "当前累积工作时数所属的工作地点。"
+    },
+    {
+      "state_def_id": "state.character.daily_route_id",
+      "definition_version": 1,
+      "key": "daily_route_id",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "正在行进的道路；非空时不能在端点作业。"
+    },
+    {
+      "state_def_id": "state.character.daily_destination_id",
+      "definition_version": 1,
+      "key": "daily_destination_id",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "当前路段的终点。"
+    },
+    {
+      "state_def_id": "state.character.daily_travel_remaining",
+      "definition_version": 1,
+      "key": "daily_travel_remaining",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "int",
+      "default": 0,
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "当前路段尚需经过的小时数。",
+      "minimum": 0
+    },
+    {
+      "state_def_id": "state.character.daily_departure_fact_id",
+      "definition_version": 1,
+      "key": "daily_departure_fact_id",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "本次出发的事实来源。"
+    },
+    {
+      "state_def_id": "state.character.daily_presence_fact_id",
+      "definition_version": 1,
+      "key": "daily_presence_fact_id",
+      "owner_kinds": [
+        "character"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "最近到场的事实来源。"
     }
   ]
 }

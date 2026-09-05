@@ -6,6 +6,7 @@ const ControllerModel = preload(
 const SaveEnvelopeServiceModel = preload(
 	"res://scripts/sim/save/save_envelope_service.gd"
 )
+const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 
 const FIXTURE := (
 	"res://data/sim/fixtures/seventh_outpost_first_winter_fixture.json"
@@ -101,6 +102,8 @@ func _run() -> void:
 	var service = SaveEnvelopeServiceModel.new()
 	var previous_pack := envelope.duplicate(true)
 	previous_pack["definition_manifest"]["content_pack_version"] = 1
+	for key: String in DailyLife.STATE_KEYS:
+		previous_pack["definition_manifest"]["required_definition_ids"].erase("state:state.character." + key)
 	previous_pack["definition_manifest"]["required_definition_ids"].erase("item:item.fiber_rope")
 	previous_pack = service.finalize_envelope(previous_pack)
 	var previous_pack_path := "user://tests/save_previous_content_pack.json"
@@ -116,12 +119,15 @@ func _run() -> void:
 		)
 		and _equivalent(previous_restored.session.get_save_store_data(), before_store)
 		and _equivalent(previous_restored.day_history, before_history)
-		and int(previous_restored.build_save_envelope()["definition_manifest"]["content_pack_version"]) == 3,
+		and "base_v3_to_v4_resident_activity_definitions" in previous_report.get("migrations", [])
+		and int(previous_restored.build_save_envelope()["definition_manifest"]["content_pack_version"]) == 4,
 		"5B. Previous 105-definition base pack migrates from disk without changing world history"
 	)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(previous_pack_path))
 	var v2_pack := envelope.duplicate(true)
 	v2_pack["definition_manifest"]["content_pack_version"] = 2
+	for key: String in DailyLife.STATE_KEYS:
+		v2_pack["definition_manifest"]["required_definition_ids"].erase("state:state.character." + key)
 	var v2_stores: Dictionary = v2_pack.get("stores", {}).duplicate(true)
 	var v2_items: Array = v2_stores.get("items", []).duplicate(true)
 	var v2_facts: Array = v2_stores.get("facts", [])
@@ -157,7 +163,7 @@ func _run() -> void:
 		)) == 4,
 		"5C. Content pack v2 rope receives explicit full durability during v3 migration"
 	)
-	for version: int in [1, 2, 3]:
+	for version: int in [1, 2, 3, 4]:
 		var broken_manifest := previous_pack.duplicate(true)
 		broken_manifest["definition_manifest"]["content_pack_version"] = version
 		if version == 1:

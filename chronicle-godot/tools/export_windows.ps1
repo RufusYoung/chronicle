@@ -42,7 +42,7 @@ $manifest = [ordered]@{
     createdUtc = [DateTime]::UtcNow.ToString('o')
     sourceCommit = (& git -C $project rev-parse HEAD)
     sourceDirty = [bool](& git -C $project status --porcelain)
-    kind = 'H1 internal Windows smoke build, not a submission candidate'
+    kind = 'Internal world prototype, not a submission candidate'
     files = @(Get-ChildItem -LiteralPath $output -File | Where-Object { $_.Extension -in @('.exe', '.pck') } | ForEach-Object {
         @{ name = $_.Name; bytes = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
     })

@@ -55,6 +55,8 @@ func restart_session() -> void:
 			var restored: Dictionary = view_model.load_from_path(save_path)
 			if restored.get("success", false):
 				_startup_message = "已继续上次保存的世界。"
+				if not view_model.session.world_tick_adapter.daily_life_config.get("version", 0):
+					_startup_message += "这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))

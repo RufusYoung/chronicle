@@ -4,6 +4,7 @@ class_name V5NpcLivelihoodSystem
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const Access = preload("res://scripts/sim/resource/resource_access.gd")
 const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
+const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
@@ -16,7 +17,8 @@ const MAX_FATIGUE := 10
 func resolve_work_tick(
 		snapshot: Variant,
 		profiles: Array,
-		tick_event: Dictionary
+		tick_event: Dictionary,
+		daily_life_config: Dictionary = {}
 ) -> Dictionary:
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
@@ -48,6 +50,16 @@ func resolve_work_tick(
 			profile_key, profiles_by_scope.get(fallback_key, {})
 		)
 		if not _actor_matches_profile(actor, profile):
+			continue
+		var physical_work: bool = DailyLife.enabled(daily_life_config) and "generated_resident" in actor.get("tags", [])
+		if physical_work and (not bool(snapshot.get_entity_state(actor_id, "alive", true))
+				or int(snapshot.get_entity_state(actor_id, "health", 100)) < int(daily_life_config.get("minimum_work_health", 30))
+				or int(snapshot.get_entity_state(actor_id, "fatigue", 0)) >= int(daily_life_config.get("rest_fatigue", 7))
+				or not DailyLife.work_time(occupation_id, int(tick_event.get("hour", 0)), daily_life_config)
+				or str(snapshot.get_entity_state(actor_id, "daily_activity", "")) != "working"
+				or str(snapshot.get_entity_state(actor_id, "daily_route_id", "")) != ""
+				or str(snapshot.get_entity_state(actor_id, "location_id", "")) != str(profile.get("workplace_id", ""))
+				or str(snapshot.get_entity_state(actor_id, "workplace_id", "")) != str(profile.get("workplace_id", ""))):
 			continue
 		var interval := maxi(int(profile.get("work_interval_hours", 8)), 1)
 		var elapsed := int(snapshot.get_entity_state(
@@ -166,7 +178,7 @@ func resolve_work_tick(
 				product_index
 			)
 
-		result.add_fact({
+		var production_fact := {
 			"fact_id": fact_id,
 			"fact_type": "npc_livelihood_produced",
 			"actor_id": actor_id,
@@ -185,7 +197,13 @@ func resolve_work_tick(
 					"display_name", actor_id
 				))
 			)) + ("（旧版薪酬模型：铜币由规则生成，尚未实际付款。）" if _contains_currency_product(products) else ""),
-		})
+		}
+		if physical_work:
+			production_fact["hour"] = int(tick_event.get("hour", 0))
+			production_fact["work_hours"] = interval
+			production_fact["actual_location_id"] = str(snapshot.get_entity_state(actor_id, "location_id", ""))
+			production_fact["source_fact_ids"] = [str(snapshot.get_entity_state(actor_id, "daily_presence_fact_id", ""))]
+		result.add_fact(production_fact)
 		result.add_state_change({
 			"entity_id": actor_id,
 			"key": "livelihood_elapsed_hours",
@@ -679,6 +697,8 @@ func _find_food(
 		return a_support > b_support if a_support != b_support else a_id < b_id
 	)
 	for holder_id: Variant in ordered_members:
+		if not _can_share_here(snapshot, recipient_id, str(holder_id)):
+			continue
 		for item: Dictionary in snapshot.get_items():
 			var item_id := str(item.get("item_instance_id", ""))
 			var holder: Dictionary = item.get("holder", {})
@@ -693,6 +713,15 @@ func _find_food(
 				row["holder_id"] = str(holder_id)
 				return row
 	return {}
+
+
+func _can_share_here(snapshot: Variant, recipient_id: String, holder_id: String) -> bool:
+	if int(snapshot.get_entity_state(recipient_id, "daily_life_version", 0)) != 1:
+		return true
+	return bool(snapshot.get_entity_state(holder_id, "alive", true)) \
+		and str(snapshot.get_entity_state(recipient_id, "daily_route_id", "")) == "" \
+		and str(snapshot.get_entity_state(holder_id, "daily_route_id", "")) == "" \
+		and str(snapshot.get_entity_state(recipient_id, "location_id", "")) == str(snapshot.get_entity_state(holder_id, "location_id", ""))
 
 
 func _external_support_links(snapshot: Variant) -> Dictionary:
@@ -731,6 +760,8 @@ func _external_contacts(
 		var requester_id := str(member_value)
 		for link: Dictionary in external_links.get(requester_id, []):
 			var contact_id := str(link.get("contact_id", ""))
+			if not _can_share_here(snapshot, requester_id, contact_id):
+				continue
 			var contact_household_id := str(snapshot.get_entity_state(
 				contact_id, "household_id", ""
 			))
@@ -776,6 +807,8 @@ func _find_external_food(
 		external_links
 	):
 		var contact_id := str(contact.get("contact_id", ""))
+		if not _can_share_here(snapshot, recipient_id, contact_id):
+			continue
 		if int(snapshot.get_relation(
 			str(contact.get("requester_id", recipient_id)),
 			contact_id,

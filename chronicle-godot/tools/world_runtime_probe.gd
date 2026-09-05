@@ -5,6 +5,7 @@ const Live = preload("res://scripts/rebuild/v5_live_location_view_model.gd")
 var output := "user://tests/world_runtime_probe"
 var rows: Array = []
 var failures: Array[String] = []
+var world_seed := 81001
 
 
 func _initialize() -> void:
@@ -14,10 +15,13 @@ func _initialize() -> void:
 func _run() -> void:
 	if not OS.get_cmdline_user_args().is_empty():
 		output += "." + OS.get_cmdline_user_args()[0].validate_filename()
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--seed="):
+			world_seed = argument.trim_prefix("--seed=").to_int()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var model := Live.new()
 	var began := Time.get_ticks_usec()
-	_check(model.start({"scenario": "generated_network", "challenge_seed_override": 81001}).success, "start")
+	_check(model.start({"scenario": "generated_network", "challenge_seed_override": world_seed}).success, "start")
 	rows.append({"phase": "start", "ms": _ms(began)})
 	var checkpoint := ""
 	for day: int in range(1, 8):
@@ -59,7 +63,7 @@ func _run() -> void:
 
 func _flush() -> void:
 	var file := FileAccess.open(output + "/result.json", FileAccess.WRITE)
-	file.store_string(JSON.stringify({"seed": 81001, "engine": Engine.get_version_info(),
+	file.store_string(JSON.stringify({"seed": world_seed, "engine": Engine.get_version_info(),
 		"processor": OS.get_processor_name(), "rows": rows, "failures": failures,
 		"scope": "Seven passive days, no interventions; one-hour native-precision continuation at day seven. Not a gameplay or economy acceptance."}, "  "))
 	file.close()

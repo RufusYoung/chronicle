@@ -32,7 +32,7 @@ func _run() -> void:
 	_check(
 		bool(start.get("success", false))
 		and str(start.get("fixture_id", "")) == "core_system_contract"
-		and int(start.get("definition_count", 0)) == 106,
+		and int(start.get("definition_count", 0)) == 116,
 		"1. 最小合同 fixture 通过全部 Definition 与 Store 启动校验"
 	)
 	if not bool(start.get("success", false)):
@@ -185,7 +185,7 @@ func _run() -> void:
 		{}
 	) as Dictionary).get("required_definition_ids", [])
 	_check(
-		manifest.size() == 106
+		manifest.size() == 116
 		and manifest == _sorted_copy(manifest)
 		and "item:item.travel_ration" in manifest
 		and "item:item.fiber_rope" in manifest
