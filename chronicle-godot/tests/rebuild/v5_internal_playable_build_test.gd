@@ -30,8 +30,8 @@ func _initialize() -> void:
 func _run() -> void:
 	_check(
 		str(ProjectSettings.get_setting("application/run/main_scene"))
-			== VIEWER_SCENE,
-		"1. Normal project launch enters the V5 playable slice"
+			== "res://scenes/rebuild/world_bootstrap.tscn",
+		"1. Normal launch uses the world bootstrap; the old slice remains an explicit regression scene"
 	)
 
 	var packed := load(VIEWER_SCENE) as PackedScene

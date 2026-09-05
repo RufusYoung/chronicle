@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_live_travel_loop_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 6.57,
+  "UnexpectedErrors": []
+}

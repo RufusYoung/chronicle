@@ -1,0 +1,151 @@
+{
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "rows": [
+    {
+      "ms": 191.862,
+      "phase": "start"
+    },
+    {
+      "elapsed_days": 1,
+      "ms": 7631.454,
+      "phase": "simulation"
+    },
+    {
+      "elapsed_days": 1,
+      "ms": 432.728,
+      "phase": "projection"
+    },
+    {
+      "elapsed_days": 1,
+      "ms": 12.907,
+      "phase": "reference_audit",
+      "result": {
+        "error": "",
+        "ok": true,
+        "phase": "references"
+      }
+    },
+    {
+      "byte_count": 1388069,
+      "elapsed_days": 1,
+      "ms": 1160.592,
+      "phase": "save_with_integrity_readback"
+    },
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 11,
+        "deferred_consequences": 0,
+        "entities": 61,
+        "equipment_loadouts": 1,
+        "exchanges": 23,
+        "facts": 621,
+        "investigation_leads": 0,
+        "items": 54,
+        "memories": 0,
+        "obligations": 3,
+        "pressures": 12,
+        "relationships": 333,
+        "resource_stocks": 23,
+        "rumors": 0,
+        "states": 1021,
+        "traces": 19
+      },
+      "elapsed_days": 1,
+      "phase": "counts"
+    },
+    {
+      "elapsed_days": 2,
+      "ms": 12868.667,
+      "phase": "simulation"
+    },
+    {
+      "elapsed_days": 3,
+      "ms": 18205.24,
+      "phase": "simulation"
+    },
+    {
+      "elapsed_days": 4,
+      "ms": 23672.273,
+      "phase": "simulation"
+    },
+    {
+      "elapsed_days": 5,
+      "ms": 27762.834,
+      "phase": "simulation"
+    },
+    {
+      "elapsed_days": 6,
+      "ms": 33314.456,
+      "phase": "simulation"
+    },
+    {
+      "elapsed_days": 7,
+      "ms": 36687.027,
+      "phase": "simulation"
+    },
+    {
+      "elapsed_days": 7,
+      "ms": 1389.52,
+      "phase": "projection"
+    },
+    {
+      "elapsed_days": 7,
+      "ms": 25.182,
+      "phase": "reference_audit",
+      "result": {
+        "error": "",
+        "ok": true,
+        "phase": "references"
+      }
+    },
+    {
+      "byte_count": 3302636,
+      "elapsed_days": 7,
+      "ms": 2612.104,
+      "phase": "save_with_integrity_readback"
+    },
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 22,
+        "deferred_consequences": 0,
+        "entities": 63,
+        "equipment_loadouts": 1,
+        "exchanges": 148,
+        "facts": 1823,
+        "investigation_leads": 0,
+        "items": 221,
+        "memories": 0,
+        "obligations": 4,
+        "pressures": 76,
+        "relationships": 352,
+        "resource_stocks": 23,
+        "rumors": 0,
+        "states": 1046,
+        "traces": 23
+      },
+      "elapsed_days": 7,
+      "phase": "counts"
+    },
+    {
+      "elapsed_days": 7,
+      "ms": 1614.9,
+      "phase": "load"
+    }
+  ],
+  "scope": "Seven passive days, no interventions; one-hour native-precision continuation at day seven. Not a gameplay or economy acceptance.",
+  "seed": 81001
+}

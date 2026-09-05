@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/world_demo_surface_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 23.18,
+  "UnexpectedErrors": []
+}

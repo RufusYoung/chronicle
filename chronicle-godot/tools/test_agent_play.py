@@ -1,16 +1,23 @@
 """Real Godot process tests, not a mock transport or injected game-state test."""
 
 import json
+import os
 import subprocess
 import sys
 import unittest
 
 from agent_play import ChronicleClient, PROJECT
 
+PACKAGED = os.environ.get("CHRONICLE_TEST_PACKAGED") == "1"
+
+
+def client(**kwargs):
+    return ChronicleClient(packaged=PACKAGED, **kwargs)
+
 
 class TransportTest(unittest.TestCase):
     def test_agent_flow_and_receipt(self):
-        with ChronicleClient(timeout=60) as game:
+        with client(timeout=60) as game:
             opened = game.request("start", mode="play", scenario="lake_town", seed=81001)
             self.assertTrue(opened["ok"])
             self.assertEqual(opened["observation"]["location"]["title"], "老陈铺子")
@@ -28,7 +35,7 @@ class TransportTest(unittest.TestCase):
         self.assertFalse(any(t.is_alive() for t in game.readers))
 
     def test_fragmented_unicode_frame(self):
-        with ChronicleClient(timeout=30) as game:
+        with client(timeout=30) as game:
             request = {"protocol": 1, "command": "observe", "request_id": "逐字节输入"}
             payload = json.dumps(request, ensure_ascii=False).encode("utf-8")
             frame = f"{len(payload):08d}".encode("ascii") + payload
@@ -40,7 +47,7 @@ class TransportTest(unittest.TestCase):
             self.assertEqual(result["request_id"], request["request_id"])
 
     def test_malformed_json_does_not_desynchronize(self):
-        with ChronicleClient(timeout=30) as game:
+        with client(timeout=30) as game:
             game.process.stdin.write(b"00000001{")
             game.process.stdin.flush()
             self.assertEqual(game._receive()["error"], "invalid_json")
@@ -51,14 +58,14 @@ class TransportTest(unittest.TestCase):
                              (b"00000005{}", "incomplete_frame"),
                              (b"000", "invalid_frame_length"),
                              (b"0000xxxx", "invalid_frame_length")]:
-            with self.subTest(frame=frame), ChronicleClient(timeout=30) as game:
+            with self.subTest(frame=frame), client(timeout=30) as game:
                 game.process.stdin.write(frame)
                 game.process.stdin.close()
                 self.assertEqual(game._receive()["error"], error)
             self.assertEqual(game.process.returncode, 2)
 
     def test_timeout_owns_and_reaps_process(self):
-        game = ChronicleClient(timeout=30)
+        game = client(timeout=30)
         game.timeout = 0.05
         with self.assertRaises(TimeoutError):
             game._receive()
@@ -67,7 +74,7 @@ class TransportTest(unittest.TestCase):
 
     def test_jsonl_cli(self):
         result = subprocess.run(
-            [sys.executable, str(PROJECT / "tools" / "agent_play.py")],
+            [sys.executable, str(PROJECT / "tools" / "agent_play.py")] + (["--packaged"] if PACKAGED else []),
             input=b'{"command":"observe"}\n[]\n', capture_output=True, timeout=40,
         )
         self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", errors="replace"))
@@ -75,6 +82,22 @@ class TransportTest(unittest.TestCase):
         self.assertEqual(lines[0]["event"], "client_ready")
         self.assertEqual(lines[1]["error"], "not_started")
         self.assertIn("client_error", lines[2])
+
+    def test_generated_region_and_cross_town_travel(self):
+        with client(timeout=60) as game:
+            opened = game.request("start", mode="play", scenario="generated_network", seed=81001)
+            self.assertTrue(opened["ok"])
+            region = opened["observation"]["region_map"]
+            self.assertEqual(len(region["sites"]), 3)
+            self.assertEqual(len(region["roads"]), 2)
+            self.assertEqual(region["layout"], "topology_not_geography")
+            names = [s["name"] for s in region["sites"] if s["id"] != region["current_settlement_id"]]
+            route = next(c for c in opened["choices"] if c["kind"] == "travel" and c["enabled"]
+                         and any(name in c.get("destination_name", "") for name in names))
+            traveled = game.request("act", choice_id=route["choice_id"])
+            self.assertTrue(traveled["ok"])
+            self.assertNotEqual(region["current_settlement_id"], traveled["observation"]["region_map"]["current_settlement_id"])
+            self.assertEqual(game.request("inspect")["error"], "omniscient_inspection_disabled_in_play_mode")
 
 
 if __name__ == "__main__":

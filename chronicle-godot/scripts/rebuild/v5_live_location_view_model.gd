@@ -6,11 +6,14 @@ const LifeStageTransitionServiceModel = preload(
 )
 
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
+const WorldSave = preload("res://scripts/rebuild/live_world_save.gd")
+const RegionProjection = preload("res://scripts/rebuild/region_map_projection.gd")
 const RoutePressureQueryModel = preload(
 	"res://scripts/sim/resource/route_pressure_query.gd"
 )
 
 const FIXTURE_PATH := "res://data/sim/fixtures/lake_town_food_crisis_fixture.json"
+const NETWORK_FIXTURE := "res://data/sim/fixtures/generated_settlement_network_fixture.json"
 const RULE_PATHS := [
 	"res://data/sim/raw/action_rules/basic_action_rules.json",
 	"res://data/sim/raw/action_rules/domain_action_rules.json",
@@ -49,6 +52,9 @@ func _init(source_session: Variant = null) -> void:
 
 
 func start(options: Dictionary = {}) -> Dictionary:
+	var scenario := str(options.get("scenario", "lake_town"))
+	if scenario not in ["lake_town", "generated_network"]:
+		return {"success": false, "error": "unknown_start_scenario"}
 	if session == null:
 		session = SimSessionModel.new()
 	action_history.clear()
@@ -64,9 +70,18 @@ func start(options: Dictionary = {}) -> Dictionary:
 		runtime_rng.randomize()
 		start_options["challenge_seed_override"] = int(runtime_rng.randi())
 	start_result = session.start_from_fixture_path(
-		FIXTURE_PATH, RULE_PATHS, start_options
+		NETWORK_FIXTURE if scenario == "generated_network" else FIXTURE_PATH,
+		RULE_PATHS, start_options
 	)
 	return start_result.duplicate(true)
+
+
+func save_to_path(path: String, overwrite: bool = false) -> Dictionary:
+	return WorldSave.new().save_model(self, path, overwrite)
+
+
+func load_from_path(path: String) -> Dictionary:
+	return WorldSave.new().load_model(self, path)
 
 
 func is_ready() -> bool:
@@ -121,7 +136,8 @@ func advance_time(hours: int = 1) -> Dictionary:
 		return latest_result.duplicate(true)
 
 	latest_result = session.advance_time(hours, "after_short_wait", {
-		"label": "在老陈铺子等待一小时",
+		"label": "在%s等待 %d 小时" % [
+			str(session.get_snapshot().location.get("display_name", "此地")), hours],
 		"source": "v5_live_location_surface",
 	})
 	if bool(latest_result.get("success", false)):
@@ -394,6 +410,7 @@ func build_view_data() -> Dictionary:
 		"player": _player_view(snapshot),
 		"time": _time_view(),
 		"region_status": _region_status_rows(snapshot),
+		"region_map": RegionProjection.new().build(session, _current_settlement_id(snapshot)),
 		"visible_people": visible_people,
 		"visible_observations": visible_observations,
 		"actions": _action_rows(),

@@ -1,0 +1,18 @@
+[
+  {
+    "Test": "tests/rebuild/v5_world_time_surface_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.54,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/live_world_time_session_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.54,
+    "UnexpectedErrors": []
+  }
+]

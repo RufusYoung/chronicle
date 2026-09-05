@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_live_location_viewer_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 7.3,
+  "UnexpectedErrors": []
+}

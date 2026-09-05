@@ -5,7 +5,6 @@ const Session = preload("res://scripts/sim/core/sim_session.gd")
 const LiveView = preload("res://scripts/rebuild/v5_live_location_view_model.gd")
 const OutpostView = preload("res://scripts/rebuild/v5_seventh_outpost_view_model.gd")
 const Saves = preload("res://scripts/sim/save/save_envelope_service.gd")
-const NETWORK := "res://data/sim/fixtures/generated_settlement_network_fixture.json"
 const SAVE_ROOT := "user://agent_play/"
 const CACHE_LIMIT := 32
 const FIELDS := {
@@ -97,11 +96,9 @@ func _start(request: Dictionary) -> Dictionary:
 		next_model = OutpostView.new()
 		result = next_model.start({}, "first_winter", options)
 	else:
-		var next_session := Session.new()
-		result = next_session.start_from_fixture_path(
-			NETWORK if next_scenario == "generated_network" else LiveView.FIXTURE_PATH,
-			LiveView.RULE_PATHS, options)
-		next_model = LiveView.new(next_session)
+		next_model = LiveView.new()
+		options["scenario"] = next_scenario
+		result = next_model.start(options)
 	if not result.get("success", false):
 		return _error("start_failed:%s" % str(result.get("error", "unknown")))
 	model = next_model
@@ -125,7 +122,7 @@ func _refresh() -> void:
 	var projected: Dictionary = model.build_view_data()
 	_view = {"visibility": "player_surface"}
 	# Never expose raw transaction history or save payloads through player observation.
-	for key: String in ["location", "playtest", "player", "time", "region_status", "visible_people",
+	for key: String in ["location", "playtest", "player", "time", "region_status", "region_map", "visible_people",
 		"visible_observations", "decision", "agency", "risk", "knowledge", "investigation",
 		"chronicle", "feedback", "title", "subtitle", "phase_id", "day", "duration_days",
 		"complete", "objective", "ritual", "status", "market", "people", "incident", "completion"]:

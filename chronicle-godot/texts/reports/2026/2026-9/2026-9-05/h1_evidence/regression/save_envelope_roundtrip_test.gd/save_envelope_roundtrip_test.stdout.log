@@ -1,0 +1,20 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 SAVE ENVELOPE PASS] 1. 第一冬可作为正式存档验收场景启动
+[V5 SAVE ENVELOPE PASS] 2. 保存前已产生职责、NPC、世界时间和生活项目 runtime
+[V5 SAVE ENVELOPE PASS] 3. 正式 SaveEnvelope v1 包含完整性摘要且不保存派生投影
+[V5 SAVE ENVELOPE PASS] 4. 内存载入后 Store、时间、生活游标与行动候选完全一致
+[V5 SAVE ENVELOPE PASS] 5. user 路径磁盘保存与载入恢复相同真值和候选
+[V5 SAVE ENVELOPE PASS] 5B. Previous 105-definition base pack migrates from disk without changing world history
+[V5 SAVE ENVELOPE PASS] 5C. Content pack v2 rope receives explicit full durability during v3 migration
+[V5 SAVE ENVELOPE PASS] 5D. Missing definitions are still rejected outside the exact previous manifest: v1
+[V5 SAVE ENVELOPE PASS] 5D. Missing definitions are still rejected outside the exact previous manifest: v2
+[V5 SAVE ENVELOPE PASS] 5D. Missing definitions are still rejected outside the exact previous manifest: v3
+[V5 SAVE ENVELOPE PASS] 6. v0 迁移注册路径升级后恢复相同 Store 真值
+[V5 SAVE ENVELOPE PASS] 7. 内容被篡改但摘要未更新的存档在完整性阶段被拒绝
+[V5 SAVE ENVELOPE PASS] 8. 摘要有效但跨 Store 引用损坏的存档仍被拒绝
+[V5 SAVE ENVELOPE PASS] 9. 高于运行时版本且无迁移路径的存档明确失败
+[V5 SAVE ENVELOPE PASS] 10. 旧版容器类型损坏时返回迁移失败而不是触发脚本错误
+[V5 SAVE ENVELOPE PASS] 11. 常用小数跨磁盘解析不误报哈希错误，真实小数篡改仍被拒绝
+[V5 SAVE ENVELOPE PASS] 12. 载入后继续承担同一职责会得到相同结果与后续世界状态
+[V5 SAVE ENVELOPE RESULT] PASS

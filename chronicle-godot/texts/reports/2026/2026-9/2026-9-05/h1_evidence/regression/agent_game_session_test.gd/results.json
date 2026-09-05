@@ -1,0 +1,8 @@
+{
+  "Test": "tests/agent/agent_game_session_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 19.64,
+  "UnexpectedErrors": []
+}

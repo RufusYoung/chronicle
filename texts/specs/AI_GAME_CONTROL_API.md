@@ -26,6 +26,8 @@ with ChronicleClient() as game:
 
 也可运行 `python tools/agent_play.py`，向它的标准输入逐行发送 JSON。客户端自动补入协议版本、请求编号、会话身份与当前修订号，标准输出逐行返回 JSON。输入 EOF 会关闭它拥有的 Godot 进程。
 
+H1 已增加发布包入口，直接启动 `Chronicle.exe --headless -- --agent-stdio`，使用同一帧协议和控制权限。Python 调用 `ChronicleClient(godot=r"C:\code\game\chronicle\builds\h1-windows\Chronicle.exe", packaged=True)`，或 CLI 加 `--packaged --godot <exe>`；不会传入源码目录，不要求安装 Godot。发布包由 bootstrap 分派到同一个 stdio driver，不用编辑器的 `--script` 启动参数代替包内入口。
+
 ```jsonl
 {"command":"start","mode":"world","scenario":"generated_network","seed":81001}
 {"command":"advance","hours":24}
@@ -43,7 +45,7 @@ with ChronicleClient() as game:
 | `world` | 启动 `generated_network`、读时间与网络摘要、按页查事实/人物/物品/资源/承诺/交换、推进 1 至 24 小时、存读档 | 不提供角色行动，不接收状态改写。观察明确为 `omniscient_debug`，不得用这种信息冒充玩家已知。现有生成夹具仍含被动旅人实体。 |
 | `play` | 启动 `generated_network`、`lake_town` 或 `first_winter`；取得正式 ViewModel 同源内容与候选，执行行动、旅行、挑战、战斗、调查、回应、职责、成长、交易和旧生涯转换 | 不能全知查询、直接推进任意时长、指定骰点或注入 effects。等待也是候选动作，战斗中不提供等待。一次性或受限行动遵循正式候选约束。 |
 
-`generated_network` 是本轮生成世界的代码入口，不是已经完成的人类开局 UI。湖湾镇和第七哨站是旧回归切片。旧生涯转换仍启动新夹具并携带部分状态，API 会在候选上警示这一点；不能把它写成连续世界已经完成。
+`generated_network` 已同时接入正式世界原型 UI 与代码入口，二者共用地点 ViewModel 的开局和行动规则；仍未完成有目标、经济生活和危险旅途的玩家人生开局。`region_map` 仅公开区域拓扑、种子、聚落名称、地形标签、道路时间和当前位置，不泄露远处人物库存或目标。湖湾镇和第七哨站保留为旧回归切片；旧生涯转换仍启动新夹具并携带部分状态，不能把它写成连续世界已经完成。
 
 ## 命令合同
 

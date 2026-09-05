@@ -1,0 +1,12 @@
+test_agent_flow_and_receipt (__main__.TransportTest.test_agent_flow_and_receipt) ... ok
+test_fragmented_unicode_frame (__main__.TransportTest.test_fragmented_unicode_frame) ... ok
+test_frame_bounds_and_truncation (__main__.TransportTest.test_frame_bounds_and_truncation) ... ok
+test_generated_region_and_cross_town_travel (__main__.TransportTest.test_generated_region_and_cross_town_travel) ... ok
+test_jsonl_cli (__main__.TransportTest.test_jsonl_cli) ... ok
+test_malformed_json_does_not_desynchronize (__main__.TransportTest.test_malformed_json_does_not_desynchronize) ... ok
+test_timeout_owns_and_reaps_process (__main__.TransportTest.test_timeout_owns_and_reaps_process) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 49.527s
+
+OK

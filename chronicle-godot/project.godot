@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="CHRONICLE_GODOT"
-run/main_scene="res://scenes/rebuild/v5_live_location_viewer.tscn"
-config/features=PackedStringArray("4.5", "Mobile")
+run/main_scene="res://scenes/rebuild/world_bootstrap.tscn"
+config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -39,4 +39,4 @@ theme/custom_font="uid://p0c7nu1f53no"
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-renderer/rendering_method="mobile"
+renderer/rendering_method="gl_compatibility"

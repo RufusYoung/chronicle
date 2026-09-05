@@ -33,15 +33,21 @@ def find_godot() -> str:
 class ChronicleClient:
     """One process, one ordered caller. A timeout closes the session, never retries."""
 
-    def __init__(self, *, godot: str | None = None, timeout: float = 120.0):
+    def __init__(self, *, godot: str | None = None, timeout: float = 120.0, packaged: bool = False):
         self.timeout = timeout
         self.messages: queue.Queue[dict | None] = queue.Queue()
         self.diagnostics: deque[str] = deque(maxlen=40)
         self.session_id = ""
         self.revision = 0
+        binary = godot or find_godot()
+        if packaged:
+            binary = shutil.which(binary) or str(Path(binary).resolve())
+        command = [binary, "--headless"]
+        command += (["--", "--agent-stdio"] if packaged else
+                    ["--path", str(PROJECT), "--script", "res://scripts/agent/agent_stdio_runner.gd"])
         self.process = subprocess.Popen(
-            [godot or find_godot(), "--headless", "--path", str(PROJECT),
-             "--script", "res://scripts/agent/agent_stdio_runner.gd"],
+            command,
+            cwd=str(Path(binary).resolve().parent) if packaged else None,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
@@ -150,11 +156,12 @@ class ChronicleClient:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--godot")
+    parser.add_argument("--packaged", action="store_true", help="Use an exported Chronicle executable via its built-in agent entry.")
     parser.add_argument("--timeout", type=float, default=120)
     args = parser.parse_args()
     sys.stdin.reconfigure(encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")
-    with ChronicleClient(godot=args.godot, timeout=args.timeout) as game:
+    with ChronicleClient(godot=args.godot, timeout=args.timeout, packaged=args.packaged) as game:
         print(json.dumps({"event": "client_ready", "session_id": game.session_id}, ensure_ascii=False), flush=True)
         for line in sys.stdin:
             try:

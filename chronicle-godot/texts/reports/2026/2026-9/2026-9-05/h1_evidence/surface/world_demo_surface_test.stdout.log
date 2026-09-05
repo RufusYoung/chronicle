@@ -1,0 +1,56 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] formal project entry dispatches through world bootstrap
+CHRONICLE_WORLD_READY seed=81001 location=generated_location.reed_bay.commons
+[PASS] formal demo opens generated world
+[PASS] region reflects actual three-site topology
+[PASS] map locates traveler
+[PASS] map page does not compete with action dock
+[PASS] viewing region changes no Stores or RNG
+[PASS] window exit protects unsaved work
+[PASS] action dock fits 720p viewport
+[PASS] missing save gives actionable feedback
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: save_to_path
+[PASS] UI writes isolated native world save
+[PASS] overwrite requires confirmation
+[PASS] cancelled overwrite does not advance world
+[PASS] worker rejects duplicate actions while busy
+[PASS] duplicate action rejected before execution
+[PASS] quit waits for in-flight settlement
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: perform_travel
+[PASS] UI frames continue during settlement
+[PASS] cross-town travel keeps same live session
+[PASS] arrival moves map marker
+[PASS] reed-bank illustration is not reused as a different town
+[PASS] restoring save requires confirmation
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: load_from_path
+[PASS] disk load restores every Store, time and RNG at native precision
+[PASS] disk load restores feedback, choices and map
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: perform_travel
+[PASS] travel after disk load reproduces uninterrupted continuation
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: perform_travel
+[PASS] second cross-town arrival stays in same world
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: perform_travel
+[PASS] interior facility retains correct town marker
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: advance_time
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: save_to_path
+CHRONICLE_WORLD_READY seed=81001 location=generated_location.wind_pass.road_yard
+[PASS] fresh viewer continues saved world instead of regenerating it
+[PASS] startup tells player it resumed the save
+[PASS] failed read leaves live session intact
+[PASS] malformed surface runtime is rejected atomically
+[PASS] new world requires confirmation and exposes seed
+[PASS] bounded worker completion
+[PASS] formal operation succeeds: start
+[PASS] new world uses selected generation seed
+[PASS] new world does not overwrite existing disk save
+WORLD_DEMO_EVIDENCE C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/world_demo_evidence
+WORLD_DEMO_RESULT 50/50

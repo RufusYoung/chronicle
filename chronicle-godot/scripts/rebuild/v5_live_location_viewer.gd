@@ -136,8 +136,8 @@ func wait_until_north_quay_ferry() -> Dictionary:
 	return result
 
 
-func refresh_view() -> void:
-	current_view_data = view_model.build_view_data()
+func refresh_view(projected: Dictionary = {}) -> void:
+	current_view_data = projected if not projected.is_empty() else view_model.build_view_data()
 	if not bool(current_view_data.get("ready", false)):
 		_show_load_error(str(current_view_data.get("error_text", "局面暂时无法载入。")))
 		return
