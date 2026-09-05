@@ -211,7 +211,7 @@ func generate_fixture(
 	chronicles.append({
 		"entry_id": "chronicle.generated_settlement_network.%d" % base_seed,
 		"subject_id": str(primary.get("settlement_id", "")),
-		"title": "北境聚落网络形成",
+		"title": str(config.get("network_title", "北境聚落网络形成")),
 		"body": "%d 个聚落通过 %d 条区域道路彼此可达，资源差异开始具备形成贸易和迁移的条件。" % [
 			sites.size(), links.size()
 		],

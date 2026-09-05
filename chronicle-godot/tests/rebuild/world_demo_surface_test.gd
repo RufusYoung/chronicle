@@ -21,12 +21,13 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var began := Time.get_ticks_usec()
 	var viewer = Demo.instantiate()
+	viewer.initial_scenario = "generated_network"
 	viewer.save_path = path
 	root.add_child(viewer)
 	await process_frame
 	await process_frame
 	samples.append({"method": "startup_to_frame", "ms": (Time.get_ticks_usec() - began) / 1000.0})
-	_check(viewer.current_view_data.playtest.mode == "generated_settlement_network", "formal demo opens generated world")
+	_check(viewer.current_view_data.playtest.mode == "generated_settlement_network", "legacy network still uses shared world surface")
 	_check(viewer.current_view_data.region_map.sites.size() == 3 and viewer.current_view_data.region_map.roads.size() == 2, "region reflects actual three-site topology")
 	_check(viewer.current_view_data.region_map.current_settlement_id == "generated_settlement.reed_bay", "map locates traveler")
 	var signature := _signature(viewer.view_model)
@@ -92,6 +93,7 @@ func _run() -> void:
 	viewer.queue_free()
 	await process_frame
 	var continued = Demo.instantiate()
+	continued.initial_scenario = "generated_network"
 	continued.save_path = path
 	root.add_child(continued)
 	await process_frame

@@ -1,0 +1,1314 @@
+{
+  "checkpoint": "user://tests/food_economy_probe/final_81001/day7.json",
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "renderer": "gl_compatibility",
+  "rows": [
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.layout"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 1,
+        "hour": 9,
+        "world_tick_count": 1
+      },
+      "frames": 38,
+      "from": "generated_location.reed_bay.commons",
+      "index": 0,
+      "operation_ms": 220.992,
+      "projection_ms": 57.98,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 0,
+        "hour": 8,
+        "world_tick_count": 0
+      },
+      "state_sha256": "aac61ba6981fafb566e2eb6d976451f06a08546e0003dc98c19a7d96632b920b",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 301.29,
+      "view_sha256": "f6bc02a682f08e3d43ee246fa7aa12eaf3489c6193f62ebec42838af0c80c0c7",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_reed_craft"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 2,
+        "hour": 10,
+        "world_tick_count": 2
+      },
+      "frames": 24,
+      "from": "generated_location.reed_bay.commons",
+      "index": 1,
+      "operation_ms": 92.485,
+      "projection_ms": 58.62,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 1,
+        "hour": 9,
+        "world_tick_count": 1
+      },
+      "state_sha256": "cd20b5727a44b810a93ca0632040e700869f905feff7bf324c9d5e0b2a081d33",
+      "to": "generated_location.reed_bay.work_shed",
+      "total_ms": 171.961,
+      "view_sha256": "ba56c8a9305caca6099c337acbda266eefe64d363074493b0c992523758444c5",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 3,
+        "hour": 11,
+        "world_tick_count": 3
+      },
+      "frames": 22,
+      "from": "generated_location.reed_bay.work_shed",
+      "index": 2,
+      "operation_ms": 72.324,
+      "projection_ms": 60.61,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 2,
+        "hour": 10,
+        "world_tick_count": 2
+      },
+      "state_sha256": "ff2728f9934fb91db075d1be97d208689b93184e339d1cddf5e4e836f2414090",
+      "to": "generated_location.reed_bay.work_shed",
+      "total_ms": 154.962,
+      "view_sha256": "8a5b2555065eb0f30cb9d702b21310d753f7b4d77771637726ee25e64a36f3e7",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.reed_craft"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 4,
+        "hour": 12,
+        "world_tick_count": 4
+      },
+      "frames": 23,
+      "from": "generated_location.reed_bay.work_shed",
+      "index": 3,
+      "operation_ms": 84.133,
+      "projection_ms": 56.95,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 3,
+        "hour": 11,
+        "world_tick_count": 3
+      },
+      "state_sha256": "d1151141a18a76414dcb9c41b033179cdce54fbb2fe47f347588ef1111d00be6",
+      "to": "generated_location.reed_bay.work_shed",
+      "total_ms": 162.667,
+      "view_sha256": "9e76c7943a165fcd014db24447f01ee635dae9e49ae110f4b924e996ac536ada",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.reed_craft_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 5,
+        "hour": 13,
+        "world_tick_count": 5
+      },
+      "frames": 24,
+      "from": "generated_location.reed_bay.work_shed",
+      "index": 4,
+      "operation_ms": 95.782,
+      "projection_ms": 57.992,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 4,
+        "hour": 12,
+        "world_tick_count": 4
+      },
+      "state_sha256": "6a0c21b9f1f54134f466ae3765cc0c417d3eb52406f483ac6f78f678bd6e8380",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 177.687,
+      "view_sha256": "088103e8f77c229e0c024d56d3088ff373cce998067ba4268fed8996e1186876",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 6,
+        "hour": 14,
+        "world_tick_count": 6
+      },
+      "frames": 26,
+      "from": "generated_location.reed_bay.commons",
+      "index": 5,
+      "operation_ms": 108.44,
+      "projection_ms": 62.16,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 5,
+        "hour": 13,
+        "world_tick_count": 5
+      },
+      "state_sha256": "dbfd0e1df9cbc7aedc76464fcf24db23d6653a8498808741c5775a2b0b7f4750",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 195.506,
+      "view_sha256": "491c9c5a1d76c86389433b08f5a5a38a591dcbdca4dbf6893101670dfd65d3b6",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 7,
+        "hour": 15,
+        "world_tick_count": 7
+      },
+      "frames": 25,
+      "from": "generated_location.reed_bay.commons",
+      "index": 6,
+      "operation_ms": 96.15,
+      "projection_ms": 61.64,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 6,
+        "hour": 14,
+        "world_tick_count": 6
+      },
+      "state_sha256": "25ed2800a2bddcbf14017e36d707b30c39cbb9a9feb347d77fd32a0722665c6b",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 181.932,
+      "view_sha256": "aa5eaa9ad3d9255a959b09168c6c2e166fc19b6dbe69066ebfdc059b13c6bc47",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_fishery"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 8,
+        "hour": 16,
+        "world_tick_count": 8
+      },
+      "frames": 28,
+      "from": "generated_location.reed_bay.commons",
+      "index": 7,
+      "operation_ms": 116.092,
+      "projection_ms": 71.197,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 7,
+        "hour": 15,
+        "world_tick_count": 7
+      },
+      "state_sha256": "ab4a88f61af9a1b71f0e6d4253c5c25435c5aafdb3ac8e7e274733643b836d6b",
+      "to": "generated_location.reed_bay.landing",
+      "total_ms": 207.853,
+      "view_sha256": "b032054cb9aa493306004c10e03e5e3392f7f4b23866d0e61b644086c6846101",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 9,
+        "hour": 17,
+        "world_tick_count": 9
+      },
+      "frames": 26,
+      "from": "generated_location.reed_bay.landing",
+      "index": 8,
+      "operation_ms": 100.881,
+      "projection_ms": 65.296,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 8,
+        "hour": 16,
+        "world_tick_count": 8
+      },
+      "state_sha256": "b89d3946c1530f278f8f8e23bdd1d20fc839dd2253c0a6aa054d5471bb142a25",
+      "to": "generated_location.reed_bay.landing",
+      "total_ms": 191.294,
+      "view_sha256": "2d873cf486dd30b9e4730aaa811a9be9d280105bf808a6828fbd75d3801fffa5",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.reed_bay.001"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 10,
+        "hour": 18,
+        "world_tick_count": 10
+      },
+      "frames": 25,
+      "from": "generated_location.reed_bay.landing",
+      "index": 9,
+      "operation_ms": 102.828,
+      "projection_ms": 64.378,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 9,
+        "hour": 17,
+        "world_tick_count": 9
+      },
+      "state_sha256": "01df477d6ccaa61417c89c2b548acf9c6092bc444a77e07ef94f85ba9cee47a4",
+      "to": "generated_location.reed_bay.landing",
+      "total_ms": 184.66,
+      "view_sha256": "e727dfe6dc851ad1f046ca7753d5aeeeb551b28991906479a9e0f54dd7fa8b98",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.fishery_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 11,
+        "hour": 19,
+        "world_tick_count": 11
+      },
+      "frames": 27,
+      "from": "generated_location.reed_bay.landing",
+      "index": 10,
+      "operation_ms": 106.161,
+      "projection_ms": 69.634,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 10,
+        "hour": 18,
+        "world_tick_count": 10
+      },
+      "state_sha256": "7bb5787379bf2f0fe3d7ac6c3980f44b7b28999f7db50bf5a592e75f8b990da7",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 200.831,
+      "view_sha256": "2e4ad94edcfc0f06725a8de93e2d7488a43346831ae206ec968b479d1b58b996",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 12,
+        "hour": 20,
+        "world_tick_count": 12
+      },
+      "frames": 34,
+      "from": "generated_location.reed_bay.commons",
+      "index": 11,
+      "operation_ms": 144.645,
+      "projection_ms": 101.925,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 11,
+        "hour": 19,
+        "world_tick_count": 11
+      },
+      "state_sha256": "815b2c85cfe2cba1a07730ff5ff4db146783ef6ed0f27700c4be0570263fcd57",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 277.124,
+      "view_sha256": "0694d949d49b1910cdb057726a0cbb9a651c7a2648bb6d654a1211564e48c0dc",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.reed_bay.002"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 13,
+        "hour": 21,
+        "world_tick_count": 13
+      },
+      "frames": 34,
+      "from": "generated_location.reed_bay.commons",
+      "index": 12,
+      "operation_ms": 156.707,
+      "projection_ms": 87.005,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 12,
+        "hour": 20,
+        "world_tick_count": 12
+      },
+      "state_sha256": "8a4b44a902f14a055c7d7241a6c1c0228d204afc4bf133016a4d52477dfbd2c8",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 263.345,
+      "view_sha256": "a51e4774f8906afc7b5281f42434fad90848d35041d3eafc9a71f77350dbe494",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_salt_gathering"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 14,
+        "hour": 22,
+        "world_tick_count": 14
+      },
+      "frames": 35,
+      "from": "generated_location.reed_bay.commons",
+      "index": 13,
+      "operation_ms": 169.034,
+      "projection_ms": 84.038,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 13,
+        "hour": 21,
+        "world_tick_count": 13
+      },
+      "state_sha256": "8e3b488ddc71cf5155a2acaafcba1f849cfaaceaf5a904eeb3922a2a556ec4e7",
+      "to": "generated_location.reed_bay.salt_pans",
+      "total_ms": 274.057,
+      "view_sha256": "1d8675eef80093d60bc4b58fe3da058d3d918fcd1c5e7c9f9b4e1be5f3e9befc",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 1,
+        "elapsed_hours": 15,
+        "hour": 23,
+        "world_tick_count": 15
+      },
+      "frames": 38,
+      "from": "generated_location.reed_bay.salt_pans",
+      "index": 14,
+      "operation_ms": 96.897,
+      "projection_ms": 177.456,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 14,
+        "hour": 22,
+        "world_tick_count": 14
+      },
+      "state_sha256": "fbec442eeee88b18f4d131e90a2e60e078fa82423ccc1959e5eed255a767ac7f",
+      "to": "generated_location.reed_bay.salt_pans",
+      "total_ms": 294.178,
+      "view_sha256": "7034a760ae0059b001a8247ab24bde18c66f0eaa474424b18463d5ee332df85d",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.salt_gathering"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 16,
+        "hour": 0,
+        "world_tick_count": 16
+      },
+      "frames": 47,
+      "from": "generated_location.reed_bay.salt_pans",
+      "index": 15,
+      "operation_ms": 270.119,
+      "projection_ms": 77.031,
+      "start_time": {
+        "day": 1,
+        "elapsed_hours": 15,
+        "hour": 23,
+        "world_tick_count": 15
+      },
+      "state_sha256": "cc2651455d2fe327779a523f168ff2c525e7ad880453d4dc817a0b425bbfb04a",
+      "to": "generated_location.reed_bay.salt_pans",
+      "total_ms": 372.389,
+      "view_sha256": "715df1a5978b7d17efb067c13c7f97f06fb717f0777e5a69cb16b113e6de8c4a",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.salt_gathering_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 17,
+        "hour": 1,
+        "world_tick_count": 17
+      },
+      "frames": 33,
+      "from": "generated_location.reed_bay.salt_pans",
+      "index": 16,
+      "operation_ms": 124.148,
+      "projection_ms": 109.181,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 16,
+        "hour": 0,
+        "world_tick_count": 16
+      },
+      "state_sha256": "0137f3f5fa8773474b584e88ae06546b2d754cfbd056184affc9b30a4b3faaec",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 256.285,
+      "view_sha256": "2dc769fdfc0c503c8c15d8aaa66f9c114f39e8a0d9cd1f75279657805dba8e94",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 18,
+        "hour": 2,
+        "world_tick_count": 18
+      },
+      "frames": 43,
+      "from": "generated_location.reed_bay.commons",
+      "index": 17,
+      "operation_ms": 171.939,
+      "projection_ms": 144.9,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 17,
+        "hour": 1,
+        "world_tick_count": 17
+      },
+      "state_sha256": "f6452a9624db3d4c82e8a83ba3305052a007f76f8a5401311c3c2b64e6e92ea0",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 336.308,
+      "view_sha256": "91aff7a208e8aeaa85d736a675162419f1284829bc3d4d5b019bcf079f599d61",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 19,
+        "hour": 3,
+        "world_tick_count": 19
+      },
+      "frames": 26,
+      "from": "generated_location.reed_bay.commons",
+      "index": 18,
+      "operation_ms": 100.414,
+      "projection_ms": 73.258,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 18,
+        "hour": 2,
+        "world_tick_count": 18
+      },
+      "state_sha256": "4b0e33dc704ec661464b828f3798c335bcdf0a33286ce4098e802c71811d66a1",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 196.512,
+      "view_sha256": "4798f0816752d3c22d78d164bced4235a20938084754fabfab13f7be68c6d390",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_road_carting"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 2,
+        "elapsed_hours": 20,
+        "hour": 4,
+        "world_tick_count": 20
+      },
+      "frames": 37,
+      "from": "generated_location.reed_bay.commons",
+      "index": 19,
+      "operation_ms": 171.541,
+      "projection_ms": 98.622,
+      "start_time": {
+        "day": 2,
+        "elapsed_hours": 19,
+        "hour": 3,
+        "world_tick_count": 19
+      },
+      "state_sha256": "9567c34b00e58095d1601506acd4fea596ac48a8ef0d36cb5cf94acd85ceb864",
+      "to": "generated_location.reed_bay.road_yard",
+      "total_ms": 293.294,
+      "view_sha256": "7ca2d0306a25111ea800ead6cf527c8171e5e6f8762b9dfb7fee5fd0d0cf4809",
+      "world": "initial"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.reed_bay.001"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 169,
+        "hour": 9,
+        "world_tick_count": 169
+      },
+      "frames": 79,
+      "from": "generated_location.reed_bay.commons",
+      "index": 0,
+      "operation_ms": 339.796,
+      "projection_ms": 286.046,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 168,
+        "hour": 8,
+        "world_tick_count": 168
+      },
+      "state_sha256": "06b5434b51f2f83d42fca22481e37f3e9d5c5b26ed1e86811f901f5a49b7584b",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 645.915,
+      "view_sha256": "8ed9346e09f81db8e6980fa5e41faee13971d39a663d7b9e8b07aff2b26b68cf",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_reed_craft"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 170,
+        "hour": 10,
+        "world_tick_count": 170
+      },
+      "frames": 89,
+      "from": "generated_location.reed_bay.commons",
+      "index": 1,
+      "operation_ms": 436.272,
+      "projection_ms": 263.321,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 169,
+        "hour": 9,
+        "world_tick_count": 169
+      },
+      "state_sha256": "a043cdca570bbd0a466614b8b22c369d63bfea80d02c3da1788d5aec879e534b",
+      "to": "generated_location.reed_bay.work_shed",
+      "total_ms": 724.676,
+      "view_sha256": "69d606e1f945802e9fa5f72388a9e3e68503b643c468dbdaeafa4be4f8857a05",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 171,
+        "hour": 11,
+        "world_tick_count": 171
+      },
+      "frames": 79,
+      "from": "generated_location.reed_bay.work_shed",
+      "index": 2,
+      "operation_ms": 344.029,
+      "projection_ms": 271.754,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 170,
+        "hour": 10,
+        "world_tick_count": 170
+      },
+      "state_sha256": "a6cb5cc1b91161723bea61e681a868ba695ced085652d3eb49815f6787c44911",
+      "to": "generated_location.reed_bay.work_shed",
+      "total_ms": 635.1,
+      "view_sha256": "4d935676ab7d1d9596b929acbe7ce57a5babddcb6aa2720e64b8ddcfcca684d3",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.reed_bay.002"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 172,
+        "hour": 12,
+        "world_tick_count": 172
+      },
+      "frames": 80,
+      "from": "generated_location.reed_bay.work_shed",
+      "index": 3,
+      "operation_ms": 371.842,
+      "projection_ms": 254.862,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 171,
+        "hour": 11,
+        "world_tick_count": 171
+      },
+      "state_sha256": "42c38de39055a4874baeef4f15db0f6f514d03237d1268e13d0d386ed8a558e4",
+      "to": "generated_location.reed_bay.work_shed",
+      "total_ms": 646.85,
+      "view_sha256": "4ab9ea06b004ff11d441806a69321b6dba0bbac5ec587dd6abc9f676a769b3ef",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.reed_craft_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 173,
+        "hour": 13,
+        "world_tick_count": 173
+      },
+      "frames": 93,
+      "from": "generated_location.reed_bay.work_shed",
+      "index": 4,
+      "operation_ms": 459.945,
+      "projection_ms": 276.436,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 172,
+        "hour": 12,
+        "world_tick_count": 172
+      },
+      "state_sha256": "7b2953b1f453e27c6ab9782f83f70f3d399fe750f2f60104e8c9e96d0eb4317b",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 757.535,
+      "view_sha256": "5e73a0379f3cd7cb2b698d2d5fa66e106e2018201768b8970e3993629a17acb6",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 174,
+        "hour": 14,
+        "world_tick_count": 174
+      },
+      "frames": 87,
+      "from": "generated_location.reed_bay.commons",
+      "index": 5,
+      "operation_ms": 372.947,
+      "projection_ms": 315.828,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 173,
+        "hour": 13,
+        "world_tick_count": 173
+      },
+      "state_sha256": "309096356abb295e89a0fc7b46025de564b6154efa03b542f5a1d277d261dae4",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 707.027,
+      "view_sha256": "7e6f47928c705cd4716237285c06fd26cb763f5a6b0330562dc965226223d925",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.layout"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 175,
+        "hour": 15,
+        "world_tick_count": 175
+      },
+      "frames": 92,
+      "from": "generated_location.reed_bay.commons",
+      "index": 6,
+      "operation_ms": 424.448,
+      "projection_ms": 299.098,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 174,
+        "hour": 14,
+        "world_tick_count": 174
+      },
+      "state_sha256": "c35a0605d798873341d52c51279d0cd8f7bbd83be7254a9ae2e2d7462b2a9fe4",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 746.403,
+      "view_sha256": "ee6b8fdb68b300be5f7d0eda2fde34fdad9a5751c796b29e474d62dcc0879759",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_fishery"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 176,
+        "hour": 16,
+        "world_tick_count": 176
+      },
+      "frames": 98,
+      "from": "generated_location.reed_bay.commons",
+      "index": 7,
+      "operation_ms": 507.8,
+      "projection_ms": 262.738,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 175,
+        "hour": 15,
+        "world_tick_count": 175
+      },
+      "state_sha256": "9ae1392834cdb49d1f74b0b3a5058e8171ebf9822a195e555c76936a2ff41fe7",
+      "to": "generated_location.reed_bay.landing",
+      "total_ms": 793.081,
+      "view_sha256": "73652f6ae3ddb5b0bd99c2bb6e8778198908633babf64cd507ad82bf4a55f8c1",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 177,
+        "hour": 17,
+        "world_tick_count": 177
+      },
+      "frames": 90,
+      "from": "generated_location.reed_bay.landing",
+      "index": 8,
+      "operation_ms": 342.547,
+      "projection_ms": 363.388,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 176,
+        "hour": 16,
+        "world_tick_count": 176
+      },
+      "state_sha256": "1ccbdde18917be5f4ac2bf3ed3d4d1f990fac5af343e756ac2394d56a536073b",
+      "to": "generated_location.reed_bay.landing",
+      "total_ms": 726.012,
+      "view_sha256": "e9176e59ff3d5ac30a07dd57247ebce069fa18682a98d8d7d7db081c9e6bda55",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.fishery"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 178,
+        "hour": 18,
+        "world_tick_count": 178
+      },
+      "frames": 91,
+      "from": "generated_location.reed_bay.landing",
+      "index": 9,
+      "operation_ms": 433.597,
+      "projection_ms": 274.55,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 177,
+        "hour": 17,
+        "world_tick_count": 177
+      },
+      "state_sha256": "28a4a55883d987e021abf8128468a8c08495bcae4d736826af051842de502be4",
+      "to": "generated_location.reed_bay.landing",
+      "total_ms": 733.543,
+      "view_sha256": "36aa7d6a99a38fb3c44a47efadc55f5c42598a80fca5ea569cbde0a61efaade6",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.fishery_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 179,
+        "hour": 19,
+        "world_tick_count": 179
+      },
+      "frames": 88,
+      "from": "generated_location.reed_bay.landing",
+      "index": 10,
+      "operation_ms": 414.465,
+      "projection_ms": 278.163,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 178,
+        "hour": 18,
+        "world_tick_count": 178
+      },
+      "state_sha256": "2df6f1e9a8294b3e2179a1bbb8111497da03dd3599f082122bb1f2becbaf51a0",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 712.24,
+      "view_sha256": "0d529f5b5dab6d2b1ced56e8b66a82695698cbad6c59393e7fac0e1c7ec65eca",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 180,
+        "hour": 20,
+        "world_tick_count": 180
+      },
+      "frames": 103,
+      "from": "generated_location.reed_bay.commons",
+      "index": 11,
+      "operation_ms": 531.629,
+      "projection_ms": 284.981,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 179,
+        "hour": 19,
+        "world_tick_count": 179
+      },
+      "state_sha256": "53bdb1ae4b46e79da1908198698d53eb724e4f5d8db067e0811b681f96a41dbf",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 838.829,
+      "view_sha256": "bff4f45ed6beecff98ce37604a77a5b1f2ce5d10ae2bc2607036d87cff9fc61e",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "approach_visible_person:generated_resident.reed_bay.003"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 181,
+        "hour": 21,
+        "world_tick_count": 181
+      },
+      "frames": 88,
+      "from": "generated_location.reed_bay.commons",
+      "index": 12,
+      "operation_ms": 399.78,
+      "projection_ms": 295.012,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 180,
+        "hour": 20,
+        "world_tick_count": 180
+      },
+      "state_sha256": "972b3bd7417e55bf2c450136b8422f4a2929f09badc3eb3e3abf1ec3758e908b",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 715.794,
+      "view_sha256": "e38e329ed2ef4c3541dcb544a77ccb1e89070250161e7d186f3b9448bab079c7",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_salt_gathering"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 182,
+        "hour": 22,
+        "world_tick_count": 182
+      },
+      "frames": 94,
+      "from": "generated_location.reed_bay.commons",
+      "index": 13,
+      "operation_ms": 457.136,
+      "projection_ms": 280.057,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 181,
+        "hour": 21,
+        "world_tick_count": 181
+      },
+      "state_sha256": "e2bd5890cbb2f90a95319c91b134a23747a45e7fa72a1d7246f126d2677f44ee",
+      "to": "generated_location.reed_bay.salt_pans",
+      "total_ms": 761.202,
+      "view_sha256": "ea7fd4f52a5ad0ea41d1d3e6f8e21a477598ad0d3b3cb13ef04a90134e78cbba",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 8,
+        "elapsed_hours": 183,
+        "hour": 23,
+        "world_tick_count": 183
+      },
+      "frames": 149,
+      "from": "generated_location.reed_bay.salt_pans",
+      "index": 14,
+      "operation_ms": 334.876,
+      "projection_ms": 857.747,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 182,
+        "hour": 22,
+        "world_tick_count": 182
+      },
+      "state_sha256": "30fd34ad1a582888a6d55d68ea301a645e2799c9ca045c461c497327e7f01bb2",
+      "to": "generated_location.reed_bay.salt_pans",
+      "total_ms": 1217.392,
+      "view_sha256": "61bc67372e2fc1de164c77d364406a409f46cc48da30a65c026f9eaf7f43a461",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "inspect_visible_trace:generated_feature.reed_bay.salt_gathering"
+        ],
+        "method": "perform_action"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 184,
+        "hour": 0,
+        "world_tick_count": 184
+      },
+      "frames": 215,
+      "from": "generated_location.reed_bay.salt_pans",
+      "index": 15,
+      "operation_ms": 1465.77,
+      "projection_ms": 279.942,
+      "start_time": {
+        "day": 8,
+        "elapsed_hours": 183,
+        "hour": 23,
+        "world_tick_count": 183
+      },
+      "state_sha256": "8f81a9e0ddd5ef85eb2a2e3ac8a299bcdbb234f305b77c17dc004b8e057533b9",
+      "to": "generated_location.reed_bay.salt_pans",
+      "total_ms": 1771.784,
+      "view_sha256": "d1a1b36baa835047881344e40f7b9d522007a607432eef151b1c3b974a36f3ee",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.salt_gathering_to_commons"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 185,
+        "hour": 1,
+        "world_tick_count": 185
+      },
+      "frames": 106,
+      "from": "generated_location.reed_bay.salt_pans",
+      "index": 16,
+      "operation_ms": 530.805,
+      "projection_ms": 305.045,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 184,
+        "hour": 0,
+        "world_tick_count": 184
+      },
+      "state_sha256": "8181a9fd22a7ac91cccaf8f2c5a9dd9923bdd6816cf0284c2b97bfe3702edcea",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 862.845,
+      "view_sha256": "e1f4943998323e193a70c28f6a95cb9a3b10702fbda0064c6c6ed9dcf37726e5",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 186,
+        "hour": 2,
+        "world_tick_count": 186
+      },
+      "frames": 87,
+      "from": "generated_location.reed_bay.commons",
+      "index": 17,
+      "operation_ms": 368.147,
+      "projection_ms": 312.446,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 185,
+        "hour": 1,
+        "world_tick_count": 185
+      },
+      "state_sha256": "a7e50ba0ad1763d6f527db82b8c8e5d313f52a1f0d8d00b67dd01782bc5dafeb",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 703.228,
+      "view_sha256": "fab1f6a9ce4de7e463b95ced1055c8d563565f9fbb0010cd39f23c5b6016e46c",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          1
+        ],
+        "method": "advance_time"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 187,
+        "hour": 3,
+        "world_tick_count": 187
+      },
+      "frames": 102,
+      "from": "generated_location.reed_bay.commons",
+      "index": 18,
+      "operation_ms": 411.651,
+      "projection_ms": 398.808,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 186,
+        "hour": 2,
+        "world_tick_count": 186
+      },
+      "state_sha256": "b0a0a66481182e4c765a6470bb65c25f258082034a6ebf051d601d5bf873b056",
+      "to": "generated_location.reed_bay.commons",
+      "total_ms": 830.254,
+      "view_sha256": "4574410d4293e8c22320e4d4330ad41212a372a3ea45270dad704ee11524006f",
+      "world": "day7"
+    },
+    {
+      "choice": {
+        "arguments": [
+          "generated_route.reed_bay.commons_to_road_carting"
+        ],
+        "method": "perform_travel"
+      },
+      "daily_life_version": 1.0,
+      "elapsed_hours": 1,
+      "end_time": {
+        "day": 9,
+        "elapsed_hours": 188,
+        "hour": 4,
+        "world_tick_count": 188
+      },
+      "frames": 109,
+      "from": "generated_location.reed_bay.commons",
+      "index": 19,
+      "operation_ms": 567.791,
+      "projection_ms": 301.315,
+      "start_time": {
+        "day": 9,
+        "elapsed_hours": 187,
+        "hour": 3,
+        "world_tick_count": 187
+      },
+      "state_sha256": "212cf06d9fe09ff0b962121c35b0aa1a4488090f68eda124cbe7682aaab305e4",
+      "to": "generated_location.reed_bay.road_yard",
+      "total_ms": 891.845,
+      "view_sha256": "822f0ab42cff1808c9644d006667190999684d4a5c7fdd67cd2e8c2f2eb0bab3",
+      "world": "day7"
+    }
+  ],
+  "scope": "Program-driven legal rendered UI operations; no human gameplay acceptance. Multi-hour travel reported without dividing by hours.",
+  "summaries": {
+    "day7": {
+      "count": 20,
+      "max_ms": 1771.784,
+      "p50_ms": 733.543,
+      "p95_ms": 1217.392
+    },
+    "initial": {
+      "count": 20,
+      "max_ms": 372.389,
+      "p50_ms": 200.831,
+      "p95_ms": 336.308
+    }
+  }
+}

@@ -16,6 +16,28 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_canon_world_and_play_entry(self):
+        for mode in ("world", "play"):
+            with self.subTest(mode=mode), client(timeout=60) as game:
+                opened = game.request("start", mode=mode, scenario="echo_realm", seed=81001)
+                self.assertTrue(opened["ok"], opened)
+                observation = opened["observation"]
+                canon = observation["canon"] if mode == "world" else observation["region_map"]["canon"]
+                self.assertEqual(canon["place_name"], "回音港")
+                self.assertEqual(len(canon["regions"]), 6)
+                if mode == "world":
+                    progressed = game.request("advance", hours=1)
+                else:
+                    wait = next(c for c in opened["choices"] if c["kind"] == "wait" and c["enabled"])
+                    progressed = game.request("act", choice_id=wait["choice_id"])
+                self.assertTrue(progressed["ok"], progressed)
+                before_save = progressed["observation"]
+                slot = f"canon_{mode}_{os.getpid()}"
+                self.assertTrue(game.request("save", slot=slot)["ok"])
+                restored = game.request("load", slot=slot)
+                self.assertTrue(restored["ok"], restored)
+                self.assertEqual(before_save, restored["observation"])
+
     def test_agent_flow_and_receipt(self):
         with client(timeout=60) as game:
             opened = game.request("start", mode="play", scenario="lake_town", seed=81001)

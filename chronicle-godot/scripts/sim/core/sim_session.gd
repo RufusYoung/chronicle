@@ -2,6 +2,7 @@ extends RefCounted
 class_name V5SimSession
 
 const SimRegistryModel = preload("res://scripts/sim/core/sim_registry.gd")
+const CanonWorld = preload("res://scripts/sim/generation/canon_world_setup.gd")
 const SimContextModel = preload("res://scripts/sim/core/sim_context.gd")
 const SimWorldLogModel = preload("res://scripts/sim/core/sim_world_log.gd")
 const SimSnapshotBuilderModel = preload("res://scripts/sim/core/sim_snapshot_builder.gd")
@@ -78,6 +79,7 @@ const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_c
 const EconomicSetup = preload("res://scripts/sim/economy/economic_world_setup.gd")
 const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
+const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 4
@@ -181,6 +183,13 @@ func start_from_fixture_path(
 			return _start_failure("unsupported_resident_daily_life_version")
 		if version == 1:
 			fixture["resident_daily_life"] = DailyLife.PROFILE.duplicate(true)
+	if int(options.get("resident_food_access_version", 0)) not in [0, 1]:
+		_reset_runtime()
+		return _start_failure("unsupported_resident_food_access_version")
+	if int(options.get("resident_food_access_version", 0)) == 1:
+		if not DailyLife.enabled(fixture.get("resident_daily_life", {})):
+			return _start_failure("food_access_requires_daily_life")
+		fixture.resident_daily_life["food_access"] = FoodAccess.PROFILE.duplicate(true)
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -198,8 +207,21 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if fixture.is_empty():
 		return _start_failure("fixture_not_loaded")
 	fixture = fixture.duplicate(true)
+	var canon_result := CanonWorld.prepare(fixture)
+	if not canon_result.ok:
+		return _start_failure(str(canon_result.error))
 	if int(fixture.get("resident_daily_life", {}).get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_resident_daily_life_version")
+	if int(fixture.get("resident_daily_life", {}).get("food_access", {}).get("version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_resident_food_access_version")
+	var food_config: Dictionary = fixture.get("resident_daily_life", {}).get("food_access", {})
+	if FoodAccess.enabled(food_config) and not DailyLife.enabled(fixture.get("resident_daily_life", {})):
+		return _start_failure("food_access_requires_daily_life")
+	var food_batch: Dictionary = food_config.get("production_batch", {})
+	if int(food_batch.get("version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_food_production_batch_version")
+	if FoodAccess.enabled(food_batch) and (int(food_batch.get("work_hours", 0)) < 1 or int(food_batch.get("portions", 0)) < 1):
+		return _start_failure("invalid_food_production_batch")
 	var settlement_result := _apply_settlement_generation(fixture)
 	if not bool(settlement_result.get("ok", false)):
 		var failed := _start_failure("settlement_generation_failed")
@@ -227,6 +249,8 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	organization_generation_report = (
 		organization_result.get("report", {}) as Dictionary
 	).duplicate(true)
+	FoodAccess.configure_fixture(fixture)
+	CanonWorld.bind_locations(fixture)
 	var economic_result := EconomicSetup.configure_fixture(fixture)
 	if not bool(economic_result.get("ok", false)):
 		return _start_failure(str(economic_result.get("error", "economic_setup_failed")))

@@ -1,0 +1,42 @@
+[
+  {
+    "source": "history",
+    "path": "texts/v1/txt/回响之境/神话、传说、历史/历史.txt",
+    "sha256": "FA67E07FE60086E92F1E283F02500924B5C3AC511102BB012ED7E92FE0ED88D4"
+  },
+  {
+    "source": "factions",
+    "path": "texts/v1/txt/回响之境/势力分布/势力.txt",
+    "sha256": "A1FA7F5A2A4B845125E83E46FFE7A10D6CAC5A00201068466A9F7A6B774492EB"
+  },
+  {
+    "source": "mirror",
+    "path": "texts/v1/txt/回响之境/地区/中央偏北界域 - 碎星与镜湖/设定.txt",
+    "sha256": "5B218B7A900B2FD4833E5BAA969986751C88C6D550537F9DCAA5E583B81AA068"
+  },
+  {
+    "source": "central",
+    "path": "texts/v1/txt/回响之境/地区/中央界域 - 苍穹之痕/设定.txt",
+    "sha256": "14EB6E761469F9F56E5CED553337381873DA8E8958A3D4F7F7603F182633E971"
+  },
+  {
+    "source": "north",
+    "path": "texts/v1/txt/回响之境/地区/北部-永夜与霜语之地/设定.txt",
+    "sha256": "3421567BA1F2DFA3A3FB3C414E297564A539A36A66431E87323ED9F509E52DEB"
+  },
+  {
+    "source": "south",
+    "path": "texts/v1/txt/回响之境/地区/南部界域 - 悲歌与烈阳/南部设定.txt",
+    "sha256": "7F52683CBBDD08D5F8F10CE5B2316D82F5252E9B4E97A3CE72120D0A61962EC1"
+  },
+  {
+    "source": "east",
+    "path": "texts/v1/txt/回响之境/地区/东部海岸 - 千帆湾/设定.yxt",
+    "sha256": "290E06CFC75B3B9CF27639D5774ABB88A5306DA04D4344B24E3ADE2DA7C7EF26"
+  },
+  {
+    "source": "west",
+    "path": "texts/v1/txt/回响之境/地区/西部海岸 - 终末之海岸/设定.txt",
+    "sha256": "87D7CE2D5DBC3D32C2B74080BE43C6D9554BBEB29A0C2229618DEDAA4DB9637B"
+  }
+]

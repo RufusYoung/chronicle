@@ -28,9 +28,15 @@ def audit(path: Path) -> dict:
     initial_food = sum(row["quantity"] for row in fixture.get("initial_items", [])
                        if row["item_def_id"] in food_ids)
     remaining_food = sum(row["quantity"] for row in stores["items"] if row["item_def_id"] in food_ids)
+    purchases = [row for row in facts if row.get("fact_type") == "resident_food_purchased"]
+    cross_purchases = [row for row in purchases if row.get("buyer_settlement_id") and
+                       row.get("buyer_settlement_id") != row.get("seller_settlement_id")]
+    purchase_ids = {row["fact_id"] for row in purchases}
+    currency = sum(row["quantity"] for row in stores["items"] if row["item_def_id"] == "item.copper_coin")
     return {
         "checkpoint": str(path), "sha256": hashlib.sha256(content).hexdigest(),
         "rule_version": fixture.get("resident_daily_life", {}).get("version", 0),
+        "food_access_config": fixture.get("resident_daily_life", {}).get("food_access", {}),
         "scope": "Offline checkpoint audit; counts are observations, not a sustainable economy acceptance.",
         "resident_count": len(people), "hunger": dict(Counter(row.get("hunger") for row in states)),
         "activity": dict(Counter(row.get("daily_activity", "legacy") for row in states)),
@@ -38,6 +44,14 @@ def audit(path: Path) -> dict:
         "consumed_meals": len(meals), "remaining_food_portions": remaining_food,
         "food_balance_remainder": initial_food + produced_food - len(meals) - remaining_food,
         "food_balance_scope": "Valid for passive fixture meals; other consumption/transfers must be audited separately.",
+        "initial_currency": fixture.get("economic_generation_result", {}).get("initial_currency_total"),
+        "remaining_currency": currency,
+        "food_purchases": len(purchases), "cross_settlement_food_purchases": len(cross_purchases),
+        "purchased_portions": sum(row.get("fields", {}).get("quantity", 0) for row in purchases),
+        "cross_settlement_purchased_portions": sum(row.get("fields", {}).get("quantity", 0) for row in cross_purchases),
+        "food_sales_income": sum(row.get("fields", {}).get("total_price", 0) for row in purchases),
+        "meals_citing_purchases": sum(bool(set(row.get("source_fact_ids", [])) & purchase_ids) for row in meals),
+        "purchasing_failures": dict(Counter(row.get("reason") for row in facts if row.get("fact_type") == "resident_food_purchase_unmet")),
         "steady_meals_per_day_reference": sum(24 / (max(row.get("hunger_interval_hours", 6), 1) * 2) for row in states),
         "demand_scope": "Reference only: one hunger step per configured interval, two relieved per meal. Not observed consumption.",
         "fact_counts": dict(Counter(row.get("fact_type") for row in facts)),

@@ -14,6 +14,7 @@ func _run() -> void:
 	root.content_scale_size = root.size
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var viewer = Demo.instantiate()
+	viewer.initial_scenario = "generated_network"
 	viewer.save_path = output + "/absent_" + Crypto.new().generate_random_bytes(8).hex_encode() + ".json"
 	root.add_child(viewer)
 	await process_frame

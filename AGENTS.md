@@ -5,6 +5,7 @@
 - Use `texts/v5/CHRONICLE_WORLD_FIRST_PLAN_v5.1.md` as the single active plan. Read its current section, then only the contracts needed for the selected work. Historical next-step lists are not additional active plans.
 - Preserve the creative direction in `texts/CHRONICLE_CREATIVE_DIRECTION_GUIDE.md`: a causal world that supports ordinary life, dangerous journeys, relationships and time, not an economic dashboard or a fixed quest sequence.
 - Project development skill: `.agents/skills/chronicle-world-development/SKILL.md`. Use it for continued implementation, world evaluation and project review.
+- For world content, start with `texts/v5/CHRONICLE_CANON_WORLD_FOUNDATION_v5.1.md` and its original region/history/faction sources. Authored geography and history constrain generation; current v5 contracts govern implementation. Do not promote UI prototype places to canon, rewrite an unresolved source conflict, or mistake the static atlas for active civilization simulation. Generate local detail inside explicit anchors; preserve later causal political change.
 
 ## Continuous Execution
 

@@ -1,0 +1,86 @@
+{
+  "catalog_id": "canon.echo_realm",
+  "version": 1,
+  "world_name": "回响之境",
+  "current_era": "第四纪元：列国时代",
+  "sources": {
+    "history": "texts/v1/txt/回响之境/神话、传说、历史/历史.txt",
+    "factions": "texts/v1/txt/回响之境/势力分布/势力.txt",
+    "mirror": "texts/v1/txt/回响之境/地区/中央偏北界域 - 碎星与镜湖/设定.txt",
+    "central": "texts/v1/txt/回响之境/地区/中央界域 - 苍穹之痕/设定.txt",
+    "north": "texts/v1/txt/回响之境/地区/北部-永夜与霜语之地/设定.txt",
+    "south": "texts/v1/txt/回响之境/地区/南部界域 - 悲歌与烈阳/南部设定.txt",
+    "east": "texts/v1/txt/回响之境/地区/东部海岸 - 千帆湾/设定.yxt",
+    "west": "texts/v1/txt/回响之境/地区/西部海岸 - 终末之海岸/设定.txt"
+  },
+  "history_anchors": [
+    {"id": "skyfall", "source": "history", "claim": "天坠之殇留下苍穹之痕与断羽之岛，狮鹫王提亚马特陨落。", "unknown": "灾变的起因不设唯一答案。"},
+    {"id": "star_inscriptions", "source": "history", "claim": "早期精灵文明在镜湖畔发展星辰铭文。"},
+    {"id": "khaz_dor", "source": "history", "claim": "矮人在碎星山脉建立卡兹-多尔，以回声石记录历史。"},
+    {"id": "empire_fall", "source": "history", "claim": "悲歌帝国融合铭文与冶金发展符文蒸汽，过度开采后崩溃，留下工业废土。"},
+    {"id": "age_of_exploration", "source": "history", "claim": "列国时代约百年前开始大勘探，当前资源争端与苍穹之痕活动加剧。"}
+  ],
+  "regions": [
+    {"id": "shattered_stars_mirror_lake", "name": "碎星与镜湖", "position": "中央偏北", "source": "mirror", "description": "碎星山脉环抱镜湖；矿业、森林守护与沿岸贸易彼此依存。", "faction_ids": ["echo_dwarves", "mirror_council", "lake_freemen"]},
+    {"id": "sky_scar", "name": "苍穹之痕", "position": "中央", "source": "central", "description": "能量风暴与异常地貌中的研究边地，核心区不能建立永久统治。", "faction_ids": ["mirror_scholars", "echo_dwarves"]},
+    {"id": "night_frost", "name": "永夜与霜语", "position": "北部", "source": "north", "description": "冰原、冻土与地下堡垒；古老平衡和迁徙生存相互牵制。", "faction_ids": ["everfrost_council", "snow_orcs", "ice_dwarves"]},
+    {"id": "lament_sun", "name": "悲歌与烈阳", "position": "南部", "source": "south", "description": "符文蒸汽帝国的废墟，矿藏、回收技术与新能源引发争夺。", "faction_ids": ["radiant_iron", "rust_towns", "gear_order", "new_vola"]},
+    {"id": "thousand_sails", "name": "千帆湾", "position": "东部海岸", "source": "east", "description": "商港、海盗与潮汐研究者依赖相同的海上航路。", "faction_ids": ["emerald_federation", "split_sails", "dawn_order"]},
+    {"id": "terminal_coast", "name": "终末之海岸", "position": "西部海岸", "source": "west", "description": "灯塔防线、封锁与探索并存，安全依赖知识也限制知识。", "faction_ids": ["wardens_kingdom", "stargazer_society", "shadow_guild"]}
+  ],
+  "factions": [
+    {"id": "echo_dwarves", "name": "回声矮人王国（卡兹-多尔）", "source": "factions", "interests": ["深层采矿", "回声石技术", "粮食供应"], "internal_groups": ["主矿脉派", "外交工匠派"]},
+    {"id": "mirror_council", "name": "镜湖林精议会", "source": "factions", "interests": ["森林平衡", "限制开采", "外界情报"], "internal_groups": ["静谧守护者", "低语者"]},
+    {"id": "lake_freemen", "name": "湖上自由民", "source": "mirror", "interests": ["渔业", "湖上贸易", "声音记录", "庇护"]},
+    {"id": "mirror_scholars", "name": "镜湖学者联盟", "source": "central", "interests": ["独立研究", "危险预警", "研究资助"]},
+    {"id": "everfrost_council", "name": "永霜议会", "source": "factions", "interests": ["北地平衡", "古老魔法"]},
+    {"id": "snow_orcs", "name": "雪原兽人部落", "source": "factions", "interests": ["狩猎场", "季节迁徙"]},
+    {"id": "ice_dwarves", "name": "冰裔矮人", "source": "factions", "interests": ["地下堡垒", "天坠石刻"]},
+    {"id": "radiant_iron", "name": "辉铁城邦联合", "source": "factions", "interests": ["残存矿脉", "黑水", "技术正统"]},
+    {"id": "rust_towns", "name": "锈镇同盟", "source": "factions", "interests": ["废土回收", "地下情报"]},
+    {"id": "gear_order", "name": "齿轮修士会", "source": "factions", "interests": ["技术发展", "中立交易"], "territorial_state": false},
+    {"id": "new_vola", "name": "自由城市新沃拉", "source": "south", "interests": ["工程师避难", "阳光蒸汽"]},
+    {"id": "emerald_federation", "name": "翡翠湾贸易联邦", "source": "east", "interests": ["贸易舰队", "安全航道"]},
+    {"id": "split_sails", "name": "裂帆联盟", "source": "east", "interests": ["海上劫掠", "补给销赃"], "internal_groups": ["三位互不统属的海盗王"]},
+    {"id": "dawn_order", "name": "晨曦教团", "source": "east", "interests": ["星辰潮汐研究", "中立观测"]},
+    {"id": "wardens_kingdom", "name": "守望者王国", "source": "west", "interests": ["海岸防御", "安全通行税", "封锁危险"]},
+    {"id": "stargazer_society", "name": "观星塔学会", "source": "west", "interests": ["探索真相", "古代知识", "危险预警"]},
+    {"id": "shadow_guild", "name": "影行者行会", "source": "factions", "interests": ["秘密通道", "情报交易"], "territorial_state": false}
+  ],
+  "places": [
+    {"id": "mirror_lake", "name": "镜湖", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "lake", "faction_ids": ["mirror_council"], "constraint": "各方共享，深入探索须经林精许可。"},
+    {"id": "echo_cliffs", "name": "回音海崖", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "shore", "faction_ids": ["lake_freemen"], "constraint": "位于镜湖北岸；声音记录是当地特色。"},
+    {"id": "echo_port", "name": "回音港", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "port", "parent_place_id": "echo_cliffs", "faction_ids": ["lake_freemen"], "constraint": "湖上自由民大本营。运行区是港外小聚落，不把少量居民等同整座港城。"},
+    {"id": "silent_forest", "name": "沉默森林", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "forest", "faction_ids": ["mirror_council"], "constraint": "外来者须获许可安全通过；不能当作无主公共林场。"},
+    {"id": "heart_court", "name": "心语王庭", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "capital", "parent_place_id": "silent_forest", "faction_ids": ["mirror_council"]},
+    {"id": "reflection_forest", "name": "倒影之森", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "forest", "faction_ids": ["mirror_council"]},
+    {"id": "dying_light_forest", "name": "光灭森林", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "forest", "faction_ids": ["mirror_council"]},
+    {"id": "forgotten_forest", "name": "遗忘之森", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "forest", "faction_ids": ["mirror_council"]},
+    {"id": "shattered_stars", "name": "碎星山脉", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "mountains", "faction_ids": ["echo_dwarves"], "constraint": "回声矮人的矿业核心；北段另有冰裔矮人领地，不将整条山脉归一方。"},
+    {"id": "echo_hall", "name": "回音大殿", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "capital", "parent_place_id": "shattered_stars", "faction_ids": ["echo_dwarves"]},
+    {"id": "broken_stone", "name": "断石之山", "region_id": "shattered_stars_mirror_lake", "source": "mirror", "kind": "mountain", "faction_ids": ["echo_dwarves"]},
+    {"id": "storm_eye", "name": "风暴之眼", "region_id": "sky_scar", "source": "central", "kind": "danger", "faction_ids": [], "constraint": "核心入口，无永久统治者。"},
+    {"id": "frost_court", "name": "霜语王庭", "region_id": "night_frost", "source": "north", "kind": "capital", "faction_ids": ["everfrost_council"]},
+    {"id": "brass_throne", "name": "黄铜王座", "region_id": "lament_sun", "source": "south", "kind": "capital", "faction_ids": ["radiant_iron"]},
+    {"id": "pearl_port", "name": "明珠港", "region_id": "thousand_sails", "source": "east", "kind": "capital", "faction_ids": ["emerald_federation"]},
+    {"id": "shield_keep", "name": "坚盾堡", "region_id": "terminal_coast", "source": "west", "kind": "capital", "faction_ids": ["wardens_kingdom"]},
+    {"id": "white_tower", "name": "白塔", "region_id": "terminal_coast", "source": "west", "kind": "headquarters", "faction_ids": ["stargazer_society"]}
+  ],
+  "dependencies": [
+    {"id": "dwarven_food", "source": "mirror", "supplier": "lake_freemen", "recipient": "echo_dwarves", "need": "生活物资与粮食", "return": "矿产", "runtime_status": "not_implemented"},
+    {"id": "forest_tools", "source": "mirror", "supplier": "echo_dwarves", "recipient": "mirror_council", "need": "金属工具", "return": "魔法保护与采矿协议", "runtime_status": "not_implemented"},
+    {"id": "shore_information", "source": "mirror", "supplier": "lake_freemen", "recipient": "mirror_council", "need": "外界情报", "return": "庇护", "runtime_status": "not_implemented"},
+    {"id": "eastern_protection", "source": "factions", "supplier": "emerald_federation", "recipient": "lake_freemen", "need": "寻求贸易庇护", "return": "未约定，不生成已生效条约", "runtime_status": "not_implemented"},
+    {"id": "coast_warning", "source": "west", "supplier": "stargazer_society", "recipient": "wardens_kingdom", "need": "危险知识与预警", "return": "保护与有限准入", "runtime_status": "not_implemented"}
+  ],
+  "unresolved": [
+    {"id": "no_return_island", "sources": ["east", "west"], "issue": "无归之岛同时出现在东西海岸且归属不同。", "policy": "不建立唯一地图位置，不生成通往该岛的正式路线。"},
+    {"id": "central_lake_overlap", "sources": ["central", "mirror"], "issue": "中央界域包含镜湖岛屿；两份区域稿边界重叠。", "policy": "只采用镜湖北岸明确锚点，跨界连接与岛屿归属暂不编译。"},
+    {"id": "wetland_name", "sources": ["west"], "issue": "同稿出现南光湿地与菌光湿地。", "policy": "不自动合并为别名，不用于本轮场址。"}
+  ],
+  "simulation_scopes": [
+    {"id": "echo_port_environs", "region_id": "shattered_stars_mirror_lake", "place_id": "echo_port", "faction_id": "lake_freemen", "allowed_terrain_ids": ["lake_marsh_edge", "river_terrace"], "excluded_resource_tags": ["brine", "salt", "star_ore", "echo_stone"], "description": "回音港周边生成的小聚落；资源数量、耕地、道路与人口为可逆实现参数，不代表港城总人口。"}
+  ],
+  "prototype_exclusions": ["lake_town", "seventh_outpost", "generated_settlement_network"],
+  "generation_boundary": "只生成已选锚点允许的地方细节。势力利益是初始背景，不是永久不变的未来；神话争议和潜在线索不编译为必发剧情。"
+}

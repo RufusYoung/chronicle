@@ -59,6 +59,8 @@ const OrganizationLifecycleSystemModel = preload(
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
+const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
+const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
 const SOURCE := "WorldTickAdapter"
@@ -272,7 +274,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 		if DailyLife.enabled(daily_life_config):
 			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var activity_data: Dictionary = DailyLife.new().resolve_tick(activity_snapshot, round_event,
-				daily_life_config, settlement_network_config, context.locations, daily_life_routes)
+				daily_life_config, settlement_network_config, context.locations, daily_life_routes,
+				IndustryCatalog.profiles(activity_snapshot, npc_livelihood_profiles))
 			var activity_results: Array = activity_data.get("results", [])
 			writer.apply_results(activity_results, stores)
 			livelihood_results.append_array(activity_results)
@@ -304,13 +307,31 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			var support_data: Dictionary = (
 				livelihood_system.resolve_household_support(
 					support_snapshot,
-					round_event
+					round_event,
+					daily_life_config
 				)
 			)
 			var support_results: Array = support_data.get("results", [])
 			writer.apply_results(support_results, stores)
 			livelihood_results.append_array(support_results)
 			livelihood_events.append_array(support_data.get("events", []))
+
+			var food_config: Dictionary = daily_life_config.get("food_access", {})
+			if FoodAccess.enabled(food_config):
+				var food_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+				var buyers: Array = food_snapshot.get_entities_by_type("person")
+				buyers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.id) < str(b.id))
+				for buyer: Dictionary in buyers:
+					# Plan against current item ownership after each previous settlement.
+					var purchase := FoodAccess.new().plan_purchase(food_snapshot, buyer, round_event, food_config, context.locations, stores)
+					if purchase.has("transaction"):
+						var transaction: Variant = purchase.transaction
+						if not writer.apply_result(transaction, stores):
+							return _failure_result(event, "resident_food_transaction_rejected", stores)
+						livelihood_results.append(transaction)
+						livelihood_events.append(purchase.event)
+					elif purchase.has("error"):
+						return _failure_result(event, "resident_food_trade_" + str(purchase.error), stores)
 
 			var followup_snapshot = snapshot_builder.build_snapshot(
 				context,

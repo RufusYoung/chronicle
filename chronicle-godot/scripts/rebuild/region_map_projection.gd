@@ -1,6 +1,8 @@
 extends RefCounted
 ## Public road topology only. No remote resident goals, inventories or debug facts.
 
+const CanonWorld = preload("res://scripts/sim/generation/canon_world_setup.gd")
+
 const TERRAIN_NAMES := {"wetland": "湿地", "waterfront": "水岸", "riverside": "河岸",
 	"fertile": "沃土", "upland": "高地", "windy": "多风", "roadside": "临路",
 	"slope": "缓坡", "defensible": "易守", "marsh": "湿地", "lake_edge": "湖岸"}
@@ -25,5 +27,9 @@ func build(session: Variant, current_settlement_id: String) -> Dictionary:
 		roads.append({"id": str(link.get("link_id", "")),
 			"from": str(link.get("settlement_a_id", "")), "to": str(link.get("settlement_b_id", "")),
 			"hours": int(link.get("travel_hours", 0))})
-	return {"layout": "topology_not_geography", "seed": int(network.get("generation_seed", 0)),
+	var result := {"layout": "topology_not_geography", "seed": int(network.get("generation_seed", 0)),
 		"current_settlement_id": current_settlement_id, "sites": sites, "roads": roads}
+	var canon := CanonWorld.public_context(session.fixture_source_data)
+	if not canon.is_empty():
+		result["canon"] = canon
+	return result

@@ -14,6 +14,7 @@ const RoutePressureQueryModel = preload(
 
 const FIXTURE_PATH := "res://data/sim/fixtures/lake_town_food_crisis_fixture.json"
 const NETWORK_FIXTURE := "res://data/sim/fixtures/generated_settlement_network_fixture.json"
+const CANON_WORLD := "res://data/sim/worlds/echo_port_environs_v1.json"
 const RULE_PATHS := [
 	"res://data/sim/raw/action_rules/basic_action_rules.json",
 	"res://data/sim/raw/action_rules/domain_action_rules.json",
@@ -53,7 +54,7 @@ func _init(source_session: Variant = null) -> void:
 
 func start(options: Dictionary = {}) -> Dictionary:
 	var scenario := str(options.get("scenario", "lake_town"))
-	if scenario not in ["lake_town", "generated_network"]:
+	if scenario not in ["lake_town", "generated_network", "echo_realm"]:
 		return {"success": false, "error": "unknown_start_scenario"}
 	if session == null:
 		session = SimSessionModel.new()
@@ -62,8 +63,11 @@ func start(options: Dictionary = {}) -> Dictionary:
 	latest_event_type = ""
 	last_player_impact = {}
 	var start_options := options.duplicate(true)
-	if scenario == "generated_network" and not start_options.has("resident_daily_life_version"):
+	if scenario in ["generated_network", "echo_realm"] and not start_options.has("resident_daily_life_version"):
 		start_options["resident_daily_life_version"] = 1
+	if scenario in ["generated_network", "echo_realm"] and int(start_options.get("resident_daily_life_version", 0)) == 1 \
+			and not start_options.has("resident_food_access_version"):
+		start_options["resident_food_access_version"] = 1
 	if (
 		not start_options.has("challenge_seed_override")
 		and not "--script" in OS.get_cmdline_args()
@@ -72,7 +76,7 @@ func start(options: Dictionary = {}) -> Dictionary:
 		runtime_rng.randomize()
 		start_options["challenge_seed_override"] = int(runtime_rng.randi())
 	start_result = session.start_from_fixture_path(
-		NETWORK_FIXTURE if scenario == "generated_network" else FIXTURE_PATH,
+		{"generated_network": NETWORK_FIXTURE, "echo_realm": CANON_WORLD, "lake_town": FIXTURE_PATH}[scenario],
 		RULE_PATHS, start_options
 	)
 	return start_result.duplicate(true)
@@ -433,6 +437,11 @@ func build_view_data() -> Dictionary:
 
 func _playtest_view(snapshot: Variant) -> Dictionary:
 	var location_id := str(snapshot.location.get("id", ""))
+	if session.fixture_source_data.has("world_canon"):
+		return {"mode": "generated_settlement_network", "stage": 0, "stage_count": 0,
+			"completed": false, "failed": false, "title": "镜湖北岸的日常",
+			"summary": "回音港外的居民沿岸谋生。去泊台或作业地看看谁在工作、谁在寻找口粮；生活和出行使用同一个世界时钟。",
+			"hint": "这是原设定中的一小片运行区，尚未模拟整座回音港或大陆势力。"}
 	if _has_fact(snapshot, "settlement_network_generated"):
 		var current_settlement_id := _current_settlement_id(snapshot)
 		var current_name := _entity_name(current_settlement_id, snapshot)
@@ -2556,11 +2565,17 @@ func _tick_feedback_view() -> Dictionary:
 func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 	var here := str(session.context.location_id)
 	var lines: Array[String] = []
+	var food_lines: Array[String] = []
 	for event: Dictionary in result.get("livelihood_events", []):
+		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet"]:
+			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
+			if str(fact.get("summary", "")) != "":
+				food_lines.append(str(fact.summary))
+			continue
 		if event.get("fact_type") != "resident_activity_changed" or str(event.get("location_id", "")) != here:
 			continue
 		var activity := str(event.get("activity", ""))
-		if activity not in ["arrived", "traveling", "working", "seeking_work"]:
+		if activity not in ["arrived", "traveling", "working", "seeking_work", "seeking_food"]:
 			continue
 		var actor_id := str(event.get("actor_id", ""))
 		var person: Dictionary = session.stores.entity_store.get_entity(actor_id)
@@ -2577,6 +2592,9 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 				lines.append("%s开始在这里做工。" % name)
 			"seeking_work":
 				lines.append("%s在集地寻找可以接手的工作。" % name)
+			"seeking_food":
+				lines.append("%s在这里打听能买到的口粮。" % name)
+	lines = food_lines + lines
 	if lines.is_empty():
 		return {}
 	return {"status": "world_tick", "title": "眼前的人有了动静",
@@ -3007,7 +3025,7 @@ func _location_context(location: Dictionary, snapshot: Variant) -> String:
 func _person_state_text(states: Dictionary) -> String:
 	var rows: Array[String] = []
 	if int(states.get("daily_life_version", 0)) == 1:
-		var labels := {"working": "在岗做工", "seeking_work": "在集地找工作", "arrived": "刚刚抵达",
+		var labels := {"working": "在岗做工", "seeking_work": "在集地找工作", "seeking_food": "正在寻找口粮", "arrived": "刚刚抵达",
 			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上"}
 		rows.append(str(labels.get(str(states.get("daily_activity", "")), "日常生活")))
 		if str(states.get("daily_activity", "")) == "blocked":

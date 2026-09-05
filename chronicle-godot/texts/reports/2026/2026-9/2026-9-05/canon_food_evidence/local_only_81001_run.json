@@ -1,0 +1,39 @@
+{
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 7,
+  "extreme_person_hours": 2686,
+  "failures": [],
+  "mode": "local_only",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 3176.461
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 4053.004
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 5610.188
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 6009.581
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 7021.315
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 8133.739
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 8880.63
+    }
+  ],
+  "scope": "Test injection: only local supply knowledge",
+  "seed": 81001
+}

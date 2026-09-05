@@ -30,6 +30,10 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	for phase: String in ["initial", "day7"]:
 		var viewer = Demo.instantiate()
+		viewer.initial_scenario = "generated_network"
+		for argument: String in OS.get_cmdline_user_args():
+			if argument.begins_with("--scenario="):
+				viewer.initial_scenario = argument.trim_prefix("--scenario=")
 		viewer.save_path = output + "/absent_" + Crypto.new().generate_random_bytes(8).hex_encode() + ".json"
 		root.add_child(viewer)
 		if phase == "day7":

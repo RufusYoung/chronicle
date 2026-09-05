@@ -76,16 +76,16 @@ func handle(request: Variant) -> Dictionary:
 
 func hello() -> Dictionary:
 	return {"protocol": 1, "session_id": session_id, "revision": revision,
-		"modes": ["world", "play"], "scenarios": ["generated_network", "lake_town", "first_winter"]}
+		"modes": ["world", "play"], "scenarios": ["echo_realm", "generated_network", "lake_town", "first_winter"]}
 
 
 func _start(request: Dictionary) -> Dictionary:
 	var next_mode: Variant = request.get("mode", "world")
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
-	if next_mode not in ["world", "play"] or next_scenario not in ["generated_network", "lake_town", "first_winter"]:
+	if next_mode not in ["world", "play"] or next_scenario not in ["echo_realm", "generated_network", "lake_town", "first_winter"]:
 		return _error("invalid_start_profile")
-	if next_mode == "world" and next_scenario != "generated_network":
+	if next_mode == "world" and next_scenario not in ["generated_network", "echo_realm"]:
 		return _error("world_mode_requires_generated_network")
 	if not _integer(seed, 1, 2147483647):
 		return _error("invalid_seed")
@@ -118,6 +118,8 @@ func _refresh() -> void:
 		_view = {"visibility": "omniscient_debug", "actor_policy": "passive_fixture_actor",
 			"time": _session().get_time_summary(), "counts": _session().get_store_summary(),
 			"network": _session().get_settlement_network_summary()}
+		if scenario == "echo_realm":
+			_view["canon"] = _session().CanonWorld.public_context(_session().fixture_source_data)
 		return
 	var projected: Dictionary = model.build_view_data()
 	_view = {"visibility": "player_surface"}

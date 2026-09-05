@@ -3,6 +3,7 @@ class_name V5ResidentDailyLifeSystem
 
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Industry = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const STATE_KEYS := ["daily_life_version", "daily_activity", "daily_activity_reason", "daily_goal_id",
 	"daily_workplace_id", "daily_route_id", "daily_destination_id", "daily_travel_remaining",
 	"daily_departure_fact_id", "daily_presence_fact_id"]
@@ -22,13 +23,16 @@ static func work_time(occupation: String, hour: int, config: Dictionary) -> bool
 
 
 func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
-		network: Dictionary, locations: Dictionary, base_routes: Array) -> Dictionary:
+		network: Dictionary, locations: Dictionary, base_routes: Array, profiles: Array = []) -> Dictionary:
 	if not enabled(config) or int(tick.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
 	var routes := _routes(snapshot, network, locations, base_routes, config)
 	var result = Result.new()
 	var events: Array = []
 	var people: Array = snapshot.get_entities_by_type("person")
+	var food_config: Dictionary = config.get("food_access", {})
+	var food_items: Array = snapshot.get_items() if FoodAccess.enabled(food_config) else []
+	var known_supply_cache := {}
 	people.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.id) < str(b.id))
 	for actor: Dictionary in people:
 		if "generated_resident" not in actor.get("tags", []):
@@ -69,6 +73,12 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 			goal = _hub(network, str(states.get("settlement_id", "")))
 			activity = "seeking_work"
 			reason = "前往集地寻找工作"
+		if FoodAccess.enabled(food_config) and not must_rest:
+			var supply := _food_goal(snapshot, actor, routes, profiles, tick, food_config, network, locations, food_items, known_supply_cache)
+			if supply != "":
+				goal = supply
+				activity = "seeking_food"
+				reason = "没有口粮，带钱寻找已知供给"
 		_change(result, id, states, "daily_goal_id", goal)
 		if goal == "" or not locations.has(goal):
 			_transition(result, events, actor, states, "blocked", "没有可到达的去处", tick)
@@ -188,6 +198,40 @@ func _next_edge(routes: Array, start: String, goal: String) -> Dictionary:
 				costs[target] = cost
 				first_edges[target] = edge if next == start else first_edges[next]
 	return {}
+
+
+func _food_goal(snapshot: Variant, actor: Dictionary, routes: Array, profiles: Array,
+		tick: Dictionary, config: Dictionary, network: Dictionary, locations: Dictionary,
+		items: Array, known_supply_cache: Dictionary) -> String:
+	var hour := int(tick.get("hour", 0))
+	if not FoodAccess.needs_food(actor, items) or FoodAccess.balance(items, str(actor.id)) <= 0:
+		return ""
+	var states: Dictionary = actor.get("states", {})
+	var location := str(states.get("location_id", ""))
+	if int(states.get("age_years", 0)) < int(config.get("minimum_independent_shopping_age", 18)):
+		return ""
+	var own_settlement := str(states.get("settlement_id", ""))
+	var away := str(locations.get(location, {}).get("settlement_id", own_settlement)) != own_settlement
+	if not away and (hour < int(config.get("shopping_start_hour", 12)) or hour > int(config.get("shopping_end_hour", 17))):
+		return ""
+	# A food producer can satisfy this need by continuing real production.
+	for profile: Dictionary in profiles:
+		if str(profile.get("workplace_id", "")) == str(states.get("workplace_id", "")) \
+				and str(profile.get("occupation_id", "")) == str(states.get("occupation_id", "")) \
+				and FoodAccess.is_food_producer(profile):
+			return ""
+	if not known_supply_cache.has(own_settlement):
+		known_supply_cache[own_settlement] = FoodAccess.known_supply_locations(snapshot, actor, profiles, network, config)
+	for site: String in known_supply_cache[own_settlement]:
+		if FoodAccess.known_unaffordable(snapshot, str(actor.id), site, FoodAccess.balance(items, str(actor.id)), tick, config):
+			continue
+		if site == location:
+			return site
+		if FoodAccess.recently_failed(snapshot, str(actor.id), site, tick, config):
+			continue
+		if not _next_edge(routes, location, site).is_empty():
+			return site
+	return ""
 
 
 func _hub(network: Dictionary, settlement: String) -> String:

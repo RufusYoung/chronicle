@@ -1,0 +1,7 @@
+{
+  "scope": "Isolated per-call cache change before final wording and canon stage",
+  "count": 40,
+  "complete_state_and_view_hash_matches": 40,
+  "source_before": "food_access.json",
+  "source_after": "food_access_cached.json"
+}

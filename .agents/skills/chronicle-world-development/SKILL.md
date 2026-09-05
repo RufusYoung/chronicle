@@ -9,6 +9,8 @@ Read the repository `AGENTS.md` and current section of `texts/v5/CHRONICLE_WORLD
 
 ## Choose Work by the Missing Causal Link
 
+For geography, history, factions or new locations, consult `texts/v5/CHRONICLE_CANON_WORLD_FOUNDATION_v5.1.md` before inventing content. Reuse the user's authored anchors and record generated detail separately. Source examples are not mandatory events; disputed geography stays unresolved until needed. Static faction interests are bootstrap context, not implemented politics or permanent limits on future causal change. Preserve prototype fixtures and saves rather than silently reskinning them.
+
 Trace one concrete life outcome through needs, knowledge, intent, travel, work, ownership, payment/use and reaction. Locate the earliest missing or false link before adding another system or narrative wrapper. Treat aggregate resource allocation and finished ItemStore goods as different quantities until an explicit conversion proves otherwise.
 
 Keep the implementation open where several designs fit. Record an uncertain but reversible default and a falsifying test. A failed experiment is a reason to diagnose or change method, not automatically to ask the user or end continuous work.

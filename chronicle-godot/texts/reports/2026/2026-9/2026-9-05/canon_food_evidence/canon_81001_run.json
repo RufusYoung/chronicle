@@ -1,0 +1,40 @@
+{
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 7,
+  "extreme_person_hours": 356,
+  "failures": [],
+  "mode": "canon",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 955.365
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 1094.66
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 1287.373
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 1660.555
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 1755.463
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 2360.455
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 2373.14
+    }
+  ],
+  "scenario": "echo_realm",
+  "scope": "Passive formal new world",
+  "seed": 81001
+}

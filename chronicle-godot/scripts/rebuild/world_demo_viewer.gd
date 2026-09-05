@@ -7,6 +7,7 @@ const DEFAULT_SAVE := "user://world_demo/manual.json"
 
 @export var save_path: String = DEFAULT_SAVE
 @export var initial_seed: int = 81001
+@export var initial_scenario: String = "echo_realm"
 var busy := false
 var last_operation: Dictionary = {}
 var _worker: Thread
@@ -60,17 +61,18 @@ func restart_session() -> void:
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
-		view_model.start({"scenario": "generated_network", "challenge_seed_override": initial_seed})
+		view_model.start({"scenario": initial_scenario, "challenge_seed_override": initial_seed})
 		refresh_view()
 	else:
-		_begin_operation("start", [{"scenario": "generated_network", "challenge_seed_override": int(_seed_input.value)}])
+		_begin_operation("start", [{"scenario": initial_scenario, "challenge_seed_override": int(_seed_input.value)}])
 
 
 func refresh_view(projected: Dictionary = {}) -> void:
 	if busy:
 		return
 	super.refresh_view(projected)
-	brand_subtitle.text = "北境三镇 / 世界原型"
+	var canon: Dictionary = current_view_data.get("region_map", {}).get("canon", {})
+	brand_subtitle.text = "回响之境 / 镜湖北岸" if not canon.is_empty() else "北境三镇 / 测试世界"
 	# The generated-world observer prompt is background help, not a quest objective.
 	(surface.scene_record as RichTextLabel).text += "\n\n[b]区域概况[/b]\n" + goal_summary.text
 	goal_progress.hide()
@@ -94,6 +96,15 @@ func refresh_view(projected: Dictionary = {}) -> void:
 	_picture.visible = at_reed
 	_picture_caption.text = ("苇岸水边 · 地点美术样例\n静态环境画，不代表实时天气、人物或货物数量。"
 		if at_reed else "%s\n此处的地点画面尚未制作。" % location_title.text)
+	if not canon.is_empty():
+		_region_heading.text = "%s · %s\n当前位置：%s" % [canon.world_name, canon.region_name, location_title.text]
+		var background: Array[String] = ["回响之境 · 地理背景", str(canon.era), ""]
+		for row: Dictionary in canon.regions:
+			background.append("%s：%s" % [row.position, row.name])
+		background.append("\n当前锚点：%s\n当地社群：%s" % [canon.place_name, canon.faction_name])
+		background.append("\n" + str(canon.description))
+		background.append("\n" + str(canon.scope_note))
+		_picture_caption.text = "\n".join(background)
 
 
 func _begin_operation(method: String, arguments: Array = []) -> Dictionary:
@@ -256,7 +267,7 @@ func _install_save_controls() -> void:
 	new_world_form.add_theme_constant_override("separation", 16)
 	restart_dialog.add_child(new_world_form)
 	var explanation := Label.new()
-	explanation.text = "未保存的行动将丢失。已有存档不会删除或覆盖。\n种子相同会生成相同的初始区域。"
+	explanation.text = "未保存的行动将丢失。已有存档不会删除或覆盖。\n在回音港周边创建新世界；相同版本与种子生成相同初始区域。"
 	new_world_form.add_child(explanation)
 	_seed_input = SpinBox.new()
 	_seed_input.min_value = 1

@@ -75,7 +75,7 @@ func generate_fixture(
 	var site_token := _safe_id(str(config.get("site_id", fixture_token)))
 	var settlement_id := "generated_settlement.%s" % site_token
 	var hub_id := "generated_location.%s.commons" % site_token
-	var settlement_name := _settlement_name(definition, terrain_profile, rng)
+	var settlement_name := str(config.get("name_prefix", "")) + _settlement_name(definition, terrain_profile, rng)
 	var generation_id := "%s:%d" % [
 		str(definition.get(
 			"generation_def_id", "generation.settlement"

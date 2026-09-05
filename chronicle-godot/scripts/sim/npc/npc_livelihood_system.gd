@@ -12,6 +12,7 @@ const TransactionResultModel = preload(
 
 const HUNGRY_LEVELS := ["high", "extreme"]
 const MAX_FATIGUE := 10
+var food_access_enabled := false
 
 
 func resolve_work_tick(
@@ -256,8 +257,10 @@ func resolve_work_tick(
 
 func resolve_household_support(
 		snapshot: Variant,
-		tick_event: Dictionary
+		tick_event: Dictionary,
+		daily_life_config: Dictionary = {}
 ) -> Dictionary:
+	food_access_enabled = DailyLife.enabled(daily_life_config) and int(daily_life_config.get("food_access", {}).get("version", 0)) == 1
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
 	var households := _households(snapshot)
@@ -352,6 +355,14 @@ func resolve_household_support(
 			_safe_id(str(tick_event.get("tick_event_id", "tick"))),
 		]
 		var shared := donor_id != recipient_id
+		var sources: Array = [str(food.get("relationship_fact_id", ""))] if external else []
+		if food_access_enabled:
+			var acquisition := str(food.get("provenance", {}).get("created_by_fact_id", ""))
+			for history: Dictionary in food.get("history", []):
+				if history.get("event_type") in ["transferred", "split_from"]:
+					acquisition = str(history.get("fact_id", acquisition))
+			if acquisition != "" and acquisition not in sources:
+				sources.append(acquisition)
 		result.add_fact({
 			"fact_id": fact_id,
 			"fact_type": "npc_cross_household_shared_food" if external else (
@@ -366,9 +377,7 @@ func resolve_household_support(
 			)),
 			"relationship_kind": str(food.get("relationship_kind", "")),
 			"relationship_fact_id": str(food.get("relationship_fact_id", "")),
-			"source_fact_ids": (
-				[str(food.get("relationship_fact_id", ""))] if external else []
-			),
+			"source_fact_ids": sources,
 			"item_instance_id": item_id,
 			"item_def_id": str(food.get("item_def_id", "")),
 			"hunger_before": hunger,
@@ -393,6 +402,9 @@ func resolve_household_support(
 				)
 			),
 		})
+		if food_access_enabled:
+			result.facts_added.back()["location_id"] = str(snapshot.get_entity_state(recipient_id, "location_id", ""))
+			result.facts_added.back()["in_transit"] = str(snapshot.get_entity_state(recipient_id, "daily_route_id", "")) != ""
 		if external:
 			result.add_trace({
 				"trace_id": "trace.npc_cross_household_food.%s.%s" % [
@@ -403,7 +415,7 @@ func resolve_household_support(
 				"actor_id": donor_id,
 				"target_id": recipient_id,
 				"location_id": str(snapshot.get_entity_state(
-					recipient_id, "home_location_id", ""
+					recipient_id, "location_id" if food_access_enabled else "home_location_id", ""
 				)),
 				"source_fact_id": fact_id,
 				"source_fact_ids": [fact_id],
@@ -718,6 +730,8 @@ func _find_food(
 func _can_share_here(snapshot: Variant, recipient_id: String, holder_id: String) -> bool:
 	if int(snapshot.get_entity_state(recipient_id, "daily_life_version", 0)) != 1:
 		return true
+	if food_access_enabled and recipient_id == holder_id:
+		return bool(snapshot.get_entity_state(holder_id, "alive", true))
 	return bool(snapshot.get_entity_state(holder_id, "alive", true)) \
 		and str(snapshot.get_entity_state(recipient_id, "daily_route_id", "")) == "" \
 		and str(snapshot.get_entity_state(holder_id, "daily_route_id", "")) == "" \

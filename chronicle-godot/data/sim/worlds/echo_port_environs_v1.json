@@ -1,0 +1,53 @@
+{
+  "fixture_id": "echo_port_environs_v1",
+  "world_id": "world.echo_realm.echo_port_environs.v1",
+  "actor_id": "player",
+  "challenge_seed": 81001,
+  "world_canon": {"version": 1, "catalog_path": "res://data/sim/raw/world_defs/echo_realm_canon_v1.json", "scope_id": "echo_port_environs"},
+  "economic_contract": {"version": 1, "settlement_initial_coins": 120, "organization_seed_grant": 12, "treasury_reserve": 12, "organization_procurement_limit": 5, "organization_treasury_reserve": 2},
+  "locations": {},
+  "region_state": {},
+  "institution": {},
+  "entities": [],
+  "player": {"id": "player", "type": "person", "role": "traveler", "display_name": "旅人", "strength": 7, "dexterity": 8, "wisdom": 9, "charisma": 6, "constitution": 8, "perception": 10, "health": 100},
+  "known_facts": [],
+  "initial_items": [],
+  "initial_relationships": {},
+  "initial_chronicle_entries": [],
+  "settlement_network_generation": {
+    "definition_path": "res://data/sim/raw/generation_defs/north_border_settlements_v1.json",
+    "primary_site_id": "echo_landing",
+    "network_title": "回音港周边的聚落与道路",
+    "sites": [
+      {
+        "site_id": "echo_landing", "seed_offset": 0, "resident_count": 8, "name_prefix": "回音港外·",
+        "terrain": {"terrain_id": "lake_marsh_edge", "tags": ["waterside", "marsh", "slope"], "habitable_area": 3, "flood_exposure": 2},
+        "resources": [
+          {"resource_id": "resource.echo_landing.fish", "label": "港外可食鱼群", "tags": ["fish", "food", "water"], "abundance": 5, "reliability": 4},
+          {"resource_id": "resource.echo_landing.reeds", "label": "港外浅滩芦苇", "tags": ["reeds", "fiber"], "abundance": 4, "reliability": 4}
+        ],
+        "traffic": [
+          {"traffic_id": "traffic.echo_landing.road", "label": "港外沿岸小路", "mode": "road", "capacity": 2, "reliability": 3, "risk": 1},
+          {"traffic_id": "traffic.echo_landing.boats", "label": "港外浅水舟路", "mode": "waterway", "capacity": 4, "reliability": 4, "risk": 1}
+        ]
+      },
+      {
+        "site_id": "echo_terrace", "seed_offset": 997, "resident_count": 8, "name_prefix": "回音港外·",
+        "terrain": {"terrain_id": "river_terrace", "tags": ["riverside", "fertile", "roadside", "slope"], "habitable_area": 3, "flood_exposure": 1},
+        "resources": [
+          {"resource_id": "resource.echo_terrace.soil", "label": "港外聚落耕地", "tags": ["soil", "roots", "food"], "abundance": 5, "reliability": 5},
+          {"resource_id": "resource.echo_terrace.reeds", "label": "田沟芦苇", "tags": ["reeds", "fiber"], "abundance": 2, "reliability": 3}
+        ],
+        "traffic": [
+          {"traffic_id": "traffic.echo_terrace.road", "label": "港外运粮土路", "mode": "road", "capacity": 4, "reliability": 4, "risk": 1}
+        ]
+      }
+    ],
+    "links": [{"link_id": "echo_shore_road", "site_a_id": "echo_landing", "site_b_id": "echo_terrace", "mode": "road", "travel_hours": 3, "capacity_per_day": 4, "risk": 1}],
+    "trade_goods": [
+      {"good_id": "food", "reserve_label": "待运输口粮配额", "tags": ["food"], "reserve_capacity": 24, "daily_use_per_resident": 0.12, "base_unit_price": 2},
+      {"good_id": "fiber", "reserve_label": "待运输纤维配额", "tags": ["fiber"], "reserve_capacity": 16, "daily_use_per_resident": 0.03, "base_unit_price": 2}
+    ]
+  },
+  "resident_generation": {"definition_path": "res://data/sim/raw/generation_defs/north_border_residents_v1.json"}
+}

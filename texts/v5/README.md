@@ -5,6 +5,7 @@
 | 用途 | 文档 | 状态边界 |
 | --- | --- | --- |
 | 创作目标 | [创作方向指导](../CHRONICLE_CREATIVE_DIRECTION_GUIDE.md) | 五个灵感来源与体验约束，不以模块完成数替代 |
+| 世界设定与生成范围 | [回响之境原设定衔接](CHRONICLE_CANON_WORLD_FOUNDATION_v5.1.md) | 原始历史、六界域与势力索引；首个运行区为回音港周边，静态目录不等于大陆模拟 |
 | 设计依据 | [用户保存的主 GDD](Chronicle%20Game%20Design%20Document.md)、[v5.1 GDD](CHRONICLE_GDD_v5.1_REBUILD.md) | 两份均保留为有效设计依据 |
 | 活动计划 | [世界优先开发计划](CHRONICLE_WORLD_FIRST_PLAN_v5.1.md) | 10 月 5 日前交付 Tripothon S1 Demo、实机录屏与资产板；H0 至 H6 倒排执行，长期 B0 至 B7 提供验收归属 |
 | 旧验收记录 | [玩家能动性与世界真实感计划](CHRONICLE_PLAYER_AGENCY_SYSTEM_PLAN_v5.1.md) | 保留已完成合同；W1-C 剩余工作移入 B2，不继续作为另一个活动步骤 |
