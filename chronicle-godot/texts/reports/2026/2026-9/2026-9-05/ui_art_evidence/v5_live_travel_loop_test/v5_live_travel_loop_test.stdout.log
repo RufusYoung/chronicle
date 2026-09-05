@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LIVE TRAVEL LOOP PASS] 1. Travel viewer scene loads
+[V5 LIVE TRAVEL LOOP PASS] 2. Shop hides the granary route until local evidence is read
+[V5 LIVE TRAVEL LOOP PASS] 3. Reading the notice and grain trace exposes a usable route
+[V5 LIVE TRAVEL LOOP PASS] 4. Outbound travel switches location and refreshes time and food
+[V5 LIVE TRAVEL LOOP PASS] 5. Granary view contains only local people and observations
+[V5 LIVE TRAVEL LOOP PASS] 6. Travel feedback includes the world change that happened en route
+[V5 LIVE TRAVEL LOOP PASS] 7. Travel and source-location consequences enter player knowledge
+[V5 LIVE TRAVEL LOOP PASS] 8. Arrival regenerates local investigation and return controls
+[V5 LIVE TRAVEL LOOP PASS] 9. Granary investigation uses the existing live action pipeline
+[V5 LIVE TRAVEL LOOP PASS] 10. Return trip restores the shop projection and consumes resources
+[V5 LIVE TRAVEL LOOP PASS] 11. Renewed hunger closes the shop during the long round trip
+[V5 LIVE TRAVEL LOOP PASS] 12. Travel control communicates insufficient resources
+[V5 LIVE TRAVEL LOOP PASS] 13. UI keeps journeys, world ticks, and actions as separate events
+[V5 LIVE TRAVEL LOOP PASS] 14. Restart resets the complete travel loop
+[V5 LIVE TRAVEL LOOP RESULT] PASS

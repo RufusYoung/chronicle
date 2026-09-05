@@ -1,0 +1,78 @@
+{
+  "checks": 54,
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "note": "Script-driven UI and native save tests, not unassisted human play. Native JSON precision comparison.",
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "renderer": "gl_compatibility",
+  "samples": [
+    {
+      "method": "startup_to_frame",
+      "ms": 197.898
+    },
+    {
+      "method": "save_to_path",
+      "operation_ms": 219.069,
+      "projection_ms": 40.851,
+      "ui_frames": 37
+    },
+    {
+      "method": "perform_travel",
+      "operation_ms": 316.2,
+      "projection_ms": 49.172,
+      "ui_frames": 48
+    },
+    {
+      "method": "load_from_path",
+      "operation_ms": 171.67,
+      "projection_ms": 41.392,
+      "ui_frames": 30
+    },
+    {
+      "method": "perform_travel",
+      "operation_ms": 332.168,
+      "projection_ms": 51.326,
+      "ui_frames": 51
+    },
+    {
+      "method": "perform_travel",
+      "operation_ms": 384.248,
+      "projection_ms": 59.939,
+      "ui_frames": 58
+    },
+    {
+      "method": "perform_travel",
+      "operation_ms": 83.578,
+      "projection_ms": 51.1,
+      "ui_frames": 18
+    },
+    {
+      "method": "advance_time",
+      "operation_ms": 136.078,
+      "projection_ms": 67.614,
+      "ui_frames": 26
+    },
+    {
+      "method": "save_to_path",
+      "operation_ms": 352.231,
+      "projection_ms": 67.333,
+      "ui_frames": 52
+    },
+    {
+      "method": "start",
+      "operation_ms": 63.688,
+      "projection_ms": 41.609,
+      "ui_frames": 18
+    }
+  ]
+}

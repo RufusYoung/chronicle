@@ -12,9 +12,23 @@ static func install(
 ) -> Dictionary:
 	# Both life scales use the same reading order; only the records page scrolls.
 	_disable_nested_scrolling(viewer)
+	_install_header(viewer, host, slots.get("header", {}))
+	(viewer.get_node("Background") as ColorRect).color = Style.COLOR_CANVAS
+	var dock_style := Style.panel_style()
+	if dock.get_child(0) is MarginContainer:
+		dock_style.content_margin_left = 0
+		dock_style.content_margin_right = 0
+		dock_style.content_margin_top = 0
+		dock_style.content_margin_bottom = 0
+	dock.add_theme_stylebox_override("panel", dock_style)
+	var hint := viewer.get_node("%ActionHint") as Label
+	hint.add_theme_color_override("font_color", Style.COLOR_TEXT_MUTED)
+	hint.add_theme_font_size_override("font_size", Style.FONT_CAPTION)
+	(viewer.get_node("%ActionHeading") as Label).add_theme_font_size_override("font_size", Style.FONT_HEADING)
 	var tabs := TabContainer.new()
 	tabs.name = "WorldSurfacePages"
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tabs.use_hidden_tabs_for_min_size = false
 	tabs.add_theme_font_size_override("font_size", 15)
 	tabs.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	host.add_child(tabs)
@@ -30,6 +44,9 @@ static func install(
 	_move_nodes(slots.get("scene", []), primary)
 	var feedback := _panel_column(primary, 1.0, true)
 	_move_nodes(slots.get("feedback", []), feedback)
+	var eyebrow := feedback.get_child(0) as Label
+	eyebrow.add_theme_font_size_override("font_size", Style.FONT_CAPTION)
+	eyebrow.add_theme_color_override("font_color", Style.COLOR_TEXT_MUTED)
 	var details := HBoxContainer.new()
 	details.add_theme_constant_override("separation", 14)
 	primary.add_child(details)
@@ -48,6 +65,7 @@ static func install(
 	situation.owner = viewer
 	situation.unique_name_in_owner = true
 	_move_nodes(slots.get("decision", []), decision)
+	_move_nodes(slots.get("supplies", []), decision)
 
 	var character := HBoxContainer.new()
 	character.name = "角色"
@@ -63,6 +81,15 @@ static func install(
 	records.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	tabs.add_child(records)
 	var record_content := _panel_column(records, 1.0)
+	var back_to_scene := Button.new()
+	back_to_scene.name = "BackToScene"
+	back_to_scene.text = "返回现场"
+	back_to_scene.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	Style.apply_command_button(back_to_scene)
+	record_content.add_child(back_to_scene)
+	back_to_scene.owner = viewer
+	back_to_scene.unique_name_in_owner = true
+	back_to_scene.pressed.connect(func() -> void: tabs.current_tab = 0)
 	_heading(record_content, "本次结算 · 完整过程")
 	var receipt := _rich_text(record_content)
 	receipt.name = "ResultReceipt"
@@ -78,6 +105,27 @@ static func install(
 	tabs.tab_changed.connect(func(index: int) -> void: dock.visible = index == 0)
 	var surface := {"tabs": tabs, "situation": situation, "receipt": receipt,
 		"scene_record": scene_record, "action_page": 0, "action_signature": []}
+	var receipt_button := LinkButton.new()
+	receipt_button.name = "OpenResultReceipt"
+	receipt_button.text = "查看完整结果"
+	receipt_button.focus_mode = Control.FOCUS_ALL
+	receipt_button.custom_minimum_size.y = 24
+	receipt_button.add_theme_font_size_override("font_size", Style.FONT_CAPTION)
+	receipt_button.add_theme_color_override("font_color", Style.COLOR_TEXT_MUTED)
+	var result_header := HBoxContainer.new()
+	result_header.add_theme_constant_override("separation", 12)
+	feedback.add_child(result_header)
+	feedback.move_child(result_header, 0)
+	eyebrow.reparent(result_header)
+	eyebrow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	result_header.add_child(receipt_button)
+	receipt_button.owner = viewer
+	receipt_button.unique_name_in_owner = true
+	receipt_button.pressed.connect(func() -> void:
+		tabs.current_tab = records.get_index()
+		records.scroll_vertical = 0
+		back_to_scene.grab_focus())
+	back_to_scene.pressed.connect(func() -> void: receipt_button.grab_focus())
 	var actions: FlowContainer = viewer.get_node("%ActionButtons")
 	var pager := HBoxContainer.new()
 	pager.add_theme_constant_override("separation", 12)
@@ -106,8 +154,10 @@ static func install(
 	next.pressed.connect(func() -> void:
 		surface["action_page"] += 1
 		_apply_action_page(surface, viewer, actions))
-	Style.apply_decision_button(previous, "normal")
-	Style.apply_decision_button(next, "normal")
+	Style.apply_decision_button(previous, "normal", false, true)
+	Style.apply_decision_button(next, "normal", false, true)
+	viewer.resized.connect(func() -> void:
+		_apply_action_page(surface, viewer, actions))
 	pager.hide()
 	return surface
 
@@ -134,6 +184,7 @@ static func _apply_action_page(surface: Dictionary, viewer: Control, actions: Fl
 		page * ACTION_PAGE_SIZE + 1, mini((page + 1) * ACTION_PAGE_SIZE, count), count]
 	for index: int in count:
 		var button := actions.get_child(index) as Button
+		button.custom_minimum_size.y = 86
 		button.visible = index >= page * ACTION_PAGE_SIZE and index < (page + 1) * ACTION_PAGE_SIZE
 		button.custom_minimum_size.x = action_width(viewer, mini(ACTION_PAGE_SIZE, count - page * ACTION_PAGE_SIZE))
 
@@ -163,7 +214,7 @@ static func paginate_travel(surface: Dictionary, viewer: Control, buttons: VBoxC
 			pager.add_child(button)
 			button.owner = viewer
 			button.unique_name_in_owner = true
-			Style.apply_decision_button(button, "normal")
+			Style.apply_decision_button(button, "normal", false, true)
 			paging["previous" if direction < 0 else "next"] = button
 			button.pressed.connect(_step_travel_page.bind(paging, buttons, direction))
 			if direction < 0:
@@ -208,7 +259,7 @@ static func compact_feedback(feedback: Dictionary, max_details: int = 3) -> Stri
 static func style_action(button: Button, action_type: String) -> void:
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	button.add_theme_font_size_override("font_size", 13)
+	button.add_theme_font_size_override("font_size", Style.FONT_ACTION)
 	Style.apply_decision_button(button, action_type)
 
 
@@ -221,18 +272,7 @@ static func _panel_column(parent: Node, ratio: float, inset: bool = false) -> VB
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.size_flags_stretch_ratio = ratio
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color("#0e1515") if inset else Color("#141b1b")
-	box.border_color = Color("#9a7e4e") if inset else Color("#34413e")
-	box.set_border_width_all(0 if inset else 1)
-	if inset:
-		box.border_width_left = 3
-	box.set_corner_radius_all(4)
-	box.content_margin_left = 12
-	box.content_margin_right = 12
-	box.content_margin_top = 8
-	box.content_margin_bottom = 8
-	panel.add_theme_stylebox_override("panel", box)
+	panel.add_theme_stylebox_override("panel", Style.panel_style(inset))
 	parent.add_child(panel)
 	var column := VBoxContainer.new()
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -250,10 +290,13 @@ static func _move_nodes(nodes: Array, parent: Node) -> void:
 		if node is RichTextLabel:
 			node.fit_content = true
 			node.scroll_active = false
-			node.add_theme_font_size_override("normal_font_size", 14)
-			node.add_theme_font_size_override("bold_font_size", 14)
+			node.add_theme_font_size_override("normal_font_size", Style.FONT_BODY)
+			node.add_theme_font_size_override("bold_font_size", Style.FONT_BODY)
+			node.add_theme_color_override("default_color", Style.COLOR_TEXT_PRIMARY)
 		elif node is Label:
 			node.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			node.add_theme_font_size_override("font_size", Style.FONT_HEADING)
+			node.add_theme_color_override("font_color", Style.COLOR_HEADING)
 		elif node is ScrollContainer:
 			node.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 			node.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -285,3 +328,48 @@ static func _disable_nested_scrolling(node: Node) -> void:
 		node.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	for child: Node in node.get_children():
 		_disable_nested_scrolling(child)
+
+
+static func _install_header(viewer: Control, host: VBoxContainer, slots: Dictionary) -> void:
+	if slots.is_empty():
+		return
+	(host.get_node("Header") as Control).hide()
+	var panel := PanelContainer.new()
+	panel.name = "WorldHeader"
+	panel.custom_minimum_size.y = 64
+	panel.add_theme_stylebox_override("panel", Style.panel_style())
+	host.add_child(panel)
+	host.move_child(panel, 0)
+	panel.owner = viewer
+	panel.unique_name_in_owner = true
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 16)
+	panel.add_child(row)
+	var brand := VBoxContainer.new()
+	brand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	brand.add_theme_constant_override("separation", 0)
+	row.add_child(brand)
+	_move_nodes(slots.get("brand", []), brand)
+	var title := brand.get_child(0) as Label
+	title.autowrap_mode = TextServer.AUTOWRAP_OFF
+	title.add_theme_font_size_override("font_size", Style.FONT_TITLE)
+	var subtitle := brand.get_child(1) as Label
+	subtitle.autowrap_mode = TextServer.AUTOWRAP_OFF
+	subtitle.add_theme_font_size_override("font_size", Style.FONT_CAPTION)
+	subtitle.add_theme_color_override("font_color", Style.COLOR_TEXT_MUTED)
+	var clock_column := VBoxContainer.new()
+	clock_column.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(clock_column)
+	_move_nodes(slots.get("clock", []), clock_column)
+	for label: Label in clock_column.get_children():
+		label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		label.add_theme_font_size_override("font_size", Style.FONT_BODY)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var commands := HBoxContainer.new()
+	commands.name = "WorldCommands"
+	commands.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	commands.add_theme_constant_override("separation", 8)
+	row.add_child(commands)
+	for button: Button in slots.get("commands", []):
+		button.reparent(commands)
+		Style.apply_command_button(button)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ftbvlv2s2krk"]
 
-[ext_resource type="FontFile" uid="uid://p0c7nu1f53no" path="res://assets/fonts/SourceHanSerifSC-VF.ttf" id="1_sugp2"]
+[ext_resource type="FontFile" uid="uid://p0c7nu1f53no" path="res://art/fonts/SourceHanSerifSC-VF.ttf" id="1_sugp2"]
 
 [node name="Journey" type="Control"]
 show_behind_parent = true

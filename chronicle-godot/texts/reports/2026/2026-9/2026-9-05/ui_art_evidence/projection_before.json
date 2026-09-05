@@ -1,0 +1,303 @@
+{
+  "checkpoint": "user://tests/world_runtime_probe/day7.json",
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "rows": [
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 10,
+        "deferred_consequences": 0,
+        "entities": 61,
+        "equipment_loadouts": 1,
+        "exchanges": 0,
+        "facts": 319,
+        "investigation_leads": 0,
+        "items": 21,
+        "memories": 0,
+        "obligations": 0,
+        "pressures": 0,
+        "relationships": 304,
+        "resource_stocks": 23,
+        "rumors": 0,
+        "states": 963,
+        "traces": 0
+      },
+      "world": "initial"
+    },
+    {
+      "max_ms": 72.622,
+      "p50_ms": 70.931,
+      "p95_ms": 72.372,
+      "phase": "full_projection",
+      "repeats": 20,
+      "snapshot_calls": 680,
+      "snapshot_ms_total": 960.836,
+      "world": "initial"
+    },
+    {
+      "max_ms": 1.889,
+      "p50_ms": 1.832,
+      "p95_ms": 1.889,
+      "phase": "snapshot",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 7.658,
+      "world": "initial"
+    },
+    {
+      "max_ms": 2.115,
+      "p50_ms": 1.766,
+      "p95_ms": 2.115,
+      "phase": "action_candidates",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 6.519,
+      "world": "initial"
+    },
+    {
+      "max_ms": 10.083,
+      "p50_ms": 9.922,
+      "p95_ms": 10.083,
+      "phase": "action_rows",
+      "repeats": 5,
+      "snapshot_calls": 30,
+      "snapshot_ms_total": 41.398,
+      "world": "initial"
+    },
+    {
+      "max_ms": 47.461,
+      "p50_ms": 29.878,
+      "p95_ms": 47.461,
+      "phase": "decision",
+      "repeats": 5,
+      "snapshot_calls": 80,
+      "snapshot_ms_total": 134.651,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.005,
+      "p50_ms": 0.001,
+      "p95_ms": 0.005,
+      "phase": "agency",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 12.411,
+      "p50_ms": 5.598,
+      "p95_ms": 12.411,
+      "phase": "risk",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 29.664,
+      "world": "initial"
+    },
+    {
+      "max_ms": 7.951,
+      "p50_ms": 6.355,
+      "p95_ms": 7.951,
+      "phase": "travel",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 25.994,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.056,
+      "p50_ms": 0.02,
+      "p95_ms": 0.056,
+      "phase": "player",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 10.496,
+      "p50_ms": 9.186,
+      "p95_ms": 10.496,
+      "phase": "knowledge",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.008,
+      "p50_ms": 0.002,
+      "p95_ms": 0.008,
+      "phase": "feedback",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.004,
+      "p50_ms": 0.0,
+      "p95_ms": 0.004,
+      "phase": "world_log_copy",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 22,
+        "deferred_consequences": 0,
+        "entities": 63,
+        "equipment_loadouts": 1,
+        "exchanges": 148,
+        "facts": 1823,
+        "investigation_leads": 0,
+        "items": 221,
+        "memories": 0,
+        "obligations": 4,
+        "pressures": 76,
+        "relationships": 352,
+        "resource_stocks": 23,
+        "rumors": 0,
+        "states": 1046,
+        "traces": 23
+      },
+      "world": "day7"
+    },
+    {
+      "max_ms": 821.313,
+      "p50_ms": 649.592,
+      "p95_ms": 802.858,
+      "phase": "full_projection",
+      "repeats": 20,
+      "snapshot_calls": 720,
+      "snapshot_ms_total": 9216.732,
+      "world": "day7"
+    },
+    {
+      "max_ms": 23.941,
+      "p50_ms": 17.41,
+      "p95_ms": 23.941,
+      "phase": "snapshot",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 76.068,
+      "world": "day7"
+    },
+    {
+      "max_ms": 23.623,
+      "p50_ms": 20.051,
+      "p95_ms": 23.623,
+      "phase": "action_candidates",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 75.088,
+      "world": "day7"
+    },
+    {
+      "max_ms": 100.191,
+      "p50_ms": 87.163,
+      "p95_ms": 100.191,
+      "phase": "action_rows",
+      "repeats": 5,
+      "snapshot_calls": 30,
+      "snapshot_ms_total": 347.505,
+      "world": "day7"
+    },
+    {
+      "max_ms": 307.157,
+      "p50_ms": 295.817,
+      "p95_ms": 307.157,
+      "phase": "decision",
+      "repeats": 5,
+      "snapshot_calls": 85,
+      "snapshot_ms_total": 1079.392,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.006,
+      "p50_ms": 0.002,
+      "p95_ms": 0.006,
+      "phase": "agency",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 55.716,
+      "p50_ms": 45.212,
+      "p95_ms": 55.716,
+      "phase": "risk",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 179.565,
+      "world": "day7"
+    },
+    {
+      "max_ms": 61.316,
+      "p50_ms": 58.037,
+      "p95_ms": 61.316,
+      "phase": "travel",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 194.789,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.349,
+      "p50_ms": 0.112,
+      "p95_ms": 0.349,
+      "phase": "player",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 29.381,
+      "p50_ms": 27.357,
+      "p95_ms": 29.381,
+      "phase": "knowledge",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.009,
+      "p50_ms": 0.002,
+      "p95_ms": 0.009,
+      "phase": "feedback",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 1.345,
+      "p50_ms": 1.191,
+      "p95_ms": 1.345,
+      "phase": "world_log_copy",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    }
+  ],
+  "scope": "Warm read-only projection cost, not action latency or cold startup. Component probes overlap and must not be added together."
+}

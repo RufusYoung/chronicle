@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_player_attribute_surface_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 1.43,
+  "UnexpectedErrors": []
+}

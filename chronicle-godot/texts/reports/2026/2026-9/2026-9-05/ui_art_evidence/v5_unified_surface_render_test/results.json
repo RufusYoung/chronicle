@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_unified_surface_render_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 3.87,
+  "UnexpectedErrors": []
+}

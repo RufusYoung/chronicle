@@ -334,7 +334,7 @@ func _audit_layout(node: Node, errors: Array[String]) -> void:
 	if node is RichTextLabel:
 		if node.scroll_active or node.get_content_height() > node.size.y + 2:
 			errors.append("clipped_or_scroll:%s" % node.name)
-	if node is RichTextLabel or node is Button:
+	if node is RichTextLabel or node is BaseButton or node is Label:
 		if not Rect2(Vector2.ZERO, root.get_visible_rect().size).grow(1).encloses(node.get_global_rect()):
 			errors.append("outside_viewport:%s" % node.name)
 	for child: Node in node.get_children():

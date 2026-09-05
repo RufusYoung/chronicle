@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://c2htv2l268sj2" path="res://素材包/ui/topbar/微信图片_20251024191137_618_42.jpg" id="1_6lh64"]
 [ext_resource type="Script" uid="uid://8w5fdi01n4p4" path="res://scenes/ui/stats_area.gd" id="2_25qqm"]
-[ext_resource type="FontFile" uid="uid://p0c7nu1f53no" path="res://assets/fonts/SourceHanSerifSC-VF.ttf" id="2_iumbh"]
+[ext_resource type="FontFile" uid="uid://p0c7nu1f53no" path="res://art/fonts/SourceHanSerifSC-VF.ttf" id="2_iumbh"]
 [ext_resource type="Texture2D" uid="uid://1lb4ugsf7op0" path="res://素材包/ui/topbar/helth.png" id="3_iumbh"]
 [ext_resource type="Texture2D" uid="uid://dm20awbt03cdq" path="res://素材包/ui/topbar/sanity.png" id="4_poe2d"]
 [ext_resource type="Texture2D" uid="uid://c1ngy1r61dxrq" path="res://素材包/ui/topbar/hug.png" id="5_gyh0m"]

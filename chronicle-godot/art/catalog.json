@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "updated": "2026-09-05",
+  "files": [
+    {
+      "path": "environments/reed_bank_landing_v1.png",
+      "status": "runtime",
+      "source": "",
+      "provenance": "environments/ASSET_PROVENANCE.md",
+      "bytes": 3244480,
+      "sha256": "a9162b39deaebb21119e4d3c78c0b70b2da8af71e9e70fad34fee254c85c3f93"
+    },
+    {
+      "path": "fonts/SourceHanSerifSC-VF.ttf",
+      "status": "runtime",
+      "source": "",
+      "provenance": "fonts/SOURCE_HAN_SERIF_LICENSE.txt",
+      "bytes": 59899480,
+      "sha256": "04f163fb935acd9c0caa79e535a43d510a724d25e584d36212e494a9f9db64f4"
+    },
+    {
+      "path": "icons/icon.svg",
+      "status": "runtime",
+      "source": "",
+      "provenance": "README.md",
+      "bytes": 995,
+      "sha256": "6c80384360a5b269d1054bfb27241258154e2cc8167c522016fdc1820e84e0f8"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Audio/BGM.ogg",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Audio/BGM.ogg",
+      "provenance": "README.md",
+      "bytes": 1438150,
+      "sha256": "959da5b0ae126796d09b8ed7e9d56cf0d3cca7c66961e0639a300b68de649eee"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Audio/EnemyDeath.mp3",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Audio/EnemyDeath.mp3",
+      "provenance": "README.md",
+      "bytes": 10848,
+      "sha256": "2a826303558781e3757cfa98d124afb36a1a16025c6e59264b34fbe3ae4661c0"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Audio/GameOver.mp3",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Audio/GameOver.mp3",
+      "provenance": "README.md",
+      "bytes": 27840,
+      "sha256": "767e1d190ea3e3e35486bebd33a33f359ba0be021cc608aedbf1d09d04e650ab"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Audio/Gun.mp3",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Audio/Gun.mp3",
+      "provenance": "README.md",
+      "bytes": 4680,
+      "sha256": "e5563c7df4ab5df7869f67a716ead3410b26ae901361dcb004e2010ce0368de2"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Audio/Running.mp3",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Audio/Running.mp3",
+      "provenance": "README.md",
+      "bytes": 23208,
+      "sha256": "9e9875f9993b9927c563c6fac77d266d83382c1f275a1a1f7e3aeace046b05ab"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Sprites/ForestBackground.png",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Sprites/ForestBackground.png",
+      "provenance": "README.md",
+      "bytes": 21435,
+      "sha256": "97c1c24c43bd31b69b2e2c2cebcb0e9aeeb7f603326ec5016f803f5a044b632b"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Sprites/Foxy.png",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Sprites/Foxy.png",
+      "provenance": "README.md",
+      "bytes": 8548,
+      "sha256": "e2dcbc61e7549ad326747ad8d4e5e84b250eb405c35def6d2aba6f30f7eddde2"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Sprites/Slimer.png",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Sprites/Slimer.png",
+      "provenance": "README.md",
+      "bytes": 963,
+      "sha256": "866ee2632ff19bdafffc1346550358ef2bc4527b6a928edf8183015d5805543b"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Sprites/SlimerDeath.png",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Sprites/SlimerDeath.png",
+      "provenance": "README.md",
+      "bytes": 1766,
+      "sha256": "62f6a211e48870adc637d9ecc957d04599c90934588e9fa660c6d08a5e6f19eb"
+    },
+    {
+      "path": "reference/legacy/AssetBundle/Uranus_Pixel_11Px.ttf",
+      "status": "reference_only",
+      "source": "素材包/AssetBundle/Uranus_Pixel_11Px.ttf",
+      "provenance": "README.md",
+      "bytes": 1344764,
+      "sha256": "23c700fb18af1e3cccf29fff53fdba6f4e405764e366f93b1fe0f898382c3d2e"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/微信图片_20251024191137_618_42.jpg",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/微信图片_20251024191137_618_42.jpg",
+      "provenance": "README.md",
+      "bytes": 70526,
+      "sha256": "0c798ec0bc0b2ca3087a21614992295c1eb314b00710cb142becc94cc406c164"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/cha.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/cha.png",
+      "provenance": "README.md",
+      "bytes": 4593,
+      "sha256": "7c2bd0c638886ce58c0befd6ecccab53f19a42b633e6d59cfd0dd19ed2540b8f"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/constitution.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/constitution.png",
+      "provenance": "README.md",
+      "bytes": 2999,
+      "sha256": "cca53711744e80a5bb0c23dda625760e05805c37ce0c424e7b75062545d57aac"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/dex.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/dex.png",
+      "provenance": "README.md",
+      "bytes": 2984,
+      "sha256": "7a536bfb02b72e4d31f9f7463be80a7b07c093a7461909646d2083438d16cbc0"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/helth.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/helth.png",
+      "provenance": "README.md",
+      "bytes": 1514,
+      "sha256": "a54d258f93558b5498273e3b14bd68aa4fbd73fb7a13a0571f384819a603b0ff"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/hug.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/hug.png",
+      "provenance": "README.md",
+      "bytes": 3624,
+      "sha256": "e340f2ee83da42ba797149eb9db50ac3e824aa36d34ca9c8b662a8dbc1c9fdf9"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/int.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/int.png",
+      "provenance": "README.md",
+      "bytes": 3302,
+      "sha256": "957cc34bbc819156c47a9aa292d64ff96144f5ad21b326246a7d4e71541b74d1"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/sanity.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/sanity.png",
+      "provenance": "README.md",
+      "bytes": 1488,
+      "sha256": "224d8f943efabefc71cbd957dbdead0d31e04503f3d02aaa95faf9e927be1094"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/sleep.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/sleep.png",
+      "provenance": "README.md",
+      "bytes": 3483,
+      "sha256": "2a545c2cd91ae96061b0071c4ebcbd79dd106cc1993ef3462afad50bbf409070"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/str.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/str.png",
+      "provenance": "README.md",
+      "bytes": 3142,
+      "sha256": "5d2b05f1141add76e183ae7cf2d98e80f360c2a76904dd0b5af9fc1df12ed04a"
+    },
+    {
+      "path": "reference/legacy/ui/topbar/wis.png",
+      "status": "reference_only",
+      "source": "素材包/ui/topbar/wis.png",
+      "provenance": "README.md",
+      "bytes": 3690,
+      "sha256": "d221ac9a4ca0a899966e1c128c7a95dd416fe530c3e1a6d768a4aa176d67741b"
+    }
+  ]
+}

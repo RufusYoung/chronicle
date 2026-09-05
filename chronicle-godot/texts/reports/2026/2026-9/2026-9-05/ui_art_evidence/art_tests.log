@@ -1,0 +1,11 @@
+test_backup_preservation (__main__.ArtBoundaryTest.test_backup_preservation) ... ok
+test_changed_runtime_asset (__main__.ArtBoundaryTest.test_changed_runtime_asset) ... ok
+test_export_and_import_exclusions_required (__main__.ArtBoundaryTest.test_export_and_import_exclusions_required) ... ok
+test_reference_cannot_enter_formal_surface (__main__.ArtBoundaryTest.test_reference_cannot_enter_formal_surface) ... ok
+test_uncatalogued_and_scattered_assets (__main__.ArtBoundaryTest.test_uncatalogued_and_scattered_assets) ... ok
+test_valid_catalog (__main__.ArtBoundaryTest.test_valid_catalog) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.110s
+
+OK

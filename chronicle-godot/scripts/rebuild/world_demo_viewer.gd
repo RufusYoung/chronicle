@@ -2,7 +2,7 @@ extends "res://scripts/rebuild/v5_live_location_viewer.gd"
 ## Generated-world UI. The legacy viewer remains a synchronous regression fixture.
 
 const Graph = preload("res://scripts/rebuild/region_graph.gd")
-const REED_ART = preload("res://assets/world/reed_bank_landing_v1.png")
+const REED_ART = preload("res://art/environments/reed_bank_landing_v1.png")
 const DEFAULT_SAVE := "user://world_demo/manual.json"
 
 @export var save_path: String = DEFAULT_SAVE
@@ -221,7 +221,7 @@ func _install_save_controls() -> void:
 		button.text = item[1]
 		button.pressed.connect(item[2])
 		header.add_child(button)
-		SharedInterfaceStyle.apply_decision_button(button, "normal")
+		SharedInterfaceStyle.apply_command_button(button)
 	_status = Label.new()
 	_status.name = "WorldOperationStatus"
 	_status.custom_minimum_size.y = 20

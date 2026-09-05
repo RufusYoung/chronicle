@@ -1,0 +1,9 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 PLAYER ATTRIBUTE PASS] 1. Player attribute surface loads
+[V5 PLAYER ATTRIBUTE PASS] 2. All six attributes come from the runtime player snapshot
+[V5 PLAYER ATTRIBUTE PASS] 3. Left summary exposes all attributes and survival state
+[V5 PLAYER ATTRIBUTE PASS] 4. Character page exposes the complete attribute sheet without a nested scrollbar
+[V5 PLAYER ATTRIBUTE PASS] 5. Physical risks use dexterity, strength, and constitution checks
+[V5 PLAYER ATTRIBUTE PASS] 6. Restart restores the complete attribute sheet
+[V5 PLAYER ATTRIBUTE RESULT] PASS

@@ -4,7 +4,7 @@
 
 ## 文件与使用范围
 
-- 文件：`assets/world/reed_bank_landing_v1.png`，1536 × 1024。
+- 文件：`art/environments/reed_bank_landing_v1.png`，1536 × 1024。2026-09-05 从 `assets/world/` 原样迁入。
 - 工具：Codex 内置 imagegen；没有使用付费 API 脚本、输入参考图片或备用素材。
 - 原始输出：`$CODEX_HOME/generated_images/019ebcb5-52c8-7163-88a8-7b5e49c7b379/exec-e6966911-e28b-4b91-b724-19f074efda1c.png`，原文件保留。
 - 项目内使用：生成区域「区域」页，在苇岸聚落显示；不用于冒充其他聚落的独立美术。
@@ -21,4 +21,4 @@ Use case: stylized-concept. Asset type: original environment illustration for Ch
 
 先用可读的区域拓扑、地点画与图文行动界面验证方向，不转向大型自由视角 3D。画面必须服从地点辨识与决策，实时状态用界面明确表达；不能用生成插画数量替代人物、实物与道路因果。
 
-既有字体 `assets/fonts/SourceHanSerifSC-VF.ttf` 使用 [Adobe 思源宋体项目](https://github.com/adobe-fonts/source-han-serif)，已补充上游 [OFL 1.1 许可文件](https://github.com/adobe-fonts/source-han-serif/blob/release/LICENSE.txt)。该许可不覆盖 `素材包` 里的其他资产，备用库继续排除在导出外。
+既有字体 `art/fonts/SourceHanSerifSC-VF.ttf` 使用 [Adobe 思源宋体项目](https://github.com/adobe-fonts/source-han-serif)，已补充上游 [OFL 1.1 许可文件](https://github.com/adobe-fonts/source-han-serif/blob/release/LICENSE.txt)。该许可不覆盖 `素材包` 里的其他资产，备用库及 `art/reference/` 副本继续排除在导出外。

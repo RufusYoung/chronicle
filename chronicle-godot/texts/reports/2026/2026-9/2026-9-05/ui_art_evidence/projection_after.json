@@ -1,0 +1,323 @@
+{
+  "checkpoint": "user://tests/world_runtime_probe/day7.json",
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "rows": [
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 10,
+        "deferred_consequences": 0,
+        "entities": 61,
+        "equipment_loadouts": 1,
+        "exchanges": 0,
+        "facts": 319,
+        "investigation_leads": 0,
+        "items": 21,
+        "memories": 0,
+        "obligations": 0,
+        "pressures": 0,
+        "relationships": 304,
+        "resource_stocks": 23,
+        "rumors": 0,
+        "states": 963,
+        "traces": 0
+      },
+      "world": "initial"
+    },
+    {
+      "max_ms": 39.592,
+      "p50_ms": 38.501,
+      "p95_ms": 39.243,
+      "phase": "full_projection",
+      "repeats": 20,
+      "snapshot_calls": 360,
+      "snapshot_ms_total": 478.817,
+      "world": "initial"
+    },
+    {
+      "max_ms": 1.702,
+      "p50_ms": 1.456,
+      "p95_ms": 1.702,
+      "phase": "snapshot",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 6.779,
+      "world": "initial"
+    },
+    {
+      "max_ms": 1.925,
+      "p50_ms": 1.716,
+      "p95_ms": 1.925,
+      "phase": "action_candidates",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 6.271,
+      "world": "initial"
+    },
+    {
+      "max_ms": 9.521,
+      "p50_ms": 9.267,
+      "p95_ms": 9.521,
+      "phase": "action_rows",
+      "repeats": 5,
+      "snapshot_calls": 30,
+      "snapshot_ms_total": 39.349,
+      "world": "initial"
+    },
+    {
+      "max_ms": 28.536,
+      "p50_ms": 28.344,
+      "p95_ms": 28.536,
+      "phase": "decision",
+      "repeats": 5,
+      "snapshot_calls": 80,
+      "snapshot_ms_total": 105.773,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.004,
+      "p50_ms": 0.001,
+      "p95_ms": 0.004,
+      "phase": "agency",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 4.706,
+      "p50_ms": 4.511,
+      "p95_ms": 4.706,
+      "phase": "risk",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 20.04,
+      "world": "initial"
+    },
+    {
+      "max_ms": 5.681,
+      "p50_ms": 5.071,
+      "p95_ms": 5.681,
+      "phase": "travel",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 20.125,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.098,
+      "p50_ms": 0.023,
+      "p95_ms": 0.098,
+      "phase": "player",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 6.666,
+      "p50_ms": 6.271,
+      "p95_ms": 6.666,
+      "phase": "knowledge",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.006,
+      "p50_ms": 0.002,
+      "p95_ms": 0.006,
+      "phase": "feedback",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.002,
+      "p50_ms": 0.001,
+      "p95_ms": 0.002,
+      "phase": "world_log_copy",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 127.201,
+      "p50_ms": 89.482,
+      "p95_ms": 111.994,
+      "phase": "unshared_full_projection",
+      "repeats": 20,
+      "snapshot_calls": 680,
+      "snapshot_ms_total": 1193.028,
+      "world": "initial"
+    },
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 22,
+        "deferred_consequences": 0,
+        "entities": 63,
+        "equipment_loadouts": 1,
+        "exchanges": 148,
+        "facts": 1823,
+        "investigation_leads": 0,
+        "items": 221,
+        "memories": 0,
+        "obligations": 4,
+        "pressures": 76,
+        "relationships": 352,
+        "resource_stocks": 23,
+        "rumors": 0,
+        "states": 1046,
+        "traces": 23
+      },
+      "world": "day7"
+    },
+    {
+      "max_ms": 340.593,
+      "p50_ms": 302.461,
+      "p95_ms": 315.751,
+      "phase": "full_projection",
+      "repeats": 20,
+      "snapshot_calls": 380,
+      "snapshot_ms_total": 3945.988,
+      "world": "day7"
+    },
+    {
+      "max_ms": 14.013,
+      "p50_ms": 11.827,
+      "p95_ms": 14.013,
+      "phase": "snapshot",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 50.655,
+      "world": "day7"
+    },
+    {
+      "max_ms": 19.197,
+      "p50_ms": 14.872,
+      "p95_ms": 19.197,
+      "phase": "action_candidates",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 60.833,
+      "world": "day7"
+    },
+    {
+      "max_ms": 87.771,
+      "p50_ms": 73.032,
+      "p95_ms": 87.771,
+      "phase": "action_rows",
+      "repeats": 5,
+      "snapshot_calls": 30,
+      "snapshot_ms_total": 298.803,
+      "world": "day7"
+    },
+    {
+      "max_ms": 268.226,
+      "p50_ms": 251.963,
+      "p95_ms": 268.226,
+      "phase": "decision",
+      "repeats": 5,
+      "snapshot_calls": 85,
+      "snapshot_ms_total": 930.439,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.004,
+      "p50_ms": 0.002,
+      "p95_ms": 0.004,
+      "phase": "agency",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 42.451,
+      "p50_ms": 32.155,
+      "p95_ms": 42.451,
+      "phase": "risk",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 141.867,
+      "world": "day7"
+    },
+    {
+      "max_ms": 56.02,
+      "p50_ms": 47.004,
+      "p95_ms": 56.02,
+      "phase": "travel",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 169.172,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.538,
+      "p50_ms": 0.314,
+      "p95_ms": 0.538,
+      "phase": "player",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 34.087,
+      "p50_ms": 25.364,
+      "p95_ms": 34.087,
+      "phase": "knowledge",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.009,
+      "p50_ms": 0.003,
+      "p95_ms": 0.009,
+      "phase": "feedback",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 1.445,
+      "p50_ms": 1.313,
+      "p95_ms": 1.445,
+      "phase": "world_log_copy",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 602.264,
+      "p50_ms": 536.385,
+      "p95_ms": 568.034,
+      "phase": "unshared_full_projection",
+      "repeats": 20,
+      "snapshot_calls": 720,
+      "snapshot_ms_total": 7476.238,
+      "world": "day7"
+    }
+  ],
+  "scope": "Warm read-only projection cost, not action latency or cold startup. Component probes overlap and must not be added together."
+}

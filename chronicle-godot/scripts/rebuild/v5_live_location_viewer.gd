@@ -57,16 +57,21 @@ func _ready() -> void:
 	view_model = ViewModelModel.new()
 	surface = SharedSurface.install(self, $Margin/RootLayout,
 		$Margin/RootLayout/MainArea, action_dock, {
+		"header": {
+			"brand": [brand_subtitle.get_parent().get_node("BrandTitle"), brand_subtitle],
+			"clock": [time_label, session_label], "commands": [wait_button, restart_button],
+		},
 		"scene": [location_title, location_context, location_description],
 		"feedback": [feedback_eyebrow, feedback_title, feedback_body],
 		"people": [visible_people.get_parent().get_node("PeopleHeading"), visible_people],
 		"observations": [visible_observations.get_parent().get_node("ObservationHeading"), visible_observations],
-		"decision": [goal_progress, goal_title, goal_summary, risk_heading, risk_text, travel_heading, travel_scroll],
+		"decision": [goal_title, risk_heading, risk_text, travel_heading, travel_scroll],
 		"character": [[player_summary.get_parent().get_node("PlayerHeading"), player_summary]],
-		"records": [region_status.get_parent().get_node("RegionHeading"), region_status,
+		"records": [goal_progress, goal_summary, region_status.get_parent().get_node("RegionHeading"), region_status,
 			knowledge_heading, knowledge_text, chronicle_heading, chronicle_text,
 			history_text.get_parent().get_node("HistoryHeading"), history_text],
 	})
+	location_title.add_theme_font_size_override("font_size", SharedInterfaceStyle.FONT_TITLE)
 	wait_button.pressed.connect(advance_time)
 	restart_button.pressed.connect(_request_restart)
 	restart_dialog.confirmed.connect(restart_session)
@@ -337,7 +342,7 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		]
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		button.add_theme_font_size_override("font_size", 13)
+		button.add_theme_font_size_override("font_size", SharedInterfaceStyle.FONT_ACTION)
 		button.tooltip_text = "%s：%s\n花费：%s\n取舍：%s" % [
 			kind,
 			hint,

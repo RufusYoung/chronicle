@@ -396,7 +396,7 @@ func build_view_data() -> Dictionary:
 		visible_observations.append(_rumor_row(rumor))
 		observation_ids.append(rumor_id)
 
-	return {
+	var view := {
 		"ready": true,
 		"location": {
 			"id": str(location.get("id", "")),
@@ -414,7 +414,6 @@ func build_view_data() -> Dictionary:
 		"visible_people": visible_people,
 		"visible_observations": visible_observations,
 		"actions": _action_rows(),
-		"decision": _decision_view(snapshot),
 		"agency": _agency_view(),
 		"risk": _risk_view(),
 		"travel_options": _travel_rows(),
@@ -425,6 +424,9 @@ func build_view_data() -> Dictionary:
 		"history": action_history.duplicate(true),
 		"world_log_count": session.get_world_log_entries().size(),
 	}
+	# Reuse this projection only; never carry cached candidates across an action.
+	view["decision"] = _decision_view(snapshot, view, not encounter_options.is_empty())
+	return view
 
 
 func _playtest_view(snapshot: Variant) -> Dictionary:
@@ -859,9 +861,9 @@ func _structured_decision_metadata(
 	}
 
 
-func _decision_view(snapshot: Variant) -> Dictionary:
-	var actions := _action_rows()
-	var travel := _travel_rows()
+func _decision_view(snapshot: Variant, projection: Dictionary = {}, encounter_active: Variant = null) -> Dictionary:
+	var actions: Array = projection.actions if projection.has("actions") else _action_rows()
+	var travel: Array = projection.travel_options if projection.has("travel_options") else _travel_rows()
 	var executable_count := 0
 	for row: Dictionary in actions:
 		if bool(row.get("can_execute", true)):
@@ -870,16 +872,20 @@ func _decision_view(snapshot: Variant) -> Dictionary:
 		if bool(row.get("can_travel", false)):
 			executable_count += 1
 	var question := "你愿意先把时间用在哪里？"
-	if not session.get_combat_encounter_options().is_empty():
+	var has_combat: bool = not session.get_combat_encounter_options().is_empty() if encounter_active == null else bool(encounter_active)
+	if has_combat:
 		question = "你要用哪种方式处理眼前威胁？"
-	elif bool(_risk_view().get("active", false)):
-		question = "先准备、直接承担风险，还是离开这里？"
-	elif bool(_investigation_view(snapshot).get("active", false)):
-		question = "现在追查到底，还是让这条线索留到以后？"
-	elif not travel.is_empty():
-		question = "继续处理眼前的人和事，还是把物资投入下一段路？"
+	else:
+		var risk: Dictionary = projection.risk if projection.has("risk") else _risk_view()
+		var investigation: Dictionary = projection.investigation if projection.has("investigation") else _investigation_view(snapshot)
+		if bool(risk.get("active", false)):
+			question = "先准备、直接承担风险，还是离开这里？"
+		elif bool(investigation.get("active", false)):
+			question = "现在追查到底，还是让这条线索留到以后？"
+		elif not travel.is_empty():
+			question = "继续处理眼前的人和事，还是把物资投入下一段路？"
 	var stakes: Array[String] = []
-	var status_rows := _region_status_rows(snapshot)
+	var status_rows: Array = projection.region_status if projection.has("region_status") else _region_status_rows(snapshot)
 	var relevant_rows := status_rows.slice(0, 2)
 	for row: Dictionary in status_rows:
 		if str(row.get("key", "")) == "latest_industry_lifecycle" and int(row.get("day", 0)) >= int(session.current_day) - 3:

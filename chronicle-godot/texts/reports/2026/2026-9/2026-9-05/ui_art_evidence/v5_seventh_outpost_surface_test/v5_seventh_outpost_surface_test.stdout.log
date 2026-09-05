@@ -1,0 +1,22 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 SEVENTH OUTPOST SURFACE PASS] 1. Seventh Outpost service surface loads
+[V5 SEVENTH OUTPOST SURFACE PASS] 2. First duty begins without a blocking onboarding dialog
+[V5 SEVENTH OUTPOST SURFACE PASS] 3. Service screen exposes attributes and changing condition
+[V5 SEVENTH OUTPOST SURFACE PASS] 3c. Talents, zero-rank skills, and three equipment slots are visible
+[V5 SEVENTH OUTPOST SURFACE PASS] 3a. Inventory, quoted stock, and price reasons are visible
+[V5 SEVENTH OUTPOST SURFACE PASS] 3b. Purchase gives immediate inventory, stock, quote, and feedback changes
+[V5 SEVENTH OUTPOST SURFACE PASS] 4. Fixed comrades and systemic outpost pressures are visible
+[V5 SEVENTH OUTPOST SURFACE PASS] 5. Duty shows combined requirements, equipment risk, and availability
+[V5 SEVENTH OUTPOST SURFACE PASS] 6. Blocked duty explains the missing attribute in place
+[V5 SEVENTH OUTPOST SURFACE PASS] 7. Repeating a blocked duty gives feedback without advancing
+[V5 SEVENTH OUTPOST SURFACE PASS] 8. Two patrols create readable consequences and unlock recovery
+[V5 SEVENTH OUTPOST SURFACE PASS] 9. Recovery changes state and disappears when no longer relevant
+[V5 SEVENTH OUTPOST SURFACE PASS] 10. Seven duties end in one route-derived growth choice
+[V5 SEVENTH OUTPOST SURFACE PASS] 11. Completion text is derived from state and stored as Chronicle
+[V5 SEVENTH OUTPOST SURFACE PASS] 11a. Growth confirmation exposes evidence and permanent reward
+[V5 SEVENTH OUTPOST SURFACE PASS] 11b. Confirmed growth refreshes the sheet and offers the next life stage
+[V5 SEVENTH OUTPOST SURFACE PASS] 11c. The earned route enters a readable formal quarter surface
+[V5 SEVENTH OUTPOST SURFACE PASS] 11d. A quarter duty shows calendar, person, feedback, and item-history changes
+[V5 SEVENTH OUTPOST SURFACE PASS] 12. Resource exhaustion disables and explains affected duties
+[V5 SEVENTH OUTPOST SURFACE RESULT] PASS

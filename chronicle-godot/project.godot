@@ -13,7 +13,7 @@ config_version=5
 config/name="CHRONICLE_GODOT"
 run/main_scene="res://scenes/rebuild/world_bootstrap.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://art/icons/icon.svg"
 
 [autoload]
 
@@ -34,7 +34,7 @@ version_control/autoload_on_startup=true
 
 [gui]
 
-theme/custom_font="uid://p0c7nu1f53no"
+theme/custom_font="res://art/fonts/SourceHanSerifSC-VF.ttf"
 
 [rendering]
 

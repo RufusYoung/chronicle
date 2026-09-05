@@ -11,6 +11,7 @@ var current_view_data: Dictionary = {}
 var completion_was_shown: bool = false
 var pending_growth_candidate_id: String = ""
 var surface: Dictionary = {}
+var restart_dialog: ConfirmationDialog
 
 @onready var subtitle: Label = %Subtitle
 @onready var day_label: Label = %DayLabel
@@ -40,26 +41,43 @@ func _ready() -> void:
 	view_model = ViewModelModel.new()
 	surface = SharedSurface.install(self, $Margin/Root, $Margin/Root/Main,
 		$Margin/Root/Dock, {
+		"header": {
+			"brand": [subtitle.get_parent().get_node("Title"), subtitle],
+			"clock": [day_label], "commands": [restart_button],
+		},
 		"scene": [ritual_title, ritual_body],
 		"feedback": [feedback_eyebrow, feedback_title, feedback_body],
 		"people": [people_text.get_parent().get_node("PeopleHeading"), people_text],
-		"decision": [objective_text, status_text.get_parent().get_node("StatusHeading"), status_text],
+		"decision": [status_text.get_parent().get_node("StatusHeading"), status_text],
+		"supplies": [market_text.get_parent().get_node("MarketHeading"), market_text, market_buttons],
 		"character": [
 			[player_text.get_parent().get_node("PlayerHeading"), player_text,
 			feature_text.get_parent().get_node("FeatureHeading"), feature_text],
-			[market_text.get_parent().get_node("MarketHeading"), market_text, market_buttons],
 		],
-		"records": [history_text.get_parent().get_node("HistoryHeading"), history_text],
+		"records": [objective_text, history_text.get_parent().get_node("HistoryHeading"), history_text],
 	})
+	var place := Label.new()
+	place.name = "OutpostLocationTitle"
+	place.text = "第七哨站"
+	place.add_theme_font_size_override("font_size", SharedSurface.Style.FONT_TITLE)
+	place.add_theme_color_override("font_color", SharedSurface.Style.COLOR_HEADING)
+	ritual_title.get_parent().add_child(place)
+	ritual_title.get_parent().move_child(place, 0)
+	restart_dialog = ConfirmationDialog.new()
+	restart_dialog.name = "RestartDialog"
+	restart_dialog.title = "重新开始当前阶段？"
+	restart_dialog.dialog_text = "本阶段的未保存行动和成长将被清空。\n已有磁盘存档不会被删除或覆盖。"
+	restart_dialog.get_ok_button().text = "重新开始"
+	restart_dialog.get_cancel_button().text = "取消"
+	add_child(restart_dialog)
+	restart_dialog.owner = self
+	restart_dialog.unique_name_in_owner = true
+	restart_dialog.confirmed.connect(_restart_current_phase)
 	$Margin/Root/Dock.custom_minimum_size.y = 0
 	$Margin/Root/Header.custom_minimum_size.y = 58
-	subtitle.add_theme_font_size_override("font_size", 12)
-	day_label.add_theme_font_size_override("font_size", 14)
-	action_hint.add_theme_font_size_override("font_size", 12)
-	action_heading.add_theme_font_size_override("font_size", 16)
 	feedback_body.bbcode_enabled = true
 	action_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	restart_button.pressed.connect(_restart_current_phase)
+	restart_button.pressed.connect(_request_restart)
 	growth_confirmation_dialog.confirmed.connect(_confirm_pending_growth)
 	var transition: Dictionary = {}
 	var relay: Node = get_node_or_null("/root/_LifeStageTransition")
@@ -78,12 +96,18 @@ func restart_project(transition: Dictionary = {}) -> void:
 
 
 func _restart_current_phase() -> void:
+	restart_dialog.hide()
 	completion_was_shown = false
 	pending_growth_candidate_id = ""
 	completion_dialog.hide()
 	growth_confirmation_dialog.hide()
 	view_model.restart_current_phase()
 	refresh_view()
+
+
+func _request_restart() -> void:
+	restart_dialog.popup_centered_clamped(Vector2i(640, 210), 0.9)
+	restart_dialog.get_cancel_button().grab_focus()
 
 
 func enter_first_quarter() -> Dictionary:
@@ -494,6 +518,7 @@ func _confirm_pending_growth() -> void:
 
 func _refresh_market(market: Dictionary) -> void:
 	for child: Node in market_buttons.get_children():
+		market_buttons.remove_child(child)
 		child.queue_free()
 	var offers: Array = market.get("offers", [])
 	var lines := [
@@ -524,6 +549,7 @@ func _refresh_market(market: Dictionary) -> void:
 		str(offer.get("item_instance_id", "")),
 		int(offer.get("unit_price", 0))
 	))
+	SharedSurface.Style.apply_command_button(button)
 	market_buttons.add_child(button)
 
 
