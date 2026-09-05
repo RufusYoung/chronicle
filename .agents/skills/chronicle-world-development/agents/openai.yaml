@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chronicle World Development"
+  short_description: "Develop and verify Chronicle's causal emergent world"
+  default_prompt: "Use $chronicle-world-development to advance the current Chronicle plan through verified checkpoints until its authorized stopping condition."
