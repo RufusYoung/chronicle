@@ -1,0 +1,52 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS: non-object requests rejected
+PASS: explicit start required
+PASS: observer cannot run a scripted actor profile
+PASS: lake town exposes formal choices
+PASS: observation preserves Stores, cursors and RNG
+PASS: player cannot inspect hidden facts
+PASS: raw histories and Stores omitted
+PASS: player cannot bypass time or encounter rules
+PASS: UI route gate enforced
+PASS: roll injection rejected
+PASS: save paths confined
+PASS: fractional seed rejected
+PASS: rejected commands have no gameplay effect
+PASS: code control receipt explicitly labelled
+PASS: completed observation disappears
+PASS: actual discovery returned in feedback
+PASS: foreign session cannot mutate
+PASS: same request returns receipt without a second action
+PASS: changed payload cannot reuse request identity
+PASS: stale control revision rejected
+PASS: completed choice cannot be replayed under fresh identity
+PASS: agent action matches formal ViewModel including RNG and cursors
+PASS: native save envelope written
+PASS: overwrite requires explicit flag
+PASS: explicit atomic slot replacement works
+PASS: native save restored
+PASS: save restores feedback and player projection
+PASS: save restores complete simulation state
+PASS: save continuation deterministic
+PASS: failed load preserves current session
+PASS: generated world has no actor commands
+PASS: bounded inspection: facts
+PASS: bounded inspection: entities
+PASS: bounded inspection: resources
+PASS: bounded inspection: items
+PASS: bounded inspection: obligations
+PASS: bounded inspection: exchanges
+PASS: omniscient inspection is read-only
+PASS: observer has no actor authority
+PASS: time bounds and types enforced
+PASS: autonomous daily cycle exposed
+PASS: world changes with no actor actions
+PASS: world observer save round trip
+PASS: out-of-range inspection is an empty page
+PASS: first winter is code playable
+PASS: market action uses the actual quote, inventory and payment
+PASS: first winter duty matches formal controller
+PASS: life-project save keeps controller runtime
+PASS: outpost feedback and incident state survive save
+AGENT_CONTRACT: 49/50 passed

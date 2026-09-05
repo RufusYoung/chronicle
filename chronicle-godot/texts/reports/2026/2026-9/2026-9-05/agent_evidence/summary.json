@@ -1,0 +1,3480 @@
+{
+  "evidence_kind": "code_agent_and_passive_world",
+  "runs": [
+    {
+      "profile": "world",
+      "seed": 81001,
+      "days": 3,
+      "actor_actions": 0,
+      "seconds": 93.519,
+      "before": {
+        "actor_policy": "passive_fixture_actor",
+        "counts": {
+          "character_features": 0,
+          "chronicle_entries": 10,
+          "deferred_consequences": 0,
+          "entities": 61,
+          "equipment_loadouts": 1,
+          "exchanges": 0,
+          "facts": 319,
+          "investigation_leads": 0,
+          "items": 21,
+          "memories": 0,
+          "obligations": 0,
+          "pressures": 0,
+          "relationships": 304,
+          "resource_stocks": 23,
+          "rumors": 0,
+          "states": 963,
+          "traces": 0
+        },
+        "network": {
+          "absorption_delay_days": 1,
+          "autonomous_pressure": {
+            "daily_start_chance_percent": 24.0,
+            "enabled": true,
+            "maximum_capacity_penalty": 2.0,
+            "maximum_duration_days": 4.0,
+            "maximum_quiet_days": 8.0,
+            "maximum_risk_increase": 3.0,
+            "minimum_capacity_penalty": 1.0,
+            "minimum_duration_days": 3.0,
+            "minimum_quiet_days": 4.0,
+            "minimum_risk_increase": 2.0
+          },
+          "capacity_adaptation": {
+            "construction_plot_count_per_settlement": 6.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "facility_expansion_cooldown_days": 30.0,
+            "facility_expansion_cost": 3.0,
+            "housing_capacity_per_dwelling": 4.0,
+            "housing_construction_cooldown_days": 90.0,
+            "housing_construction_cost": 4.0,
+            "housing_pressure_days_required": 30.0,
+            "housing_pressure_ratio_percent": 85.0,
+            "labor_pressure_days_required": 14.0,
+            "maximum_extra_slots_per_occupation": 4.0,
+            "minimum_organization_members_for_coordination": 1.0,
+            "minimum_unemployed_for_expansion": 1.0,
+            "organization_coordination_days_per_member": 2.0,
+            "organization_coordination_max_reduction_days": 8.0,
+            "resource_recovery_ratio_percent": 35.0,
+            "unmet_pressure_fact_interval_days": 30.0,
+            "work_slots_per_expansion": 2.0
+          },
+          "family_generation": {
+            "birth_cooldown_days": 365.0,
+            "conception_chance_percent": 18.0,
+            "conception_interval_days": 90.0,
+            "culture_id": "culture.north_border_lakes",
+            "culture_label": "北境湖地",
+            "enabled": true,
+            "gestation_days": 280.0,
+            "given_names": [
+              "岑",
+              "川",
+              "冬",
+              "禾",
+              "简",
+              "澜",
+              "黎",
+              "苓",
+              "牧",
+              "宁",
+              "荞",
+              "桑",
+              "朔",
+              "苇",
+              "溪",
+              "砚",
+              "遥",
+              "照"
+            ],
+            "maximum_children_per_pair": 3.0,
+            "maximum_conceptions_per_settlement_per_cycle": 1.0,
+            "maximum_parent_age": 45.0,
+            "maximum_partner_age_gap": 20.0,
+            "maximum_partnership_age": 60.0,
+            "maximum_partnerships_per_settlement_per_cycle": 1.0,
+            "minimum_partnership_age": 18.0,
+            "partnership_chance_percent": 42.0,
+            "partnership_interval_days": 365.0,
+            "temperament_ids": [
+              "steady",
+              "cautious",
+              "bold",
+              "sociable",
+              "reserved"
+            ]
+          },
+          "generation_seed": 81001,
+          "industry_archetypes": [
+            {
+              "facility": {
+                "name_suffix": "制绳棚",
+                "observation": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。"
+              },
+              "industry_id": "cordage",
+              "label": "纤维制绳",
+              "occupation_ids": [
+                "cordage_maker"
+              ],
+              "requires_work_history": true,
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              }
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+                "id": "landing",
+                "name_suffix": "泊台",
+                "observation": "木台边挂着按水深分开的网具，今日鱼获会从这里进入家庭和交换。",
+                "tags": [
+                  "fishery",
+                  "waterside",
+                  "food_source"
+                ]
+              },
+              "industry_id": "fishery",
+              "label": "浅水网渔",
+              "occupation_ids": [
+                "net_fisher"
+              ],
+              "required_any_resource_tags": [
+                "fish"
+              ],
+              "resource_tag_weights": {
+                "fish": 4.0,
+                "water": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "fish"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "riverside": 3.0,
+                "waterside": 4.0
+              },
+              "traffic_mode_weights": {
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+                "id": "terraces",
+                "name_suffix": "坡田",
+                "observation": "田垄顺坡分层，低处留着排水沟，高处堆放能过冬的块根筐。",
+                "tags": [
+                  "farmland",
+                  "food_source",
+                  "slope"
+                ]
+              },
+              "industry_id": "terrace_farming",
+              "label": "坡田耕作",
+              "occupation_ids": [
+                "terrace_farmer"
+              ],
+              "required_any_resource_tags": [
+                "soil",
+                "roots"
+              ],
+              "resource_tag_weights": {
+                "food": 1.0,
+                "roots": 3.0,
+                "soil": 4.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 0.75,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "soil",
+                  "roots"
+                ]
+              },
+              "terrain_tag_weights": {
+                "fertile": 4.0,
+                "slope": 3.0,
+                "upland": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "纤维与泽草容易取得，聚落因此搭起可编苇、修具和晾药的共用长棚。",
+                "id": "work_shed",
+                "name_suffix": "长工棚",
+                "observation": "棚梁上垂着湿苇与药束，案面同时留有编席压痕和修具铁屑。",
+                "tags": [
+                  "craft",
+                  "reeds",
+                  "herbalism"
+                ]
+              },
+              "industry_id": "reed_craft",
+              "label": "苇编与修具",
+              "occupation_ids": [
+                "reed_weaver"
+              ],
+              "required_any_resource_tags": [
+                "reeds",
+                "fiber"
+              ],
+              "resource_tag_weights": {
+                "fiber": 3.0,
+                "herbs": 1.0,
+                "reeds": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 3.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "道路运量足以支撑换绳、歇轮与短途转运，泥地被车辙压成了固定车坪。",
+                "id": "road_yard",
+                "name_suffix": "车坪",
+                "observation": "车辙在这里重叠，备用轮、麻绳和过秤木架说明货物会稳定经过。",
+                "tags": [
+                  "road",
+                  "transport",
+                  "market_access"
+                ]
+              },
+              "industry_id": "road_carting",
+              "label": "短途转运",
+              "occupation_ids": [
+                "road_carter"
+              ],
+              "required_any_traffic_modes": [
+                "road"
+              ],
+              "resource_tag_weights": {
+                "timber": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "traffic_capacity",
+                "tags_any": [
+                  "road"
+                ]
+              },
+              "terrain_tag_weights": {
+                "roadside": 3.0,
+                "slope": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 5.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "地势和来路风险共同促成了守望点，值守者能提前看见靠近聚落的人与船。",
+                "id": "watch_post",
+                "name_suffix": "守望台",
+                "observation": "矮台朝向主要来路，巡铃、遮雨火盆和换班刻痕都已投入使用。",
+                "tags": [
+                  "watch",
+                  "security",
+                  "high_ground"
+                ]
+              },
+              "industry_id": "watch_service",
+              "label": "道路守望",
+              "occupation_ids": [
+                "watch_hand"
+              ],
+              "resource_tag_weights": {},
+              "terrain_tag_weights": {
+                "defensible": 4.0,
+                "slope": 1.0,
+                "upland": 3.0
+              },
+              "traffic_mode_weights": {
+                "road": 2.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "浅卤资源足够稳定，居民沿低地修出小片蒸晒盐坪。",
+                "id": "salt_pans",
+                "name_suffix": "晒盐坪",
+                "observation": "浅盘边缘结着白壳，木耙和遮雨布说明这里并非偶然取盐。",
+                "tags": [
+                  "salt",
+                  "brine",
+                  "resource_site"
+                ]
+              },
+              "industry_id": "salt_gathering",
+              "label": "浅盐采集",
+              "occupation_ids": [
+                "salt_gatherer"
+              ],
+              "required_any_resource_tags": [
+                "salt",
+                "brine"
+              ],
+              "resource_tag_weights": {
+                "brine": 4.0,
+                "salt": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "salt",
+                  "brine"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            }
+          ],
+          "industry_lifecycle": {
+            "conditions": {
+              "cordage": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "cordage_maker",
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "fishery": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "net_fisher",
+                  "salt_gatherer"
+                ]
+              },
+              "reed_craft": {
+                "demand_tags": [
+                  "fiber"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "road_carting": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "road_carter",
+                  "watch_hand"
+                ]
+              },
+              "salt_gathering": {
+                "demand_tags": [
+                  "salt"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "salt_gatherer",
+                  "net_fisher"
+                ]
+              },
+              "terrace_farming": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "terrace_farmer",
+                  "road_carter"
+                ]
+              },
+              "watch_service": {
+                "demand_kind": "route_risk",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 2.0,
+                "experience_occupations": [
+                  "watch_hand",
+                  "road_carter"
+                ]
+              }
+            },
+            "construction_cost": 4.0,
+            "enabled": true,
+            "entry_days_required": 6.0,
+            "exit_days_required": 30.0,
+            "initial_slots": 2.0,
+            "minimum_experience_cycles": 6.0,
+            "organization_coordination_days_per_member": 1.0,
+            "organization_coordination_max_reduction_days": 3.0,
+            "reentry_cooldown_days": 30.0
+          },
+          "industry_occupation_templates": [
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0
+              },
+              "label": "制绳匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "cordage_maker",
+              "products": [
+                {
+                  "item_def_id": "item.fiber_rope",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "制绳匠捻合纤维，交出了一捆可捆扎或交换的绳索。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0,
+                "perception": 1.0
+              },
+              "label": "网渔人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "net_fisher",
+              "products": [
+                {
+                  "item_def_id": "item.fresh_fish_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 8,
+              "work_summary": "网渔人从浅水网中收回了当天能分食和交换的鲜鱼。",
+              "workplace_id": "reedbank_landing"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 2.0
+              },
+              "label": "坡田农",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "terrace_farmer",
+              "products": [
+                {
+                  "item_def_id": "item.root_vegetable_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 10,
+              "work_summary": "坡田农从薄田里带回了几份耐放的块根。",
+              "workplace_id": "upper_terraces"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "dexterity": 2.0,
+                "wisdom": 1.0
+              },
+              "label": "苇编匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "reed_weaver",
+              "products": [
+                {
+                  "item_def_id": "item.woven_reed_mat",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "苇编匠压平湿苇，编成了一张可铺可换的苇席。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 1.0
+              },
+              "label": "短途车夫",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "road_carter",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 10,
+              "work_summary": "短途车夫交还货车，从当日运费里领到了铜币。",
+              "workplace_id": "south_road_yard"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "perception": 2.0,
+                "wisdom": 2.0
+              },
+              "label": "泽地采药人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "marsh_herbalist",
+              "products": [
+                {
+                  "item_def_id": "item.marsh_herb_bundle",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采药人抖掉根须上的泥水，留下了几束可晒干的泽草。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 1.0,
+                "wisdom": 1.0
+              },
+              "label": "浅盐采集人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "salt_gatherer",
+              "products": [
+                {
+                  "item_def_id": "item.raw_salt_portion",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采盐人赶在湿气回落时收拢浅盘里的原盐。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 2.0
+              },
+              "label": "村岗守夜人",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "watch_hand",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 12,
+              "work_summary": "守夜人交回巡铃，领取了这一班的薄薪。",
+              "workplace_id": "north_watch_post"
+            }
+          ],
+          "labor_absorption": {
+            "coworker_familiarity_divisor": 10.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "household_occupation_bonus": 12.0,
+            "maximum_hires_per_settlement_per_day": 2.0,
+            "minimum_search_days": 1.0,
+            "open_slot_score_weight": 3.0,
+            "unmet_search_fact_interval_days": 30.0
+          },
+          "links": [
+            {
+              "capacity_per_day": 5.0,
+              "hub_a_id": "generated_location.reed_bay.commons",
+              "hub_b_id": "generated_location.river_steps.commons",
+              "link_id": "reed_bay_river_steps",
+              "mode": "road",
+              "risk": 1,
+              "route_a_to_b_id": "generated_route.network.reed_bay_river_steps.a_to_b",
+              "route_b_to_a_id": "generated_route.network.reed_bay_river_steps.b_to_a",
+              "settlement_a_id": "generated_settlement.reed_bay",
+              "settlement_b_id": "generated_settlement.river_steps",
+              "site_a_id": "reed_bay",
+              "site_b_id": "river_steps",
+              "travel_hours": 4
+            },
+            {
+              "capacity_per_day": 4.0,
+              "hub_a_id": "generated_location.river_steps.commons",
+              "hub_b_id": "generated_location.wind_pass.commons",
+              "link_id": "river_steps_wind_pass",
+              "mode": "road",
+              "risk": 3,
+              "route_a_to_b_id": "generated_route.network.river_steps_wind_pass.a_to_b",
+              "route_b_to_a_id": "generated_route.network.river_steps_wind_pass.b_to_a",
+              "settlement_a_id": "generated_settlement.river_steps",
+              "settlement_b_id": "generated_settlement.wind_pass",
+              "site_a_id": "river_steps",
+              "site_b_id": "wind_pass",
+              "travel_hours": 6
+            }
+          ],
+          "local_procurement": {
+            "buyer_priority": [
+              "road_fellows",
+              "pass_watch",
+              "provision_circle"
+            ],
+            "buyer_purposes": {
+              "pass_watch": "patrol_supply_reserve",
+              "provision_circle": "shipment_lashing_reserve",
+              "road_fellows": "route_maintenance_reserve"
+            },
+            "currency_item_def_id": "item.copper_coin",
+            "enabled": true,
+            "maximum_quantity_per_purchase": 1.0
+          },
+          "migration_delay_days": 2,
+          "operational_material_uses": [
+            {
+              "accepted_purpose_ids": [
+                "route_maintenance_reserve",
+                "patrol_supply_reserve",
+                "shipment_lashing_reserve"
+              ],
+              "consume_when_worn_out": true,
+              "durability_loss_per_cycle": 1.0,
+              "enabled": true,
+              "item_def_id": "item.fiber_rope",
+              "item_display_name": "纤维绳索",
+              "lead_days": 1.0,
+              "procurement_exchange_type": "local_spot_procurement",
+              "procurement_fact_type": "local_rope_procured",
+              "purchase_fact_types": [
+                "local_rope_procured"
+              ],
+              "quantity_label": "捆",
+              "quantity_required": 1.0,
+              "require_acquisition_purpose": true,
+              "scope_type": "route",
+              "seller_occupation_ids": [
+                "cordage_maker"
+              ],
+              "seller_retained_quantity": 1.0,
+              "transport_cost_reduction": 0.25,
+              "trigger_fact_type": "settlement_trade_shipment",
+              "use_id": "shipment_lashing",
+              "work_label": "货运捆扎与装卸"
+            }
+          ],
+          "population_lifecycle": {
+            "adulthood_age": 18.0,
+            "days_per_year": 365.0,
+            "elder_age": 65.0,
+            "enabled": true
+          },
+          "sites": [
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 81001,
+              "hub_location_id": "generated_location.reed_bay.commons",
+              "population_target": 24,
+              "resident_capacity": 33,
+              "settlement_id": "generated_settlement.reed_bay",
+              "settlement_name": "苇岸埠",
+              "site_id": "reed_bay",
+              "terrain_id": "lake_marsh_edge",
+              "terrain_tags": [
+                "waterside",
+                "marsh",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 81998,
+              "hub_location_id": "generated_location.river_steps.commons",
+              "population_target": 26,
+              "resident_capacity": 36,
+              "settlement_id": "generated_settlement.river_steps",
+              "settlement_name": "石渡坞",
+              "site_id": "river_steps",
+              "terrain_id": "river_terrace",
+              "terrain_tags": [
+                "riverside",
+                "fertile",
+                "roadside",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 82995,
+              "hub_location_id": "generated_location.wind_pass.commons",
+              "population_target": 17,
+              "resident_capacity": 22,
+              "settlement_id": "generated_settlement.wind_pass",
+              "settlement_name": "白坡坞",
+              "site_id": "wind_pass",
+              "terrain_id": "windy_upland",
+              "terrain_tags": [
+                "upland",
+                "windy",
+                "defensible",
+                "roadside"
+              ]
+            }
+          ],
+          "trade_goods": [
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.12,
+              "good_id": "food",
+              "reserve_capacity": 24.0,
+              "reserve_label": "外来口粮储备",
+              "tags": [
+                "food"
+              ]
+            },
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.03,
+              "good_id": "fiber",
+              "reserve_capacity": 16.0,
+              "reserve_label": "外来纤维储备",
+              "tags": [
+                "fiber"
+              ]
+            },
+            {
+              "base_unit_price": 3.0,
+              "daily_use_per_resident": 0.02,
+              "good_id": "salt",
+              "reserve_capacity": 12.0,
+              "reserve_label": "外来盐储备",
+              "tags": [
+                "salt"
+              ]
+            }
+          ]
+        },
+        "time": {
+          "day": 1,
+          "elapsed_hours": 0,
+          "hour": 8,
+          "world_tick_count": 0
+        },
+        "visibility": "omniscient_debug"
+      },
+      "after": {
+        "actor_policy": "passive_fixture_actor",
+        "counts": {
+          "character_features": 0,
+          "chronicle_entries": 14,
+          "deferred_consequences": 0,
+          "entities": 61,
+          "equipment_loadouts": 1,
+          "exchanges": 74,
+          "facts": 1033,
+          "investigation_leads": 0,
+          "items": 119,
+          "memories": 0,
+          "obligations": 3,
+          "pressures": 35,
+          "relationships": 341,
+          "resource_stocks": 23,
+          "rumors": 0,
+          "states": 1021,
+          "traces": 23
+        },
+        "network": {
+          "absorption_delay_days": 1,
+          "autonomous_pressure": {
+            "daily_start_chance_percent": 24.0,
+            "enabled": true,
+            "maximum_capacity_penalty": 2.0,
+            "maximum_duration_days": 4.0,
+            "maximum_quiet_days": 8.0,
+            "maximum_risk_increase": 3.0,
+            "minimum_capacity_penalty": 1.0,
+            "minimum_duration_days": 3.0,
+            "minimum_quiet_days": 4.0,
+            "minimum_risk_increase": 2.0
+          },
+          "capacity_adaptation": {
+            "construction_plot_count_per_settlement": 6.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "facility_expansion_cooldown_days": 30.0,
+            "facility_expansion_cost": 3.0,
+            "housing_capacity_per_dwelling": 4.0,
+            "housing_construction_cooldown_days": 90.0,
+            "housing_construction_cost": 4.0,
+            "housing_pressure_days_required": 30.0,
+            "housing_pressure_ratio_percent": 85.0,
+            "labor_pressure_days_required": 14.0,
+            "maximum_extra_slots_per_occupation": 4.0,
+            "minimum_organization_members_for_coordination": 1.0,
+            "minimum_unemployed_for_expansion": 1.0,
+            "organization_coordination_days_per_member": 2.0,
+            "organization_coordination_max_reduction_days": 8.0,
+            "resource_recovery_ratio_percent": 35.0,
+            "unmet_pressure_fact_interval_days": 30.0,
+            "work_slots_per_expansion": 2.0
+          },
+          "family_generation": {
+            "birth_cooldown_days": 365.0,
+            "conception_chance_percent": 18.0,
+            "conception_interval_days": 90.0,
+            "culture_id": "culture.north_border_lakes",
+            "culture_label": "北境湖地",
+            "enabled": true,
+            "gestation_days": 280.0,
+            "given_names": [
+              "岑",
+              "川",
+              "冬",
+              "禾",
+              "简",
+              "澜",
+              "黎",
+              "苓",
+              "牧",
+              "宁",
+              "荞",
+              "桑",
+              "朔",
+              "苇",
+              "溪",
+              "砚",
+              "遥",
+              "照"
+            ],
+            "maximum_children_per_pair": 3.0,
+            "maximum_conceptions_per_settlement_per_cycle": 1.0,
+            "maximum_parent_age": 45.0,
+            "maximum_partner_age_gap": 20.0,
+            "maximum_partnership_age": 60.0,
+            "maximum_partnerships_per_settlement_per_cycle": 1.0,
+            "minimum_partnership_age": 18.0,
+            "partnership_chance_percent": 42.0,
+            "partnership_interval_days": 365.0,
+            "temperament_ids": [
+              "steady",
+              "cautious",
+              "bold",
+              "sociable",
+              "reserved"
+            ]
+          },
+          "generation_seed": 81001,
+          "industry_archetypes": [
+            {
+              "facility": {
+                "name_suffix": "制绳棚",
+                "observation": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。"
+              },
+              "industry_id": "cordage",
+              "label": "纤维制绳",
+              "occupation_ids": [
+                "cordage_maker"
+              ],
+              "requires_work_history": true,
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              }
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+                "id": "landing",
+                "name_suffix": "泊台",
+                "observation": "木台边挂着按水深分开的网具，今日鱼获会从这里进入家庭和交换。",
+                "tags": [
+                  "fishery",
+                  "waterside",
+                  "food_source"
+                ]
+              },
+              "industry_id": "fishery",
+              "label": "浅水网渔",
+              "occupation_ids": [
+                "net_fisher"
+              ],
+              "required_any_resource_tags": [
+                "fish"
+              ],
+              "resource_tag_weights": {
+                "fish": 4.0,
+                "water": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "fish"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "riverside": 3.0,
+                "waterside": 4.0
+              },
+              "traffic_mode_weights": {
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+                "id": "terraces",
+                "name_suffix": "坡田",
+                "observation": "田垄顺坡分层，低处留着排水沟，高处堆放能过冬的块根筐。",
+                "tags": [
+                  "farmland",
+                  "food_source",
+                  "slope"
+                ]
+              },
+              "industry_id": "terrace_farming",
+              "label": "坡田耕作",
+              "occupation_ids": [
+                "terrace_farmer"
+              ],
+              "required_any_resource_tags": [
+                "soil",
+                "roots"
+              ],
+              "resource_tag_weights": {
+                "food": 1.0,
+                "roots": 3.0,
+                "soil": 4.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 0.75,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "soil",
+                  "roots"
+                ]
+              },
+              "terrain_tag_weights": {
+                "fertile": 4.0,
+                "slope": 3.0,
+                "upland": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "纤维与泽草容易取得，聚落因此搭起可编苇、修具和晾药的共用长棚。",
+                "id": "work_shed",
+                "name_suffix": "长工棚",
+                "observation": "棚梁上垂着湿苇与药束，案面同时留有编席压痕和修具铁屑。",
+                "tags": [
+                  "craft",
+                  "reeds",
+                  "herbalism"
+                ]
+              },
+              "industry_id": "reed_craft",
+              "label": "苇编与修具",
+              "occupation_ids": [
+                "reed_weaver"
+              ],
+              "required_any_resource_tags": [
+                "reeds",
+                "fiber"
+              ],
+              "resource_tag_weights": {
+                "fiber": 3.0,
+                "herbs": 1.0,
+                "reeds": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 3.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "道路运量足以支撑换绳、歇轮与短途转运，泥地被车辙压成了固定车坪。",
+                "id": "road_yard",
+                "name_suffix": "车坪",
+                "observation": "车辙在这里重叠，备用轮、麻绳和过秤木架说明货物会稳定经过。",
+                "tags": [
+                  "road",
+                  "transport",
+                  "market_access"
+                ]
+              },
+              "industry_id": "road_carting",
+              "label": "短途转运",
+              "occupation_ids": [
+                "road_carter"
+              ],
+              "required_any_traffic_modes": [
+                "road"
+              ],
+              "resource_tag_weights": {
+                "timber": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "traffic_capacity",
+                "tags_any": [
+                  "road"
+                ]
+              },
+              "terrain_tag_weights": {
+                "roadside": 3.0,
+                "slope": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 5.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "地势和来路风险共同促成了守望点，值守者能提前看见靠近聚落的人与船。",
+                "id": "watch_post",
+                "name_suffix": "守望台",
+                "observation": "矮台朝向主要来路，巡铃、遮雨火盆和换班刻痕都已投入使用。",
+                "tags": [
+                  "watch",
+                  "security",
+                  "high_ground"
+                ]
+              },
+              "industry_id": "watch_service",
+              "label": "道路守望",
+              "occupation_ids": [
+                "watch_hand"
+              ],
+              "resource_tag_weights": {},
+              "terrain_tag_weights": {
+                "defensible": 4.0,
+                "slope": 1.0,
+                "upland": 3.0
+              },
+              "traffic_mode_weights": {
+                "road": 2.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "浅卤资源足够稳定，居民沿低地修出小片蒸晒盐坪。",
+                "id": "salt_pans",
+                "name_suffix": "晒盐坪",
+                "observation": "浅盘边缘结着白壳，木耙和遮雨布说明这里并非偶然取盐。",
+                "tags": [
+                  "salt",
+                  "brine",
+                  "resource_site"
+                ]
+              },
+              "industry_id": "salt_gathering",
+              "label": "浅盐采集",
+              "occupation_ids": [
+                "salt_gatherer"
+              ],
+              "required_any_resource_tags": [
+                "salt",
+                "brine"
+              ],
+              "resource_tag_weights": {
+                "brine": 4.0,
+                "salt": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "salt",
+                  "brine"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            }
+          ],
+          "industry_lifecycle": {
+            "conditions": {
+              "cordage": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "cordage_maker",
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "fishery": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "net_fisher",
+                  "salt_gatherer"
+                ]
+              },
+              "reed_craft": {
+                "demand_tags": [
+                  "fiber"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "road_carting": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "road_carter",
+                  "watch_hand"
+                ]
+              },
+              "salt_gathering": {
+                "demand_tags": [
+                  "salt"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "salt_gatherer",
+                  "net_fisher"
+                ]
+              },
+              "terrace_farming": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "terrace_farmer",
+                  "road_carter"
+                ]
+              },
+              "watch_service": {
+                "demand_kind": "route_risk",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 2.0,
+                "experience_occupations": [
+                  "watch_hand",
+                  "road_carter"
+                ]
+              }
+            },
+            "construction_cost": 4.0,
+            "enabled": true,
+            "entry_days_required": 6.0,
+            "exit_days_required": 30.0,
+            "initial_slots": 2.0,
+            "minimum_experience_cycles": 6.0,
+            "organization_coordination_days_per_member": 1.0,
+            "organization_coordination_max_reduction_days": 3.0,
+            "reentry_cooldown_days": 30.0
+          },
+          "industry_occupation_templates": [
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0
+              },
+              "label": "制绳匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "cordage_maker",
+              "products": [
+                {
+                  "item_def_id": "item.fiber_rope",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "制绳匠捻合纤维，交出了一捆可捆扎或交换的绳索。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0,
+                "perception": 1.0
+              },
+              "label": "网渔人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "net_fisher",
+              "products": [
+                {
+                  "item_def_id": "item.fresh_fish_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 8,
+              "work_summary": "网渔人从浅水网中收回了当天能分食和交换的鲜鱼。",
+              "workplace_id": "reedbank_landing"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 2.0
+              },
+              "label": "坡田农",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "terrace_farmer",
+              "products": [
+                {
+                  "item_def_id": "item.root_vegetable_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 10,
+              "work_summary": "坡田农从薄田里带回了几份耐放的块根。",
+              "workplace_id": "upper_terraces"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "dexterity": 2.0,
+                "wisdom": 1.0
+              },
+              "label": "苇编匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "reed_weaver",
+              "products": [
+                {
+                  "item_def_id": "item.woven_reed_mat",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "苇编匠压平湿苇，编成了一张可铺可换的苇席。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 1.0
+              },
+              "label": "短途车夫",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "road_carter",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 10,
+              "work_summary": "短途车夫交还货车，从当日运费里领到了铜币。",
+              "workplace_id": "south_road_yard"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "perception": 2.0,
+                "wisdom": 2.0
+              },
+              "label": "泽地采药人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "marsh_herbalist",
+              "products": [
+                {
+                  "item_def_id": "item.marsh_herb_bundle",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采药人抖掉根须上的泥水，留下了几束可晒干的泽草。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 1.0,
+                "wisdom": 1.0
+              },
+              "label": "浅盐采集人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "salt_gatherer",
+              "products": [
+                {
+                  "item_def_id": "item.raw_salt_portion",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采盐人赶在湿气回落时收拢浅盘里的原盐。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 2.0
+              },
+              "label": "村岗守夜人",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "watch_hand",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 12,
+              "work_summary": "守夜人交回巡铃，领取了这一班的薄薪。",
+              "workplace_id": "north_watch_post"
+            }
+          ],
+          "labor_absorption": {
+            "coworker_familiarity_divisor": 10.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "household_occupation_bonus": 12.0,
+            "maximum_hires_per_settlement_per_day": 2.0,
+            "minimum_search_days": 1.0,
+            "open_slot_score_weight": 3.0,
+            "unmet_search_fact_interval_days": 30.0
+          },
+          "links": [
+            {
+              "capacity_per_day": 5.0,
+              "hub_a_id": "generated_location.reed_bay.commons",
+              "hub_b_id": "generated_location.river_steps.commons",
+              "link_id": "reed_bay_river_steps",
+              "mode": "road",
+              "risk": 1,
+              "route_a_to_b_id": "generated_route.network.reed_bay_river_steps.a_to_b",
+              "route_b_to_a_id": "generated_route.network.reed_bay_river_steps.b_to_a",
+              "settlement_a_id": "generated_settlement.reed_bay",
+              "settlement_b_id": "generated_settlement.river_steps",
+              "site_a_id": "reed_bay",
+              "site_b_id": "river_steps",
+              "travel_hours": 4
+            },
+            {
+              "capacity_per_day": 4.0,
+              "hub_a_id": "generated_location.river_steps.commons",
+              "hub_b_id": "generated_location.wind_pass.commons",
+              "link_id": "river_steps_wind_pass",
+              "mode": "road",
+              "risk": 3,
+              "route_a_to_b_id": "generated_route.network.river_steps_wind_pass.a_to_b",
+              "route_b_to_a_id": "generated_route.network.river_steps_wind_pass.b_to_a",
+              "settlement_a_id": "generated_settlement.river_steps",
+              "settlement_b_id": "generated_settlement.wind_pass",
+              "site_a_id": "river_steps",
+              "site_b_id": "wind_pass",
+              "travel_hours": 6
+            }
+          ],
+          "local_procurement": {
+            "buyer_priority": [
+              "road_fellows",
+              "pass_watch",
+              "provision_circle"
+            ],
+            "buyer_purposes": {
+              "pass_watch": "patrol_supply_reserve",
+              "provision_circle": "shipment_lashing_reserve",
+              "road_fellows": "route_maintenance_reserve"
+            },
+            "currency_item_def_id": "item.copper_coin",
+            "enabled": true,
+            "maximum_quantity_per_purchase": 1.0
+          },
+          "migration_delay_days": 2,
+          "operational_material_uses": [
+            {
+              "accepted_purpose_ids": [
+                "route_maintenance_reserve",
+                "patrol_supply_reserve",
+                "shipment_lashing_reserve"
+              ],
+              "consume_when_worn_out": true,
+              "durability_loss_per_cycle": 1.0,
+              "enabled": true,
+              "item_def_id": "item.fiber_rope",
+              "item_display_name": "纤维绳索",
+              "lead_days": 1.0,
+              "procurement_exchange_type": "local_spot_procurement",
+              "procurement_fact_type": "local_rope_procured",
+              "purchase_fact_types": [
+                "local_rope_procured"
+              ],
+              "quantity_label": "捆",
+              "quantity_required": 1.0,
+              "require_acquisition_purpose": true,
+              "scope_type": "route",
+              "seller_occupation_ids": [
+                "cordage_maker"
+              ],
+              "seller_retained_quantity": 1.0,
+              "transport_cost_reduction": 0.25,
+              "trigger_fact_type": "settlement_trade_shipment",
+              "use_id": "shipment_lashing",
+              "work_label": "货运捆扎与装卸"
+            }
+          ],
+          "population_lifecycle": {
+            "adulthood_age": 18.0,
+            "days_per_year": 365.0,
+            "elder_age": 65.0,
+            "enabled": true
+          },
+          "sites": [
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 81001,
+              "hub_location_id": "generated_location.reed_bay.commons",
+              "population_target": 24,
+              "resident_capacity": 33,
+              "settlement_id": "generated_settlement.reed_bay",
+              "settlement_name": "苇岸埠",
+              "site_id": "reed_bay",
+              "terrain_id": "lake_marsh_edge",
+              "terrain_tags": [
+                "waterside",
+                "marsh",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 81998,
+              "hub_location_id": "generated_location.river_steps.commons",
+              "population_target": 26,
+              "resident_capacity": 36,
+              "settlement_id": "generated_settlement.river_steps",
+              "settlement_name": "石渡坞",
+              "site_id": "river_steps",
+              "terrain_id": "river_terrace",
+              "terrain_tags": [
+                "riverside",
+                "fertile",
+                "roadside",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 82995,
+              "hub_location_id": "generated_location.wind_pass.commons",
+              "population_target": 17,
+              "resident_capacity": 22,
+              "settlement_id": "generated_settlement.wind_pass",
+              "settlement_name": "白坡坞",
+              "site_id": "wind_pass",
+              "terrain_id": "windy_upland",
+              "terrain_tags": [
+                "upland",
+                "windy",
+                "defensible",
+                "roadside"
+              ]
+            }
+          ],
+          "trade_goods": [
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.12,
+              "good_id": "food",
+              "reserve_capacity": 24.0,
+              "reserve_label": "外来口粮储备",
+              "tags": [
+                "food"
+              ]
+            },
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.03,
+              "good_id": "fiber",
+              "reserve_capacity": 16.0,
+              "reserve_label": "外来纤维储备",
+              "tags": [
+                "fiber"
+              ]
+            },
+            {
+              "base_unit_price": 3.0,
+              "daily_use_per_resident": 0.02,
+              "good_id": "salt",
+              "reserve_capacity": 12.0,
+              "reserve_label": "外来盐储备",
+              "tags": [
+                "salt"
+              ]
+            }
+          ]
+        },
+        "time": {
+          "day": 4,
+          "elapsed_hours": 72,
+          "hour": 8,
+          "world_tick_count": 3
+        },
+        "visibility": "omniscient_debug"
+      },
+      "fact_type_counts": {
+        "settlement_generated": 3,
+        "settlement_industry_selected": 11,
+        "settlement_resource_stock_established": 14,
+        "settlement_trade_reserve_established": 9,
+        "settlement_network_generated": 1,
+        "resident_generation_completed": 3,
+        "household_generated": 8,
+        "resident_generated": 30,
+        "generated_social_relation": 198,
+        "reserve_dwelling_generated": 3,
+        "settlement_construction_plot_generated": 18,
+        "organization_generated": 3,
+        "organization_position_assigned": 6,
+        "initial_treasury_endowment": 3,
+        "resource_commons_established": 3,
+        "resource_access_granted": 3,
+        "organization_treasury_funded": 3,
+        "settlement_resource_pressure_changed": 5,
+        "region_resource_pressure_changed": 1,
+        "autonomous_route_pressure_tick": 4,
+        "settlement_trade_shipment": 8,
+        "operational_material_demand_opened": 3,
+        "settlement_network_migration_evaluated": 4,
+        "resident_employment_search_unmet": 3,
+        "organization_trade_coordinated": 3,
+        "organization_route_patrolled": 4,
+        "npc_need_changed": 200,
+        "npc_cross_household_food_request_failed": 100,
+        "npc_household_food_unmet": 100,
+        "npc_livelihood_produced": 102,
+        "npc_cross_household_shared_food": 37,
+        "npc_household_shared_food": 20,
+        "npc_wage_paid": 65,
+        "npc_self_meal": 16,
+        "npc_food_request_conflict": 19,
+        "settlement_trade_reserve_consumed": 8,
+        "npc_food_debt_repaid": 9,
+        "resident_aged": 1,
+        "regional_route_pressure_started": 1,
+        "organization_lifecycle_signal_observed": 1
+      }
+    },
+    {
+      "profile": "world",
+      "seed": 82002,
+      "days": 3,
+      "actor_actions": 0,
+      "seconds": 70.555,
+      "before": {
+        "actor_policy": "passive_fixture_actor",
+        "counts": {
+          "character_features": 0,
+          "chronicle_entries": 10,
+          "deferred_consequences": 0,
+          "entities": 61,
+          "equipment_loadouts": 1,
+          "exchanges": 0,
+          "facts": 309,
+          "investigation_leads": 0,
+          "items": 22,
+          "memories": 0,
+          "obligations": 0,
+          "pressures": 0,
+          "relationships": 280,
+          "resource_stocks": 23,
+          "rumors": 0,
+          "states": 963,
+          "traces": 0
+        },
+        "network": {
+          "absorption_delay_days": 1,
+          "autonomous_pressure": {
+            "daily_start_chance_percent": 24.0,
+            "enabled": true,
+            "maximum_capacity_penalty": 2.0,
+            "maximum_duration_days": 4.0,
+            "maximum_quiet_days": 8.0,
+            "maximum_risk_increase": 3.0,
+            "minimum_capacity_penalty": 1.0,
+            "minimum_duration_days": 3.0,
+            "minimum_quiet_days": 4.0,
+            "minimum_risk_increase": 2.0
+          },
+          "capacity_adaptation": {
+            "construction_plot_count_per_settlement": 6.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "facility_expansion_cooldown_days": 30.0,
+            "facility_expansion_cost": 3.0,
+            "housing_capacity_per_dwelling": 4.0,
+            "housing_construction_cooldown_days": 90.0,
+            "housing_construction_cost": 4.0,
+            "housing_pressure_days_required": 30.0,
+            "housing_pressure_ratio_percent": 85.0,
+            "labor_pressure_days_required": 14.0,
+            "maximum_extra_slots_per_occupation": 4.0,
+            "minimum_organization_members_for_coordination": 1.0,
+            "minimum_unemployed_for_expansion": 1.0,
+            "organization_coordination_days_per_member": 2.0,
+            "organization_coordination_max_reduction_days": 8.0,
+            "resource_recovery_ratio_percent": 35.0,
+            "unmet_pressure_fact_interval_days": 30.0,
+            "work_slots_per_expansion": 2.0
+          },
+          "family_generation": {
+            "birth_cooldown_days": 365.0,
+            "conception_chance_percent": 18.0,
+            "conception_interval_days": 90.0,
+            "culture_id": "culture.north_border_lakes",
+            "culture_label": "北境湖地",
+            "enabled": true,
+            "gestation_days": 280.0,
+            "given_names": [
+              "岑",
+              "川",
+              "冬",
+              "禾",
+              "简",
+              "澜",
+              "黎",
+              "苓",
+              "牧",
+              "宁",
+              "荞",
+              "桑",
+              "朔",
+              "苇",
+              "溪",
+              "砚",
+              "遥",
+              "照"
+            ],
+            "maximum_children_per_pair": 3.0,
+            "maximum_conceptions_per_settlement_per_cycle": 1.0,
+            "maximum_parent_age": 45.0,
+            "maximum_partner_age_gap": 20.0,
+            "maximum_partnership_age": 60.0,
+            "maximum_partnerships_per_settlement_per_cycle": 1.0,
+            "minimum_partnership_age": 18.0,
+            "partnership_chance_percent": 42.0,
+            "partnership_interval_days": 365.0,
+            "temperament_ids": [
+              "steady",
+              "cautious",
+              "bold",
+              "sociable",
+              "reserved"
+            ]
+          },
+          "generation_seed": 82002,
+          "industry_archetypes": [
+            {
+              "facility": {
+                "name_suffix": "制绳棚",
+                "observation": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。"
+              },
+              "industry_id": "cordage",
+              "label": "纤维制绳",
+              "occupation_ids": [
+                "cordage_maker"
+              ],
+              "requires_work_history": true,
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              }
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+                "id": "landing",
+                "name_suffix": "泊台",
+                "observation": "木台边挂着按水深分开的网具，今日鱼获会从这里进入家庭和交换。",
+                "tags": [
+                  "fishery",
+                  "waterside",
+                  "food_source"
+                ]
+              },
+              "industry_id": "fishery",
+              "label": "浅水网渔",
+              "occupation_ids": [
+                "net_fisher"
+              ],
+              "required_any_resource_tags": [
+                "fish"
+              ],
+              "resource_tag_weights": {
+                "fish": 4.0,
+                "water": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "fish"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "riverside": 3.0,
+                "waterside": 4.0
+              },
+              "traffic_mode_weights": {
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+                "id": "terraces",
+                "name_suffix": "坡田",
+                "observation": "田垄顺坡分层，低处留着排水沟，高处堆放能过冬的块根筐。",
+                "tags": [
+                  "farmland",
+                  "food_source",
+                  "slope"
+                ]
+              },
+              "industry_id": "terrace_farming",
+              "label": "坡田耕作",
+              "occupation_ids": [
+                "terrace_farmer"
+              ],
+              "required_any_resource_tags": [
+                "soil",
+                "roots"
+              ],
+              "resource_tag_weights": {
+                "food": 1.0,
+                "roots": 3.0,
+                "soil": 4.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 0.75,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "soil",
+                  "roots"
+                ]
+              },
+              "terrain_tag_weights": {
+                "fertile": 4.0,
+                "slope": 3.0,
+                "upland": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "纤维与泽草容易取得，聚落因此搭起可编苇、修具和晾药的共用长棚。",
+                "id": "work_shed",
+                "name_suffix": "长工棚",
+                "observation": "棚梁上垂着湿苇与药束，案面同时留有编席压痕和修具铁屑。",
+                "tags": [
+                  "craft",
+                  "reeds",
+                  "herbalism"
+                ]
+              },
+              "industry_id": "reed_craft",
+              "label": "苇编与修具",
+              "occupation_ids": [
+                "reed_weaver"
+              ],
+              "required_any_resource_tags": [
+                "reeds",
+                "fiber"
+              ],
+              "resource_tag_weights": {
+                "fiber": 3.0,
+                "herbs": 1.0,
+                "reeds": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 3.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "道路运量足以支撑换绳、歇轮与短途转运，泥地被车辙压成了固定车坪。",
+                "id": "road_yard",
+                "name_suffix": "车坪",
+                "observation": "车辙在这里重叠，备用轮、麻绳和过秤木架说明货物会稳定经过。",
+                "tags": [
+                  "road",
+                  "transport",
+                  "market_access"
+                ]
+              },
+              "industry_id": "road_carting",
+              "label": "短途转运",
+              "occupation_ids": [
+                "road_carter"
+              ],
+              "required_any_traffic_modes": [
+                "road"
+              ],
+              "resource_tag_weights": {
+                "timber": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "traffic_capacity",
+                "tags_any": [
+                  "road"
+                ]
+              },
+              "terrain_tag_weights": {
+                "roadside": 3.0,
+                "slope": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 5.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "地势和来路风险共同促成了守望点，值守者能提前看见靠近聚落的人与船。",
+                "id": "watch_post",
+                "name_suffix": "守望台",
+                "observation": "矮台朝向主要来路，巡铃、遮雨火盆和换班刻痕都已投入使用。",
+                "tags": [
+                  "watch",
+                  "security",
+                  "high_ground"
+                ]
+              },
+              "industry_id": "watch_service",
+              "label": "道路守望",
+              "occupation_ids": [
+                "watch_hand"
+              ],
+              "resource_tag_weights": {},
+              "terrain_tag_weights": {
+                "defensible": 4.0,
+                "slope": 1.0,
+                "upland": 3.0
+              },
+              "traffic_mode_weights": {
+                "road": 2.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "浅卤资源足够稳定，居民沿低地修出小片蒸晒盐坪。",
+                "id": "salt_pans",
+                "name_suffix": "晒盐坪",
+                "observation": "浅盘边缘结着白壳，木耙和遮雨布说明这里并非偶然取盐。",
+                "tags": [
+                  "salt",
+                  "brine",
+                  "resource_site"
+                ]
+              },
+              "industry_id": "salt_gathering",
+              "label": "浅盐采集",
+              "occupation_ids": [
+                "salt_gatherer"
+              ],
+              "required_any_resource_tags": [
+                "salt",
+                "brine"
+              ],
+              "resource_tag_weights": {
+                "brine": 4.0,
+                "salt": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "salt",
+                  "brine"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            }
+          ],
+          "industry_lifecycle": {
+            "conditions": {
+              "cordage": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "cordage_maker",
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "fishery": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "net_fisher",
+                  "salt_gatherer"
+                ]
+              },
+              "reed_craft": {
+                "demand_tags": [
+                  "fiber"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "road_carting": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "road_carter",
+                  "watch_hand"
+                ]
+              },
+              "salt_gathering": {
+                "demand_tags": [
+                  "salt"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "salt_gatherer",
+                  "net_fisher"
+                ]
+              },
+              "terrace_farming": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "terrace_farmer",
+                  "road_carter"
+                ]
+              },
+              "watch_service": {
+                "demand_kind": "route_risk",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 2.0,
+                "experience_occupations": [
+                  "watch_hand",
+                  "road_carter"
+                ]
+              }
+            },
+            "construction_cost": 4.0,
+            "enabled": true,
+            "entry_days_required": 6.0,
+            "exit_days_required": 30.0,
+            "initial_slots": 2.0,
+            "minimum_experience_cycles": 6.0,
+            "organization_coordination_days_per_member": 1.0,
+            "organization_coordination_max_reduction_days": 3.0,
+            "reentry_cooldown_days": 30.0
+          },
+          "industry_occupation_templates": [
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0
+              },
+              "label": "制绳匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "cordage_maker",
+              "products": [
+                {
+                  "item_def_id": "item.fiber_rope",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "制绳匠捻合纤维，交出了一捆可捆扎或交换的绳索。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0,
+                "perception": 1.0
+              },
+              "label": "网渔人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "net_fisher",
+              "products": [
+                {
+                  "item_def_id": "item.fresh_fish_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 8,
+              "work_summary": "网渔人从浅水网中收回了当天能分食和交换的鲜鱼。",
+              "workplace_id": "reedbank_landing"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 2.0
+              },
+              "label": "坡田农",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "terrace_farmer",
+              "products": [
+                {
+                  "item_def_id": "item.root_vegetable_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 10,
+              "work_summary": "坡田农从薄田里带回了几份耐放的块根。",
+              "workplace_id": "upper_terraces"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "dexterity": 2.0,
+                "wisdom": 1.0
+              },
+              "label": "苇编匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "reed_weaver",
+              "products": [
+                {
+                  "item_def_id": "item.woven_reed_mat",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "苇编匠压平湿苇，编成了一张可铺可换的苇席。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 1.0
+              },
+              "label": "短途车夫",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "road_carter",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 10,
+              "work_summary": "短途车夫交还货车，从当日运费里领到了铜币。",
+              "workplace_id": "south_road_yard"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "perception": 2.0,
+                "wisdom": 2.0
+              },
+              "label": "泽地采药人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "marsh_herbalist",
+              "products": [
+                {
+                  "item_def_id": "item.marsh_herb_bundle",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采药人抖掉根须上的泥水，留下了几束可晒干的泽草。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 1.0,
+                "wisdom": 1.0
+              },
+              "label": "浅盐采集人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "salt_gatherer",
+              "products": [
+                {
+                  "item_def_id": "item.raw_salt_portion",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采盐人赶在湿气回落时收拢浅盘里的原盐。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 2.0
+              },
+              "label": "村岗守夜人",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "watch_hand",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 12,
+              "work_summary": "守夜人交回巡铃，领取了这一班的薄薪。",
+              "workplace_id": "north_watch_post"
+            }
+          ],
+          "labor_absorption": {
+            "coworker_familiarity_divisor": 10.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "household_occupation_bonus": 12.0,
+            "maximum_hires_per_settlement_per_day": 2.0,
+            "minimum_search_days": 1.0,
+            "open_slot_score_weight": 3.0,
+            "unmet_search_fact_interval_days": 30.0
+          },
+          "links": [
+            {
+              "capacity_per_day": 5.0,
+              "hub_a_id": "generated_location.reed_bay.commons",
+              "hub_b_id": "generated_location.river_steps.commons",
+              "link_id": "reed_bay_river_steps",
+              "mode": "road",
+              "risk": 1,
+              "route_a_to_b_id": "generated_route.network.reed_bay_river_steps.a_to_b",
+              "route_b_to_a_id": "generated_route.network.reed_bay_river_steps.b_to_a",
+              "settlement_a_id": "generated_settlement.reed_bay",
+              "settlement_b_id": "generated_settlement.river_steps",
+              "site_a_id": "reed_bay",
+              "site_b_id": "river_steps",
+              "travel_hours": 4
+            },
+            {
+              "capacity_per_day": 4.0,
+              "hub_a_id": "generated_location.river_steps.commons",
+              "hub_b_id": "generated_location.wind_pass.commons",
+              "link_id": "river_steps_wind_pass",
+              "mode": "road",
+              "risk": 3,
+              "route_a_to_b_id": "generated_route.network.river_steps_wind_pass.a_to_b",
+              "route_b_to_a_id": "generated_route.network.river_steps_wind_pass.b_to_a",
+              "settlement_a_id": "generated_settlement.river_steps",
+              "settlement_b_id": "generated_settlement.wind_pass",
+              "site_a_id": "river_steps",
+              "site_b_id": "wind_pass",
+              "travel_hours": 6
+            }
+          ],
+          "local_procurement": {
+            "buyer_priority": [
+              "road_fellows",
+              "pass_watch",
+              "provision_circle"
+            ],
+            "buyer_purposes": {
+              "pass_watch": "patrol_supply_reserve",
+              "provision_circle": "shipment_lashing_reserve",
+              "road_fellows": "route_maintenance_reserve"
+            },
+            "currency_item_def_id": "item.copper_coin",
+            "enabled": true,
+            "maximum_quantity_per_purchase": 1.0
+          },
+          "migration_delay_days": 2,
+          "operational_material_uses": [
+            {
+              "accepted_purpose_ids": [
+                "route_maintenance_reserve",
+                "patrol_supply_reserve",
+                "shipment_lashing_reserve"
+              ],
+              "consume_when_worn_out": true,
+              "durability_loss_per_cycle": 1.0,
+              "enabled": true,
+              "item_def_id": "item.fiber_rope",
+              "item_display_name": "纤维绳索",
+              "lead_days": 1.0,
+              "procurement_exchange_type": "local_spot_procurement",
+              "procurement_fact_type": "local_rope_procured",
+              "purchase_fact_types": [
+                "local_rope_procured"
+              ],
+              "quantity_label": "捆",
+              "quantity_required": 1.0,
+              "require_acquisition_purpose": true,
+              "scope_type": "route",
+              "seller_occupation_ids": [
+                "cordage_maker"
+              ],
+              "seller_retained_quantity": 1.0,
+              "transport_cost_reduction": 0.25,
+              "trigger_fact_type": "settlement_trade_shipment",
+              "use_id": "shipment_lashing",
+              "work_label": "货运捆扎与装卸"
+            }
+          ],
+          "population_lifecycle": {
+            "adulthood_age": 18.0,
+            "days_per_year": 365.0,
+            "elder_age": 65.0,
+            "enabled": true
+          },
+          "sites": [
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 82002,
+              "hub_location_id": "generated_location.reed_bay.commons",
+              "population_target": 23,
+              "resident_capacity": 31,
+              "settlement_id": "generated_settlement.reed_bay",
+              "settlement_name": "苇岸坞",
+              "site_id": "reed_bay",
+              "terrain_id": "lake_marsh_edge",
+              "terrain_tags": [
+                "waterside",
+                "marsh",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 82999,
+              "hub_location_id": "generated_location.river_steps.commons",
+              "population_target": 26,
+              "resident_capacity": 36,
+              "settlement_id": "generated_settlement.river_steps",
+              "settlement_name": "石渡坞",
+              "site_id": "river_steps",
+              "terrain_id": "river_terrace",
+              "terrain_tags": [
+                "riverside",
+                "fertile",
+                "roadside",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 83996,
+              "hub_location_id": "generated_location.wind_pass.commons",
+              "population_target": 17,
+              "resident_capacity": 22,
+              "settlement_id": "generated_settlement.wind_pass",
+              "settlement_name": "风垭村",
+              "site_id": "wind_pass",
+              "terrain_id": "windy_upland",
+              "terrain_tags": [
+                "upland",
+                "windy",
+                "defensible",
+                "roadside"
+              ]
+            }
+          ],
+          "trade_goods": [
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.12,
+              "good_id": "food",
+              "reserve_capacity": 24.0,
+              "reserve_label": "外来口粮储备",
+              "tags": [
+                "food"
+              ]
+            },
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.03,
+              "good_id": "fiber",
+              "reserve_capacity": 16.0,
+              "reserve_label": "外来纤维储备",
+              "tags": [
+                "fiber"
+              ]
+            },
+            {
+              "base_unit_price": 3.0,
+              "daily_use_per_resident": 0.02,
+              "good_id": "salt",
+              "reserve_capacity": 12.0,
+              "reserve_label": "外来盐储备",
+              "tags": [
+                "salt"
+              ]
+            }
+          ]
+        },
+        "time": {
+          "day": 1,
+          "elapsed_hours": 0,
+          "hour": 8,
+          "world_tick_count": 0
+        },
+        "visibility": "omniscient_debug"
+      },
+      "after": {
+        "actor_policy": "passive_fixture_actor",
+        "counts": {
+          "character_features": 0,
+          "chronicle_entries": 14,
+          "deferred_consequences": 0,
+          "entities": 61,
+          "equipment_loadouts": 1,
+          "exchanges": 77,
+          "facts": 1046,
+          "investigation_leads": 0,
+          "items": 125,
+          "memories": 0,
+          "obligations": 3,
+          "pressures": 38,
+          "relationships": 324,
+          "resource_stocks": 23,
+          "rumors": 0,
+          "states": 1021,
+          "traces": 27
+        },
+        "network": {
+          "absorption_delay_days": 1,
+          "autonomous_pressure": {
+            "daily_start_chance_percent": 24.0,
+            "enabled": true,
+            "maximum_capacity_penalty": 2.0,
+            "maximum_duration_days": 4.0,
+            "maximum_quiet_days": 8.0,
+            "maximum_risk_increase": 3.0,
+            "minimum_capacity_penalty": 1.0,
+            "minimum_duration_days": 3.0,
+            "minimum_quiet_days": 4.0,
+            "minimum_risk_increase": 2.0
+          },
+          "capacity_adaptation": {
+            "construction_plot_count_per_settlement": 6.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "facility_expansion_cooldown_days": 30.0,
+            "facility_expansion_cost": 3.0,
+            "housing_capacity_per_dwelling": 4.0,
+            "housing_construction_cooldown_days": 90.0,
+            "housing_construction_cost": 4.0,
+            "housing_pressure_days_required": 30.0,
+            "housing_pressure_ratio_percent": 85.0,
+            "labor_pressure_days_required": 14.0,
+            "maximum_extra_slots_per_occupation": 4.0,
+            "minimum_organization_members_for_coordination": 1.0,
+            "minimum_unemployed_for_expansion": 1.0,
+            "organization_coordination_days_per_member": 2.0,
+            "organization_coordination_max_reduction_days": 8.0,
+            "resource_recovery_ratio_percent": 35.0,
+            "unmet_pressure_fact_interval_days": 30.0,
+            "work_slots_per_expansion": 2.0
+          },
+          "family_generation": {
+            "birth_cooldown_days": 365.0,
+            "conception_chance_percent": 18.0,
+            "conception_interval_days": 90.0,
+            "culture_id": "culture.north_border_lakes",
+            "culture_label": "北境湖地",
+            "enabled": true,
+            "gestation_days": 280.0,
+            "given_names": [
+              "岑",
+              "川",
+              "冬",
+              "禾",
+              "简",
+              "澜",
+              "黎",
+              "苓",
+              "牧",
+              "宁",
+              "荞",
+              "桑",
+              "朔",
+              "苇",
+              "溪",
+              "砚",
+              "遥",
+              "照"
+            ],
+            "maximum_children_per_pair": 3.0,
+            "maximum_conceptions_per_settlement_per_cycle": 1.0,
+            "maximum_parent_age": 45.0,
+            "maximum_partner_age_gap": 20.0,
+            "maximum_partnership_age": 60.0,
+            "maximum_partnerships_per_settlement_per_cycle": 1.0,
+            "minimum_partnership_age": 18.0,
+            "partnership_chance_percent": 42.0,
+            "partnership_interval_days": 365.0,
+            "temperament_ids": [
+              "steady",
+              "cautious",
+              "bold",
+              "sociable",
+              "reserved"
+            ]
+          },
+          "generation_seed": 82002,
+          "industry_archetypes": [
+            {
+              "facility": {
+                "name_suffix": "制绳棚",
+                "observation": "长架上绷着刚捻好的绳股。这里把本地纤维制成可供捆扎和交换的绳索，做工的人来自原有生计。"
+              },
+              "industry_id": "cordage",
+              "label": "纤维制绳",
+              "occupation_ids": [
+                "cordage_maker"
+              ],
+              "requires_work_history": true,
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              }
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+                "id": "landing",
+                "name_suffix": "泊台",
+                "observation": "木台边挂着按水深分开的网具，今日鱼获会从这里进入家庭和交换。",
+                "tags": [
+                  "fishery",
+                  "waterside",
+                  "food_source"
+                ]
+              },
+              "industry_id": "fishery",
+              "label": "浅水网渔",
+              "occupation_ids": [
+                "net_fisher"
+              ],
+              "required_any_resource_tags": [
+                "fish"
+              ],
+              "resource_tag_weights": {
+                "fish": 4.0,
+                "water": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "fish"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "riverside": 3.0,
+                "waterside": 4.0
+              },
+              "traffic_mode_weights": {
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+                "id": "terraces",
+                "name_suffix": "坡田",
+                "observation": "田垄顺坡分层，低处留着排水沟，高处堆放能过冬的块根筐。",
+                "tags": [
+                  "farmland",
+                  "food_source",
+                  "slope"
+                ]
+              },
+              "industry_id": "terrace_farming",
+              "label": "坡田耕作",
+              "occupation_ids": [
+                "terrace_farmer"
+              ],
+              "required_any_resource_tags": [
+                "soil",
+                "roots"
+              ],
+              "resource_tag_weights": {
+                "food": 1.0,
+                "roots": 3.0,
+                "soil": 4.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 0.75,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "soil",
+                  "roots"
+                ]
+              },
+              "terrain_tag_weights": {
+                "fertile": 4.0,
+                "slope": 3.0,
+                "upland": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "纤维与泽草容易取得，聚落因此搭起可编苇、修具和晾药的共用长棚。",
+                "id": "work_shed",
+                "name_suffix": "长工棚",
+                "observation": "棚梁上垂着湿苇与药束，案面同时留有编席压痕和修具铁屑。",
+                "tags": [
+                  "craft",
+                  "reeds",
+                  "herbalism"
+                ]
+              },
+              "industry_id": "reed_craft",
+              "label": "苇编与修具",
+              "occupation_ids": [
+                "reed_weaver"
+              ],
+              "required_any_resource_tags": [
+                "reeds",
+                "fiber"
+              ],
+              "resource_tag_weights": {
+                "fiber": 3.0,
+                "herbs": 1.0,
+                "reeds": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "reeds",
+                  "fiber"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 3.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "道路运量足以支撑换绳、歇轮与短途转运，泥地被车辙压成了固定车坪。",
+                "id": "road_yard",
+                "name_suffix": "车坪",
+                "observation": "车辙在这里重叠，备用轮、麻绳和过秤木架说明货物会稳定经过。",
+                "tags": [
+                  "road",
+                  "transport",
+                  "market_access"
+                ]
+              },
+              "industry_id": "road_carting",
+              "label": "短途转运",
+              "occupation_ids": [
+                "road_carter"
+              ],
+              "required_any_traffic_modes": [
+                "road"
+              ],
+              "resource_tag_weights": {
+                "timber": 1.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "traffic_capacity",
+                "tags_any": [
+                  "road"
+                ]
+              },
+              "terrain_tag_weights": {
+                "roadside": 3.0,
+                "slope": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 5.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 1.0,
+              "facility": {
+                "description": "地势和来路风险共同促成了守望点，值守者能提前看见靠近聚落的人与船。",
+                "id": "watch_post",
+                "name_suffix": "守望台",
+                "observation": "矮台朝向主要来路，巡铃、遮雨火盆和换班刻痕都已投入使用。",
+                "tags": [
+                  "watch",
+                  "security",
+                  "high_ground"
+                ]
+              },
+              "industry_id": "watch_service",
+              "label": "道路守望",
+              "occupation_ids": [
+                "watch_hand"
+              ],
+              "resource_tag_weights": {},
+              "terrain_tag_weights": {
+                "defensible": 4.0,
+                "slope": 1.0,
+                "upland": 3.0
+              },
+              "traffic_mode_weights": {
+                "road": 2.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            },
+            {
+              "base_score": 0.0,
+              "facility": {
+                "description": "浅卤资源足够稳定，居民沿低地修出小片蒸晒盐坪。",
+                "id": "salt_pans",
+                "name_suffix": "晒盐坪",
+                "observation": "浅盘边缘结着白壳，木耙和遮雨布说明这里并非偶然取盐。",
+                "tags": [
+                  "salt",
+                  "brine",
+                  "resource_site"
+                ]
+              },
+              "industry_id": "salt_gathering",
+              "label": "浅盐采集",
+              "occupation_ids": [
+                "salt_gatherer"
+              ],
+              "required_any_resource_tags": [
+                "salt",
+                "brine"
+              ],
+              "resource_tag_weights": {
+                "brine": 4.0,
+                "salt": 5.0
+              },
+              "stock_input": {
+                "amount_per_cycle": 1.0,
+                "source_kind": "natural_resource",
+                "tags_any": [
+                  "salt",
+                  "brine"
+                ]
+              },
+              "terrain_tag_weights": {
+                "marsh": 1.0,
+                "waterside": 1.0
+              },
+              "traffic_mode_weights": {
+                "road": 1.0,
+                "waterway": 1.0
+              },
+              "travel_hours": 1.0
+            }
+          ],
+          "industry_lifecycle": {
+            "conditions": {
+              "cordage": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "cordage_maker",
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "fishery": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "net_fisher",
+                  "salt_gatherer"
+                ]
+              },
+              "reed_craft": {
+                "demand_tags": [
+                  "fiber"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "reed_weaver",
+                  "net_fisher"
+                ]
+              },
+              "road_carting": {
+                "demand_kind": "transport",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 1.0,
+                "experience_occupations": [
+                  "road_carter",
+                  "watch_hand"
+                ]
+              },
+              "salt_gathering": {
+                "demand_tags": [
+                  "salt"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "salt_gatherer",
+                  "net_fisher"
+                ]
+              },
+              "terrace_farming": {
+                "demand_tags": [
+                  "food"
+                ],
+                "entry_demand_at_least": 4.0,
+                "exit_demand_below": 0.5,
+                "experience_occupations": [
+                  "terrace_farmer",
+                  "road_carter"
+                ]
+              },
+              "watch_service": {
+                "demand_kind": "route_risk",
+                "entry_demand_at_least": 3.0,
+                "exit_demand_below": 2.0,
+                "experience_occupations": [
+                  "watch_hand",
+                  "road_carter"
+                ]
+              }
+            },
+            "construction_cost": 4.0,
+            "enabled": true,
+            "entry_days_required": 6.0,
+            "exit_days_required": 30.0,
+            "initial_slots": 2.0,
+            "minimum_experience_cycles": 6.0,
+            "organization_coordination_days_per_member": 1.0,
+            "organization_coordination_max_reduction_days": 3.0,
+            "reentry_cooldown_days": 30.0
+          },
+          "industry_occupation_templates": [
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0
+              },
+              "label": "制绳匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "cordage_maker",
+              "products": [
+                {
+                  "item_def_id": "item.fiber_rope",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "制绳匠捻合纤维，交出了一捆可捆扎或交换的绳索。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "dexterity": 2.0,
+                "perception": 1.0
+              },
+              "label": "网渔人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "net_fisher",
+              "products": [
+                {
+                  "item_def_id": "item.fresh_fish_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 8,
+              "work_summary": "网渔人从浅水网中收回了当天能分食和交换的鲜鱼。",
+              "workplace_id": "reedbank_landing"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 2.0
+              },
+              "label": "坡田农",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 4,
+              "minimum_slots": 1,
+              "occupation_id": "terrace_farmer",
+              "products": [
+                {
+                  "item_def_id": "item.root_vegetable_portion",
+                  "quantity": 3.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 10,
+              "work_summary": "坡田农从薄田里带回了几份耐放的块根。",
+              "workplace_id": "upper_terraces"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "dexterity": 2.0,
+                "wisdom": 1.0
+              },
+              "label": "苇编匠",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "reed_weaver",
+              "products": [
+                {
+                  "item_def_id": "item.woven_reed_mat",
+                  "quantity": 1.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "苇编匠压平湿苇，编成了一张可铺可换的苇席。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 2.0,
+                "strength": 1.0
+              },
+              "label": "短途车夫",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "road_carter",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 10,
+              "work_summary": "短途车夫交还货车，从当日运费里领到了铜币。",
+              "workplace_id": "south_road_yard"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "perception": 2.0,
+                "wisdom": 2.0
+              },
+              "label": "泽地采药人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "marsh_herbalist",
+              "products": [
+                {
+                  "item_def_id": "item.marsh_herb_bundle",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采药人抖掉根须上的泥水，留下了几束可晒干的泽草。",
+              "workplace_id": "hamlet_work_shed"
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 1.0,
+                "wisdom": 1.0
+              },
+              "label": "浅盐采集人",
+              "livelihood_status": "self_employed",
+              "maximum_slots": 3,
+              "minimum_slots": 1,
+              "occupation_id": "salt_gatherer",
+              "products": [
+                {
+                  "item_def_id": "item.raw_salt_portion",
+                  "quantity": 2.0
+                }
+              ],
+              "settlement_id": "",
+              "work_interval_hours": 12,
+              "work_summary": "采盐人赶在湿气回落时收拢浅盘里的原盐。",
+              "workplace_id": ""
+            },
+            {
+              "actor_tags_all": [
+                "generated_worker"
+              ],
+              "attribute_bias": {
+                "constitution": 1.0,
+                "perception": 2.0
+              },
+              "label": "村岗守夜人",
+              "livelihood_status": "employed",
+              "maximum_slots": 2,
+              "minimum_slots": 0,
+              "occupation_id": "watch_hand",
+              "products": [],
+              "settlement_id": "",
+              "wage_amount": 2,
+              "work_interval_hours": 12,
+              "work_summary": "守夜人交回巡铃，领取了这一班的薄薪。",
+              "workplace_id": "north_watch_post"
+            }
+          ],
+          "labor_absorption": {
+            "coworker_familiarity_divisor": 10.0,
+            "enabled": true,
+            "evaluation_interval_days": 1.0,
+            "household_occupation_bonus": 12.0,
+            "maximum_hires_per_settlement_per_day": 2.0,
+            "minimum_search_days": 1.0,
+            "open_slot_score_weight": 3.0,
+            "unmet_search_fact_interval_days": 30.0
+          },
+          "links": [
+            {
+              "capacity_per_day": 5.0,
+              "hub_a_id": "generated_location.reed_bay.commons",
+              "hub_b_id": "generated_location.river_steps.commons",
+              "link_id": "reed_bay_river_steps",
+              "mode": "road",
+              "risk": 1,
+              "route_a_to_b_id": "generated_route.network.reed_bay_river_steps.a_to_b",
+              "route_b_to_a_id": "generated_route.network.reed_bay_river_steps.b_to_a",
+              "settlement_a_id": "generated_settlement.reed_bay",
+              "settlement_b_id": "generated_settlement.river_steps",
+              "site_a_id": "reed_bay",
+              "site_b_id": "river_steps",
+              "travel_hours": 4
+            },
+            {
+              "capacity_per_day": 4.0,
+              "hub_a_id": "generated_location.river_steps.commons",
+              "hub_b_id": "generated_location.wind_pass.commons",
+              "link_id": "river_steps_wind_pass",
+              "mode": "road",
+              "risk": 3,
+              "route_a_to_b_id": "generated_route.network.river_steps_wind_pass.a_to_b",
+              "route_b_to_a_id": "generated_route.network.river_steps_wind_pass.b_to_a",
+              "settlement_a_id": "generated_settlement.river_steps",
+              "settlement_b_id": "generated_settlement.wind_pass",
+              "site_a_id": "river_steps",
+              "site_b_id": "wind_pass",
+              "travel_hours": 6
+            }
+          ],
+          "local_procurement": {
+            "buyer_priority": [
+              "road_fellows",
+              "pass_watch",
+              "provision_circle"
+            ],
+            "buyer_purposes": {
+              "pass_watch": "patrol_supply_reserve",
+              "provision_circle": "shipment_lashing_reserve",
+              "road_fellows": "route_maintenance_reserve"
+            },
+            "currency_item_def_id": "item.copper_coin",
+            "enabled": true,
+            "maximum_quantity_per_purchase": 1.0
+          },
+          "migration_delay_days": 2,
+          "operational_material_uses": [
+            {
+              "accepted_purpose_ids": [
+                "route_maintenance_reserve",
+                "patrol_supply_reserve",
+                "shipment_lashing_reserve"
+              ],
+              "consume_when_worn_out": true,
+              "durability_loss_per_cycle": 1.0,
+              "enabled": true,
+              "item_def_id": "item.fiber_rope",
+              "item_display_name": "纤维绳索",
+              "lead_days": 1.0,
+              "procurement_exchange_type": "local_spot_procurement",
+              "procurement_fact_type": "local_rope_procured",
+              "purchase_fact_types": [
+                "local_rope_procured"
+              ],
+              "quantity_label": "捆",
+              "quantity_required": 1.0,
+              "require_acquisition_purpose": true,
+              "scope_type": "route",
+              "seller_occupation_ids": [
+                "cordage_maker"
+              ],
+              "seller_retained_quantity": 1.0,
+              "transport_cost_reduction": 0.25,
+              "trigger_fact_type": "settlement_trade_shipment",
+              "use_id": "shipment_lashing",
+              "work_label": "货运捆扎与装卸"
+            }
+          ],
+          "population_lifecycle": {
+            "adulthood_age": 18.0,
+            "days_per_year": 365.0,
+            "elder_age": 65.0,
+            "enabled": true
+          },
+          "sites": [
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 82002,
+              "hub_location_id": "generated_location.reed_bay.commons",
+              "population_target": 23,
+              "resident_capacity": 31,
+              "settlement_id": "generated_settlement.reed_bay",
+              "settlement_name": "苇岸坞",
+              "site_id": "reed_bay",
+              "terrain_id": "lake_marsh_edge",
+              "terrain_tags": [
+                "waterside",
+                "marsh",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 82999,
+              "hub_location_id": "generated_location.river_steps.commons",
+              "population_target": 26,
+              "resident_capacity": 36,
+              "settlement_id": "generated_settlement.river_steps",
+              "settlement_name": "石渡坞",
+              "site_id": "river_steps",
+              "terrain_id": "river_terrace",
+              "terrain_tags": [
+                "riverside",
+                "fertile",
+                "roadside",
+                "slope"
+              ]
+            },
+            {
+              "dwelling_capacity": 6,
+              "generation_seed": 83996,
+              "hub_location_id": "generated_location.wind_pass.commons",
+              "population_target": 17,
+              "resident_capacity": 22,
+              "settlement_id": "generated_settlement.wind_pass",
+              "settlement_name": "风垭村",
+              "site_id": "wind_pass",
+              "terrain_id": "windy_upland",
+              "terrain_tags": [
+                "upland",
+                "windy",
+                "defensible",
+                "roadside"
+              ]
+            }
+          ],
+          "trade_goods": [
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.12,
+              "good_id": "food",
+              "reserve_capacity": 24.0,
+              "reserve_label": "外来口粮储备",
+              "tags": [
+                "food"
+              ]
+            },
+            {
+              "base_unit_price": 2.0,
+              "daily_use_per_resident": 0.03,
+              "good_id": "fiber",
+              "reserve_capacity": 16.0,
+              "reserve_label": "外来纤维储备",
+              "tags": [
+                "fiber"
+              ]
+            },
+            {
+              "base_unit_price": 3.0,
+              "daily_use_per_resident": 0.02,
+              "good_id": "salt",
+              "reserve_capacity": 12.0,
+              "reserve_label": "外来盐储备",
+              "tags": [
+                "salt"
+              ]
+            }
+          ]
+        },
+        "time": {
+          "day": 4,
+          "elapsed_hours": 72,
+          "hour": 8,
+          "world_tick_count": 3
+        },
+        "visibility": "omniscient_debug"
+      },
+      "fact_type_counts": {
+        "settlement_generated": 3,
+        "settlement_industry_selected": 11,
+        "settlement_resource_stock_established": 14,
+        "settlement_trade_reserve_established": 9,
+        "settlement_network_generated": 1,
+        "resident_generation_completed": 3,
+        "household_generated": 8,
+        "resident_generated": 30,
+        "generated_social_relation": 188,
+        "reserve_dwelling_generated": 3,
+        "settlement_construction_plot_generated": 18,
+        "organization_generated": 3,
+        "organization_position_assigned": 6,
+        "initial_treasury_endowment": 3,
+        "resource_commons_established": 3,
+        "resource_access_granted": 3,
+        "organization_treasury_funded": 3,
+        "settlement_resource_pressure_changed": 5,
+        "region_resource_pressure_changed": 1,
+        "autonomous_route_pressure_tick": 4,
+        "settlement_trade_shipment": 8,
+        "operational_material_demand_opened": 3,
+        "settlement_network_migration_evaluated": 4,
+        "resident_employment_search_unmet": 3,
+        "organization_trade_coordinated": 3,
+        "organization_route_patrolled": 4,
+        "npc_need_changed": 205,
+        "npc_cross_household_food_request_failed": 102,
+        "npc_household_food_unmet": 102,
+        "npc_livelihood_produced": 109,
+        "npc_household_shared_food": 38,
+        "npc_cross_household_shared_food": 22,
+        "npc_wage_paid": 72,
+        "npc_self_meal": 15,
+        "npc_food_request_conflict": 22,
+        "settlement_trade_reserve_consumed": 8,
+        "npc_food_debt_repaid": 5,
+        "regional_route_pressure_started": 1,
+        "organization_lifecycle_signal_observed": 1
+      }
+    },
+    {
+      "profile": "generated_network_play",
+      "actions": [
+        "travel/generated_route.network.reed_bay_river_steps.a_to_b",
+        "travel/generated_route.network.reed_bay_river_steps.b_to_a",
+        "travel/generated_route.network.reed_bay_river_steps.a_to_b",
+        "travel/generated_route.network.reed_bay_river_steps.b_to_a",
+        "travel/generated_route.network.reed_bay_river_steps.a_to_b",
+        "travel/generated_route.network.reed_bay_river_steps.b_to_a"
+      ],
+      "locations": [
+        "generated_location.reed_bay.commons",
+        "generated_location.river_steps.commons",
+        "generated_location.reed_bay.commons",
+        "generated_location.river_steps.commons",
+        "generated_location.reed_bay.commons",
+        "generated_location.river_steps.commons",
+        "generated_location.reed_bay.commons"
+      ],
+      "time": {
+        "day": 2,
+        "elapsed_hours": 24,
+        "hour": 8,
+        "world_tick_count": 6
+      }
+    },
+    {
+      "profile": "first_winter_play",
+      "actions": [
+        "duty/audit_rations_with_marta",
+        "duty/drill_with_elai",
+        "duty/patrol_fog_line",
+        "duty/practice_wall_archery",
+        "duty/repair_east_wall",
+        "duty/rest_in_infirmary",
+        "duty/audit_rations_with_marta",
+        "growth/growth.first_winter.fire_circle"
+      ],
+      "complete": true,
+      "next_choices": [
+        "market/item_instance.seventh_outpost.marta_rations",
+        "phase/first_quarter"
+      ],
+      "time": {
+        "day": 8,
+        "elapsed_hours": 168,
+        "hour": 6,
+        "world_tick_count": 7
+      }
+    }
+  ]
+}

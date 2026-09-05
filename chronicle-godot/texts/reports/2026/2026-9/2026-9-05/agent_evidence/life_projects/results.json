@@ -1,0 +1,34 @@
+[
+  {
+    "Test": "tests/sim/first_quarter_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.31,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/first_year_close_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.47,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/second_year_reception_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.32,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/seventh_outpost_life_project_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.54,
+    "UnexpectedErrors": []
+  }
+]

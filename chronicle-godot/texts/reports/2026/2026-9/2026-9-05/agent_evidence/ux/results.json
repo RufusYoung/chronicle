@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_playtest_ux_regression_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 14.55,
+  "UnexpectedErrors": []
+}

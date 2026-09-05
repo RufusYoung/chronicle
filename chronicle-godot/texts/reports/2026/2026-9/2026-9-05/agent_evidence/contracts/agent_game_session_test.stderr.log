@@ -1,0 +1,5 @@
+ERROR: FAIL: world save preserves state and no-actor boundary
+   at: push_error (core/variant/variant_utility.cpp:1024)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tests/agent/agent_game_session_test.gd:178)
+       [1] _run (res://tests/agent/agent_game_session_test.gd:95)

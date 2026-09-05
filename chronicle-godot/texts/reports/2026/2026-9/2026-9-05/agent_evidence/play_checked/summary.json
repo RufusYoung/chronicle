@@ -1,0 +1,55 @@
+{
+  "evidence_kind": "code_agent_and_passive_world",
+  "runs": [
+    {
+      "profile": "generated_network_play",
+      "actions": [
+        "travel/generated_route.network.reed_bay_river_steps.a_to_b",
+        "travel/generated_route.network.river_steps_wind_pass.a_to_b",
+        "travel/generated_route.wind_pass.commons_to_road_carting",
+        "player_action/inspect_visible_trace:generated_feature.wind_pass.road_carting",
+        "wait/one_hour",
+        "wait/one_hour"
+      ],
+      "locations": [
+        "generated_location.reed_bay.commons",
+        "generated_location.river_steps.commons",
+        "generated_location.wind_pass.commons",
+        "generated_location.wind_pass.road_yard",
+        "generated_location.wind_pass.road_yard",
+        "generated_location.wind_pass.road_yard",
+        "generated_location.wind_pass.road_yard"
+      ],
+      "time": {
+        "day": 1,
+        "elapsed_hours": 14,
+        "hour": 22,
+        "world_tick_count": 6
+      }
+    },
+    {
+      "profile": "first_winter_play",
+      "actions": [
+        "duty/audit_rations_with_marta",
+        "duty/drill_with_elai",
+        "duty/patrol_fog_line",
+        "duty/practice_wall_archery",
+        "duty/rest_in_infirmary",
+        "duty/repair_east_wall",
+        "duty/audit_rations_with_marta",
+        "growth/growth.first_winter.fire_circle"
+      ],
+      "complete": true,
+      "next_choices": [
+        "market/item_instance.seventh_outpost.marta_rations",
+        "phase/first_quarter"
+      ],
+      "time": {
+        "day": 8,
+        "elapsed_hours": 168,
+        "hour": 6,
+        "world_tick_count": 7
+      }
+    }
+  ]
+}

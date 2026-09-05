@@ -1,0 +1,10 @@
+{
+  "Test": "tests/agent/agent_game_session_test.gd",
+  "Passed": false,
+  "ExitCode": 1,
+  "TimedOut": false,
+  "Seconds": 17.97,
+  "UnexpectedErrors": [
+    "ERROR: FAIL: world save preserves state and no-actor boundary"
+  ]
+}

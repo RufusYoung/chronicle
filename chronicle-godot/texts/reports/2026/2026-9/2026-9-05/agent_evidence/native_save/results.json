@@ -1,0 +1,8 @@
+{
+  "Test": "tests/sim/save_envelope_roundtrip_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 5.81,
+  "UnexpectedErrors": []
+}

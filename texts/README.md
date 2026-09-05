@@ -4,7 +4,7 @@
 
 - 体验与灵感基准：[创作方向指导](CHRONICLE_CREATIVE_DIRECTION_GUIDE.md)。
 - 当前设计与实现文档：[v5 索引](v5/README.md)。
-- 活动执行状态：[玩家能动性与世界真实感计划](v5/CHRONICLE_PLAYER_AGENCY_SYSTEM_PLAN_v5.1.md)，截至 2026-09-04，W1-C 进行中。
+- 活动执行状态：[世界优先开发计划](v5/CHRONICLE_WORLD_FIRST_PLAN_v5.1.md)。自 2026-09-05 起以后台入口、连续世界、底层相互作用、最后接入玩家为顺序；旧计划保留已完成合同。
 - 最新整体审阅：[方向、实现与开发计划审阅](v5/CHRONICLE_PROJECT_REVIEW_2026-09-05.md)，包含实际 UI 操作和待采纳建议，不等于新活动计划。
 
 下方保留早期文档定位。旧 Demo 范围和旧阶段顺序不能直接视作当前发布范围；冲突与统一建议见整体审阅，不自行废弃用户保存的 GDD。

@@ -51,14 +51,15 @@ var latest_event_type: String = ""
 
 
 func start(
-		transition: Dictionary = {}, requested_phase_id: String = ""
+		transition: Dictionary = {}, requested_phase_id: String = "",
+		start_options: Dictionary = {}
 ) -> Dictionary:
 	var next_phase_id := _resolve_phase_id(transition, requested_phase_id)
 	var phase: Dictionary = _phase_config(next_phase_id)
 	var next_controller = ControllerModel.new()
 	var start_report: Dictionary = next_controller.start(
 		str(phase.get("fixture_path", "")),
-		str(phase.get("project_path", ""))
+		str(phase.get("project_path", "")), [], start_options
 	)
 	if not bool(start_report.get("success", false)):
 		start_result = start_report.duplicate(true)

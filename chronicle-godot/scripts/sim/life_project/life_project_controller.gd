@@ -41,7 +41,8 @@ var effect_protocol_resolver: Variant = EffectProtocolResolverModel.new()
 func start(
 		fixture_path: String,
 		project_path: String,
-		rule_paths: Array = []
+		rule_paths: Array = [],
+		start_options: Dictionary = {}
 ) -> Dictionary:
 	reset()
 	var loader = SimRegistryModel.new()
@@ -54,7 +55,8 @@ func start(
 	session = SimSessionModel.new()
 	var start_result: Dictionary = session.start_from_fixture_path(
 		fixture_path,
-		rule_paths
+		rule_paths,
+		start_options
 	)
 	if not bool(start_result.get("success", false)):
 		return start_result

@@ -6,9 +6,11 @@
 | --- | --- | --- |
 | 创作目标 | [创作方向指导](../CHRONICLE_CREATIVE_DIRECTION_GUIDE.md) | 五个灵感来源与体验约束，不以模块完成数替代 |
 | 设计依据 | [用户保存的主 GDD](Chronicle%20Game%20Design%20Document.md)、[v5.1 GDD](CHRONICLE_GDD_v5.1_REBUILD.md) | 两份均保留为有效设计依据 |
-| 活动计划 | [玩家能动性与世界真实感计划](CHRONICLE_PLAYER_AGENCY_SYSTEM_PLAN_v5.1.md) | 截至 2026-09-04，W1-C 进行中；收入、货运与产业反馈未完整接通 |
+| 活动计划 | [世界优先开发计划](CHRONICLE_WORLD_FIRST_PLAN_v5.1.md) | 10 月 5 日前交付 Tripothon S1 Demo、实机录屏与资产板；H0 至 H6 倒排执行，长期 B0 至 B7 提供验收归属 |
+| 旧验收记录 | [玩家能动性与世界真实感计划](CHRONICLE_PLAYER_AGENCY_SYSTEM_PLAN_v5.1.md) | 保留已完成合同；W1-C 剩余工作移入 B2，不继续作为另一个活动步骤 |
 | 经济边界 | [经济权属合同](CHRONICLE_ECONOMIC_OWNERSHIP_CONTRACT_v5.1.md) | 最小合同验收不等于完整经济与文明摩擦 |
-| 本轮审阅 | [方向、实现与开发计划](CHRONICLE_PROJECT_REVIEW_2026-09-05.md) | 建议待采纳，没有改动活动步骤和旧验收状态 |
+| AI 后台入口 | [代码级游玩协议](../specs/AI_GAME_CONTROL_API.md) | 生成世界观察与正式同源行动，非任意状态写入、非后台内置 LLM |
+| 本轮审阅 | [方向、实现与开发计划](CHRONICLE_PROJECT_REVIEW_2026-09-05.md) | 原审阅保留；后续顺序调整见世界优先计划，不回写审阅历史 |
 
 下文的阶段记录与推荐顺序保留其历史语境；其中旧测试数和完成度估算不作为当前项目进度。
 
