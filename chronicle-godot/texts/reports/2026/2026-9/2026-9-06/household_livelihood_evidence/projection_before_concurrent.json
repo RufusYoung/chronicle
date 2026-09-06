@@ -1,0 +1,323 @@
+{
+  "checkpoint": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe\\canon_livelihood_frozen_81001\\day30.json",
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "rows": [
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 10,
+        "deferred_consequences": 0,
+        "entities": 61,
+        "equipment_loadouts": 1,
+        "exchanges": 0,
+        "facts": 319,
+        "investigation_leads": 0,
+        "items": 21,
+        "memories": 0,
+        "obligations": 0,
+        "pressures": 0,
+        "relationships": 304,
+        "resource_stocks": 23,
+        "rumors": 0,
+        "states": 963,
+        "traces": 0
+      },
+      "world": "initial"
+    },
+    {
+      "max_ms": 51.435,
+      "p50_ms": 45.343,
+      "p95_ms": 48.889,
+      "phase": "full_projection",
+      "repeats": 20,
+      "snapshot_calls": 300,
+      "snapshot_ms_total": 540.828,
+      "world": "initial"
+    },
+    {
+      "max_ms": 2.355,
+      "p50_ms": 1.894,
+      "p95_ms": 2.355,
+      "phase": "snapshot",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 8.81,
+      "world": "initial"
+    },
+    {
+      "max_ms": 2.82,
+      "p50_ms": 2.372,
+      "p95_ms": 2.82,
+      "phase": "action_candidates",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 8.76,
+      "world": "initial"
+    },
+    {
+      "max_ms": 12.213,
+      "p50_ms": 11.869,
+      "p95_ms": 12.213,
+      "phase": "action_rows",
+      "repeats": 5,
+      "snapshot_calls": 30,
+      "snapshot_ms_total": 50.196,
+      "world": "initial"
+    },
+    {
+      "max_ms": 36.503,
+      "p50_ms": 35.008,
+      "p95_ms": 36.503,
+      "phase": "decision",
+      "repeats": 5,
+      "snapshot_calls": 70,
+      "snapshot_ms_total": 127.324,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.004,
+      "p50_ms": 0.002,
+      "p95_ms": 0.004,
+      "phase": "agency",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 6.077,
+      "p50_ms": 5.8,
+      "p95_ms": 6.077,
+      "phase": "risk",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 25.126,
+      "world": "initial"
+    },
+    {
+      "max_ms": 9.692,
+      "p50_ms": 6.774,
+      "p95_ms": 9.692,
+      "phase": "travel",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 30.561,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.054,
+      "p50_ms": 0.026,
+      "p95_ms": 0.054,
+      "phase": "player",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 8.269,
+      "p50_ms": 7.748,
+      "p95_ms": 8.269,
+      "phase": "knowledge",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.008,
+      "p50_ms": 0.002,
+      "p95_ms": 0.008,
+      "phase": "feedback",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 0.003,
+      "p50_ms": 0.001,
+      "p95_ms": 0.003,
+      "phase": "world_log_copy",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "initial"
+    },
+    {
+      "max_ms": 86.478,
+      "p50_ms": 80.31,
+      "p95_ms": 84.965,
+      "phase": "unshared_full_projection",
+      "repeats": 20,
+      "snapshot_calls": 580,
+      "snapshot_ms_total": 1061.397,
+      "world": "initial"
+    },
+    {
+      "counts": {
+        "character_features": 0,
+        "chronicle_entries": 24,
+        "deferred_consequences": 0,
+        "entities": 42,
+        "equipment_loadouts": 1,
+        "exchanges": 130,
+        "facts": 10608,
+        "investigation_leads": 0,
+        "items": 692,
+        "memories": 1263,
+        "obligations": 0,
+        "pressures": 29,
+        "relationships": 160,
+        "resource_stocks": 11,
+        "rumors": 0,
+        "states": 728,
+        "traces": 9
+      },
+      "world": "day7"
+    },
+    {
+      "max_ms": 1244.454,
+      "p50_ms": 1201.32,
+      "p95_ms": 1241.921,
+      "phase": "full_projection",
+      "repeats": 20,
+      "snapshot_calls": 300,
+      "snapshot_ms_total": 11893.201,
+      "world": "day7"
+    },
+    {
+      "max_ms": 52.642,
+      "p50_ms": 48.71,
+      "p95_ms": 52.642,
+      "phase": "snapshot",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 186.719,
+      "world": "day7"
+    },
+    {
+      "max_ms": 88.569,
+      "p50_ms": 80.13,
+      "p95_ms": 88.569,
+      "phase": "action_candidates",
+      "repeats": 5,
+      "snapshot_calls": 5,
+      "snapshot_ms_total": 201.097,
+      "world": "day7"
+    },
+    {
+      "max_ms": 364.345,
+      "p50_ms": 354.993,
+      "p95_ms": 364.345,
+      "phase": "action_rows",
+      "repeats": 5,
+      "snapshot_calls": 30,
+      "snapshot_ms_total": 1222.382,
+      "world": "day7"
+    },
+    {
+      "max_ms": 945.672,
+      "p50_ms": 900.509,
+      "p95_ms": 945.672,
+      "phase": "decision",
+      "repeats": 5,
+      "snapshot_calls": 70,
+      "snapshot_ms_total": 2838.41,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.005,
+      "p50_ms": 0.002,
+      "p95_ms": 0.005,
+      "phase": "agency",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 162.768,
+      "p50_ms": 157.888,
+      "p95_ms": 162.768,
+      "phase": "risk",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 589.765,
+      "world": "day7"
+    },
+    {
+      "max_ms": 203.464,
+      "p50_ms": 199.329,
+      "p95_ms": 203.464,
+      "phase": "travel",
+      "repeats": 5,
+      "snapshot_calls": 15,
+      "snapshot_ms_total": 606.372,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.971,
+      "p50_ms": 0.418,
+      "p95_ms": 0.971,
+      "phase": "player",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 130.467,
+      "p50_ms": 124.466,
+      "p95_ms": 130.467,
+      "phase": "knowledge",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 0.01,
+      "p50_ms": 0.003,
+      "p95_ms": 0.01,
+      "phase": "feedback",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 25.319,
+      "p50_ms": 21.658,
+      "p95_ms": 25.319,
+      "phase": "world_log_copy",
+      "repeats": 5,
+      "snapshot_calls": 0,
+      "snapshot_ms_total": 0.0,
+      "world": "day7"
+    },
+    {
+      "max_ms": 2344.74,
+      "p50_ms": 2193.005,
+      "p95_ms": 2313.453,
+      "phase": "unshared_full_projection",
+      "repeats": 20,
+      "snapshot_calls": 580,
+      "snapshot_ms_total": 24196.542,
+      "world": "day7"
+    }
+  ],
+  "scope": "Warm read-only projection cost, not action latency or cold startup. Component probes overlap and must not be added together."
+}

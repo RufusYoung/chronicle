@@ -145,6 +145,11 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 			or not locations.has(location) or "home" in locations[location].get("tags", []):
 		return {}
 	var items: Array = stores.item_store.list_items_for_owner(buyer)
+	if int(config.get("household_budget", {}).get("version", 0)) == 1:
+		var own_store := FoodStorage.stock_holder(snapshot, buyer)
+		if own_store != "" and snapshot.get_entity_state(own_store, "location_id", "") == location \
+				and FoodStorage.quantity(stores.item_store.list_items_for_owner(own_store), own_store) > 0:
+			return {}
 	var cart_config: Dictionary = config.get("carting", {})
 	var carting := Carting.restocking(snapshot, actor, cart_config)
 	if not carting and not needs_food(actor, items) and (family_request.is_empty() or food_quantity(items, buyer) > 0):
@@ -261,6 +266,8 @@ func _seller_offers(snapshot: Variant, seller: Dictionary, buyer: String, holder
 		"accepted_currency_item_def_ids": [CURRENCY], "fact_type": "resident_food_purchased",
 		"exchange_type": "resident_food_purchase", "stock_entity_id": holder}
 	if carting and total_food - retained >= int(cart_config.target_portions):
+		policy["base_markup"] = -0.5
+	if int(config.get("household_budget", {}).get("version", 0)) == 1 and holder != id and total_food - retained >= 8:
 		policy["base_markup"] = -0.5
 	for offer: Dictionary in Market.new().build_stock_view(policy, stores, buyer).get("offers", []):
 		var item: Dictionary = stores.item_store.get_item(str(offer.get("item_instance_id", "")))

@@ -7,6 +7,9 @@ const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const Carting = preload("res://scripts/sim/economy/resident_food_carting.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
+const Hauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
+const Budget = preload("res://scripts/sim/economy/household_food_budget.gd")
+const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 const STATE_KEYS := ["daily_life_version", "daily_activity", "daily_activity_reason", "daily_goal_id",
 	"daily_workplace_id", "daily_route_id", "daily_destination_id", "daily_travel_remaining",
 	"daily_departure_fact_id", "daily_presence_fact_id"]
@@ -85,6 +88,13 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 			reason = "前往集地寻找工作"
 		if FoodAccess.enabled(food_config) and not must_rest:
 			var family := FamilyFood.request(snapshot, actor, tick, food_config.get("household_provisioning", {}))
+			if Budget.enabled(food_config.get("household_budget", {})):
+				family = Budget.request(snapshot, actor, tick, food_config.household_budget)
+			var haul_config: Dictionary = food_config.get("hauling", {})
+			if Hauling.enabled(haul_config) and not family.is_empty():
+				var sent := Hauling.assigned_targets(snapshot, id, tick)
+				if family.targets.all(func(row: Dictionary) -> bool: return str(row.target_id) in sent):
+					family = {}
 			var carried := FoodAccess.food_quantity(food_items, id)
 			var cart_config: Dictionary = food_config.get("carting", {})
 			if Carting.is_carter(actor, cart_config) and on_shift:
@@ -109,20 +119,67 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 				activity = "seeking_food"
 				reason = "没有口粮，带钱寻找已知供给" if family.is_empty() else "记得%s缺粮，带自己的钱去采购" % family.names
 				decision_sources = family.get("source_fact_ids", [])
+			var subsistence_config: Dictionary = food_config.get("subsistence", {})
+			var subsistence_need := Subsistence.decision(snapshot, actor, food_items, family, subsistence_config, tick)
+			if not subsistence_need.is_empty():
+				for profile: Dictionary in Subsistence.candidates(actor, profiles, subsistence_config):
+					var site := str(profile.workplace_id)
+					if Subsistence.recently_failed(snapshot, id, site, tick, subsistence_config):
+						continue
+					var hours := 0 if site == location else int(_next_edge(routes, location, site).get("total_hours", 100000))
+					if hours > int(subsistence_config.maximum_travel_hours):
+						continue
+					if work_time("subsistence", hour, config):
+						goal = site
+						activity = "foraging"
+						reason = str(subsistence_need.reason)
+					elif int(subsistence_config.get("household_affordability_version", 0)) == 1 \
+							and states.get("occupation_id") in config.get("night_occupations", []):
+						goal = home
+						activity = "resting"
+						reason = "现有买粮钱补不上口粮缺口，今晚暂停原班次，回家休息准备白天采食"
+					else:
+						continue
+					decision_sources = subsistence_need.source_fact_ids
+					decision_intent = "subsistence"
+					break
 			var self_reserve := 1 if FoodStorage.enabled(food_config.get("worksite_storage", {})) else 0
 			var useful_return := true
-			if self_reserve > 0 and location == home:
+			if self_reserve > 0 and location == home and not family.has("pantry_id"):
 				useful_return = false
 				for target: Dictionary in family.get("targets", []):
 					if snapshot.get_entity_state(str(target.target_id), "location_id", "") == home \
 							and snapshot.get_entity_state(str(target.target_id), "daily_route_id", "") == "":
 						useful_return = true
-			if not family.is_empty() and carried > self_reserve and useful_return:
+			var return_reserve := int(food_config.get("household_budget", {}).get("personal_reserve", self_reserve))
+			if not family.is_empty() and carried > return_reserve and useful_return:
 				decision_intent = ""
 				goal = str(family.home_location_id)
 				activity = "home"
 				reason = "给%s带粮回家" % family.names
 				decision_sources = family.source_fact_ids
+			if Hauling.is_carrier(actor, haul_config):
+				var order := Hauling.active_order(snapshot, id)
+				if not order.is_empty():
+					goal = str(order.origin_location_id if order.status == "returning" else order.destination_location_id)
+					activity = "working"
+					reason = "携带未交出的托运粮食和封存运费返回" if order.status == "returning" else "把受托粮食送到约定家人手中，之后才能领取运费"
+					decision_sources = order.source_fact_ids
+					decision_intent = "food_hauling"
+				elif on_shift and supply == "" and activity != "foraging" and (family.is_empty() or carried <= return_reserve):
+					var sites := FoodAccess.known_supply_locations(snapshot, actor, profiles, network, food_config)
+					var best := ""
+					var distance := 100000
+					for site: String in sites:
+						if Hauling.recently_visited(snapshot, id, site, tick, haul_config):
+							continue
+						var hours := 0 if site == location else int(_next_edge(routes, location, site).get("total_hours", 100000))
+						if hours < distance:
+							best = site
+							distance = hours
+					goal = best if best != "" else _hub(network, str(states.get("settlement_id", "")))
+					activity = "seeking_work"
+					reason = "到已知作业地询问有报酬的送粮差事" if best != "" else "暂未找到可到场询问的差事，返回集地"
 		_change(result, id, states, "daily_goal_id", goal)
 		if goal == "" or not locations.has(goal):
 			_transition(result, events, actor, states, "blocked", "没有可到达的去处", tick)

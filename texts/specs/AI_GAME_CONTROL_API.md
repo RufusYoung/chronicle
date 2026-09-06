@@ -55,7 +55,7 @@ H1 已增加发布包入口，直接启动 `Chronicle.exe --headless -- --agent-
 
 | 命令 | 参数与结果 |
 | --- | --- |
-| `start` | `mode` 默认 world，`scenario` 默认 generated_network，`seed` 默认 81001，取 1 至 2147483647 的整数。可选 `economy_variant` 为 default 或 worksite_carting_v1，后者只允许 echo_realm。替换当前会话；非法配置保留旧会话。 |
+| `start` | `mode` 默认 world，`scenario` 默认 generated_network，`seed` 默认 81001，取 1 至 2147483647 的整数。`economy_variant` 见下表，非 default 只允许 echo_realm。替换当前会话；非法配置保留旧会话。 |
 | `observe` | 返回当前正式观察与候选，不推进时间、不消费 RNG。不包含完整 Stores、原始事务历史或存档内容。现场对象按稳定 ID 排序，候选按 choice_id 排序，不代表推荐顺序。 |
 | `act` | 只能传当前候选的 `choice_id`。`enabled=false` 不能执行；成长与生涯转换还要求 `confirm: true`。配给交易每次买 1 份，价格来自当前正式报价，不能自报低价。 |
 | `advance` | 仅 world 模式，`hours` 为 1 至 24 的整数，以全局范围调用正式时间推进。无需角色行动也会结算已有世界机制。 |
@@ -68,6 +68,16 @@ H1 已增加发布包入口，直接启动 `Chronicle.exe --headless -- --agent-
 底层旧 ViewModel 的部分日志仍以玩家实体和界面来源命名。审计必须连同 API receipt 使用，不能只凭旧日志的 `source` 字符串判断真人操作；本轮未全局迁移历史事实命名。
 
 ### 显式经济实验
+
+| `economy_variant` | 新世界规则 |
+| --- | --- |
+| `default` | 保留接口既有的家庭供给规则。 |
+| `worksite_carting_v1` | 工作地粮堆与本人出资转运；未通过持续生活验收。 |
+| `worksite_hauling_v1` | 工作地粮堆与付款者出资、收货后计酬的送粮。 |
+| `household_budget_v1` | 上述送粮与家庭粮柜、备粮记忆；单独启用仍会长期缺粮。 |
+| `household_livelihood_v1` | 粮柜、预算、送粮与受资源权限约束的替代采食共同运行。 |
+
+查看本轮整合规则应显式选择 `household_livelihood_v1`。`world` 模式的逐小时世界演算不会注入 NPC 指令；`play` 模式仍只能执行返回的合法选项。这是居民生活联调，不意味着当前正式玩家人生已完成。配置和限制见[家庭生活合同](../v5/CHRONICLE_HOUSEHOLD_LIVELIHOOD_CONTRACT_v5.1.md)。
 
 `economy_variant: "worksite_carting_v1"` 在新世界启用现场粮堆、取货、积压停工与自费转运。它在源码及 Windows 包共用同一入口，不依赖屏幕控制，也不允许调用方注入人物行为。
 

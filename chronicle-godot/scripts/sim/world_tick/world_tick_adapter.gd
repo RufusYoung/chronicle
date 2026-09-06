@@ -62,6 +62,8 @@ const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
+const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
+const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
@@ -275,10 +277,26 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 
 		if DailyLife.enabled(daily_life_config):
 			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			var budget_config: Dictionary = daily_life_config.get("food_access", {}).get("household_budget", {})
+			if FoodBudget.enabled(budget_config):
+				for person: Dictionary in activity_snapshot.get_entities_by_type("person"):
+					var home_transfer := FoodBudget.new().plan_home_transfer(activity_snapshot, person, round_event, budget_config, stores)
+					if home_transfer.has("transaction"):
+						if not writer.apply_result(home_transfer.transaction, stores):
+							return _failure_result(event, "household_pantry_transfer_rejected", stores)
+						livelihood_results.append(home_transfer.transaction)
+						livelihood_events.append_array(home_transfer.events)
+				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+				var budget_observation := FoodBudget.new().observe(activity_snapshot, round_event, budget_config)
+				if not writer.apply_results(budget_observation.results, stores):
+					return _failure_result(event, "household_budget_observation_rejected", stores)
+				livelihood_results.append_array(budget_observation.results)
+				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var storage_config: Dictionary = daily_life_config.get("food_access", {}).get("worksite_storage", {})
 			if FoodStorage.enabled(storage_config):
 				for person: Dictionary in activity_snapshot.get_entities_by_type("person"):
-					var withdrawal := FoodStorage.new().plan_withdrawal(activity_snapshot, person, round_event, storage_config, stores, daily_life_config)
+					var household_need := FoodBudget.request(activity_snapshot, person, round_event, budget_config)
+					var withdrawal := FoodStorage.new().plan_withdrawal(activity_snapshot, person, round_event, storage_config, stores, daily_life_config, household_need)
 					if withdrawal.has("transaction"):
 						if not writer.apply_result(withdrawal.transaction, stores):
 							return _failure_result(event, "worksite_food_withdrawal_rejected", stores)
@@ -321,7 +339,25 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			livelihood_events.append_array(work_data.get("events", []))
 
 			var family_config: Dictionary = daily_life_config.get("food_access", {}).get("household_provisioning", {})
-			if FamilyFood.enabled(family_config):
+			var hauling_config: Dictionary = daily_life_config.get("food_access", {}).get("hauling", {})
+			if FoodHauling.enabled(hauling_config):
+				var routing := DailyLife.new()
+				var haul_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+				var haul_routes: Array = routing._routes(haul_snapshot, settlement_network_config, context.locations, daily_life_routes, daily_life_config)
+				var route_finder := func(start: String, goal: String) -> Dictionary: return routing._next_edge(haul_routes, start, goal)
+				for carrier: Dictionary in haul_snapshot.get_entities_by_type("person"):
+					var hauling := FoodHauling.new().plan_contact(haul_snapshot, carrier, round_event, hauling_config, family_config, stores, route_finder,
+						daily_life_config.get("food_access", {}).get("household_budget", {}))
+					if hauling.has("error"):
+						return _failure_result(event, str(hauling.error), stores)
+					if not hauling.has("transaction"):
+						continue
+					if not writer.apply_result(hauling.transaction, stores):
+						return _failure_result(event, "food_hauling_rejected", stores)
+					livelihood_results.append(hauling.transaction)
+					livelihood_events.append_array(hauling.events)
+					haul_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			if FamilyFood.enabled(family_config) and not FoodBudget.enabled(daily_life_config.get("food_access", {}).get("household_budget", {})):
 				var delivery_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 				var carriers: Array = delivery_snapshot.get_entities_by_type("person")
 				carriers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.id) < str(b.id))
@@ -359,6 +395,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				for buyer: Dictionary in buyers:
 					# Plan against current item ownership after each previous settlement.
 					var family_request := FamilyFood.request(food_snapshot, buyer, round_event, family_config)
+					if FoodBudget.enabled(food_config.get("household_budget", {})):
+						family_request = FoodBudget.request(food_snapshot, buyer, round_event, food_config.household_budget)
 					var purchase := FoodAccess.new().plan_purchase(food_snapshot, buyer, round_event, food_config, context.locations, stores, family_request, food_reservations)
 					if purchase.has("transaction"):
 						var transaction: Variant = purchase.transaction

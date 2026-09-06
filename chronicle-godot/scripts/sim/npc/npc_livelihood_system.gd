@@ -7,6 +7,8 @@ const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodCarting = preload("res://scripts/sim/economy/resident_food_carting.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
+const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
+const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
@@ -41,7 +43,11 @@ func resolve_work_tick(
 	var available_resources := _available_resource_amounts(snapshot)
 	var treasury = Treasury.new(snapshot)
 	for actor: Dictionary in _sorted_people(snapshot):
-		if FoodCarting.is_carter(actor, daily_life_config.get("food_access", {}).get("carting", {})):
+		var temporary := Subsistence.active_profile(actor, profiles, daily_life_config.get("food_access", {}).get("subsistence", {}))
+		var foraging := not temporary.is_empty()
+		if not foraging and FoodHauling.is_carrier(actor, daily_life_config.get("food_access", {}).get("hauling", {})):
+			continue
+		if not foraging and FoodCarting.is_carter(actor, daily_life_config.get("food_access", {}).get("carting", {})):
 			continue
 		var actor_id := str(actor.get("id", ""))
 		var occupation_id := str(snapshot.get_entity_state(
@@ -52,36 +58,42 @@ func resolve_work_tick(
 		))
 		var profile_key := _profile_key(settlement_id, occupation_id)
 		var fallback_key := _profile_key("", occupation_id)
-		if not profiles_by_scope.has(profile_key) and not profiles_by_scope.has(
+		if not foraging and not profiles_by_scope.has(profile_key) and not profiles_by_scope.has(
 			fallback_key
 		):
 			continue
 		var profile: Dictionary = profiles_by_scope.get(
 			profile_key, profiles_by_scope.get(fallback_key, {})
 		)
+		if foraging:
+			profile = temporary
 		if not _actor_matches_profile(actor, profile):
 			continue
 		var physical_work: bool = DailyLife.enabled(daily_life_config) and "generated_resident" in actor.get("tags", [])
 		if physical_work and (not bool(snapshot.get_entity_state(actor_id, "alive", true))
 				or int(snapshot.get_entity_state(actor_id, "health", 100)) < int(daily_life_config.get("minimum_work_health", 30))
 				or int(snapshot.get_entity_state(actor_id, "fatigue", 0)) >= int(daily_life_config.get("rest_fatigue", 7))
-				or not DailyLife.work_time(occupation_id, int(tick_event.get("hour", 0)), daily_life_config)
-				or str(snapshot.get_entity_state(actor_id, "daily_activity", "")) != "working"
+				or not DailyLife.work_time("subsistence" if foraging else occupation_id, int(tick_event.get("hour", 0)), daily_life_config)
+				or str(snapshot.get_entity_state(actor_id, "daily_activity", "")) != ("foraging" if foraging else "working")
 				or str(snapshot.get_entity_state(actor_id, "daily_route_id", "")) != ""
 				or str(snapshot.get_entity_state(actor_id, "location_id", "")) != str(profile.get("workplace_id", ""))
-				or str(snapshot.get_entity_state(actor_id, "workplace_id", "")) != str(profile.get("workplace_id", ""))):
+				or (not foraging and str(snapshot.get_entity_state(actor_id, "workplace_id", "")) != str(profile.get("workplace_id", "")))):
 			continue
-		var storage_config: Dictionary = daily_life_config.get("food_access", {}).get("worksite_storage", {})
+		var storage_config: Dictionary = {} if foraging else daily_life_config.get("food_access", {}).get("worksite_storage", {})
 		if not FoodStorage.has_capacity(snapshot, actor_id, profile, storage_config):
 			continue
 		var interval := maxi(int(profile.get("work_interval_hours", 8)), 1)
+		var elapsed_key := "subsistence_elapsed_hours" if foraging else "livelihood_elapsed_hours"
 		var elapsed := int(snapshot.get_entity_state(
-			actor_id, "livelihood_elapsed_hours", 0
+			actor_id, elapsed_key, 0
 		)) + 1
+		if foraging and snapshot.get_entity_state(actor_id, "subsistence_workplace_id", "") != profile.workplace_id:
+			elapsed = 1
+			result.add_state_change({"entity_id": actor_id, "key": "subsistence_workplace_id", "to": profile.workplace_id})
 		if elapsed < interval:
 			result.add_state_change({
 				"entity_id": actor_id,
-				"key": "livelihood_elapsed_hours",
+				"key": elapsed_key,
 				"to": elapsed,
 			})
 			continue
@@ -105,9 +117,9 @@ func resolve_work_tick(
 				"fact_type": "npc_wage_work_declined" if wage_missing else "npc_livelihood_blocked_resource",
 				"actor_id": actor_id,
 				"settlement_id": settlement_id,
-				"location_id": str(snapshot.get_entity_state(
-					actor_id, "workplace_id", ""
-				)),
+				"location_id": str(profile.get("workplace_id", "")),
+				"work_kind": "subsistence" if foraging else "occupation",
+				"hour": int(tick_event.get("hour", 0)),
 				"occupation_id": occupation_id,
 				"stock_id": str(blocked_resource.get("stock_id", "")),
 				"resource_label": str(blocked_resource.get(
@@ -125,7 +137,7 @@ func resolve_work_tick(
 			})
 			result.add_state_change({
 				"entity_id": actor_id,
-				"key": "livelihood_elapsed_hours",
+				"key": elapsed_key,
 				"to": elapsed - interval,
 			})
 			result.add_state_change({
@@ -196,9 +208,8 @@ func resolve_work_tick(
 			"fact_id": fact_id,
 			"fact_type": "npc_livelihood_produced",
 			"actor_id": actor_id,
-			"location_id": str(snapshot.get_entity_state(
-				actor_id, "workplace_id", ""
-			)),
+			"location_id": str(profile.get("workplace_id", "")),
+			"work_kind": "subsistence" if foraging else "occupation",
 			"occupation_id": occupation_id,
 			"livelihood_cycle_count": cycle_count,
 			"products": product_rows,
@@ -213,6 +224,8 @@ func resolve_work_tick(
 			)) + ("（旧版薪酬模型：铜币由规则生成，尚未实际付款。）" if _contains_currency_product(products) else ""),
 		}
 		if physical_work:
+			if foraging:
+				production_fact["summary"] = "%s在这里花了 %d 小时采得 %d 份口粮，实际消耗公用作业资源。食物先由本人携带，家人还没收到。" % [actor.display_name, interval, products[0].quantity]
 			if FoodStorage.enabled(storage_config) and FoodStorage.stock_holder(snapshot, actor_id) != "" \
 					and not products.is_empty() and products[0].get("item_def_id") in FoodStorage.FOOD_IDS:
 				production_fact["stock_entity_id"] = FoodStorage.stock_holder(snapshot, actor_id)
@@ -224,7 +237,7 @@ func resolve_work_tick(
 		result.add_fact(production_fact)
 		result.add_state_change({
 			"entity_id": actor_id,
-			"key": "livelihood_elapsed_hours",
+			"key": elapsed_key,
 			"to": elapsed - interval,
 		})
 		result.add_state_change({

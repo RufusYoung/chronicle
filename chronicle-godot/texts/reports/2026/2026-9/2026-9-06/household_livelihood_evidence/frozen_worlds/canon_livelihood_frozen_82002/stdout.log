@@ -1,0 +1,72 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] start
+[PASS] configuration experiment: household livelihood with finite quoted fee
+[PASS] day_1
+FOOD_ECONOMY_DAY canon_livelihood_frozen 1
+[PASS] day_2
+FOOD_ECONOMY_DAY canon_livelihood_frozen 2
+[PASS] day_3
+FOOD_ECONOMY_DAY canon_livelihood_frozen 3
+[PASS] day_4
+FOOD_ECONOMY_DAY canon_livelihood_frozen 4
+[PASS] day_5
+FOOD_ECONOMY_DAY canon_livelihood_frozen 5
+[PASS] day_6
+FOOD_ECONOMY_DAY canon_livelihood_frozen 6
+[PASS] day_7
+FOOD_ECONOMY_DAY canon_livelihood_frozen 7
+[PASS] day_8
+FOOD_ECONOMY_DAY canon_livelihood_frozen 8
+[PASS] day_9
+FOOD_ECONOMY_DAY canon_livelihood_frozen 9
+[PASS] day_10
+FOOD_ECONOMY_DAY canon_livelihood_frozen 10
+[PASS] day_11
+FOOD_ECONOMY_DAY canon_livelihood_frozen 11
+[PASS] day_12
+FOOD_ECONOMY_DAY canon_livelihood_frozen 12
+[PASS] day_13
+FOOD_ECONOMY_DAY canon_livelihood_frozen 13
+[PASS] day_14
+FOOD_ECONOMY_DAY canon_livelihood_frozen 14
+[PASS] day_15
+FOOD_ECONOMY_DAY canon_livelihood_frozen 15
+[PASS] day_16
+FOOD_ECONOMY_DAY canon_livelihood_frozen 16
+[PASS] day_17
+FOOD_ECONOMY_DAY canon_livelihood_frozen 17
+[PASS] day_18
+FOOD_ECONOMY_DAY canon_livelihood_frozen 18
+[PASS] day_19
+FOOD_ECONOMY_DAY canon_livelihood_frozen 19
+[PASS] day_20
+FOOD_ECONOMY_DAY canon_livelihood_frozen 20
+[PASS] day_21
+FOOD_ECONOMY_DAY canon_livelihood_frozen 21
+[PASS] day_22
+FOOD_ECONOMY_DAY canon_livelihood_frozen 22
+[PASS] day_23
+FOOD_ECONOMY_DAY canon_livelihood_frozen 23
+[PASS] day_24
+FOOD_ECONOMY_DAY canon_livelihood_frozen 24
+[PASS] day_25
+FOOD_ECONOMY_DAY canon_livelihood_frozen 25
+[PASS] day_26
+FOOD_ECONOMY_DAY canon_livelihood_frozen 26
+[PASS] day_27
+FOOD_ECONOMY_DAY canon_livelihood_frozen 27
+[PASS] day_28
+FOOD_ECONOMY_DAY canon_livelihood_frozen 28
+[PASS] day_29
+FOOD_ECONOMY_DAY canon_livelihood_frozen 29
+[PASS] day_30
+FOOD_ECONOMY_DAY canon_livelihood_frozen 30
+[PASS] native save
+[PASS] references
+[PASS] native load
+[PASS] continuation
+[PASS] restored continuation
+[PASS] native precision continuation equal
+[PASS] no actor actions
+FOOD_ECONOMY_RESULT PASS

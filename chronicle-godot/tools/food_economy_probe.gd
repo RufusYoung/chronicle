@@ -1,6 +1,7 @@
 extends SceneTree
 
 const Live = preload("res://scripts/rebuild/v5_live_location_view_model.gd")
+const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 var failures: Array = []
 
 
@@ -20,6 +21,18 @@ func _run() -> void:
 		options["food_carting_version"] = 1
 	if mode.begins_with("canon_depot"):
 		options["worksite_food_storage_version"] = 1
+	if mode.begins_with("canon_haul"):
+		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1})
+	if mode.begins_with("canon_budget"):
+		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1})
+	if mode.begins_with("canon_cooperation"):
+		push_error("Retired unfunded cooperation experiment. Historical evidence is not a supported world preset.")
+		quit(1)
+		return
+	if mode.begins_with("canon_livelihood"):
+		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1, "resident_subsistence_version": 1})
+	if mode == "canon_livelihood_without_subsistence":
+		options["resident_subsistence_version"] = 0
 	if mode in ["canon_without_family", "canon_without_carting"]:
 		options["food_carting_version"] = 0
 	if mode == "canon_without_family":
@@ -29,6 +42,20 @@ func _run() -> void:
 		quit(1)
 		return
 	var fixture: Dictionary = model.session.fixture_source_data.duplicate(true)
+	if mode.begins_with("canon_livelihood"):
+		fixture.resident_daily_life.food_access.hauling.fee = 4
+		if mode == "canon_livelihood_without_affordability":
+			fixture.resident_daily_life.food_access.subsistence.erase("household_affordability_version")
+			fixture.resident_daily_life.food_access.subsistence.erase("quote_memory_hours")
+		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "configuration experiment: household livelihood with finite quoted fee")
+	if mode.begins_with("canon_budget_fee"):
+		var fee := int(mode.trim_prefix("canon_budget_fee"))
+		fixture.resident_daily_life.food_access.hauling.fee = fee
+		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "configuration experiment: finite quoted haul fee")
+	if mode == "canon_budget_without_hauling":
+		fixture.resident_daily_life.food_access.hauling.fee = 4
+		fixture.resident_daily_life.food_access.hauling["allow_new_contracts"] = false
+		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "test injection: no new paid hauling agreements, no timer wages restored")
 	if mode == "local_only":
 		fixture.resident_daily_life.food_access.adjacent_supply_known = false
 		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "test injection: local information only")
@@ -44,11 +71,20 @@ func _run() -> void:
 	var rows: Array = []
 	var extreme_person_hours := 0
 	var activity_hours := {}
+	if mode == "canon_livelihood_withdraw_reopen":
+		_set_terrace_access(model, false)
 	for day: int in range(1, days + 1):
+		if mode == "canon_livelihood_withdraw_reopen" and day == 8:
+			_set_terrace_access(model, true)
 		var began := Time.get_ticks_usec()
 		var ok := true
 		for hour: int in range(24):
-			ok = model.session.advance_time(1, "food_economy_probe", {"scope_type": "global", "scope_id": "", "source": "passive_food_probe"}).success and ok
+			var advanced: Dictionary = model.session.advance_time(1, "food_economy_probe", {"scope_type": "global", "scope_id": "", "source": "passive_food_probe"})
+			if not advanced.get("success", false):
+				print("FOOD_ECONOMY_ADVANCE_FAILURE " + JSON.stringify(advanced))
+				model.save_to_path(output + "/failed.json", true)
+				quit(1)
+				return
 			for id: String in model.session.stores.state_store.states:
 				var state: Dictionary = model.session.stores.state_store.states[id]
 				if state.has("occupation_id"):
@@ -65,7 +101,12 @@ func _run() -> void:
 	_check(model.save_to_path(checkpoint, true).success, "native save")
 	_check(model.session.validate_persistent_references().ok, "references")
 	var restored := Live.new()
-	_check(restored.load_from_path(checkpoint).success, "native load")
+	var loaded := restored.load_from_path(checkpoint)
+	_check(loaded.success, "native load")
+	if not loaded.success:
+		print("FOOD_ECONOMY_LOAD_FAILURE " + JSON.stringify(loaded))
+		quit(1)
+		return
 	var metadata := {"scope_type": "global", "scope_id": "", "source": "passive_food_probe"}
 	_check(model.session.advance_time(1, "continuation", metadata).success, "continuation")
 	_check(restored.session.advance_time(1, "continuation", metadata).success, "restored continuation")
@@ -73,13 +114,42 @@ func _run() -> void:
 	_check(model.session.action_count == 0 and model.session.travel_count == 0, "no actor actions")
 	var file := FileAccess.open(output + "/result.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"mode": mode, "scenario": scenario, "seed": seed, "elapsed_days": days, "rows": rows,
+		"food_access_config": fixture.resident_daily_life.get("food_access", {}),
 		"extreme_person_hours": extreme_person_hours, "failures": failures,
 		"activity_hours": activity_hours,
-		"scope": "Passive opt-in rules experiment; no actor actions" if mode.begins_with("canon_depot") or mode.begins_with("canon_carting") else ("Configuration experiment" if mode.begins_with("batch") else ("Test injection: household provisioning disabled" if mode == "canon_without_family" else ("Test injection: only local supply knowledge" if mode == "local_only" else "Passive default world"))),
+		"scope": _scope(mode),
 		"boundary": "Not human play or sustainable economy acceptance."}, "  "))
 	file.close()
 	print("FOOD_ECONOMY_RESULT " + ("PASS" if failures.is_empty() else "FAIL"))
 	quit(0 if failures.is_empty() else 1)
+
+
+func _scope(mode: String) -> String:
+	if mode in ["canon_without_family", "canon_without_carting", "canon_budget_without_hauling", "canon_livelihood_withdraw_reopen", "canon_livelihood_without_subsistence", "canon_livelihood_without_affordability", "local_only"]:
+		return "Passive counterexample with explicitly disabled rule; no actor actions"
+	for prefix: String in ["canon_depot", "canon_carting", "canon_haul", "canon_budget", "canon_cooperation", "canon_livelihood", "batch"]:
+		if mode.begins_with(prefix):
+			return "Passive opt-in configuration experiment; no actor actions"
+	return "Passive default world; no actor actions"
+
+
+func _set_terrace_access(model: Variant, allowed: bool) -> void:
+	# Deliberate world-counterexample injection, not an implemented political decision or player action.
+	var stocks: Array = []
+	for stock: Dictionary in model.session.stores.resource_stock_store.list_stocks():
+		if stock.get("settlement_id") == "generated_settlement.echo_terrace" and "food" in stock.get("tags", []) \
+				and stock.get("source_kind") == "natural_resource":
+			stocks.append(str(stock.stock_id))
+	var fact := {"fact_id": "test_injection.terrace_access." + str(allowed), "fact_type": "test_injection",
+		"actor_id": "generated_settlement.echo_terrace", "stock_ids": stocks, "resident_production": allowed,
+		"day": model.session.current_day, "hour": model.session.current_hour,
+		"summary": "测试注入：恢复坡田采收权限。" if allowed else "测试注入：暂时撤去坡田采收权限。未增删钱粮。"}
+	var transaction := Result.new()
+	transaction.add_fact(fact)
+	_check(model.session.writer.apply_result(transaction, model.session.stores), "test injection is explicitly recorded")
+	for id: String in stocks:
+		model.session.stores.resource_stock_store.stocks[id].access.resident_production = allowed
+	_check(stocks.size() == 1, "one existing commons permission changed without creating resources")
 
 
 func _signature(model: Variant) -> String:

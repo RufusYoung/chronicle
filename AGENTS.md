@@ -13,6 +13,8 @@ The user explicitly authorized consecutive development iterations on 2026-09-05.
 
 Stop when the user pauses or redirects, a decision genuinely requires their product preference or new authority, an external blocker leaves no useful authorized work, or a substantive milestone merits their review. A new document, test count, routine parameter choice or completed round alone is not a milestone.
 
+The user clarified on 2026-09-06 that a single new mechanism, even with an hour of work, tests and a package, is a small checkpoint. A milestone requires several systems working together toward the active phase's observable outcome. Failed local experiments require continued diagnosis and integration, not a final milestone report. For H2, carry needs, work, physical goods, travel, payment and later reactions through an autonomous multi-day chain with counterexamples and persistence before considering a phase review.
+
 Reversible implementation and balance choices are engineering work. State and record the assumption, test alternatives, and proceed. Ask about changes to genre, creative direction, public commitments, monetization, incompatible player-save policy or material deadline/scope tradeoffs. Do not invent recurring automations, new tasks or new account expenditure to keep running.
 
 ## Engineering and Evidence

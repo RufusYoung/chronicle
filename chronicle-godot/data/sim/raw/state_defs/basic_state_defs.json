@@ -760,10 +760,36 @@
         "working",
         "seeking_work",
         "seeking_food",
+        "foraging",
         "traveling",
         "arrived",
         "blocked"
       ]
+    },
+    {
+      "state_def_id": "state.character.subsistence_elapsed_hours",
+      "definition_version": 1,
+      "key": "subsistence_elapsed_hours",
+      "owner_kinds": ["character"],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": ["set", "add"],
+      "persistence": "save",
+      "ui_visibility": "hidden",
+      "description": "就地采食已经付出的工作小时，不计为本职工作时间。"
+    },
+    {
+      "state_def_id": "state.character.subsistence_workplace_id",
+      "definition_version": 1,
+      "key": "subsistence_workplace_id",
+      "owner_kinds": ["character"],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "采食工时所属的地点，换地点不能携走进度。"
     },
     {
       "state_def_id": "state.character.daily_activity_reason",

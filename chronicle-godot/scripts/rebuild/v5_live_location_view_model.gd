@@ -9,6 +9,7 @@ const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
 const WorldSave = preload("res://scripts/rebuild/live_world_save.gd")
 const RegionProjection = preload("res://scripts/rebuild/region_map_projection.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
+const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
 const RoutePressureQueryModel = preload(
 	"res://scripts/sim/resource/route_pressure_query.gd"
 )
@@ -1180,16 +1181,15 @@ func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 	var entity_id := str(entity.get("id", ""))
 	var already_known := _has_fact(snapshot, "actor_read_object", "target_id", entity_id) or _has_fact(
 		snapshot, "actor_inspected_trace", "target_id", entity_id)
+	var state_text := _person_state_text(states) if entity_type == "person" else _object_state_text(entity, snapshot)
+	if entity_type == "person" and not FoodHauling.active_order(snapshot, entity_id).is_empty():
+		state_text += "　随身带着尚未结清的托运货包"
 	return {
 		"id": str(entity.get("id", "")),
 		"name": str(entity.get("display_name", "未命名")),
 		"description": str(entity.get("description", "")),
 		"surface_priority": 2 if already_known else 0,
-		"state_text": (
-			_person_state_text(states)
-			if entity_type == "person"
-			else _object_state_text(entity, snapshot)
-		),
+		"state_text": state_text,
 	}
 
 
@@ -2571,7 +2571,12 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 	var lines: Array[String] = []
 	var food_lines: Array[String] = []
 	for event: Dictionary in result.get("livelihood_events", []):
-		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet", "household_food_delivered", "worksite_food_withdrawn"]:
+		if event.get("event_type") in ["livelihood_produced", "livelihood_blocked_resource"]:
+			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
+			if fact.get("location_id") == here and fact.get("work_kind") == "subsistence":
+				food_lines.append(str(fact.get("summary", "")))
+			continue
+		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet", "household_food_delivered", "worksite_food_withdrawn", "food_hauling_accepted", "food_hauling_delivered", "food_hauling_stocked", "food_hauling_returned", "food_hauling_return_started", "household_pantry_taken", "household_pantry_stored"]:
 			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
 			if str(fact.get("summary", "")) != "":
 				food_lines.append(str(fact.summary))
@@ -2579,7 +2584,7 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 		if event.get("fact_type") != "resident_activity_changed" or str(event.get("location_id", "")) != here:
 			continue
 		var activity := str(event.get("activity", ""))
-		if activity not in ["arrived", "traveling", "working", "seeking_work", "seeking_food"]:
+		if activity not in ["arrived", "traveling", "working", "seeking_work", "seeking_food", "foraging"]:
 			continue
 		var actor_id := str(event.get("actor_id", ""))
 		var person: Dictionary = session.stores.entity_store.get_entity(actor_id)
@@ -2595,7 +2600,9 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 			"working":
 				lines.append("%s开始在这里做工。" % name)
 			"seeking_work":
-				lines.append("%s在集地寻找可以接手的工作。" % name)
+				lines.append("%s：%s。" % [name, event.get("reason", "寻找可以接手的工作")])
+			"foraging":
+				lines.append("%s开始在这里采食：口粮不足又买不起，只能付出自己的工时。" % name)
 			"seeking_food":
 				lines.append("%s：%s。" % [name, event.get("reason", "在这里打听能买到的口粮")])
 	lines = food_lines + lines
@@ -3029,8 +3036,8 @@ func _location_context(location: Dictionary, snapshot: Variant) -> String:
 func _person_state_text(states: Dictionary) -> String:
 	var rows: Array[String] = []
 	if int(states.get("daily_life_version", 0)) == 1:
-		var labels := {"working": "在岗做工", "seeking_work": "在集地找工作", "seeking_food": "正在寻找口粮", "arrived": "刚刚抵达",
-			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上"}
+		var labels := {"working": "正在做工", "seeking_work": "正在寻找差事", "seeking_food": "正在寻找口粮", "arrived": "刚刚抵达",
+			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上", "foraging": "正在采食口粮"}
 		rows.append(str(labels.get(str(states.get("daily_activity", "")), "日常生活")))
 		if str(states.get("daily_activity", "")) == "blocked":
 			rows.append(str(states.get("daily_activity_reason", "")))
@@ -3050,6 +3057,8 @@ func _person_state_text(states: Dictionary) -> String:
 
 func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 	var entity_id := str(entity.get("id", ""))
+	if "household_food_store" in entity.get("tags", []):
+		return "家中存粮 %d 份 · 家庭成员到场取用" % FoodStorage.quantity(snapshot.get_items(), entity_id)
 	if "worksite_food_store" in entity.get("tags", []):
 		var owner := str(entity.get("stock_custodian_id", ""))
 		var present: bool = snapshot.get_entity_state(owner, "location_id", "") == entity.get("stock_location_id") \

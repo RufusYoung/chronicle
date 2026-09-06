@@ -1,0 +1,196 @@
+{
+  "activity_hours": {
+    "generated_resident.echo_landing.001": {
+      "arrived": 29,
+      "home": 1,
+      "resting": 57,
+      "traveling": 29,
+      "working": 52
+    },
+    "generated_resident.echo_landing.002": {
+      "arrived": 35,
+      "resting": 56,
+      "seeking_food": 1,
+      "traveling": 35,
+      "working": 41
+    },
+    "generated_resident.echo_landing.003": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_landing.004": {
+      "arrived": 53,
+      "resting": 54,
+      "seeking_food": 4,
+      "traveling": 57
+    },
+    "generated_resident.echo_landing.005": {
+      "arrived": 45,
+      "resting": 9,
+      "seeking_food": 8,
+      "traveling": 45,
+      "working": 61
+    },
+    "generated_resident.echo_landing.006": {
+      "arrived": 29,
+      "home": 3,
+      "resting": 55,
+      "traveling": 29,
+      "working": 52
+    },
+    "generated_resident.echo_landing.007": {
+      "arrived": 41,
+      "resting": 56,
+      "seeking_food": 3,
+      "traveling": 41,
+      "working": 27
+    },
+    "generated_resident.echo_landing.008": {
+      "arrived": 53,
+      "resting": 46,
+      "seeking_food": 4,
+      "traveling": 65
+    },
+    "generated_resident.echo_terrace.001": {
+      "arrived": 29,
+      "home": 1,
+      "resting": 65,
+      "traveling": 29,
+      "working": 44
+    },
+    "generated_resident.echo_terrace.002": {
+      "arrived": 39,
+      "resting": 66,
+      "seeking_food": 4,
+      "traveling": 39,
+      "working": 20
+    },
+    "generated_resident.echo_terrace.003": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_terrace.004": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_terrace.005": {
+      "arrived": 53,
+      "resting": 48,
+      "seeking_food": 5,
+      "seeking_work": 1,
+      "traveling": 61
+    },
+    "generated_resident.echo_terrace.006": {
+      "arrived": 43,
+      "resting": 23,
+      "seeking_food": 3,
+      "traveling": 43,
+      "working": 56
+    },
+    "generated_resident.echo_terrace.007": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_terrace.008": {
+      "home": 84,
+      "resting": 84
+    }
+  },
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 7,
+  "extreme_person_hours": 393,
+  "failures": [],
+  "food_access_config": {
+    "adjacent_supply_known": true,
+    "hauling": {
+      "deadline_hours": 18,
+      "fee": 4,
+      "maximum_hours": 4,
+      "maximum_portions": 4,
+      "payer_reserve": 1,
+      "retry_hours": 6,
+      "version": 1
+    },
+    "household_budget": {
+      "capacity": 32,
+      "coverage_hours": 24,
+      "maximum_load": 8,
+      "memory_hours": 24,
+      "personal_reserve": 2,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "household_provisioning": {
+      "maximum_recipients": 4,
+      "memory_hours": 48,
+      "minimum_support": 50,
+      "self_reserve": 1,
+      "social_presence_version": 1,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "minimum_independent_shopping_age": 18,
+    "production_batch": {
+      "portions": 12,
+      "version": 1,
+      "work_hours": 4
+    },
+    "retry_hours": 6,
+    "seller_retained_portions": 2,
+    "shopping_end_hour": 17,
+    "shopping_start_hour": 12,
+    "target_portions": 2,
+    "version": 1,
+    "worksite_storage": {
+      "maximum_stock": 24,
+      "personal_portions": 4,
+      "version": 1
+    }
+  },
+  "mode": "canon_livelihood_without_subsistence",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 2041.662
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 2695.45
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 3767.139
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 4409.192
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 4981.16
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 5856.372
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 7240.487
+    }
+  ],
+  "scenario": "echo_realm",
+  "scope": "Passive counterexample with explicitly disabled rule; no actor actions",
+  "seed": 81001
+}

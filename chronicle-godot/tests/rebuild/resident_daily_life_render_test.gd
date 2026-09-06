@@ -36,7 +36,7 @@ func _run() -> void:
 		viewer.wait_button.pressed.emit()
 		await _settle(viewer)
 	_check(viewer.current_view_data.location.id == "generated_location.reed_bay.landing", "traveler reaches workplace through legal route")
-	_check("在岗做工" in viewer.visible_people.text, "same workers are visibly at work")
+	_check("正在做工" in viewer.visible_people.text, "same workers are visibly at work")
 	_check("开始在这里做工" in str(viewer.current_view_data.feedback.get("body", "")), "local work transition has concrete feedback")
 	_check(viewer.action_dock.get_global_rect().end.y <= root.size.y, "people do not push action dock outside viewport")
 	await _screenshot("landing_1pm.png")

@@ -8,6 +8,7 @@ const DEFAULT_SAVE := "user://world_demo/manual.json"
 @export var save_path: String = DEFAULT_SAVE
 @export var initial_seed: int = 81001
 @export var initial_scenario: String = "echo_realm"
+@export var initial_livelihood_rules: bool = true
 var busy := false
 var last_operation: Dictionary = {}
 var _worker: Thread
@@ -26,6 +27,7 @@ var _road_text: Label
 var _picture: TextureRect
 var _picture_caption: Label
 var _seed_input: SpinBox
+var _livelihood_rules: CheckBox
 var _startup := true
 var _startup_message := ""
 
@@ -58,13 +60,23 @@ func restart_session() -> void:
 				_startup_message = "已继续上次保存的世界。"
 				if not view_model.session.world_tick_adapter.daily_life_config.get("version", 0):
 					_startup_message += "这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。"
+				elif initial_livelihood_rules and not view_model.session.world_tick_adapter.daily_life_config.get("food_access", {}).has("subsistence"):
+					_startup_message += "此存档保留旧谋生规则；「新世界」可体验家庭口粮、送粮和替代采食，原存档不会被转换。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
-		view_model.start({"scenario": initial_scenario, "challenge_seed_override": initial_seed})
+		view_model.start(_world_options(initial_seed, initial_livelihood_rules))
 		refresh_view()
 	else:
-		_begin_operation("start", [{"scenario": initial_scenario, "challenge_seed_override": int(_seed_input.value)}])
+		_begin_operation("start", [_world_options(int(_seed_input.value), _livelihood_rules.button_pressed)])
+
+
+func _world_options(seed_value: int, integrated: bool) -> Dictionary:
+	var options := {"scenario": initial_scenario, "challenge_seed_override": seed_value}
+	if integrated and initial_scenario == "echo_realm":
+		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
+			"household_food_budget_version": 1, "resident_subsistence_version": 1})
+	return options
 
 
 func refresh_view(projected: Dictionary = {}) -> void:
@@ -275,6 +287,11 @@ func _install_save_controls() -> void:
 	_seed_input.value = initial_seed
 	_seed_input.prefix = "世界种子 "
 	new_world_form.add_child(_seed_input)
+	_livelihood_rules = CheckBox.new()
+	_livelihood_rules.text = "家庭与谋生联动：共有口粮、付费送粮、缺粮后的采食"
+	_livelihood_rules.button_pressed = initial_livelihood_rules
+	_livelihood_rules.visible = initial_scenario == "echo_realm"
+	new_world_form.add_child(_livelihood_rules)
 
 
 func _confirmation(title_text: String, message: String, action: String) -> ConfirmationDialog:

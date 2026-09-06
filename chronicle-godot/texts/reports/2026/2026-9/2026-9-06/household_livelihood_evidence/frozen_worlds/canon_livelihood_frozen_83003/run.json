@@ -1,0 +1,304 @@
+{
+  "activity_hours": {
+    "generated_resident.echo_landing.001": {
+      "arrived": 121,
+      "home": 10,
+      "resting": 236,
+      "traveling": 121,
+      "working": 232
+    },
+    "generated_resident.echo_landing.002": {
+      "arrived": 169,
+      "foraging": 47,
+      "resting": 246,
+      "traveling": 169,
+      "working": 89
+    },
+    "generated_resident.echo_landing.003": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_landing.004": {
+      "arrived": 195,
+      "foraging": 44,
+      "resting": 281,
+      "seeking_food": 5,
+      "traveling": 195
+    },
+    "generated_resident.echo_landing.005": {
+      "arrived": 177,
+      "foraging": 104,
+      "resting": 221,
+      "seeking_food": 5,
+      "traveling": 177,
+      "working": 36
+    },
+    "generated_resident.echo_landing.006": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_landing.007": {
+      "arrived": 163,
+      "foraging": 100,
+      "resting": 257,
+      "seeking_food": 4,
+      "traveling": 163,
+      "working": 33
+    },
+    "generated_resident.echo_landing.008": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.001": {
+      "arrived": 121,
+      "home": 13,
+      "resting": 229,
+      "traveling": 121,
+      "working": 236
+    },
+    "generated_resident.echo_terrace.002": {
+      "arrived": 137,
+      "foraging": 52,
+      "resting": 283,
+      "traveling": 141,
+      "working": 107
+    },
+    "generated_resident.echo_terrace.003": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.004": {
+      "arrived": 227,
+      "foraging": 4,
+      "resting": 223,
+      "seeking_food": 7,
+      "traveling": 259
+    },
+    "generated_resident.echo_terrace.005": {
+      "arrived": 187,
+      "foraging": 39,
+      "resting": 117,
+      "seeking_food": 7,
+      "traveling": 191,
+      "working": 179
+    },
+    "generated_resident.echo_terrace.006": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.007": {
+      "arrived": 177,
+      "foraging": 60,
+      "resting": 250,
+      "seeking_food": 4,
+      "traveling": 229
+    },
+    "generated_resident.echo_terrace.008": {
+      "arrived": 121,
+      "home": 13,
+      "resting": 249,
+      "traveling": 121,
+      "working": 216
+    }
+  },
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 30,
+  "extreme_person_hours": 174,
+  "failures": [],
+  "food_access_config": {
+    "adjacent_supply_known": true,
+    "hauling": {
+      "deadline_hours": 18,
+      "fee": 4,
+      "maximum_hours": 4,
+      "maximum_portions": 4,
+      "payer_reserve": 1,
+      "retry_hours": 6,
+      "version": 1
+    },
+    "household_budget": {
+      "capacity": 32,
+      "coverage_hours": 24,
+      "maximum_load": 8,
+      "memory_hours": 24,
+      "personal_reserve": 2,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "household_provisioning": {
+      "maximum_recipients": 4,
+      "memory_hours": 48,
+      "minimum_support": 50,
+      "self_reserve": 1,
+      "social_presence_version": 1,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "minimum_independent_shopping_age": 18,
+    "production_batch": {
+      "portions": 12,
+      "version": 1,
+      "work_hours": 4
+    },
+    "retry_hours": 6,
+    "seller_retained_portions": 2,
+    "shopping_end_hour": 17,
+    "shopping_start_hour": 12,
+    "subsistence": {
+      "household_affordability_version": 1,
+      "maximum_travel_hours": 4,
+      "minimum_age": 18,
+      "minimum_health": 40,
+      "portions": 4,
+      "quote_memory_hours": 24,
+      "retry_hours": 12,
+      "version": 1,
+      "work_hours": 4
+    },
+    "target_portions": 2,
+    "version": 1,
+    "worksite_storage": {
+      "maximum_stock": 24,
+      "personal_portions": 4,
+      "version": 1
+    }
+  },
+  "mode": "canon_livelihood_frozen",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 2217.582
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 2915.767
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 4184.851
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 4721.495
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 5872.004
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 6718.828
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 7619.232
+    },
+    {
+      "elapsed_days": 8,
+      "simulation_ms": 8161.129
+    },
+    {
+      "elapsed_days": 9,
+      "simulation_ms": 9891.477
+    },
+    {
+      "elapsed_days": 10,
+      "simulation_ms": 11113.818
+    },
+    {
+      "elapsed_days": 11,
+      "simulation_ms": 11922.89
+    },
+    {
+      "elapsed_days": 12,
+      "simulation_ms": 12685.244
+    },
+    {
+      "elapsed_days": 13,
+      "simulation_ms": 13591.469
+    },
+    {
+      "elapsed_days": 14,
+      "simulation_ms": 14476.268
+    },
+    {
+      "elapsed_days": 15,
+      "simulation_ms": 15610.202
+    },
+    {
+      "elapsed_days": 16,
+      "simulation_ms": 17180.151
+    },
+    {
+      "elapsed_days": 17,
+      "simulation_ms": 16017.548
+    },
+    {
+      "elapsed_days": 18,
+      "simulation_ms": 17018.643
+    },
+    {
+      "elapsed_days": 19,
+      "simulation_ms": 17097.094
+    },
+    {
+      "elapsed_days": 20,
+      "simulation_ms": 18288.79
+    },
+    {
+      "elapsed_days": 21,
+      "simulation_ms": 17843.219
+    },
+    {
+      "elapsed_days": 22,
+      "simulation_ms": 19131.724
+    },
+    {
+      "elapsed_days": 23,
+      "simulation_ms": 20373.084
+    },
+    {
+      "elapsed_days": 24,
+      "simulation_ms": 21660.514
+    },
+    {
+      "elapsed_days": 25,
+      "simulation_ms": 21420.142
+    },
+    {
+      "elapsed_days": 26,
+      "simulation_ms": 23180.28
+    },
+    {
+      "elapsed_days": 27,
+      "simulation_ms": 23386.721
+    },
+    {
+      "elapsed_days": 28,
+      "simulation_ms": 26148.982
+    },
+    {
+      "elapsed_days": 29,
+      "simulation_ms": 24853.481
+    },
+    {
+      "elapsed_days": 30,
+      "simulation_ms": 29252.521
+    }
+  ],
+  "scenario": "echo_realm",
+  "scope": "Passive opt-in configuration experiment; no actor actions",
+  "seed": 83003
+}

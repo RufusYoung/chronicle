@@ -89,7 +89,7 @@ static func has_capacity(snapshot: Variant, actor: String, profile: Dictionary, 
 	return quantity(snapshot.get_items(), holder) + amount <= int(config.maximum_stock)
 
 
-func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, config: Dictionary, stores: Dictionary, daily_config: Dictionary = {}) -> Dictionary:
+func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, config: Dictionary, stores: Dictionary, daily_config: Dictionary = {}, household_need: Dictionary = {}) -> Dictionary:
 	if not enabled(config) or not bool(actor.get("states", {}).get("alive", true)) \
 			or actor.get("states", {}).get("life_status", "alive") != "alive":
 		return {}
@@ -99,11 +99,39 @@ func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, con
 			or snapshot.get_entity_state(owner, "daily_route_id", "") != "" \
 			or snapshot.get_entity_state(owner, "location_id", "") != depot.get("stock_location_id"):
 		return {}
+	for item: Dictionary in stores.item_store.list_items_for_owner(str(depot.id)):
+		if int(daily_config.get("food_access", {}).get("hauling", {}).get("version", 0)) != 1:
+			break
+		if item.get("item_def_id") != "item.copper_coin":
+			continue
+		var returned := Result.new()
+		var receipt := "fact.worksite_cash_reclaimed.%s.%d" % [owner, int(tick.day) * 24 + int(tick.hour)]
+		var sources: Array = []
+		for history: Dictionary in item.get("history", []):
+			var source := str(history.get("fact_id", ""))
+			if source != "" and source not in sources:
+				sources.append(source)
+		returned.add_item_change({"operation": "transfer", "item_instance_id": item.item_instance_id,
+			"expected_holder": item.holder, "new_holder": {"kind": "entity", "id": owner}, "source_fact_ids": [receipt]})
+		var cash_fact := {"fact_id": receipt, "fact_type": "worksite_cash_reclaimed", "actor_id": owner,
+			"stock_entity_id": depot.id, "location_id": depot.stock_location_id, "day": tick.day, "hour": tick.hour,
+			"amount": item.quantity, "source_fact_ids": sources, "summary": "%s到场取回作业地保管的 %d 枚铜币。" % [actor.display_name, int(item.quantity)]}
+		returned.add_fact(cash_fact)
+		returned.mark_resolved("worksite_cash_reclaimed")
+		return {"transaction": returned, "event": cash_fact}
 	var on_shift := int(tick.hour) > int(daily_config.get("work_start_hour", 6)) and int(tick.hour) <= int(daily_config.get("work_end_hour", 18))
 	var leaving := not on_shift or int(actor.states.get("fatigue", 0)) >= int(daily_config.get("rest_fatigue", 7)) \
 		or int(actor.states.get("health", 100)) < int(daily_config.get("minimum_work_health", 30))
 	# During work, take a meal as needed. Load the household bundle before leaving, not on every arrival.
 	var target := int(config.personal_portions) if leaving else (1 if actor.states.get("hunger") in ["high", "extreme"] else 0)
+	if int(daily_config.get("food_access", {}).get("household_budget", {}).get("version", 0)) == 1:
+		# A forecast for the coming day is supplied after a real work block, not an emergency trip on every arrival.
+		var finished_block := false
+		for fact: Dictionary in snapshot.get_facts():
+			if fact.get("fact_type") == "npc_livelihood_produced" and fact.get("actor_id") == owner and int(fact.get("day", 0)) == int(tick.day):
+				finished_block = true
+		if leaving or finished_block:
+			target = maxi(target, int(household_need.get("target_portions", 0)))
 	var needed := maxi(target - quantity(stores.item_store.list_items_for_owner(owner), owner), 0)
 	if needed == 0:
 		return {}

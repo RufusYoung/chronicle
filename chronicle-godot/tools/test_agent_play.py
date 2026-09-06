@@ -16,6 +16,39 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_integrated_household_work_in_actual_process(self):
+        with client(timeout=60) as game:
+            opened = game.request("start", mode="world", scenario="echo_realm", seed=81001,
+                                  economy_variant="household_livelihood_v1")
+            self.assertTrue(opened["ok"], opened)
+            for _ in range(3):
+                self.assertTrue(game.request("advance", hours=24)["ok"])
+            facts = []
+            offset = 0
+            while True:
+                page = game.request("inspect", kind="facts", offset=offset, limit=100)
+                self.assertTrue(page["ok"], page)
+                facts.extend(page["rows"])
+                offset += len(page["rows"])
+                if offset >= page["total"]:
+                    break
+            receipts = {row["fact_id"] for row in facts if row.get("fact_type") == "food_hauling_stocked"
+                        and row.get("fee_paid", 0) > 0}
+            withdrawals = {row["fact_id"] for row in facts if row.get("fact_type") == "household_pantry_taken"
+                           and receipts.intersection(row.get("source_fact_ids", []))}
+            self.assertTrue(receipts, "No real paid delivery into household storage")
+            self.assertTrue(any(row.get("work_kind") == "subsistence" and row.get("products")
+                                for row in facts), "No autonomous alternate livelihood")
+            self.assertTrue(withdrawals, "Delivered food was not actually taken by a household member")
+            self.assertTrue(any(row.get("fact_type") in
+                                {"npc_self_meal", "npc_household_shared_food", "npc_cross_household_shared_food"}
+                                and withdrawals.intersection(row.get("source_fact_ids", [])) for row in facts),
+                            "No meal descended from a paid delivery and local withdrawal")
+            slot = f"household_work_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            self.assertTrue(game.request("load", slot=slot)["ok"])
+            self.assertTrue(game.request("advance", hours=1)["ok"])
+
     def test_opt_in_worksite_stock_in_actual_process(self):
         with client(timeout=60) as game:
             opened = game.request("start", mode="world", scenario="echo_realm", seed=81001,

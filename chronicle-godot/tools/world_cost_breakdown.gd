@@ -12,7 +12,11 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var model := Live.new()
-	var loaded := model.load_from_path("user://tests/world_runtime_probe/day7.json")
+	var checkpoint := "user://tests/world_runtime_probe/day7.json"
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--checkpoint="):
+			checkpoint = argument.trim_prefix("--checkpoint=")
+	var loaded := model.load_from_path(checkpoint)
 	if not loaded.get("success", false):
 		push_error(str(loaded))
 		quit(1)
@@ -31,7 +35,7 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var tag := "breakdown" if OS.get_cmdline_user_args().is_empty() else OS.get_cmdline_user_args()[0].validate_filename()
 	var file := FileAccess.open(output + "/" + tag + ".json", FileAccess.WRITE)
-	file.store_string(JSON.stringify({"rows": rows, "unchanged": unchanged,
+	file.store_string(JSON.stringify({"rows": rows, "unchanged": unchanged, "checkpoint": checkpoint,
 		"counts": model.session.get_store_summary(), "scope": "Warm microprobes; overlapping costs, not tick attribution."}, "  "))
 	file.close()
 	print(JSON.stringify(rows))

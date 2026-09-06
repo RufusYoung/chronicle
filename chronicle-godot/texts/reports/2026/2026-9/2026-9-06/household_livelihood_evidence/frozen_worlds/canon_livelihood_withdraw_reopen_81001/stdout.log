@@ -1,0 +1,44 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] start
+[PASS] configuration experiment: household livelihood with finite quoted fee
+[PASS] test injection is explicitly recorded
+[PASS] one existing commons permission changed without creating resources
+[PASS] day_1
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 1
+[PASS] day_2
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 2
+[PASS] day_3
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 3
+[PASS] day_4
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 4
+[PASS] day_5
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 5
+[PASS] day_6
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 6
+[PASS] day_7
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 7
+[PASS] test injection is explicitly recorded
+[PASS] one existing commons permission changed without creating resources
+[PASS] day_8
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 8
+[PASS] day_9
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 9
+[PASS] day_10
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 10
+[PASS] day_11
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 11
+[PASS] day_12
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 12
+[PASS] day_13
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 13
+[PASS] day_14
+FOOD_ECONOMY_DAY canon_livelihood_withdraw_reopen 14
+[PASS] native save
+[PASS] references
+[PASS] native load
+[PASS] continuation
+[PASS] restored continuation
+[PASS] native precision continuation equal
+[PASS] no actor actions
+FOOD_ECONOMY_RESULT PASS

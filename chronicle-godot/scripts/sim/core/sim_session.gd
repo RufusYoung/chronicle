@@ -83,11 +83,15 @@ const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const FoodCarting = preload("res://scripts/sim/economy/resident_food_carting.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
+const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
+const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
+const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
-const CONTENT_PACK_VERSION := 4
+const CONTENT_PACK_VERSION := 5
 const FIBER_ROPE_DURABILITY_MIGRATION := "base_v2_to_v3_fiber_rope_durability"
 const RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION := "base_v3_to_v4_resident_activity_definitions"
+const SUBSISTENCE_DEFINITIONS_MIGRATION := "base_v4_to_v5_subsistence_definitions"
 
 const RELATIONSHIP_AXIS_DEFS_PATH := (
 	"res://data/sim/raw/relationship_defs/relationship_axis_defs.json"
@@ -211,6 +215,26 @@ func start_from_fixture_path(
 		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
 			return _start_failure("worksite_food_storage_requires_food_access")
 		fixture.resident_daily_life.food_access["worksite_storage"] = FoodStorage.PROFILE.duplicate(true)
+	if int(options.get("household_food_hauling_version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_household_food_hauling_version")
+	if int(options.get("household_food_hauling_version", 0)) == 1:
+		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
+			return _start_failure("food_hauling_requires_food_access")
+		fixture.resident_daily_life.food_access["hauling"] = FoodHauling.PROFILE.duplicate(true)
+	if int(options.get("household_food_budget_version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_household_food_budget_version")
+	if int(options.get("household_food_budget_version", 0)) == 1:
+		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
+			return _start_failure("food_budget_requires_food_access")
+		fixture.resident_daily_life.food_access["household_budget"] = FoodBudget.PROFILE.duplicate(true)
+	if int(options.get("household_purchase_funding_version", 0)) != 0:
+		return _start_failure("unsupported_household_purchase_funding_version")
+	if int(options.get("resident_subsistence_version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_resident_subsistence_version")
+	if int(options.get("resident_subsistence_version", 0)) == 1:
+		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
+			return _start_failure("subsistence_requires_food_access")
+		fixture.resident_daily_life.food_access["subsistence"] = Subsistence.PROFILE.duplicate(true)
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -236,6 +260,11 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if int(fixture.get("resident_daily_life", {}).get("food_access", {}).get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_resident_food_access_version")
 	var food_config: Dictionary = fixture.get("resident_daily_life", {}).get("food_access", {})
+	var subsistence_error := Subsistence.validate_config(food_config.get("subsistence", {}))
+	if subsistence_error != "":
+		return _start_failure(subsistence_error)
+	if Subsistence.enabled(food_config.get("subsistence", {})) and not FoodAccess.enabled(food_config):
+		return _start_failure("subsistence_requires_food_access")
 	var storage_config: Dictionary = food_config.get("worksite_storage", {})
 	var storage_error := FoodStorage.validate_config(storage_config)
 	if storage_error != "":
@@ -249,6 +278,20 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if FoodCarting.enabled(carting_config) and not FoodAccess.enabled(food_config):
 		return _start_failure("food_carting_requires_food_access")
 	var family_config: Dictionary = food_config.get("household_provisioning", {})
+	var budget_config: Dictionary = food_config.get("household_budget", {})
+	var budget_error := FoodBudget.validate_config(budget_config)
+	if budget_error != "":
+		return _start_failure(budget_error)
+	if FoodBudget.enabled(budget_config) and (not FoodStorage.enabled(storage_config) or not FamilyFood.enabled(family_config)):
+		return _start_failure("food_budget_requires_storage_and_family")
+	if int(food_config.get("purchase_funding", {}).get("version", 0)) != 0:
+		return _start_failure("unsupported_household_purchase_funding_version")
+	var haul_config: Dictionary = food_config.get("hauling", {})
+	var haul_error := FoodHauling.validate_config(haul_config)
+	if haul_error != "":
+		return _start_failure(haul_error)
+	if FoodHauling.enabled(haul_config) and (not FoodStorage.enabled(storage_config) or not FamilyFood.enabled(family_config) or FoodCarting.enabled(carting_config)):
+		return _start_failure("food_hauling_requires_storage_family_and_no_self_funded_carting")
 	if int(family_config.get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_household_provisioning_version")
 	if FamilyFood.enabled(family_config):
@@ -300,6 +343,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	).duplicate(true)
 	FoodAccess.configure_fixture(fixture)
 	FoodStorage.configure_fixture(fixture)
+	FoodBudget.configure_fixture(fixture)
 	CanonWorld.bind_locations(fixture)
 	var economic_result := EconomicSetup.configure_fixture(fixture)
 	if not bool(economic_result.get("ok", false)):
@@ -2190,10 +2234,14 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 		return _save_failure("save_definition_manifest_mismatch", "definitions")
 	# Upgrade exact historical manifests, not arbitrary subsets of current definitions.
 	var previous := expected.duplicate()
+	for key: String in Subsistence.STATE_KEYS:
+		previous.erase("state:state.character." + key)
+	if pack_version == 4 and actual == previous:
+		return {"ok": true, "error": "", "phase": "definitions", "migrations": [SUBSISTENCE_DEFINITIONS_MIGRATION]}
 	for key: String in DailyLife.STATE_KEYS:
 		previous.erase("state:state.character." + key)
 	if pack_version in [2, 3] and actual == previous:
-		var migrations := [RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION]
+		var migrations := [RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION, SUBSISTENCE_DEFINITIONS_MIGRATION]
 		if pack_version == 2:
 			migrations.push_front(FIBER_ROPE_DURABILITY_MIGRATION)
 		return {"ok": true, "error": "", "phase": "definitions", "migrations": migrations}
@@ -2207,6 +2255,7 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 				"base_v1_to_v2_fiber_rope",
 				FIBER_ROPE_DURABILITY_MIGRATION,
 				RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION,
+				SUBSISTENCE_DEFINITIONS_MIGRATION,
 			],
 		}
 	return _save_failure("save_definition_manifest_mismatch", "definitions")
@@ -2253,10 +2302,23 @@ func _migrate_store_save_data(value: Variant, migrations: Variant) -> Variant:
 
 
 func _validate_save_references() -> Dictionary:
+	var custody_error := FoodHauling.validate_custody(stores)
+	if custody_error != "":
+		return _save_failure(custody_error, "references")
+	var budget_error := FoodBudget.validate_references(stores, context.locations)
+	if budget_error != "":
+		return _save_failure(budget_error, "references")
 	var economic_error := _validate_economic_references()
 	if economic_error != "":
 		return _save_failure(economic_error, "references")
 	var entity_store: Variant = stores["entity_store"]
+	for pantry_id: String in fixture_source_data.get("household_food_storage_generated", {}).get("pantry_ids", []):
+		if "household_food_store" not in entity_store.get_entity(pantry_id).get("tags", []):
+			return _save_failure("missing_household_food_pantry", "references")
+	for order: Dictionary in stores.exchange_store.list_exchanges():
+		var haul_error := FoodHauling.validate_order(order, stores, context.locations)
+		if haul_error != "":
+			return _save_failure(haul_error, "references")
 	for depot_id: String in fixture_source_data.get("worksite_food_storage_generated", {}).get("depot_ids", []):
 		if not entity_store.has_entity(depot_id) or "worksite_food_store" not in entity_store.get_entity(depot_id).get("tags", []):
 			return _save_failure("missing_worksite_food_depot", "references")
@@ -2297,7 +2359,7 @@ func _validate_save_references() -> Dictionary:
 					],
 					"references"
 				)
-		for state_key: String in ["daily_goal_id", "daily_workplace_id", "daily_destination_id"]:
+		for state_key: String in ["daily_goal_id", "daily_workplace_id", "daily_destination_id", "subsistence_workplace_id"]:
 			var target := str(entity_states.get(state_key, ""))
 			if target != "" and not context.locations.has(target):
 				return _save_failure("save_daily_location_unknown:%s:%s" % [entity_id, state_key], "references")

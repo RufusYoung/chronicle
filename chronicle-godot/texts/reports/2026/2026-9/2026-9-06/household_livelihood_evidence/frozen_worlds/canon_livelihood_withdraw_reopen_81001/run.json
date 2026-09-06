@@ -1,0 +1,247 @@
+{
+  "activity_hours": {
+    "generated_resident.echo_landing.001": {
+      "arrived": 57,
+      "home": 7,
+      "resting": 107,
+      "traveling": 57,
+      "working": 108
+    },
+    "generated_resident.echo_landing.002": {
+      "arrived": 61,
+      "foraging": 24,
+      "resting": 133,
+      "traveling": 61,
+      "working": 57
+    },
+    "generated_resident.echo_landing.003": {
+      "home": 168,
+      "resting": 168
+    },
+    "generated_resident.echo_landing.004": {
+      "arrived": 105,
+      "foraging": 4,
+      "resting": 102,
+      "seeking_food": 4,
+      "traveling": 121
+    },
+    "generated_resident.echo_landing.005": {
+      "arrived": 85,
+      "foraging": 12,
+      "resting": 48,
+      "seeking_food": 9,
+      "traveling": 85,
+      "working": 97
+    },
+    "generated_resident.echo_landing.006": {
+      "arrived": 57,
+      "home": 6,
+      "resting": 117,
+      "traveling": 57,
+      "working": 99
+    },
+    "generated_resident.echo_landing.007": {
+      "arrived": 71,
+      "foraging": 11,
+      "resting": 118,
+      "seeking_food": 4,
+      "traveling": 71,
+      "working": 61
+    },
+    "generated_resident.echo_landing.008": {
+      "arrived": 91,
+      "foraging": 20,
+      "resting": 102,
+      "seeking_food": 4,
+      "traveling": 119
+    },
+    "generated_resident.echo_terrace.001": {
+      "arrived": 59,
+      "home": 1,
+      "resting": 121,
+      "traveling": 59,
+      "working": 96
+    },
+    "generated_resident.echo_terrace.002": {
+      "arrived": 83,
+      "foraging": 4,
+      "resting": 127,
+      "seeking_food": 20,
+      "traveling": 83,
+      "working": 19
+    },
+    "generated_resident.echo_terrace.003": {
+      "home": 168,
+      "resting": 168
+    },
+    "generated_resident.echo_terrace.004": {
+      "home": 168,
+      "resting": 168
+    },
+    "generated_resident.echo_terrace.005": {
+      "arrived": 93,
+      "resting": 115,
+      "seeking_food": 26,
+      "seeking_work": 1,
+      "traveling": 101
+    },
+    "generated_resident.echo_terrace.006": {
+      "arrived": 91,
+      "resting": 16,
+      "seeking_food": 20,
+      "traveling": 91,
+      "working": 118
+    },
+    "generated_resident.echo_terrace.007": {
+      "arrived": 56,
+      "foraging": 40,
+      "home": 24,
+      "resting": 151,
+      "seeking_food": 9,
+      "traveling": 56
+    },
+    "generated_resident.echo_terrace.008": {
+      "arrived": 56,
+      "foraging": 56,
+      "home": 10,
+      "resting": 158,
+      "traveling": 56
+    }
+  },
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 14,
+  "extreme_person_hours": 1328,
+  "failures": [],
+  "food_access_config": {
+    "adjacent_supply_known": true,
+    "hauling": {
+      "deadline_hours": 18,
+      "fee": 4,
+      "maximum_hours": 4,
+      "maximum_portions": 4,
+      "payer_reserve": 1,
+      "retry_hours": 6,
+      "version": 1
+    },
+    "household_budget": {
+      "capacity": 32,
+      "coverage_hours": 24,
+      "maximum_load": 8,
+      "memory_hours": 24,
+      "personal_reserve": 2,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "household_provisioning": {
+      "maximum_recipients": 4,
+      "memory_hours": 48,
+      "minimum_support": 50,
+      "self_reserve": 1,
+      "social_presence_version": 1,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "minimum_independent_shopping_age": 18,
+    "production_batch": {
+      "portions": 12,
+      "version": 1,
+      "work_hours": 4
+    },
+    "retry_hours": 6,
+    "seller_retained_portions": 2,
+    "shopping_end_hour": 17,
+    "shopping_start_hour": 12,
+    "subsistence": {
+      "household_affordability_version": 1,
+      "maximum_travel_hours": 4,
+      "minimum_age": 18,
+      "minimum_health": 40,
+      "portions": 4,
+      "quote_memory_hours": 24,
+      "retry_hours": 12,
+      "version": 1,
+      "work_hours": 4
+    },
+    "target_portions": 2,
+    "version": 1,
+    "worksite_storage": {
+      "maximum_stock": 24,
+      "personal_portions": 4,
+      "version": 1
+    }
+  },
+  "mode": "canon_livelihood_withdraw_reopen",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 1978.14
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 2664.031
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 3230.586
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 4475.965
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 5395.649
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 6296.4
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 6588.61
+    },
+    {
+      "elapsed_days": 8,
+      "simulation_ms": 6603.102
+    },
+    {
+      "elapsed_days": 9,
+      "simulation_ms": 7374.636
+    },
+    {
+      "elapsed_days": 10,
+      "simulation_ms": 7588.297
+    },
+    {
+      "elapsed_days": 11,
+      "simulation_ms": 9054.332
+    },
+    {
+      "elapsed_days": 12,
+      "simulation_ms": 9137.395
+    },
+    {
+      "elapsed_days": 13,
+      "simulation_ms": 9847.639
+    },
+    {
+      "elapsed_days": 14,
+      "simulation_ms": 10567.074
+    }
+  ],
+  "scenario": "echo_realm",
+  "scope": "Passive counterexample with explicitly disabled rule; no actor actions",
+  "seed": 81001
+}
