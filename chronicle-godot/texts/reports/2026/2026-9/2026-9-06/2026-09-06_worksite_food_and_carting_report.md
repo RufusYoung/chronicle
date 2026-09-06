@@ -53,4 +53,7 @@
 
 - 完整回归 137/137 个测试文件通过，包含实际渲染测试；原始结果见 [回归清单](worksite_food_evidence/regression_results.json)。转运、仓储和画面专项日志分别归档在同目录。
 - 最终仓储配置的 81001 种子重新运行七日后，原生存档的 `stores/session/world_time/rng_states/world_log` 五部分均与首轮一致，见 [确定性重复](worksite_food_evidence/seed_repeat.json)。没有把保存时间戳当作世界状态。
-- Windows 包将在本次运行时提交后重建，并执行独立进程协议测试和真实绘制启动检查；完成后追加结果，不以导出退出码代替实包运行。
+- Windows 包从干净的运行时提交 `d68cdf9b6802f4db2f1b0f7fb19a11ce9d8030a6` 构建，美术来源检查与实际无界面启动通过。[构建清单](worksite_food_evidence/runtime_build_manifest.json) 记录提交和文件哈希；包仍为内部世界原型，不是参赛候选版。
+- 独立 `Chronicle.exe` 的 [后台控制测试 10/10](worksite_food_evidence/runtime_agent_tests.txt) 通过，包含显式仓储配置、真实生产取粮和存档继续，不依赖源码 Godot 进程。
+- [实际绘制启动](worksite_food_evidence/runtime_startup.json) 在本机分别约 2.60 秒与 2.74 秒进入可操作帧。前者为默认正式地理开局，后者为旧 H1 七日合成存档，不能称为仓储实验第七日渲染。各一次样本，未清理系统缓存，也不是干净机器或人类试玩验收。
+- 以上文件固定记录运行时提交的核验。报告归档提交后再次从干净 HEAD 导出并重跑实包检查，最终包与核验文件保留在 `builds/h1-windows/`；此目录的最新构建清单是交付包来源依据。
