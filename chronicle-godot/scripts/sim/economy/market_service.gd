@@ -28,7 +28,10 @@ func build_stock_view(
 		}
 
 	var offers: Array = []
-	for item: Dictionary in item_store.list_items_for_owner(seller_entity_id):
+	var stock_entity := _stock_entity(policy, stores, buyer_entity_id)
+	if stock_entity == "":
+		return {"offers": [], "error": "market_stock_access_denied"}
+	for item: Dictionary in item_store.list_items_for_owner(stock_entity):
 		if not _is_sellable(item, policy):
 			continue
 		var quote := _quote(item, policy, stores, buyer_entity_id)
@@ -215,7 +218,7 @@ func plan_trade(
 		tick
 	)
 	transaction.item_changes.back()["expected_holder"] = {
-		"kind": "entity", "id": seller_entity_id,
+		"kind": "entity", "id": _stock_entity(policy, stores, buyer_entity_id),
 	}
 	var remaining_payment := total_price
 	for index: int in range(payment_items.size()):
@@ -279,6 +282,25 @@ func plan_trade(
 	}
 
 
+func _stock_entity(policy: Dictionary, stores: Dictionary, buyer: String) -> String:
+	var seller := str(policy.get("seller_entity_id", ""))
+	var stock := str(policy.get("stock_entity_id", seller))
+	if stock == seller:
+		return seller
+	var depot: Dictionary = stores.entity_store.get_entity(stock)
+	var location := str(policy.get("location_id", ""))
+	if "worksite_food_store" not in depot.get("tags", []) or depot.get("stock_custodian_id") != seller \
+			or depot.get("stock_location_id") != location or location == "" \
+			or stores.state_store.get_state(stock, "location_id", "") != location \
+			or stores.state_store.get_state(seller, "location_id", "") != location \
+			or stores.state_store.get_state(seller, "daily_route_id", "") != "" \
+			or not bool(stores.state_store.get_state(seller, "alive", true)) \
+			or stores.state_store.get_state(buyer, "location_id", "") != location \
+			or stores.state_store.get_state(buyer, "daily_route_id", "") != "":
+		return ""
+	return stock
+
+
 func _quote(
 		item: Dictionary,
 		policy: Dictionary,
@@ -339,6 +361,12 @@ func _quote(
 			"multiplier": relation_multiplier,
 		})
 	var unit_price := maxi(ceili(price), 1)
+	if int(policy.get("unit_cost_basis", 0)) > 0:
+		unit_price = int(policy.unit_cost_basis)
+		factors.append({"factor_id": "purchase_cost", "label": "实际进货价", "value": unit_price, "multiplier": 1.0})
+	if int(policy.get("unit_surcharge", 0)) > 0:
+		unit_price += int(policy.unit_surcharge)
+		factors.append({"factor_id": "transport_service", "label": "实物转运", "value": int(policy.unit_surcharge), "multiplier": 1.0})
 	var currency_ids: Array = policy.get("accepted_currency_item_def_ids", [])
 	return {
 		"unit_price": unit_price,

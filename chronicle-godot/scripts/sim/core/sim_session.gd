@@ -81,6 +81,8 @@ const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
+const FoodCarting = preload("res://scripts/sim/economy/resident_food_carting.gd")
+const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 4
@@ -197,6 +199,18 @@ func start_from_fixture_path(
 		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
 			return _start_failure("household_provisioning_requires_food_access")
 		fixture.resident_daily_life.food_access["household_provisioning"] = FamilyFood.PROFILE.duplicate(true)
+	if int(options.get("food_carting_version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_food_carting_version")
+	if int(options.get("food_carting_version", 0)) == 1:
+		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
+			return _start_failure("food_carting_requires_food_access")
+		fixture.resident_daily_life.food_access["carting"] = FoodCarting.PROFILE.duplicate(true)
+	if int(options.get("worksite_food_storage_version", 0)) not in [0, 1]:
+		return _start_failure("unsupported_worksite_food_storage_version")
+	if int(options.get("worksite_food_storage_version", 0)) == 1:
+		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
+			return _start_failure("worksite_food_storage_requires_food_access")
+		fixture.resident_daily_life.food_access["worksite_storage"] = FoodStorage.PROFILE.duplicate(true)
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -222,6 +236,18 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if int(fixture.get("resident_daily_life", {}).get("food_access", {}).get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_resident_food_access_version")
 	var food_config: Dictionary = fixture.get("resident_daily_life", {}).get("food_access", {})
+	var storage_config: Dictionary = food_config.get("worksite_storage", {})
+	var storage_error := FoodStorage.validate_config(storage_config)
+	if storage_error != "":
+		return _start_failure(storage_error)
+	if FoodStorage.enabled(storage_config) and not FoodAccess.enabled(food_config):
+		return _start_failure("worksite_food_storage_requires_food_access")
+	var carting_config: Dictionary = food_config.get("carting", {})
+	var carting_error := FoodCarting.validate(carting_config)
+	if carting_error != "":
+		return _start_failure(carting_error)
+	if FoodCarting.enabled(carting_config) and not FoodAccess.enabled(food_config):
+		return _start_failure("food_carting_requires_food_access")
 	var family_config: Dictionary = food_config.get("household_provisioning", {})
 	if int(family_config.get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_household_provisioning_version")
@@ -273,6 +299,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		organization_result.get("report", {}) as Dictionary
 	).duplicate(true)
 	FoodAccess.configure_fixture(fixture)
+	FoodStorage.configure_fixture(fixture)
 	CanonWorld.bind_locations(fixture)
 	var economic_result := EconomicSetup.configure_fixture(fixture)
 	if not bool(economic_result.get("ok", false)):
@@ -2230,6 +2257,13 @@ func _validate_save_references() -> Dictionary:
 	if economic_error != "":
 		return _save_failure(economic_error, "references")
 	var entity_store: Variant = stores["entity_store"]
+	for depot_id: String in fixture_source_data.get("worksite_food_storage_generated", {}).get("depot_ids", []):
+		if not entity_store.has_entity(depot_id) or "worksite_food_store" not in entity_store.get_entity(depot_id).get("tags", []):
+			return _save_failure("missing_worksite_food_depot", "references")
+	for entity: Dictionary in entity_store.entities.values():
+		var depot_error := FoodStorage.validate_depot(entity, stores, context.locations)
+		if depot_error != "":
+			return _save_failure(depot_error, "references")
 	var fact_store: Variant = stores["fact_store"]
 	var item_store: Variant = stores["item_store"]
 	var industry_error := IndustryCatalog.validate_references(stores, context.locations, registry)

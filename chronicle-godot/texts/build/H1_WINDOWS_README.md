@@ -38,6 +38,8 @@
 
 Godot 图标尚未替换；可执行文件没有数字签名。此构建仅完成开发机冒烟，不代表所有 Windows 电脑兼容。没有录制参赛视频，也没有提交作品。
 
+本包另含一个**默认关闭**的仓储与转运实验。后台开局指定 `scenario="echo_realm"`、`economy_variant="worksite_carting_v1"` 可运行；正常点「新世界」仍采用此前规则。实验把食物留在作业地，取货与交易要求到场，积压会停工。三种子生活表现比默认规则差，不能称为已完成经济系统；没有用增加初始钱或保证订单来掩盖这个结果。
+
 ## 工具与第三方资料
 
 使用 Godot 4.6.3 与 Compatibility 渲染。引擎及随附库版权见 GODOT_COPYRIGHT.txt；思源宋体许可见 SOURCE_HAN_SERIF_LICENSE.txt；地点画来源见 ASSET_PROVENANCE.md。备用素材库未纳入此构建。

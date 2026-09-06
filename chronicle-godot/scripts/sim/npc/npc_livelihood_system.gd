@@ -5,6 +5,8 @@ const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_c
 const Access = preload("res://scripts/sim/resource/resource_access.gd")
 const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
+const FoodCarting = preload("res://scripts/sim/economy/resident_food_carting.gd")
+const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
@@ -17,6 +19,7 @@ const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 var family_reservations: Dictionary = {}
 var family_food_enabled := false
 var physical_social := false
+var carting_enabled := false
 
 
 func resolve_work_tick(
@@ -38,6 +41,8 @@ func resolve_work_tick(
 	var available_resources := _available_resource_amounts(snapshot)
 	var treasury = Treasury.new(snapshot)
 	for actor: Dictionary in _sorted_people(snapshot):
+		if FoodCarting.is_carter(actor, daily_life_config.get("food_access", {}).get("carting", {})):
+			continue
 		var actor_id := str(actor.get("id", ""))
 		var occupation_id := str(snapshot.get_entity_state(
 			actor_id, "occupation_id", ""
@@ -65,6 +70,9 @@ func resolve_work_tick(
 				or str(snapshot.get_entity_state(actor_id, "daily_route_id", "")) != ""
 				or str(snapshot.get_entity_state(actor_id, "location_id", "")) != str(profile.get("workplace_id", ""))
 				or str(snapshot.get_entity_state(actor_id, "workplace_id", "")) != str(profile.get("workplace_id", ""))):
+			continue
+		var storage_config: Dictionary = daily_life_config.get("food_access", {}).get("worksite_storage", {})
+		if not FoodStorage.has_capacity(snapshot, actor_id, profile, storage_config):
 			continue
 		var interval := maxi(int(profile.get("work_interval_hours", 8)), 1)
 		var elapsed := int(snapshot.get_entity_state(
@@ -180,7 +188,8 @@ func resolve_work_tick(
 				quantity,
 				fact_id,
 				tick_event,
-				product_index
+				product_index,
+				FoodStorage.production_holder(snapshot, actor_id, item_def_id, storage_config)
 			)
 
 		var production_fact := {
@@ -204,6 +213,10 @@ func resolve_work_tick(
 			)) + ("（旧版薪酬模型：铜币由规则生成，尚未实际付款。）" if _contains_currency_product(products) else ""),
 		}
 		if physical_work:
+			if FoodStorage.enabled(storage_config) and FoodStorage.stock_holder(snapshot, actor_id) != "" \
+					and not products.is_empty() and products[0].get("item_def_id") in FoodStorage.FOOD_IDS:
+				production_fact["stock_entity_id"] = FoodStorage.stock_holder(snapshot, actor_id)
+				production_fact["summary"] = "%s完成采收，%d 份产物存入作业地粮堆，没有自动带回家。" % [actor.get("display_name", actor_id), products[0].quantity]
 			production_fact["hour"] = int(tick_event.get("hour", 0))
 			production_fact["work_hours"] = interval
 			production_fact["actual_location_id"] = str(snapshot.get_entity_state(actor_id, "location_id", ""))
@@ -267,6 +280,18 @@ func resolve_household_support(
 	food_access_enabled = DailyLife.enabled(daily_life_config) and int(daily_life_config.get("food_access", {}).get("version", 0)) == 1
 	family_reservations = FamilyFood.reservations(snapshot, tick_event,
 		daily_life_config.get("food_access", {}).get("household_provisioning", {}))
+	var cart_config: Dictionary = daily_life_config.get("food_access", {}).get("carting", {})
+	carting_enabled = FoodCarting.enabled(cart_config)
+	if FoodCarting.enabled(cart_config):
+		for person: Dictionary in snapshot.get_entities_by_type("person"):
+			if not FoodCarting.is_carter(person, cart_config):
+				continue
+			var cargo := 0
+			for item: Dictionary in snapshot.get_items():
+				if item.get("holder", {}) == {"kind": "entity", "id": str(person.id)} \
+						and not FoodCarting.purchase_source(snapshot, item, str(person.id)).is_empty():
+					cargo += int(item.quantity)
+			family_reservations[str(person.id)] = maxi(cargo, int(family_reservations.get(str(person.id), 0)))
 	family_food_enabled = FamilyFood.enabled(daily_life_config.get("food_access", {}).get("household_provisioning", {}))
 	physical_social = family_food_enabled and int(daily_life_config.get("food_access", {}).get("household_provisioning", {}).get("social_presence_version", 0)) == 1
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
@@ -542,10 +567,13 @@ func _append_product_changes(
 		quantity: int,
 		fact_id: String,
 		tick_event: Dictionary,
-		product_index: int
+		product_index: int,
+		holder_id: String = ""
 ) -> void:
+	if holder_id == "":
+		holder_id = actor_id
 	var remaining := quantity
-	var existing := _partial_stack(snapshot, actor_id, item_def_id)
+	var existing := _partial_stack(snapshot, holder_id, item_def_id)
 	if not existing.is_empty():
 		var capacity := int(existing.get("max_stack", 1)) - int(
 			existing.get("quantity", 0)
@@ -572,7 +600,7 @@ func _append_product_changes(
 		"item": {
 			"item_instance_id": item_instance_id,
 			"item_def_id": item_def_id,
-			"holder": {"kind": "entity", "id": actor_id},
+			"holder": {"kind": "entity", "id": holder_id},
 			"quantity": remaining,
 			"condition": {},
 			"custom_tags": ["livelihood_product"],
@@ -758,7 +786,7 @@ func _can_share_here(snapshot: Variant, recipient_id: String, holder_id: String)
 
 
 func _can_spare_food(snapshot: Variant, holder: String, recipient: String, available: Dictionary) -> bool:
-	if holder == recipient or not family_food_enabled:
+	if holder == recipient or (not family_food_enabled and not carting_enabled):
 		return true
 	var retained := int(family_reservations.get(holder, 0))
 	if snapshot.get_entity_state(holder, "hunger", "none") in HUNGRY_LEVELS:

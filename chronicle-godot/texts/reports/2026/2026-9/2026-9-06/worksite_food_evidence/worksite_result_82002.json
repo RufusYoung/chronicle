@@ -1,0 +1,136 @@
+{
+  "activity_hours": {
+    "generated_resident.echo_landing.001": {
+      "arrived": 29,
+      "home": 7,
+      "resting": 49,
+      "traveling": 29,
+      "working": 54
+    },
+    "generated_resident.echo_landing.002": {
+      "arrived": 43,
+      "resting": 66,
+      "seeking_food": 7,
+      "traveling": 43,
+      "working": 9
+    },
+    "generated_resident.echo_landing.003": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_landing.004": {
+      "arrived": 55,
+      "resting": 29,
+      "seeking_food": 1,
+      "traveling": 83
+    },
+    "generated_resident.echo_landing.005": {
+      "arrived": 39,
+      "resting": 18,
+      "seeking_food": 7,
+      "traveling": 39,
+      "working": 65
+    },
+    "generated_resident.echo_landing.006": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_landing.007": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_landing.008": {
+      "arrived": 41,
+      "resting": 11,
+      "seeking_food": 9,
+      "traveling": 41,
+      "working": 66
+    },
+    "generated_resident.echo_terrace.001": {
+      "arrived": 39,
+      "home": 3,
+      "resting": 57,
+      "traveling": 39,
+      "working": 30
+    },
+    "generated_resident.echo_terrace.002": {
+      "arrived": 39,
+      "resting": 65,
+      "seeking_food": 6,
+      "traveling": 39,
+      "working": 19
+    },
+    "generated_resident.echo_terrace.003": {
+      "arrived": 23,
+      "home": 1,
+      "resting": 66,
+      "seeking_food": 1,
+      "seeking_work": 50,
+      "traveling": 27
+    },
+    "generated_resident.echo_terrace.004": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_terrace.005": {
+      "home": 84,
+      "resting": 84
+    },
+    "generated_resident.echo_terrace.006": {
+      "arrived": 41,
+      "resting": 11,
+      "seeking_food": 8,
+      "traveling": 41,
+      "working": 67
+    },
+    "generated_resident.echo_terrace.007": {
+      "arrived": 39,
+      "home": 6,
+      "resting": 54,
+      "traveling": 39,
+      "working": 30
+    },
+    "generated_resident.echo_terrace.008": {
+      "home": 84,
+      "resting": 84
+    }
+  },
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 7,
+  "extreme_person_hours": 1132,
+  "failures": [],
+  "mode": "canon_depot_final",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 1531.451
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 2220.265
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 3112.133
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 3826.88
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 4815.599
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 5604.271
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 6537.148
+    }
+  ],
+  "scenario": "echo_realm",
+  "scope": "Passive formal new world",
+  "seed": 82002
+}

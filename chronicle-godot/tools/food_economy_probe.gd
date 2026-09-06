@@ -16,6 +16,12 @@ func _run() -> void:
 	var model := Live.new()
 	var scenario := "echo_realm" if mode.begins_with("canon") else "generated_network"
 	var options := {"scenario": scenario, "challenge_seed_override": seed}
+	if mode.begins_with("canon_carting") or mode.begins_with("canon_depot"):
+		options["food_carting_version"] = 1
+	if mode.begins_with("canon_depot"):
+		options["worksite_food_storage_version"] = 1
+	if mode in ["canon_without_family", "canon_without_carting"]:
+		options["food_carting_version"] = 0
 	if mode == "canon_without_family":
 		options["household_provisioning_version"] = 0
 	_check(model.start(options).success, "start")
@@ -37,12 +43,19 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var rows: Array = []
 	var extreme_person_hours := 0
+	var activity_hours := {}
 	for day: int in range(1, days + 1):
 		var began := Time.get_ticks_usec()
 		var ok := true
 		for hour: int in range(24):
 			ok = model.session.advance_time(1, "food_economy_probe", {"scope_type": "global", "scope_id": "", "source": "passive_food_probe"}).success and ok
-			for state: Dictionary in model.session.stores.state_store.states.values():
+			for id: String in model.session.stores.state_store.states:
+				var state: Dictionary = model.session.stores.state_store.states[id]
+				if state.has("occupation_id"):
+					if not activity_hours.has(id):
+						activity_hours[id] = {}
+					var activity := str(state.get("daily_activity", "legacy"))
+					activity_hours[id][activity] = int(activity_hours[id].get(activity, 0)) + 1
 				if state.get("hunger") == "extreme" and state.has("occupation_id") and bool(state.get("alive", true)):
 					extreme_person_hours += 1
 		_check(ok, "day_%d" % day)
@@ -61,7 +74,8 @@ func _run() -> void:
 	var file := FileAccess.open(output + "/result.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"mode": mode, "scenario": scenario, "seed": seed, "elapsed_days": days, "rows": rows,
 		"extreme_person_hours": extreme_person_hours, "failures": failures,
-		"scope": "Configuration experiment" if mode.begins_with("batch") else ("Test injection: household provisioning disabled" if mode == "canon_without_family" else ("Test injection: only local supply knowledge" if mode == "local_only" else "Passive formal new world")),
+		"activity_hours": activity_hours,
+		"scope": "Passive opt-in rules experiment; no actor actions" if mode.begins_with("canon_depot") or mode.begins_with("canon_carting") else ("Configuration experiment" if mode.begins_with("batch") else ("Test injection: household provisioning disabled" if mode == "canon_without_family" else ("Test injection: only local supply knowledge" if mode == "local_only" else "Passive default world"))),
 		"boundary": "Not human play or sustainable economy acceptance."}, "  "))
 	file.close()
 	print("FOOD_ECONOMY_RESULT " + ("PASS" if failures.is_empty() else "FAIL"))

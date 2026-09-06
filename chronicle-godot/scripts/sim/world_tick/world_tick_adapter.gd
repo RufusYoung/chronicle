@@ -61,6 +61,7 @@ const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_sc
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
+const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
@@ -274,6 +275,16 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 
 		if DailyLife.enabled(daily_life_config):
 			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			var storage_config: Dictionary = daily_life_config.get("food_access", {}).get("worksite_storage", {})
+			if FoodStorage.enabled(storage_config):
+				for person: Dictionary in activity_snapshot.get_entities_by_type("person"):
+					var withdrawal := FoodStorage.new().plan_withdrawal(activity_snapshot, person, round_event, storage_config, stores, daily_life_config)
+					if withdrawal.has("transaction"):
+						if not writer.apply_result(withdrawal.transaction, stores):
+							return _failure_result(event, "worksite_food_withdrawal_rejected", stores)
+						livelihood_results.append(withdrawal.transaction)
+						livelihood_events.append(withdrawal.event)
+				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var observations := FamilyFood.new().observe(activity_snapshot, round_event,
 				daily_life_config.get("food_access", {}).get("household_provisioning", {}))
 			if not observations.results.is_empty():
@@ -285,7 +296,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				daily_life_config, settlement_network_config, context.locations, daily_life_routes,
 				IndustryCatalog.profiles(activity_snapshot, npc_livelihood_profiles))
 			var activity_results: Array = activity_data.get("results", [])
-			writer.apply_results(activity_results, stores)
+			if not writer.apply_results(activity_results, stores):
+				return _failure_result(event, "resident_activity_rejected", stores)
 			livelihood_results.append_array(activity_results)
 			livelihood_events.append_array(activity_data.get("events", []))
 
@@ -303,7 +315,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				daily_life_config
 			)
 			var work_results: Array = work_data.get("results", [])
-			writer.apply_results(work_results, stores)
+			if not writer.apply_results(work_results, stores):
+				return _failure_result(event, "resident_work_rejected", stores)
 			livelihood_results.append_array(work_results)
 			livelihood_events.append_array(work_data.get("events", []))
 

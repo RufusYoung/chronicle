@@ -8,6 +8,7 @@ const LifeStageTransitionServiceModel = preload(
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
 const WorldSave = preload("res://scripts/rebuild/live_world_save.gd")
 const RegionProjection = preload("res://scripts/rebuild/region_map_projection.gd")
+const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const RoutePressureQueryModel = preload(
 	"res://scripts/sim/resource/route_pressure_query.gd"
 )
@@ -2570,7 +2571,7 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 	var lines: Array[String] = []
 	var food_lines: Array[String] = []
 	for event: Dictionary in result.get("livelihood_events", []):
-		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet", "household_food_delivered"]:
+		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet", "household_food_delivered", "worksite_food_withdrawn"]:
 			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
 			if str(fact.get("summary", "")) != "":
 				food_lines.append(str(fact.summary))
@@ -3049,6 +3050,11 @@ func _person_state_text(states: Dictionary) -> String:
 
 func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 	var entity_id := str(entity.get("id", ""))
+	if "worksite_food_store" in entity.get("tags", []):
+		var owner := str(entity.get("stock_custodian_id", ""))
+		var present: bool = snapshot.get_entity_state(owner, "location_id", "") == entity.get("stock_location_id") \
+			and snapshot.get_entity_state(owner, "daily_route_id", "") == "" and bool(snapshot.get_entity_state(owner, "alive", true))
+		return "现场存粮 %d 份 · %s" % [FoodStorage.quantity(snapshot.get_items(), entity_id), "主人在场" if present else "主人不在场，不能取货交易"]
 	var entity_type := str(entity.get("type", ""))
 	var states: Dictionary = entity.get("states", {})
 	var price_changed := str(states.get("price_level", "")) == "raised_again"

@@ -16,6 +16,31 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_opt_in_worksite_stock_in_actual_process(self):
+        with client(timeout=60) as game:
+            opened = game.request("start", mode="world", scenario="echo_realm", seed=81001,
+                                  economy_variant="worksite_carting_v1")
+            self.assertTrue(opened["ok"], opened)
+            self.assertTrue(game.request("advance", hours=24)["ok"])
+            facts = []
+            offset = 0
+            while True:
+                page = game.request("inspect", kind="facts", offset=offset, limit=100)
+                self.assertTrue(page["ok"], page)
+                facts.extend(page["rows"])
+                offset += len(page["rows"])
+                if offset >= page["total"]:
+                    break
+            self.assertTrue(any(row.get("stock_entity_id") and row.get("fact_type") == "npc_livelihood_produced"
+                                for row in facts), "No worksite production in actual package")
+            self.assertTrue(any(row.get("fact_type") == "worksite_food_withdrawn" for row in facts))
+            slot = f"worksite_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            restored = game.request("load", slot=slot)
+            self.assertTrue(restored["ok"], restored)
+            self.assertTrue(game.request("advance", hours=1)["ok"])
+            self.assertFalse(game.request("start", mode="world", scenario="echo_realm", economy_variant="invented")["ok"])
+
     def test_family_provisioning_in_actual_process(self):
         with client(timeout=60) as game:
             self.assertTrue(game.request("start", mode="world", scenario="echo_realm", seed=81001)["ok"])

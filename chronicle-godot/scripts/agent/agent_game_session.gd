@@ -8,7 +8,7 @@ const Saves = preload("res://scripts/sim/save/save_envelope_service.gd")
 const SAVE_ROOT := "user://agent_play/"
 const CACHE_LIMIT := 32
 const FIELDS := {
-	"start": ["mode", "scenario", "seed"],
+	"start": ["mode", "scenario", "seed", "economy_variant"],
 	"observe": [], "act": ["choice_id", "confirm"],
 	"advance": ["hours"], "inspect": ["kind", "offset", "limit"],
 	"save": ["slot", "overwrite"], "load": ["slot"],
@@ -83,6 +83,9 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_mode: Variant = request.get("mode", "world")
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
+	var variant: Variant = request.get("economy_variant", "default")
+	if variant not in ["default", "worksite_carting_v1"] or (variant != "default" and next_scenario != "echo_realm"):
+		return _error("invalid_economy_variant")
 	if next_mode not in ["world", "play"] or next_scenario not in ["echo_realm", "generated_network", "lake_town", "first_winter"]:
 		return _error("invalid_start_profile")
 	if next_mode == "world" and next_scenario not in ["generated_network", "echo_realm"]:
@@ -92,6 +95,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_model: Variant
 	var result: Dictionary
 	var options := {"challenge_seed_override": int(seed)}
+	if variant == "worksite_carting_v1":
+		options.merge({"food_carting_version": 1, "worksite_food_storage_version": 1})
 	if next_scenario == "first_winter":
 		next_model = OutpostView.new()
 		result = next_model.start({}, "first_winter", options)

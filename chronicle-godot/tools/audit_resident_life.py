@@ -28,7 +28,13 @@ def audit(path: Path) -> dict:
     initial_food = sum(row["quantity"] for row in fixture.get("initial_items", [])
                        if row["item_def_id"] in food_ids)
     remaining_food = sum(row["quantity"] for row in stores["items"] if row["item_def_id"] in food_ids)
+    depots = {row["id"] for row in stores["entities"].values() if "worksite_food_store" in row.get("tags", [])}
+    stored_food = sum(row["quantity"] for row in stores["items"] if row["item_def_id"] in food_ids
+                      and row.get("holder", {}).get("id") in depots)
     purchases = [row for row in facts if row.get("fact_type") == "resident_food_purchased"]
+    carting = [row for row in purchases if row.get("purpose_id") == "food_carting"]
+    transported_sales = [row for row in purchases if row.get("transport_source_fact_id")]
+    transported_ids = {row["fact_id"] for row in transported_sales}
     cross_purchases = [row for row in purchases if row.get("buyer_settlement_id") and
                        row.get("buyer_settlement_id") != row.get("seller_settlement_id")]
     purchase_ids = {row["fact_id"] for row in purchases}
@@ -49,6 +55,7 @@ def audit(path: Path) -> dict:
         "activity": dict(Counter(row.get("daily_activity", "legacy") for row in states)),
         "initial_food_portions": initial_food, "produced_food_portions": produced_food,
         "consumed_meals": len(meals), "remaining_food_portions": remaining_food,
+        "worksite_food_portions": stored_food, "worksite_storage_count": len(depots),
         "food_balance_remainder": initial_food + produced_food - len(meals) - remaining_food,
         "food_balance_scope": "Valid for passive fixture meals; other consumption/transfers must be audited separately.",
         "initial_currency": fixture.get("economic_generation_result", {}).get("initial_currency_total"),
@@ -57,6 +64,15 @@ def audit(path: Path) -> dict:
         "purchased_portions": sum(row.get("fields", {}).get("quantity", 0) for row in purchases),
         "cross_settlement_purchased_portions": sum(row.get("fields", {}).get("quantity", 0) for row in cross_purchases),
         "food_sales_income": sum(row.get("fields", {}).get("total_price", 0) for row in purchases),
+        "carting_pickups": len(carting),
+        "carting_purchase_cost": sum(row["fields"]["total_price"] for row in carting),
+        "carting_purchased_portions": sum(row["fields"]["quantity"] for row in carting),
+        "transported_sales": len(transported_sales),
+        "transported_sold_portions": sum(row["fields"]["quantity"] for row in transported_sales),
+        "transported_sales_revenue": sum(row["fields"]["total_price"] for row in transported_sales),
+        "transported_sales_gross_margin": sum(row["transport_margin"] for row in transported_sales),
+        "meals_citing_transported_sales": sum(bool(set(row.get("source_fact_ids", [])) & transported_ids) for row in meals),
+        "carting_accounting_boundary": "Gross margin is sold-lot revenue minus its purchase cost, not household net profit; unsold or eaten loads remain costs.",
         "meals_citing_purchases": sum(bool(set(row.get("source_fact_ids", [])) & purchase_ids) for row in meals),
         "family_deliveries": len(deliveries),
         "deliveries_citing_purchases": sum(bool(set(row.get("source_fact_ids", [])) & purchase_ids) for row in deliveries),
@@ -74,6 +90,8 @@ def audit(path: Path) -> dict:
                        "wages_received": wages[person["id"]],
                        "food_purchase_spend": sum(row.get("fields", {}).get("total_price", 0) for row in purchases
                                                   if row.get("actor_id") == person["id"]),
+                       "food_sales_received": sum(row.get("fields", {}).get("total_price", 0) for row in purchases
+                                                  if row.get("target_id") == person["id"]),
                        "food": sum(row["quantity"] for row in stores["items"] if row["item_def_id"] in food_ids and
                                    row.get("holder") == {"kind": "entity", "id": person["id"]}),
                        "coins": sum(row["quantity"] for row in stores["items"] if row["item_def_id"] == "item.copper_coin" and

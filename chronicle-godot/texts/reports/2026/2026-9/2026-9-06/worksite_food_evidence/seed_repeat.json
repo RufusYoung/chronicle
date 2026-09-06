@@ -1,0 +1,37 @@
+{
+  "checkpoints": [
+    {
+      "sha256": "42153EF1190ABBD25699EEF18532AF36EDD77F851DCC0DD14A2EC4C2A4A4AA3F",
+      "path": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe/canon_depot_final_81001/day7.json"
+    },
+    {
+      "sha256": "90CF5D3DED50BC66FB03580B18D75D7340D78D4FD9396B40C24C47918B171710",
+      "path": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe/canon_depot_repeat_81001/day7.json"
+    }
+  ],
+  "seed": 81001,
+  "elapsed_days": 7,
+  "scope": "Offline comparison of parsed native JSON; excludes creation metadata; not a gameplay acceptance",
+  "parts": [
+    {
+      "part": "stores",
+      "equal": true
+    },
+    {
+      "part": "session",
+      "equal": true
+    },
+    {
+      "part": "world_time",
+      "equal": true
+    },
+    {
+      "part": "rng_states",
+      "equal": true
+    },
+    {
+      "part": "world_log",
+      "equal": true
+    }
+  ]
+}
