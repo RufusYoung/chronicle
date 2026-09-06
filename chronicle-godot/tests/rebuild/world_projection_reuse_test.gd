@@ -8,13 +8,13 @@ class CountedView extends "res://scripts/rebuild/v5_live_location_view_model.gd"
 	var travel_calls := 0
 	var status_calls := 0
 
-	func _action_rows() -> Array:
+	func _action_rows(snapshot: Variant = null) -> Array:
 		action_calls += 1
-		return super._action_rows()
+		return super._action_rows(snapshot)
 
-	func _travel_rows() -> Array:
+	func _travel_rows(snapshot: Variant = null) -> Array:
 		travel_calls += 1
-		return super._travel_rows()
+		return super._travel_rows(snapshot)
 
 	func _region_status_rows(snapshot: Variant) -> Array:
 		status_calls += 1

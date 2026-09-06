@@ -6,7 +6,7 @@ func active_pressure(
 		snapshot: Variant, link_id: String, day: int
 ) -> Dictionary:
 	var latest: Dictionary = {}
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("regional_route_pressure_started"):
 		if (
 			str(fact.get("fact_type", ""))
 			!= "regional_route_pressure_started"
@@ -41,7 +41,7 @@ func active_pressure(
 
 func latest_start_day(snapshot: Variant, link_id: String, before_day: int) -> int:
 	var latest_day := 0
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("regional_route_pressure_started"):
 		if (
 			str(fact.get("fact_type", ""))
 			== "regional_route_pressure_started"

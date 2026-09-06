@@ -148,7 +148,7 @@ func _create_item(
 	normalized["updated_tick"] = int(
 		item.get("updated_tick", normalized["created_tick"])
 	)
-	items[item_instance_id] = normalized
+	_store_item(item_instance_id, normalized)
 	return true
 
 
@@ -159,9 +159,18 @@ func get_item(item_instance_id: String) -> Dictionary:
 
 
 func list_items() -> Array:
+	return _list_projected_items(true)
+
+
+func snapshot_items() -> Array:
+	# Projected rows belong to the snapshot; nested record data remains frozen.
+	return _list_projected_items(false)
+
+
+func _list_projected_items(deep_copy: bool) -> Array:
 	var rows: Array = []
 	for item_instance_id: String in items.keys():
-		rows.append(_project_item(items[item_instance_id]))
+		rows.append(_project_item(items[item_instance_id], deep_copy))
 	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return str(a.get("item_instance_id", "")) < str(
 			b.get("item_instance_id", "")
@@ -253,12 +262,41 @@ func get_item_definition(item_def_id: String) -> Dictionary:
 
 func fork_for_preflight(preview_fact_store: Variant) -> Variant:
 	var clone = get_script().new()
-	clone.items = items.duplicate(true)
-	clone.item_defs = item_defs.duplicate(true)
+	copy_runtime_to(clone)
 	clone.entity_store = entity_store
 	clone.fact_store = preview_fact_store
-	clone.location_ids = location_ids.duplicate(true)
 	return clone
+
+
+func copy_runtime_to(target: Variant) -> void:
+	# Mutations replace one frozen record. Untouched items need no history clone.
+	target.items = items.duplicate()
+	target.item_defs = item_defs.duplicate(true)
+	target.location_ids = location_ids.duplicate()
+	target.validation_errors = validation_errors.duplicate()
+	target.validation_warnings = validation_warnings.duplicate()
+	target.last_error = last_error
+	target.conserve_currency = conserve_currency
+
+
+func _store_item(item_id: String, record: Dictionary) -> void:
+	_freeze(record)
+	items[item_id] = record
+
+
+func _freeze(value: Variant) -> void:
+	if value is Dictionary:
+		if value.is_read_only():
+			return
+		for key: Variant in value:
+			_freeze(value[key])
+		value.make_read_only()
+	elif value is Array:
+		if value.is_read_only():
+			return
+		for child: Variant in value:
+			_freeze(child)
+		value.make_read_only()
 
 
 func get_contract_report() -> Dictionary:
@@ -291,7 +329,7 @@ func _append_history(change: Dictionary) -> bool:
 	))
 	if source_fact_id == "" or not _fact_exists(source_fact_id):
 		return _reject("%s:history_requires_source_fact" % item_instance_id)
-	var stored: Dictionary = items[item_instance_id]
+	var stored: Dictionary = (items[item_instance_id] as Dictionary).duplicate()
 	var history: Array = (stored.get("history", []) as Array).duplicate(true)
 	var normalized_entry := (entry as Dictionary).duplicate(true)
 	normalized_entry["fact_id"] = source_fact_id
@@ -302,7 +340,7 @@ func _append_history(change: Dictionary) -> bool:
 		"updated_tick",
 		_fact_tick(fact_store.get_fact(source_fact_id))
 	))
-	items[item_instance_id] = stored
+	_store_item(item_instance_id, stored)
 	return true
 
 
@@ -321,7 +359,7 @@ func _transfer_item(change: Dictionary) -> bool:
 		return _reject("%s:invalid_transfer_holder" % item_instance_id)
 	if str((holder as Dictionary).get("kind", "")) == "destroyed":
 		return _reject("%s:transfer_cannot_destroy" % item_instance_id)
-	var stored: Dictionary = items[item_instance_id]
+	var stored: Dictionary = (items[item_instance_id] as Dictionary).duplicate()
 	if _is_destroyed(stored):
 		return _reject("%s:item_destroyed" % item_instance_id)
 	if _holders_equal(stored.get("holder", {}), holder):
@@ -335,7 +373,7 @@ func _transfer_item(change: Dictionary) -> bool:
 		"from_holder": previous_holder,
 		"to_holder": (holder as Dictionary).duplicate(true),
 	})
-	items[item_instance_id] = stored
+	_store_item(item_instance_id, stored)
 	return true
 
 
@@ -349,7 +387,7 @@ func _consume_item(change: Dictionary) -> bool:
 	var source_fact_ids: Array = (source_fact_value as Array).duplicate(true)
 	if source_fact_ids.is_empty() or not _facts_exist(source_fact_ids):
 		return _reject("%s:consume_requires_source_fact" % item_instance_id)
-	var stored: Dictionary = items[item_instance_id]
+	var stored: Dictionary = (items[item_instance_id] as Dictionary).duplicate()
 	var definition: Dictionary = item_defs.get(str(stored.get("item_def_id", "")), {})
 	if "consume" not in (definition.get("capabilities", []) as Array):
 		return _reject("%s:item_not_consumable" % item_instance_id)
@@ -367,7 +405,7 @@ func _consume_item(change: Dictionary) -> bool:
 	_append_generated_history(stored, "consumed", source_fact_ids, {
 		"quantity": quantity,
 	})
-	items[item_instance_id] = stored
+	_store_item(item_instance_id, stored)
 	return true
 
 
@@ -381,7 +419,7 @@ func _increase_quantity(change: Dictionary) -> bool:
 	var source_fact_ids: Array = (source_fact_value as Array).duplicate(true)
 	if source_fact_ids.is_empty() or not _facts_exist(source_fact_ids):
 		return _reject("%s:quantity_increase_requires_source_fact" % item_instance_id)
-	var stored: Dictionary = items[item_instance_id]
+	var stored: Dictionary = (items[item_instance_id] as Dictionary).duplicate()
 	if _is_destroyed(stored):
 		return _reject("%s:item_destroyed" % item_instance_id)
 	var definition: Dictionary = item_defs.get(str(stored.get("item_def_id", "")), {})
@@ -402,7 +440,7 @@ func _increase_quantity(change: Dictionary) -> bool:
 		"from": current_quantity,
 		"to": current_quantity + quantity,
 	})
-	items[item_instance_id] = stored
+	_store_item(item_instance_id, stored)
 	return true
 
 
@@ -416,7 +454,7 @@ func _adjust_durability(change: Dictionary) -> bool:
 	var source_fact_ids: Array = (source_fact_value as Array).duplicate(true)
 	if source_fact_ids.is_empty() or not _facts_exist(source_fact_ids):
 		return _reject("%s:durability_requires_source_fact" % item_instance_id)
-	var stored: Dictionary = items[item_instance_id]
+	var stored: Dictionary = (items[item_instance_id] as Dictionary).duplicate()
 	if _is_destroyed(stored):
 		return _reject("%s:item_destroyed" % item_instance_id)
 	var condition: Dictionary = (stored.get("condition", {}) as Dictionary).duplicate(true)
@@ -446,7 +484,7 @@ func _adjust_durability(change: Dictionary) -> bool:
 		"from": current,
 		"to": next,
 	})
-	items[item_instance_id] = stored
+	_store_item(item_instance_id, stored)
 	return true
 
 
@@ -461,7 +499,7 @@ func _split_stack(change: Dictionary) -> bool:
 	var source_fact_ids: Array = (source_fact_value as Array).duplicate(true)
 	if source_fact_ids.is_empty() or not _facts_exist(source_fact_ids):
 		return _reject("%s:split_requires_source_fact" % item_instance_id)
-	var stored: Dictionary = items[item_instance_id]
+	var stored: Dictionary = (items[item_instance_id] as Dictionary).duplicate()
 	var definition: Dictionary = item_defs.get(str(stored.get("item_def_id", "")), {})
 	if not bool(definition.get("stackable", false)):
 		return _reject("%s:item_not_stackable" % item_instance_id)
@@ -498,13 +536,13 @@ func _split_stack(change: Dictionary) -> bool:
 		"source_item_instance_id": item_instance_id,
 		"quantity": quantity,
 	})
-	items[item_instance_id] = stored
-	items[new_id] = split
+	_store_item(item_instance_id, stored)
+	_store_item(new_id, split)
 	return true
 
 
-func _project_item(value: Dictionary) -> Dictionary:
-	var item := value.duplicate(true)
+func _project_item(value: Dictionary, deep_copy: bool = true) -> Dictionary:
+	var item := value.duplicate(deep_copy)
 	var item_instance_id := str(item.get("item_instance_id", ""))
 	var definition: Dictionary = item_defs.get(str(item.get("item_def_id", "")), {})
 	item["item_id"] = item_instance_id

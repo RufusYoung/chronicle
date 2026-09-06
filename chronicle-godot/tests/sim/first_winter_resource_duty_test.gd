@@ -58,12 +58,14 @@ func _run() -> void:
 
 	var blocked = ControllerModel.new()
 	blocked.start(FIXTURE, PROJECT)
-	blocked.session.stores["item_store"].items[
-		"item_instance.seventh_outpost.wall_timber"
-	]["quantity"] = 0
-	blocked.session.stores["item_store"].items[
-		"item_instance.seventh_outpost.wall_timber"
-	]["holder"] = {"kind": "destroyed", "id": ""}
+	# Test injection through owned save records; live item revisions are immutable.
+	var item_store: Variant = blocked.session.stores["item_store"]
+	var exhausted_items: Array = item_store.to_save_data()
+	for item: Dictionary in exhausted_items:
+		if str(item.get("item_instance_id", "")) == "item_instance.seventh_outpost.wall_timber":
+			item["quantity"] = 0
+			item["holder"] = {"kind": "destroyed", "id": ""}
+	_check(item_store.load_save_data(exhausted_items).ok, "4a. Exhausted test fixture loads through the item contract")
 	var option := _find_duty(blocked.get_duty_options(), "repair_east_wall")
 	var rejected: Dictionary = blocked.execute_duty("repair_east_wall")
 	_check(

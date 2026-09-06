@@ -279,6 +279,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var budget_config: Dictionary = daily_life_config.get("food_access", {}).get("household_budget", {})
 			if FoodBudget.enabled(budget_config):
+				var home_changed := false
 				for person: Dictionary in activity_snapshot.get_entities_by_type("person"):
 					var home_transfer := FoodBudget.new().plan_home_transfer(activity_snapshot, person, round_event, budget_config, stores)
 					if home_transfer.has("transaction"):
@@ -286,14 +287,18 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 							return _failure_result(event, "household_pantry_transfer_rejected", stores)
 						livelihood_results.append(home_transfer.transaction)
 						livelihood_events.append_array(home_transfer.events)
-				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+						home_changed = true
+				if home_changed:
+					activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 				var budget_observation := FoodBudget.new().observe(activity_snapshot, round_event, budget_config)
 				if not writer.apply_results(budget_observation.results, stores):
 					return _failure_result(event, "household_budget_observation_rejected", stores)
 				livelihood_results.append_array(budget_observation.results)
-				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+				if not budget_observation.results.is_empty():
+					activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var storage_config: Dictionary = daily_life_config.get("food_access", {}).get("worksite_storage", {})
 			if FoodStorage.enabled(storage_config):
+				var stock_changed := false
 				for person: Dictionary in activity_snapshot.get_entities_by_type("person"):
 					var household_need := FoodBudget.request(activity_snapshot, person, round_event, budget_config)
 					var withdrawal := FoodStorage.new().plan_withdrawal(activity_snapshot, person, round_event, storage_config, stores, daily_life_config, household_need)
@@ -302,7 +307,9 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 							return _failure_result(event, "worksite_food_withdrawal_rejected", stores)
 						livelihood_results.append(withdrawal.transaction)
 						livelihood_events.append(withdrawal.event)
-				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+						stock_changed = true
+				if stock_changed:
+					activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var observations := FamilyFood.new().observe(activity_snapshot, round_event,
 				daily_life_config.get("food_access", {}).get("household_provisioning", {}))
 			if not observations.results.is_empty():
@@ -1204,7 +1211,7 @@ func _observed_need_change_count(changes: Array) -> int:
 
 func _store_summary(stores: Dictionary) -> Dictionary:
 	return {
-		"facts": _list_size(stores.get("fact_store"), "list_facts"),
+		"facts": _array_property_size(stores.get("fact_store"), "facts"),
 		"memories": _array_property_size(stores.get("memory_store"), "memories"),
 		"traces": _list_size(stores.get("trace_store"), "list_traces"),
 		"rumors": _list_size(stores.get("rumor_store"), "list_rumors"),

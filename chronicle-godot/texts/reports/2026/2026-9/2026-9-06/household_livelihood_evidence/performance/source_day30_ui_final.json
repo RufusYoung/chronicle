@@ -1,0 +1,12 @@
+{
+  "checkpoint": "C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/food_economy_probe/canon_livelihood_frozen_81001/day30.json",
+  "elapsed_hours_after": 721,
+  "elapsed_hours_before": 720,
+  "failures": [],
+  "operation_ms": 461.269,
+  "passed": true,
+  "projection_ms": 145.985,
+  "renderer": "gl_compatibility",
+  "scope": "Program-driven real UI of a native thirty-day world, with a legal wait. Not human play or a latency distribution.",
+  "wait_through_draw_ms": 637
+}

@@ -227,16 +227,17 @@ func _run() -> void:
 	viewer.view_model.controller.session.stores["state_store"].set_state(
 		"seventh_outpost", "supply", 0
 	)
-	for item_id: String in [
-		"item_instance.seventh_outpost.wall_timber",
-		"item_instance.seventh_outpost.arrow_materials",
-	]:
-		viewer.view_model.controller.session.stores["item_store"].items[
-			item_id
-		]["quantity"] = 0
-		viewer.view_model.controller.session.stores["item_store"].items[
-			item_id
-		]["holder"] = {"kind": "destroyed", "id": ""}
+	# Test injection: load exhausted materials without mutating frozen live records.
+	var item_store: Variant = viewer.view_model.controller.session.stores["item_store"]
+	var exhausted_items: Array = item_store.to_save_data()
+	for item: Dictionary in exhausted_items:
+		if str(item.get("item_instance_id", "")) in [
+			"item_instance.seventh_outpost.wall_timber",
+			"item_instance.seventh_outpost.arrow_materials",
+		]:
+			item["quantity"] = 0
+			item["holder"] = {"kind": "destroyed", "id": ""}
+	_check(item_store.load_save_data(exhausted_items).ok, "11e. Exhaustion test fixture loads through the item contract")
 	viewer.refresh_view()
 	await process_frame
 	var repair := _find_duty_button(action_buttons, "repair_east_wall")

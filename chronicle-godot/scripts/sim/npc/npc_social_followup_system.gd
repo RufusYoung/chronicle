@@ -310,7 +310,7 @@ func _co_present(snapshot: Variant, first: String, second: String) -> bool:
 
 func _food_debt_pairs(snapshot: Variant) -> Array:
 	var rows: Dictionary = {}
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("npc_cross_household_shared_food"):
 		if str(fact.get("fact_type", "")) != "npc_cross_household_shared_food":
 			continue
 		var debtor_id := str(fact.get("requester_id", ""))
@@ -341,7 +341,7 @@ func _food_debt_pairs(snapshot: Variant) -> Array:
 
 func _failed_request_pairs(snapshot: Variant) -> Array:
 	var rows: Dictionary = {}
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("npc_cross_household_food_request_failed"):
 		if str(fact.get("fact_type", "")) != (
 			"npc_cross_household_food_request_failed"
 		):
@@ -452,7 +452,7 @@ func _has_repayment_for_debtor_day(
 		debtor_id: String,
 		day: int
 ) -> bool:
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("npc_food_debt_repaid"):
 		if (
 			str(fact.get("fact_type", "")) == "npc_food_debt_repaid"
 			and str(fact.get("debtor_id", "")) == debtor_id
@@ -479,7 +479,7 @@ func _households(snapshot: Variant) -> Dictionary:
 
 func _available_item_quantities(snapshot: Variant) -> Dictionary:
 	var rows: Dictionary = {}
-	for item: Dictionary in snapshot.get_items():
+	for item: Dictionary in snapshot.items:
 		rows[str(item.get("item_instance_id", ""))] = int(item.get(
 			"quantity", 0
 		))

@@ -3,6 +3,8 @@ class_name V5TransactionWorldWriter
 
 const ResourceAccess = preload("res://scripts/sim/resource/resource_access.gd")
 const FactStore = preload("res://scripts/sim/fact/fact_store.gd")
+const MemoryStore = preload("res://scripts/sim/memory/memory_store.gd")
+const ItemStore = preload("res://scripts/sim/item/item_store.gd")
 
 const EXTERNAL_PROJECTION_KEYS := [
 	"food_count",
@@ -408,6 +410,12 @@ func _copy_script_properties(
 		object_map: Dictionary
 ) -> void:
 	if source.get_script() == FactStore and target.get_script() == FactStore:
+		source.copy_runtime_to(target)
+		return
+	if source.get_script() == MemoryStore and target.get_script() == MemoryStore:
+		source.copy_runtime_to(target)
+		return
+	if source.get_script() == ItemStore and target.get_script() == ItemStore:
 		source.copy_runtime_to(target)
 		return
 	for property: Dictionary in source.get_property_list():

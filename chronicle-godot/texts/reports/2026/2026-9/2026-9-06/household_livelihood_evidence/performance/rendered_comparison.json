@@ -1,0 +1,46 @@
+[
+  {
+    "tag": "household_release_1",
+    "matched": 40,
+    "total": 40,
+    "summary": {
+      "day7": {
+        "count": 20,
+        "max_ms": 1210.603,
+        "p50_ms": 817.313,
+        "p95_ms": 1042.667
+      },
+      "initial": {
+        "count": 20,
+        "max_ms": 155.342,
+        "p50_ms": 102.941,
+        "p95_ms": 139.854
+      }
+    },
+    "hours": [
+      1
+    ]
+  },
+  {
+    "tag": "household_release_2",
+    "matched": 40,
+    "total": 40,
+    "summary": {
+      "day7": {
+        "count": 20,
+        "max_ms": 1155.225,
+        "p50_ms": 805.643,
+        "p95_ms": 995.042
+      },
+      "initial": {
+        "count": 20,
+        "max_ms": 142.809,
+        "p50_ms": 98.063,
+        "p95_ms": 118.184
+      }
+    },
+    "hours": [
+      1
+    ]
+  }
+]

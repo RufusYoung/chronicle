@@ -107,7 +107,7 @@ static func known_supply_locations(snapshot: Variant, actor: Dictionary, profile
 
 
 static func known_unaffordable(snapshot: Variant, actor: String, location: String, money: int, tick: Dictionary, config: Dictionary) -> bool:
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_actor(actor):
 		if fact.get("fact_type") == "resident_food_purchase_unmet" and fact.get("reason") == "unaffordable" \
 				and fact.get("actor_id") == actor and fact.get("location_id") == location \
 				and _hour(tick) - int(fact.get("absolute_hour", -100)) < int(config.get("retry_hours", 6)) \
@@ -125,7 +125,7 @@ static func is_food_producer(profile: Dictionary) -> bool:
 
 static func recently_failed(snapshot: Variant, actor: String, location: String, tick: Dictionary, config: Dictionary) -> bool:
 	var now := _hour(tick)
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_actor(actor):
 		if fact.get("fact_type") == "resident_food_purchase_unmet" and fact.get("actor_id") == actor and fact.get("location_id") == location \
 				and now - int(fact.get("absolute_hour", -100)) < int(config.get("retry_hours", 6)):
 			return true

@@ -51,7 +51,7 @@ static func assigned_targets(snapshot: Variant, payer: String, tick: Dictionary)
 
 
 static func recently_visited(snapshot: Variant, carrier: String, place: String, tick: Dictionary, config: Dictionary) -> bool:
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_actor(carrier):
 		if fact.get("fact_type") == "food_hauling_no_contract" and fact.get("actor_id") == carrier \
 				and fact.get("location_id") == place and Family.absolute_hour(tick) - Family.absolute_hour(fact) < int(config.retry_hours):
 			return true

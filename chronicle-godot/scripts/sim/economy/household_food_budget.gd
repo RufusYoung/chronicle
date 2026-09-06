@@ -220,9 +220,10 @@ static func _member_at_home(snapshot: Variant, actor: Dictionary) -> bool:
 static func _meal_priority(snapshot: Variant, actor: Dictionary) -> int:
 	var level := int({"extreme": 3, "high": 2}.get(str(actor.states.get("hunger", "none")), 0))
 	var last_meal := 0
-	for fact: Dictionary in snapshot.get_facts():
-		if fact.get("fact_type") in ["npc_self_meal", "npc_household_shared_food", "npc_cross_household_shared_food"] and fact.get("target_id") == actor.id:
-			last_meal = maxi(last_meal, Family.absolute_hour(fact))
+	for kind: String in ["npc_self_meal", "npc_household_shared_food", "npc_cross_household_shared_food"]:
+		for fact: Dictionary in snapshot.get_facts_by_type(kind):
+			if fact.get("target_id") == actor.id:
+				last_meal = maxi(last_meal, Family.absolute_hour(fact))
 	return level * 1000000 - last_meal
 
 

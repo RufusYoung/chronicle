@@ -40,7 +40,7 @@ static func profiles(snapshot: Variant, initial_profiles: Array) -> Array:
 
 static func routes(snapshot: Variant) -> Array:
 	var rows: Array = []
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("settlement_industry_founded"):
 		if str(fact.get("fact_type", "")) != "settlement_industry_founded":
 			continue
 		var id := str(fact.get("facility_entity_id", ""))
@@ -72,7 +72,7 @@ static func routes(snapshot: Variant) -> Array:
 
 
 static func location(snapshot: Variant, source: Dictionary) -> Dictionary:
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("settlement_industry_founded"):
 		if (
 			str(fact.get("fact_type", "")) != "settlement_industry_founded"
 			or str(fact.get("workplace_id", "")) != str(source.get("id", ""))
@@ -84,7 +84,7 @@ static func location(snapshot: Variant, source: Dictionary) -> Dictionary:
 		row["display_name"] = str(fact.get("facility_name", "产业设施")) + ("旧址" if retired else "")
 		row["description"] = str(fact.get("facility_description", ""))
 		if retired:
-			for event: Dictionary in snapshot.get_facts():
+			for event: Dictionary in snapshot.get_facts_by_type("settlement_industry_retired"):
 				if (
 					str(event.get("fact_type", "")) == "settlement_industry_retired"
 					and str(event.get("target_id", "")) == id

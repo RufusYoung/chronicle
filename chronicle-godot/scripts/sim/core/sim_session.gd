@@ -561,25 +561,27 @@ func execute_market_trade(
 	)
 
 
-func get_action_candidates() -> Array:
-	var snapshot: Variant = get_snapshot()
+func get_action_candidates(snapshot: Variant = null) -> Array:
+	if snapshot == null:
+		snapshot = get_snapshot()
 	if snapshot == null:
 		return []
 	return affordance_system.generate_candidates(snapshot, rules)
 
 
-func get_action_options() -> Array:
+func get_action_options(snapshot: Variant = null) -> Array:
 	var rows: Array = []
-	for candidate: Variant in get_action_candidates():
+	for candidate: Variant in get_action_candidates(snapshot):
 		rows.append(candidate.to_dict())
 	return rows
 
 
-func get_travel_options() -> Array:
+func get_travel_options(snapshot: Variant = null) -> Array:
 	if not initialized:
 		return []
 	var rows: Array = []
-	var snapshot: Variant = get_snapshot()
+	if snapshot == null:
+		snapshot = get_snapshot()
 	var food_count := int(snapshot.get_player_value("food_count", 0))
 	for route: Dictionary in _current_travel_routes(snapshot):
 		if str(route.get("from_location_id", "")) != context.location_id:
@@ -633,10 +635,11 @@ func get_travel_options() -> Array:
 	return rows
 
 
-func get_challenge_options() -> Array:
+func get_challenge_options(snapshot: Variant = null) -> Array:
 	if not initialized:
 		return []
-	var snapshot: Variant = get_snapshot()
+	if snapshot == null:
+		snapshot = get_snapshot()
 	var rows: Array = []
 	for challenge: Dictionary in challenge_definitions:
 		if str(challenge.get("location_id", "")) != context.location_id:
@@ -746,10 +749,11 @@ func get_challenge_options() -> Array:
 	return rows
 
 
-func get_combat_encounter_options() -> Array:
+func get_combat_encounter_options(snapshot: Variant = null) -> Array:
 	if not initialized:
 		return []
-	var snapshot: Variant = get_snapshot()
+	if snapshot == null:
+		snapshot = get_snapshot()
 	var rows: Array = []
 	for encounter: Dictionary in _active_combat_encounter_definitions(snapshot):
 		if not _combat_encounter_requirements_met(encounter, snapshot):
@@ -818,10 +822,11 @@ func get_combat_encounter_director_summary() -> Dictionary:
 	}
 
 
-func get_return_echo_options() -> Array:
+func get_return_echo_options(snapshot: Variant = null) -> Array:
 	if not initialized:
 		return []
-	var snapshot: Variant = get_snapshot()
+	if snapshot == null:
+		snapshot = get_snapshot()
 	var rows: Array = []
 	for definition: Dictionary in return_echo_definitions:
 		if not _return_echo_is_available(definition, snapshot):
@@ -953,10 +958,11 @@ func execute_return_echo_option(
 	}
 
 
-func get_investigation_options() -> Array:
+func get_investigation_options(snapshot: Variant = null) -> Array:
 	if not initialized:
 		return []
-	var snapshot: Variant = get_snapshot()
+	if snapshot == null:
+		snapshot = get_snapshot()
 	var rows: Array = []
 	for lead: Dictionary in snapshot.get_open_investigation_leads():
 		var definition := _find_investigation_definition(
@@ -1300,12 +1306,13 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 	if not initialized:
 		return _travel_failure("session_not_initialized", route_id)
 
-	var route := _find_travel_route(route_id, context.location_id)
+	var pre_travel_snapshot: Variant = get_snapshot()
+	var route := _find_travel_route(route_id, context.location_id, pre_travel_snapshot)
 	if route.is_empty():
 		return _travel_failure("route_not_found", route_id)
 	if not bool(route.get("enabled", true)):
 		return _travel_failure("route_closed", route_id)
-	if not _route_discovery_requirements_met(route, get_snapshot()):
+	if not _route_discovery_requirements_met(route, pre_travel_snapshot):
 		return _travel_failure("route_not_discovered", route_id)
 
 	var to_location_id := str(route.get("to_location_id", ""))
@@ -1322,7 +1329,6 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 		return _travel_failure("invalid_route_contract", route_id)
 	if not _route_access_time_allows(route):
 		return _travel_failure("outside_access_window", route_id)
-	var pre_travel_snapshot: Variant = get_snapshot()
 	if not _route_required_items_met(route, pre_travel_snapshot):
 		return _travel_failure("missing_required_item", route_id)
 	if int(pre_travel_snapshot.get_player_value("food_count", 0)) < food_cost:
@@ -1538,6 +1544,10 @@ func get_world_log_entries() -> Array:
 	return world_log.list_entries()
 
 
+func get_world_log_entry_count() -> int:
+	return 0 if world_log == null else world_log.entries.size()
+
+
 func get_world_log_summary() -> Dictionary:
 	if world_log == null:
 		return {}
@@ -1549,7 +1559,7 @@ func get_store_summary() -> Dictionary:
 		return _empty_store_summary()
 	return {
 		"entities": stores["entity_store"].list_entities().size(),
-		"facts": stores["fact_store"].list_facts().size(),
+		"facts": stores["fact_store"].facts.size(),
 		"states": _count_states(stores["state_store"]),
 		"character_features": _count_character_features(
 			stores["character_feature_store"]
@@ -1564,7 +1574,7 @@ func get_store_summary() -> Dictionary:
 		].list_stocks().size(),
 		"obligations": stores["obligation_store"].list_obligations().size(),
 		"exchanges": stores["exchange_store"].list_exchanges().size(),
-		"items": stores["item_store"].list_items().size(),
+		"items": stores["item_store"].items.size(),
 		"equipment_loadouts": stores["equipment_store"].list_loadouts().size(),
 		"chronicle_entries": (
 			stores["chronicle_store"].list_entries().size()
@@ -2738,8 +2748,10 @@ func _find_candidate_by_action_id(candidates: Array, action_id: String) -> Varia
 	return null
 
 
-func _find_travel_route(route_id: String, from_location_id: String) -> Dictionary:
-	for route: Dictionary in _current_travel_routes(get_snapshot()):
+func _find_travel_route(
+	route_id: String, from_location_id: String, snapshot: Variant
+) -> Dictionary:
+	for route: Dictionary in _current_travel_routes(snapshot):
 		if str(route.get("route_id", "")) != route_id:
 			continue
 		if str(route.get("from_location_id", "")) != from_location_id:

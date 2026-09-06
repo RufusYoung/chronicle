@@ -25,6 +25,8 @@ func _run() -> void:
 	var state := _state(model)
 	_measure("snapshot", model.session.get_snapshot)
 	_measure("world_projection", model.build_view_data)
+	_measure("world_log_summary", model.session.get_world_log_summary)
+	_measure("store_summary", model.session.get_store_summary)
 	_measure("transaction_preview_all_stores", writer._build_preview_stores.bind(model.session.stores))
 	for key: String in model.session.stores:
 		var source: Variant = model.session.stores[key]

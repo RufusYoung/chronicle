@@ -82,7 +82,9 @@ func build_snapshot(
 	if state_store != null and str(context.institution_entity_id) != "":
 		institution = state_store.list_states(str(context.institution_entity_id))
 
-	return SimSnapshotModel.new({
+	# Each Store read below already returns an owned copy (or frozen history).
+	# Assign those copies once, rather than cloning them again in the constructor.
+	var data := {
 		"fixture_id": str(context.fixture_id),
 		"world_time": world_time.duplicate(true),
 		"location": context.location.duplicate(true),
@@ -95,7 +97,6 @@ func build_snapshot(
 			{} if relationship_store == null
 			else relationship_store.relations.duplicate(true)
 		),
-		"memories": [] if memory_store == null else memory_store.memories.duplicate(true),
 		"traces": [] if trace_store == null else trace_store.list_traces(),
 		"rumors": [] if rumor_store == null else rumor_store.list_rumors(),
 		"facts": [] if fact_store == null else fact_store.snapshot_facts(),
@@ -106,7 +107,6 @@ func build_snapshot(
 			[] if deferred_consequence_store == null
 			else deferred_consequence_store.list_deferred_consequences()
 		),
-		"items": [] if item_store == null else item_store.list_items(),
 		"resource_stocks": (
 			[]
 			if resource_stock_store == null
@@ -138,7 +138,22 @@ func build_snapshot(
 			else character_feature_store.list_skill_progress()
 		),
 		"character_progress": character_progress,
-	})
+	}
+	var snapshot = SimSnapshotModel.new()
+	for key: String in data:
+		snapshot.set(key, data[key])
+	# Only MemoryStore supplies frozen records. Direct snapshot construction still
+	# deep-copies caller-owned, potentially mutable memory dictionaries.
+	if memory_store != null:
+		snapshot.memories = memory_store.snapshot_memories()
+	if item_store != null:
+		snapshot.items = item_store.snapshot_items()
+	if fact_store != null:
+		# Indexed facts cannot change independently of their detached indices.
+		snapshot.facts.make_read_only()
+		snapshot._fact_types = fact_store.snapshot_fact_types()
+		snapshot._fact_actors = fact_store.snapshot_fact_actors()
+	return snapshot
 
 
 func _states_from_context(context: Variant) -> Dictionary:

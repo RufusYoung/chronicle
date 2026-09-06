@@ -4,6 +4,7 @@ class_name V5FactStore
 var facts: Array = []
 var facts_by_id: Dictionary = {}
 var facts_by_type: Dictionary = {}
+var facts_by_actor: Dictionary = {}
 
 
 func add_fact(fact: Dictionary) -> void:
@@ -20,6 +21,10 @@ func add_fact(fact: Dictionary) -> void:
 		if not facts_by_type.has(fact_type):
 			facts_by_type[fact_type] = []
 		(facts_by_type[fact_type] as Array).append(stored)
+	var actor_id := str(stored.get("actor_id", ""))
+	if not facts_by_actor.has(actor_id):
+		facts_by_actor[actor_id] = []
+	(facts_by_actor[actor_id] as Array).append(stored)
 
 
 func list_facts() -> Array:
@@ -30,14 +35,26 @@ func snapshot_facts() -> Array:
 	return facts.duplicate()
 
 
+func snapshot_fact_types() -> Dictionary:
+	var types := {}
+	for key: String in facts_by_type:
+		types[key] = (facts_by_type[key] as Array).duplicate()
+	return types
+
+
+func snapshot_fact_actors() -> Dictionary:
+	var actors := {}
+	for key: String in facts_by_actor:
+		actors[key] = (facts_by_actor[key] as Array).duplicate()
+	return actors
+
+
 func copy_runtime_to(target: Variant) -> void:
 	# Transactions own their containers; only recursively frozen facts are shared.
 	target.facts = facts.duplicate()
 	target.facts_by_id = facts_by_id.duplicate()
-	var types := {}
-	for key: String in facts_by_type:
-		types[key] = (facts_by_type[key] as Array).duplicate()
-	target.facts_by_type = types
+	target.facts_by_type = snapshot_fact_types()
+	target.facts_by_actor = snapshot_fact_actors()
 
 
 func _freeze(value: Variant) -> void:
@@ -67,6 +84,7 @@ func clear() -> void:
 	facts.clear()
 	facts_by_id.clear()
 	facts_by_type.clear()
+	facts_by_actor.clear()
 
 
 func to_save_data() -> Array:

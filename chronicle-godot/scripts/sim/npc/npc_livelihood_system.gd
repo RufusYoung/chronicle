@@ -763,7 +763,7 @@ func _find_food(
 			continue
 		if not _can_spare_food(snapshot, str(holder_id), recipient_id, available_quantity):
 			continue
-		for item: Dictionary in snapshot.get_items():
+		for item: Dictionary in snapshot.get_items_for_holder(str(holder_id)):
 			var item_id := str(item.get("item_instance_id", ""))
 			var holder: Dictionary = item.get("holder", {})
 			if (
@@ -805,7 +805,7 @@ func _can_spare_food(snapshot: Variant, holder: String, recipient: String, avail
 	if snapshot.get_entity_state(holder, "hunger", "none") in HUNGRY_LEVELS:
 		retained = maxi(retained, 1)
 	var quantity := 0
-	for item: Dictionary in snapshot.get_items():
+	for item: Dictionary in snapshot.get_items_for_holder(holder):
 		if item.get("holder", {}) == {"kind": "entity", "id": holder} and "food" in item.get("tags", []):
 			quantity += int(available.get(str(item.item_instance_id), 0))
 	return quantity > retained
@@ -813,7 +813,7 @@ func _can_spare_food(snapshot: Variant, holder: String, recipient: String, avail
 
 func _external_support_links(snapshot: Variant) -> Dictionary:
 	var rows: Dictionary = {}
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("generated_social_relation"):
 		var relationship_kind := str(fact.get("relationship_kind", ""))
 		if (
 			str(fact.get("fact_type", "")) != "generated_social_relation"
@@ -1159,7 +1159,7 @@ func _partial_stack(
 		actor_id: String,
 		item_def_id: String
 ) -> Dictionary:
-	for item: Dictionary in snapshot.get_items():
+	for item: Dictionary in snapshot.get_items_for_holder(actor_id):
 		var holder: Dictionary = item.get("holder", {})
 		if (
 			str(holder.get("kind", "")) == "entity"

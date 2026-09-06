@@ -1,6 +1,7 @@
 extends SceneTree
 
 const Session = preload("res://scripts/sim/core/sim_session.gd")
+const Snapshot = preload("res://scripts/sim/core/sim_snapshot.gd")
 const Industry = preload("res://scripts/sim/settlement/industry_lifecycle_system.gd")
 const Catalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const Capacity = preload("res://scripts/sim/settlement/settlement_capacity_adaptation_system.gd")
@@ -364,7 +365,8 @@ func _initial_industry_retirement() -> void:
 
 
 func _check_work_day_scoring(session: Variant, network: Dictionary, settlement: String) -> void:
-	var snapshot = _snapshot(session)
+	# Test-injected cycles belong to an editable fixture, not indexed world history.
+	var snapshot = Snapshot.new(_snapshot(session).to_dict())
 	var config: Dictionary = network["industry_lifecycle"]
 	var rules: Dictionary = config["conditions"]["cordage"]
 	var normal: Dictionary = Industry.new()._experienced_founder(snapshot, settlement, rules, config)

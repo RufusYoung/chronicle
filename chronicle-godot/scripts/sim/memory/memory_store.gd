@@ -5,7 +5,29 @@ var memories: Array = []
 
 
 func add_memory(memory: Dictionary) -> void:
-	memories.append(memory.duplicate(true))
+	var stored := memory.duplicate(true)
+	_freeze(stored)
+	memories.append(stored)
+
+
+func snapshot_memories() -> Array:
+	return memories.duplicate()
+
+
+func copy_runtime_to(target: Variant) -> void:
+	# Each transaction owns its array; append-only, recursively frozen records can be shared.
+	target.memories = memories.duplicate()
+
+
+func _freeze(value: Variant) -> void:
+	if value is Dictionary:
+		for key: Variant in value:
+			_freeze(value[key])
+		value.make_read_only()
+	elif value is Array:
+		for child: Variant in value:
+			_freeze(child)
+		value.make_read_only()
 
 
 func list_memories(owner_id: String) -> Array:

@@ -86,7 +86,7 @@ static func has_capacity(snapshot: Variant, actor: String, profile: Dictionary, 
 	var holder := stock_holder(snapshot, actor)
 	if holder == "" or snapshot.get_entity_state(holder, "location_id", "") != snapshot.get_entity_state(actor, "workplace_id", ""):
 		return false
-	return quantity(snapshot.get_items(), holder) + amount <= int(config.maximum_stock)
+	return quantity(snapshot.get_items_for_holder(holder), holder) + amount <= int(config.maximum_stock)
 
 
 func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, config: Dictionary, stores: Dictionary, daily_config: Dictionary = {}, household_need: Dictionary = {}) -> Dictionary:
@@ -127,7 +127,7 @@ func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, con
 	if int(daily_config.get("food_access", {}).get("household_budget", {}).get("version", 0)) == 1:
 		# A forecast for the coming day is supplied after a real work block, not an emergency trip on every arrival.
 		var finished_block := false
-		for fact: Dictionary in snapshot.get_facts():
+		for fact: Dictionary in snapshot.get_facts_by_actor(owner):
 			if fact.get("fact_type") == "npc_livelihood_produced" and fact.get("actor_id") == owner and int(fact.get("day", 0)) == int(tick.day):
 				finished_block = true
 		if leaving or finished_block:

@@ -1,0 +1,170 @@
+{
+  "checkpoint": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe\\canon_livelihood_frozen_83003\\day30.json",
+  "failures": [],
+  "passed": true,
+  "roundtrip_differences": {
+    "examples": [],
+    "maximum_absolute_delta": 0.0,
+    "numeric_changes": 0,
+    "other_changes": 0
+  },
+  "rows": [
+    {
+      "elapsed_hours": 720,
+      "hour": 0,
+      "state_sha256": "1c232a7384eb7210f80205d216ab6c94f043470335e61352de96912ae350c68c",
+      "view_sha256": "439838458635dd1844538010e858a6d887751e355d1aadfe6c3ee7a0bee3f1ee"
+    },
+    {
+      "elapsed_hours": 721,
+      "hour": 1,
+      "state_sha256": "0a705d88f96169cf75ae3381e1d4d660866d1c83e219ad0383e12f2e17188fb4",
+      "view_sha256": "b4376611ab8cabc5d30817085a24d37f8996303733fdad1c92c15ad4e4f5dd04"
+    },
+    {
+      "elapsed_hours": 722,
+      "hour": 2,
+      "state_sha256": "57f679fe37d306d471b22118e549d074f798af173fcafaab5e2ddd2178b8f340",
+      "view_sha256": "6181ea9e642fdd822b29ad541d9516c020b42d5697d9ba43fa13ba7227036426"
+    },
+    {
+      "elapsed_hours": 723,
+      "hour": 3,
+      "state_sha256": "77c40a481ef74061bf23148a741f40ce6b3296568acd59a19cb223352dc47be9",
+      "view_sha256": "4624f68ff8136380f4b42880374de1366dd33591e1ff6790cd1ab85100256f33"
+    },
+    {
+      "elapsed_hours": 724,
+      "hour": 4,
+      "state_sha256": "5d923f044d033e6a42e96ddef58cb62e6f53b6fb3891f49f9fa0edfbbd7f913c",
+      "view_sha256": "b8d2cbedecb142c1d0235d521237ca27a6e4a6b23c099a756c7af3a69db48cd3"
+    },
+    {
+      "elapsed_hours": 725,
+      "hour": 5,
+      "state_sha256": "2abfe4ffa42a703c62fe0147220aa2a046813328ff0582f5d5d41442c52774a6",
+      "view_sha256": "2001980acf62c737af70178eb070680e39d8d8983a7decdb3d74fea7f8eead9d"
+    },
+    {
+      "elapsed_hours": 726,
+      "hour": 6,
+      "state_sha256": "771bffa0b603f619b92d81576834b43a9bf22e0eb7d0b65beac547b15baf995f",
+      "view_sha256": "0eb76c17689c9a5cd1f7060e7d8ed29c389be6002d89d523ecb93942fa2fad12"
+    },
+    {
+      "elapsed_hours": 727,
+      "hour": 7,
+      "state_sha256": "323dbf631bf584d0f8a472c3db71449566e20c2a923028e547df3f51a2d2b309",
+      "view_sha256": "6172878ff7a5affc2d8c0095f86fe14365404f7d8d3105b8ab2544d747e3ba3d"
+    },
+    {
+      "elapsed_hours": 728,
+      "hour": 8,
+      "state_sha256": "71107c0321bb9a78e7d55afd32151905ebbfd8ce745f632a5f5c4123a0dd3f5c",
+      "view_sha256": "1d08c1d127e1d448010c9fafbd6b524e8712f384c2787befa1a9b0a656c30f5a"
+    },
+    {
+      "elapsed_hours": 729,
+      "hour": 9,
+      "state_sha256": "d6bf2ae6872ff6c64e1edd5361c04b0825ff83c2149b50bf5f65d0b243d63515",
+      "view_sha256": "bc367d9c0fdbc63dbf1ee2a4e8a3faa8b4480a594a0895342e2d34f1b753169b"
+    },
+    {
+      "elapsed_hours": 730,
+      "hour": 10,
+      "state_sha256": "bcd5a76ecf817d10cc2e1036efbc4d929a9f5449da94e8e860bacc9a7b6f8c19",
+      "view_sha256": "72ef482cf50a5d018b7101c4cfbd3f43a8fa961af1f1c1c2fe01ea3238a56b2c"
+    },
+    {
+      "elapsed_hours": 731,
+      "hour": 11,
+      "state_sha256": "247afe4959f73e23fda0d26b82ba9758f6b43d2990daee32b3c4b71555276264",
+      "view_sha256": "3eed4923319e2ebfb6554c6f272e4e3003471018256a63e86242b5622e7b89c8"
+    },
+    {
+      "elapsed_hours": 732,
+      "hour": 12,
+      "state_sha256": "287ca1f36792f07cb6b59f81e65cd535605d518bcefae457e5fb36fcd88194ef",
+      "view_sha256": "1fcd43c378c413d1c0b428a682eb164ca82141ee13ac0cb3233aea6549aa3e22"
+    },
+    {
+      "elapsed_hours": 733,
+      "hour": 13,
+      "state_sha256": "77d0b9cd99c0f4089b32e9df68938e594ddf44f871c56cd81028649eb1814f25",
+      "view_sha256": "667721d693c6ddaece57812682af579830ec42929db4108e831e7be0af2003c4"
+    },
+    {
+      "elapsed_hours": 734,
+      "hour": 14,
+      "state_sha256": "8f02142b1a861d547ce4c271d56e65cd05eae308cd1687e74b80c83171f4af74",
+      "view_sha256": "9ad624d476e1f4714b13993ec949314980e28ae9e15187879e67f901490f2bcb"
+    },
+    {
+      "elapsed_hours": 735,
+      "hour": 15,
+      "state_sha256": "2c4639b47658570352c10e3de1afc12ab660afb5a503acdfbf2678b4edfb2eab",
+      "view_sha256": "1063fbc900e2db475f31fb8d28f9922a49280af4255f533e5897d074f3331849"
+    },
+    {
+      "elapsed_hours": 736,
+      "hour": 16,
+      "state_sha256": "07c369fbef0b2b399134f2bee3e287f667b3ee2be3b1dd9903a496fa402c8e09",
+      "view_sha256": "3c80967920103f97ca3edf6c928db47e1716377693d5d852a021b08e6ea5d066"
+    },
+    {
+      "elapsed_hours": 737,
+      "hour": 17,
+      "state_sha256": "b8402ea634a26f2d3ec64397db45ba7b719da7db64cb3f4cb9c85fb2022da977",
+      "view_sha256": "a617d12b53b3a03609fcbccdb993b4bdf2858d2609d328d3c3641ff58990579a"
+    },
+    {
+      "elapsed_hours": 738,
+      "hour": 18,
+      "state_sha256": "df1b44ee49dc69cc86591adc4f29d0ff3f8d1e58b3a144fda72a3e77b653e417",
+      "view_sha256": "5939d581c7c57b6fd0037e1ea1c168aa8316fb76dc281e0f2cd245a62b651682"
+    },
+    {
+      "elapsed_hours": 739,
+      "hour": 19,
+      "state_sha256": "9d26494b4251187befb5800449ca810e2f5ffec93bbb2e3810a37af8dc1203e1",
+      "view_sha256": "272660db5c0c22801f327a26ea234b7824968cf131e6e2218f9a5ad127ce78ad"
+    },
+    {
+      "elapsed_hours": 740,
+      "hour": 20,
+      "state_sha256": "af2096edd27874d583e1840dbb34419b20607ee32fc282c7e3e765745eae59e6",
+      "view_sha256": "65556d9403fc7fc982645589771575eb5d9decbc30b5124fd4369414eb04c47b"
+    },
+    {
+      "elapsed_hours": 741,
+      "hour": 21,
+      "state_sha256": "4994335866ad728e35aafa2beb165e3c469f3fe2f65dde7e5df426d2b4e4f7b8",
+      "view_sha256": "5283009fb3cf80e8030d90436140d67231158eb6db1b6f023754ee8a8a860496"
+    },
+    {
+      "elapsed_hours": 742,
+      "hour": 22,
+      "state_sha256": "b3fbf15eb7b11216b0692c2631d164fa478b42d10084696cfca629d9953e661d",
+      "view_sha256": "1d132deafa2434c193c652ff6e18d991b9de16a9426b71ea1dc58aaf85658da8"
+    },
+    {
+      "elapsed_hours": 743,
+      "hour": 23,
+      "state_sha256": "f6faa6aa1537fac5e337a4b17f8dd61c005088450842821473bfd4dff1602767",
+      "view_sha256": "886bc1cf20306ea557652ae0cc7cf9f0b9c48582923e17ee2e66bc87ff6d49dd"
+    },
+    {
+      "elapsed_hours": 744,
+      "hour": 24,
+      "state_sha256": "b0f7c93775197e0fd9285a6f5f513098da2f4872a2e998e5fdc5496d7541b662",
+      "view_sha256": "66a38990e43e9ff790bac226a5520f07e454b2df1fd58093f667c70de9585e3a"
+    },
+    {
+      "elapsed_hours": 745,
+      "hour": 25,
+      "state_sha256": "6dd69b0ad7f665b0bfb2dfb6341b760cda2cd81091c717f6363ba59a8ee861d7",
+      "view_sha256": "15a33bc8d5477ebdac3dd13ba23af0a273fe742d984b1ce632a52d5f7786e794"
+    }
+  ],
+  "scope": "Legal observer waits with UI-data projection. Row hashes compare full runtime precision across code versions. Disk continuation uses the existing SaveEnvelope canonical precision and reports numeric roundtrip differences; not bit-identical floating-point persistence or human play."
+}

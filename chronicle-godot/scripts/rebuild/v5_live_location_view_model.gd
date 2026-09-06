@@ -120,11 +120,11 @@ func perform_action(action_id: String) -> Dictionary:
 		}
 		return latest_result.duplicate(true)
 
-	var option := _find_action_option(action_id)
 	latest_result = session.execute_timed_action(action_id, {
 		"source": "v5_live_location_surface",
 	})
 	if bool(latest_result.get("success", false)):
+		var option: Dictionary = latest_result.get("candidate", {})
 		action_history.append({
 			"index": action_history.size() + 1,
 			"action_id": action_id,
@@ -376,7 +376,7 @@ func build_view_data() -> Dictionary:
 			visible_people.append(row)
 		else:
 			visible_observations.append(row)
-	var encounter_options: Array = session.get_combat_encounter_options()
+	var encounter_options: Array = session.get_combat_encounter_options(snapshot)
 	if not encounter_options.is_empty():
 		var preview: Dictionary = (
 			(encounter_options[0] as Dictionary).get("preview", {})
@@ -424,16 +424,16 @@ func build_view_data() -> Dictionary:
 		"region_map": RegionProjection.new().build(session, _current_settlement_id(snapshot)),
 		"visible_people": visible_people,
 		"visible_observations": visible_observations,
-		"actions": _action_rows(),
+		"actions": _action_rows(snapshot),
 		"agency": _agency_view(),
-		"risk": _risk_view(),
-		"travel_options": _travel_rows(),
+		"risk": _risk_view(snapshot),
+		"travel_options": _travel_rows(snapshot),
 		"knowledge": _knowledge_rows(snapshot),
 		"investigation": _investigation_view(snapshot),
 		"chronicle": _chronicle_view(snapshot),
 		"feedback": _feedback_view(),
 		"history": action_history.duplicate(true),
-		"world_log_count": session.get_world_log_entries().size(),
+		"world_log_count": session.get_world_log_entry_count(),
 	}
 	# Reuse this projection only; never carry cached candidates across an action.
 	view["decision"] = _decision_view(snapshot, view, not encounter_options.is_empty())
@@ -696,7 +696,7 @@ func _has_fact(
 		field: String = "",
 		value: String = ""
 ) -> bool:
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type(fact_type):
 		if str(fact.get("fact_type", "")) != fact_type:
 			continue
 		if field == "" or str(fact.get(field, "")) == value:
@@ -709,7 +709,7 @@ func _has_challenge_outcome(
 		challenge_id: String,
 		outcome: String
 ) -> bool:
-	for fact: Dictionary in snapshot.get_facts():
+	for fact: Dictionary in snapshot.get_facts_by_type("actor_attempted_challenge"):
 		if (
 			str(fact.get("fact_type", "")) == "actor_attempted_challenge"
 			and str(fact.get("challenge_id", "")) == challenge_id
@@ -719,13 +719,14 @@ func _has_challenge_outcome(
 	return false
 
 
-func _action_rows() -> Array:
+func _action_rows(snapshot: Variant = null) -> Array:
 	var rows: Array[Dictionary] = []
-	var snapshot: Variant = session.get_snapshot()
-	var combat_rows := _combat_action_rows()
+	if snapshot == null:
+		snapshot = session.get_snapshot()
+	var combat_rows := _combat_action_rows(snapshot)
 	if not combat_rows.is_empty():
 		return combat_rows
-	for option: Dictionary in session.get_investigation_options():
+	for option: Dictionary in session.get_investigation_options(snapshot):
 		var action_type := str(
 			option.get("action_type", "investigation")
 		)
@@ -743,7 +744,7 @@ func _action_rows() -> Array:
 		}
 		row.merge(_structured_decision_metadata(option, action_type), true)
 		rows.append(row)
-	for option: Dictionary in session.get_action_options():
+	for option: Dictionary in session.get_action_options(snapshot):
 		var action_type := str(option.get("action_type", "normal"))
 		var target_id := str(option.get("target_id", ""))
 		var can_execute := bool(option.get("can_execute", true))
@@ -760,7 +761,7 @@ func _action_rows() -> Array:
 		}
 		row.merge(_candidate_decision_metadata(option), true)
 		rows.append(row)
-	for option: Dictionary in session.get_challenge_options():
+	for option: Dictionary in session.get_challenge_options(snapshot):
 		if not _surface_requirements_met(
 			str(option.get("challenge_id", "")),
 			snapshot
@@ -779,7 +780,7 @@ func _action_rows() -> Array:
 		}
 		row.merge(_structured_decision_metadata(option, action_type), true)
 		rows.append(row)
-	for option: Dictionary in session.get_return_echo_options():
+	for option: Dictionary in session.get_return_echo_options(snapshot):
 		var row := {
 			"action_id": str(option.get("option_id", "")),
 			"return_echo_option_id": str(
@@ -878,8 +879,8 @@ func _structured_decision_metadata(
 
 
 func _decision_view(snapshot: Variant, projection: Dictionary = {}, encounter_active: Variant = null) -> Dictionary:
-	var actions: Array = projection.actions if projection.has("actions") else _action_rows()
-	var travel: Array = projection.travel_options if projection.has("travel_options") else _travel_rows()
+	var actions: Array = projection.actions if projection.has("actions") else _action_rows(snapshot)
+	var travel: Array = projection.travel_options if projection.has("travel_options") else _travel_rows(snapshot)
 	var executable_count := 0
 	for row: Dictionary in actions:
 		if bool(row.get("can_execute", true)):
@@ -888,11 +889,11 @@ func _decision_view(snapshot: Variant, projection: Dictionary = {}, encounter_ac
 		if bool(row.get("can_travel", false)):
 			executable_count += 1
 	var question := "你愿意先把时间用在哪里？"
-	var has_combat: bool = not session.get_combat_encounter_options().is_empty() if encounter_active == null else bool(encounter_active)
+	var has_combat: bool = not session.get_combat_encounter_options(snapshot).is_empty() if encounter_active == null else bool(encounter_active)
 	if has_combat:
 		question = "你要用哪种方式处理眼前威胁？"
 	else:
-		var risk: Dictionary = projection.risk if projection.has("risk") else _risk_view()
+		var risk: Dictionary = projection.risk if projection.has("risk") else _risk_view(snapshot)
 		var investigation: Dictionary = projection.investigation if projection.has("investigation") else _investigation_view(snapshot)
 		if bool(risk.get("active", false)):
 			question = "先准备、直接承担风险，还是离开这里？"
@@ -973,9 +974,9 @@ func _agency_view() -> Dictionary:
 	}
 
 
-func _combat_action_rows() -> Array:
+func _combat_action_rows(snapshot: Variant = null) -> Array:
 	var rows: Array[Dictionary] = []
-	for option: Dictionary in session.get_combat_encounter_options():
+	for option: Dictionary in session.get_combat_encounter_options(snapshot):
 		var preview: Dictionary = option.get("preview", {})
 		var approach_id := str(option.get("approach_id", ""))
 		var approach_label := _combat_approach_label(approach_id)
@@ -1027,12 +1028,13 @@ func _hours_until_north_quay_ferry() -> int:
 	return 24 - hour + 6
 
 
-func _risk_view() -> Dictionary:
-	var combat_risk := _combat_risk_view()
+func _risk_view(snapshot: Variant = null) -> Dictionary:
+	if snapshot == null:
+		snapshot = session.get_snapshot()
+	var combat_risk := _combat_risk_view(snapshot)
 	if bool(combat_risk.get("active", false)):
 		return combat_risk
-	var options: Array = session.get_challenge_options()
-	var snapshot: Variant = session.get_snapshot()
+	var options: Array = session.get_challenge_options(snapshot)
 	if options.is_empty():
 		return {"active": false}
 	var attempt: Dictionary = {}
@@ -1072,8 +1074,8 @@ func _risk_view() -> Dictionary:
 	}
 
 
-func _combat_risk_view() -> Dictionary:
-	var options: Array = session.get_combat_encounter_options()
+func _combat_risk_view(snapshot: Variant = null) -> Dictionary:
+	var options: Array = session.get_combat_encounter_options(snapshot)
 	if options.is_empty():
 		return {"active": false}
 	var first: Dictionary = options[0]
@@ -1105,12 +1107,13 @@ func _combat_risk_view() -> Dictionary:
 	}
 
 
-func _travel_rows() -> Array:
-	if not session.get_combat_encounter_options().is_empty():
+func _travel_rows(snapshot: Variant = null) -> Array:
+	if snapshot == null:
+		snapshot = session.get_snapshot()
+	if not session.get_combat_encounter_options(snapshot).is_empty():
 		return []
 	var rows: Array[Dictionary] = []
-	var snapshot: Variant = session.get_snapshot()
-	for option: Dictionary in session.get_travel_options():
+	for option: Dictionary in session.get_travel_options(snapshot):
 		if not _surface_requirements_met(
 			str(option.get("route_id", "")),
 			snapshot
@@ -1329,7 +1332,7 @@ func _region_status_rows(snapshot: Variant) -> Array:
 		snapshot, current_settlement_id
 	)
 	if current_settlement_id != "":
-		var capacity := _settlement_capacity(current_settlement_id)
+		var capacity := _settlement_capacity(current_settlement_id, snapshot)
 		var pressure_days := int(snapshot.get_entity_state(
 			current_settlement_id, "migration_pressure_days", 0
 		))
@@ -1454,8 +1457,10 @@ func _current_settlement_id(snapshot: Variant) -> String:
 	return ""
 
 
-func _settlement_capacity(settlement_id: String) -> int:
-	var runtime_capacity := int(session.get_snapshot().get_entity_state(
+func _settlement_capacity(settlement_id: String, snapshot: Variant = null) -> int:
+	if snapshot == null:
+		snapshot = session.get_snapshot()
+	var runtime_capacity := int(snapshot.get_entity_state(
 		settlement_id, "resident_capacity", 0
 	))
 	if runtime_capacity > 0:
@@ -1964,6 +1969,7 @@ func _good_label(good_id: String) -> String:
 func _knowledge_rows(snapshot: Variant) -> Array:
 	var rows: Array[String] = []
 	var names: Dictionary = {}
+	var seen: Dictionary = {}
 	for fact: Dictionary in snapshot.get_facts():
 		if fact.has("observed_by_player") and not bool(
 			fact.get("observed_by_player", false)
@@ -1977,7 +1983,8 @@ func _knowledge_rows(snapshot: Variant) -> Array:
 				names[target_id] = _entity_name(target_id, snapshot)
 			target_name = str(names[target_id])
 		var text := _fact_text(fact_type, target_name, fact)
-		if text not in rows:
+		if not seen.has(text):
+			seen[text] = true
 			rows.append(text)
 	if rows.is_empty():
 		rows.append("你还没有确认任何值得记下的事实。")
@@ -2677,10 +2684,12 @@ func _tick_narrative(result: Dictionary) -> String:
 func _local_organization_response_result(result: Dictionary) -> Dictionary:
 	if session == null or not session.is_ready():
 		return {}
+	var network_results: Array = result.get("network_results", [])
+	if network_results.is_empty():
+		return {}
 	var settlement_id := _current_settlement_id(session.get_snapshot())
 	if settlement_id == "":
 		return {}
-	var network_results: Array = result.get("network_results", [])
 	for index: int in range(network_results.size() - 1, -1, -1):
 		var result_value: Variant = network_results[index]
 		if not result_value is Dictionary:
@@ -2706,13 +2715,14 @@ func _local_organization_response_result(result: Dictionary) -> Dictionary:
 
 func _tick_detail_lines(result_data: Dictionary) -> Array:
 	var rows: Array[String] = []
+	var snapshot: Variant = session.get_snapshot()
 	for change: Dictionary in result_data.get("state_changes", []):
-		rows.append(_state_change_text(change))
+		rows.append(_state_change_text(change, snapshot))
 	for pressure: Dictionary in result_data.get("pressure_changes", []):
 		if str(pressure.get("pressure_type", "")) == "market_shortage":
 			rows.append("老陈铺子周围的粮食压力继续上升")
 	for change: Dictionary in result_data.get("resource_changes", []):
-		var stock: Dictionary = session.get_snapshot().get_resource_stock(str(
+		var stock: Dictionary = snapshot.get_resource_stock(str(
 			change.get("stock_id", "")
 		))
 		var label := str(stock.get(
@@ -2734,11 +2744,12 @@ func _tick_detail_lines(result_data: Dictionary) -> Array:
 func _decision_detail_lines(result: Dictionary) -> Array:
 	var rows: Array[String] = []
 	var decisions: Array = result.get("observed_autonomous_decisions", [])
+	var snapshot: Variant = null if decisions.is_empty() else session.get_snapshot()
 	for decision_value: Variant in decisions:
 		if not (decision_value is Dictionary):
 			continue
 		var decision := decision_value as Dictionary
-		var actor_name := _entity_name(str(decision.get("actor_id", "")))
+		var actor_name := _entity_name(str(decision.get("actor_id", "")), snapshot)
 		rows.append("这是%s根据当前处境自行作出的决定" % actor_name)
 		var factors: Array = decision.get("matched_factors", [])
 		for factor_value: Variant in factors:
@@ -2752,9 +2763,10 @@ func _decision_detail_lines(result: Dictionary) -> Array:
 
 func _need_detail_lines(result: Dictionary) -> Array:
 	var rows: Array[String] = []
+	var snapshot: Variant = null if result.get("observed_need_changes", []).is_empty() else session.get_snapshot()
 	for change: Dictionary in result.get("observed_need_changes", []):
 		rows.append("%s的%s从%s变为%s" % [
-			_entity_name(str(change.get("actor_id", ""))),
+			_entity_name(str(change.get("actor_id", "")), snapshot),
 			_state_key_label(str(change.get("need_key", ""))),
 			_hunger_label(str(change.get("from", ""))),
 			_hunger_label(str(change.get("to", ""))),
@@ -2792,6 +2804,7 @@ func _result_detail_lines(
 		include_fact_count: bool = true
 ) -> Array:
 	var rows: Array[String] = []
+	var snapshot: Variant = session.get_snapshot()
 	for requirement: Dictionary in candidate.get("player_requirements", []):
 		if not bool(requirement.get("met", false)):
 			continue
@@ -2801,11 +2814,11 @@ func _result_detail_lines(
 			_attribute_number(requirement.get("required", 0)),
 		])
 	for change: Dictionary in transaction.get("state_changes", []):
-		rows.append(_state_change_text(change))
+		rows.append(_state_change_text(change, snapshot))
 	for change: Dictionary in transaction.get("relationship_changes", []):
-		rows.append(_relationship_change_text(change))
+		rows.append(_relationship_change_text(change, snapshot))
 	for change: Dictionary in transaction.get("item_changes", []):
-		var item_text := _item_change_text(change)
+		var item_text := _item_change_text(change, snapshot)
 		if item_text != "":
 			rows.append(item_text)
 	var facts: Array = transaction.get("facts_added", [])
@@ -2814,15 +2827,17 @@ func _result_detail_lines(
 	return rows
 
 
-func _state_change_text(change: Dictionary) -> String:
+func _state_change_text(change: Dictionary, snapshot: Variant = null) -> String:
+	if snapshot == null:
+		snapshot = session.get_snapshot()
 	var entity_id := str(change.get("entity_id", ""))
 	var key := str(change.get("key", ""))
 	if key == "visible" and bool(change.get("to", false)):
-		return "%s出现在现场" % _entity_name(entity_id)
+		return "%s出现在现场" % _entity_name(entity_id, snapshot)
 	if key == "visible" and not bool(change.get("to", true)):
-		return "%s已经离开现场" % _entity_name(entity_id)
+		return "%s已经离开现场" % _entity_name(entity_id, snapshot)
 	if key == "price_level" and str(change.get("to", "")) == "raised_again":
-		return "%s上的价格又被改高" % _entity_name(entity_id)
+		return "%s上的价格又被改高" % _entity_name(entity_id, snapshot)
 	if entity_id == "player" and key == "food_count":
 		return "随身食物 %s" % _signed_number(int(change.get("delta", 0)))
 	if entity_id == "player" and key == "health":
@@ -2830,12 +2845,12 @@ func _state_change_text(change: Dictionary) -> String:
 			return "健康降至 %d" % int(change.get("to", 0))
 		return "健康 %s，现为 %d" % [
 			_signed_number(int(change.get("delta", 0))),
-			int(session.get_snapshot().get_player_value("health", 0)),
+			int(snapshot.get_player_value("health", 0)),
 		]
 	if entity_id == "player" and key == "fatigue":
 		return "疲劳 %s，现为 %d / 10" % [
 			_signed_number(int(change.get("delta", 0))),
-			int(session.get_snapshot().get_player_value("fatigue", 0)),
+			int(snapshot.get_player_value("fatigue", 0)),
 		]
 	if entity_id == "player" and key == "injury":
 		return "伤势：%s" % _injury_label(str(change.get("to", "")))
@@ -2848,23 +2863,25 @@ func _state_change_text(change: Dictionary) -> String:
 	if entity_id == "player" and key == "inventory_item_ids":
 		return "随身物品发生变化"
 	if key == "hunger" and str(change.get("operation", "")) == "decrease_tier":
-		return "%s的饥饿有所缓和" % _entity_name(entity_id)
-	return "%s的%s发生变化" % [_entity_name(entity_id), _state_key_label(key)]
+		return "%s的饥饿有所缓和" % _entity_name(entity_id, snapshot)
+	return "%s的%s发生变化" % [_entity_name(entity_id, snapshot), _state_key_label(key)]
 
 
-func _relationship_change_text(change: Dictionary) -> String:
+func _relationship_change_text(change: Dictionary, snapshot: Variant = null) -> String:
 	return "%s对你的%s %s" % [
-		_entity_name(str(change.get("source_id", ""))),
+		_entity_name(str(change.get("source_id", "")), snapshot),
 		_relationship_axis_label(str(change.get("axis", ""))),
 		_signed_number(int(change.get("delta", 0))),
 	]
 
 
-func _item_change_text(change: Dictionary) -> String:
+func _item_change_text(change: Dictionary, snapshot: Variant = null) -> String:
 	var operation := str(change.get("operation", ""))
 	var quantity := int(change.get("quantity", 1))
 	if operation == "adjust_durability":
-		var item: Dictionary = session.get_snapshot().get_item(str(change.get(
+		if snapshot == null:
+			snapshot = session.get_snapshot()
+		var item: Dictionary = snapshot.get_item(str(change.get(
 			"item_instance_id", ""
 		)))
 		var condition: Dictionary = item.get("condition", {})
@@ -3403,22 +3420,32 @@ func _fact_text(
 			"actor_injured_during_combat",
 		]:
 			return summary
+	match fact_type:
+		"actor_traveled_route":
+			return _travel_fact_text(fact)
+		"actor_prepared_for_challenge":
+			return _challenge_preparation_fact_text(fact)
+		"actor_attempted_challenge":
+			return _challenge_attempt_fact_text(fact)
+		"actor_injured_during_challenge":
+			return _challenge_injury_fact_text(fact)
+		"actor_discovered_item":
+			return _item_discovery_fact_text(target_name, fact)
+	var named_template := str({
+		"actor_gave_food_to_target": "你给%s递过食物。",
+		"actor_asked_about_concealed_item": "你问过%s藏起来的东西。",
+		"actor_read_object": "你读过%s。",
+		"actor_inspected_trace": "你检查过%s。",
+		"actor_requested_favor_from_target": "你请%s帮过一次忙。",
+		"actor_heard_rumor_seed": "你听到过一条关于%s的传闻。",
+		"actor_acquired_preparation_item": "你为远行备好了%s。",
+	}.get(fact_type, ""))
+	if named_template != "":
+		return named_template % target_name
 	return {
-		"actor_gave_food_to_target": "你给%s递过食物。" % target_name,
-		"actor_asked_about_concealed_item": "你问过%s藏起来的东西。" % target_name,
-		"actor_read_object": "你读过%s。" % target_name,
-		"actor_inspected_trace": "你检查过%s。" % target_name,
-		"actor_requested_favor_from_target": "你请%s帮过一次忙。" % target_name,
-		"actor_heard_rumor_seed": "你听到过一条关于%s的传闻。" % target_name,
 		"actor_asked_about_market_pressure": "你确认湖湾镇正承受粮食压力。",
-		"actor_traveled_route": _travel_fact_text(fact),
-		"actor_prepared_for_challenge": _challenge_preparation_fact_text(fact),
-		"actor_attempted_challenge": _challenge_attempt_fact_text(fact),
-		"actor_injured_during_challenge": _challenge_injury_fact_text(fact),
 		"actor_injured_during_combat": "你在短遭遇中受了战斗挫伤。",
 		"actor_resolved_combat_encounter": "你已经处理过井口的短遭遇。",
-		"actor_discovered_item": _item_discovery_fact_text(target_name, fact),
-		"actor_acquired_preparation_item": "你为远行备好了%s。" % target_name,
 		"actor_prepared_mist_salt_expedition": "你在北埠用两小时劳动换得了往返口粮与防盐面罩。",
 		"actor_acquired_mist_salt_echo": "你从雾盐旧井第二环回来后，呼吸里留下了不会随普通伤势消失的盐冷回响。",
 		"actor_observed_mist_salt_filaments_follow_water": "你亲眼看见井下白丝逆着石壁渗水的方向弯曲。",

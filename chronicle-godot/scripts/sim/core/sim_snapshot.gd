@@ -14,6 +14,8 @@ var memories: Array = []
 var traces: Array = []
 var rumors: Array = []
 var facts: Array = []
+var _fact_types: Variant = null
+var _fact_actors: Variant = null
 var pressures: Array = []
 var obligations: Array = []
 var exchanges: Array = []
@@ -181,6 +183,19 @@ func get_facts() -> Array:
 	return facts.duplicate()
 
 
+func get_facts_by_type(fact_type: String) -> Array:
+	# Directly constructed snapshots can contain mutable fixture facts and use no
+	# cache. The builder supplies a detached index over FactStore's frozen records.
+	var source: Array = facts if _fact_types == null or fact_type == "" else _fact_types.get(fact_type, [])
+	return source.filter(func(fact: Dictionary) -> bool: return str(fact.get("fact_type", "")) == fact_type)
+
+
+func get_facts_by_actor(actor_id: String) -> Array:
+	if _fact_actors != null:
+		return (_fact_actors.get(actor_id, []) as Array).duplicate()
+	return facts.filter(func(fact: Dictionary) -> bool: return str(fact.get("actor_id", "")) == actor_id)
+
+
 func get_pressures() -> Array:
 	return pressures.duplicate(true)
 
@@ -211,6 +226,15 @@ func get_pending_deferred_consequences() -> Array:
 
 func get_items() -> Array:
 	return items.duplicate(true)
+
+
+func get_items_for_holder(holder_id: String, holder_kind: String = "entity") -> Array:
+	var rows: Array = []
+	for item: Dictionary in items:
+		var holder: Dictionary = item.get("holder", {})
+		if str(holder.get("kind", "")) == holder_kind and str(holder.get("id", "")) == holder_id:
+			rows.append(item.duplicate(true))
+	return rows
 
 
 func get_resource_stocks() -> Array:
