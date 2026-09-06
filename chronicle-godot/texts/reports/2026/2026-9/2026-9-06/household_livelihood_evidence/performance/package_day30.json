@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "checkpoint_sha256": "3a272e4d5133c3c742cdc28a46e6dc4e004c2699c2de8f3fa83e582384ec893a",
+  "checkpoint": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe\\canon_livelihood_frozen_81001\\day30.json",
+  "sample": {
+    "elapsed_hours": 720,
+    "ok": true,
+    "profile": "day7",
+    "renderer": "gl_compatibility",
+    "save_exists": true,
+    "save_path": "user://tests/world_runtime_probe/day7.json",
+    "startup_message": "已继续上次保存的世界。",
+    "process_to_frame_ms": 4128.467299975455,
+    "output": [
+      "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+      "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+      "",
+      "CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.commons",
+      "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":720,\"ok\":true,\"profile\":\"day7\",\"renderer\":\"gl_compatibility\",\"save_exists\":true,\"save_path\":\"user://tests/world_runtime_probe/day7.json\",\"startup_message\":\"已继续上次保存的世界。\"}"
+    ]
+  },
+  "scope": "Actual packaged renderer loads a thirty-day native world with enabled controls. The existing probe label 'day7' means a minimum age, not this world's age. Read-only UI check; no UI wait or human play in this probe. Original test checkpoint restored byte-for-byte."
+}
