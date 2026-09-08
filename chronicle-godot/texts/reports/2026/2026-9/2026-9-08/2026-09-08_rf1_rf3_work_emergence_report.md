@@ -1,6 +1,6 @@
 # RF1 至 RF3：跨用途作业与局部自主因果
 
-2026-09-08。源码集成验收完成，Windows 运行包检查中。以下区分已经观察到的世界行为与尚待完成的运行包检查。活动计划仍只有 [世界优先计划](../../../../../../texts/v5/CHRONICLE_WORLD_FIRST_PLAN_v5.1.md)，约束见 [作业框架合同](../../../../../../texts/v5/CHRONICLE_WORK_FRAMEWORK_CONTRACT_v5.1.md)。
+2026-09-08。RF1–RF3 集成交付完成，E1 局部涌现验收通过；运行时源码 `5808ab0`，Windows 包已实际验证。后续计划/证据提交不改变该运行时。活动计划仍只有 [世界优先计划](../../../../../../texts/v5/CHRONICLE_WORLD_FIRST_PLAN_v5.1.md)，约束见 [作业框架合同](../../../../../../texts/v5/CHRONICLE_WORK_FRAMEWORK_CONTRACT_v5.1.md)。
 
 ## 世界现在多了什么
 
@@ -49,7 +49,11 @@
 - 同一冻结运行时的常规测试 125/125、实际渲染 23/23。含渲染整遍最初为 146/148，两项旧渲染测试假设修正后，全部 23 项渲染重新运行通过；不谎称那一遍没有失败。具体见 `regression_final/results.json` 与 `render_final/results.json`。RF1 专项 57/57、活动与维修专项 52/52 包含在常规回归中，不重复算测试套数。
 - 源码后台协议实进程 12/12，通过实际新建作业世界、生产/磨损、候选、存读档与推进；测试用时 48.275 秒。没有用 mock transport 替代 Godot 进程。
 - 截图：[720p](work_framework_evidence/render_final/workshop_720.png)、[900p](work_framework_evidence/render_final/workshop_900.png)。原始运行日志及原始失败打包保留于 `raw_validation_evidence.zip`，目录中仍可直接读取解包的本地日志；Git 不逐份提交重复 stdout/stderr。
-- Windows 包协议、旧三十日原生存档与新七日存档的实际包内渲染待完成；完成前不宣布发布。
+- Windows 包后台协议 12/12，用时 38.647 秒。实际 Compatibility 渲染中，新世界首次可控画面 1.95 秒、新七日作业档 2.93 秒、旧三十日生计档 4.44 秒，旧七日档 2.50 秒；每项一次，不是 P95、冷磁盘或独立机器验收。旧档维持自己的 bootstrap，不自动开启作业规则。检查只替换隔离测试档并原样恢复，没有覆盖手动存档。
+- 包在 `builds/h1-windows/`，原型入口为 `Chronicle.exe`，不是参赛发布候选。[构建清单](work_framework_evidence/build_manifest.json) 记录干净源 `5808ab0fa9abe2ab7ccc269d367fb5057a749e76`，EXE 为 104659456 字节、PCK 为 45184404 字节及各自 SHA256。实际启动有 `CHRONICLE_WORLD_READY`；存档渲染证据见 [新七日](work_framework_evidence/package_work_day7.json)、[旧三十日](work_framework_evidence/package_legacy_day30.json) 及 [启动画面](work_framework_evidence/package_startup.json)。没有把导出退出码当作可用证明。
+- 第一次包内协议命令漏设 `CHRONICLE_GODOT`，实际误启动编辑器并握手超时，已终止该调用后更正路径复测；失败日志保留为 `package_agent_wrong_binary.log`，不能算包内失败或通过。正确命令同时设置 `CHRONICLE_TEST_PACKAGED=1` 和 `CHRONICLE_GODOT=<绝对路径>/builds/h1-windows/Chronicle.exe` 后运行 `chronicle-godot/tools/test_agent_play.py`。
+
+本次到实包检查约 2 小时 32 分钟，包含 RF1–RF3 实现、候选调试、回归和交付；没有逐项计时的工作不能伪装成精确净编码小时。含渲染完整回归第二遍 807.92 秒；最终六组七日约 175 秒，另一个未调参样本约 27 秒。后续整体验收和战斗的成本尚未测得，不将此次三轮速度线性外推为游戏完成日期。
 
 ## 下一阶段
 
