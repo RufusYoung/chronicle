@@ -2580,10 +2580,10 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 	for event: Dictionary in result.get("livelihood_events", []):
 		if event.get("event_type") in ["livelihood_produced", "livelihood_blocked_resource"]:
 			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
-			if fact.get("location_id") == here and fact.get("work_kind") == "subsistence":
+			if fact.get("location_id") == here and (fact.get("work_kind") == "subsistence" or fact.has("recipe_id")):
 				food_lines.append(str(fact.get("summary", "")))
 			continue
-		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet", "household_food_delivered", "worksite_food_withdrawn", "food_hauling_accepted", "food_hauling_delivered", "food_hauling_stocked", "food_hauling_returned", "food_hauling_return_started", "household_pantry_taken", "household_pantry_stored"]:
+		if str(event.get("location_id", "")) == here and event.get("event_type", event.get("fact_type", "")) in ["resident_food_purchased", "resident_food_purchase_unmet", "household_food_delivered", "worksite_food_withdrawn", "food_hauling_accepted", "food_hauling_delivered", "food_hauling_stocked", "food_hauling_returned", "food_hauling_return_started", "household_pantry_taken", "household_pantry_stored", "work_supply_purchased", "work_supply_unmet"]:
 			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
 			if str(fact.get("summary", "")) != "":
 				food_lines.append(str(fact.summary))
@@ -2605,7 +2605,7 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 					var destination: Dictionary = session.context.get_location(str(event.to_location_id))
 					lines.append("%s动身前往%s，%s。" % [name, destination.get("display_name", "下一处地点"), event.get("reason", "继续日常生活")])
 			"working":
-				lines.append("%s开始在这里做工。" % name)
+				lines.append("%s：%s。" % [name, event.get("reason", "开始在这里做工")])
 			"seeking_work":
 				lines.append("%s：%s。" % [name, event.get("reason", "寻找可以接手的工作")])
 			"foraging":
@@ -3080,6 +3080,19 @@ func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 		var owner := str(entity.get("stock_custodian_id", ""))
 		var present: bool = snapshot.get_entity_state(owner, "location_id", "") == entity.get("stock_location_id") \
 			and snapshot.get_entity_state(owner, "daily_route_id", "") == "" and bool(snapshot.get_entity_state(owner, "alive", true))
+		if int(session.world_tick_adapter.daily_life_config.get("food_access", {}).get("worksite_storage", {}).get("version", 0)) == 2:
+			var quantities := {}
+			for item: Dictionary in snapshot.get_items_for_holder(entity_id):
+				if int(item.quantity) <= 0:
+					continue
+				var label := str(item.get("display_name", item.item_def_id))
+				if item.get("condition", {}).has("durability"):
+					label += "（耐久 %d/%d）" % [item.condition.durability, item.condition.maximum_durability]
+				quantities[label] = int(quantities.get(label, 0)) + int(item.quantity)
+			var goods: Array[String] = []
+			for label: String in quantities:
+				goods.append("%s × %d" % [label, quantities[label]])
+			return "现场货柜：%s\n%s" % ["、".join(goods) if not goods.is_empty() else "空", "主人在场，可当面询价" if present else "主人不在场，货物不会自动交付"]
 		return "现场存粮 %d 份 · %s" % [FoodStorage.quantity(snapshot.get_items(), entity_id), "主人在场" if present else "主人不在场，不能取货交易"]
 	var entity_type := str(entity.get("type", ""))
 	var states: Dictionary = entity.get("states", {})

@@ -76,8 +76,11 @@ H1 已增加发布包入口，直接启动 `Chronicle.exe --headless -- --agent-
 | `worksite_hauling_v1` | 工作地粮堆与付款者出资、收货后计酬的送粮。 |
 | `household_budget_v1` | 上述送粮与家庭粮柜、备粮记忆；单独启用仍会长期缺粮。 |
 | `household_livelihood_v1` | 粮柜、预算、送粮与受资源权限约束的替代采食共同运行。 |
+| `work_framework_v1` | 在家庭生计上启用共享配方、非食品货柜、工具磨损/有限维修、实际补货及统一活动取舍。 |
 
-查看本轮整合规则应显式选择 `household_livelihood_v1`。`world` 模式的逐小时世界演算不会注入 NPC 指令；`play` 模式仍只能执行返回的合法选项。这是居民生活联调，不意味着当前正式玩家人生已完成。配置和限制见[家庭生活合同](../v5/CHRONICLE_HOUSEHOLD_LIVELIHOOD_CONTRACT_v5.1.md)。
+查看家庭生计基线可显式选择 `household_livelihood_v1`。`world` 模式的逐小时世界演算不会注入 NPC 指令；`play` 模式仍只能执行返回的合法选项。这是居民生活联调，不意味着当前正式玩家人生已完成。配置和限制见[家庭生活合同](../v5/CHRONICLE_HOUSEHOLD_LIVELIHOOD_CONTRACT_v5.1.md)。
+
+9 月 8 日的跨用途作业使用 `work_framework_v1`，旧组合和 API 缺省值不变。示例：`{"command":"start","mode":"world","scenario":"echo_realm","seed":81001,"economy_variant":"work_framework_v1"}`。检查工具时用 `inspect kind=items` 读取实例、耐久、持有者及履历；检查取舍时用 `inspect kind=facts` 读取已提交的候选评分、采购、维修和作业事实。这里是调试全知观察，不可用来声称玩家知道远方库存。见[作业框架合同](../v5/CHRONICLE_WORK_FRAMEWORK_CONTRACT_v5.1.md)。
 
 `economy_variant: "worksite_carting_v1"` 在新世界启用现场粮堆、取货、积压停工与自费转运。它在源码及 Windows 包共用同一入口，不依赖屏幕控制，也不允许调用方注入人物行为。
 

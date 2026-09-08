@@ -1,17 +1,19 @@
 extends RefCounted
 class_name V5WorksiteFoodStorage
 
+const ItemSources = preload("res://scripts/sim/item/item_causal_sources.gd")
+
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const FOOD_IDS := ["item.fresh_fish_portion", "item.root_vegetable_portion"]
 const PROFILE := {"version": 1, "personal_portions": 4, "maximum_stock": 24}
 
 
 static func enabled(config: Dictionary) -> bool:
-	return int(config.get("version", 0)) == 1
+	return int(config.get("version", 0)) in [1, 2]
 
 
 static func validate_config(config: Dictionary) -> String:
-	if int(config.get("version", 0)) not in [0, 1]:
+	if int(config.get("version", 0)) not in [0, 1, 2]:
 		return "unsupported_worksite_food_storage_version"
 	if enabled(config):
 		for key: String in ["personal_portions", "maximum_stock"]:
@@ -25,8 +27,19 @@ static func depot_id(owner: String) -> String:
 	return "worksite_food_store." + owner
 
 
-static func configure_fixture(fixture: Dictionary) -> void:
-	if not enabled(fixture.get("resident_daily_life", {}).get("food_access", {}).get("worksite_storage", {})) \
+static func configure_fixture(fixture: Dictionary, registry: Variant = null) -> void:
+	var config: Dictionary = fixture.get("resident_daily_life", {}).get("food_access", {}).get("worksite_storage", {})
+	if int(config.get("version", 0)) == 2:
+		if registry == null:
+			return
+		# Derived from definitions, not a hand-maintained commodity whitelist.
+		var definitions: Array = []
+		for definition: Dictionary in registry.list_definitions("item").values():
+			if definition.get("item_kind") != "currency" and "trade" in definition.get("capabilities", []):
+				definitions.append(str(definition.item_def_id))
+		definitions.sort()
+		config["stored_item_def_ids"] = definitions
+	if not enabled(config) \
 			or fixture.has("worksite_food_storage_generated"):
 		return
 	var depots: Array = []
@@ -40,17 +53,17 @@ static func configure_fixture(fixture: Dictionary) -> void:
 				continue
 			var food := false
 			for product: Dictionary in profile.get("products", []):
-				food = food or product.get("item_def_id") in FOOD_IDS
+				food = food or stores_definition(str(product.get("item_def_id", "")), config)
 			if not food:
 				continue
 			depots.append({"id": depot_id(str(actor.id)), "type": "environment_detail", "role": "worksite_food_store",
-				"display_name": str(actor.get("display_name", "居民")) + "的作业地存粮",
-				"description": "这是有主人的现场存粮。取用和买卖要本人到场，货物不会跟着主人自动回家。",
+				"display_name": str(actor.get("display_name", "居民")) + ("的作业地货柜" if int(config.version) == 2 else "的作业地存粮"),
+				"description": ("这是有主人的现场库存。" if int(config.version) == 2 else "这是有主人的现场存粮。") + "取用和买卖要本人到场，货物不会跟着主人自动回家。",
 				"tags": ["worksite_food_store"], "stock_custodian_id": str(actor.id),
 				"stock_location_id": str(states.get("workplace_id", "")),
 				"states": {"location_id": str(states.get("workplace_id", "")), "visible": true}})
 	fixture.entities.append_array(depots)
-	fixture["worksite_food_storage_generated"] = {"version": 1, "depot_ids": depots.map(func(row: Dictionary) -> String: return str(row.id))}
+	fixture["worksite_food_storage_generated"] = {"version": config.version, "depot_ids": depots.map(func(row: Dictionary) -> String: return str(row.id))}
 
 
 static func stock_holder(snapshot: Variant, actor: String) -> String:
@@ -60,16 +73,20 @@ static func stock_holder(snapshot: Variant, actor: String) -> String:
 	return str(depot.id)
 
 
-static func quantity(items: Array, holder: String) -> int:
+static func stores_definition(item_def_id: String, config: Dictionary) -> bool:
+	return item_def_id in (config.get("stored_item_def_ids", []) if int(config.get("version", 0)) == 2 else FOOD_IDS)
+
+
+static func quantity(items: Array, holder: String, config: Dictionary = {}) -> int:
 	var count := 0
 	for item: Dictionary in items:
-		if item.get("holder", {}) == {"kind": "entity", "id": holder} and item.get("item_def_id") in FOOD_IDS:
+		if item.get("holder", {}) == {"kind": "entity", "id": holder} and stores_definition(str(item.get("item_def_id", "")), config):
 			count += int(item.quantity)
 	return count
 
 
 static func production_holder(snapshot: Variant, actor: String, item_def: String, config: Dictionary) -> String:
-	if enabled(config) and item_def in FOOD_IDS:
+	if enabled(config) and stores_definition(item_def, config):
 		return stock_holder(snapshot, actor)
 	return actor
 
@@ -79,14 +96,14 @@ static func has_capacity(snapshot: Variant, actor: String, profile: Dictionary, 
 		return true
 	var amount := 0
 	for product: Dictionary in profile.get("products", []):
-		if product.get("item_def_id") in FOOD_IDS:
+		if stores_definition(str(product.get("item_def_id", "")), config):
 			amount += int(product.get("quantity", 0))
 	if amount == 0:
 		return true
 	var holder := stock_holder(snapshot, actor)
 	if holder == "" or snapshot.get_entity_state(holder, "location_id", "") != snapshot.get_entity_state(actor, "workplace_id", ""):
 		return false
-	return quantity(snapshot.get_items_for_holder(holder), holder) + amount <= int(config.maximum_stock)
+	return quantity(snapshot.get_items_for_holder(holder), holder, config) + amount <= int(config.maximum_stock)
 
 
 func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, config: Dictionary, stores: Dictionary, daily_config: Dictionary = {}, household_need: Dictionary = {}) -> Dictionary:
@@ -132,7 +149,11 @@ func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, con
 				finished_block = true
 		if leaving or finished_block:
 			target = maxi(target, int(household_need.get("target_portions", 0)))
-	var needed := maxi(target - quantity(stores.item_store.list_items_for_owner(owner), owner), 0)
+	var carried := 0
+	for item: Dictionary in stores.item_store.list_items_for_owner(owner):
+		if _withdrawable_food(item, config):
+			carried += int(item.quantity)
+	var needed := maxi(target - carried, 0)
 	if needed == 0:
 		return {}
 	var result := Result.new()
@@ -140,7 +161,7 @@ func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, con
 	var fact_id := "fact.worksite_food_withdrawn.%s.%d" % [owner, int(tick.day) * 24 + int(tick.hour)]
 	var sources: Array = []
 	for item: Dictionary in stores.item_store.list_items_for_owner(str(depot.id)):
-		if item.item_def_id not in FOOD_IDS or needed == 0:
+		if not _withdrawable_food(item, config) or needed == 0:
 			continue
 		var take := mini(needed, int(item.quantity))
 		var change := {"item_instance_id": str(item.item_instance_id), "new_holder": {"kind": "entity", "id": owner},
@@ -154,6 +175,8 @@ func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, con
 		var source := str(item.get("provenance", {}).get("created_by_fact_id", ""))
 		if source != "" and source not in sources:
 			sources.append(source)
+		if int(config.get("version", 0)) == 2:
+			ItemSources.append_to(sources, item)
 		needed -= take
 		count += take
 	if count == 0:
@@ -165,6 +188,12 @@ func plan_withdrawal(snapshot: Variant, actor: Dictionary, tick: Dictionary, con
 	result.add_fact(fact)
 	result.mark_resolved("worksite_food_withdrawal")
 	return {"transaction": result, "event": fact}
+
+
+static func _withdrawable_food(item: Dictionary, config: Dictionary) -> bool:
+	if int(config.get("version", 0)) == 2:
+		return "food" in item.get("tags", []) and "consume" in item.get("capabilities", [])
+	return item.get("item_def_id") in FOOD_IDS
 
 
 static func validate_depot(depot: Dictionary, stores: Dictionary, locations: Dictionary) -> String:

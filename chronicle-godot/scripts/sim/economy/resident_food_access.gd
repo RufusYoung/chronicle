@@ -117,6 +117,8 @@ static func known_unaffordable(snapshot: Variant, actor: String, location: Strin
 
 
 static func is_food_producer(profile: Dictionary) -> bool:
+	if profile.has("work_output_food"):
+		return bool(profile.work_output_food)
 	for product: Dictionary in profile.get("products", []):
 		if str(product.get("item_def_id", "")) in HARVEST_FOOD_IDS:
 			return true
@@ -226,6 +228,8 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 		"item_instance_id": offer.item_instance_id, "quantity": quantity, "quoted_unit_price": price,
 		"maximum_total_price": money, "exchange_id": "exchange.resident_food.%s.%d" % [buyer, _hour(tick)],
 		"purpose_id": "food_carting" if carting else "household_food", "purpose_target_id": buyer,
+		"trace_payment_sources": int(config.get("worksite_storage", {}).get("version", 0)) == 2,
+		"trace_goods_sources": int(config.get("worksite_storage", {}).get("version", 0)) == 2,
 		"source_fact_ids": source_ids, "summary": summary}, stores,
 		{"elapsed_hours": _hour(tick), "day": int(tick.get("day", 0))})
 	if not bool(plan.get("success", false)):

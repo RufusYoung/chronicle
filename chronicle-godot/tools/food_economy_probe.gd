@@ -31,6 +31,9 @@ func _run() -> void:
 		return
 	if mode.begins_with("canon_livelihood"):
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1, "resident_subsistence_version": 1})
+	if mode.begins_with("canon_work"):
+		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
+			"household_food_budget_version": 1, "resident_subsistence_version": 1, "work_rules_version": 1})
 	if mode == "canon_livelihood_without_subsistence":
 		options["resident_subsistence_version"] = 0
 	if mode in ["canon_without_family", "canon_without_carting"]:
@@ -42,6 +45,22 @@ func _run() -> void:
 		quit(1)
 		return
 	var fixture: Dictionary = model.session.fixture_source_data.duplicate(true)
+	if mode.begins_with("canon_work_without"):
+		if mode.begins_with("canon_work_without_repair"):
+			fixture.resident_daily_life.maintenance_profiles = []
+		elif mode.begins_with("canon_work_without_supply"):
+			fixture.resident_daily_life.activity_choice.supply_enabled = false
+		elif mode.begins_with("canon_work_without_wear"):
+			for profile: Dictionary in fixture.generated_livelihood_profiles:
+				if profile.has("work_recipe"):
+					profile.work_recipe.tools = []
+		else:
+			push_error("Unknown work ablation")
+			quit(1)
+			return
+		fixture.known_facts.append({"fact_id": "test_injection." + mode, "fact_type": "test_injection",
+			"summary": "测试注入：在初始配置关闭一个机制，不更改初始钱物。", "disabled_mechanism": mode})
+		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "explicit same-source mechanism ablation")
 	if mode.begins_with("canon_livelihood"):
 		fixture.resident_daily_life.food_access.hauling.fee = 4
 		if mode == "canon_livelihood_without_affordability":
@@ -114,6 +133,7 @@ func _run() -> void:
 	_check(model.session.action_count == 0 and model.session.travel_count == 0, "no actor actions")
 	var file := FileAccess.open(output + "/result.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"mode": mode, "scenario": scenario, "seed": seed, "elapsed_days": days, "rows": rows,
+		"work_rules": fixture.get("work_rules", {}), "activity_choice": fixture.resident_daily_life.get("activity_choice", {}),
 		"food_access_config": fixture.resident_daily_life.get("food_access", {}),
 		"extreme_person_hours": extreme_person_hours, "failures": failures,
 		"activity_hours": activity_hours,
@@ -125,9 +145,11 @@ func _run() -> void:
 
 
 func _scope(mode: String) -> String:
+	if mode.begins_with("canon_work_without"):
+		return "Passive counterexample with explicit initial mechanism ablation; no actor actions"
 	if mode in ["canon_without_family", "canon_without_carting", "canon_budget_without_hauling", "canon_livelihood_withdraw_reopen", "canon_livelihood_without_subsistence", "canon_livelihood_without_affordability", "local_only"]:
 		return "Passive counterexample with explicitly disabled rule; no actor actions"
-	for prefix: String in ["canon_depot", "canon_carting", "canon_haul", "canon_budget", "canon_cooperation", "canon_livelihood", "batch"]:
+	for prefix: String in ["canon_depot", "canon_carting", "canon_haul", "canon_budget", "canon_cooperation", "canon_livelihood", "canon_work", "batch"]:
 		if mode.begins_with(prefix):
 			return "Passive opt-in configuration experiment; no actor actions"
 	return "Passive default world; no actor actions"

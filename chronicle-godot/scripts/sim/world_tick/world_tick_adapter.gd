@@ -65,6 +65,7 @@ const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd"
 const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
 const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
+const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
 const SOURCE := "WorldTickAdapter"
@@ -319,12 +320,28 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var activity_data: Dictionary = DailyLife.new().resolve_tick(activity_snapshot, round_event,
 				daily_life_config, settlement_network_config, context.locations, daily_life_routes,
-				IndustryCatalog.profiles(activity_snapshot, npc_livelihood_profiles))
+				IndustryCatalog.profiles(activity_snapshot, npc_livelihood_profiles), registry)
 			var activity_results: Array = activity_data.get("results", [])
 			if not writer.apply_results(activity_results, stores):
 				return _failure_result(event, "resident_activity_rejected", stores)
 			livelihood_results.append_array(activity_results)
 			livelihood_events.append_array(activity_data.get("events", []))
+			if int(daily_life_config.get("activity_choice", {}).get("version", 0)) == 1:
+				for actor: Dictionary in activity_snapshot.get_entities_by_type("person"):
+					if stores.state_store.get_state(str(actor.id), "daily_intent_id", "") != "work_supply" \
+							or stores.state_store.get_state(str(actor.id), "daily_activity", "") != "seeking_work" \
+							or stores.state_store.get_state(str(actor.id), "daily_route_id", "") != "":
+						continue
+					var supply_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+					var purchase := WorkOpportunities.plan_purchase(supply_snapshot, supply_snapshot.get_entity(str(actor.id)),
+						IndustryCatalog.profiles(supply_snapshot, npc_livelihood_profiles), stores, round_event)
+					if purchase.has("error"):
+						return _failure_result(event, "work_supply:" + str(purchase.error), stores)
+					if purchase.has("transaction"):
+						if not writer.apply_result(purchase.transaction, stores):
+							return _failure_result(event, "work_supply_transaction_rejected", stores)
+						livelihood_results.append(purchase.transaction)
+						livelihood_events.append(purchase.event)
 
 		if not npc_livelihood_profiles.is_empty():
 			var livelihood_system = NpcLivelihoodSystemModel.new()
@@ -337,7 +354,8 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				work_snapshot,
 				npc_livelihood_profiles,
 				round_event,
-				daily_life_config
+				daily_life_config,
+				registry
 			)
 			var work_results: Array = work_data.get("results", [])
 			if not writer.apply_results(work_results, stores):

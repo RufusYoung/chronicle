@@ -1,6 +1,8 @@
 extends RefCounted
 class_name V5MarketService
 
+const ItemSources = preload("res://scripts/sim/item/item_causal_sources.gd")
+
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
 )
@@ -181,6 +183,11 @@ func plan_trade(
 	if not source_value is Array:
 		return _failure("source_fact_ids_invalid")
 	var source_fact_ids: Array = (source_value as Array).duplicate(true)
+	if bool(intent.get("trace_goods_sources", false)):
+		ItemSources.append_to(source_fact_ids, stores.item_store.get_item(item_instance_id))
+	if bool(intent.get("trace_payment_sources", false)):
+		for payment: Dictionary in payment_items:
+			ItemSources.append_to(source_fact_ids, payment)
 	var transaction = TransactionResultModel.new()
 	transaction.add_fact({
 		"fact_id": fact_id,

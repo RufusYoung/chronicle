@@ -23,6 +23,9 @@ def audit(path: Path) -> dict:
     production = [row for row in facts if row.get("fact_type") == "npc_livelihood_produced"]
     produced_food = sum(product["quantity"] for row in production for product in row.get("products", [])
                         if product["item_def_id"] in food_ids)
+    work_food_inputs = sum(item["quantity"] for row in facts
+                           if row.get("fact_type") in {"npc_livelihood_produced", "npc_work_maintained"}
+                           for item in row.get("item_inputs", []) if item["item_def_id"] in food_ids)
     meals = [row for row in facts if row.get("fact_type") in
              {"npc_self_meal", "npc_household_shared_food", "npc_cross_household_shared_food"}]
     initial_food = sum(row["quantity"] for row in fixture.get("initial_items", [])
@@ -90,7 +93,8 @@ def audit(path: Path) -> dict:
         "initial_food_portions": initial_food, "produced_food_portions": produced_food,
         "consumed_meals": len(meals), "remaining_food_portions": remaining_food,
         "worksite_food_portions": stored_food, "worksite_storage_count": len(depots),
-        "food_balance_remainder": initial_food + produced_food - len(meals) - remaining_food,
+        "food_consumed_as_work_input": work_food_inputs,
+        "food_balance_remainder": initial_food + produced_food - work_food_inputs - len(meals) - remaining_food,
         "food_balance_scope": "Valid for passive fixture meals; other consumption/transfers must be audited separately.",
         "initial_currency": fixture.get("economic_generation_result", {}).get("initial_currency_total"),
         "remaining_currency": currency,

@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "checks": {
+    "three_natural_seeds": true,
+    "seven_days_no_native_failures": true,
+    "natural_not_injected": true,
+    "money_food_goods_conserved": true,
+    "two_causal_structures": true,
+    "autonomous_producer_buyer_use_and_food": true,
+    "seller_reuses_actual_revenue": true,
+    "refusal_then_limited_repair": true,
+    "paid_physical_hauling_continues": true,
+    "repair_ablation_exists": true,
+    "repair_ablation_labeled": true,
+    "repair_changes_behavior": true,
+    "no_disabled_repairs": true,
+    "supply_ablation_exists": true,
+    "supply_ablation_labeled": true,
+    "supply_changes_behavior": true,
+    "no_disabled_purchases": true,
+    "wear_ablation_exists": true,
+    "wear_ablation_labeled": true,
+    "wear_changes_behavior": true,
+    "no_tool_replacement_without_wear": true,
+    "same_frozen_runtime_for_heldout": true,
+    "heldout_seed_is_new": true,
+    "heldout_exists": true,
+    "current_runtime_matches_frozen_evidence": true,
+    "complete_frozen_regression_coverage": true,
+    "nonrender_passed": true,
+    "actual_render_passed": true,
+    "trace_fix_preserves_outcomes:natural_81001": true,
+    "trace_fix_preserves_outcomes:natural_82002": true,
+    "trace_fix_preserves_outcomes:natural_83003": true,
+    "trace_fix_preserves_outcomes:repair_81001": true,
+    "trace_fix_preserves_outcomes:supply_81001": true,
+    "trace_fix_preserves_outcomes:wear_81001": true,
+    "checker_rejects_injected_natural": true,
+    "checker_rejects_unbalanced_money": true,
+    "checker_rejects_counts_without_chains": true
+  },
+  "suites": {
+    "nonrender": {
+      "passed": 125,
+      "total": 125
+    },
+    "actual_render": {
+      "passed": 23,
+      "total": 23
+    }
+  },
+  "scope": "RF3 E1 finite local emergence only. Mixed food stacks cite contributing batches, not exact per-meal units. Does not accept H2, thirty-day life, diplomacy, player experience, or human UI tests."
+}

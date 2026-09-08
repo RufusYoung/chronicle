@@ -71,7 +71,7 @@ func _run() -> void:
 	_check(legacy.start({"scenario": "echo_realm"}).success, "old-rule world starts")
 	var envelope: Dictionary = legacy.session.build_save_envelope()
 	envelope.definition_manifest.content_pack_version = 4
-	for key: String in Subsistence.STATE_KEYS:
+	for key: String in Subsistence.STATE_KEYS + ["daily_intent_id", "work_elapsed_recipe_id"]:
 		envelope.definition_manifest.required_definition_ids.erase("state:state.character." + key)
 	var migrated := Session.new()
 	var loaded := migrated.load_from_save_envelope(Saves.new().finalize_envelope(envelope))

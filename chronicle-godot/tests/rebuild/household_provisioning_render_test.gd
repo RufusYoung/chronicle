@@ -15,9 +15,14 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var viewer = Demo.instantiate()
 	viewer.initial_seed = 81001
+	viewer.initial_livelihood_rules = false
+	viewer.initial_work_rules = false
 	viewer.save_path = output + "/absent_" + Crypto.new().generate_random_bytes(8).hex_encode() + ".json"
 	root.add_child(viewer)
 	await process_frame
+	_check(not viewer.view_model.session.fixture_source_data.has("work_rules") \
+		and not viewer.view_model.session.fixture_source_data.resident_daily_life.food_access.has("subsistence"),
+		"legacy individual-family fixture is isolated from newer household and work presets")
 	for destination: String in ["generated_location.echo_terrace.commons", "generated_location.echo_terrace.terraces"]:
 		var route := ""
 		for option: Dictionary in viewer.view_model.session.get_travel_options():

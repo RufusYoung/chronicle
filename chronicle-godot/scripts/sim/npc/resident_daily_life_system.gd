@@ -10,6 +10,8 @@ const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd"
 const Hauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
 const Budget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
+const Choice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
+const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const STATE_KEYS := ["daily_life_version", "daily_activity", "daily_activity_reason", "daily_goal_id",
 	"daily_workplace_id", "daily_route_id", "daily_destination_id", "daily_travel_remaining",
 	"daily_departure_fact_id", "daily_presence_fact_id"]
@@ -29,7 +31,7 @@ static func work_time(occupation: String, hour: int, config: Dictionary) -> bool
 
 
 func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
-		network: Dictionary, locations: Dictionary, base_routes: Array, profiles: Array = []) -> Dictionary:
+		network: Dictionary, locations: Dictionary, base_routes: Array, profiles: Array = [], registry: Variant = null) -> Dictionary:
 	if not enabled(config) or int(tick.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
 	var routes := _routes(snapshot, network, locations, base_routes, config)
@@ -39,6 +41,8 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 	var food_config: Dictionary = config.get("food_access", {})
 	var food_items: Array = snapshot.get_items() if FoodAccess.enabled(food_config) else []
 	var known_supply_cache := {}
+	var choice_config: Dictionary = config.get("activity_choice", {})
+	var use_choice := Choice.enabled(choice_config)
 	people.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.id) < str(b.id))
 	for actor: Dictionary in people:
 		if "generated_resident" not in actor.get("tags", []):
@@ -70,6 +74,10 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 		var reason := "日常在家"
 		var decision_sources: Array = []
 		var decision_intent := ""
+		var proposals: Array = []
+		var decision_evidence: Dictionary = {}
+		if use_choice:
+			Choice.propose(proposals, "home", home, "home", "暂时没有更值得赶去做的事")
 		if must_rest or not on_shift:
 			activity = "resting"
 			reason = "身体需要休息" if must_rest else "班次结束，回家休息"
@@ -86,6 +94,9 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 			goal = _hub(network, str(states.get("settlement_id", "")))
 			activity = "seeking_work"
 			reason = "前往集地寻找工作"
+		if use_choice:
+			Choice.propose(proposals, "rest" if activity == "resting" else ("work" if activity == "working" else ("seek_work" if activity == "seeking_work" else "home")), goal, activity, reason)
+			proposals.back()["mandatory_rest"] = must_rest
 		if FoodAccess.enabled(food_config) and not must_rest:
 			var family := FamilyFood.request(snapshot, actor, tick, food_config.get("household_provisioning", {}))
 			if Budget.enabled(food_config.get("household_budget", {})):
@@ -112,6 +123,8 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 					else:
 						activity = "seeking_work"
 						reason = "周转钱或已知供货不足，暂不进货"
+				if use_choice:
+					Choice.propose(proposals, "cart", goal, activity, reason, decision_sources, decision_intent)
 			var supply := _food_goal(snapshot, actor, routes, profiles, tick, food_config, network, locations, food_items, known_supply_cache, family)
 			if supply != "":
 				decision_intent = ""
@@ -119,10 +132,12 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 				activity = "seeking_food"
 				reason = "没有口粮，带钱寻找已知供给" if family.is_empty() else "记得%s缺粮，带自己的钱去采购" % family.names
 				decision_sources = family.get("source_fact_ids", [])
+				if use_choice:
+					Choice.propose(proposals, "food", goal, activity, reason, decision_sources, decision_intent)
 			var subsistence_config: Dictionary = food_config.get("subsistence", {})
 			var subsistence_need := Subsistence.decision(snapshot, actor, food_items, family, subsistence_config, tick)
 			if not subsistence_need.is_empty():
-				for profile: Dictionary in Subsistence.candidates(actor, profiles, subsistence_config):
+				for profile: Dictionary in Subsistence.candidates(actor, profiles, subsistence_config, snapshot):
 					var site := str(profile.workplace_id)
 					if Subsistence.recently_failed(snapshot, id, site, tick, subsistence_config):
 						continue
@@ -142,6 +157,8 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 						continue
 					decision_sources = subsistence_need.source_fact_ids
 					decision_intent = "subsistence"
+					if use_choice:
+						Choice.propose(proposals, "forage", goal, activity, reason, decision_sources, decision_intent)
 					break
 			var self_reserve := 1 if FoodStorage.enabled(food_config.get("worksite_storage", {})) else 0
 			var useful_return := true
@@ -158,6 +175,8 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 				activity = "home"
 				reason = "给%s带粮回家" % family.names
 				decision_sources = family.source_fact_ids
+				if use_choice:
+					Choice.propose(proposals, "care", goal, activity, reason, decision_sources, decision_intent)
 			if Hauling.is_carrier(actor, haul_config):
 				var order := Hauling.active_order(snapshot, id)
 				if not order.is_empty():
@@ -166,7 +185,9 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 					reason = "携带未交出的托运粮食和封存运费返回" if order.status == "returning" else "把受托粮食送到约定家人手中，之后才能领取运费"
 					decision_sources = order.source_fact_ids
 					decision_intent = "food_hauling"
-				elif on_shift and supply == "" and activity != "foraging" and (family.is_empty() or carried <= return_reserve):
+					if use_choice:
+						Choice.propose(proposals, "haul", goal, activity, reason, decision_sources, decision_intent)
+				elif on_shift and (use_choice or (supply == "" and activity != "foraging" and (family.is_empty() or carried <= return_reserve))):
 					var sites := FoodAccess.known_supply_locations(snapshot, actor, profiles, network, food_config)
 					var best := ""
 					var distance := 100000
@@ -180,6 +201,31 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 					goal = best if best != "" else _hub(network, str(states.get("settlement_id", "")))
 					activity = "seeking_work"
 					reason = "到已知作业地询问有报酬的送粮差事" if best != "" else "暂未找到可到场询问的差事，返回集地"
+					if use_choice:
+						Choice.propose(proposals, "seek_work", goal, activity, reason, [], "")
+		if use_choice:
+			if not must_rest and on_shift:
+				var demand := WorkOpportunities.need(snapshot, actor, profiles)
+				if not demand.is_empty():
+					demand.source_fact_ids.append_array(WorkOpportunities.failure_sources(snapshot, id, demand, tick))
+					for profile: Dictionary in WorkOpportunities.repair_profiles(snapshot, actor, config, tick):
+						Choice.propose(proposals, "repair", profile.workplace_id, "working", "工具已经磨坏，先到有材料的作业地修补", demand.source_fact_ids, "repair:" + str(profile.work_recipe.recipe_id))
+					if bool(choice_config.get("supply_enabled", true)):
+						for site: String in WorkOpportunities.supply_sites(snapshot, actor, profiles, demand, network, registry, tick):
+							if site == workplace:
+								Choice.propose(proposals, "resupply", site, "seeking_work", "先回作业地检查自己存下的备用用品，不需要向自己的货柜付钱", demand.source_fact_ids, "work_supply")
+							elif FoodAccess.balance(food_items, id) > 0:
+								Choice.propose(proposals, "resupply", site, "seeking_work", "作业用品不足，去已知的生产地当面询价", demand.source_fact_ids, "work_supply")
+			var chosen := Choice.choose(proposals, actor, routes, self, snapshot, profiles, registry, choice_config, food_config)
+			if not chosen.is_empty():
+				goal = str(chosen.goal)
+				activity = str(chosen.activity)
+				reason = str(chosen.reason)
+				decision_sources = chosen.source_fact_ids
+				decision_intent = str(chosen.intent_id)
+				decision_evidence = {"choice_version": 1, "chosen_candidate": chosen.rule_id,
+					"goal_location_id": goal, "utility_score": chosen.score, "alternatives": chosen.alternatives}
+			_change(result, id, states, "daily_intent_id", decision_intent)
 		_change(result, id, states, "daily_goal_id", goal)
 		if goal == "" or not locations.has(goal):
 			_transition(result, events, actor, states, "blocked", "没有可到达的去处", tick)
@@ -198,6 +244,7 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 				"route_id": route.route_id, "from_location_id": location,
 				"to_location_id": route.to_location_id, "goal_location_id": goal,
 				"travel_hours": route.hours}
+			journey.merge(decision_evidence)
 			if not decision_sources.is_empty():
 				journey["source_fact_ids"] = decision_sources
 			if decision_intent != "":
@@ -206,6 +253,7 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 			_change(result, id, states, "daily_departure_fact_id", fact)
 			continue
 		var evidence := {"source_fact_ids": decision_sources} if not decision_sources.is_empty() else {}
+		evidence.merge(decision_evidence)
 		if decision_intent != "":
 			evidence["intent_id"] = decision_intent
 		_transition(result, events, actor, states, activity, reason, tick, evidence)
@@ -333,7 +381,8 @@ func _food_goal(snapshot: Variant, actor: Dictionary, routes: Array, profiles: A
 		if str(profile.get("workplace_id", "")) == str(states.get("workplace_id", "")) \
 				and str(profile.get("occupation_id", "")) == str(states.get("occupation_id", "")) \
 				and FoodAccess.is_food_producer(profile):
-			return ""
+			if not profile.has("work_recipe") or not WorkOpportunities.knows_work_blocked(snapshot, actor, profile, tick):
+				return ""
 	var cache_key := own_settlement + (".cart" if Carting.is_carter(actor, config.get("carting", {})) else "")
 	if not known_supply_cache.has(cache_key):
 		known_supply_cache[cache_key] = FoodAccess.known_supply_locations(snapshot, actor, profiles, network, config)

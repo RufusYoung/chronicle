@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "maintenance": [
+    {
+      "recipe_id": "recipe.patch_cordage",
+      "label": "用纤维修补绳具",
+      "resource_tags_all": ["reeds", "fiber"],
+      "amount_per_cycle": 1,
+      "work_interval_hours": 2,
+      "repairs": [{"query": {"tags_all": ["rope"]}, "restore": 2, "maximum_repairs": 1}]
+    }
+  ],
+  "overrides": [
+    {
+      "product_query": {"tags_all": ["fish"]},
+      "label": "网具捕捞",
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.net_fishing",
+        "item_inputs": [],
+        "tools": [{"query": {"tags_all": ["rope"]}, "wear": 1}]
+      },
+      "initial_tools": [{"item_def_id": "item.fiber_rope", "quantity": 1}]
+    },
+    {
+      "product_query": {"tags_all": ["household_good", "reed"]},
+      "label": "捻绳作业",
+      "products": [{"item_def_id": "item.fiber_rope", "quantity": 1}],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.reed_cordage",
+        "item_inputs": [],
+        "tools": [{"query": {"tags_all": ["rope"]}, "wear": 1}]
+      },
+      "initial_tools": [{"item_def_id": "item.fiber_rope", "quantity": 1}]
+    }
+  ]
+}

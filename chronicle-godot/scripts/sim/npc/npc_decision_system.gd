@@ -255,6 +255,10 @@ func _build_bindings(
 
 
 func _choose_action(candidates: Array) -> Dictionary:
+	return choose_candidate(candidates)
+
+
+static func choose_candidate(candidates: Array) -> Dictionary:
 	var chosen: Dictionary = {}
 	for candidate_value: Variant in candidates:
 		if not (candidate_value is Dictionary):
@@ -265,7 +269,7 @@ func _choose_action(candidates: Array) -> Dictionary:
 	return chosen.duplicate(true)
 
 
-func _is_better_choice(candidate: Dictionary, current: Dictionary) -> bool:
+static func _is_better_choice(candidate: Dictionary, current: Dictionary) -> bool:
 	var candidate_score := int(candidate.get("score", 0))
 	var current_score := int(current.get("score", 0))
 	if candidate_score != current_score:

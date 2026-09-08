@@ -1,0 +1,8 @@
+{
+  "Test": "tests/sim/minimum_contract_fixture_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 1.54,
+  "UnexpectedErrors": []
+}

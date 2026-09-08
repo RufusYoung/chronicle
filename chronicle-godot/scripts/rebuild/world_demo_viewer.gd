@@ -9,6 +9,7 @@ const DEFAULT_SAVE := "user://world_demo/manual.json"
 @export var initial_seed: int = 81001
 @export var initial_scenario: String = "echo_realm"
 @export var initial_livelihood_rules: bool = true
+@export var initial_work_rules: bool = true
 var busy := false
 var last_operation: Dictionary = {}
 var _worker: Thread
@@ -28,6 +29,7 @@ var _picture: TextureRect
 var _picture_caption: Label
 var _seed_input: SpinBox
 var _livelihood_rules: CheckBox
+var _work_rules: CheckBox
 var _startup := true
 var _startup_message := ""
 
@@ -62,20 +64,24 @@ func restart_session() -> void:
 					_startup_message += "这是旧生活规则存档；新建世界才会启用居民作息，原存档不会被转换。"
 				elif initial_livelihood_rules and not view_model.session.world_tick_adapter.daily_life_config.get("food_access", {}).has("subsistence"):
 					_startup_message += "此存档保留旧谋生规则；「新世界」可体验家庭口粮、送粮和替代采食，原存档不会被转换。"
+				elif initial_work_rules and not view_model.session.fixture_source_data.has("work_rules"):
+					_startup_message += "此存档保留旧作业规则；「新世界」可体验工具损耗、修补和实际补货，原存档不会被转换。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
-		view_model.start(_world_options(initial_seed, initial_livelihood_rules))
+		view_model.start(_world_options(initial_seed, initial_livelihood_rules, initial_work_rules))
 		refresh_view()
 	else:
-		_begin_operation("start", [_world_options(int(_seed_input.value), _livelihood_rules.button_pressed)])
+		_begin_operation("start", [_world_options(int(_seed_input.value), _livelihood_rules.button_pressed, _work_rules.button_pressed)])
 
 
-func _world_options(seed_value: int, integrated: bool) -> Dictionary:
+func _world_options(seed_value: int, integrated: bool, work_rules: bool = false) -> Dictionary:
 	var options := {"scenario": initial_scenario, "challenge_seed_override": seed_value}
 	if integrated and initial_scenario == "echo_realm":
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
 			"household_food_budget_version": 1, "resident_subsistence_version": 1})
+		if work_rules:
+			options["work_rules_version"] = 1
 	return options
 
 
@@ -292,6 +298,13 @@ func _install_save_controls() -> void:
 	_livelihood_rules.button_pressed = initial_livelihood_rules
 	_livelihood_rules.visible = initial_scenario == "echo_realm"
 	new_world_form.add_child(_livelihood_rules)
+	_work_rules = CheckBox.new()
+	_work_rules.text = "作业框架实验：工具磨损、修补、补货与行动取舍"
+	_work_rules.button_pressed = initial_work_rules
+	_work_rules.visible = initial_scenario == "echo_realm"
+	_work_rules.disabled = not _livelihood_rules.button_pressed
+	_livelihood_rules.toggled.connect(func(pressed: bool) -> void: _work_rules.disabled = not pressed)
+	new_world_form.add_child(_work_rules)
 
 
 func _confirmation(title_text: String, message: String, action: String) -> ConfirmationDialog:

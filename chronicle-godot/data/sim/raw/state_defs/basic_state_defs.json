@@ -792,6 +792,30 @@
       "description": "采食工时所属的地点，换地点不能携走进度。"
     },
     {
+      "state_def_id": "state.character.daily_intent_id",
+      "definition_version": 1,
+      "key": "daily_intent_id",
+      "owner_kinds": ["character"],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "hidden",
+      "description": "当前短程意图，行走、到达和作业共用，不从描述文本推断。"
+    },
+    {
+      "state_def_id": "state.character.work_elapsed_recipe_id",
+      "definition_version": 1,
+      "key": "work_elapsed_recipe_id",
+      "owner_kinds": ["character"],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": ["set"],
+      "persistence": "save",
+      "ui_visibility": "hidden",
+      "description": "尚未完成的工时所属作业，换配方不能挪用工时。"
+    },
+    {
       "state_def_id": "state.character.daily_activity_reason",
       "definition_version": 1,
       "key": "daily_activity_reason",

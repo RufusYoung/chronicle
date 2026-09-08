@@ -16,6 +16,32 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_work_framework_in_actual_process(self):
+        with client(timeout=90) as game:
+            opened = game.request("start", mode="world", scenario="echo_realm", seed=81001,
+                                  economy_variant="work_framework_v1")
+            self.assertTrue(opened["ok"], opened)
+            for _ in range(4):
+                self.assertTrue(game.request("advance", hours=24)["ok"])
+            facts = []
+            offset = 0
+            while True:
+                page = game.request("inspect", kind="facts", offset=offset, limit=100)
+                self.assertTrue(page["ok"], page)
+                facts.extend(page["rows"])
+                offset += len(page["rows"])
+                if offset >= page["total"]:
+                    break
+            recipes = {f.get("recipe_id") for f in facts if f.get("fact_type") == "npc_livelihood_produced"}
+            self.assertIn("recipe.net_fishing", recipes)
+            self.assertIn("recipe.reed_cordage", recipes)
+            self.assertTrue(any(f.get("tools_used") for f in facts), "No actual tool use in the runtime")
+            self.assertTrue(any(f.get("choice_version") == 1 and len(f.get("alternatives", [])) >= 2 for f in facts))
+            slot = f"work_framework_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            self.assertTrue(game.request("load", slot=slot)["ok"])
+            self.assertTrue(game.request("advance", hours=1)["ok"])
+
     def test_integrated_household_work_in_actual_process(self):
         with client(timeout=60) as game:
             opened = game.request("start", mode="world", scenario="echo_realm", seed=81001,

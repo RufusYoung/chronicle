@@ -1,0 +1,44 @@
+[
+  {
+    "Case": "canon_work_frozen2_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": true,
+    "SecondsThisInvocation": 0.22
+  },
+  {
+    "Case": "canon_work_frozen2_82002",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 40.02
+  },
+  {
+    "Case": "canon_work_frozen2_83003",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 31.72
+  },
+  {
+    "Case": "canon_work_without_repair_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 30.15
+  },
+  {
+    "Case": "canon_work_without_supply_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 28.7
+  },
+  {
+    "Case": "canon_work_without_wear_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 30.66
+  }
+]

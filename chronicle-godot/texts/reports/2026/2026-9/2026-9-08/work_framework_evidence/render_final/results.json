@@ -1,0 +1,186 @@
+[
+  {
+    "Test": "tests/rebuild/canon_world_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.29,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/household_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.03,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/household_provisioning_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.23,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/resident_daily_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.04,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/resident_food_market_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.64,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_dynamic_settlement_resource_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.86,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_economic_authority_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.51,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_emergent_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.86,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_first_quarter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.54,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_first_year_close_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.36,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_organization_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.99,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_settlement_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.37,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_industry_lifecycle_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 20.97,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_life_incident_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.66,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_organization_lifecycle_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.36,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_playable_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.83,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_second_year_reception_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.39,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_absorption_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.35,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_capacity_adaptation_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.34,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_network_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 20.47,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_unified_surface_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.97,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/work_framework_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 10.73,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/worksite_food_storage_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.39,
+    "UnexpectedErrors": []
+  }
+]

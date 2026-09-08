@@ -1,0 +1,44 @@
+[
+  {
+    "Case": "canon_work_delivery_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 27.81
+  },
+  {
+    "Case": "canon_work_delivery_82002",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 27.47
+  },
+  {
+    "Case": "canon_work_delivery_83003",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 30.01
+  },
+  {
+    "Case": "canon_work_without_repair_delivery_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 31.88
+  },
+  {
+    "Case": "canon_work_without_supply_delivery_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 28.6
+  },
+  {
+    "Case": "canon_work_without_wear_delivery_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 29.14
+  }
+]

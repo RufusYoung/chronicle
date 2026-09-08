@@ -84,7 +84,7 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	if variant not in ["default", "worksite_carting_v1", "worksite_hauling_v1", "household_budget_v1", "household_livelihood_v1"] or (variant != "default" and next_scenario != "echo_realm"):
+	if variant not in ["default", "worksite_carting_v1", "worksite_hauling_v1", "household_budget_v1", "household_livelihood_v1", "work_framework_v1"] or (variant != "default" and next_scenario != "echo_realm"):
 		return _error("invalid_economy_variant")
 	if next_mode not in ["world", "play"] or next_scenario not in ["echo_realm", "generated_network", "lake_town", "first_winter"]:
 		return _error("invalid_start_profile")
@@ -101,8 +101,10 @@ func _start(request: Dictionary) -> Dictionary:
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1})
 	if variant == "household_budget_v1":
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1})
-	if variant == "household_livelihood_v1":
+	if variant in ["household_livelihood_v1", "work_framework_v1"]:
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1, "resident_subsistence_version": 1})
+	if variant == "work_framework_v1":
+		options["work_rules_version"] = 1
 	if next_scenario == "first_winter":
 		next_model = OutpostView.new()
 		result = next_model.start({}, "first_winter", options)

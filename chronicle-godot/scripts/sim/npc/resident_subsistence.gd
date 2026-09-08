@@ -3,6 +3,7 @@ class_name V5ResidentSubsistence
 
 const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
 const Family = preload("res://scripts/sim/npc/household_provisioning.gd")
+const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const PROFILE := {"version": 1, "work_hours": 4, "portions": 4, "minimum_health": 40,
 	"minimum_age": 18, "retry_hours": 12, "maximum_travel_hours": 4,
 	"household_affordability_version": 1, "quote_memory_hours": 24}
@@ -28,7 +29,7 @@ static func validate_config(config: Dictionary) -> String:
 	return ""
 
 
-static func candidates(actor: Dictionary, profiles: Array, config: Dictionary) -> Array:
+static func candidates(actor: Dictionary, profiles: Array, config: Dictionary, snapshot: Variant = null) -> Array:
 	var rows: Array = []
 	var state: Dictionary = actor.get("states", {})
 	if not enabled(config) or "generated_resident" not in actor.get("tags", []) \
@@ -39,7 +40,10 @@ static func candidates(actor: Dictionary, profiles: Array, config: Dictionary) -
 		if profile.get("settlement_id") != state.get("settlement_id") or not Food.is_food_producer(profile):
 			continue
 		if profile.get("occupation_id") == state.get("occupation_id"):
-			return []
+			if not profile.has("work_recipe") or snapshot == null:
+				return []
+			if not WorkOpportunities.knows_work_blocked(snapshot, actor, profile, snapshot.world_time):
+				continue
 		# Local residents know the commons and its usual use, not current stock or private stores.
 		var row := profile.duplicate(true)
 		row["actor_tags_all"] = ["generated_resident"]
@@ -49,6 +53,8 @@ static func candidates(actor: Dictionary, profiles: Array, config: Dictionary) -
 		row["work_summary"] = "%s暂时放下原本的安排，在本地公用作业地采食，产物需自己携带。" % actor.display_name
 		row["products"] = [{"item_def_id": profile.products[0].item_def_id,
 			"quantity": mini(int(config.portions), int(profile.products[0].quantity))}]
+		if profile.has("work_recipe"):
+			row["work_recipe"] = {"version": 1, "recipe_id": "recipe.hand_gather." + str(profile.occupation_id), "item_inputs": [], "tools": []}
 		rows.append(row)
 	return rows
 
@@ -103,10 +109,10 @@ static func recently_failed(snapshot: Variant, actor: String, site: String, tick
 	return false
 
 
-static func active_profile(actor: Dictionary, profiles: Array, config: Dictionary) -> Dictionary:
+static func active_profile(actor: Dictionary, profiles: Array, config: Dictionary, snapshot: Variant = null) -> Dictionary:
 	if actor.get("states", {}).get("daily_activity") != "foraging":
 		return {}
-	for profile: Dictionary in candidates(actor, profiles, config):
+	for profile: Dictionary in candidates(actor, profiles, config, snapshot):
 		if profile.workplace_id == actor.states.get("location_id") and actor.states.get("daily_route_id", "") == "":
 			return profile
 	return {}

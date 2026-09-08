@@ -86,9 +86,12 @@ const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd"
 const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
 const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
+const WorkRules = preload("res://scripts/sim/economy/work_rules_setup.gd")
+const ActivityChoice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
-const CONTENT_PACK_VERSION := 5
+const CONTENT_PACK_VERSION := 6
+const WORK_INTENT_DEFINITIONS_MIGRATION := "base_v5_to_v6_work_intent_definitions"
 const FIBER_ROPE_DURABILITY_MIGRATION := "base_v2_to_v3_fiber_rope_durability"
 const RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION := "base_v3_to_v4_resident_activity_definitions"
 const SUBSISTENCE_DEFINITIONS_MIGRATION := "base_v4_to_v5_subsistence_definitions"
@@ -235,6 +238,12 @@ func start_from_fixture_path(
 		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
 			return _start_failure("subsistence_requires_food_access")
 		fixture.resident_daily_life.food_access["subsistence"] = Subsistence.PROFILE.duplicate(true)
+	if options.get("work_rules_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_work_rules_version")
+	if options.get("work_rules_version", 0) == 1:
+		fixture["work_rules"] = loader.load_json(WorkRules.DEFAULT_PATH)
+		if fixture.work_rules.is_empty():
+			return _start_failure("work_rules_not_loaded")
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -251,12 +260,17 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	_reset_runtime()
 	if fixture.is_empty():
 		return _start_failure("fixture_not_loaded")
+	if not fixture.get("work_rules", {}) is Dictionary:
+		return _start_failure("work_rules_not_dictionary")
 	fixture = fixture.duplicate(true)
 	var canon_result := CanonWorld.prepare(fixture)
 	if not canon_result.ok:
 		return _start_failure(str(canon_result.error))
 	if int(fixture.get("resident_daily_life", {}).get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_resident_daily_life_version")
+	var choice_error := ActivityChoice.validate(fixture.get("resident_daily_life", {}).get("activity_choice", {}))
+	if choice_error != "":
+		return _start_failure(choice_error)
 	if int(fixture.get("resident_daily_life", {}).get("food_access", {}).get("version", 0)) not in [0, 1]:
 		return _start_failure("unsupported_resident_food_access_version")
 	var food_config: Dictionary = fixture.get("resident_daily_life", {}).get("food_access", {})
@@ -342,7 +356,8 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		organization_result.get("report", {}) as Dictionary
 	).duplicate(true)
 	FoodAccess.configure_fixture(fixture)
-	FoodStorage.configure_fixture(fixture)
+	if fixture.get("work_rules", {}).is_empty():
+		FoodStorage.configure_fixture(fixture)
 	FoodBudget.configure_fixture(fixture)
 	CanonWorld.bind_locations(fixture)
 	var economic_result := EconomicSetup.configure_fixture(fixture)
@@ -361,6 +376,10 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		var failed := _start_failure("raw_definition_contract_invalid")
 		failed["definition_report"] = definition_report
 		return failed
+	var work_rules_error := WorkRules.configure(fixture, registry)
+	if work_rules_error != "":
+		return _start_failure(work_rules_error)
+	FoodStorage.configure_fixture(fixture, registry)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -2244,14 +2263,18 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 		return _save_failure("save_definition_manifest_mismatch", "definitions")
 	# Upgrade exact historical manifests, not arbitrary subsets of current definitions.
 	var previous := expected.duplicate()
+	for key: String in ActivityChoice.STATE_KEYS:
+		previous.erase("state:state.character." + key)
+	if pack_version == 5 and actual == previous:
+		return {"ok": true, "error": "", "phase": "definitions", "migrations": [WORK_INTENT_DEFINITIONS_MIGRATION]}
 	for key: String in Subsistence.STATE_KEYS:
 		previous.erase("state:state.character." + key)
 	if pack_version == 4 and actual == previous:
-		return {"ok": true, "error": "", "phase": "definitions", "migrations": [SUBSISTENCE_DEFINITIONS_MIGRATION]}
+		return {"ok": true, "error": "", "phase": "definitions", "migrations": [SUBSISTENCE_DEFINITIONS_MIGRATION, WORK_INTENT_DEFINITIONS_MIGRATION]}
 	for key: String in DailyLife.STATE_KEYS:
 		previous.erase("state:state.character." + key)
 	if pack_version in [2, 3] and actual == previous:
-		var migrations := [RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION, SUBSISTENCE_DEFINITIONS_MIGRATION]
+		var migrations := [RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION, SUBSISTENCE_DEFINITIONS_MIGRATION, WORK_INTENT_DEFINITIONS_MIGRATION]
 		if pack_version == 2:
 			migrations.push_front(FIBER_ROPE_DURABILITY_MIGRATION)
 		return {"ok": true, "error": "", "phase": "definitions", "migrations": migrations}
@@ -2266,6 +2289,7 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 				FIBER_ROPE_DURABILITY_MIGRATION,
 				RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION,
 				SUBSISTENCE_DEFINITIONS_MIGRATION,
+				WORK_INTENT_DEFINITIONS_MIGRATION,
 			],
 		}
 	return _save_failure("save_definition_manifest_mismatch", "definitions")

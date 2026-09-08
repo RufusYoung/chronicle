@@ -37,7 +37,15 @@ func _run() -> void:
 		await _settle(viewer)
 	_check(viewer.current_view_data.location.id == "generated_location.reed_bay.landing", "traveler reaches workplace through legal route")
 	_check("正在做工" in viewer.visible_people.text, "same workers are visibly at work")
-	_check("开始在这里做工" in str(viewer.current_view_data.feedback.get("body", "")), "local work transition has concrete feedback")
+	var feedback := str(viewer.current_view_data.feedback.get("body", ""))
+	var explains_work := false
+	for person: Dictionary in viewer.current_view_data.visible_people:
+		if viewer.view_model.session.stores.state_store.get_state(str(person.id), "daily_activity", "") != "working":
+			continue
+		var reason := str(viewer.view_model.session.stores.state_store.get_state(str(person.id), "daily_activity_reason", ""))
+		if reason != "" and str(person.name) in feedback and reason in feedback:
+			explains_work = true
+	_check(explains_work, "local work feedback names a present person and their actual work reason")
 	_check(viewer.action_dock.get_global_rect().end.y <= root.size.y, "people do not push action dock outside viewport")
 	await _screenshot("landing_1pm.png")
 	viewer.queue_free()

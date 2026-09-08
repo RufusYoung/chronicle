@@ -9,6 +9,8 @@ const FoodCarting = preload("res://scripts/sim/economy/resident_food_carting.gd"
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
 const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
+const WorkRecipe = preload("res://scripts/sim/economy/work_recipe_service.gd")
+const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
@@ -28,7 +30,8 @@ func resolve_work_tick(
 		snapshot: Variant,
 		profiles: Array,
 		tick_event: Dictionary,
-		daily_life_config: Dictionary = {}
+		daily_life_config: Dictionary = {},
+		registry: Variant = null
 ) -> Dictionary:
 	if int(tick_event.get("elapsed_hours", 0)) <= 0:
 		return {"results": [], "events": []}
@@ -42,9 +45,12 @@ func resolve_work_tick(
 	var blocked_count := 0
 	var available_resources := _available_resource_amounts(snapshot)
 	var treasury = Treasury.new(snapshot)
+	var recipes := WorkRecipe.new(snapshot, registry)
 	for actor: Dictionary in _sorted_people(snapshot):
-		var temporary := Subsistence.active_profile(actor, profiles, daily_life_config.get("food_access", {}).get("subsistence", {}))
+		var temporary := Subsistence.active_profile(actor, profiles, daily_life_config.get("food_access", {}).get("subsistence", {}), snapshot)
 		var foraging := not temporary.is_empty()
+		var repair := WorkOpportunities.active_repair(snapshot, actor, daily_life_config)
+		var maintaining := not repair.is_empty()
 		if not foraging and FoodHauling.is_carrier(actor, daily_life_config.get("food_access", {}).get("hauling", {})):
 			continue
 		if not foraging and FoodCarting.is_carter(actor, daily_life_config.get("food_access", {}).get("carting", {})):
@@ -67,6 +73,8 @@ func resolve_work_tick(
 		)
 		if foraging:
 			profile = temporary
+		if maintaining:
+			profile = repair
 		if not _actor_matches_profile(actor, profile):
 			continue
 		var physical_work: bool = DailyLife.enabled(daily_life_config) and "generated_resident" in actor.get("tags", [])
@@ -77,20 +85,27 @@ func resolve_work_tick(
 				or str(snapshot.get_entity_state(actor_id, "daily_activity", "")) != ("foraging" if foraging else "working")
 				or str(snapshot.get_entity_state(actor_id, "daily_route_id", "")) != ""
 				or str(snapshot.get_entity_state(actor_id, "location_id", "")) != str(profile.get("workplace_id", ""))
-				or (not foraging and str(snapshot.get_entity_state(actor_id, "workplace_id", "")) != str(profile.get("workplace_id", "")))):
+				or (not foraging and not maintaining and str(snapshot.get_entity_state(actor_id, "workplace_id", "")) != str(profile.get("workplace_id", "")))):
 			continue
 		var storage_config: Dictionary = {} if foraging else daily_life_config.get("food_access", {}).get("worksite_storage", {})
 		if not FoodStorage.has_capacity(snapshot, actor_id, profile, storage_config):
 			continue
 		var interval := maxi(int(profile.get("work_interval_hours", 8)), 1)
+		var structured_work := WorkRecipe.enabled(profile)
 		var elapsed_key := "subsistence_elapsed_hours" if foraging else "livelihood_elapsed_hours"
 		var elapsed := int(snapshot.get_entity_state(
 			actor_id, elapsed_key, 0
 		)) + 1
+		if structured_work and not foraging:
+			var recipe_id := str(profile.work_recipe.recipe_id)
+			var previous_recipe := str(snapshot.get_entity_state(actor_id, "work_elapsed_recipe_id", ""))
+			if previous_recipe != recipe_id:
+				elapsed = 1 if previous_recipe != "" else elapsed
+				result.add_state_change({"entity_id": actor_id, "key": "work_elapsed_recipe_id", "to": recipe_id})
 		if foraging and snapshot.get_entity_state(actor_id, "subsistence_workplace_id", "") != profile.workplace_id:
 			elapsed = 1
 			result.add_state_change({"entity_id": actor_id, "key": "subsistence_workplace_id", "to": profile.workplace_id})
-		if elapsed < interval:
+		if elapsed < interval and not structured_work:
 			result.add_state_change({
 				"entity_id": actor_id,
 				"key": elapsed_key,
@@ -105,8 +120,11 @@ func resolve_work_tick(
 		var wage := int(profile.get("wage_amount", 0))
 		var reserve := int(snapshot.get_entity_state(settlement_id, "treasury_reserve", 0))
 		var wage_missing := wage > 0 and treasury.balance(settlement_id) - reserve < wage
+		var material_plan := recipes.plan_inputs(profile, actor_id, fact_id, _tick_value(tick_event)) if structured_work else {"ok": true}
+		var proposed_resources := available_resources.duplicate() if structured_work else available_resources
 		var resource_plan := {"ok": false, "missing": {"label": "可支付薪酬", "amount": wage,
-			"available": maxi(treasury.balance(settlement_id) - reserve, 0), "denial": "treasury_insufficient"}} if wage_missing else _resource_plan(profile, available_resources, snapshot, actor_id)
+			"available": maxi(treasury.balance(settlement_id) - reserve, 0), "denial": "treasury_insufficient"}} if wage_missing else (
+			material_plan if not material_plan.ok else _resource_plan(profile, proposed_resources, snapshot, actor_id))
 		if not bool(resource_plan.get("ok", false)):
 			var blocked_resource: Dictionary = resource_plan.get("missing", {})
 			var blocked_count_for_actor := int(snapshot.get_entity_state(
@@ -118,7 +136,7 @@ func resolve_work_tick(
 				"actor_id": actor_id,
 				"settlement_id": settlement_id,
 				"location_id": str(profile.get("workplace_id", "")),
-				"work_kind": "subsistence" if foraging else "occupation",
+				"work_kind": "subsistence" if foraging else ("maintenance" if maintaining else "occupation"),
 				"hour": int(tick_event.get("hour", 0)),
 				"occupation_id": occupation_id,
 				"stock_id": str(blocked_resource.get("stock_id", "")),
@@ -132,13 +150,13 @@ func resolve_work_tick(
 				"tick_event_id": str(tick_event.get("tick_event_id", "")),
 				"summary": "%s未开工：%s。没有扣取生产投入或发放物品。" % [
 					str(actor.get("display_name", actor_id)),
-					"聚落可支付的薪酬不足" if wage_missing else ("没有该资源的生产使用权" if str(blocked_resource.get("denial", "")) != "" else str(blocked_resource.get("label", "生产资源")) + "不足"),
+					"聚落可支付的薪酬不足" if wage_missing else ((_work_denial_label(str(blocked_resource.get("denial", ""))) if structured_work else "没有该资源的生产使用权") if str(blocked_resource.get("denial", "")) != "" else str(blocked_resource.get("label", "生产资源")) + "不足"),
 				],
 			})
 			result.add_state_change({
 				"entity_id": actor_id,
 				"key": elapsed_key,
-				"to": elapsed - interval,
+				"to": 0 if structured_work else elapsed - interval,
 			})
 			result.add_state_change({
 				"entity_id": actor_id,
@@ -157,6 +175,12 @@ func resolve_work_tick(
 			})
 			blocked_count += 1
 			continue
+		if elapsed < interval:
+			result.add_state_change({"entity_id": actor_id, "key": elapsed_key, "to": elapsed})
+			continue
+		if structured_work:
+			available_resources = proposed_resources
+			recipes.append_inputs(result, material_plan)
 
 		var cycle_count := int(snapshot.get_entity_state(
 			actor_id, "livelihood_cycle_count", 0
@@ -182,7 +206,9 @@ func resolve_work_tick(
 				"created_tick": _tick_value(tick_event), "settled_tick": _tick_value(tick_event)})
 		var products: Array = profile.get("products", [])
 		var product_rows: Array = []
-		for product_index: int in range(products.size()):
+		if structured_work:
+			product_rows = recipes.append_products(result, profile, actor_id, storage_config, fact_id, _tick_value(tick_event))
+		for product_index: int in range(0 if structured_work else products.size()):
 			var product: Dictionary = products[product_index]
 			var item_def_id := str(product.get("item_def_id", ""))
 			var quantity := maxi(int(product.get("quantity", 1)), 1)
@@ -206,10 +232,10 @@ func resolve_work_tick(
 
 		var production_fact := {
 			"fact_id": fact_id,
-			"fact_type": "npc_livelihood_produced",
+			"fact_type": "npc_work_maintained" if maintaining else "npc_livelihood_produced",
 			"actor_id": actor_id,
 			"location_id": str(profile.get("workplace_id", "")),
-			"work_kind": "subsistence" if foraging else "occupation",
+			"work_kind": "subsistence" if foraging else ("maintenance" if maintaining else "occupation"),
 			"occupation_id": occupation_id,
 			"livelihood_cycle_count": cycle_count,
 			"products": product_rows,
@@ -227,13 +253,39 @@ func resolve_work_tick(
 			if foraging:
 				production_fact["summary"] = "%s在这里花了 %d 小时采得 %d 份口粮，实际消耗公用作业资源。食物先由本人携带，家人还没收到。" % [actor.display_name, interval, products[0].quantity]
 			if FoodStorage.enabled(storage_config) and FoodStorage.stock_holder(snapshot, actor_id) != "" \
-					and not products.is_empty() and products[0].get("item_def_id") in FoodStorage.FOOD_IDS:
+					and not products.is_empty() and FoodStorage.stores_definition(str(products[0].get("item_def_id", "")), storage_config):
 				production_fact["stock_entity_id"] = FoodStorage.stock_holder(snapshot, actor_id)
 				production_fact["summary"] = "%s完成采收，%d 份产物存入作业地粮堆，没有自动带回家。" % [actor.get("display_name", actor_id), products[0].quantity]
 			production_fact["hour"] = int(tick_event.get("hour", 0))
 			production_fact["work_hours"] = interval
 			production_fact["actual_location_id"] = str(snapshot.get_entity_state(actor_id, "location_id", ""))
 			production_fact["source_fact_ids"] = [str(snapshot.get_entity_state(actor_id, "daily_presence_fact_id", ""))]
+		if structured_work:
+			production_fact["recipe_id"] = profile.work_recipe.recipe_id
+			production_fact["item_inputs"] = material_plan.inputs
+			production_fact["tools_used"] = material_plan.tools
+			production_fact["repairs"] = material_plan.repairs
+			var sources: Array = production_fact.get("source_fact_ids", [])
+			var decisions: Array = snapshot.get_facts_by_actor(actor_id)
+			for index: int in range(decisions.size() - 1, -1, -1):
+				var decision: Dictionary = decisions[index]
+				if decision.get("actor_id") == actor_id and decision.get("choice_version") == 1 \
+						and decision.get("goal_location_id") == profile.workplace_id:
+					sources.append(str(decision.fact_id))
+					break
+			for source: String in material_plan.source_fact_ids:
+				if source not in sources:
+					sources.append(source)
+			production_fact["source_fact_ids"] = sources
+			var output_labels: Array[String] = []
+			for row: Dictionary in product_rows:
+				output_labels.append("%s × %d" % [registry.get_definition("item", str(row.item_def_id)).get("display_name", row.item_def_id), row.quantity])
+			production_fact["summary"] = "%s花了%d小时完成%s，%s留在%s。" % [actor.get("display_name", actor_id), interval,
+				profile.get("label", "作业"), "、".join(output_labels), "现场货柜" if production_fact.has("stock_entity_id") else "本人行囊"]
+			for tool: Dictionary in material_plan.tools:
+				production_fact.summary += "%s磨损%d，剩余耐久%d。" % [registry.get_definition("item", str(tool.item_def_id)).get("display_name", "工具"), tool.wear, tool.remaining_durability]
+			if maintaining:
+				production_fact["summary"] = "%s花了%d小时和实际材料修补旧工具，恢复部分耐久。修补次数有限，之后仍需换新。" % [actor.display_name, interval]
 		result.add_fact(production_fact)
 		result.add_state_change({
 			"entity_id": actor_id,
@@ -283,6 +335,23 @@ func resolve_work_tick(
 		})
 	result.mark_resolved("npc_livelihood_work")
 	return {"results": [result], "events": events}
+
+
+func _work_denial_label(reason: String) -> String:
+	match reason:
+		"work_tool_missing_or_worn":
+			return "缺少可用工具，现有工具可能已经磨损耗尽"
+		"work_item_input_missing":
+			return "手边和自己的现场货柜中没有足够的作业材料"
+		"worker_not_at_worksite":
+			return "本人尚未到达作业地点"
+		"no_repairable_owned_tool":
+			return "没有还能修补的自有工具"
+		"resource_shortage":
+			return "现场原料不足"
+		"resident_use_denied", "resource_use_denied", "resource_access_denied":
+			return "没有该资源的生产使用权"
+	return "当前作业条件不满足，详细原因见记录"
 
 
 func resolve_household_support(
