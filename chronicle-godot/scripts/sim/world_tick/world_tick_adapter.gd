@@ -59,6 +59,8 @@ const OrganizationLifecycleSystemModel = preload(
 const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/transaction_world_writer.gd")
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
+const CommunityLife = preload("res://scripts/sim/npc/community_life.gd")
+const Community = preload("res://scripts/sim/organization/local_cooperation.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
@@ -318,6 +320,13 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 					return _failure_result(event, "household_observation_rejected", stores)
 				livelihood_results.append_array(observations.results)
 				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			var community_config: Dictionary = daily_life_config.get("community_rules", {})
+			if community_config.get("version", 0) == 1:
+				var local_observation := CommunityLife.new().observe(activity_snapshot, round_event, community_config, daily_life_config.get("food_access", {}).get("household_budget", {}))
+				if not writer.apply_results(local_observation.results, stores):
+					return _failure_result(event, "community_observation_rejected", stores)
+				livelihood_results.append_array(local_observation.results)
+				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 			var activity_data: Dictionary = DailyLife.new().resolve_tick(activity_snapshot, round_event,
 				daily_life_config, settlement_network_config, context.locations, daily_life_routes,
 				IndustryCatalog.profiles(activity_snapshot, npc_livelihood_profiles), registry)
@@ -326,6 +335,19 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				return _failure_result(event, "resident_activity_rejected", stores)
 			livelihood_results.append_array(activity_results)
 			livelihood_events.append_array(activity_data.get("events", []))
+			if community_config.get("version", 0) == 1:
+				var conversation_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+				var conversations := CommunityLife.new().converse(conversation_snapshot, round_event, community_config)
+				if not writer.apply_results(conversations.results, stores):
+					return _failure_result(event, "community_conversation_rejected", stores)
+				livelihood_results.append_array(conversations.results)
+				livelihood_events.append_array(conversations.events)
+				var policy_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+				var policies := Community.new().resolve_tick(policy_snapshot, round_event, community_config)
+				if not writer.apply_results(policies.results, stores):
+					return _failure_result(event, "community_policy_rejected", stores)
+				livelihood_results.append_array(policies.results)
+				livelihood_events.append_array(policies.events)
 			if int(daily_life_config.get("activity_choice", {}).get("version", 0)) == 1:
 				for actor: Dictionary in activity_snapshot.get_entities_by_type("person"):
 					if stores.state_store.get_state(str(actor.id), "daily_intent_id", "") != "work_supply" \
@@ -372,7 +394,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				var route_finder := func(start: String, goal: String) -> Dictionary: return routing._next_edge(haul_routes, start, goal)
 				for carrier: Dictionary in haul_snapshot.get_entities_by_type("person"):
 					var hauling := FoodHauling.new().plan_contact(haul_snapshot, carrier, round_event, hauling_config, family_config, stores, route_finder,
-						daily_life_config.get("food_access", {}).get("household_budget", {}))
+						daily_life_config.get("food_access", {}).get("household_budget", {}), daily_life_config.get("community_rules", {}))
 					if hauling.has("error"):
 						return _failure_result(event, str(hauling.error), stores)
 					if not hauling.has("transaction"):

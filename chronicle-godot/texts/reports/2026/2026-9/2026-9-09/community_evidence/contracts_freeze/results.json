@@ -1,0 +1,26 @@
+[
+  {
+    "Test": "tests/rebuild/community_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.05,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/community_assistance_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.58,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/community_life_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.54,
+    "UnexpectedErrors": []
+  }
+]

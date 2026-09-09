@@ -5,6 +5,7 @@ const Market = preload("res://scripts/sim/economy/market_service.gd")
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Carting = preload("res://scripts/sim/economy/resident_food_carting.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
+const CommunityKnowledge = preload("res://scripts/sim/npc/community_knowledge.gd")
 const PROFILE := {"version": 1, "shopping_start_hour": 12, "shopping_end_hour": 17,
 	"target_portions": 2, "seller_retained_portions": 2, "retry_hours": 6,
 	"adjacent_supply_known": true,
@@ -65,7 +66,7 @@ static func needs_food(actor: Dictionary, items: Array) -> bool:
 		and food_quantity(items, str(actor.id)) == 0
 
 
-static func known_supply_locations(snapshot: Variant, actor: Dictionary, profiles: Array, network: Dictionary = {}, config: Dictionary = {}) -> Array:
+static func known_supply_locations(snapshot: Variant, actor: Dictionary, profiles: Array, network: Dictionary = {}, config: Dictionary = {}, tick: Dictionary = {}) -> Array:
 	# A resident knows local occupations, not remote inventories or live offers.
 	var sites: Array = []
 	var neighboring_sites: Array = []
@@ -103,6 +104,11 @@ static func known_supply_locations(snapshot: Variant, actor: Dictionary, profile
 					sites.append(stall)
 	neighboring_sites.sort()
 	sites.append_array(neighboring_sites)
+	if CommunityKnowledge.enabled(config.get("community_rules", {})):
+		var now := CommunityKnowledge.hour(snapshot.world_time if tick.is_empty() else tick)
+		for report: Dictionary in CommunityKnowledge.supply_reports(snapshot, str(actor.id), now):
+			if report.location_id not in sites:
+				sites.append(str(report.location_id))
 	return sites
 
 
@@ -176,7 +182,7 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 			if depot != "" and snapshot.get_entity_state(depot, "location_id", "") == location:
 				holders.append(depot)
 		for holder: String in holders:
-			offers.append_array(_seller_offers(snapshot, seller, buyer, holder, location, config, stores, reservations, carting))
+			offers.append_array(_seller_offers(snapshot, seller, buyer, holder, location, config, stores, reservations, carting, tick))
 	offers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if int(a.unit_price) != int(b.unit_price):
 			return int(a.unit_price) < int(b.unit_price)
@@ -187,7 +193,27 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 		if str(states.get("daily_activity", "")) != "seeking_food" \
 				or recently_failed(snapshot, buyer, location, tick, config):
 			return {}
-		return _unmet(actor, location, "no_local_surplus", tick)
+		var refusal_sources: Array = []
+		if CommunityKnowledge.enabled(config.get("community_rules", {})):
+			var without_policy := config.duplicate(true)
+			without_policy.erase("community_rules")
+			for seller: Dictionary in snapshot.get_entities_by_type("person"):
+				if seller.id == buyer or not snapshot.is_entity_active(str(seller.id)) or not bool(seller.states.get("alive", true)) or seller.states.get("life_status", "alive") != "alive" or seller.states.get("location_id") != location or seller.states.get("daily_route_id", "") != "" or seller.states.get("settlement_id") == states.get("settlement_id"):
+					continue
+				var policy := CommunityKnowledge.known_policy(snapshot, str(seller.id), _hour(tick))
+				if policy.get("payload", {}).get("policy") == "reserve":
+					var holders := [str(seller.id)]
+					var depot := FoodStorage.stock_holder(snapshot, str(seller.id))
+					if depot != "" and snapshot.get_entity_state(depot, "location_id", "") == location:
+						holders.append(depot)
+					for holder: String in holders:
+						if not _seller_offers(snapshot, seller, buyer, holder, location, without_policy, stores, reservations, carting, tick).is_empty():
+							refusal_sources.append(str(policy.source_fact_id))
+							break
+		if refusal_sources.is_empty():
+			return _unmet(actor, location, "no_local_surplus", tick)
+		return _unmet(actor, location, "community_reserve" if not refusal_sources.is_empty() else "no_local_surplus", tick,
+			{"source_fact_ids": refusal_sources})
 	var offer: Dictionary = offers[0]
 	var price := int(offer.unit_price)
 	if money < price:
@@ -202,6 +228,10 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 				return {}
 			return _unmet(actor, location, "carting_load_unaffordable", tick, {"available_coins": money, "unit_price": price})
 	var source_ids: Array = family_request.get("source_fact_ids", []).duplicate()
+	if CommunityKnowledge.enabled(config.get("community_rules", {})):
+		source_ids.append_array(CommunityKnowledge.sources_at(snapshot, buyer, location, _hour(tick)))
+		if offer.has("community_policy_source"):
+			source_ids.append(str(offer.community_policy_source))
 	var stock_entity := str(offer.policy.get("stock_entity_id", offer.policy.seller_entity_id))
 	if stock_entity != str(offer.policy.seller_entity_id):
 		var origin := str(stores.item_store.get_item(str(offer.item_instance_id)).get("provenance", {}).get("created_by_fact_id", ""))
@@ -253,12 +283,17 @@ func plan_purchase(snapshot: Variant, actor: Dictionary, tick: Dictionary,
 
 
 func _seller_offers(snapshot: Variant, seller: Dictionary, buyer: String, holder: String, location: String,
-		config: Dictionary, stores: Dictionary, reservations: Dictionary, carting: bool) -> Array:
+		config: Dictionary, stores: Dictionary, reservations: Dictionary, carting: bool, tick: Dictionary = {}) -> Array:
 	var id := str(seller.id)
 	var offers: Array = []
 	var cart_config: Dictionary = config.get("carting", {})
 	var total_food := food_quantity(stores.item_store.list_items_for_owner(holder), holder)
 	var retained := maxi(int(config.get("seller_retained_portions", 2)), int(reservations.get(id, 0)))
+	var community_policy: Dictionary = {}
+	if CommunityKnowledge.enabled(config.get("community_rules", {})) and seller.states.get("settlement_id") != snapshot.get_entity_state(buyer, "settlement_id", ""):
+		community_policy = CommunityKnowledge.known_policy(snapshot, id, _hour(snapshot.world_time if tick.is_empty() else tick))
+		if not community_policy.is_empty():
+			retained = maxi(int(community_policy.payload.retained_portions), int(reservations.get(id, 0)))
 	if Carting.is_carter(seller, cart_config):
 		if carting:
 			return []
@@ -279,6 +314,8 @@ func _seller_offers(snapshot: Variant, seller: Dictionary, buyer: String, holder
 			continue
 		offer["surplus"] = mini(int(offer.available_quantity), total_food - retained)
 		offer["policy"] = policy
+		if not community_policy.is_empty():
+			offer["community_policy_source"] = str(community_policy.source_fact_id)
 		if Carting.is_carter(seller, cart_config):
 			var acquisition := Carting.purchase_source(snapshot, item, id)
 			if not acquisition.is_empty():
@@ -302,6 +339,8 @@ func _unmet(actor: Dictionary, location: String, reason: String, tick: Dictionar
 		"summary": "%s没买到食物：%s。" % [actor.get("display_name", actor.id),
 			"在场的人没有可出售的余粮" if reason == "no_local_surplus" else "有货，但手里的铜币不够"]}
 	fact.merge(extra, true)
+	if reason == "community_reserve":
+		fact.summary = "%s没能在这里买到粮：在场卖方听说本地仍有人缺粮，按互助约定先留口粮；需要另找供给或等新消息。" % actor.get("display_name", actor.id)
 	result.add_fact(fact)
 	result.mark_resolved("resident_food_purchase_unmet")
 	return {"transaction": result, "event": fact}

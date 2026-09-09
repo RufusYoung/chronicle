@@ -14,6 +14,10 @@ func _run() -> void:
 	var mode := args[0] if not args.is_empty() else "batch12"
 	var seed := int(args[1]) if args.size() > 1 else 81001
 	var days := int(args[2]) if args.size() > 2 else 7
+	if mode.begins_with("-") or seed <= 0 or days not in range(1, 31):
+		push_error("Usage: food_economy_probe.gd -- MODE SEED DAYS (1..30)")
+		quit(1)
+		return
 	var model := Live.new()
 	var scenario := "echo_realm" if mode.begins_with("canon") else "generated_network"
 	var options := {"scenario": scenario, "challenge_seed_override": seed}
@@ -31,9 +35,11 @@ func _run() -> void:
 		return
 	if mode.begins_with("canon_livelihood"):
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1, "resident_subsistence_version": 1})
-	if mode.begins_with("canon_work"):
+	if mode.begins_with("canon_work") or mode.begins_with("canon_community"):
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
 			"household_food_budget_version": 1, "resident_subsistence_version": 1, "work_rules_version": 1})
+	if mode.begins_with("canon_community"):
+		options["community_rules_version"] = 1
 	if mode == "canon_livelihood_without_subsistence":
 		options["resident_subsistence_version"] = 0
 	if mode in ["canon_without_family", "canon_without_carting"]:
@@ -45,6 +51,20 @@ func _run() -> void:
 		quit(1)
 		return
 	var fixture: Dictionary = model.session.fixture_source_data.duplicate(true)
+	if mode.begins_with("canon_community_without_"):
+		var disabled := ""
+		for mechanism: String in ["messages", "policy", "social"]:
+			if mode.begins_with("canon_community_without_" + mechanism + "_"):
+				disabled = mechanism + "_enabled"
+		if disabled == "":
+			push_error("Unknown community ablation")
+			quit(1)
+			return
+		for config: Dictionary in [fixture.community_rules, fixture.resident_daily_life.community_rules, fixture.resident_daily_life.food_access.community_rules]:
+			config[disabled] = false
+		fixture.known_facts.append({"fact_id": "test_injection." + mode, "fact_type": "test_injection",
+			"summary": "测试注入：关闭一种交往机制，保持初始人物、钱物与地点不变。", "disabled_mechanism": disabled})
+		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "explicit same-source community ablation")
 	if mode.begins_with("canon_work_without"):
 		if mode.begins_with("canon_work_without_repair"):
 			fixture.resident_daily_life.maintenance_profiles = []
@@ -116,6 +136,8 @@ func _run() -> void:
 		_check(ok, "day_%d" % day)
 		rows.append({"elapsed_days": day, "simulation_ms": (Time.get_ticks_usec() - began) / 1000.0})
 		print("FOOD_ECONOMY_DAY %s %d" % [mode, day])
+		if mode.begins_with("canon_community") and day < days and day % 7 == 0:
+			_check(model.save_to_path(output + "/day%d.json" % day, true).success, "weekly diagnostic checkpoint")
 	var checkpoint := output + "/day%d.json" % days
 	_check(model.save_to_path(checkpoint, true).success, "native save")
 	_check(model.session.validate_persistent_references().ok, "references")
@@ -127,9 +149,18 @@ func _run() -> void:
 		quit(1)
 		return
 	var metadata := {"scope_type": "global", "scope_id": "", "source": "passive_food_probe"}
-	_check(model.session.advance_time(1, "continuation", metadata).success, "continuation")
-	_check(restored.session.advance_time(1, "continuation", metadata).success, "restored continuation")
+	var continued: Dictionary = model.session.advance_time(1, "continuation", metadata)
+	var restored_continued: Dictionary = restored.session.advance_time(1, "continuation", metadata)
+	_check(continued.success, "continuation")
+	_check(restored_continued.success, "restored continuation")
+	if not continued.success or not restored_continued.success:
+		print("FOOD_ECONOMY_CONTINUATION_FAILURE " + JSON.stringify({"source": continued, "restored": restored_continued}))
 	_check(_signature(model) == _signature(restored), "native precision continuation equal")
+	if _signature(model) != _signature(restored):
+		for pair: Array in [["source", model], ["restored", restored]]:
+			var diagnostic := FileAccess.open(output + "/continuation_" + str(pair[0]) + ".json", FileAccess.WRITE)
+			diagnostic.store_string(_signature(pair[1]))
+			diagnostic.close()
 	_check(model.session.action_count == 0 and model.session.travel_count == 0, "no actor actions")
 	var file := FileAccess.open(output + "/result.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"mode": mode, "scenario": scenario, "seed": seed, "elapsed_days": days, "rows": rows,
@@ -145,11 +176,11 @@ func _run() -> void:
 
 
 func _scope(mode: String) -> String:
-	if mode.begins_with("canon_work_without"):
+	if mode.begins_with("canon_work_without") or mode.begins_with("canon_community_without"):
 		return "Passive counterexample with explicit initial mechanism ablation; no actor actions"
 	if mode in ["canon_without_family", "canon_without_carting", "canon_budget_without_hauling", "canon_livelihood_withdraw_reopen", "canon_livelihood_without_subsistence", "canon_livelihood_without_affordability", "local_only"]:
 		return "Passive counterexample with explicitly disabled rule; no actor actions"
-	for prefix: String in ["canon_depot", "canon_carting", "canon_haul", "canon_budget", "canon_cooperation", "canon_livelihood", "canon_work", "batch"]:
+	for prefix: String in ["canon_depot", "canon_carting", "canon_haul", "canon_budget", "canon_cooperation", "canon_livelihood", "canon_work", "canon_community", "batch"]:
 		if mode.begins_with(prefix):
 			return "Passive opt-in configuration experiment; no actor actions"
 	return "Passive default world; no actor actions"

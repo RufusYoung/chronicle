@@ -55,6 +55,14 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 		if hours >= 100000 or row.goal == "":
 			continue
 		var factors := {"purpose": int(config.weights[row.kind]), "travel": -hours * int(config.travel_cost)}
+		if row.kind == "social":
+			factors["company_need"] = mini(int(row.get("social_need", 0)), 30)
+			factors["liaison"] = 8 if bool(row.get("representative", false)) else 0
+			factors["carried_news"] = 28 if bool(row.get("dispatch", false)) else 0
+			factors["unmet_food"] = -30 if bool(row.get("unmet_food", false)) else 0
+		if row.kind == "aid":
+			factors["trust"] = mini(int(row.get("aid_trust", 0)), 12)
+			factors["temperament"] = int({"cautious": -16, "reserved": -8, "sociable": 6}.get(str(states.get("temperament", "steady")), 0))
 		if row.kind == "rest" and not bool(row.get("mandatory_rest", false)):
 			factors["optional_rest"] = -int(config.optional_rest_discount)
 		if row.kind in ["food", "forage"] and need_food:

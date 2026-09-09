@@ -8,10 +8,13 @@ const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const Carting = preload("res://scripts/sim/economy/resident_food_carting.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const Hauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
+const Assistance = preload("res://scripts/sim/npc/community_assistance.gd")
 const Budget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 const Choice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
+const CommunityLife = preload("res://scripts/sim/npc/community_life.gd")
+const CommunityKnowledge = preload("res://scripts/sim/npc/community_knowledge.gd")
 const STATE_KEYS := ["daily_life_version", "daily_activity", "daily_activity_reason", "daily_goal_id",
 	"daily_workplace_id", "daily_route_id", "daily_destination_id", "daily_travel_remaining",
 	"daily_departure_fact_id", "daily_presence_fact_id"]
@@ -131,7 +134,9 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 				goal = supply
 				activity = "seeking_food"
 				reason = "没有口粮，带钱寻找已知供给" if family.is_empty() else "记得%s缺粮，带自己的钱去采购" % family.names
-				decision_sources = family.get("source_fact_ids", [])
+				decision_sources = family.get("source_fact_ids", []).duplicate()
+				if CommunityKnowledge.enabled(food_config.get("community_rules", {})):
+					decision_sources.append_array(CommunityKnowledge.sources_at(snapshot, id, supply, CommunityKnowledge.hour(tick)))
 				if use_choice:
 					Choice.propose(proposals, "food", goal, activity, reason, decision_sources, decision_intent)
 			var subsistence_config: Dictionary = food_config.get("subsistence", {})
@@ -177,12 +182,14 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 				decision_sources = family.source_fact_ids
 				if use_choice:
 					Choice.propose(proposals, "care", goal, activity, reason, decision_sources, decision_intent)
-			if Hauling.is_carrier(actor, haul_config):
+			if Hauling.is_carrier(actor, haul_config) or not Hauling.active_order(snapshot, id).is_empty():
 				var order := Hauling.active_order(snapshot, id)
 				if not order.is_empty():
 					goal = str(order.origin_location_id if order.status == "returning" else order.destination_location_id)
 					activity = "working"
 					reason = "携带未交出的托运粮食和封存运费返回" if order.status == "returning" else "把受托粮食送到约定家人手中，之后才能领取运费"
+					if order.get("self_delivery", false):
+						reason = "把未能送出的自有口粮带回作业地" if order.status == "returning" else "亲自把答应援助的口粮送到邻聚落的粮柜，没有运费收入"
 					decision_sources = order.source_fact_ids
 					decision_intent = "food_hauling"
 					if use_choice:
@@ -204,6 +211,14 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 					if use_choice:
 						Choice.propose(proposals, "seek_work", goal, activity, reason, [], "")
 		if use_choice:
+			if not must_rest:
+				var committed := proposals.any(func(row: Dictionary) -> bool: return row.kind in ["care", "haul"])
+				if not committed:
+					proposals.append_array(Assistance.proposals(snapshot, actor, tick, config.get("community_rules", {}), food_config.get("household_budget", {})))
+					var visits := CommunityLife.proposals(snapshot, actor, tick, config.get("community_rules", {}), network)
+					for visit: Dictionary in visits:
+						visit["unmet_food"] = FoodAccess.needs_food(actor, food_items) or proposals.any(func(row: Dictionary) -> bool: return row.kind in ["food", "forage"] and not row.source_fact_ids.is_empty())
+					proposals.append_array(visits)
 			if not must_rest and on_shift:
 				var demand := WorkOpportunities.need(snapshot, actor, profiles)
 				if not demand.is_empty():
@@ -383,17 +398,28 @@ func _food_goal(snapshot: Variant, actor: Dictionary, routes: Array, profiles: A
 				and FoodAccess.is_food_producer(profile):
 			if not profile.has("work_recipe") or not WorkOpportunities.knows_work_blocked(snapshot, actor, profile, tick):
 				return ""
-	var cache_key := own_settlement + (".cart" if Carting.is_carter(actor, config.get("carting", {})) else "")
+	var individual_knowledge := CommunityKnowledge.enabled(config.get("community_rules", {}))
+	var cache_key := str(actor.id) if individual_knowledge else own_settlement + (".cart" if Carting.is_carter(actor, config.get("carting", {})) else "")
 	if not known_supply_cache.has(cache_key):
-		known_supply_cache[cache_key] = FoodAccess.known_supply_locations(snapshot, actor, profiles, network, config)
+		known_supply_cache[cache_key] = FoodAccess.known_supply_locations(snapshot, actor, profiles, network, config, tick)
 	var sites: Array = known_supply_cache[cache_key].duplicate()
-	if Carting.enabled(config.get("carting", {})):
+	if individual_knowledge:
+		var costs := {}
+		for site: String in sites:
+			var distance := 0 if site == location else int(_next_edge(routes, location, site).get("total_hours", 100000))
+			var reports := CommunityKnowledge.supply_reports(snapshot, str(actor.id), CommunityKnowledge.hour(tick)).filter(func(m: Dictionary) -> bool: return m.location_id == site)
+			# Recent positive testimony is worth checking before another merely familiar empty site.
+			costs[site] = distance * 3 - (18 if not reports.is_empty() else 0)
+		sites.sort_custom(func(a: String, b: String) -> bool: return costs[a] < costs[b] if costs[a] != costs[b] else a < b)
+	elif Carting.enabled(config.get("carting", {})):
 		var distances := {}
 		for site: String in sites:
 			distances[site] = 0 if site == location else int(_next_edge(routes, location, site).get("total_hours", 100000))
 		sites.sort_custom(func(a: String, b: String) -> bool:
 			return int(distances[a]) < int(distances[b]) if distances[a] != distances[b] else a < b)
 	for site: String in sites:
+		if individual_knowledge and FoodAccess.recently_failed(snapshot, str(actor.id), site, tick, config):
+			continue
 		if Carting.enabled(config.get("carting", {})) and FoodAccess.recently_failed(snapshot, str(actor.id), site, tick, config):
 			continue
 		if FoodAccess.known_unaffordable(snapshot, str(actor.id), site, FoodAccess.balance(items, str(actor.id)), tick, config):

@@ -87,6 +87,8 @@ const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd
 const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 const WorkRules = preload("res://scripts/sim/economy/work_rules_setup.gd")
+const Community = preload("res://scripts/sim/organization/local_cooperation.gd")
+const CommunityKnowledge = preload("res://scripts/sim/npc/community_knowledge.gd")
 const ActivityChoice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
@@ -238,6 +240,10 @@ func start_from_fixture_path(
 		if not FoodAccess.enabled(fixture.get("resident_daily_life", {}).get("food_access", {})):
 			return _start_failure("subsistence_requires_food_access")
 		fixture.resident_daily_life.food_access["subsistence"] = Subsistence.PROFILE.duplicate(true)
+	if options.get("community_rules_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_community_rules_version")
+	if options.get("community_rules_version", 0) == 1:
+		fixture["community_rules"] = Community.PROFILE.duplicate(true)
 	if options.get("work_rules_version", 0) not in [0, 1]:
 		return _start_failure("unsupported_work_rules_version")
 	if options.get("work_rules_version", 0) == 1:
@@ -262,6 +268,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		return _start_failure("fixture_not_loaded")
 	if not fixture.get("work_rules", {}) is Dictionary:
 		return _start_failure("work_rules_not_dictionary")
+	var community_error := Community.validate(fixture.get("community_rules", {}))
+	if community_error != "":
+		return _start_failure(community_error)
 	fixture = fixture.duplicate(true)
 	var canon_result := CanonWorld.prepare(fixture)
 	if not canon_result.ok:
@@ -380,6 +389,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	if work_rules_error != "":
 		return _start_failure(work_rules_error)
 	FoodStorage.configure_fixture(fixture, registry)
+	community_error = Community.configure(fixture)
+	if community_error != "":
+		return _start_failure(community_error)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -1813,7 +1825,7 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 	var migrated_store_data: Variant = _migrate_store_save_data(
 		envelope.get("stores", {}), manifest_report.get("migrations", [])
 	)
-	var store_report := _load_store_save_data(migrated_store_data)
+	var store_report := _load_store_save_data(migrated_store_data, CommunityKnowledge.hour(envelope.get("world_time", {})))
 	if not bool(store_report.get("ok", false)):
 		_reset_runtime()
 		return store_report
@@ -2195,7 +2207,7 @@ func _store_save_data() -> Dictionary:
 	}
 
 
-func _load_store_save_data(data: Variant) -> Dictionary:
+func _load_store_save_data(data: Variant, restored_hour: int = -1) -> Dictionary:
 	if not data is Dictionary:
 		return _save_failure("save_stores_not_dictionary", "stores")
 	var source := data as Dictionary
@@ -2239,7 +2251,7 @@ func _load_store_save_data(data: Variant) -> Dictionary:
 				],
 				"stores"
 			)
-	return _validate_save_references()
+	return _validate_save_references(restored_hour)
 
 
 func _validate_definition_manifest(value: Variant) -> Dictionary:
@@ -2335,7 +2347,10 @@ func _migrate_store_save_data(value: Variant, migrations: Variant) -> Variant:
 	return migrated
 
 
-func _validate_save_references() -> Dictionary:
+func _validate_save_references(restored_hour: int = -1) -> Dictionary:
+	var community_error := Community.validate_references(fixture_source_data, stores, context.locations)
+	if community_error != "":
+		return _save_failure(community_error, "references")
 	var custody_error := FoodHauling.validate_custody(stores)
 	if custody_error != "":
 		return _save_failure(custody_error, "references")
@@ -2423,6 +2438,9 @@ func _validate_save_references() -> Dictionary:
 					"references"
 				)
 	for memory: Dictionary in stores["memory_store"].to_save_data():
+		var community_memory_error := CommunityKnowledge.validate_memory(memory, stores, context.locations, fixture_source_data.get("community_rules", {}), restored_hour if restored_hour >= 0 else CommunityKnowledge.hour(get_time_summary()))
+		if community_memory_error != "":
+			return _save_failure(community_memory_error, "references")
 		var family_memory_error := FamilyFood.validate_memory(memory, stores, context.locations)
 		if family_memory_error != "":
 			return _save_failure(family_memory_error, "references")

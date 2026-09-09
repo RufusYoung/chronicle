@@ -6,6 +6,7 @@ const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
 const Family = preload("res://scripts/sim/npc/household_provisioning.gd")
 const Storage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const Budget = preload("res://scripts/sim/economy/household_food_budget.gd")
+const Assistance = preload("res://scripts/sim/npc/community_assistance.gd")
 const TYPE := "household_food_hauling"
 const PROFILE := {"version": 1, "fee": 4, "maximum_hours": 4, "deadline_hours": 18,
 	"retry_hours": 6, "payer_reserve": 1, "maximum_portions": 4}
@@ -59,12 +60,23 @@ static func recently_visited(snapshot: Variant, carrier: String, place: String, 
 
 
 func plan_contact(snapshot: Variant, carrier: Dictionary, tick: Dictionary, config: Dictionary,
-		family_config: Dictionary, stores: Dictionary, find_route: Callable, budget_config: Dictionary = {}) -> Dictionary:
-	if not is_carrier(carrier, config) or not _present(carrier):
+		family_config: Dictionary, stores: Dictionary, find_route: Callable, budget_config: Dictionary = {}, community_config: Dictionary = {}) -> Dictionary:
+	if not enabled(config) or not _present(carrier):
 		return {}
 	var active := active_order(snapshot, str(carrier.id))
 	if not active.is_empty():
 		return _progress(snapshot, carrier, active, tick, stores, budget_config)
+	var self_dispatch := str(carrier.states.get("daily_intent_id", "")).begins_with("community_delivery:")
+	if self_dispatch and carrier.states.get("location_id") == carrier.states.get("workplace_id"):
+		var self_config := config.duplicate(true)
+		self_config.fee = 0
+		var depot: Dictionary = snapshot.get_entity(Storage.depot_id(str(carrier.id)))
+		for need: Dictionary in Assistance.requests(snapshot, carrier, tick, community_config, budget_config):
+			if str(carrier.states.daily_intent_id) == "community_delivery:" + str(need.request_root_fact_id) and not depot.is_empty():
+				need["self_delivery"] = true
+				return _try_order(snapshot, carrier, carrier, depot, need, tick, self_config, stores, find_route)
+	if not is_carrier(carrier, config):
+		return {}
 	if not bool(config.get("allow_new_contracts", true)):
 		return {}
 	var location := str(carrier.states.get("location_id", ""))
@@ -82,63 +94,12 @@ func plan_contact(snapshot: Variant, carrier: Dictionary, tick: Dictionary, conf
 		var need := Family.request(snapshot, owner, tick, family_config)
 		if Budget.enabled(budget_config):
 			need = Budget.request(snapshot, owner, tick, budget_config)
-		if need.is_empty() or need.home_location_id == location:
-			continue
-		var route: Dictionary = find_route.call(location, str(need.home_location_id))
-		if route.is_empty() or int(route.total_hours) > int(config.maximum_hours):
-			continue
-		var targets: Array = []
-		for remembered: Dictionary in need.targets:
-			var already_sent := false
-			for order: Dictionary in snapshot.exchanges:
-				if order.get("exchange_type") == TYPE and order.get("party_a") == owner.id \
-						and Family.absolute_hour(tick) < int(order.get("deadline_tick", 0)) \
-						and remembered.target_id in order.get("recipient_ids", []):
-					already_sent = true
-			if not already_sent:
-				targets.append(str(remembered.target_id))
-		targets = targets.slice(0, int(config.maximum_portions))
-		var amount := int(need.get("pantry_portions", targets.size()))
-		var food := Storage.quantity(stores.item_store.list_items_for_owner(str(depot.id)), str(depot.id))
-		var fee := int(config.fee)
-		if targets.is_empty() or food < amount + int(config.payer_reserve) \
-				or Food.balance(stores.item_store.list_items_for_owner(str(owner.id)), str(owner.id)) < fee:
-			continue
-		var hour := Family.absolute_hour(tick)
-		var id := "exchange.food_haul.%s.%s.%d" % [owner.id, carrier.id, hour]
-		var fact_id := "fact." + id
-		var result := Result.new()
-		var escrow := {"kind": "escrow", "id": id}
-		var sources: Array = need.source_fact_ids.duplicate()
-		var remaining := amount
-		for item: Dictionary in stores.item_store.list_items_for_owner(str(depot.id)):
-			if not Food.is_food(item) or remaining <= 0:
-				continue
-			var source := str(item.get("provenance", {}).get("created_by_fact_id", ""))
-			for history: Dictionary in item.get("history", []):
-				if history.get("event_type") in ["transferred", "split_from"]:
-					source = str(history.get("fact_id", source))
-			if source != "" and source not in sources:
-				sources.append(source)
-			remaining -= int(item.quantity)
-		_move(result, stores.item_store.list_items_for_owner(str(depot.id)), amount, escrow, fact_id, hour, false)
-		_move(result, stores.item_store.list_items_for_owner(str(owner.id)), fee, escrow, fact_id, hour, true)
-		var order := {"exchange_id": id, "exchange_type": TYPE, "status": "in_transit", "party_a": owner.id,
-			"party_b": carrier.id, "origin_location_id": location, "destination_location_id": need.home_location_id,
-			"stock_entity_id": depot.id, "recipient_ids": targets, "delivered_ids": [], "fee": fee,
-			"quantity": amount, "created_tick": hour, "deadline_tick": hour + int(config.deadline_hours),
-			"source_fact_ids": [fact_id], "need_fact_ids": need.source_fact_ids}
-		if need.has("pantry_id"):
-			order["pantry_id"] = need.pantry_id
-			order["delivered_portions"] = 0
-		result.add_exchange(order)
-		var fact := _fact(fact_id, "food_hauling_accepted", carrier, tick,
-			"%s接下%s的送粮托付：把 %d 份送到%s后，才可领取已封存的 %d 枚铜币。" % [carrier.display_name, owner.display_name, amount, "家中共有粮柜" if need.has("pantry_id") else "家人手中", fee], sources)
-		fact.merge({"target_id": owner.id, "exchange_id": id, "quantity": amount, "fee": fee,
-			"destination_location_id": need.home_location_id, "recipient_ids": targets})
-		result.add_fact(fact)
-		result.mark_resolved("food_hauling_accepted")
-		return {"transaction": result, "events": [fact]}
+		var needs: Array = [need] if not need.is_empty() else []
+		needs.append_array(Assistance.requests(snapshot, owner, tick, community_config, budget_config))
+		for request: Dictionary in needs:
+			var planned := _try_order(snapshot, carrier, owner, depot, request, tick, config, stores, find_route)
+			if not planned.is_empty():
+				return planned
 	if is_worksite:
 		var fact := _fact("fact.haul_visit.%s.%d" % [carrier.id, Family.absolute_hour(tick)], "food_hauling_no_contract", carrier, tick,
 			"%s到场询问送粮差事，没有谈成具备存粮、付款能力和收货需求的托付。" % carrier.display_name)
@@ -147,6 +108,91 @@ func plan_contact(snapshot: Variant, carrier: Dictionary, tick: Dictionary, conf
 		result.mark_resolved("food_hauling_no_contract")
 		return {"transaction": result, "events": [fact]}
 	return {}
+
+
+func _try_order(snapshot: Variant, carrier: Dictionary, owner: Dictionary, depot: Dictionary, need: Dictionary,
+		tick: Dictionary, config: Dictionary, stores: Dictionary, find_route: Callable) -> Dictionary:
+	var location := str(carrier.states.location_id)
+	if need.home_location_id == location:
+		return {}
+	var route: Dictionary = find_route.call(location, str(need.home_location_id))
+	if route.is_empty() or int(route.total_hours) > int(need.get("maximum_hours", config.maximum_hours)):
+		return {}
+	var targets: Array = []
+	for remembered: Dictionary in need.targets:
+		var already_sent := false
+		for order: Dictionary in snapshot.exchanges:
+			if order.get("exchange_type") == TYPE and order.get("party_a") == owner.id \
+					and Family.absolute_hour(tick) < int(order.get("deadline_tick", 0)) \
+					and remembered.target_id in order.get("recipient_ids", []):
+				already_sent = true
+		if not already_sent:
+			targets.append(str(remembered.target_id))
+	targets = targets.slice(0, int(config.maximum_portions))
+	var amount := int(need.get("pantry_portions", targets.size()))
+	var food := Storage.quantity(stores.item_store.list_items_for_owner(str(depot.id)), str(depot.id))
+	var fee := int(config.fee)
+	if targets.is_empty() or food < amount + int(need.get("retained_portions", config.payer_reserve)) \
+			or Food.balance(stores.item_store.list_items_for_owner(str(owner.id)), str(owner.id)) < fee:
+		return {}
+	var hour := Family.absolute_hour(tick)
+	if need.get("community_withheld", false):
+		for previous: Dictionary in snapshot.get_facts_by_actor(str(owner.id)):
+			if previous.get("fact_type") == "community_aid_withheld" and previous.get("community_policy_id") == need.community_policy_id and previous.get("requester_id") == need.requester_id:
+				return {}
+		var withheld := _fact("fact.community_aid_withheld.%s.%d" % [owner.id, hour], "community_aid_withheld", owner, tick,
+			"%s能承担这次送粮，但听到的本地留粮约定尚未解除，暂不接受邻聚落的送粮请求。货与钱仍归本人。" % owner.display_name, need.source_fact_ids)
+		withheld.merge({"target_id": carrier.id, "requester_id": need.requester_id, "community_policy_id": need.community_policy_id})
+		var refusal := Result.new()
+		refusal.add_fact(withheld)
+		refusal.mark_resolved("community_aid_withheld")
+		return {"transaction": refusal, "events": [withheld]}
+	var id := "exchange.food_haul.%s.%s.%d" % [owner.id, carrier.id, hour]
+	var fact_id := "fact." + id
+	var result := Result.new()
+	var escrow := {"kind": "escrow", "id": id}
+	var sources: Array = need.source_fact_ids.duplicate()
+	var remaining := amount
+	for item: Dictionary in stores.item_store.list_items_for_owner(str(depot.id)):
+		if not Food.is_food(item) or remaining <= 0:
+			continue
+		var source := str(item.get("provenance", {}).get("created_by_fact_id", ""))
+		for history: Dictionary in item.get("history", []):
+			if history.get("event_type") in ["transferred", "split_from"]:
+				source = str(history.get("fact_id", source))
+		if source != "" and source not in sources:
+			sources.append(source)
+		remaining -= int(item.quantity)
+	_move(result, stores.item_store.list_items_for_owner(str(depot.id)), amount, escrow, fact_id, hour, false)
+	_move(result, stores.item_store.list_items_for_owner(str(owner.id)), fee, escrow, fact_id, hour, true)
+	var order := {"exchange_id": id, "exchange_type": TYPE, "status": "in_transit", "party_a": owner.id,
+		"party_b": carrier.id, "origin_location_id": location, "destination_location_id": need.home_location_id,
+		"stock_entity_id": depot.id, "recipient_ids": targets, "delivered_ids": [], "fee": fee,
+		"quantity": amount, "created_tick": hour, "deadline_tick": hour + int(config.deadline_hours),
+		"source_fact_ids": [fact_id], "need_fact_ids": need.source_fact_ids}
+	if need.has("pantry_id"):
+		order["pantry_id"] = need.pantry_id
+		order["delivered_portions"] = 0
+	if need.has("community_request_id"):
+		for key: String in ["community_request_id", "request_root_fact_id", "requester_id", "community_policy_id"]:
+			order[key] = need[key]
+	if need.get("self_delivery", false):
+		order["self_delivery"] = true
+	result.add_exchange(order)
+	var destination := "邻聚落请求者的共有粮柜" if need.has("community_request_id") else ("家中共有粮柜" if need.has("pantry_id") else "家人手中")
+	var fact := _fact(fact_id, "food_hauling_accepted", carrier, tick,
+		"%s接下%s的送粮托付：把 %d 份送到%s后，才可领取已封存的 %d 枚铜币。" % [carrier.display_name, owner.display_name, amount, destination, fee], sources)
+	fact.merge({"target_id": owner.id, "exchange_id": id, "quantity": amount, "fee": fee,
+		"destination_location_id": need.home_location_id, "recipient_ids": targets})
+	if need.has("community_request_id"):
+		fact["community_request_id"] = need.community_request_id
+		fact["requester_id"] = need.requester_id
+	if need.get("self_delivery", false):
+		fact["self_delivery"] = true
+		fact.summary = "%s决定暂放手边工作，亲自把 %d 份自有口粮送到邻聚落请求者的粮柜。货物已单独装好，只能实际送达或原路带回，没有额外报酬。" % [owner.display_name, amount]
+	result.add_fact(fact)
+	result.mark_resolved("food_hauling_accepted")
+	return {"transaction": result, "events": [fact]}
 
 
 func _progress(snapshot: Variant, carrier: Dictionary, order: Dictionary, tick: Dictionary, stores: Dictionary, budget_config: Dictionary = {}) -> Dictionary:
@@ -189,6 +235,12 @@ func _progress(snapshot: Variant, carrier: Dictionary, order: Dictionary, tick: 
 				"settled_tick": hour, "source_fact_ids": sources + [fact_id]})
 			fact = _fact(fact_id, "food_hauling_stocked", carrier, tick, "%s把 %d 份托运粮食存入约定的家庭粮柜，领取 %d 枚铜币。家人仍须回家取粮才能吃到。" % [carrier.display_name, int(order.quantity), int(order.fee)], sources)
 			fact.merge({"pantry_id": order.pantry_id, "payer_id": order.party_a, "quantity": order.quantity, "fee_paid": order.fee})
+			if order.get("self_delivery", false):
+				fact.summary = "%s亲自把 %d 份自有口粮送入约定的邻里粮柜；这趟路花了自己的时间，没有运费收入。" % [carrier.display_name, int(order.quantity)]
+			if order.has("community_request_id"):
+				fact["community_request_id"] = order.community_request_id
+				if not order.get("self_delivery", false):
+					fact.summary += " 这是%s听到请求后自愿出粮并付运费的邻里援助。" % snapshot.get_entity(str(order.party_a)).display_name
 	elif order.status == "in_transit" and place == order.destination_location_id:
 		var delivered: Array = order.delivered_ids.duplicate()
 		for recipient: String in order.recipient_ids:
@@ -252,7 +304,8 @@ static func validate_order(order: Dictionary, stores: Dictionary, locations: Dic
 	for key: String in ["party_a", "party_b", "stock_entity_id"]:
 		if not stores.entity_store.has_entity(str(order.get(key, ""))):
 			return "invalid_food_haul_party"
-	if order.party_a == order.party_b or stores.entity_store.get_entity(str(order.party_a)).get("type") != "person" \
+	var self_delivery: bool = order.get("self_delivery", false) == true
+	if (order.party_a == order.party_b and not self_delivery) or stores.entity_store.get_entity(str(order.party_a)).get("type") != "person" \
 			or stores.entity_store.get_entity(str(order.party_b)).get("type") != "person":
 		return "invalid_food_haul_party"
 	var depot: Dictionary = stores.entity_store.get_entity(str(order.stock_entity_id))
@@ -263,8 +316,11 @@ static func validate_order(order: Dictionary, stores: Dictionary, locations: Dic
 			return "invalid_food_haul_location"
 	for key: String in ["fee", "quantity", "created_tick", "deadline_tick"]:
 		var value: Variant = order.get(key)
-		if not (value is int or value is float) or int(value) < 1 or float(value) != float(int(value)):
+		var minimum := 0 if key == "fee" and self_delivery else 1
+		if not (value is int or value is float) or int(value) < minimum or float(value) != float(int(value)):
 			return "invalid_food_haul_terms"
+	if self_delivery and (order.party_a != order.party_b or order.fee != 0 or not order.has("community_request_id")):
+		return "invalid_self_food_haul_terms"
 	if not order.get("recipient_ids") is Array or not order.get("delivered_ids") is Array \
 			or order.recipient_ids.is_empty() or (not order.has("pantry_id") and order.recipient_ids.size() != int(order.quantity)) \
 			or int(order.deadline_tick) <= int(order.created_tick):
@@ -294,7 +350,37 @@ static func validate_order(order: Dictionary, stores: Dictionary, locations: Dic
 			if not source is String or stores.fact_store.get_fact(str(source)).is_empty():
 				return "invalid_food_haul_evidence"
 	var accepted: Dictionary = stores.fact_store.get_fact(str(order.source_fact_ids[0]))
-	if order.has("pantry_id"):
+	if bool(accepted.get("self_delivery", false)) != self_delivery:
+		return "invalid_self_food_haul_agreement"
+	if order.has("community_request_id"):
+		var request: Dictionary = stores.fact_store.get_fact(str(order.community_request_id))
+		var root: Dictionary = stores.fact_store.get_fact(str(order.get("request_root_fact_id", "")))
+		var policy: Dictionary = stores.fact_store.get_fact(str(order.get("community_policy_id", "")))
+		var policy_root: Dictionary = stores.fact_store.get_fact(str(policy.get("root_fact_id", policy.get("fact_id", ""))))
+		var group: Dictionary = stores.entity_store.get_entity(str(policy_root.get("subject_id", "")))
+		var terms: Dictionary = root.get("payload", {}).get("delivery_request", {})
+		if request.get("fact_type") != "community_message_heard" or request.get("actor_id") != order.party_a \
+				or request.get("root_fact_id") != root.get("fact_id") or request.get("subject_id") != order.get("requester_id") \
+				or request.fact_id not in order.need_fact_ids \
+				or terms.get("pantry_id") != order.get("pantry_id") or terms.get("home_location_id") != order.destination_location_id \
+				or not terms.has("quantity") or int(order.quantity) > int(terms.quantity) or accepted.get("community_request_id") != request.fact_id \
+				or accepted.get("requester_id") != order.requester_id:
+			return "invalid_community_food_haul_evidence"
+		if Family.absolute_hour(request) > int(order.created_tick):
+			return "invalid_community_food_haul_permission"
+		if not _known_at(stores, str(order.party_a), str(request.fact_id), int(order.created_tick)):
+			return "invalid_community_food_haul_expired_request"
+		if order.get("community_policy_id", "") != "" and (policy.get("topic") != "policy" or policy_root.get("fact_type") != "community_policy_changed" \
+				or policy.get("actor_id") != order.party_a or policy.get("fact_id") not in order.need_fact_ids \
+				or policy_root.get("payload", {}).get("policy") not in ["open", "relief"] or order.party_a not in group.get("member_ids", []) \
+				or Family.absolute_hour(policy) > int(order.created_tick)):
+			return "invalid_community_food_haul_permission"
+		if not policy.is_empty() and not _known_at(stores, str(order.party_a), str(policy.fact_id), int(order.created_tick)):
+			return "invalid_community_food_haul_expired_policy"
+		for recipient: String in order.recipient_ids:
+			if recipient not in terms.get("recipient_ids", []):
+				return "invalid_community_food_haul_recipient"
+	elif order.has("pantry_id"):
 		var witnessed := false
 		for source: String in order.need_fact_ids:
 			var observation: Dictionary = stores.fact_store.get_fact(source)
@@ -315,6 +401,15 @@ static func validate_order(order: Dictionary, stores: Dictionary, locations: Dic
 				or receipt.get("actor_id") != order.party_b or (order.status == "settled" and receipt.get("fee_paid") != order.fee):
 			return "invalid_food_haul_receipt"
 	return _validate_escrow(order, stores)
+
+
+static func _known_at(stores: Dictionary, owner: String, source: String, tick: int) -> bool:
+	for memory: Dictionary in stores.memory_store.memories:
+		if memory.get("memory_type") == "community_report" and memory.get("owner_id") == owner \
+				and memory.get("source_fact_id") == source and int(memory.get("learned_hour", tick + 1)) <= tick \
+				and tick < int(memory.get("expires_hour", -1)):
+			return true
+	return false
 
 
 static func validate_custody(stores: Dictionary) -> String:

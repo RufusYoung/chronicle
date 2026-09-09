@@ -1,0 +1,26 @@
+[
+  {
+    "Test": "tests/sim/household_food_budget_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.68,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/household_food_hauling_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.09,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/household_provisioning_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.56,
+    "UnexpectedErrors": []
+  }
+]

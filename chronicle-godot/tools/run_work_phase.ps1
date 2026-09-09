@@ -5,6 +5,9 @@ param(
     [string]$RunLabel = 'frozen3',
     [int[]]$Seeds = @(81001, 82002, 83003),
     [switch]$SkipAblations,
+    [ValidateSet('work', 'community')][string]$Framework = 'work',
+    [ValidateRange(1, 30)][int]$Days = 7,
+    [ValidateRange(30, 1800)][int]$CaseTimeoutSeconds = 900,
     [string]$OutputDirectory = ''
 )
 $ErrorActionPreference = 'Stop'
@@ -25,14 +28,21 @@ function Get-RuntimeManifest {
     }) | ConvertTo-Json -Depth 3 -Compress
 }
 $manifest = Get-RuntimeManifest
+$configuration = [ordered]@{ Framework = $Framework; Days = $Days; Seeds = @($Seeds); SkipAblations = [bool]$SkipAblations; RunLabel = $RunLabel } | ConvertTo-Json -Depth 3 -Compress
+if ($Resume -and (Get-Content -LiteralPath (Join-Path $OutputDirectory 'run_configuration.json') -Raw -Encoding UTF8).Trim() -ne $configuration) {
+    throw 'Cannot resume with different seeds, duration or mechanisms.'
+}
+$configuration | Set-Content -LiteralPath (Join-Path $OutputDirectory 'run_configuration.json') -Encoding UTF8
 if ($Resume -and (Get-Content -LiteralPath (Join-Path $OutputDirectory 'runtime_manifest.json') -Raw -Encoding UTF8).Trim() -ne $manifest) {
     throw 'Cannot resume after a runtime change.'
 }
 $manifest | Set-Content -LiteralPath (Join-Path $OutputDirectory 'runtime_manifest.json') -Encoding UTF8
-$cases = @($Seeds | ForEach-Object { @{ Mode = 'canon_work_' + $RunLabel; Seed = $_ } })
+$prefix = 'canon_' + $Framework + '_'
+$cases = @($Seeds | ForEach-Object { @{ Mode = $prefix + $RunLabel; Seed = $_ } })
 if (-not $SkipAblations) {
-    $cases += @('repair', 'supply', 'wear') | ForEach-Object {
-        @{ Mode = 'canon_work_without_' + $_ + '_' + $RunLabel; Seed = $Seeds[0] }
+    $ablations = if ($Framework -eq 'work') { @('repair', 'supply', 'wear') } else { @('messages', 'policy', 'social') }
+    $cases += $ablations | ForEach-Object {
+        @{ Mode = $prefix + 'without_' + $_ + '_' + $RunLabel; Seed = $Seeds[0] }
     }
 }
 $results = @()
@@ -46,9 +56,9 @@ foreach ($case in $cases) {
         ([string](Get-Content -LiteralPath $stderr -Raw -Encoding UTF8) -notmatch '(SCRIPT ERROR:|ERROR:)')
     $exitCode = 0
     if (-not $reuse) {
-        $process = Start-Process -FilePath $engine -ArgumentList @('--headless', '--path', ('"' + $root + '"'), '--script', 'res://tools/food_economy_probe.gd', '--', $case.Mode, $case.Seed, 7) -PassThru -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+        $process = Start-Process -FilePath $engine -ArgumentList @('--headless', '--path', ('"' + $root + '"'), '--script', 'res://tools/food_economy_probe.gd', '--', $case.Mode, $case.Seed, $Days) -PassThru -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr
         Write-Host ('RUN {0} PID={1}' -f $label, $process.Id)
-        $finished = $process.WaitForExit(300000)
+        $finished = $process.WaitForExit($CaseTimeoutSeconds * 1000)
         if (-not $finished) {
             Stop-Process -Id $process.Id -Force
             $process.WaitForExit()
@@ -59,10 +69,12 @@ foreach ($case in $cases) {
         Write-Host ('REUSE {0}: completed passive run with unchanged runtime manifest' -f $label)
     }
     $errors = [string](Get-Content -LiteralPath $stderr -Raw -Encoding UTF8)
-    $passed = $finished -and $exitCode -eq 0 -and $errors -notmatch '(SCRIPT ERROR:|ERROR:)'
+    $passed = $finished -and $exitCode -eq 0 -and $errors -notmatch '(SCRIPT ERROR:|ERROR:)' -and
+        ([string](Get-Content -LiteralPath $stdout -Raw -Encoding UTF8) -match 'FOOD_ECONOMY_RESULT PASS')
     if ($passed) {
         $directory = Join-Path $env:APPDATA ('Godot\app_userdata\CHRONICLE_GODOT\tests\food_economy_probe\' + $label)
-        & $Python (Join-Path $PSScriptRoot 'audit_work_framework.py') (Join-Path $directory 'day7.json') --output (Join-Path $OutputDirectory ($label + '.audit.json'))
+        $audit = if ($Framework -eq 'work') { 'audit_work_framework.py' } else { 'audit_community_life.py' }
+        & $Python (Join-Path $PSScriptRoot $audit) (Join-Path $directory ('day' + $Days + '.json')) --output (Join-Path $OutputDirectory ($label + '.audit.json'))
         $passed = $LASTEXITCODE -eq 0
         Copy-Item -LiteralPath (Join-Path $directory 'result.json') -Destination (Join-Path $OutputDirectory ($label + '.probe.json'))
     }

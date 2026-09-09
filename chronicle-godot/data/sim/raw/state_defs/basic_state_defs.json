@@ -761,6 +761,7 @@
         "seeking_work",
         "seeking_food",
         "foraging",
+        "socializing",
         "traveling",
         "arrived",
         "blocked"

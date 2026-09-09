@@ -79,6 +79,11 @@ static func decision(snapshot: Variant, actor: Dictionary, items: Array, family:
 	for fact: Dictionary in snapshot.get_facts_by_actor(str(actor.id)):
 		if fact.get("actor_id") != actor.id:
 			continue
+		if int(config.get("unavailable_quote_version", 0)) == 1 and fact.get("fact_type") == "resident_food_purchase_unmet" \
+				and fact.get("reason") in ["no_local_surplus", "community_reserve"] \
+				and Family.absolute_hour(tick) - Family.absolute_hour(fact) < int(config.get("quote_memory_hours", 24)):
+			sources.append(str(fact.fact_id))
+			return {"reason": "自己刚刚询问过却买不到粮，有钱也不能当饭吃，改去尝试采食", "source_fact_ids": sources}
 		var price := 0
 		if fact.get("fact_type") == "resident_food_purchase_unmet" and fact.get("reason") == "unaffordable":
 			price = int(fact.get("unit_price", 0))

@@ -1,0 +1,16 @@
+[
+  {
+    "Case": "canon_community_rf4_freeze1_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 482.33
+  },
+  {
+    "Case": "canon_community_rf4_freeze1_82002",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 379.57
+  }
+]

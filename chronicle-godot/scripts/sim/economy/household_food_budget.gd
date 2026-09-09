@@ -181,6 +181,19 @@ func plan_home_transfer(snapshot: Variant, actor: Dictionary, tick: Dictionary, 
 		"location_id": store.stock_location_id, "pantry_id": store.id, "quantity": count, "day": tick.day, "hour": tick.hour, "source_fact_ids": sources,
 		"summary": "%s%s %d 份口粮。共有粮食只在家中取用，个人铜币不共享。" % [actor.display_name, "从家中粮柜取出" if taking else "自愿向家中粮柜存入", count]}
 	result.add_fact(fact)
+	if taking and int(config.get("community_aid_feedback_version", 0)) == 1:
+		for source: String in sources:
+			var receipt: Dictionary = stores.fact_store.get_fact(source)
+			if receipt.get("fact_type") != "food_hauling_stocked" or not receipt.has("community_request_id"):
+				continue
+			var remembered: Array = snapshot.get_memories(str(actor.id))
+			if remembered.any(func(m: Dictionary) -> bool: return m.get("memory_type") == "community_aid_received" and m.get("delivery_fact_id") == source):
+				continue
+			var donor := str(receipt.payer_id)
+			result.add_memory({"memory_id": "memory.aid.%s.%s" % [actor.id, source], "memory_type": "community_aid_received",
+				"owner_id": actor.id, "target_id": donor, "delivery_fact_id": source,
+				"source_fact_id": id, "source_fact_ids": [id, source], "summary": "%s取到了%s托人送来的口粮，记住了这次实际帮助。" % [actor.display_name, snapshot.get_entity(donor).display_name]})
+			result.add_relationship_change({"source_id": actor.id, "target_id": donor, "axis": "trust", "delta": 4})
 	result.mark_resolved("household_pantry_transfer")
 	return {"transaction": result, "events": [fact]}
 

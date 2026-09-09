@@ -515,7 +515,7 @@ func _refresh_feedback(feedback: Dictionary) -> void:
 	feedback_eyebrow.text = str(feedback.get("eyebrow", "当前局势"))
 	feedback_title.text = str(feedback.get("title", "局面"))
 	SharedSurface.update_receipt(surface, feedback)
-	feedback_body.text = SharedSurface.compact_feedback(feedback, 2)
+	feedback_body.text = SharedSurface.compact_feedback(feedback, int(feedback.get("compact_details_limit", 2)))
 
 
 func _refresh_history(history: Array) -> void:

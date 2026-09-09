@@ -2577,7 +2577,13 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 	var here := str(session.context.location_id)
 	var lines: Array[String] = []
 	var food_lines: Array[String] = []
+	var heard: Array[Dictionary] = []
 	for event: Dictionary in result.get("livelihood_events", []):
+		if event.get("location_id") == here and event.get("fact_type") in ["community_conversation", "community_message_heard", "community_policy_changed", "community_visit_unmet", "community_aid_withheld"]:
+			food_lines.append(str(event.get("summary", "")))
+			if event.get("fact_type") in ["community_message_heard", "community_policy_changed", "community_aid_withheld"]:
+				heard.append(event)
+			continue
 		if event.get("event_type") in ["livelihood_produced", "livelihood_blocked_resource"]:
 			var fact: Dictionary = session.stores.fact_store.get_fact(str(event.get("fact_id", "")))
 			if fact.get("location_id") == here and (fact.get("work_kind") == "subsistence" or fact.has("recipe_id")):
@@ -2591,7 +2597,7 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 		if event.get("fact_type") != "resident_activity_changed" or str(event.get("location_id", "")) != here:
 			continue
 		var activity := str(event.get("activity", ""))
-		if activity not in ["arrived", "traveling", "working", "seeking_work", "seeking_food", "foraging"]:
+		if activity not in ["arrived", "traveling", "working", "seeking_work", "seeking_food", "foraging", "socializing"]:
 			continue
 		var actor_id := str(event.get("actor_id", ""))
 		var person: Dictionary = session.stores.entity_store.get_entity(actor_id)
@@ -2612,9 +2618,19 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 				lines.append("%s开始在这里采食：口粮不足又买不起，只能付出自己的工时。" % name)
 			"seeking_food":
 				lines.append("%s：%s。" % [name, event.get("reason", "在这里打听能买到的口粮")])
+			"socializing":
+				lines.append("%s：%s。" % [name, event.get("reason", "留出一段时间与人聊近况")])
 	lines = food_lines + lines
 	if lines.is_empty():
 		return {}
+	if not heard.is_empty():
+		var focal: Dictionary = heard.back()
+		for event: Dictionary in heard:
+			if event.get("topic") in ["supply", "policy"]:
+				focal = event
+		return {"status": "world_tick", "title": "当面听到的近况", "body": str(focal.summary),
+			"details": lines, "compact_details_limit": 0,
+			"summary": "消息来自现场交谈；完整经过保留在记录中。"}
 	return {"status": "world_tick", "title": "眼前的人有了动静",
 		"body": "\n".join(lines.slice(0, 3)), "details": lines,
 		"summary": "人物按自己的作息行动，不是等待操作的奖励。"}
@@ -3054,7 +3070,7 @@ func _person_state_text(states: Dictionary) -> String:
 	var rows: Array[String] = []
 	if int(states.get("daily_life_version", 0)) == 1:
 		var labels := {"working": "正在做工", "seeking_work": "正在寻找差事", "seeking_food": "正在寻找口粮", "arrived": "刚刚抵达",
-			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上", "foraging": "正在采食口粮"}
+			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上", "foraging": "正在采食口粮", "socializing": "正在走访交谈"}
 		rows.append(str(labels.get(str(states.get("daily_activity", "")), "日常生活")))
 		if str(states.get("daily_activity", "")) == "blocked":
 			rows.append(str(states.get("daily_activity_reason", "")))
@@ -3074,6 +3090,9 @@ func _person_state_text(states: Dictionary) -> String:
 
 func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 	var entity_id := str(entity.get("id", ""))
+	if "local_cooperation" in entity.get("tags", []):
+		var leader: Dictionary = snapshot.get_entity(str(entity.representative_id))
+		return "地方联络人：%s · %d 位成员\n消息要当面传递，约定不会自动通知所有人。" % [leader.get("display_name", entity.representative_id), entity.member_ids.size()]
 	if "household_food_store" in entity.get("tags", []):
 		return "家中存粮 %d 份 · 家庭成员到场取用" % FoodStorage.quantity(snapshot.get_items(), entity_id)
 	if "worksite_food_store" in entity.get("tags", []):
