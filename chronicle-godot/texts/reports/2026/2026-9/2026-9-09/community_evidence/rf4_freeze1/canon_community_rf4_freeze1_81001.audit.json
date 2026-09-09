@@ -45,24 +45,24 @@
     {
       "policy": "fact.community_policy_changed.generated_resident.echo_terrace.007.644",
       "needs": [
-        "fact.community_observation.generated_resident.echo_landing.007.633.need",
-        "fact.community_observation.generated_resident.echo_landing.001.57.need"
+        "fact.community_observation.generated_resident.echo_landing.001.57.need",
+        "fact.community_observation.generated_resident.echo_landing.007.633.need"
       ],
       "mode": "relief"
     },
     {
       "policy": "fact.community_policy_changed.generated_resident.echo_terrace.007.658",
       "needs": [
-        "fact.community_observation.generated_resident.echo_landing.007.633.need",
-        "fact.community_observation.generated_resident.echo_landing.001.57.need"
+        "fact.community_observation.generated_resident.echo_landing.001.57.need",
+        "fact.community_observation.generated_resident.echo_landing.007.633.need"
       ],
       "mode": "reserve"
     },
     {
       "policy": "fact.community_policy_changed.generated_resident.echo_terrace.007.680",
       "needs": [
-        "fact.community_observation.generated_resident.echo_landing.007.633.need",
-        "fact.community_observation.generated_resident.echo_landing.001.57.need"
+        "fact.community_observation.generated_resident.echo_landing.001.57.need",
+        "fact.community_observation.generated_resident.echo_landing.007.633.need"
       ],
       "mode": "relief"
     },
@@ -87,7 +87,7 @@
   ],
   "chains": [
     {
-      "structure": "report>cross_trade>meal",
+      "structure": "cross_trade_ancestry_candidate",
       "event": "fact.exchange.resident_food.generated_resident.echo_terrace.001.496",
       "actor_id": "generated_resident.echo_terrace.001",
       "target_id": "generated_resident.echo_landing.004",
@@ -102,6 +102,8 @@
         "fact.community_policy_changed.generated_resident.echo_landing.001.34",
         "fact.community_policy_changed.generated_resident.echo_terrace.007.34"
       ],
+      "direct_messages": [],
+      "direct_policies": [],
       "followup_choices_or_work": [],
       "meals": [
         "fact.npc_household_meal.generated_resident.echo_terrace.001.echo_port_environs_v1_time_468",
@@ -140,7 +142,7 @@
       ]
     },
     {
-      "structure": "report>cross_trade>meal",
+      "structure": "cross_trade_ancestry_candidate",
       "event": "fact.exchange.resident_food.generated_resident.echo_landing.001.714",
       "actor_id": "generated_resident.echo_landing.001",
       "target_id": "generated_resident.echo_terrace.007",
@@ -175,6 +177,10 @@
         "fact.community_policy_changed.generated_resident.echo_terrace.007.692",
         "fact.community_policy_changed.generated_resident.echo_terrace.007.714"
       ],
+      "direct_messages": [],
+      "direct_policies": [
+        "fact.community_policy_changed.generated_resident.echo_terrace.007.714"
+      ],
       "followup_choices_or_work": [],
       "meals": [
         "fact.npc_household_meal.generated_resident.echo_landing.001.echo_port_environs_v1_time_683"
@@ -201,10 +207,22 @@
       "cross_settlement": true,
       "request": "fact.community_message_heard.generated_resident.echo_terrace.001.470.0",
       "root_request": "fact.community_observation.generated_resident.echo_landing.001.463.need",
+      "direct_request_choices": [
+        "fact.resident_activity.generated_resident.echo_terrace.001.echo_port_environs_v1_time_439",
+        "fact.resident_activity.generated_resident.echo_terrace.001.echo_port_environs_v1_time_457"
+      ],
       "receipts": [
         "fact.food_haul.exchange.food_haul.generated_resident.echo_terrace.001.generated_resident.echo_terrace.001.490.498"
       ],
       "paid_fees": 0,
+      "physical_pantry_takings": [
+        "fact.pantry_transfer.generated_resident.echo_landing.003.499",
+        "fact.pantry_transfer.generated_resident.echo_landing.003.500",
+        "fact.pantry_transfer.generated_resident.echo_landing.003.501"
+      ],
+      "receipt_memories": [
+        "memory.aid.generated_resident.echo_landing.003.fact.food_haul.exchange.food_haul.generated_resident.echo_terrace.001.generated_resident.echo_terrace.001.490.498"
+      ],
       "recipient_meal_ancestry": [
         "fact.npc_household_meal.generated_resident.echo_landing.003.echo_port_environs_v1_time_467",
         "fact.npc_household_meal.generated_resident.echo_landing.003.echo_port_environs_v1_time_468",
@@ -230,10 +248,24 @@
       "cross_settlement": true,
       "request": "fact.community_message_heard.generated_resident.echo_terrace.001.644.1",
       "root_request": "fact.community_observation.generated_resident.echo_landing.007.633.need",
+      "direct_request_choices": [
+        "fact.resident_activity.generated_resident.echo_terrace.001.echo_port_environs_v1_time_625"
+      ],
       "receipts": [
         "fact.food_haul.exchange.food_haul.generated_resident.echo_terrace.001.generated_resident.echo_terrace.001.658.666"
       ],
       "paid_fees": 0,
+      "physical_pantry_takings": [
+        "fact.pantry_transfer.generated_resident.echo_landing.004.671",
+        "fact.pantry_transfer.generated_resident.echo_landing.007.671",
+        "fact.pantry_transfer.generated_resident.echo_landing.006.672"
+      ],
+      "receipt_memories": [
+        "memory.aid.generated_resident.echo_landing.004.fact.food_haul.exchange.food_haul.generated_resident.echo_terrace.001.generated_resident.echo_terrace.001.658.666",
+        "memory.aid.generated_resident.echo_landing.007.fact.food_haul.exchange.food_haul.generated_resident.echo_terrace.001.generated_resident.echo_terrace.001.658.666",
+        "memory.aid.generated_resident.echo_landing.008.fact.food_haul.exchange.food_haul.generated_resident.echo_terrace.001.generated_resident.echo_terrace.001.658.666",
+        "memory.aid.generated_resident.echo_landing.006.fact.food_haul.exchange.food_haul.generated_resident.echo_terrace.001.generated_resident.echo_terrace.001.658.666"
+      ],
       "recipient_meal_ancestry": [
         "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_642",
         "fact.npc_household_meal.generated_resident.echo_landing.006.echo_port_environs_v1_time_642",
@@ -253,6 +285,7 @@
   ],
   "assistance_orders": 2,
   "assistance_settled": 2,
+  "assistance_choice_delivery_receipt": 2,
   "assistance_withheld": 0,
   "assistance_returned_information": 0,
   "assistance_policy_feedback": 0,

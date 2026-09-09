@@ -1,0 +1,492 @@
+{
+  "activity_choice": {
+    "continuity_bonus": 8,
+    "optional_rest_discount": 50,
+    "supply_enabled": true,
+    "travel_cost": 3,
+    "version": 1,
+    "weights": {
+      "aid": 58,
+      "care": 64,
+      "cart": 36,
+      "food": 48,
+      "forage": 43,
+      "haul": 90,
+      "home": 0,
+      "repair": 60,
+      "rest": 80,
+      "resupply": 62,
+      "seek_work": 18,
+      "social": 28,
+      "work": 35
+    }
+  },
+  "activity_hours": {
+    "generated_resident.echo_landing.001": {
+      "arrived": 183,
+      "foraging": 41,
+      "resting": 232,
+      "seeking_food": 10,
+      "seeking_work": 18,
+      "socializing": 14,
+      "traveling": 215,
+      "working": 7
+    },
+    "generated_resident.echo_landing.002": {
+      "arrived": 181,
+      "foraging": 76,
+      "resting": 243,
+      "seeking_food": 16,
+      "seeking_work": 3,
+      "socializing": 11,
+      "traveling": 189,
+      "working": 1
+    },
+    "generated_resident.echo_landing.003": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_landing.004": {
+      "arrived": 169,
+      "foraging": 28,
+      "resting": 232,
+      "seeking_food": 7,
+      "socializing": 18,
+      "traveling": 185,
+      "working": 81
+    },
+    "generated_resident.echo_landing.005": {
+      "arrived": 179,
+      "foraging": 52,
+      "resting": 125,
+      "seeking_food": 11,
+      "socializing": 13,
+      "traveling": 183,
+      "working": 157
+    },
+    "generated_resident.echo_landing.006": {
+      "arrived": 185,
+      "home": 7,
+      "resting": 249,
+      "seeking_work": 5,
+      "socializing": 15,
+      "traveling": 185,
+      "working": 74
+    },
+    "generated_resident.echo_landing.007": {
+      "arrived": 159,
+      "foraging": 24,
+      "resting": 254,
+      "seeking_food": 12,
+      "socializing": 18,
+      "traveling": 159,
+      "working": 94
+    },
+    "generated_resident.echo_landing.008": {
+      "arrived": 165,
+      "foraging": 25,
+      "resting": 252,
+      "seeking_food": 16,
+      "socializing": 16,
+      "traveling": 165,
+      "working": 81
+    },
+    "generated_resident.echo_terrace.001": {
+      "arrived": 175,
+      "home": 4,
+      "resting": 265,
+      "socializing": 21,
+      "traveling": 179,
+      "working": 76
+    },
+    "generated_resident.echo_terrace.002": {
+      "arrived": 177,
+      "foraging": 72,
+      "resting": 244,
+      "seeking_food": 7,
+      "socializing": 5,
+      "traveling": 177,
+      "working": 38
+    },
+    "generated_resident.echo_terrace.003": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.004": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.005": {
+      "arrived": 167,
+      "foraging": 32,
+      "resting": 244,
+      "seeking_food": 10,
+      "socializing": 14,
+      "traveling": 167,
+      "working": 86
+    },
+    "generated_resident.echo_terrace.006": {
+      "arrived": 187,
+      "foraging": 39,
+      "resting": 94,
+      "seeking_food": 11,
+      "socializing": 15,
+      "traveling": 191,
+      "working": 183
+    },
+    "generated_resident.echo_terrace.007": {
+      "arrived": 129,
+      "foraging": 60,
+      "home": 82,
+      "resting": 283,
+      "seeking_food": 12,
+      "socializing": 13,
+      "traveling": 141
+    },
+    "generated_resident.echo_terrace.008": {
+      "arrived": 129,
+      "foraging": 64,
+      "home": 82,
+      "resting": 299,
+      "seeking_food": 7,
+      "socializing": 10,
+      "traveling": 129
+    }
+  },
+  "boundary": "Not human play or sustainable economy acceptance.",
+  "elapsed_days": 30,
+  "extreme_person_hours": 322,
+  "failures": [],
+  "food_access_config": {
+    "adjacent_supply_known": false,
+    "community_rules": {
+      "aid_enabled": true,
+      "aid_portions": 4,
+      "aid_retained_portions": 6,
+      "aid_retry_hours": 48,
+      "aid_travel_hours": 6,
+      "conversation_retry_hours": 8,
+      "maximum_hops": 4,
+      "maximum_reports": 6,
+      "memory_hours": 48,
+      "messages_enabled": true,
+      "minimum_report_trust": 0,
+      "observation_hours": 12,
+      "open_portions": 2,
+      "policy_enabled": false,
+      "policy_review_hours": 12,
+      "relief_portions": 1,
+      "reserve_portions": 6,
+      "social_enabled": true,
+      "version": 1,
+      "visit_retry_hours": 12
+    },
+    "hauling": {
+      "deadline_hours": 18,
+      "fee": 4,
+      "maximum_hours": 4,
+      "maximum_portions": 4,
+      "payer_reserve": 1,
+      "retry_hours": 6,
+      "version": 1
+    },
+    "household_budget": {
+      "capacity": 32,
+      "community_aid_feedback_version": 1,
+      "coverage_hours": 24,
+      "maximum_load": 8,
+      "memory_hours": 24,
+      "personal_reserve": 2,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "household_provisioning": {
+      "maximum_recipients": 4,
+      "memory_hours": 48,
+      "minimum_support": 50,
+      "self_reserve": 1,
+      "social_presence_version": 1,
+      "travel_hours": {
+        "bold": 6,
+        "cautious": 2,
+        "reserved": 4,
+        "sociable": 4,
+        "steady": 4
+      },
+      "version": 1
+    },
+    "minimum_independent_shopping_age": 18,
+    "production_batch": {
+      "portions": 12,
+      "version": 1,
+      "work_hours": 4
+    },
+    "retry_hours": 6,
+    "seller_retained_portions": 2,
+    "shopping_end_hour": 17,
+    "shopping_start_hour": 12,
+    "subsistence": {
+      "household_affordability_version": 1,
+      "maximum_travel_hours": 4,
+      "minimum_age": 18,
+      "minimum_health": 40,
+      "portions": 4,
+      "quote_memory_hours": 24,
+      "retry_hours": 12,
+      "unavailable_quote_version": 1,
+      "version": 1,
+      "work_hours": 4
+    },
+    "target_portions": 2,
+    "version": 1,
+    "worksite_storage": {
+      "maximum_stock": 24,
+      "personal_portions": 4,
+      "stored_item_def_ids": [
+        "item.arrow_material_bundle",
+        "item.fiber_rope",
+        "item.field_repair_hammer",
+        "item.fresh_fish_portion",
+        "item.lake_town_granary_measure_token",
+        "item.lu_huai_last_inspection_leaf",
+        "item.marsh_herb_bundle",
+        "item.mist_salt_reverse_flow_filament_sample",
+        "item.outpost_boar_spear",
+        "item.patrol_lantern",
+        "item.raw_salt_portion",
+        "item.root_vegetable_portion",
+        "item.travel_ration",
+        "item.wall_timber_bundle",
+        "item.waxed_mist_salt_breathing_veil",
+        "item.waxed_winter_cloak",
+        "item.woven_reed_mat"
+      ],
+      "version": 2
+    }
+  },
+  "mode": "canon_community_without_policy_rf4_freeze1",
+  "rows": [
+    {
+      "elapsed_days": 1,
+      "simulation_ms": 2209.928
+    },
+    {
+      "elapsed_days": 2,
+      "simulation_ms": 3049.774
+    },
+    {
+      "elapsed_days": 3,
+      "simulation_ms": 3865.758
+    },
+    {
+      "elapsed_days": 4,
+      "simulation_ms": 4149.715
+    },
+    {
+      "elapsed_days": 5,
+      "simulation_ms": 5089.036
+    },
+    {
+      "elapsed_days": 6,
+      "simulation_ms": 5642.495
+    },
+    {
+      "elapsed_days": 7,
+      "simulation_ms": 6350.972
+    },
+    {
+      "elapsed_days": 8,
+      "simulation_ms": 7119.993
+    },
+    {
+      "elapsed_days": 9,
+      "simulation_ms": 8322.608
+    },
+    {
+      "elapsed_days": 10,
+      "simulation_ms": 8571.055
+    },
+    {
+      "elapsed_days": 11,
+      "simulation_ms": 9503.22
+    },
+    {
+      "elapsed_days": 12,
+      "simulation_ms": 10170.212
+    },
+    {
+      "elapsed_days": 13,
+      "simulation_ms": 10535.029
+    },
+    {
+      "elapsed_days": 14,
+      "simulation_ms": 11925.235
+    },
+    {
+      "elapsed_days": 15,
+      "simulation_ms": 14541.986
+    },
+    {
+      "elapsed_days": 16,
+      "simulation_ms": 15734.238
+    },
+    {
+      "elapsed_days": 17,
+      "simulation_ms": 15630.845
+    },
+    {
+      "elapsed_days": 18,
+      "simulation_ms": 17095.334
+    },
+    {
+      "elapsed_days": 19,
+      "simulation_ms": 17861.867
+    },
+    {
+      "elapsed_days": 20,
+      "simulation_ms": 18869.882
+    },
+    {
+      "elapsed_days": 21,
+      "simulation_ms": 16824.573
+    },
+    {
+      "elapsed_days": 22,
+      "simulation_ms": 16981.044
+    },
+    {
+      "elapsed_days": 23,
+      "simulation_ms": 17724.457
+    },
+    {
+      "elapsed_days": 24,
+      "simulation_ms": 18446.8
+    },
+    {
+      "elapsed_days": 25,
+      "simulation_ms": 18993.307
+    },
+    {
+      "elapsed_days": 26,
+      "simulation_ms": 18263.298
+    },
+    {
+      "elapsed_days": 27,
+      "simulation_ms": 20013.419
+    },
+    {
+      "elapsed_days": 28,
+      "simulation_ms": 20713.662
+    },
+    {
+      "elapsed_days": 29,
+      "simulation_ms": 20335.005
+    },
+    {
+      "elapsed_days": 30,
+      "simulation_ms": 21805.736
+    }
+  ],
+  "scenario": "echo_realm",
+  "scope": "Passive counterexample with explicit initial mechanism ablation; no actor actions",
+  "seed": 81001,
+  "work_rules": {
+    "maintenance": [
+      {
+        "amount_per_cycle": 1.0,
+        "label": "用纤维修补绳具",
+        "recipe_id": "recipe.patch_cordage",
+        "repairs": [
+          {
+            "maximum_repairs": 1.0,
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "restore": 2.0
+          }
+        ],
+        "resource_tags_all": [
+          "reeds",
+          "fiber"
+        ],
+        "work_interval_hours": 2.0
+      }
+    ],
+    "overrides": [
+      {
+        "initial_tools": [
+          {
+            "item_def_id": "item.fiber_rope",
+            "quantity": 1.0
+          }
+        ],
+        "label": "网具捕捞",
+        "product_query": {
+          "tags_all": [
+            "fish"
+          ]
+        },
+        "work_recipe": {
+          "item_inputs": [],
+          "recipe_id": "recipe.net_fishing",
+          "tools": [
+            {
+              "query": {
+                "tags_all": [
+                  "rope"
+                ]
+              },
+              "wear": 1.0
+            }
+          ],
+          "version": 1.0
+        }
+      },
+      {
+        "initial_tools": [
+          {
+            "item_def_id": "item.fiber_rope",
+            "quantity": 1.0
+          }
+        ],
+        "label": "捻绳作业",
+        "product_query": {
+          "tags_all": [
+            "household_good",
+            "reed"
+          ]
+        },
+        "products": [
+          {
+            "item_def_id": "item.fiber_rope",
+            "quantity": 1.0
+          }
+        ],
+        "work_recipe": {
+          "item_inputs": [],
+          "recipe_id": "recipe.reed_cordage",
+          "tools": [
+            {
+              "query": {
+                "tags_all": [
+                  "rope"
+                ]
+              },
+              "wear": 1.0
+            }
+          ],
+          "version": 1.0
+        }
+      }
+    ],
+    "version": 1.0
+  }
+}

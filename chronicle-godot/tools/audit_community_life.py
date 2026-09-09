@@ -48,9 +48,11 @@ def audit(path: Path) -> dict:
                      and f.get("fact_type") in {"resident_activity_changed", "npc_livelihood_produced"}
                      and event["fact_id"] in ancestry(f)]
         descendants = [f["fact_id"] for f in meals if event["fact_id"] in ancestry(f)]
-        chains.append({"structure": "report>cross_trade>meal" if event in cross_trades else "reported_policy>refusal>alternative",
+        direct = set(event.get("source_fact_ids", []))
+        chains.append({"structure": "cross_trade_ancestry_candidate" if event in cross_trades else "reported_policy>refusal>alternative",
                        "event": event["fact_id"], "actor_id": event["actor_id"], "target_id": event.get("target_id"),
                        "messages": sorted(prior & message_ids), "policies": sorted(prior & policy_ids),
+                       "direct_messages": sorted(direct & message_ids), "direct_policies": sorted(direct & policy_ids),
                        "followup_choices_or_work": [f["fact_id"] for f in followups], "meals": descendants})
     policy_feedback = []
     for policy in policies:
@@ -69,6 +71,14 @@ def audit(path: Path) -> dict:
         receipts = [f for f in facts if f.get("exchange_id") == order["exchange_id"]
                     and f["fact_type"] == "food_hauling_stocked"]
         receipt_ids = {f["fact_id"] for f in receipts}
+        choices = [f for f in facts if f.get("actor_id") == order["party_a"]
+                   and f.get("intent_id") == "community_delivery:" + order["request_root_fact_id"]
+                   and order["community_request_id"] in f.get("source_fact_ids", [])]
+        taken = [f for f in facts if f["fact_type"] == "household_pantry_taken"
+                 and f["actor_id"] in order["recipient_ids"]
+                 and receipt_ids.intersection(f.get("source_fact_ids", []))]
+        remembered = [m for m in envelope["stores"]["memories"] if m.get("memory_type") == "community_aid_received"
+                      and m.get("target_id") == order["party_a"] and m.get("delivery_fact_id") in receipt_ids]
         recipient_meals = [f for f in meals if f.get("target_id") in order["recipient_ids"]
                            and receipt_ids.intersection(ancestry(f))]
         responses = [f for f in facts if f["fact_type"] == "community_observation"
@@ -89,7 +99,10 @@ def audit(path: Path) -> dict:
                            "status": order["status"], "quantity": order["quantity"],
                            "cross_settlement": settlement(order["party_a"]) != settlement(order["requester_id"]),
                            "request": order["community_request_id"], "root_request": order["request_root_fact_id"],
+                           "direct_request_choices": [f["fact_id"] for f in choices],
                            "receipts": sorted(receipt_ids), "paid_fees": sum(f.get("fee_paid", 0) for f in receipts),
+                           "physical_pantry_takings": [f["fact_id"] for f in taken],
+                           "receipt_memories": [m["memory_id"] for m in remembered],
                            "recipient_meal_ancestry": [f["fact_id"] for f in recipient_meals],
                            "satisfied_reports": sorted(response_ids), "returned_messages": sorted(return_ids),
                            "later_rules": later_rules, "earlier_withholding": prior_refusals})
@@ -111,6 +124,7 @@ def audit(path: Path) -> dict:
         "hauling_orders": life["hauling_orders"], "hauling_paid_fees": life["hauling_paid_fees"],
         "community_assistance": assistance, "assistance_orders": len(assistance),
         "assistance_settled": sum(r["status"] == "settled" for r in assistance),
+        "assistance_choice_delivery_receipt": sum(bool(r["direct_request_choices"] and r["receipts"] and r["physical_pantry_takings"]) for r in assistance),
         "assistance_withheld": len(withheld),
         "assistance_returned_information": sum(bool(r["returned_messages"]) for r in assistance),
         "assistance_policy_feedback": sum(bool(r["later_rules"]) for r in assistance),

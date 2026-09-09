@@ -12,5 +12,33 @@
     "ExitCode": 0,
     "ReusedCompletedSimulation": false,
     "SecondsThisInvocation": 379.57
+  },
+  {
+    "Case": "canon_community_rf4_freeze1_85005",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 366.26
+  },
+  {
+    "Case": "canon_community_without_messages_rf4_freeze1_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 352.96
+  },
+  {
+    "Case": "canon_community_without_policy_rf4_freeze1_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 431.1
+  },
+  {
+    "Case": "canon_community_without_social_rf4_freeze1_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 366.85
   }
 ]
