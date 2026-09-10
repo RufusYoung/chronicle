@@ -1,0 +1,18 @@
+test_agent_flow_and_receipt (__main__.TransportTest.test_agent_flow_and_receipt) ... ok
+test_canon_world_and_play_entry (__main__.TransportTest.test_canon_world_and_play_entry) ... ok
+test_community_in_actual_process (__main__.TransportTest.test_community_in_actual_process) ... ok
+test_family_provisioning_in_actual_process (__main__.TransportTest.test_family_provisioning_in_actual_process) ... ok
+test_fragmented_unicode_frame (__main__.TransportTest.test_fragmented_unicode_frame) ... ok
+test_frame_bounds_and_truncation (__main__.TransportTest.test_frame_bounds_and_truncation) ... ok
+test_generated_region_and_cross_town_travel (__main__.TransportTest.test_generated_region_and_cross_town_travel) ... ok
+test_integrated_household_work_in_actual_process (__main__.TransportTest.test_integrated_household_work_in_actual_process) ... ok
+test_jsonl_cli (__main__.TransportTest.test_jsonl_cli) ... ok
+test_malformed_json_does_not_desynchronize (__main__.TransportTest.test_malformed_json_does_not_desynchronize) ... ok
+test_opt_in_worksite_stock_in_actual_process (__main__.TransportTest.test_opt_in_worksite_stock_in_actual_process) ... ok
+test_timeout_owns_and_reaps_process (__main__.TransportTest.test_timeout_owns_and_reaps_process) ... ok
+test_work_framework_in_actual_process (__main__.TransportTest.test_work_framework_in_actual_process) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 46.098s
+
+OK

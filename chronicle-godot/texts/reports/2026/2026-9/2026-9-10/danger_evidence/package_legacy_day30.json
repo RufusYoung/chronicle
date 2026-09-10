@@ -10,7 +10,7 @@
     "save_exists": true,
     "save_path": "user://tests/world_runtime_probe/day7.json",
     "startup_message": "已继续上次保存的世界。此存档保留旧作业规则；「新世界」可体验工具损耗、修补和实际补货，原存档不会被转换。",
-    "process_to_frame_ms": 5108.73900000297,
+    "process_to_frame_ms": 4912.811900008819,
     "output": [
       "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
       "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",

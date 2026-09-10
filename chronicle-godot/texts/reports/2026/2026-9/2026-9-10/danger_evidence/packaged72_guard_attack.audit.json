@@ -1,7 +1,7 @@
 {
   "evidence_kind": "read_only_checkpoint_audit",
   "checkpoint": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\agent_play\\play\\echo_realm\\world_danger_outcome_guard_attack.json",
-  "sha256": "5776c554abf34fc4cd4b2055cceb6b185cc94f70a9fae512056026675bfc8a46",
+  "sha256": "2dc7f7b22bca3dfd53fd96675e5612cf1f5d536b9f77accc64843d7bb1debfbd",
   "elapsed_hours": 72,
   "scope": "Same-person follow-up, not sole-cause attribution. No simulation or player input is performed by this audit.",
   "test_injections": [],

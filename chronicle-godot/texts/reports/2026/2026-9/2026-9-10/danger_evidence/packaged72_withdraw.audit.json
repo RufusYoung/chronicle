@@ -1,7 +1,7 @@
 {
   "evidence_kind": "read_only_checkpoint_audit",
   "checkpoint": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\agent_play\\play\\echo_realm\\world_danger_outcome_withdraw.json",
-  "sha256": "5040816b315e179d7f8dc75767f0eb484f947d82e5207b445284ed2780530110",
+  "sha256": "ecfca2175a400b0adce3ae5e30c5141590f77bb6a75ea3202f02c156d56f6553",
   "elapsed_hours": 72,
   "scope": "Same-person follow-up, not sole-cause attribution. No simulation or player input is performed by this audit.",
   "test_injections": [],

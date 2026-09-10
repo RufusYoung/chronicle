@@ -1,0 +1,39 @@
+{
+  "checked_utc": "2026-09-10T03:51:18.5112975Z",
+  "runtime_files": 235,
+  "runtime_mismatches": [],
+  "legal72_comparisons": [
+    {
+      "tactic": "withdraw",
+      "same_residents": true,
+      "same_threat": true,
+      "same_decisions": true,
+      "final_food_balance": 0.0
+    },
+    {
+      "tactic": "guard_attack",
+      "same_residents": true,
+      "same_threat": true,
+      "same_decisions": true,
+      "final_food_balance": 0.0
+    }
+  ],
+  "package_manifest": {
+    "createdUtc": "2026-09-10T03:45:16.8606172Z",
+    "sourceCommit": "0500de41bbe37d2f09ab947cb82f3f8536f96f58",
+    "sourceDirty": false,
+    "kind": "Internal world prototype, not a submission candidate",
+    "files": [
+      {
+        "name": "Chronicle.exe",
+        "bytes": 104659456,
+        "sha256": "91724F15024A3A545E28CCD83134403D31CE2323A38E51C95E4DFA282F732AB6"
+      },
+      {
+        "name": "Chronicle.pck",
+        "bytes": 45263176,
+        "sha256": "3787D46411FC1E16E105075209EFF8A642BF32B7FE7BB8E96CEEC7CE46EE089C"
+      }
+    ]
+  }
+}
