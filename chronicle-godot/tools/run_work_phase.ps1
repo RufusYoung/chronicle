@@ -5,7 +5,7 @@ param(
     [string]$RunLabel = 'frozen3',
     [int[]]$Seeds = @(81001, 82002, 83003),
     [switch]$SkipAblations,
-    [ValidateSet('work', 'community')][string]$Framework = 'work',
+    [ValidateSet('work', 'community', 'danger')][string]$Framework = 'work',
     [ValidateRange(1, 30)][int]$Days = 7,
     [ValidateRange(30, 1800)][int]$CaseTimeoutSeconds = 900,
     [string]$OutputDirectory = ''
@@ -40,9 +40,12 @@ $manifest | Set-Content -LiteralPath (Join-Path $OutputDirectory 'runtime_manife
 $prefix = 'canon_' + $Framework + '_'
 $cases = @($Seeds | ForEach-Object { @{ Mode = $prefix + $RunLabel; Seed = $_ } })
 if (-not $SkipAblations) {
-    $ablations = if ($Framework -eq 'work') { @('repair', 'supply', 'wear') } else { @('messages', 'policy', 'social') }
+    $ablations = switch ($Framework) { 'work' { @('repair', 'supply', 'wear') } 'community' { @('messages', 'policy', 'social') } 'danger' { @('contact') } }
     $cases += $ablations | ForEach-Object {
         @{ Mode = $prefix + 'without_' + $_ + '_' + $RunLabel; Seed = $Seeds[0] }
+    }
+    if ($Framework -eq 'danger') {
+        $cases += @{ Mode = $prefix + 'community_' + $RunLabel; Seed = $Seeds[0] }
     }
 }
 $results = @()
@@ -73,7 +76,7 @@ foreach ($case in $cases) {
         ([string](Get-Content -LiteralPath $stdout -Raw -Encoding UTF8) -match 'FOOD_ECONOMY_RESULT PASS')
     if ($passed) {
         $directory = Join-Path $env:APPDATA ('Godot\app_userdata\CHRONICLE_GODOT\tests\food_economy_probe\' + $label)
-        $audit = if ($Framework -eq 'work') { 'audit_work_framework.py' } else { 'audit_community_life.py' }
+        $audit = switch ($Framework) { 'work' { 'audit_work_framework.py' } 'community' { 'audit_community_life.py' } 'danger' { 'audit_world_danger.py' } }
         & $Python (Join-Path $PSScriptRoot $audit) (Join-Path $directory ('day' + $Days + '.json')) --output (Join-Path $OutputDirectory ($label + '.audit.json'))
         $passed = $LASTEXITCODE -eq 0
         Copy-Item -LiteralPath (Join-Path $directory 'result.json') -Destination (Join-Path $OutputDirectory ($label + '.probe.json'))

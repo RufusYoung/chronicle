@@ -11,6 +11,7 @@ const DEFAULT_SAVE := "user://world_demo/manual.json"
 @export var initial_livelihood_rules: bool = true
 @export var initial_work_rules: bool = true
 @export var initial_community_rules: bool = false
+@export var initial_world_danger: bool = false
 var busy := false
 var last_operation: Dictionary = {}
 var _worker: Thread
@@ -32,6 +33,7 @@ var _seed_input: SpinBox
 var _livelihood_rules: CheckBox
 var _work_rules: CheckBox
 var _community_rules: CheckBox
+var _danger_rules: CheckBox
 var _startup := true
 var _startup_message := ""
 
@@ -71,13 +73,13 @@ func restart_session() -> void:
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
-		view_model.start(_world_options(initial_seed, initial_livelihood_rules, initial_work_rules, initial_community_rules))
+		view_model.start(_world_options(initial_seed, initial_livelihood_rules, initial_work_rules, initial_community_rules, initial_world_danger))
 		refresh_view()
 	else:
-		_begin_operation("start", [_world_options(int(_seed_input.value), _livelihood_rules.button_pressed, _work_rules.button_pressed, _community_rules.button_pressed)])
+		_begin_operation("start", [_world_options(int(_seed_input.value), _livelihood_rules.button_pressed, _work_rules.button_pressed, _community_rules.button_pressed, _danger_rules.button_pressed)])
 
 
-func _world_options(seed_value: int, integrated: bool, work_rules: bool = false, community_rules: bool = false) -> Dictionary:
+func _world_options(seed_value: int, integrated: bool, work_rules: bool = false, community_rules: bool = false, danger_rules: bool = false) -> Dictionary:
 	var options := {"scenario": initial_scenario, "challenge_seed_override": seed_value}
 	if integrated and initial_scenario == "echo_realm":
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
@@ -86,6 +88,8 @@ func _world_options(seed_value: int, integrated: bool, work_rules: bool = false,
 			options["work_rules_version"] = 1
 			if community_rules:
 				options["community_rules_version"] = 1
+			if danger_rules:
+				options["world_danger_version"] = 1
 	return options
 
 
@@ -242,6 +246,10 @@ func perform_combat_encounter(id: String, metadata: Dictionary = {}) -> Dictiona
 	return _begin_operation("perform_combat_encounter", [id, metadata])
 
 
+func rest_for_recovery() -> Dictionary:
+	return _begin_operation("rest_for_recovery")
+
+
 func perform_return_echo(id: String) -> Dictionary:
 	return _begin_operation("perform_return_echo", [id])
 
@@ -319,6 +327,16 @@ func _install_save_controls() -> void:
 	_work_rules.toggled.connect(refresh_dependencies)
 	_livelihood_rules.toggled.connect(refresh_dependencies)
 	new_world_form.add_child(_community_rules)
+	_danger_rules = CheckBox.new()
+	_danger_rules.text = "实体危险实验：居民遇险、连续交锋与伤后休养"
+	_danger_rules.button_pressed = initial_world_danger
+	_danger_rules.visible = initial_scenario == "echo_realm"
+	_danger_rules.disabled = not (_livelihood_rules.button_pressed and _work_rules.button_pressed)
+	var refresh_danger := func(_pressed: bool) -> void:
+		_danger_rules.disabled = not (_livelihood_rules.button_pressed and _work_rules.button_pressed)
+	_work_rules.toggled.connect(refresh_danger)
+	_livelihood_rules.toggled.connect(refresh_danger)
+	new_world_form.add_child(_danger_rules)
 
 
 func _confirmation(title_text: String, message: String, action: String) -> ConfirmationDialog:

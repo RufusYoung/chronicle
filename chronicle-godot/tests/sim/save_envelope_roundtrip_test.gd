@@ -102,6 +102,9 @@ func _run() -> void:
 	var service = SaveEnvelopeServiceModel.new()
 	var previous_pack := envelope.duplicate(true)
 	previous_pack["definition_manifest"]["content_pack_version"] = 1
+	for danger_key: String in ["danger_opponent_id", "danger_round_hour", "danger_advantage", "danger_grace_until", "danger_retreat_until", "danger_rest_nourished_until"]:
+		previous_pack.definition_manifest.required_definition_ids.erase("state:state.entity." + danger_key)
+	previous_pack.definition_manifest.required_definition_ids.erase("object:object.creature")
 	for key: String in DailyLife.STATE_KEYS + ["subsistence_elapsed_hours", "subsistence_workplace_id", "daily_intent_id", "work_elapsed_recipe_id"]:
 		previous_pack["definition_manifest"]["required_definition_ids"].erase("state:state.character." + key)
 	previous_pack["definition_manifest"]["required_definition_ids"].erase("item:item.fiber_rope")
@@ -120,12 +123,15 @@ func _run() -> void:
 		and _equivalent(previous_restored.session.get_save_store_data(), before_store)
 		and _equivalent(previous_restored.day_history, before_history)
 		and "base_v3_to_v4_resident_activity_definitions" in previous_report.get("migrations", [])
-		and int(previous_restored.build_save_envelope()["definition_manifest"]["content_pack_version"]) == 6,
+		and int(previous_restored.build_save_envelope()["definition_manifest"]["content_pack_version"]) == 7,
 		"5B. Previous 105-definition base pack migrates from disk without changing world history"
 	)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(previous_pack_path))
 	var v2_pack := envelope.duplicate(true)
 	v2_pack["definition_manifest"]["content_pack_version"] = 2
+	for danger_key: String in ["danger_opponent_id", "danger_round_hour", "danger_advantage", "danger_grace_until", "danger_retreat_until", "danger_rest_nourished_until"]:
+		v2_pack.definition_manifest.required_definition_ids.erase("state:state.entity." + danger_key)
+	v2_pack.definition_manifest.required_definition_ids.erase("object:object.creature")
 	for key: String in DailyLife.STATE_KEYS + ["subsistence_elapsed_hours", "subsistence_workplace_id", "daily_intent_id", "work_elapsed_recipe_id"]:
 		v2_pack["definition_manifest"]["required_definition_ids"].erase("state:state.character." + key)
 	var v2_stores: Dictionary = v2_pack.get("stores", {}).duplicate(true)

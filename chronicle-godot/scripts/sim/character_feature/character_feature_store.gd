@@ -261,7 +261,33 @@ func apply_change(change: Dictionary) -> bool:
 			if assignment.is_empty():
 				return _reject("grant_talent_assignment_missing")
 			return assign_talent(assignment)
+		"recover_trait":
+			return _recover_trait(change)
 	return _reject("unsupported_character_feature_operation")
+
+
+func _recover_trait(change: Dictionary) -> bool:
+	var id := str(change.get("trait_instance_id", ""))
+	var source := str(change.get("source_fact_id", ""))
+	var instance: Dictionary = trait_instances.get(id, {})
+	var fact: Dictionary = fact_store.get_fact(source) if fact_store != null else {}
+	if instance.is_empty() or instance.get("trait_def_id") != "trait.combat_bruising" \
+			or instance.get("status") != "active" or source in instance.get("recovery_fact_ids", []) \
+			or fact.get("fact_type") != "actor_rested_with_injury" or fact.get("actor_id") != instance.get("owner_entity_id") \
+			or id not in fact.get("trait_instance_ids", []) or int(change.get("required_hours", 0)) not in range(1, 73) \
+			or change.get("required_hours") != fact.get("required_recovery_hours"):
+		return _reject("invalid_trait_recovery")
+	var progress := int(instance.get("recovery_progress", 0)) + 1
+	instance["recovery_progress"] = progress
+	instance["last_recovery_fact_id"] = source
+	var sources: Array = instance.get("recovery_fact_ids", []).duplicate()
+	sources.append(source)
+	instance["recovery_fact_ids"] = sources
+	instance["stage_id"] = "healed" if progress >= int(change.required_hours) else "recovering"
+	instance["status"] = "resolved" if instance.stage_id == "healed" else "active"
+	instance["updated_tick"] = int(fact.get("day", 0)) * 24 + int(fact.get("hour", 0))
+	trait_instances[id] = instance
+	return true
 
 
 func list_talent_assignments(owner_id: String = "") -> Array:

@@ -35,11 +35,15 @@ func _run() -> void:
 		return
 	if mode.begins_with("canon_livelihood"):
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1, "resident_subsistence_version": 1})
-	if mode.begins_with("canon_work") or mode.begins_with("canon_community"):
+	if mode.begins_with("canon_work") or mode.begins_with("canon_community") or mode.begins_with("canon_danger"):
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
 			"household_food_budget_version": 1, "resident_subsistence_version": 1, "work_rules_version": 1})
 	if mode.begins_with("canon_community"):
 		options["community_rules_version"] = 1
+	if mode.begins_with("canon_danger"):
+		options["world_danger_version"] = 1
+		if mode.begins_with("canon_danger_community"):
+			options["community_rules_version"] = 1
 	if mode == "canon_livelihood_without_subsistence":
 		options["resident_subsistence_version"] = 0
 	if mode in ["canon_without_family", "canon_without_carting"]:
@@ -51,6 +55,12 @@ func _run() -> void:
 		quit(1)
 		return
 	var fixture: Dictionary = model.session.fixture_source_data.duplicate(true)
+	if mode.begins_with("canon_danger_without_contact"):
+		fixture.world_danger.contacts_enabled = false
+		fixture.resident_daily_life.world_danger.contacts_enabled = false
+		fixture.known_facts.append({"fact_id": "test_injection." + mode, "fact_type": "test_injection",
+			"summary": "测试注入：只关闭危险接触，保留初始人物、威胁实体、身体恢复规则和全部钱物。"})
+		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "same-source contact ablation")
 	if mode.begins_with("canon_community_without_"):
 		var disabled := ""
 		for mechanism: String in ["messages", "policy", "social"]:

@@ -6,6 +6,7 @@ const Recipe = preload("res://scripts/sim/economy/work_recipe_service.gd")
 const Storage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
+const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const PROFILE := {"version": 1, "supply_enabled": true, "travel_cost": 3, "continuity_bonus": 8, "optional_rest_discount": 50,
 	"weights": {"home": 0, "rest": 80, "work": 35, "seek_work": 18,
 		"food": 48, "forage": 43, "care": 64, "cart": 36, "haul": 90,
@@ -55,6 +56,13 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 		if hours >= 100000 or row.goal == "":
 			continue
 		var factors := {"purpose": int(config.weights[row.kind]), "travel": -hours * int(config.travel_cost)}
+		if config.has("danger_hour"):
+			var danger := WorldDanger.known_danger(snapshot, str(actor.id), str(row.goal), int(config.danger_hour))
+			if not danger.is_empty():
+				factors["personally_seen_danger"] = -100 if states.get("temperament") == "cautious" else -75
+				if hunger == "extreme" and row.kind in ["food", "forage", "work"]:
+					factors["hunger_against_danger"] = 55
+				row.source_fact_ids.append(str(danger.source_fact_id))
 		if row.kind == "social":
 			factors["company_need"] = mini(int(row.get("social_need", 0)), 30)
 			factors["liaison"] = 8 if bool(row.get("representative", false)) else 0

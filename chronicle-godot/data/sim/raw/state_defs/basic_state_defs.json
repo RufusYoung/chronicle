@@ -1,5 +1,93 @@
 {
   "state_defs": [
+    {"state_def_id": "state.entity.danger_rest_nourished_until", "definition_version": 1,
+      "key": "danger_rest_nourished_until", "owner_kinds": ["entity"], "value_type": "int", "default": 0,
+      "minimum": 0, "allowed_operations": ["set"], "persistence": "save", "ui_visibility": "detail",
+      "description": "A physically consumed meal supports a bounded period of recovery."},
+    {
+      "state_def_id": "state.entity.danger_opponent_id",
+      "definition_version": 1,
+      "key": "danger_opponent_id",
+      "owner_kinds": [
+        "entity"
+      ],
+      "value_type": "string",
+      "default": "",
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "Versioned world danger runtime state."
+    },
+    {
+      "state_def_id": "state.entity.danger_round_hour",
+      "definition_version": 1,
+      "key": "danger_round_hour",
+      "owner_kinds": [
+        "entity"
+      ],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "Versioned world danger runtime state."
+    },
+    {
+      "state_def_id": "state.entity.danger_advantage",
+      "definition_version": 1,
+      "key": "danger_advantage",
+      "owner_kinds": [
+        "entity"
+      ],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "Versioned world danger runtime state."
+    },
+    {
+      "state_def_id": "state.entity.danger_grace_until",
+      "definition_version": 1,
+      "key": "danger_grace_until",
+      "owner_kinds": [
+        "entity"
+      ],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "Versioned world danger runtime state."
+    },
+    {
+      "state_def_id": "state.entity.danger_retreat_until",
+      "definition_version": 1,
+      "key": "danger_retreat_until",
+      "owner_kinds": [
+        "entity"
+      ],
+      "value_type": "int",
+      "default": 0,
+      "minimum": 0,
+      "allowed_operations": [
+        "set"
+      ],
+      "persistence": "save",
+      "ui_visibility": "detail",
+      "description": "Versioned world danger runtime state."
+    },
     {
       "state_def_id": "state.common.visible",
       "definition_version": 1,

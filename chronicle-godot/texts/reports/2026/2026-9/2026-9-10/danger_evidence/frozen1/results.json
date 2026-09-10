@@ -1,0 +1,37 @@
+[
+  {
+    "Case": "canon_danger_frozen1_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 43.8
+  },
+  {
+    "Case": "canon_danger_frozen1_82002",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 41.32
+  },
+  {
+    "Case": "canon_danger_frozen1_85005",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 42.2
+  },
+  {
+    "Case": "canon_danger_without_contact_frozen1_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 43.69
+  },
+  {
+    "Case": "canon_danger_community_frozen1_81001",
+    "Passed": true,
+    "ExitCode": 0,
+    "ReusedCompletedSimulation": false,
+    "SecondsThisInvocation": 54.78
+  }
+]

@@ -15,6 +15,7 @@ const Choice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const CommunityLife = preload("res://scripts/sim/npc/community_life.gd")
 const CommunityKnowledge = preload("res://scripts/sim/npc/community_knowledge.gd")
+const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const STATE_KEYS := ["daily_life_version", "daily_activity", "daily_activity_reason", "daily_goal_id",
 	"daily_workplace_id", "daily_route_id", "daily_destination_id", "daily_travel_remaining",
 	"daily_departure_fact_id", "daily_presence_fact_id"]
@@ -54,6 +55,10 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 		var states: Dictionary = actor.get("states", {})
 		if not bool(states.get("alive", true)):
 			continue
+		var danger_rules: Dictionary = config.get("world_danger", {})
+		if WorldDanger.enabled(danger_rules) and (states.get("danger_opponent_id", "") != "" \
+				or int(states.get("danger_round_hour", 0)) >= WorldDanger.hour(tick)):
+			continue
 		_change(result, id, states, "daily_life_version", 1)
 		var location := str(states.get("location_id", ""))
 		var home := str(states.get("home_location_id", ""))
@@ -63,10 +68,12 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 			_change(result, id, states, "daily_workplace_id", workplace)
 			_change(result, id, states, "livelihood_elapsed_hours", 0)
 		if str(states.get("daily_route_id", "")) != "":
-			_progress_journey(result, events, actor, states, routes, locations, tick)
+			_progress_journey(result, events, actor, states, routes, locations, tick,
+				WorldDanger.enabled(danger_rules) and WorldDanger.needs_recovery(snapshot, id))
 			continue
 		var fatigue := int(states.get("fatigue", 0))
-		var must_rest := int(states.get("health", 100)) < int(config.get("minimum_work_health", 30)) \
+		var must_rest: bool = int(states.get("health", 100)) < int(config.get("minimum_work_health", 30)) \
+			or (WorldDanger.enabled(danger_rules) and WorldDanger.needs_recovery(snapshot, id) and states.get("hunger") != "extreme") \
 			or fatigue >= int(config.get("rest_fatigue", 7)) \
 			or (str(states.get("daily_activity", "")) == "resting" and fatigue > int(config.get("resume_fatigue", 2)))
 		var hour := int(tick.get("hour", 0))
@@ -231,7 +238,10 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 								Choice.propose(proposals, "resupply", site, "seeking_work", "先回作业地检查自己存下的备用用品，不需要向自己的货柜付钱", demand.source_fact_ids, "work_supply")
 							elif FoodAccess.balance(food_items, id) > 0:
 								Choice.propose(proposals, "resupply", site, "seeking_work", "作业用品不足，去已知的生产地当面询价", demand.source_fact_ids, "work_supply")
-			var chosen := Choice.choose(proposals, actor, routes, self, snapshot, profiles, registry, choice_config, food_config)
+			var effective_choice := choice_config.duplicate(true)
+			if WorldDanger.enabled(danger_rules):
+				effective_choice["danger_hour"] = WorldDanger.hour(tick)
+			var chosen := Choice.choose(proposals, actor, routes, self, snapshot, profiles, registry, effective_choice, food_config)
 			if not chosen.is_empty():
 				goal = str(chosen.goal)
 				activity = str(chosen.activity)
@@ -282,7 +292,7 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 
 
 func _progress_journey(result: Variant, events: Array, actor: Dictionary, states: Dictionary,
-		routes: Array, locations: Dictionary, tick: Dictionary) -> void:
+		routes: Array, locations: Dictionary, tick: Dictionary, injured: bool = false) -> void:
 	var id := str(actor.id)
 	var route_id := str(states.get("daily_route_id", ""))
 	var route: Dictionary = {}
@@ -304,6 +314,9 @@ func _progress_journey(result: Variant, events: Array, actor: Dictionary, states
 			{"route_id": route_id, "source_fact_ids": [str(states.get("daily_departure_fact_id", ""))]})
 		return
 	var remaining := maxi(int(states.get("daily_travel_remaining", 1)) - 1, 0)
+	if injured and posmod(int(tick.get("hour", 0)), 2) == 1:
+		_transition(result, events, actor, states, "traveling", "伤势放慢了脚步，还没走完这段路", tick)
+		return
 	_change(result, id, states, "daily_travel_remaining", remaining)
 	if remaining > 0:
 		_transition(result, events, actor, states, "traveling", "继续尚未走完的路", tick)

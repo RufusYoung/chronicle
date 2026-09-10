@@ -1,6 +1,14 @@
 {
   "object_defs": [
     {
+      "object_def_id": "object.creature",
+      "definition_version": 1,
+      "type": "creature",
+      "owner_kind": "character",
+      "description": "有身体、位置和自主危险行为的非人类个体。",
+      "default_tags": ["creature"]
+    },
+    {
       "object_def_id": "object.person",
       "definition_version": 1,
       "type": "person",

@@ -60,6 +60,7 @@ const TransactionWorldWriterModel = preload("res://scripts/sim/transaction/trans
 const TickEventSchemaModel = preload("res://scripts/sim/world_tick/tick_event_schema.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const CommunityLife = preload("res://scripts/sim/npc/community_life.gd")
+const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const Community = preload("res://scripts/sim/organization/local_cooperation.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
@@ -279,7 +280,14 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			need_changes.append_array(round_need_changes)
 
 		if DailyLife.enabled(daily_life_config):
-			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true)
+			var danger_config: Dictionary = daily_life_config.get("world_danger", {})
+			if WorldDanger.enabled(danger_config):
+				var danger := WorldDanger.new().run_tick(context, stores, round_event, danger_config, registry, writer)
+				if not danger.ok:
+					return _failure_result(event, "world_danger_rejected:" + str(danger.get("error", "")), stores)
+				livelihood_results.append_array(danger.results)
+				livelihood_events.append_array(danger.events)
+			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
 			var budget_config: Dictionary = daily_life_config.get("food_access", {}).get("household_budget", {})
 			if FoodBudget.enabled(budget_config):
 				var home_changed := false
@@ -335,6 +343,12 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				return _failure_result(event, "resident_activity_rejected", stores)
 			livelihood_results.append_array(activity_results)
 			livelihood_events.append_array(activity_data.get("events", []))
+			if WorldDanger.enabled(danger_config):
+				var contact := WorldDanger.new().run_tick(context, stores, round_event, danger_config, registry, writer, true)
+				if not contact.ok:
+					return _failure_result(event, "world_danger_contact_rejected:" + str(contact.get("error", "")), stores)
+				livelihood_results.append_array(contact.results)
+				livelihood_events.append_array(contact.events)
 			if community_config.get("version", 0) == 1:
 				var conversation_snapshot = snapshot_builder.build_snapshot(context, stores, true)
 				var conversations := CommunityLife.new().converse(conversation_snapshot, round_event, community_config)

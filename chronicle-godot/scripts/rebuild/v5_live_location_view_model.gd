@@ -163,6 +163,29 @@ func advance_time(hours: int = 1) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func rest_for_recovery() -> Dictionary:
+	latest_event_type = "recovery"
+	var before: Variant = session.get_snapshot()
+	latest_result = session.recover_from_danger()
+	if latest_result.get("success", false):
+		var after: Variant = session.get_snapshot()
+		var injury_text := "挫伤已经恢复。"
+		var wounds: Array = session.WorldDanger.wounds(after, str(after.player.get("id", "player")))
+		if not wounds.is_empty():
+			injury_text = "挫伤休养进度 %d/%d 小时。" % [int(wounds[0].recovery_progress), int(session.fixture_source_data.world_danger.recovery_hours)]
+		var text := "你休养了一小时，健康 %d → %d。%s\n这次消耗 %d 份食物，随身还剩 %d 份。" % [
+			int(before.get_player_value("health", 100)), int(after.get_player_value("health", 100)), injury_text,
+			int(before.get_player_value("food_count", 0)) - int(after.get_player_value("food_count", 0)), int(after.get_player_value("food_count", 0))]
+		text += "疲劳 %d → %d。" % [int(before.get_player_value("fatigue", 0)), int(after.get_player_value("fatigue", 0))]
+		if int(after.get_player_value("danger_rest_nourished_until", 0)) < session.WorldDanger.hour(session.get_time_summary()):
+			text += "缺乏食物补充，这一小时不能恢复健康或伤势。"
+		latest_result["recovery_feedback"] = {"status": "success", "title": "休养后的身体", "body": text, "details": []}
+		action_history.append({"index": action_history.size() + 1, "event_type": "recovery",
+			"label": "休养一小时", "narrative": text, "cause_kind": "player"})
+		_capture_player_impact("休养一小时")
+	return latest_result.duplicate(true)
+
+
 func wait_until_north_quay_ferry() -> Dictionary:
 	latest_event_type = "ferry_wait"
 	if not is_ready():
@@ -809,6 +832,19 @@ func _action_rows(snapshot: Variant = null) -> Array:
 			"can_execute": true,
 		})
 	# Put the current dilemma before optional conversations; every other action stays reachable.
+	if session.fixture_source_data.get("world_danger", {}).get("version", 0) == 1 \
+			and (not session.WorldDanger.wounds(snapshot, str(snapshot.player.get("id", "player"))).is_empty() \
+				or int(snapshot.get_player_value("health", 100)) < 100 or int(snapshot.get_player_value("fatigue", 0)) > 0):
+		var nourished: bool = int(snapshot.get_player_value("danger_rest_nourished_until", 0)) > session.WorldDanger.hour(session.get_time_summary())
+		var food: Dictionary = session.WorldDanger.recovery_food(snapshot, str(snapshot.player.get("id", "player")))
+		var needs_food: bool = int(snapshot.get_player_value("health", 100)) < 100 or not session.WorldDanger.wounds(snapshot, str(snapshot.player.get("id", "player"))).is_empty()
+		var can_heal: bool = needs_food and (nourished or not food.is_empty())
+		rows.append({"action_id": "world_danger_recovery", "event_type": "recovery", "label": "找个安全处休养一小时",
+			"action_type": "life", "kind": "休养", "cost": "1 小时 / 1 份随身食物" if needs_food and not nourished and not food.is_empty() else "1 小时",
+			"known_effect": "恢复疲劳、健康与挫伤进度，一餐最多支持六小时休养。" if can_heal else "恢复 1 点疲劳，不消耗食物；缺乏营养时不能恢复健康或挫伤。",
+			"hint": "先脱离危险。仅消除疲劳不需要消耗口粮，伤后恢复需要营养。",
+			"tradeoff": "别人继续工作、出行和消耗物资，你这一小时无法做其他事。",
+			"can_execute": true})
 	var focused: Array[Dictionary] = []
 	var ordinary: Array[Dictionary] = []
 	for row: Dictionary in rows:
@@ -920,6 +956,8 @@ func _decision_view(snapshot: Variant, projection: Dictionary = {}, encounter_ac
 			str(row.get("label", "局势")),
 			str(row.get("value", "")),
 		])
+	if has_combat:
+		stakes = ["交锋会占用这一小时，不能同时上工或赶路。", "击退能暂时开放这里，脱离只保护自己的离场。"]
 	return {
 		"question": question,
 		"rule": "现场行动会消耗真实时间。你不必点完所有选项；选择你愿意承担后果的目标。",
@@ -986,6 +1024,7 @@ func _combat_action_rows(snapshot: Variant = null) -> Array:
 		var row := {
 			"action_id": str(option.get("option_id", "")),
 			"combat_option_id": str(option.get("option_id", "")),
+			"world_danger": option.get("world_danger", false),
 			"event_type": "combat_encounter",
 			"label": "[%s·%s] %s" % [
 				approach_label,
@@ -1003,6 +1042,9 @@ func _combat_action_rows(snapshot: Variant = null) -> Array:
 			],
 			"tradeoff": "失败可能%s" % "、".join(costs) if not costs.is_empty() else "此次未预见身体或装备损耗",
 		}
+		if option.get("world_danger", false):
+			row.hint = str(option.effect_description)
+			row.known_effect = str(option.effect_description)
 		rows.append(row)
 	return rows
 
@@ -1103,7 +1145,7 @@ func _combat_risk_view(snapshot: Variant = null) -> Dictionary:
 		"check_text": "d6 检定　%s" % "　/　".join(checks),
 		"prepared": true,
 		"preparation_text": "当前装备与伤势已经计入每个选择的有效数值。",
-		"failure_hint": "选择会立刻推进 1 小时并只结算一次；失败会留下明确代价，但不会立即死亡。",
+		"failure_hint": "每回合推进 1 小时，其他人物继续生活。成功未必结束交锋；撤离后仍须沿道路离开。" if first.get("world_danger", false) else "选择会立刻推进 1 小时并只结算一次；失败会留下明确代价，但不会立即死亡。",
 	}
 
 
@@ -2076,6 +2118,8 @@ func _feedback_view() -> Dictionary:
 
 
 func _base_feedback_view() -> Dictionary:
+	if latest_event_type == "recovery" and latest_result.has("recovery_feedback"):
+		return latest_result.recovery_feedback.duplicate(true)
 	if latest_result.is_empty():
 		return {
 			"status": "idle",
@@ -2213,7 +2257,10 @@ func _combat_encounter_feedback_view() -> Dictionary:
 	for fact: Dictionary in transaction.get("facts_added", []):
 		if bool(fact.get("show_in_feedback", false)):
 			details.append(str(fact.get("summary", "")))
-	details.append("这次遭遇已经结算，原来的三个选择已从行动栏撤下。")
+	if narrative.get("world_danger", false):
+		details.append("交锋已经结束，可以安排下一步。" if narrative.get("ended", false) else "这只是一轮交锋。请依据新伤势与优势选择继续、防守或脱离。")
+	else:
+		details.append("这次遭遇已经结算，原来的三个选择已从行动栏撤下。")
 	return {
 		"status": str(narrative.get("outcome", "combat_encounter")),
 		"summary_details": [],
@@ -2560,6 +2607,8 @@ func _tick_feedback_view() -> Dictionary:
 			results = latest_result.get("results", [])
 		result_data = results[0] if not results.is_empty() else {}
 	var narrative: Dictionary = result_data.get("narrative_result", {})
+	if narrative.get("world_danger", false) and narrative.get("location_id") != session.context.location_id:
+		return {"status": "world_tick", "title": "时间继续流逝", "body": "这里没有亲眼可见的新变化，远方的情况仍需到场或听人说起。", "details": []}
 	var details := _tick_detail_lines(result_data)
 	details.append_array(_need_detail_lines(latest_result))
 	details.append_array(_decision_detail_lines(latest_result))
@@ -2579,6 +2628,9 @@ func _local_resident_activity_feedback(result: Dictionary) -> Dictionary:
 	var food_lines: Array[String] = []
 	var heard: Array[Dictionary] = []
 	for event: Dictionary in result.get("livelihood_events", []):
+		if event.get("location_id") == here and str(event.get("fact_type", "")).begins_with("world_danger"):
+			food_lines.append(str(event.get("summary", "")))
+			continue
 		if event.get("location_id") == here and event.get("fact_type") in ["community_conversation", "community_message_heard", "community_policy_changed", "community_visit_unmet", "community_aid_withheld"]:
 			food_lines.append(str(event.get("summary", "")))
 			if event.get("fact_type") in ["community_message_heard", "community_policy_changed", "community_aid_withheld"]:
@@ -2687,6 +2739,8 @@ func _tick_narrative(result: Dictionary) -> String:
 		var result_data := result_value as Dictionary
 		var narrative: Dictionary = result_data.get("narrative_result", {})
 		var summary := str(narrative.get("summary", ""))
+		if narrative.get("world_danger", false) and narrative.get("location_id") != session.context.location_id:
+			continue
 		if summary != "":
 			summaries.append(summary)
 	if not summaries.is_empty():
@@ -2974,6 +3028,7 @@ func _combat_cost_text(value: String) -> String:
 
 func _combat_approach_label(approach_id: String) -> String:
 	return {
+		"attack": "进攻", "guard": "防守", "withdraw": "脱离",
 		"fight_balanced": "交战",
 		"retreat": "撤退",
 		"negotiate": "交涉",
@@ -3068,6 +3123,10 @@ func _location_context(location: Dictionary, snapshot: Variant) -> String:
 
 func _person_state_text(states: Dictionary) -> String:
 	var rows: Array[String] = []
+	if states.get("danger_opponent_id", "") != "":
+		rows.append("正被危险缠住")
+	if int(states.get("health", 100)) < 100:
+		rows.append("健康 %d/100" % int(states.health))
 	if int(states.get("daily_life_version", 0)) == 1:
 		var labels := {"working": "正在做工", "seeking_work": "正在寻找差事", "seeking_food": "正在寻找口粮", "arrived": "刚刚抵达",
 			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上", "foraging": "正在采食口粮", "socializing": "正在走访交谈"}
@@ -3090,6 +3149,8 @@ func _person_state_text(states: Dictionary) -> String:
 
 func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 	var entity_id := str(entity.get("id", ""))
+	if "world_threat" in entity.get("tags", []):
+		return "仍在守着觅食地 · 健康 %d · 需要绕开、驱赶或脱离" % int(entity.states.get("health", 0))
 	if "local_cooperation" in entity.get("tags", []):
 		var leader: Dictionary = snapshot.get_entity(str(entity.representative_id))
 		return "地方联络人：%s · %d 位成员\n消息要当面传递，约定不会自动通知所有人。" % [leader.get("display_name", entity.representative_id), entity.member_ids.size()]

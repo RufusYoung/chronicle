@@ -89,10 +89,13 @@ const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 const WorkRules = preload("res://scripts/sim/economy/work_rules_setup.gd")
 const Community = preload("res://scripts/sim/organization/local_cooperation.gd")
 const CommunityKnowledge = preload("res://scripts/sim/npc/community_knowledge.gd")
+const WorldDangerSetup = preload("res://scripts/sim/combat/world_danger_setup.gd")
+const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const ActivityChoice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
-const CONTENT_PACK_VERSION := 6
+const CONTENT_PACK_VERSION := 7
+const WORLD_DANGER_DEFINITIONS_MIGRATION := "base_v6_to_v7_world_danger_definitions"
 const WORK_INTENT_DEFINITIONS_MIGRATION := "base_v5_to_v6_work_intent_definitions"
 const FIBER_ROPE_DURABILITY_MIGRATION := "base_v2_to_v3_fiber_rope_durability"
 const RESIDENT_ACTIVITY_DEFINITIONS_MIGRATION := "base_v3_to_v4_resident_activity_definitions"
@@ -244,6 +247,11 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_community_rules_version")
 	if options.get("community_rules_version", 0) == 1:
 		fixture["community_rules"] = Community.PROFILE.duplicate(true)
+	if options.get("world_danger_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_world_danger_version")
+	if options.get("world_danger_version", 0) == 1:
+		fixture["world_danger"] = WorldDangerSetup.PROFILE.duplicate(true)
+		fixture.world_danger["seed"] = int(fixture.get("challenge_seed", 1))
 	if options.get("work_rules_version", 0) not in [0, 1]:
 		return _start_failure("unsupported_work_rules_version")
 	if options.get("work_rules_version", 0) == 1:
@@ -271,6 +279,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	var community_error := Community.validate(fixture.get("community_rules", {}))
 	if community_error != "":
 		return _start_failure(community_error)
+	var danger_error := WorldDangerSetup.validate(fixture.get("world_danger", {}))
+	if danger_error != "":
+		return _start_failure(danger_error)
 	fixture = fixture.duplicate(true)
 	var canon_result := CanonWorld.prepare(fixture)
 	if not canon_result.ok:
@@ -392,6 +403,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	community_error = Community.configure(fixture)
 	if community_error != "":
 		return _start_failure(community_error)
+	danger_error = WorldDangerSetup.configure(fixture)
+	if danger_error != "":
+		return _start_failure(danger_error)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -601,6 +615,8 @@ func get_action_candidates(snapshot: Variant = null) -> Array:
 
 
 func get_action_options(snapshot: Variant = null) -> Array:
+	if initialized and WorldDanger.enabled(fixture_source_data.get("world_danger", {})) and not get_combat_encounter_options(snapshot).is_empty():
+		return []
 	var rows: Array = []
 	for candidate: Variant in get_action_candidates(snapshot):
 		rows.append(candidate.to_dict())
@@ -608,6 +624,8 @@ func get_action_options(snapshot: Variant = null) -> Array:
 
 
 func get_travel_options(snapshot: Variant = null) -> Array:
+	if initialized and WorldDanger.enabled(fixture_source_data.get("world_danger", {})) and not get_combat_encounter_options(snapshot).is_empty():
+		return []
 	if not initialized:
 		return []
 	var rows: Array = []
@@ -781,6 +799,9 @@ func get_challenge_options(snapshot: Variant = null) -> Array:
 
 
 func get_combat_encounter_options(snapshot: Variant = null) -> Array:
+	if initialized and WorldDanger.enabled(fixture_source_data.get("world_danger", {})):
+		return WorldDanger.new().options(get_snapshot() if snapshot == null else snapshot,
+			str(context.player.get("id", "player")), get_time_summary(), fixture_source_data.world_danger, registry)
 	if not initialized:
 		return []
 	if snapshot == null:
@@ -1128,6 +1149,8 @@ func execute_combat_encounter_option(
 		option_id: String,
 		metadata: Dictionary = {}
 ) -> Dictionary:
+	if option_id.begins_with("world_combat:") and initialized:
+		return _execute_world_combat(option_id)
 	if not initialized:
 		return _combat_encounter_failure(
 			"session_not_initialized", option_id
@@ -1227,6 +1250,66 @@ func execute_combat_encounter_option(
 		),
 		"store_summary": get_store_summary(),
 	}
+
+
+func _execute_world_combat(option_id: String) -> Dictionary:
+	var option := _find_combat_encounter_option(option_id)
+	if option.is_empty():
+		return _combat_encounter_failure("world_combat_option_unavailable", option_id)
+	var tick := get_time_summary()
+	var actor := str(context.player.get("id", "player"))
+	var snapshot: Variant = get_snapshot()
+	var threat: Dictionary = snapshot.get_entity(str(option.enemy_id))
+	var result: Variant = WorldDanger.new().resolve_round(snapshot, actor, threat, str(option.approach_id),
+		challenge_rng.randi_range(1, 6), tick, fixture_source_data.world_danger, registry)
+	# The selected round occupies the following hour; the hourly AI must not act twice.
+	result.add_state_change({"entity_id": actor, "key": "danger_round_hour", "to": WorldDanger.hour(tick) + 1})
+	if not writer.apply_result(result, stores):
+		return _combat_encounter_failure(result.error_reason, option_id)
+	var advanced := advance_time(1, "world_combat_round", {"scope_type": "global", "scope_id": "", "source": "world_combat"})
+	if not advanced.get("success", false):
+		return _combat_encounter_failure("world_combat_tick_failed", option_id)
+	combat_encounter_count += 1
+	var log_entry := _build_combat_encounter_log_entry(option, result, combat_encounter_count, int(result.narrative_result.roll))
+	world_log.append_entry(log_entry)
+	return {"success": true, "option_id": option_id, "hours": 1, "outcome": result.narrative_result.outcome,
+		"preview": option.preview,
+		"transaction_result": result.to_dict(), "tick_result": advanced, "world_log_entry": log_entry,
+		"time": get_time_summary(), "combat_encounter_count": combat_encounter_count}
+
+
+func recover_from_danger() -> Dictionary:
+	if not initialized or not WorldDanger.enabled(fixture_source_data.get("world_danger", {})):
+		return {"success": false, "error": "world_danger_not_enabled"}
+	var snapshot: Variant = get_snapshot()
+	var actor := str(context.player.get("id", "player"))
+	if not get_combat_encounter_options(snapshot).is_empty():
+		return {"success": false, "error": "cannot_rest_in_combat"}
+	var now := WorldDanger.hour(get_time_summary())
+	var nourished := int(snapshot.get_player_value("danger_rest_nourished_until", 0)) > now
+	var needs_food := int(snapshot.get_player_value("health", 100)) < 100 or not WorldDanger.wounds(snapshot, actor).is_empty()
+	var food := WorldDanger.recovery_food(snapshot, actor)
+	var transaction := preload("res://scripts/sim/transaction/transaction_result.gd").new()
+	if needs_food and not nourished and not food.is_empty():
+		var fact := {"fact_id": "fact.world_danger_recovery_meal.%s.%d" % [actor, now],
+			"fact_type": "actor_ate_for_recovery", "actor_id": actor, "source_id": actor,
+			"item_instance_id": food.item_instance_id, "location_id": context.location_id,
+			"day": current_day, "hour": current_hour, "summary": "吃掉一份随身食物，支持接下来六小时的休养。"}
+		transaction.add_fact(fact)
+		transaction.add_item_change({"operation": "consume", "item_instance_id": food.item_instance_id, "quantity": 1,
+			"beneficiary_id": actor, "provider_id": actor, "source_fact_ids": [fact.fact_id]})
+		transaction.add_state_change({"entity_id": actor, "key": "danger_rest_nourished_until", "to": now + 6})
+		transaction.add_state_change({"entity_id": actor, "key": "hunger", "degrade": 2})
+	transaction.add_state_change({"entity_id": actor, "key": "daily_activity", "to": "resting"})
+	transaction.mark_resolved("world_danger_rest")
+	if not writer.apply_result(transaction, stores):
+		return {"success": false, "error": transaction.error_reason}
+	var result := advance_time(1, "world_danger_rest", {"scope_type": "global", "scope_id": "", "source": "world_danger_rest"})
+	var finish := preload("res://scripts/sim/transaction/transaction_result.gd").new()
+	finish.add_state_change({"entity_id": actor, "key": "daily_activity", "to": "home"})
+	if not writer.apply_result(finish, stores):
+		return {"success": false, "error": finish.error_reason}
+	return result
 
 
 func execute_challenge_option(
@@ -1825,6 +1908,14 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 	var migrated_store_data: Variant = _migrate_store_save_data(
 		envelope.get("stores", {}), manifest_report.get("migrations", [])
 	)
+	var session_data: Dictionary = envelope.get("session", {})
+	if str(session_data.get("actor_entity_id", "")) != str(context.actor_id):
+		_reset_runtime()
+		return _save_failure("save_actor_id_mismatch", "session")
+	# Position-dependent reference checks must use the saved position, not the bootstrap hub.
+	if not context.set_current_location(str(session_data.get("current_location_id", ""))):
+		_reset_runtime()
+		return _save_failure("save_location_unknown", "session")
 	var store_report := _load_store_save_data(migrated_store_data, CommunityKnowledge.hour(envelope.get("world_time", {})))
 	if not bool(store_report.get("ok", false)):
 		_reset_runtime()
@@ -1838,15 +1929,6 @@ func load_from_save_envelope(source: Variant) -> Dictionary:
 			"save_world_log_invalid:%s" % ",".join(log_report.get("errors", [])),
 			"world_log"
 		)
-	var session_data: Dictionary = envelope.get("session", {})
-	if str(session_data.get("actor_entity_id", "")) != str(context.actor_id):
-		_reset_runtime()
-		return _save_failure("save_actor_id_mismatch", "session")
-	if not context.set_current_location(str(
-		session_data.get("current_location_id", "")
-	)):
-		_reset_runtime()
-		return _save_failure("save_location_unknown", "session")
 	settlement_generation_report = (
 		session_data.get(
 			"settlement_generation", settlement_generation_report
@@ -2275,6 +2357,11 @@ func _validate_definition_manifest(value: Variant) -> Dictionary:
 		return _save_failure("save_definition_manifest_mismatch", "definitions")
 	# Upgrade exact historical manifests, not arbitrary subsets of current definitions.
 	var previous := expected.duplicate()
+	for key: String in WorldDangerSetup.STATE_KEYS:
+		previous.erase("state:state.entity." + key)
+	previous.erase("object:object.creature")
+	if pack_version == 6 and actual == previous:
+		return {"ok": true, "error": "", "phase": "definitions", "migrations": [WORLD_DANGER_DEFINITIONS_MIGRATION]}
 	for key: String in ActivityChoice.STATE_KEYS:
 		previous.erase("state:state.character." + key)
 	if pack_version == 5 and actual == previous:
@@ -2351,6 +2438,9 @@ func _validate_save_references(restored_hour: int = -1) -> Dictionary:
 	var community_error := Community.validate_references(fixture_source_data, stores, context.locations)
 	if community_error != "":
 		return _save_failure(community_error, "references")
+	var danger_error := WorldDangerSetup.validate_references(fixture_source_data, stores, context.locations, str(context.actor_id), str(context.location_id))
+	if danger_error != "":
+		return _save_failure(danger_error, "references")
 	var custody_error := FoodHauling.validate_custody(stores)
 	if custody_error != "":
 		return _save_failure(custody_error, "references")

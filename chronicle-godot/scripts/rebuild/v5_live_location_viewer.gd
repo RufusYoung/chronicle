@@ -135,6 +135,12 @@ func advance_time() -> Dictionary:
 	return result
 
 
+func rest_for_recovery() -> Dictionary:
+	var result: Dictionary = view_model.rest_for_recovery()
+	refresh_view()
+	return result
+
+
 func wait_until_north_quay_ferry() -> Dictionary:
 	var result: Dictionary = view_model.wait_until_north_quay_ferry()
 	refresh_view()
@@ -356,6 +362,8 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
 		match str(action.get("event_type", "player_action")):
+			"recovery":
+				button.pressed.connect(rest_for_recovery)
 			"ferry_wait":
 				button.pressed.connect(wait_until_north_quay_ferry)
 			"challenge":

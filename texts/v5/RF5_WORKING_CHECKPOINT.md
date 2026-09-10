@@ -1,0 +1,12 @@
+# RF5 Working Checkpoint
+
+2026-09-10. Source HEAD: 4555997, branch codex/player-agency-world-surface.
+
+- RF5 implementation is uncommitted. Finite territorial creature, shared NPC/player continuous combat, physical escape, equipment wear, personal danger memory and food-backed injury recovery are connected. RF6 player identity and complete first experience remain pending.
+- Initial escape difficulty made escape impossible for weaker residents; corrected to 12. Extreme hunger can compete with remembered danger, and personally witnessed retreat clears that memory. Seven-day development candidate3 has ten bruise instances, six healed; this is not final balance acceptance.
+- First full regression 65213 finished 147/153; six old definition-count tests failed after adding seven definitions. Their strict totals were corrected and all six passed. Final danger contracts now pass 47/47, actual rendering passes. Final full regression session 15694 writes to %TEMP%/chronicle-rf5-final-regression and remains running. All passive/agent candidate sessions have finished.
+- Legal agent withdrawal and guarded attack both passed at equal elapsed hours 24 and 72. At hour24 guard protects one resident; by hour72 that resident is worse off (health79 vs100), with different meal timing. Do not claim uniformly positive intervention or complete E3. Final packaged play must repeat the 72-hour routes.
+- Frozen2 five seven-day cases passed, with unchanged runtime manifest and native continuation. Natural three seeds healed6/5/5 bruise instances;3/4/4 instances followed by more work. Contact ablation removes encounters. Food balances zero; worst meal gaps129/62/134h remain failures of survival balance. Community combination runs, still default off.
+- Next: synchronize this scoped tested checkpoint, export clean Windows runtime, run packaged protocol and both legal policies, actual-render new seven-day and old thirty-day saves. Wait for session15694, preserve results, then finalize single active plan/report and Git. Do not call a package complete merely from export status.
+- Evidence: chronicle-godot/texts/reports/2026/2026-9/2026-9-10/danger_evidence; development checkpoints in user://tests/food_economy_probe/canon_danger_candidate[1-3]_81001; current screenshots in user://tests/world_danger_render.
+- No human UI play performed. Agent actions are formal game commands; controlled contract scenarios and contact ablation are test injection. Community remains default off. No new source art or proprietary game assets used.
