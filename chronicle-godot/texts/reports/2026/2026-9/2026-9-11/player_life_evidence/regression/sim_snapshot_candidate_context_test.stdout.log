@@ -1,0 +1,14 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 1. SimSnapshotBuilder 能从 context + stores 构建 snapshot
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 2. 给陈米食物后，StateStore 中 chen_mi.hunger 为 medium
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 3. 基于新 snapshot 生成候选时，不再为 chen_mi 生成 give_food_to_hungry_person
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 4. 报告伊莱后，TraceStore 中存在 institutional_record_mark
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 5. 基于新 snapshot 生成候选时，可以从 trace store 生成 inspect_visible_trace 候选
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 6. 报告伊莱后，RumorStore 中存在 outpost_discipline_report_seed
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 7. 基于新 snapshot 生成候选时，可以生成 hear_rumor_seed 候选
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 8. 替伊莱隐瞒后，RelationshipStore 中 recruit_elai -> player debt >= 10
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 9. 基于新 snapshot 生成候选时，可以生成 request_favor_from_indebted_person 候选
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 10. MemoryStore 能被 snapshot 读取
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT PASS] 11. SimRunner 每一步候选生成使用 snapshot
+[V5 SIM SNAPSHOT CANDIDATE CONTEXT RESULT] PASS

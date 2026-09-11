@@ -1,0 +1,10 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 NPC AUTONOMOUS DECISION PASS] 1. 粮铺行为来自自主行动规则，不再来自预排延迟剧情
+[V5 NPC AUTONOMOUS DECISION PASS] 2. 缺粮且陈米挨饿时，老陈选择收铺保粮
+[V5 NPC AUTONOMOUS DECISION PASS] 3. 自主决定保留可解释的效用来源
+[V5 NPC AUTONOMOUS DECISION PASS] 4. 外部行动只改变饥饿状态，老陈随后自行选择继续营业
+[V5 NPC AUTONOMOUS DECISION PASS] 5. 帮助路径产生不同世界事实，而不是改写同一段收铺文案
+[V5 NPC AUTONOMOUS DECISION PASS] 6. 区域压力不足时，等待不会硬触发预设剧情
+[V5 NPC AUTONOMOUS DECISION PASS] 7. 同一通用规则会驱动异地商人，且不依赖玩家当前地点
+[V5 NPC AUTONOMOUS DECISION RESULT] PASS

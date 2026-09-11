@@ -1,0 +1,12 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LOCATION UI FIX PASS] 1. UI fix viewer 场景可加载
+[V5 LOCATION UI FIX PASS] 2. 左侧状态栏使用新顺序，并把伤势/精神并入健康/理智
+[V5 LOCATION UI FIX PASS] 3. 切换到市场后行动选项刷新为市场行动
+[V5 LOCATION UI FIX PASS] 4. 切换到废弃粮仓后行动选项刷新为粮仓行动
+[V5 LOCATION UI FIX PASS] 5. 切回湖湾镇后恢复湖湾镇初始行动
+[V5 LOCATION UI FIX PASS] 6. 顶部菜单打开弹窗且不替换主界面地点局面
+[V5 LOCATION UI FIX PASS] 7. Esc 关闭弹窗并保留地点、线索和行动历史
+[V5 LOCATION UI FIX PASS] 8. 角色按钮弹窗包含角色详情
+[V5 LOCATION UI FIX PASS] 9. 关闭按钮逻辑可返回主界面
+[V5 LOCATION UI FIX RESULT] PASS

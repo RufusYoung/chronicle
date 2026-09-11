@@ -1,0 +1,14 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 RAW RULE PROTOTYPE PASS] 1. 能加载 raw action rules
+[V5 RAW RULE PROTOTYPE PASS] 2. 能加载 lake_town_food_crisis_fixture
+[V5 RAW RULE PROTOTYPE PASS] 4. 湖湾镇不依赖 fixture.actions
+[V5 RAW RULE PROTOTYPE PASS] 3. 湖湾镇能生成基础行动
+[V5 RAW RULE PROTOTYPE PASS] 5. 能加载 seventh_outpost_ration_fixture
+[V5 RAW RULE PROTOTYPE PASS] 5a. 第七哨站不依赖 fixture.actions
+[V5 RAW RULE PROTOTYPE PASS] 6. 第七哨站能生成基础行动
+[V5 RAW RULE PROTOTYPE PASS] 7. 第七哨站能生成至少 3 个军纪 / 口粮领域行动
+[V5 RAW RULE PROTOTYPE PASS] 8. 第七哨站行动不是湖湾镇换壳
+[V5 RAW RULE PROTOTYPE PASS] 9. 执行 give_food_to_hungry_person 后 FactStore 出现 actor_gave_food_to_target
+[V5 RAW RULE PROTOTYPE PASS] 10. 执行 report_discipline_violation_to_superior 后 FactStore 出现 actor_reported_discipline_violation
+[V5 RAW RULE PROTOTYPE RESULT] PASS

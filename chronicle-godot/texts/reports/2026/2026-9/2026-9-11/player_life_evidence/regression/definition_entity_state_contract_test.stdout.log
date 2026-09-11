@@ -1,0 +1,20 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 1. Raw Definition 文件以稳定 ID 和版本通过严格注册
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 2. Registry 可按 kind 与稳定 ID 返回不可变定义
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 3. Registry 拒绝 ID 不一致、重复 key/type 且不覆盖定义
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 4. Registry 拒绝缺少版本、类型和所有者合同的 StateDef
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 5. EntityStore 只保存身份和静态元数据，不吞入可变状态
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 6. 严格 EntityStore 拒绝未注册实体类型
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 7. StateStore 只保存可变状态，玩家身份字段不会形成第二真值
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 8. 已注册 StateDef 允许合法类型、范围与 add 操作
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 9. 严格 StateStore 拒绝类型错误且不发生部分写入
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 10. 严格 StateStore 拒绝 StateDef 未允许的操作
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 11. 严格 StateStore 拒绝未注册状态字段
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 12. SimSession 启动时加载 Definition 并由 EntityStore 构建 Snapshot
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 13. 初始化后 Context 释放玩家、实体、地区、制度和事实副本
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 14. 篡改 Context 运行副本不会改变 Store 真值或 Snapshot
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 15. ItemStore 口粮变化会立即重建 Snapshot 与候选阻塞解释
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 16. Snapshot 合并静态身份与可变状态而不产生重复所有权
+[V5 DEFINITION ENTITY STATE CONTRACT PASS] 17. StateStore 拒绝写入由 ItemStore 聚合的 food_count 投影
+[V5 DEFINITION ENTITY STATE CONTRACT RESULT] PASS

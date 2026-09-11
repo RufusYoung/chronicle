@@ -205,6 +205,7 @@ static func _append_food_transfer(result: Variant, items: Array, amount: int, to
 		if not Food.is_food(item) or moved >= amount:
 			continue
 		var count := mini(amount - moved, int(item.quantity))
+		preload("res://scripts/sim/item/item_causal_sources.gd").append_to(sources, item)
 		var source := str(item.get("provenance", {}).get("created_by_fact_id", ""))
 		for history: Dictionary in item.get("history", []):
 			if history.get("event_type") in ["transferred", "split_from"]:

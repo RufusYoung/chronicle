@@ -1,0 +1,58 @@
+[
+  {
+    "Test": "tests/sim/generated_livelihood_network_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 16.19,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/generated_settlement_network_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 22.25,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/generated_social_pressure_network_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 15.16,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/npc_resident_network_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.58,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/work_activity_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.05,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/work_recipe_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.58,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/worksite_food_storage_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.95,
+    "UnexpectedErrors": []
+  }
+]

@@ -9,7 +9,8 @@ const TransactionResultModel = preload(
 func resolve_tick(
 		snapshot: Variant,
 		profiles: Array,
-		tick_event: Dictionary
+		tick_event: Dictionary,
+		actors: Array = []
 ) -> Dictionary:
 	var elapsed_hours := maxi(int(tick_event.get("elapsed_hours", 0)), 0)
 	if elapsed_hours == 0:
@@ -22,7 +23,7 @@ func resolve_tick(
 		if not (profile_value is Dictionary):
 			continue
 		var profile := profile_value as Dictionary
-		for actor: Dictionary in snapshot.get_entities():
+		for actor: Dictionary in snapshot.get_entities() if actors.is_empty() else actors:
 			if not _actor_matches(actor, profile.get("actor", {}), snapshot):
 				continue
 			for need_value: Variant in profile.get("needs", []):

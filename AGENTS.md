@@ -29,6 +29,8 @@ Reversible implementation and balance choices are engineering work. State and re
 
 ## Model and Context
 
+The user defaults to extra-high (极高) reasoning. Recommend Ultra in the checkpoint report only when the next integrated task has a concrete need for it; do not change global or task settings silently.
+
 The requested development model is GPT-6 Astra. Model configuration is not proof of the current task's runtime identity; report only verified configuration or tool results. Do not silently edit global settings or hard-code assumed model capabilities into game logic.
 
 Prefer concise goals, observable acceptance criteria and file ownership over a long prescriptive implementation script. Before compaction or handoff, record the current hypothesis, source commit, unfinished changes, active process IDs, evidence paths, failed approaches and next executable action. A stronger model does not replace product evidence.

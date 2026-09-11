@@ -1,0 +1,58 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit community world starts
+[PASS] two local groups share actual generated residents, no extra civilization
+[PASS] distant supply is not known at bootstrap
+[PASS] legacy work world still starts
+[PASS] old rules do not gain messages or groups
+[PASS] reject malformed community config: memory_hours
+[PASS] reject malformed community config: maximum_hops
+[PASS] reject malformed community config: maximum_reports
+[PASS] controlled fixture loads through formal session
+[PASS] foreign inventory is unknown before hearing
+[PASS] private own observations commit
+[PASS] another person's private observation does not leak
+[PASS] co-present conversation transfers reports
+[PASS] receiver has one first-hand relayed supply report
+[PASS] heard location opens a real food search candidate
+[PASS] relaying does not refresh original expiry
+[PASS] expired report cannot guide a new trip
+[PASS] message has a valid native evidence chain
+[PASS] reject future observation
+[PASS] reject payload detached from actual witness
+[PASS] reject relaying that extends expiry
+[PASS] reject a message learned after world time
+[PASS] community native save
+[PASS] community native load
+[PASS] community full native state roundtrip
+[PASS] controlled fixture loads through formal session
+[PASS] distant actors do not converse
+[PASS] controlled fixture loads through formal session
+[PASS] test injection: receiver distrusts speaker
+[PASS] distrusted speaker still privately observes
+[PASS] conversation can happen without accepting reports
+[PASS] negative trust blocks adoption of supply report
+[PASS] just conversed, company need is satisfied
+[PASS] unmet company need later creates real visit candidates
+[PASS] controlled fixture loads through formal session
+[PASS] worksite owner observes actual supplies
+[PASS] ordinary service contact shares information
+[PASS] job enquiry is not an information dead end
+[PASS] receiving a service conversation suspends that hour's production
+[PASS] native bootstrap cannot disagree with compiled community rules
+[PASS] message relay remains bounded
+[PASS] controlled fixture loads through formal session
+[PASS] before hearing restriction seller offers actual surplus
+[PASS] representative observes own actual hunger
+[PASS] local shortage changes group policy via transaction
+[PASS] policy does not telepathically reach members
+[PASS] policy travels through actual meeting
+[PASS] member now knows reserve rule
+[PASS] heard reserve rule actually prevents foreign purchase of reserved food
+[PASS] outdated rule knowledge cannot permanently freeze trade
+[PASS] controlled fixture loads through formal session
+[PASS] test injection: a real-style failed local quote is recorded
+[PASS] having coins no longer blocks adaptive self-provisioning after no stock
+[PASS] old subsistence rule remains unchanged
+[PASS] native numeric type does not duplicate observation
+WORK_RECIPE_RESULT PASS 55/55

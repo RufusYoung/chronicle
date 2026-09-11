@@ -1,0 +1,16 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 WORLD TIME SURFACE PASS] 1. 世界时间地点场景可以加载
+[V5 WORLD TIME SURFACE PASS] 2. 初始时钟来自 fixture，延迟现场细节尚未出现
+[V5 WORLD TIME SURFACE PASS] 3. 时间操作与状态生成的玩家行动同时可用
+[V5 WORLD TIME SURFACE PASS] 4. 点击等待后，时钟和现场可见状态一起刷新
+[V5 WORLD TIME SURFACE PASS] 5. 玩家在现场收到世界自主变化的叙事和原因
+[V5 WORLD TIME SURFACE PASS] 6. 时间后果进入地区压力和玩家已确认事实
+[V5 WORLD TIME SURFACE PASS] 7. 行动历史记录等待，但核心仍区分玩家行动和世界 Tick
+[V5 WORLD TIME SURFACE PASS] 8. 时间推进后，普通行动仍由新快照重新生成
+[V5 WORLD TIME SURFACE PASS] 9. 再次等待继续走时钟，但不会复制一次性后果
+[V5 WORLD TIME SURFACE PASS] 10. 重载局面会恢复初始时间和待触发世界状态
+[V5 WORLD TIME SURFACE PASS] 11. 重载后仍可先改变陈米的饥饿状态
+[V5 WORLD TIME SURFACE PASS] 12. 同样经过一小时，给食物改变了老陈读取的处境并促成继续营业
+[V5 WORLD TIME SURFACE PASS] 13. UI 展示的是另一条世界事实，不是替换措辞后的同一结局
+[V5 WORLD TIME SURFACE RESULT] PASS

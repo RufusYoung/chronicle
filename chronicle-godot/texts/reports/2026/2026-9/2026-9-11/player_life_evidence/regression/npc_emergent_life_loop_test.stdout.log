@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 NPC EMERGENT LIFE LOOP PASS] 1. 流逝三小时会先让闻简的饥饿从中等自然增长到高
+[V5 NPC EMERGENT LIFE LOOP PASS] 2. 饥饿与断粮会让闻简真实离开档房并抵达粮铺
+[V5 NPC EMERGENT LIFE LOOP PASS] 3. 异地移动会留下可追溯事实和原地点痕迹
+[V5 NPC EMERGENT LIFE LOOP PASS] 4. 粮铺收门时闻简无法交易，只能求助并形成传闻
+[V5 NPC EMERGENT LIFE LOOP PASS] 5. 玩家能用既有通用行动介入求助，而不是观看后台报告
+[V5 NPC EMERGENT LIFE LOOP PASS] 6. 玩家缓解饥饿后，闻简会依据职责自行返回档房
+[V5 NPC EMERGENT LIFE LOOP PASS] 7. 玩家后来抵达档房时，能同时见到返家的闻简和离场痕迹
+[V5 NPC EMERGENT LIFE LOOP PASS] 8. 帮助陈米会让同一段时间产生营业与来客并存的不同局面
+[V5 NPC EMERGENT LIFE LOOP PASS] 9. 营业路径会完成真实资源转移和已结算交易
+[V5 NPC EMERGENT LIFE LOOP PASS] 10. 玩家在档房能看到本地补货，但不会直接获知粮铺里的异地交易
+[V5 NPC EMERGENT LIFE LOOP PASS] 11. 玩家后来到粮铺时，会从传闻和成交痕迹发现异地交易
+[V5 NPC EMERGENT LIFE LOOP PASS] 12. 交易完成后闻简继续自己的生活链，而不是停在剧情终点
+[V5 NPC EMERGENT LIFE LOOP PASS] 13. 一次推进四小时也会逐小时完成离岗与求助，不依赖连续点击
+[V5 NPC EMERGENT LIFE LOOP PASS] 14. 一次推进四小时也会完成营业分支的真实交易
+[V5 NPC EMERGENT LIFE LOOP RESULT] PASS

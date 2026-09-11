@@ -230,7 +230,7 @@ func append_inputs(result: Variant, plan: Dictionary) -> void:
 	worn = plan.worn
 
 
-func append_products(result: Variant, profile: Dictionary, actor: String, storage_config: Dictionary, fact_id: String, tick: int) -> Array:
+func append_products(result: Variant, profile: Dictionary, actor: String, storage_config: Dictionary, fact_id: String, tick: int, output_holder: String = "") -> Array:
 	var rows: Array = []
 	var ordinal := 0
 	# Aggregate duplicate product rows before filling stacks.
@@ -238,7 +238,7 @@ func append_products(result: Variant, profile: Dictionary, actor: String, storag
 	for product: Dictionary in profile.products:
 		amounts[product.item_def_id] = int(amounts.get(product.item_def_id, 0)) + int(product.quantity)
 	for definition_id: String in amounts:
-		var holder := Storage.production_holder(snapshot, actor, definition_id, storage_config)
+		var holder := output_holder if output_holder != "" else Storage.production_holder(snapshot, actor, definition_id, storage_config)
 		var remaining := int(amounts[definition_id])
 		var definition: Dictionary = registry.get_definition("item", definition_id)
 		var maximum := int(definition.get("max_stack", 1)) if definition.get("stackable", false) else 1

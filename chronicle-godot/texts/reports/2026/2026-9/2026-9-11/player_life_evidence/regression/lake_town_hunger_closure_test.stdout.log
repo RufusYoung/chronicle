@@ -1,0 +1,24 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[LAKE TOWN HUNGER CLOSURE PASS] 1. non-extreme hunger does not trigger hunger closure
+[LAKE TOWN HUNGER CLOSURE PASS] 2. extreme hunger and weak health trigger collapse
+[LAKE TOWN HUNGER CLOSURE PASS] 3. collapse creates WorldFact, Trace, and Memory
+[LAKE TOWN HUNGER CLOSURE PASS] 4. Ma Shen concern and food spare trigger emergency food
+[LAKE TOWN HUNGER CLOSURE PASS] 5. emergency food lowers Chen Mi hunger
+[LAKE TOWN HUNGER CLOSURE PASS] 6. selling shop goods raises family food and leaves a trace
+[LAKE TOWN HUNGER CLOSURE PASS] 7. seeking help changes Chen Mi or Old Chen location
+[LAKE TOWN HUNGER CLOSURE PASS] 8. emergency credit changes food and debt or market credit
+[LAKE TOWN HUNGER CLOSURE PASS] 9. health crash requires sustained extreme hunger or decline
+[LAKE TOWN HUNGER CLOSURE PASS] 10. temporary Ma Shen stay requires rescue and care
+[LAKE TOWN HUNGER CLOSURE PASS] 11. unresolved record is used only when other closures cannot fire
+[LAKE TOWN HUNGER CLOSURE PASS] 12. every hunger-closure WorldFact has cause_fact_ids
+[LAKE TOWN HUNGER CLOSURE PASS] 13. every hunger-closure Trace has source_fact_id
+[LAKE TOWN HUNGER CLOSURE PASS] 14. the same hunger closure is not generated every day
+[LAKE TOWN HUNGER CLOSURE PASS] 15. 20-seed batch has zero unresolved extreme hunger
+[LAKE TOWN HUNGER CLOSURE PASS] 16. quality output contains the hunger closure summary
+[LAKE TOWN HUNGER CLOSURE PASS] 17. variation output contains hunger closure samples
+[LAKE TOWN HUNGER CLOSURE PASS] 18. prior unresolved seeds now have hunger closure facts
+[LAKE TOWN HUNGER CLOSURE PASS] 19. same-seed reproducibility still passes
+[LAKE TOWN HUNGER CLOSURE PASS] 20. different seeds still produce diverse histories
+[LAKE TOWN HUNGER CLOSURE SUMMARY] seeds=20 unresolved=0 bad=4 emergency_food=15 relocation=20 health_crash=4 recorded=0
+[LAKE TOWN HUNGER CLOSURE RESULT] PASS

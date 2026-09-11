@@ -69,6 +69,7 @@ const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd
 const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
+const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
 const SOURCE := "WorldTickAdapter"
@@ -250,6 +251,10 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			resource_results.append_array(recovery_results)
 			resource_events.append_array(recovery_data.get("events", []))
 
+		if daily_life_config.get("player_life", {}).get("version", 0) == 1 and elapsed_hours > 0:
+			var player_error := PlayerLife.tick(context, stores, round_event, npc_need_profiles, writer)
+			if player_error != "":
+				return _failure_result(event, player_error, stores)
 		if not npc_need_profiles.is_empty():
 			var need_snapshot = snapshot_builder.build_snapshot(
 				context,

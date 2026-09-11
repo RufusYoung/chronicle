@@ -1,0 +1,23 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 1. ObligationStore updates open obligation to fulfilled
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 2. ObligationStore updates open obligation to breached
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 3. ExchangeStore updates open exchange to settled
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 4. DeferredConsequenceStore updates pending consequence to triggered
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 5. TransactionResult supports settlement update arrays
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 6. TransactionWorldWriter writes settlement updates
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 7. EffectTemplateResolver parses obligation / exchange / deferred update atoms
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 8. ConsequenceTriggerSystem.fulfill_obligation returns obligation_fulfilled fact
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 9. fulfill_obligation writeback sets obligation.status = fulfilled
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 10. ConsequenceTriggerSystem.breach_obligation returns obligation_breached fact
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 11. breach_obligation writeback sets obligation.status = breached
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 12. ConsequenceTriggerSystem.settle_exchange returns exchange_settled fact
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 13. settle_exchange writeback sets exchange.status = settled
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 14. trigger_deferred_by_key("after_patrol") triggers a pending consequence
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 15. triggered deferred consequence writeback sets deferred.status = triggered
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 16. triggering deferred consequence produces deferred_consequence_triggered fact
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 17. triggering deferred consequence produces pressure change
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 18. WorldLog records obligation / exchange / deferred update counts
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 19. pressure_priority raises related action candidate priority
+[V5 CONSEQUENCE TRIGGER SETTLEMENT PASS] 20. RawRuleContractValidator still PASS
+[V5 CONSEQUENCE TRIGGER SETTLEMENT RESULT] PASS

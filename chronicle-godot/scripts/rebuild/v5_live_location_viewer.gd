@@ -135,6 +135,12 @@ func advance_time() -> Dictionary:
 	return result
 
 
+func act_player_life(id: String) -> Dictionary:
+	var result: Dictionary = view_model.act_player_life(id)
+	refresh_view()
+	return result
+
+
 func rest_for_recovery() -> Dictionary:
 	var result: Dictionary = view_model.rest_for_recovery()
 	refresh_view()
@@ -193,12 +199,18 @@ func refresh_view(projected: Dictionary = {}) -> void:
 	]
 	knowledge_heading.text = "已经确认的事"
 	knowledge_text.text = _format_bullets(current_view_data.get("knowledge", []))
-	(surface["situation"] as RichTextLabel).text = "[b]随身[/b] 食物 %d · 健康 %d · 疲劳 %d/10\n%s" % [
-		player.get("food_count", 0), player.get("health", 100), player.get("fatigue", 0),
+	(surface["situation"] as RichTextLabel).text = "[b]身体与行囊[/b] 饥饿 %s · 食物 %d · 铜币 %d\n健康 %d · 疲劳 %d/10%s\n%s" % [
+		{"none": "不饿", "low": "轻微", "medium": "明显", "high": "严重", "extreme": "极度"}.get(player.get("hunger", "none"), "未知"),
+		player.get("food_count", 0), player.get("coins", 0), player.get("health", 100), player.get("fatigue", 0),
+		" · 路程剩余%d小时" % player.travel_remaining if int(player.get("travel_remaining", 0)) > 0 else "",
 		_format_decision_context(
 		current_view_data.get("decision", {}) as Dictionary,
 		current_view_data.get("agency", {}) as Dictionary
 	)]
+	if not player.get("living_body", false):
+		(surface["situation"] as RichTextLabel).text = "[b]随身[/b] 食物 %d · 健康 %d · 疲劳 %d/10\n%s" % [
+			player.get("food_count", 0), player.get("health", 100), player.get("fatigue", 0),
+			_format_decision_context(current_view_data.get("decision", {}), current_view_data.get("agency", {}))]
 	_refresh_chronicle(
 		current_view_data.get("chronicle", {}) as Dictionary
 	)
@@ -362,6 +374,8 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
 		match str(action.get("event_type", "player_action")):
+			"player_life":
+				button.pressed.connect(act_player_life.bind(str(action.action_id)))
 			"recovery":
 				button.pressed.connect(rest_for_recovery)
 			"ferry_wait":
@@ -618,7 +632,7 @@ func _format_decision_context(
 	if world_summary != "":
 		var first_event := world_summary.split(" | ")[0]
 		rows.append("[b]%s[/b] %s" % [
-			"世界自行发生" if str(agency.get("world_kind", "")) == "independent" else "行动期间",
+			"你见过的后续" if str(agency.get("world_kind", "")) == "observed_followup" else ("世界自行发生" if str(agency.get("world_kind", "")) == "independent" else "行动期间"),
 			first_event,
 		])
 	return "\n".join(rows)

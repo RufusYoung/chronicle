@@ -1,0 +1,27 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PLAYER AGENCY PASS] old_chen_initial: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] Action card exposes cost and tradeoff without hovering
+[PLAYER AGENCY PASS] One UI choice settles once and advances the shared world clock
+[PLAYER AGENCY PASS] Equal-time paired runs differ because helping changes a condition the merchant reads
+[PLAYER AGENCY PASS] Player result and the subsequent world reaction are both visible
+[PLAYER AGENCY PASS] A stale action consumes neither resources nor another hour
+[PLAYER AGENCY PASS] Waiting is attributed to world evolution without erasing the earlier player impact
+[PLAYER AGENCY PASS] old_chen_after_wait: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] Character page exposes the complete attribute sheet
+[PLAYER AGENCY PASS] old_chen_character: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] Full earlier consequences remain accessible in the record, not just the latest message
+[PLAYER AGENCY PASS] many_actions_page_0: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] many_actions_page_1: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] many_actions_page_2: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] many_actions_page_3: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] many_actions_page_4: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] Every injected action remains reachable across pages without consuming world time
+[PLAYER AGENCY PASS] outpost_initial: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] Outpost uses the same visible time-cost and consequence cards
+[PLAYER AGENCY PASS] Duty, daily pressure and autonomous simulation have separate causal receipts
+[PLAYER AGENCY PASS] Direct impact is prominent and the full world settlement remains in records
+[PLAYER AGENCY PASS] outpost_after_duty: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] outpost_character: visible content fits 1280x720 with no nested scroll ()
+[PLAYER AGENCY PASS] Character page translates mark stages instead of exposing internal enum values
+[PLAYER AGENCY SURFACE RESULT] PASS

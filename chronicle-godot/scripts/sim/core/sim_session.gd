@@ -92,6 +92,7 @@ const CommunityKnowledge = preload("res://scripts/sim/npc/community_knowledge.gd
 const WorldDangerSetup = preload("res://scripts/sim/combat/world_danger_setup.gd")
 const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const ActivityChoice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
+const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 7
@@ -247,6 +248,10 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_community_rules_version")
 	if options.get("community_rules_version", 0) == 1:
 		fixture["community_rules"] = Community.PROFILE.duplicate(true)
+	if options.get("player_life_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_player_life_version")
+	if options.get("player_life_version", 0) == 1:
+		fixture["player_life"] = PlayerLife.PROFILE.duplicate(true)
 	if options.get("world_danger_version", 0) not in [0, 1]:
 		return _start_failure("unsupported_world_danger_version")
 	if options.get("world_danger_version", 0) == 1:
@@ -406,6 +411,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	danger_error = WorldDangerSetup.configure(fixture)
 	if danger_error != "":
 		return _start_failure(danger_error)
+	var player_error := PlayerLife.configure(fixture)
+	if player_error != "":
+		return _start_failure(player_error)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -624,6 +632,8 @@ func get_action_options(snapshot: Variant = null) -> Array:
 
 
 func get_travel_options(snapshot: Variant = null) -> Array:
+	if initialized and PlayerLife.enabled(fixture_source_data) and stores.state_store.get_state(str(context.actor_id), "daily_route_id", "") != "":
+		return []
 	if initialized and WorldDanger.enabled(fixture_source_data.get("world_danger", {})) and not get_combat_encounter_options(snapshot).is_empty():
 		return []
 	if not initialized:
@@ -1281,6 +1291,8 @@ func _execute_world_combat(option_id: String) -> Dictionary:
 func recover_from_danger() -> Dictionary:
 	if not initialized or not WorldDanger.enabled(fixture_source_data.get("world_danger", {})):
 		return {"success": false, "error": "world_danger_not_enabled"}
+	if PlayerLife.enabled(fixture_source_data) and stores.state_store.get_state(str(context.actor_id), "daily_route_id", "") != "":
+		return {"success": false, "error": "cannot_rest_while_traveling"}
 	var snapshot: Variant = get_snapshot()
 	var actor := str(context.player.get("id", "player"))
 	if not get_combat_encounter_options(snapshot).is_empty():
@@ -1449,6 +1461,30 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 		return _travel_failure("insufficient_food", route_id)
 
 	var from_location_id: String = str(context.location_id)
+	if PlayerLife.enabled(fixture_source_data):
+		if stores.state_store.get_state(str(context.actor_id), "daily_route_id", "") != "" or not get_combat_encounter_options().is_empty():
+			return _travel_failure("player_cannot_depart_now", route_id)
+		var departure := preload("res://scripts/sim/transaction/transaction_result.gd").new()
+		var fact_id := "fact.player_departure.%d" % elapsed_hours_since_start
+		departure.add_fact({"fact_id": fact_id, "fact_type": "actor_departed", "actor_id": context.actor_id,
+			"location_id": from_location_id, "from_location_id": from_location_id, "to_location_id": to_location_id, "route_id": route_id,
+			"day": current_day, "hour": current_hour, "summary": "你动身前往%s，途中不能同时工作或交易。" % destination.display_name})
+		PlayerLife.set_state(departure, str(context.actor_id), "daily_route_id", route_id)
+		PlayerLife.set_state(departure, str(context.actor_id), "daily_destination_id", to_location_id)
+		PlayerLife.set_state(departure, str(context.actor_id), "daily_travel_remaining", hours)
+		PlayerLife.set_state(departure, str(context.actor_id), "daily_departure_fact_id", fact_id)
+		PlayerLife.set_state(departure, str(context.actor_id), "daily_activity", "traveling")
+		departure.mark_resolved("player_departure")
+		if not writer.apply_result(departure, stores):
+			return _travel_failure(departure.error_reason, route_id)
+		var first_hour := advance_time(1, "player_journey")
+		travel_count += 1
+		var travel_summary := str(departure.facts_added[0].summary)
+		if first_hour.get("success", false) and context.location_id == to_location_id:
+			travel_summary = "沿路走了1小时，已经抵达%s。" % destination.display_name
+		return PlayerLife.feedback({"success": first_hour.get("success", false), "route_id": route_id,
+			"hours": 1, "from_location_id": from_location_id, "to_location_id": to_location_id,
+			"tick_result": first_hour, "time": get_time_summary()}, travel_summary)
 	var tick_metadata := {
 		"scope_type": "location",
 		"scope_id": from_location_id,
@@ -2438,6 +2474,9 @@ func _validate_save_references(restored_hour: int = -1) -> Dictionary:
 	var community_error := Community.validate_references(fixture_source_data, stores, context.locations)
 	if community_error != "":
 		return _save_failure(community_error, "references")
+	var player_error := PlayerLife.validate_save(fixture_source_data, stores, context.locations, str(context.actor_id), str(context.location_id))
+	if player_error != "":
+		return _save_failure(player_error, "references")
 	var danger_error := WorldDangerSetup.validate_references(fixture_source_data, stores, context.locations, str(context.actor_id), str(context.location_id))
 	if danger_error != "":
 		return _save_failure(danger_error, "references")

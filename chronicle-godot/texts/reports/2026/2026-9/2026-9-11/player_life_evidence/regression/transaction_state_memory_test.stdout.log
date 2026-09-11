@@ -1,0 +1,12 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 TRANSACTION STATE MEMORY PASS] 1. 给陈米食物后写入 actor_gave_food_to_target
+[V5 TRANSACTION STATE MEMORY PASS] 2. 给陈米食物后 hunger 从 high 降为 medium
+[V5 TRANSACTION STATE MEMORY PASS] 3. 给陈米食物后 chen_mi -> player gratitude 增加
+[V5 TRANSACTION STATE MEMORY PASS] 4. 给陈米食物后生成 received_help memory
+[V5 TRANSACTION STATE MEMORY PASS] 5. 报告伊莱后写入 actor_reported_discipline_violation
+[V5 TRANSACTION STATE MEMORY PASS] 6. 报告伊莱后 recruit_elai -> player resentment 增加
+[V5 TRANSACTION STATE MEMORY PASS] 7. 报告伊莱后 captain_ron -> player discipline_respect 增加
+[V5 TRANSACTION STATE MEMORY PASS] 8. 替伊莱隐瞒后 recruit_elai -> player trust 增加
+[V5 TRANSACTION STATE MEMORY PASS] 9. 替伊莱隐瞒后生成 being_protected memory
+[V5 TRANSACTION STATE MEMORY RESULT] PASS

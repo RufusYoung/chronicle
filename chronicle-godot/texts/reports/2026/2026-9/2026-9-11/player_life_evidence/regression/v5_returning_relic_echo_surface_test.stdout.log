@@ -1,0 +1,15 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 RETURNING RELIC ECHO SURFACE PASS] 1. Returning relic echo surface loads
+[V5 RETURNING RELIC ECHO SURFACE PASS] 2. Chronicle and recognition choice stay hidden at the initial shop
+[V5 RETURNING RELIC ECHO SURFACE PASS] 3. Finding the token does not fabricate a return chronicle
+[V5 RETURNING RELIC ECHO SURFACE PASS] 4. Returning with the token exposes a clear NPC recognition action
+[V5 RETURNING RELIC ECHO SURFACE PASS] 5. Chronicle remains absent until recognition actually resolves
+[V5 RETURNING RELIC ECHO SURFACE PASS] 6. Recognition takes an hour and gives concrete local-history feedback
+[V5 RETURNING RELIC ECHO SURFACE PASS] 7. Feedback exposes relationship, clue, chronicle, and item history
+[V5 RETURNING RELIC ECHO SURFACE PASS] 8. Recognition and local history appear in confirmed knowledge
+[V5 RETURNING RELIC ECHO SURFACE PASS] 9. Personal chronicle shows its real event and evidence count
+[V5 RETURNING RELIC ECHO SURFACE PASS] 10. The token remains owned while the one-shot echo leaves the action list
+[V5 RETURNING RELIC ECHO SURFACE PASS] 11. Visible response is backed by relationship, item, and chronicle stores
+[V5 RETURNING RELIC ECHO SURFACE PASS] 12. Restart clears the complete return echo surface
+[V5 RETURNING RELIC ECHO SURFACE RESULT] PASS

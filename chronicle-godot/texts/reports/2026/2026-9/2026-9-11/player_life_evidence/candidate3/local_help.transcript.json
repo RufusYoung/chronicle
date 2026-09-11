@@ -1,0 +1,5753 @@
+[
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 0,
+      "hour": 8,
+      "world_tick_count": 0
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 2,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　2 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 小镇",
+      "description": "回音港外·芦湾埠落在湖泽交界、略高于季节水线的缓坡上。这里能长期支撑约 31 人，最先稳定下来的生计是苇编与修具、浅水网渔、短途转运、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "回音港外·芦湾埠集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_fishery",
+        "label": "前往回音港外·芦湾埠泊台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_reed_craft",
+        "label": "前往回音港外·芦湾埠长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_road_carting",
+        "label": "前往回音港外·芦湾埠车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_watch_service",
+        "label": "前往回音港外·芦湾埠守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.a_to_b",
+        "label": "沿区域道路前往回音港外·石渡坞　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.echo_landing.commons_to_fishery",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 1,
+      "hour": 9,
+      "world_tick_count": 1
+    },
+    "feedback": {
+      "body": "你动身前往回音港外·芦湾埠泊台，途中不能同时工作或交易。",
+      "details": [
+        "同期世界变化（不全由你造成）：生产与自然恢复改变了本地资源水位，聚落压力随之调整。 | 1 批物资沿区域道路从富余聚落流向短缺聚落，来源库存、目的库存和运力同时发生变化。"
+      ],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 1,
+      "hour": 9,
+      "world_tick_count": 1
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 2,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　2 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/gather:net_fisher",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 5,
+      "hour": 13,
+      "world_tick_count": 5
+    },
+    "feedback": {
+      "body": "旅人花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 4 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 5,
+      "hour": 13,
+      "world_tick_count": 5
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 2,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　2 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+        "label": "帮陶砚采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.006:net_fisher",
+        "label": "帮叶遥采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 9,
+      "hour": 17,
+      "world_tick_count": 9
+    },
+    "feedback": {
+      "body": "你帮陶砚完成采收，4份产物交给对方，领取3枚实际铜币。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 4 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 9,
+      "hour": 17,
+      "world_tick_count": 9
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.player.player_work.9.output.0",
+        "label": "向陶砚买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+        "label": "帮陶砚采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.006:net_fisher",
+        "label": "帮叶遥采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 10,
+      "hour": 18,
+      "world_tick_count": 10
+    },
+    "feedback": {
+      "body": "天色或身体条件已不适合继续。已完成1/4小时；下次选择同一作业可接着做，换作业会重新准备。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 10,
+      "hour": 18,
+      "world_tick_count": 10
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.player.player_work.9.output.0",
+        "label": "向陶砚买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+        "label": "帮陶砚采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.006:net_fisher",
+        "label": "帮叶遥采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 11,
+      "hour": 19,
+      "world_tick_count": 11
+    },
+    "feedback": {
+      "body": "陶砚动身前往回音港外·芦湾埠集地，班次结束，回家休息。\n陶川动身前往回音港外·芦湾埠集地，班次结束，回家休息。\n叶砚动身前往回音港外·芦湾埠集地，现有买粮钱补不上口粮缺口，今晚暂停原班次，回家休息准备白天采食。",
+      "details": [
+        "陶砚动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "陶川动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "叶砚动身前往回音港外·芦湾埠集地，现有买粮钱补不上口粮缺口，今晚暂停原班次，回家休息准备白天采食。",
+        "叶遥动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "叶荞动身前往回音港外·芦湾埠集地，班次结束，回家休息。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "陶砚动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "陶川动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "叶砚动身前往回音港外·芦湾埠集地，现有买粮钱补不上口粮缺口，今晚暂停原班次，回家休息准备白天采食。",
+        "叶遥动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "叶荞动身前往回音港外·芦湾埠集地，班次结束，回家休息。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 11,
+      "hour": 19,
+      "world_tick_count": 11
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 12,
+      "hour": 20,
+      "world_tick_count": 12
+    },
+    "feedback": {
+      "body": "时间继续往前，陶砚的饥饿从缓和加深到了严重。这会改变接下来愿意采取的行动。",
+      "details": [
+        "某个对象的hunger_elapsed_hours发生变化",
+        "某个对象的饥饿状态发生变化",
+        "这次变化已经成为可追溯的世界事实",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从轻微变为缓和",
+        "某个对象的饥饿状态从缓和变为严重"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象的hunger_elapsed_hours发生变化",
+        "某个对象的饥饿状态发生变化",
+        "这次变化已经成为可追溯的世界事实",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从轻微变为缓和",
+        "某个对象的饥饿状态从缓和变为严重"
+      ],
+      "title": "陶砚显得更饿了"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 12,
+      "hour": 20,
+      "world_tick_count": 12
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 13,
+      "hour": 21,
+      "world_tick_count": 13
+    },
+    "feedback": {
+      "body": "你吃掉一份鲜鱼，饥饿减轻了。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 13,
+      "hour": 21,
+      "world_tick_count": 13
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 14,
+      "hour": 22,
+      "world_tick_count": 14
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 14,
+      "hour": 22,
+      "world_tick_count": 14
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 15,
+      "hour": 23,
+      "world_tick_count": 15
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 15,
+      "hour": 23,
+      "world_tick_count": 15
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 16,
+      "hour": 0,
+      "world_tick_count": 16
+    },
+    "feedback": {
+      "body": "1 批物资沿区域道路从富余聚落流向短缺聚落，来源库存、目的库存和运力同时发生变化。",
+      "details": [
+        "待运输口粮配额因生产消耗 1.0",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "待运输口粮配额因生产消耗 1.0",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 16,
+      "hour": 0,
+      "world_tick_count": 16
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 17,
+      "hour": 1,
+      "world_tick_count": 17
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 17,
+      "hour": 1,
+      "world_tick_count": 17
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 18,
+      "hour": 2,
+      "world_tick_count": 18
+    },
+    "feedback": {
+      "body": "1 人吃到了食物，其中 0 份来自同住者，0 份来自邻里或工友；另有 0 次跨家庭求助没有得到食物。",
+      "details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 18,
+      "hour": 2,
+      "world_tick_count": 18
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 19,
+      "hour": 3,
+      "world_tick_count": 19
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.1"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.1"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 19,
+      "hour": 3,
+      "world_tick_count": 19
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 20,
+      "hour": 4,
+      "world_tick_count": 20
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.8"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 20,
+      "hour": 4,
+      "world_tick_count": 20
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 21,
+      "hour": 5,
+      "world_tick_count": 21
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.7"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.7"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 21,
+      "hour": 5,
+      "world_tick_count": 21
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 22,
+      "hour": 6,
+      "world_tick_count": 22
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象出现在现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象出现在现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 22,
+      "hour": 6,
+      "world_tick_count": 22
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 23,
+      "hour": 7,
+      "world_tick_count": 23
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 23,
+      "hour": 7,
+      "world_tick_count": 23
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 24,
+      "hour": 8,
+      "world_tick_count": 24
+    },
+    "feedback": {
+      "body": "7 人吃到了食物，其中 0 份来自同住者，0 份来自邻里或工友；另有 6 次跨家庭求助没有得到食物。",
+      "details": [],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 24,
+      "hour": 8,
+      "world_tick_count": 24
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 25,
+      "hour": 9,
+      "world_tick_count": 25
+    },
+    "feedback": {
+      "body": "你吃掉一份鲜鱼，饥饿减轻了。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 25,
+      "hour": 9,
+      "world_tick_count": 25
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 26,
+      "hour": 10,
+      "world_tick_count": 26
+    },
+    "feedback": {
+      "body": "陶砚沿着来路抵达这里。\n叶牧沿着来路抵达这里。\n叶遥沿着来路抵达这里。",
+      "details": [
+        "陶砚沿着来路抵达这里。",
+        "叶牧沿着来路抵达这里。",
+        "叶遥沿着来路抵达这里。",
+        "叶荞沿着来路抵达这里。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "陶砚沿着来路抵达这里。",
+        "叶牧沿着来路抵达这里。",
+        "叶遥沿着来路抵达这里。",
+        "叶荞沿着来路抵达这里。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 26,
+      "hour": 10,
+      "world_tick_count": 26
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 3,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+        "label": "帮陶砚采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.004:net_fisher",
+        "label": "帮叶牧采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.006:net_fisher",
+        "label": "帮叶遥采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 29,
+      "hour": 13,
+      "world_tick_count": 29
+    },
+    "feedback": {
+      "body": "你帮陶砚完成采收，4份产物交给对方，领取3枚实际铜币。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 3 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 29,
+      "hour": 13,
+      "world_tick_count": 29
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_8.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.player.player_work.9.output.0",
+        "label": "向陶砚买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:item_instance.exchange_resident_food_generated_resident_echo_landing_007_40.goods",
+        "label": "向叶荞买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 30,
+      "hour": 14,
+      "world_tick_count": 30
+    },
+    "feedback": {
+      "body": "叶牧花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。\n叶砚沿着来路抵达这里。\n叶荞动身前往回音港外·芦湾埠集地，给家中接下来一天的口粮带粮回家。",
+      "details": [
+        "叶牧花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。",
+        "叶砚沿着来路抵达这里。",
+        "叶荞动身前往回音港外·芦湾埠集地，给家中接下来一天的口粮带粮回家。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "叶牧花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。",
+        "叶砚沿着来路抵达这里。",
+        "叶荞动身前往回音港外·芦湾埠集地，给家中接下来一天的口粮带粮回家。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 30,
+      "hour": 14,
+      "world_tick_count": 30
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_8.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.player.player_work.9.output.0",
+        "label": "向陶砚买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:item_instance.exchange_resident_food_generated_resident_echo_landing_004_60.goods",
+        "label": "向叶牧买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 31,
+      "hour": 15,
+      "world_tick_count": 31
+    },
+    "feedback": {
+      "body": "叶牧动身前往回音港外·芦湾埠集地，给家中接下来一天的口粮带粮回家。\n叶砚：记得家中接下来一天的口粮缺粮，带自己的钱去采购。\n叶川沿着来路抵达这里。",
+      "details": [
+        "叶牧动身前往回音港外·芦湾埠集地，给家中接下来一天的口粮带粮回家。",
+        "叶砚：记得家中接下来一天的口粮缺粮，带自己的钱去采购。",
+        "叶川沿着来路抵达这里。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "叶牧动身前往回音港外·芦湾埠集地，给家中接下来一天的口粮带粮回家。",
+        "叶砚：记得家中接下来一天的口粮缺粮，带自己的钱去采购。",
+        "叶川沿着来路抵达这里。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 31,
+      "hour": 15,
+      "world_tick_count": 31
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_8.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.player.player_work.9.output.0",
+        "label": "向陶砚买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.008:net_fisher",
+        "label": "帮叶川采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/help:generated_resident.echo_landing.008:net_fisher",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 34,
+      "hour": 18,
+      "world_tick_count": 34
+    },
+    "feedback": {
+      "body": "雇主已经离开现场、遇险或无法支付。采收停止，未凭空发薪；可以改为自己采食。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 3 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 34,
+      "hour": 18,
+      "world_tick_count": 34
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 35,
+      "hour": 19,
+      "world_tick_count": 35
+    },
+    "feedback": {
+      "body": "叶砚动身前往回音港外·芦湾埠集地，现有买粮钱补不上口粮缺口，今晚暂停原班次，回家休息准备白天采食。",
+      "details": [
+        "叶砚动身前往回音港外·芦湾埠集地，现有买粮钱补不上口粮缺口，今晚暂停原班次，回家休息准备白天采食。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "叶砚动身前往回音港外·芦湾埠集地，现有买粮钱补不上口粮缺口，今晚暂停原班次，回家休息准备白天采食。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 35,
+      "hour": 19,
+      "world_tick_count": 35
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 36,
+      "hour": 20,
+      "world_tick_count": 36
+    },
+    "feedback": {
+      "body": "时间继续往前，叶砚的饥饿从缓和加深到了严重。这会改变接下来愿意采取的行动。",
+      "details": [
+        "某个对象的hunger_elapsed_hours发生变化",
+        "某个对象的饥饿状态发生变化",
+        "这次变化已经成为可追溯的世界事实",
+        "某个对象的饥饿状态从缓和变为严重"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象的hunger_elapsed_hours发生变化",
+        "某个对象的饥饿状态发生变化",
+        "这次变化已经成为可追溯的世界事实",
+        "某个对象的饥饿状态从缓和变为严重"
+      ],
+      "title": "叶砚显得更饿了"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 36,
+      "hour": 20,
+      "world_tick_count": 36
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 37,
+      "hour": 21,
+      "world_tick_count": 37
+    },
+    "feedback": {
+      "body": "你吃掉一份鲜鱼，饥饿减轻了。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 37,
+      "hour": 21,
+      "world_tick_count": 37
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 38,
+      "hour": 22,
+      "world_tick_count": 38
+    },
+    "feedback": {
+      "body": "1 人吃到了食物，其中 1 份来自同住者，0 份来自邻里或工友；另有 0 次跨家庭求助没有得到食物。",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 38,
+      "hour": 22,
+      "world_tick_count": 38
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 39,
+      "hour": 23,
+      "world_tick_count": 39
+    },
+    "feedback": {
+      "body": "1 人吃到了食物，其中 0 份来自同住者，0 份来自邻里或工友；另有 0 次跨家庭求助没有得到食物。",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 39,
+      "hour": 23,
+      "world_tick_count": 39
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 40,
+      "hour": 0,
+      "world_tick_count": 40
+    },
+    "feedback": {
+      "body": "1 批物资沿区域道路从富余聚落流向短缺聚落，来源库存、目的库存和运力同时发生变化。",
+      "details": [
+        "待运输口粮配额因生产消耗 1.0",
+        "待运输口粮配额因生产消耗 1.0",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "待运输口粮配额因生产消耗 1.0",
+        "待运输口粮配额因生产消耗 1.0",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 40,
+      "hour": 0,
+      "world_tick_count": 40
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 41,
+      "hour": 1,
+      "world_tick_count": 41
+    },
+    "feedback": {
+      "body": "1 名居民完成了工作，实际产物或薪酬已进入物品库存。",
+      "details": [
+        "港外聚落耕地自然恢复 1.0",
+        "港外运粮土路自然恢复 0.6"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外聚落耕地自然恢复 1.0",
+        "港外运粮土路自然恢复 0.6"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 41,
+      "hour": 1,
+      "world_tick_count": 41
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 42,
+      "hour": 2,
+      "world_tick_count": 42
+    },
+    "feedback": {
+      "body": "4 人吃到了食物，其中 0 份来自同住者，0 份来自邻里或工友；另有 0 次跨家庭求助没有得到食物。",
+      "details": [
+        "港外聚落耕地自然恢复 1.0"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外聚落耕地自然恢复 1.0"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 42,
+      "hour": 2,
+      "world_tick_count": 42
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 43,
+      "hour": 3,
+      "world_tick_count": 43
+    },
+    "feedback": {
+      "body": "1 人吃到了食物，其中 0 份来自同住者，0 份来自邻里或工友；另有 0 次跨家庭求助没有得到食物。",
+      "details": [
+        "港外聚落耕地自然恢复 1.0"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外聚落耕地自然恢复 1.0"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 43,
+      "hour": 3,
+      "world_tick_count": 43
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 44,
+      "hour": 4,
+      "world_tick_count": 44
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外聚落耕地自然恢复 0.9"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外聚落耕地自然恢复 0.9"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 44,
+      "hour": 4,
+      "world_tick_count": 44
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 45,
+      "hour": 5,
+      "world_tick_count": 45
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 45,
+      "hour": 5,
+      "world_tick_count": 45
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 46,
+      "hour": 6,
+      "world_tick_count": 46
+    },
+    "feedback": {
+      "body": "1 名居民完成了工作，实际产物或薪酬已进入物品库存。",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 46,
+      "hour": 6,
+      "world_tick_count": 46
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/gather:net_fisher",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 50,
+      "hour": 10,
+      "world_tick_count": 50
+    },
+    "feedback": {
+      "body": "旅人花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 4 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 50,
+      "hour": 10,
+      "world_tick_count": 50
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 7,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×5",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　7 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×5、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_32.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_8.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_28.output.0",
+        "label": "向叶遥买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 51,
+      "hour": 11,
+      "world_tick_count": 51
+    },
+    "feedback": {
+      "body": "你吃掉一份鲜鱼，饥饿减轻了。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 51,
+      "hour": 11,
+      "world_tick_count": 51
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_28.output.0",
+        "label": "向叶遥买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 52,
+      "hour": 12,
+      "world_tick_count": 52
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.2"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.2"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 52,
+      "hour": 12,
+      "world_tick_count": 52
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_28.output.0",
+        "label": "向叶遥买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 53,
+      "hour": 13,
+      "world_tick_count": 53
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 53,
+      "hour": 13,
+      "world_tick_count": 53
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_28.output.0",
+        "label": "向叶遥买1份鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 54,
+      "hour": 14,
+      "world_tick_count": 54
+    },
+    "feedback": {
+      "body": "叶遥花了4小时完成网具捕捞，鲜鱼 × 12留在现场货柜。纤维绳索磨损1，剩余耐久1。\n陶砚沿着来路抵达这里。",
+      "details": [
+        "叶遥花了4小时完成网具捕捞，鲜鱼 × 12留在现场货柜。纤维绳索磨损1，剩余耐久1。",
+        "陶砚沿着来路抵达这里。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "叶遥花了4小时完成网具捕捞，鲜鱼 × 12留在现场货柜。纤维绳索磨损1，剩余耐久1。",
+        "陶砚沿着来路抵达这里。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 54,
+      "hour": 14,
+      "world_tick_count": 54
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_32.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_8.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_28.output.0",
+        "label": "向叶遥买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_54.output.0",
+        "label": "向叶遥买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 55,
+      "hour": 15,
+      "world_tick_count": 55
+    },
+    "feedback": {
+      "body": "陶砚动身前往回音港外·芦湾埠集地，暂时没有更值得赶去做的事。\n叶遥动身前往回音港外·芦湾埠集地，暂时没有更值得赶去做的事。",
+      "details": [
+        "陶砚动身前往回音港外·芦湾埠集地，暂时没有更值得赶去做的事。",
+        "叶遥动身前往回音港外·芦湾埠集地，暂时没有更值得赶去做的事。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "陶砚动身前往回音港外·芦湾埠集地，暂时没有更值得赶去做的事。",
+        "叶遥动身前往回音港外·芦湾埠集地，暂时没有更值得赶去做的事。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 55,
+      "hour": 15,
+      "world_tick_count": 55
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 56,
+      "hour": 16,
+      "world_tick_count": 56
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.2",
+        "港外浅滩芦苇自然恢复 0.3"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.2",
+        "港外浅滩芦苇自然恢复 0.3"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 56,
+      "hour": 16,
+      "world_tick_count": 56
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 57,
+      "hour": 17,
+      "world_tick_count": 57
+    },
+    "feedback": {
+      "body": "",
+      "details": [],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 57,
+      "hour": 17,
+      "world_tick_count": 57
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 58,
+      "hour": 18,
+      "world_tick_count": 58
+    },
+    "feedback": {
+      "body": "陶砚沿着来路抵达这里。\n叶遥沿着来路抵达这里。",
+      "details": [
+        "陶砚沿着来路抵达这里。",
+        "叶遥沿着来路抵达这里。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "陶砚沿着来路抵达这里。",
+        "叶遥沿着来路抵达这里。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 58,
+      "hour": 18,
+      "world_tick_count": 58
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_32.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_8.output.0",
+        "label": "向陶砚买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_28.output.0",
+        "label": "向叶遥买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_54.output.0",
+        "label": "向叶遥买1份鲜鱼 · 2铜币",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 59,
+      "hour": 19,
+      "world_tick_count": 59
+    },
+    "feedback": {
+      "body": "陶砚从自己的作业地存粮中取出 3 份随身口粮，其余仍留在原处。\n叶遥从自己的作业地存粮中取出 4 份随身口粮，其余仍留在原处。\n陶砚动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+      "details": [
+        "陶砚从自己的作业地存粮中取出 3 份随身口粮，其余仍留在原处。",
+        "叶遥从自己的作业地存粮中取出 4 份随身口粮，其余仍留在原处。",
+        "陶砚动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "叶遥动身前往回音港外·芦湾埠集地，班次结束，回家休息。"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary": "人物按自己的作息行动，不是等待操作的奖励。",
+      "summary_details": [
+        "陶砚从自己的作业地存粮中取出 3 份随身口粮，其余仍留在原处。",
+        "叶遥从自己的作业地存粮中取出 4 份随身口粮，其余仍留在原处。",
+        "陶砚动身前往回音港外·芦湾埠集地，班次结束，回家休息。",
+        "叶遥动身前往回音港外·芦湾埠集地，班次结束，回家休息。"
+      ],
+      "title": "眼前的人有了动静"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 59,
+      "hour": 19,
+      "world_tick_count": 59
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 60,
+      "hour": 20,
+      "world_tick_count": 60
+    },
+    "feedback": {
+      "body": "时间继续往前，陶砚的饥饿从缓和加深到了严重。这会改变接下来愿意采取的行动。",
+      "details": [
+        "某个对象的hunger_elapsed_hours发生变化",
+        "某个对象的饥饿状态发生变化",
+        "这次变化已经成为可追溯的世界事实",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从轻微变为缓和"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象的hunger_elapsed_hours发生变化",
+        "某个对象的饥饿状态发生变化",
+        "这次变化已经成为可追溯的世界事实",
+        "某个对象的饥饿状态从缓和变为严重",
+        "某个对象的饥饿状态从轻微变为缓和"
+      ],
+      "title": "陶砚显得更饿了"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 60,
+      "hour": 20,
+      "world_tick_count": 60
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 61,
+      "hour": 21,
+      "world_tick_count": 61
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 61,
+      "hour": 21,
+      "world_tick_count": 61
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 62,
+      "hour": 22,
+      "world_tick_count": 62
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象已经离开现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 62,
+      "hour": 22,
+      "world_tick_count": 62
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 63,
+      "hour": 23,
+      "world_tick_count": 63
+    },
+    "feedback": {
+      "body": "你吃掉一份鲜鱼，饥饿减轻了。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 63,
+      "hour": 23,
+      "world_tick_count": 63
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 64,
+      "hour": 0,
+      "world_tick_count": 64
+    },
+    "feedback": {
+      "body": "1 批物资沿区域道路从富余聚落流向短缺聚落，来源库存、目的库存和运力同时发生变化。",
+      "details": [
+        "待运输口粮配额因生产消耗 1.0",
+        "待运输口粮配额因生产消耗 1.0",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "待运输口粮配额因生产消耗 1.0",
+        "待运输口粮配额因生产消耗 1.0",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 64,
+      "hour": 0,
+      "world_tick_count": 64
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 65,
+      "hour": 1,
+      "world_tick_count": 65
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 65,
+      "hour": 1,
+      "world_tick_count": 65
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 66,
+      "hour": 2,
+      "world_tick_count": 66
+    },
+    "feedback": {
+      "body": "1 人吃到了食物，其中 0 份来自同住者，0 份来自邻里或工友；另有 0 次跨家庭求助没有得到食物。",
+      "details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.3"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 66,
+      "hour": 2,
+      "world_tick_count": 66
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 67,
+      "hour": 3,
+      "world_tick_count": 67
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.1"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8",
+        "港外沿岸小路自然恢复 0.1"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 67,
+      "hour": 3,
+      "world_tick_count": 67
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 68,
+      "hour": 4,
+      "world_tick_count": 68
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "港外可食鱼群自然恢复 0.8"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.8"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 68,
+      "hour": 4,
+      "world_tick_count": 68
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 69,
+      "hour": 5,
+      "world_tick_count": 69
+    },
+    "feedback": {
+      "body": "1 名居民完成了工作，实际产物或薪酬已进入物品库存。",
+      "details": [
+        "港外可食鱼群自然恢复 0.7"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "港外可食鱼群自然恢复 0.7"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 69,
+      "hour": 5,
+      "world_tick_count": 69
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 70,
+      "hour": 6,
+      "world_tick_count": 70
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象出现在现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象出现在现场",
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 70,
+      "hour": 6,
+      "world_tick_count": 70
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 71,
+      "hour": 7,
+      "world_tick_count": 71
+    },
+    "feedback": {
+      "body": "",
+      "details": [
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [
+        "某个对象的健康发生变化",
+        "某个对象的健康发生变化",
+        "这次变化已经成为可追溯的世界事实"
+      ],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 71,
+      "hour": 7,
+      "world_tick_count": 71
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 6,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "items": [
+        "鲜鱼 ×3",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100",
+        "铜币 ×3",
+        "铜币 ×3"
+      ],
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾埠的旅人",
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾埠的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼 ×3、旅行口粮 ×2、上蜡冬衣 40/100、铜币 ×3、铜币 ×3",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾埠泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份随身食物",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "wait/one_hour",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 72,
+      "hour": 8,
+      "world_tick_count": 72
+    },
+    "feedback": {
+      "body": "7 人吃到了食物，其中 1 份来自同住者，0 份来自邻里或工友；另有 6 次跨家庭求助没有得到食物。",
+      "details": [],
+      "eyebrow": "世界自行发生 · 非你的直接结果",
+      "status": "world_tick",
+      "summary_details": [],
+      "title": "时间带来了变化"
+    },
+    "witnessed_followups": []
+  }
+]

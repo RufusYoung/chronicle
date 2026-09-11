@@ -1,0 +1,65 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] initially absent industry has no phantom workplace or worker
+[INDUSTRY PASS] industry day 1 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] industry day 2 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] demand alone cannot create an industry without practical experience
+[INDUSTRY PASS] test-injected extra cycles on the same day cannot outweigh actual days of practice
+[INDUSTRY PASS] industry day 3 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] sustained risk, earned work experience and materials found one local industry
+[INDUSTRY PASS] new industry capacity receipt explains formation, not nonexistent unemployment pressure
+[INDUSTRY PASS] construction material debit exactly matches the receipt
+[INDUSTRY PASS] founder actually changes occupation and joins the new workplace
+[INDUSTRY PASS] foundation cites real work and demand evidence and consumes construction materials
+[INDUSTRY PASS] industry day 3 commits: {"error":"","ok":true,"phase":"no_changes","result_count":0}
+[INDUSTRY PASS] replaying the same daily evaluation does not duplicate construction or charges
+[INDUSTRY PASS] new workplace is reachable from the existing hub
+[INDUSTRY PASS] active industry saves through the normal envelope
+[INDUSTRY PASS] active facility, profiles, employment and receipts survive save/load exactly
+[INDUSTRY PASS] invalid runtime industry profile is rejected during load: resource
+[INDUSTRY PASS] invalid runtime industry profile is rejected during load: product
+[INDUSTRY PASS] invalid runtime industry profile is rejected during load: source
+[INDUSTRY PASS] invalid runtime industry profile is rejected during load: location
+[INDUSTRY PASS] invalid runtime industry profile is rejected during load: shape
+[INDUSTRY PASS] loaded new occupation produces through the existing livelihood system
+[INDUSTRY PASS] industry day 4 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] industry day 5 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] brief demand loss does not instantly erase an industry
+[INDUSTRY PASS] industry day 6 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] retirement capacity receipt describes closed jobs, not negative expansion
+[INDUSTRY PASS] sustained demand loss retires the industry and removes recruitable profiles
+[INDUSTRY PASS] retirement closes the facility and lays off its real worker
+[INDUSTRY PASS] retired premises remain visitable historical places
+[INDUSTRY PASS] retired workers cannot continue producing from stale startup profiles
+[INDUSTRY PASS] retired industry saves
+[INDUSTRY PASS] loading cannot reopen a retired industry
+[INDUSTRY PASS] industry day 7 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] reentry cooldown prevents next-day reconstruction
+[INDUSTRY PASS] industry day 8 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] renewed conditions pay for a distinct site with correct capacity, without erasing the old ruin
+[INDUSTRY PASS] housing and industry share land and do not overwrite active sites or ruins
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] industry day 1 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] no_demand blocks formation
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] industry day 1 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] no_materials blocks formation
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] industry day 1 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] no_land blocks formation
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] industry day 1 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] failed preflight leaves no half-created facility, job, fact or material charge
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] construction timber cannot substitute for missing production fiber
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] industry day 1 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] industry day 2 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] industry day 3 commits: {"error":"","ok":true,"phase":"committed_batch","result_count":1,"store_count":17}
+[INDUSTRY PASS] startup industries can also retire after prolonged resource loss
+[INDUSTRY PASS] ordinary resource recovery cannot resurrect a retired startup industry
+[INDUSTRY PASS] fixture starts
+[INDUSTRY PASS] formal WorldTick discovers and founds the industry without manual lifecycle calls
+[INDUSTRY PASS] world-tick result is available for render verification
+[INDUSTRY RESULT] PASS

@@ -84,7 +84,7 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	if variant not in ["default", "worksite_carting_v1", "worksite_hauling_v1", "household_budget_v1", "household_livelihood_v1", "work_framework_v1", "community_life_v1", "world_danger_v1"] or (variant != "default" and next_scenario != "echo_realm"):
+	if variant not in ["default", "worksite_carting_v1", "worksite_hauling_v1", "household_budget_v1", "household_livelihood_v1", "work_framework_v1", "community_life_v1", "world_danger_v1", "player_life_v1"] or (variant != "default" and next_scenario != "echo_realm"):
 		return _error("invalid_economy_variant")
 	if next_mode not in ["world", "play"] or next_scenario not in ["echo_realm", "generated_network", "lake_town", "first_winter"]:
 		return _error("invalid_start_profile")
@@ -101,13 +101,15 @@ func _start(request: Dictionary) -> Dictionary:
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1})
 	if variant == "household_budget_v1":
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1})
-	if variant in ["household_livelihood_v1", "work_framework_v1", "community_life_v1", "world_danger_v1"]:
+	if variant in ["household_livelihood_v1", "work_framework_v1", "community_life_v1", "world_danger_v1", "player_life_v1"]:
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1, "household_food_budget_version": 1, "resident_subsistence_version": 1})
-	if variant in ["work_framework_v1", "community_life_v1", "world_danger_v1"]:
+	if variant in ["work_framework_v1", "community_life_v1", "world_danger_v1", "player_life_v1"]:
 		options["work_rules_version"] = 1
 	if variant == "community_life_v1":
 		options["community_rules_version"] = 1
-	if variant == "world_danger_v1":
+	if variant == "player_life_v1":
+		options["player_life_version"] = 1
+	if variant in ["world_danger_v1", "player_life_v1"]:
 		options["world_danger_version"] = 1
 	if next_scenario == "first_winter":
 		next_model = OutpostView.new()
@@ -141,7 +143,7 @@ func _refresh() -> void:
 	var projected: Dictionary = model.build_view_data()
 	_view = {"visibility": "player_surface"}
 	# Never expose raw transaction history or save payloads through player observation.
-	for key: String in ["location", "playtest", "player", "time", "region_status", "region_map", "visible_people",
+	for key: String in ["location", "playtest", "player", "player_life_followups", "time", "region_status", "region_map", "visible_people",
 		"visible_observations", "decision", "agency", "risk", "knowledge", "investigation",
 		"chronicle", "feedback", "title", "subtitle", "phase_id", "day", "duration_days",
 		"complete", "objective", "ritual", "status", "market", "people", "incident", "completion"]:
@@ -234,6 +236,7 @@ func _act(request: Dictionary) -> Dictionary:
 		"challenge": result = model.perform_challenge(choice.id)
 		"combat_encounter": result = model.perform_combat_encounter(choice.id)
 		"recovery": result = model.rest_for_recovery()
+		"player_life": result = model.act_player_life(choice.id)
 		"return_echo": result = model.perform_return_echo(choice.id)
 		"investigation": result = model.perform_investigation(choice.id)
 		"ferry_wait": result = model.wait_until_north_quay_ferry()

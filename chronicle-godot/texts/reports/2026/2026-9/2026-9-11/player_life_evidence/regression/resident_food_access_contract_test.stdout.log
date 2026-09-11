@@ -1,0 +1,62 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] presence-only baseline
+[PASS] distinct funded buyer and seller
+[PASS] test injection fixture starts
+[PASS] local real surplus yields purchase plan
+[PASS] planning does not mutate goods
+[PASS] purchase committed through existing writer
+[PASS] goods reach actual buyer
+[PASS] same goods leave seller
+[PASS] actual copper payment conserves both balances
+[PASS] same transaction cannot settle twice
+[PASS] owned food prevents immediate repeated purchase
+[PASS] purchased food enters existing meal rules
+[PASS] real consumption relieves hunger
+[PASS] meal directly cites acquired goods transaction
+[PASS] references and currency after meal
+[PASS] native save after purchase and consumption
+[PASS] native restore purchase
+[PASS] native stores roundtrip exact
+[PASS] old presence-only bootstrap does not acquire shopping on load
+[PASS] test injection fixture starts
+[PASS] test injection: remote inventory is not delivered
+[PASS] test injection fixture starts
+[PASS] test injection: moving seller is absent
+[PASS] test injection fixture starts
+[PASS] test injection: moving buyer cannot pay remotely
+[PASS] test injection fixture starts
+[PASS] test injection: dead seller cannot trade
+[PASS] test injection fixture starts
+[PASS] test injection: has goods but no money is a distinct failure
+[PASS] failed attempt records no exchange or inventory mutation
+[PASS] no free food rescue
+[PASS] failed local offer is not spammed every hour
+[PASS] test injection fixture starts
+[PASS] test injection fixture starts
+[PASS] waiting buyer records unavailable stock
+[PASS] test injection: carry same failed observation to stocked local state
+[PASS] newly visible surplus overrides old failed attempt without extra delay
+[PASS] test injection fixture starts
+[PASS] seller retains survival food
+[PASS] test injection fixture starts
+[PASS] private home is not a public market
+[PASS] test injection fixture starts
+[PASS] first claimant receives goods
+[PASS] stale second claimant cannot double spend
+[PASS] test injection fixture starts
+[PASS] test injection: traveler eats from own carried inventory
+[PASS] being in transit does not make own food inaccessible
+[PASS] new formal world
+[PASS] new world explicitly enables food access
+[PASS] new batch has explicit real work and output units
+[PASS] new batch has explicit real work and output units
+[PASS] new batch has explicit real work and output units
+[PASS] fish and roots use same purchase contract
+[PASS] batch calibration never boosts non-food outputs
+[PASS] persisted batch setup is idempotent
+[PASS] zero labor batch rejected instead of silently normalized
+[PASS] passive eight hours
+[PASS] NPC food intent does not impersonate player actions
+[PASS] food journeys retain valid references
+RESIDENT_FOOD_ACCESS_RESULT PASS 59/59

@@ -1,0 +1,37 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[INDUSTRY RENDER PASS] normal generated world starts
+[INDUSTRY RENDER PASS] world advances naturally before rendering
+[INDUSTRY RENDER PASS] an industry is present without adding a scripted foundation
+[INDUSTRY RENDER PASS] seven-day knowledge list renders within five seconds without rebuilding a snapshot per fact
+[INDUSTRY UI TIMING] knowledge_seconds=0.017
+[INDUSTRY RENDER PASS] existing record surface reports industry change
+[INDUSTRY RENDER PASS] recent industry change is visible on the decision surface without opening records
+[INDUSTRY RENDER PASS] visible text and buttons fit at 720p: []
+[INDUSTRY RENDER PASS] render saved: industry_hub
+[INDUSTRY RENDER PASS] browsing destinations does not advance world time
+[INDUSTRY RENDER PASS] route is visible and enabled: runtime_industry.generated_settlement.reed_bay.cordage.day6.visit
+[INDUSTRY UI TIMING] travel_seconds=0.207
+[INDUSTRY RENDER PASS] visible route button enters the real new workplace
+[INDUSTRY RENDER PASS] site title names the actual facility, not an empty reserved plot
+[INDUSTRY RENDER PASS] workplace goal resolves the known settlement name
+[INDUSTRY RENDER PASS] visible text and buttons fit at 720p: []
+[INDUSTRY RENDER PASS] render saved: industry_active
+[INDUSTRY RENDER PASS] new facility offers a visible inspection action
+[INDUSTRY UI TIMING] inspection_seconds=0.279
+[INDUSTRY RENDER PASS] inspection feedback displays the actual founding account
+[INDUSTRY RENDER PASS] completed one-time inspection no longer occupies an action slot
+[INDUSTRY RENDER PASS] visible text and buttons fit at 720p: []
+[INDUSTRY RENDER PASS] render saved: industry_inspected
+[INDUSTRY RENDER PASS] test intervention retires the same facility through its transaction
+[INDUSTRY RENDER PASS] retirement changes the current site to a ruin
+[INDUSTRY RENDER PASS] site description explains why this facility retired
+[INDUSTRY RENDER PASS] visible text and buttons fit at 720p: []
+[INDUSTRY RENDER PASS] render saved: industry_retired
+[INDUSTRY RENDER PASS] browsing destinations does not advance world time
+[INDUSTRY RENDER PASS] route is visible and enabled: runtime_industry.generated_settlement.reed_bay.cordage.day6.return
+[INDUSTRY UI TIMING] travel_seconds=0.248
+[INDUSTRY RENDER PASS] retired site retains a working return route
+[INDUSTRY RENDER PASS] hub route also identifies the retired workplace without a local entity snapshot
+[INDUSTRY RENDER RESULT] PASS

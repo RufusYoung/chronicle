@@ -66,6 +66,11 @@ func build_snapshot(
 			player_items,
 			"item.travel_ration"
 		)
+		if "player_controlled" in player.get("tags", []):
+			player["food_count"] = 0
+			for item: Dictionary in player_items:
+				if "food" in item.get("tags", []) and "consume" in item.get("capabilities", []):
+					player.food_count += int(item.quantity)
 
 	var character_progress: Dictionary = {}
 	if state_store != null and character_feature_store != null:

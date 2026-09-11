@@ -1,0 +1,15 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[V5 DYNAMIC RESOURCE RENDER PASS] 1. 正式地点界面可以载入动态资源聚落
+[V5 DYNAMIC RESOURCE RENDER PASS] 2. 集地状态面板直接显示各资源当前水位、容量与恢复速度
+[V5 DYNAMIC RESOURCE RENDER PASS] 3. 试玩目标明确解释生产会消耗长期库存
+[V5 DYNAMIC RESOURCE RENDER PASS] 4. 等待跨过生产周期后，反馈区说明居民生产与资源变化
+[V5 DYNAMIC RESOURCE RENDER PASS] 5. 低鱼量推进五日后，正式界面显示停工水位和迁离压力
+[V5 DYNAMIC RESOURCE RENDER PASS] 6. 动态资源集地截图已写入
+[V5 DYNAMIC RESOURCE RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_dynamic_resource_hub.png
+[V5 DYNAMIC RESOURCE RENDER PASS] 7. 渔业设施仍可从集地到达
+[V5 DYNAMIC RESOURCE RENDER PASS] 8. 进入渔业设施后，现场对象显示具体鱼群水位和停工原因
+[V5 DYNAMIC RESOURCE RENDER PASS] 9. 动态资源渔业设施截图已写入
+[V5 DYNAMIC RESOURCE RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_dynamic_resource_fishery.png
+[V5 DYNAMIC RESOURCE RENDER RESULT] PASS

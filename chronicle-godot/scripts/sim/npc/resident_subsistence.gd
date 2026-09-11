@@ -32,7 +32,7 @@ static func validate_config(config: Dictionary) -> String:
 static func candidates(actor: Dictionary, profiles: Array, config: Dictionary, snapshot: Variant = null) -> Array:
 	var rows: Array = []
 	var state: Dictionary = actor.get("states", {})
-	if not enabled(config) or "generated_resident" not in actor.get("tags", []) \
+	if not enabled(config) or ("generated_resident" not in actor.get("tags", []) and "player_controlled" not in actor.get("tags", [])) \
 			or int(state.get("age_years", 0)) < int(config.minimum_age) or int(state.get("health", 0)) < int(config.minimum_health) \
 			or not bool(state.get("alive", true)) or state.get("life_status", "alive") != "alive":
 		return rows
@@ -46,10 +46,11 @@ static func candidates(actor: Dictionary, profiles: Array, config: Dictionary, s
 				continue
 		# Local residents know the commons and its usual use, not current stock or private stores.
 		var row := profile.duplicate(true)
-		row["actor_tags_all"] = ["generated_resident"]
+		row["actor_tags_all"] = ["player_controlled"] if "player_controlled" in actor.get("tags", []) else ["generated_resident"]
 		row["wage_amount"] = 0
 		row["work_interval_hours"] = int(config.work_hours)
 		row["work_kind"] = "subsistence"
+		row["label"] = "就地采食"
 		row["work_summary"] = "%s暂时放下原本的安排，在本地公用作业地采食，产物需自己携带。" % actor.display_name
 		row["products"] = [{"item_def_id": profile.products[0].item_def_id,
 			"quantity": mini(int(config.portions), int(profile.products[0].quantity))}]

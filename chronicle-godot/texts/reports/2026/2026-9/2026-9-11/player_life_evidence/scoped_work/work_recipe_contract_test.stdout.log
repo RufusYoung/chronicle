@@ -1,0 +1,60 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit work framework starts in canon world
+[PASS] food and nonfood producers are generated people
+[PASS] nonfood producer has actual owned stock container
+[PASS] controlled fixture loads through formal session
+[PASS] same work resolver commits recipe.net_fishing
+[PASS] one source-backed production event
+[PASS] actual resource input consumed
+[PASS] preserved tool wears once
+[PASS] output is physically in worksite store
+[PASS] controlled fixture loads through formal session
+[PASS] worn tool records refusal without invalid transaction
+[PASS] worn tool consumes no raw materials
+[PASS] broken tool cannot produce output
+[PASS] controlled fixture loads through formal session
+[PASS] remote work rejected
+[PASS] controlled fixture loads through formal session
+[PASS] same work resolver commits recipe.reed_cordage
+[PASS] one source-backed production event
+[PASS] actual resource input consumed
+[PASS] preserved tool wears once
+[PASS] output is physically in worksite store
+[PASS] controlled fixture loads through formal session
+[PASS] worn tool records refusal without invalid transaction
+[PASS] worn tool consumes no raw materials
+[PASS] broken tool cannot produce output
+[PASS] controlled fixture loads through formal session
+[PASS] remote work rejected
+[PASS] controlled fixture loads through formal session
+[PASS] explicit tool-stack boundary injection
+[PASS] third data-only recipe consumes item inputs, no new runtime branch
+[PASS] inputs consumed across two stacks
+[PASS] unused tools in stack retain durability
+[PASS] one tool split and worn without duplicating it
+[PASS] third product is stored with legal max-stack splitting
+[PASS] new food enters withdrawal without adding an item ID whitelist
+[PASS] third product reaches ordinary household use
+[PASS] third data-only product really feeds its owner
+[PASS] consumed inputs cannot satisfy another cycle
+[PASS] overlapping selectors cannot double consume the same units
+[PASS] failed compound work cannot leave partial wear or history
+[PASS] unknown query semantic rejected
+[PASS] zero-wear tool role rejected
+[PASS] recipe cannot mint payment
+[PASS] material-free production rejected
+[PASS] duplicate resource demand rejected before reservation
+[PASS] malformed repairs rejected without script exception
+[PASS] malformed data-only output rejected before compiling traits
+[PASS] malformed maintenance selector rejected before matching
+[PASS] formal start rejects malformed work configuration without entering generation
+[PASS] mixed inventory preserves contributing production after partial withdrawal
+[PASS] shared ancestry is deduplicated
+[PASS] unassisted first day advances with food and nonfood work
+[PASS] native save includes versioned work definitions
+[PASS] versioned rules restore
+[PASS] native branches advance
+[PASS] full native continuation agrees
+[PASS] legacy start does not silently acquire work rules
+WORK_RECIPE_RESULT PASS 57/57

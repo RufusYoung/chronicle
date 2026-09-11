@@ -144,6 +144,29 @@ static func reserved_for_work(snapshot: Variant, seller: Dictionary, profile: Di
 	return reserved
 
 
+static func stock_offers(snapshot: Variant, seller: Dictionary, buyer: String, profiles: Array, stores: Dictionary) -> Array:
+	var holder := Storage.stock_holder(snapshot, str(seller.id))
+	if holder == "":
+		return []
+	var reserved := reserved_for_work(snapshot, seller, assigned_profile(seller, profiles), holder)
+	var policy := {"market_policy_id": "work_supply." + str(seller.id), "seller_entity_id": seller.id,
+		"stock_entity_id": holder, "location_id": seller.states.location_id, "sellable_item_tags_any": [],
+		"accepted_currency_item_def_ids": [Food.CURRENCY], "fact_type": "work_supply_purchased", "exchange_type": "work_supply_purchase"}
+	var rows: Array = []
+	for offer: Dictionary in Market.new().build_stock_view(policy, stores, buyer).get("offers", []):
+		var item: Dictionary = stores.item_store.get_item(str(offer.item_instance_id))
+		var retained := int(reserved.get(item.item_instance_id, 0))
+		if int(offer.available_quantity) <= retained:
+			continue
+		offer["surplus"] = int(offer.available_quantity) - retained
+		offer["policy"] = policy.duplicate(true)
+		offer.policy["minimum_retained_quantity"] = retained
+		offer["seller_name"] = seller.display_name
+		offer["item"] = item
+		rows.append(offer)
+	return rows
+
+
 static func plan_purchase(snapshot: Variant, actor: Dictionary, profiles: Array, stores: Dictionary, tick: Dictionary) -> Dictionary:
 	if actor.states.get("daily_intent_id") != "work_supply" or actor.states.get("daily_route_id", "") != "" \
 			or actor.states.get("daily_activity") != "seeking_work" or not actor.states.get("alive", true):
@@ -161,25 +184,12 @@ static func plan_purchase(snapshot: Variant, actor: Dictionary, profiles: Array,
 		if seller.id == buyer or seller.states.get("location_id") != location or seller.states.get("daily_route_id", "") != "" \
 				or not seller.states.get("alive", true) or seller.states.get("life_status", "alive") != "alive":
 			continue
-		var holder := Storage.stock_holder(snapshot, str(seller.id))
-		if holder == "":
-			continue
-		var own_profile := assigned_profile(seller, profiles)
-		var reserved := reserved_for_work(snapshot, seller, own_profile, holder)
-		var policy := {"market_policy_id": "work_supply." + str(seller.id), "seller_entity_id": seller.id,
-			"stock_entity_id": holder, "location_id": location, "sellable_item_tags_any": [],
-			"accepted_currency_item_def_ids": [Food.CURRENCY], "fact_type": "work_supply_purchased", "exchange_type": "work_supply_purchase"}
-		for offer: Dictionary in Market.new().build_stock_view(policy, stores, buyer).get("offers", []):
-			var item: Dictionary = stores.item_store.get_item(str(offer.item_instance_id))
+		for offer: Dictionary in stock_offers(snapshot, seller, buyer, profiles, stores):
+			var item: Dictionary = offer.item
 			if not Recipe.matches(item, demand.query) or int(item.get("condition", {}).get("durability", 0)) < int(demand.minimum_durability):
 				continue
-			var retained := int(reserved.get(item.item_instance_id, 0))
-			if int(offer.available_quantity) - retained < int(demand.quantity):
+			if int(offer.surplus) < int(demand.quantity):
 				continue
-			offer["policy"] = policy.duplicate(true)
-			offer.policy["minimum_retained_quantity"] = retained
-			offer["seller_name"] = seller.display_name
-			offer["item"] = item
 			offers.append(offer)
 	offers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.unit_price) < int(b.unit_price) if a.unit_price != b.unit_price else str(a.item_instance_id) < str(b.item_instance_id))
 	for offer: Dictionary in offers:

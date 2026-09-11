@@ -16,6 +16,31 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_player_body_journey_and_native_restore(self):
+        with client(timeout=90) as game:
+            opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                  economy_variant="player_life_v1")
+            self.assertTrue(opened["ok"], opened)
+            self.assertEqual(opened["observation"]["player"]["hunger"], "low")
+            route = next(c for c in opened["choices"] if c["kind"] == "travel" and ".network." in c["id"])
+            departed = game.request("act", choice_id=route["choice_id"])
+            self.assertTrue(departed["ok"], departed)
+            self.assertGreater(departed["observation"]["player"]["travel_remaining"], 0)
+            self.assertIn("路上", departed["observation"]["location"]["title"])
+            self.assertEqual(departed["observation"]["visible_people"], [])
+            self.assertFalse(any(c["kind"] == "travel" for c in departed["choices"]))
+            slot = f"player_journey_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            restored = game.request("load", slot=slot)
+            self.assertTrue(restored["ok"], restored)
+            self.assertEqual(restored["observation"], departed["observation"])
+            while restored["observation"]["player"]["travel_remaining"]:
+                continuation = next(c for c in restored["choices"] if c["kind"] == "player_life" and c["id"] == "continue")
+                restored = game.request("act", choice_id=continuation["choice_id"])
+                self.assertTrue(restored["ok"], restored)
+            self.assertNotEqual(restored["observation"]["location"]["id"], opened["observation"]["location"]["id"])
+            self.assertEqual(game.request("inspect")["error"], "omniscient_inspection_disabled_in_play_mode")
+
     def test_community_in_actual_process(self):
         with client(timeout=90) as game:
             opened = game.request("start", mode="world", scenario="echo_realm", seed=81001,

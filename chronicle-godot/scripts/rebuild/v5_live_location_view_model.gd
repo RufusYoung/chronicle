@@ -163,6 +163,15 @@ func advance_time(hours: int = 1) -> Dictionary:
 	return latest_result.duplicate(true)
 
 
+func act_player_life(id: String) -> Dictionary:
+	latest_event_type = "player_life"
+	latest_result = session.PlayerLife.execute(session, id)
+	if latest_result.get("success", false):
+		action_history.append({"index": action_history.size() + 1, "event_type": "player_life",
+			"label": latest_result.get("player_life_feedback", {}).get("body", "生活行动"), "result": latest_result.duplicate(true)})
+	return latest_result
+
+
 func rest_for_recovery() -> Dictionary:
 	latest_event_type = "recovery"
 	var before: Variant = session.get_snapshot()
@@ -460,6 +469,34 @@ func build_view_data() -> Dictionary:
 	}
 	# Reuse this projection only; never carry cached candidates across an action.
 	view["decision"] = _decision_view(snapshot, view, not encounter_options.is_empty())
+	if session.PlayerLife.enabled(session.fixture_source_data) and encounter_options.is_empty():
+		view.decision["question"] = "把这几个小时用来备粮、赚取报酬，还是继续赶路？"
+		view.decision["rule"] = "采食归自己，短工产物给雇主。比较所需时间、身体状况和能拿到的东西。"
+		var stakes: Array = []
+		if int(snapshot.player.food_count) == 0:
+			stakes.append("行囊里没有食物。可以找现货，或白天去本地公用作业地采食")
+		else:
+			stakes.append("还有%d份随身食物；约%d小时后饥饿会加深一级" % [snapshot.player.food_count, maxi(6 - int(snapshot.player.get("hunger_elapsed_hours", 0)), 1)])
+		if session.current_hour >= 15 and session.current_hour < 18:
+			stakes.append("天黑前仅剩%d小时作业时间，长活可能要留到明天" % (18 - session.current_hour))
+		view.decision["stakes"] = stakes
+		var followups: Array = session.PlayerLife.observed_followups(session)
+		view["player_life_followups"] = followups
+		for followup: Dictionary in followups:
+			view.knowledge.append(followup.text)
+		if not followups.is_empty():
+			view.agency["world_summary"] = followups[0].text
+			view.agency["world_kind"] = "observed_followup"
+	if session.PlayerLife.enabled(session.fixture_source_data) and int(snapshot.player.get("daily_travel_remaining", 0)) > 0:
+		var destination: Dictionary = session.context.get_location(str(snapshot.player.daily_destination_id))
+		view.location.title = "前往" + str(destination.get("display_name", "目的地")) + "的路上"
+		view.location.description = "已经离开出发地，尚未抵达。还需%d小时；不能查看两端人物的实时状态，也不能隔空交易或劳动。" % snapshot.player.daily_travel_remaining
+		view.location.context = "途中"
+		view.visible_people = []
+		view.visible_observations = []
+		view.region_status = []
+		view.decision["question"] = "还在路上，继续前往目的地。"
+		view.decision["stakes"] = ["途中不能同时劳动或交易；饥饿照常增长"]
 	return view
 
 
@@ -749,6 +786,8 @@ func _action_rows(snapshot: Variant = null) -> Array:
 	var combat_rows := _combat_action_rows(snapshot)
 	if not combat_rows.is_empty():
 		return combat_rows
+	if session.PlayerLife.enabled(session.fixture_source_data):
+		return session.PlayerLife.options(session)
 	for option: Dictionary in session.get_investigation_options(snapshot):
 		var action_type := str(
 			option.get("action_type", "investigation")
@@ -1284,8 +1323,11 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		snapshot.get_player_value("mist_salt_echo", "none")
 	)
 	var item_names: Array[String] = []
+	var inventory: Array = []
 	for item: Dictionary in snapshot.get_player_items():
 		item_names.append(_item_display_text(item))
+		inventory.append({"id": item.item_instance_id, "definition_id": item.item_def_id,
+			"name": item.display_name, "quantity": item.quantity, "condition": item.get("condition", {}).duplicate(true)})
 	var long_term_line := ""
 	if mist_salt_echo != "none":
 		long_term_line = "\n长期痕迹　%s" % _mist_salt_echo_label(
@@ -1295,6 +1337,10 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		"title": "无名旅人",
 		"role": role_label,
 		"food_count": int(snapshot.get_player_value("food_count", 0)),
+		"hunger": str(snapshot.get_player_value("hunger", "none")),
+		"coins": session.FoodAccess.balance(snapshot.get_player_items(), str(snapshot.player.id)),
+		"travel_remaining": int(snapshot.get_player_value("daily_travel_remaining", 0)),
+		"living_body": "player_controlled" in snapshot.player.get("tags", []),
 		"strength": strength,
 		"dexterity": dexterity,
 		"wisdom": wisdom,
@@ -1306,6 +1352,7 @@ func _player_view(snapshot: Variant) -> Dictionary:
 		"injury": injury,
 		"mist_salt_echo": mist_salt_echo,
 		"items": item_names,
+		"inventory": inventory,
 		"summary": "身份　%s%s\n力量 %d　敏捷 %d　智慧 %d\n魅力 %d　体质 %d　感知 %d\n食物　%d 份　健康　%d　疲劳　%d / 10\n伤势　%s\n随身物品　%s" % [
 			role_label,
 			long_term_line,
@@ -2118,6 +2165,8 @@ func _feedback_view() -> Dictionary:
 
 
 func _base_feedback_view() -> Dictionary:
+	if latest_result.has("player_life_feedback"):
+		return latest_result.player_life_feedback.duplicate(true)
 	if latest_event_type == "recovery" and latest_result.has("recovery_feedback"):
 		return latest_result.recovery_feedback.duplicate(true)
 	if latest_result.is_empty():
@@ -2129,6 +2178,10 @@ func _base_feedback_view() -> Dictionary:
 		}
 
 	if latest_event_type == "world_tick":
+		if session.PlayerLife.enabled(session.fixture_source_data):
+			var local_summary: String = session.PlayerLife.local_tick_summary(session, latest_result)
+			return {"status": "world_tick", "title": "这一小时", "details": [],
+				"body": local_summary if local_summary != "" else "眼前没有新的动静。时间已经过去，身体与居民的生活照常变化。"}
 		return _tick_feedback_view()
 	if latest_event_type == "ferry_wait":
 		return _ferry_wait_feedback_view()
@@ -2716,6 +2769,8 @@ func _ferry_wait_narrative() -> String:
 
 
 func _tick_narrative(result: Dictionary) -> String:
+	if session != null and session.is_ready() and session.PlayerLife.enabled(session.fixture_source_data):
+		return session.PlayerLife.local_tick_summary(session, result)
 	var local_response := _local_organization_response_result(result)
 	if not local_response.is_empty():
 		var local_narrative: Dictionary = local_response.get(
