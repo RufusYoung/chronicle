@@ -1,0 +1,4 @@
+test_agent_flow_and_receipt (__main__.TransportTest.test_agent_flow_and_receipt) ... ERROR
+test_canon_world_and_play_entry (__main__.TransportTest.test_canon_world_and_play_entry) ... 
+  test_canon_world_and_play_entry (__main__.TransportTest.test_canon_world_and_play_entry) (mode='world') ... ERROR
+  test_canon_world_and_play_entry (__main__.TransportTest.test_canon_world_and_play_entry) (mode='play') ... ERROR

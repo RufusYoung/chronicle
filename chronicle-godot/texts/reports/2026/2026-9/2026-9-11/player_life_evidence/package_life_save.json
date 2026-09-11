@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "checkpoint_sha256": "a030fa517ec0608dfa3342011de79422c4ad27fe8d1c9f32d16d8dd2e9792465",
+  "checkpoint": "chronicle-godot\\texts\\reports\\2026\\2026-9\\2026-9-11\\player_life_evidence\\tool_life.ui_probe.json",
+  "sample": {
+    "elapsed_hours": 168,
+    "ok": true,
+    "profile": "day7",
+    "renderer": "gl_compatibility",
+    "save_exists": true,
+    "save_path": "user://tests/world_runtime_probe/day7.json",
+    "startup_message": "已继续上次保存的世界。",
+    "process_to_frame_ms": 5088.336799992248,
+    "output": [
+      "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+      "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+      "",
+      "CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.landing",
+      "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":168,\"ok\":true,\"profile\":\"day7\",\"renderer\":\"gl_compatibility\",\"save_exists\":true,\"save_path\":\"user://tests/world_runtime_probe/day7.json\",\"startup_message\":\"已继续上次保存的世界。\"}"
+    ]
+  },
+  "scope": "Actual packaged renderer loads the specified native world with enabled controls. The existing probe label 'day7' means a minimum age, not this world's age. Read-only UI check; no UI wait or human play in this probe. Original test checkpoint restored byte-for-byte."
+}

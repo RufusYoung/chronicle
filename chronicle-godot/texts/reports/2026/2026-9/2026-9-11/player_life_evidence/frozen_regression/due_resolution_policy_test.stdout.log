@@ -1,0 +1,28 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 DUE RESOLUTION POLICY PASS] 1. DueResolutionPolicy validates obligation fulfilled decision
+[V5 DUE RESOLUTION POLICY PASS] 2. DueResolutionPolicy validates obligation breached decision
+[V5 DUE RESOLUTION POLICY PASS] 3. DueResolutionPolicy validates exchange settled decision
+[V5 DUE RESOLUTION POLICY PASS] 4. DueResolutionPolicy validates exchange failed decision
+[V5 DUE RESOLUTION POLICY PASS] 5. obligation + settled decision is invalid
+[V5 DUE RESOLUTION POLICY PASS] 6. exchange + breached decision is invalid
+[V5 DUE RESOLUTION POLICY PASS] 7. missing target_id decision is invalid
+[V5 DUE RESOLUTION POLICY PASS] 8. trade_watch_duty_for_silence creates obligation and exchange
+[V5 DUE RESOLUTION POLICY PASS] 9. tick_event include_due_checks=true sets obligation and exchange due_status = due
+[V5 DUE RESOLUTION POLICY PASS] 10. DueResolutionSystem fulfilled obligation creates obligation_fulfilled fact
+[V5 DUE RESOLUTION POLICY PASS] 11. DueResolutionSystem does not directly write Store
+[V5 DUE RESOLUTION POLICY PASS] 12. fulfilled writeback sets obligation.status = fulfilled
+[V5 DUE RESOLUTION POLICY PASS] 13. fulfilled writeback sets due_status = resolved and resolution fields
+[V5 DUE RESOLUTION POLICY PASS] 14. DueResolutionSystem breached obligation creates obligation_breached fact
+[V5 DUE RESOLUTION POLICY PASS] 15. breached writeback sets obligation.status = breached and due_status = resolved
+[V5 DUE RESOLUTION POLICY PASS] 16. DueResolutionSystem settled exchange creates exchange_settled fact
+[V5 DUE RESOLUTION POLICY PASS] 17. settled writeback sets exchange.status = settled and due_status = resolved
+[V5 DUE RESOLUTION POLICY PASS] 18. DueResolutionSystem failed exchange creates exchange_failed fact
+[V5 DUE RESOLUTION POLICY PASS] 19. failed writeback sets exchange.status = failed and resolution fields
+[V5 DUE RESOLUTION POLICY PASS] 20. keep_due records pending resolution without changing main status
+[V5 DUE RESOLUTION POLICY PASS] 21. non-due obligation cannot be resolved
+[V5 DUE RESOLUTION POLICY PASS] 22. already fulfilled obligation cannot be resolved again
+[V5 DUE RESOLUTION POLICY PASS] 23. TransactionWorldWriter writes resolution_count updates exactly once
+[V5 DUE RESOLUTION POLICY PASS] 24. WorldLog summarizes due resolution entries
+[V5 DUE RESOLUTION POLICY PASS] 25. RawRuleContractValidator still PASS
+[V5 DUE RESOLUTION POLICY RESULT] PASS

@@ -13,6 +13,9 @@ func _run() -> void:
 	await process_frame
 	_check(viewer.view_model.session.fixture_source_data.has("player_life_generated"), "new world opts into physical player")
 	_check("饥饿" in viewer.surface.situation.text and "铜币" in viewer.surface.situation.text, "decision-relevant body and money are visible")
+	for button: Node in viewer.action_buttons.get_children():
+		if button is Button:
+			_check(not button.text.strip_edges().ends_with("取舍："), "no empty tradeoff caption on life actions")
 	await _capture("start_720")
 	viewer.restart_dialog.popup_centered()
 	await process_frame
@@ -68,6 +71,12 @@ func _run() -> void:
 			viewer.perform_travel(route.route_id)
 			await _settle(viewer)
 			break
+	root.size = Vector2i(1280, 720)
+	root.content_scale_size = root.size
+	viewer.refresh_view()
+	await process_frame
+	await _capture("known_followup_commons_720")
+	_check(viewer.action_dock.get_global_rect().end.y <= root.size.y, "known aftermath plus multiple exits fits 720p")
 	for route: Dictionary in viewer.view_model.session.get_travel_options():
 		if ".network." in str(route.route_id):
 			viewer.perform_travel(route.route_id)

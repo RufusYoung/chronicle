@@ -1,0 +1,48 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.commons
+[PASS] new world opts into physical player
+[PASS] decision-relevant body and money are visible
+[PASS] no empty tradeoff caption on life actions
+[PASS] no empty tradeoff caption on life actions
+[PASS] new-world options fit 720p
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] work ownership and real duration are on the button
+[PASS] formal UI operation completed
+[PASS] actual rendered work button invokes the formal action
+[PASS] rendered result uses real wage balance
+[PASS] feedback reports actual pay and goods
+[PASS] life controls fit 720p
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] formal UI operation completed
+[PASS] actual local conversation presents the downstream food use
+[PASS] result names the reported consequence rather than generic acknowledgement
+[PASS] followup controls remain visible
+[PASS] formal UI operation completed
+[PASS] known aftermath plus multiple exits fits 720p
+[PASS] formal UI operation completed
+[PASS] multi-hour travel is presented as being on the road
+[PASS] no origin or destination NPCs are falsely shown as present
+[PASS] only continuation is offered in transit
+PLAYER_LIFE_RENDER_RESULT PASS

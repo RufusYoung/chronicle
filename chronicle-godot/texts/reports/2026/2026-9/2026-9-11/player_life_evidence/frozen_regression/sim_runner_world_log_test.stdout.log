@@ -1,0 +1,19 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 SIM RUNNER WORLD LOG PASS] 1. 能运行 lake_town_food_crisis_sequence
+[V5 SIM RUNNER WORLD LOG PASS] 2. 湖湾镇执行 3 步
+[V5 SIM RUNNER WORLD LOG PASS] 3. 湖湾镇 world_log 包含 actor_gave_food_to_target
+[V5 SIM RUNNER WORLD LOG PASS] 4. 湖湾镇 world_log 包含 actor_read_object
+[V5 SIM RUNNER WORLD LOG PASS] 5. 湖湾镇 world_log 包含 actor_inspected_trace
+[V5 SIM RUNNER WORLD LOG PASS] 6. 能运行 seventh_outpost_report_sequence
+[V5 SIM RUNNER WORLD LOG PASS] 7. 第七哨站 report sequence 产生 actor_reported_discipline_violation
+[V5 SIM RUNNER WORLD LOG PASS] 8. 第七哨站 report sequence 产生 institutional_record_mark trace
+[V5 SIM RUNNER WORLD LOG PASS] 9. 第七哨站 report sequence 产生 outpost_discipline_report_seed rumor seed
+[V5 SIM RUNNER WORLD LOG PASS] 10. 能运行 seventh_outpost_conceal_sequence
+[V5 SIM RUNNER WORLD LOG PASS] 11. 第七哨站 conceal sequence 产生 actor_concealed_discipline_violation
+[V5 SIM RUNNER WORLD LOG PASS] 12. 第七哨站 conceal sequence 不产生 rumor seed
+[V5 SIM RUNNER WORLD LOG PASS] 13. 每个 sequence 都通过 ActionAffordanceSystem 选择候选
+[V5 SIM RUNNER WORLD LOG PASS] 14. 湖湾镇 store 写回 facts / relationships / memories
+[V5 SIM RUNNER WORLD LOG PASS] 15. 第七哨站 report store 写回 facts / traces / rumors
+[V5 SIM RUNNER WORLD LOG PASS] 16. 第七哨站 conceal sequence 生成 narrative summary
+[V5 SIM RUNNER WORLD LOG RESULT] PASS

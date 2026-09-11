@@ -1,0 +1,7 @@
+ERROR: Unable to open JSON file: res://missing_organization_definition.json
+   at: push_error (core/variant/variant_utility.cpp:1024)
+   GDScript backtrace (most recent call first):
+       [0] load_json (res://scripts/sim/core/sim_registry.gd:222)
+       [1] _apply_organization_generation (res://scripts/sim/core/sim_session.gd:2251)
+       [2] start_from_fixture_data (res://scripts/sim/core/sim_session.gd:374)
+       [3] _run (res://tests/sim/generated_organization_contract_test.gd:153)

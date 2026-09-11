@@ -352,21 +352,23 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		var caption := str(action.get("label", "采取行动"))
 		if str(action.get("event_type", "")) == "challenge":
 			caption = caption.trim_suffix("%d小时" % int(action.get("hours", 1))).strip_edges()
-		button.text = "%s　[%s]\n%s\n取舍：%s" % [
+		button.text = "%s　[%s]\n%s" % [
 			caption,
 			cost,
 			known_effect,
-			tradeoff,
 		]
+		if tradeoff != "":
+			button.text += "\n取舍：" + tradeoff
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.add_theme_font_size_override("font_size", SharedInterfaceStyle.FONT_ACTION)
-		button.tooltip_text = "%s：%s\n花费：%s\n取舍：%s" % [
+		button.tooltip_text = "%s：%s\n花费：%s" % [
 			kind,
 			hint,
 			cost,
-			tradeoff,
 		]
+		if tradeoff != "":
+			button.tooltip_text += "\n取舍：" + tradeoff
 		button.mouse_entered.connect(_show_action_hint.bind(kind, hint))
 		button.focus_entered.connect(_show_action_hint.bind(kind, hint))
 		button.mouse_exited.connect(_restore_action_hint)

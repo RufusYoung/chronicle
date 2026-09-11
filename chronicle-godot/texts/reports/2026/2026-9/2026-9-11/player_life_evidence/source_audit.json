@@ -58,7 +58,12 @@
     "tool:actual_maintenance": true,
     "tool:finished_nonfood_recipe": true,
     "tool:inventory_contains_new_tool": true,
-    "runtime:unchanged": true
+    "tool:observer_equal_initial_truth_and_time": true,
+    "runtime:unchanged": true,
+    "runtime:simulation_freeze_preserved": true,
+    "regression:complete_discovery": true,
+    "regression:all_passed": true,
+    "regression:final_presentation_passed": true
   },
   "summaries": {
     "frozen_81001/observer": {
@@ -367,6 +372,66 @@
       },
       "changed_residents": {},
       "changed_balances": {}
+    },
+    "tool_vs_observer": {
+      "observer_hunger": {
+        "low": 6,
+        "medium": 2,
+        "extreme": 8
+      },
+      "tool_hunger": {
+        "low": 4,
+        "high": 2,
+        "medium": 2,
+        "extreme": 8
+      },
+      "comparison_scope": "Equal initial native game truth, not byte-identical files: save_id and wall-clock save timestamps differ. The four-policy E3 branches separately share their exact native file.",
+      "changed_residents": {
+        "generated_resident.echo_landing.001": {
+          "livelihood_cycle_count": [
+            5,
+            3
+          ]
+        },
+        "generated_resident.echo_landing.002": {
+          "livelihood_cycle_count": [
+            2,
+            5
+          ]
+        },
+        "generated_resident.echo_landing.004": {
+          "hunger": [
+            "low",
+            "high"
+          ]
+        },
+        "generated_resident.echo_landing.005": {
+          "hunger": [
+            "medium",
+            "low"
+          ],
+          "livelihood_cycle_count": [
+            5,
+            4
+          ]
+        },
+        "generated_resident.echo_landing.007": {
+          "hunger": [
+            "low",
+            "high"
+          ],
+          "livelihood_cycle_count": [
+            5,
+            4
+          ]
+        },
+        "generated_resident.echo_landing.008": {
+          "hunger": [
+            "low",
+            "medium"
+          ]
+        }
+      }
     }
   },
   "tool_recipes": {
@@ -376,5 +441,8 @@
     "recipe.reed_cordage": 1
   },
   "runtime_files": 236,
+  "presentation_only_changes_since_simulation_freeze": [
+    "scripts\\rebuild\\v5_live_location_viewer.gd"
+  ],
   "boundary": "Legal code-agent evidence, not human play, fun, full RF6, or universal welfare improvement. Danger-to-resident causality remains hard to read in the current UI."
 }

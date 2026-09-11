@@ -1,0 +1,13 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LOCATION VIEWER LOOP PASS] 1. 独立 rebuild viewer 场景可加载
+[V5 LOCATION VIEWER LOOP PASS] 2. 初始局面显示角色、湖湾镇叙述和地点切面
+[V5 LOCATION VIEWER LOOP PASS] 3. 初始行动包含走近陈米
+[V5 LOCATION VIEWER LOOP PASS] 4. 走近陈米后中央叙述和底部行动切换
+[V5 LOCATION VIEWER LOOP PASS] 5. 查看涨价告示后新增粮价线索
+[V5 LOCATION VIEWER LOOP PASS] 6. 点击线索可打开线索行动卡
+[V5 LOCATION VIEWER LOOP PASS] 7. 去市场打听粮价后更新地区状态并新增线索
+[V5 LOCATION VIEWER LOOP PASS] 8. 前往废弃粮仓后切换地点且右侧仍保留地点节点
+[V5 LOCATION VIEWER LOOP PASS] 9. 长期停留后生涯面板写入已完成经历
+[V5 LOCATION VIEWER LOOP PASS] 10. 行动历史记录最小交互闭环
+[V5 LOCATION VIEWER LOOP RESULT] PASS

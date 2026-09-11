@@ -1,0 +1,452 @@
+{
+  "passed": false,
+  "checks": {
+    "frozen_81001/observer:aligned": true,
+    "frozen_81001/observer:no_injection": true,
+    "frozen_81001/observer:finite_money": true,
+    "frozen_81001/observer:same_start": true,
+    "frozen_81001/observer:legal_actions": true,
+    "frozen_81001/prepared:aligned": true,
+    "frozen_81001/prepared:no_injection": true,
+    "frozen_81001/prepared:finite_money": true,
+    "frozen_81001/prepared:same_start": true,
+    "frozen_81001/prepared:legal_actions": true,
+    "frozen_81001/direct_risk:aligned": true,
+    "frozen_81001/direct_risk:no_injection": true,
+    "frozen_81001/direct_risk:finite_money": true,
+    "frozen_81001/direct_risk:same_start": true,
+    "frozen_81001/direct_risk:legal_actions": true,
+    "frozen_81001/local_help:aligned": true,
+    "frozen_81001/local_help:no_injection": true,
+    "frozen_81001/local_help:finite_money": true,
+    "frozen_81001/local_help:same_start": true,
+    "frozen_81001/local_help:legal_actions": true,
+    "frozen_81001:four_policies": true,
+    "frozen_81001:two_materially_different_strategies": true,
+    "frozen_81001:local_report": true,
+    "heldout_85005/observer:aligned": true,
+    "heldout_85005/observer:no_injection": true,
+    "heldout_85005/observer:finite_money": true,
+    "heldout_85005/observer:same_start": true,
+    "heldout_85005/observer:legal_actions": true,
+    "heldout_85005/prepared:aligned": true,
+    "heldout_85005/prepared:no_injection": true,
+    "heldout_85005/prepared:finite_money": true,
+    "heldout_85005/prepared:same_start": true,
+    "heldout_85005/prepared:legal_actions": true,
+    "heldout_85005/direct_risk:aligned": true,
+    "heldout_85005/direct_risk:no_injection": true,
+    "heldout_85005/direct_risk:finite_money": true,
+    "heldout_85005/direct_risk:same_start": true,
+    "heldout_85005/direct_risk:legal_actions": true,
+    "heldout_85005/local_help:aligned": true,
+    "heldout_85005/local_help:no_injection": true,
+    "heldout_85005/local_help:finite_money": true,
+    "heldout_85005/local_help:same_start": true,
+    "heldout_85005/local_help:legal_actions": true,
+    "heldout_85005:four_policies": true,
+    "heldout_85005:two_materially_different_strategies": true,
+    "heldout_85005:local_report": true,
+    "frozen_tool/tool_life:aligned": true,
+    "frozen_tool/tool_life:no_injection": true,
+    "frozen_tool/tool_life:finite_money": true,
+    "frozen_tool/tool_life:same_start": true,
+    "frozen_tool/tool_life:legal_actions": true,
+    "tool:earned_income": true,
+    "tool:actual_purchase": true,
+    "tool:use_to_exhaustion": true,
+    "tool:actual_maintenance": true,
+    "tool:finished_nonfood_recipe": true,
+    "tool:inventory_contains_new_tool": true,
+    "tool:observer_equal_initial_truth_and_time": true,
+    "runtime:unchanged": true,
+    "runtime:simulation_freeze_preserved": true,
+    "package:clean_source": true,
+    "package:runtime_matches_export_commit": false,
+    "package:binary_hashes": true,
+    "package:native_parity:observer": true,
+    "package:native_parity:prepared": true,
+    "package:native_parity:direct_risk": true,
+    "package:native_parity:local_help": true
+  },
+  "summaries": {
+    "frozen_81001/observer": {
+      "elapsed_hours": 72,
+      "actions": 72,
+      "action_kinds": {
+        "wait": 72
+      },
+      "waits": 72,
+      "player_food": 2,
+      "player_coins": 0,
+      "known_followups": 0,
+      "hunger": {
+        "low": 6,
+        "high": 2,
+        "medium": 1,
+        "extreme": 7
+      },
+      "changed_residents": {},
+      "changed_balances": {}
+    },
+    "frozen_81001/prepared": {
+      "elapsed_hours": 72,
+      "actions": 66,
+      "action_kinds": {
+        "travel": 7,
+        "player_life": 19,
+        "wait": 36,
+        "combat_encounter": 4
+      },
+      "waits": 36,
+      "player_food": 5,
+      "player_coins": 0,
+      "known_followups": 0,
+      "hunger": {
+        "low": 6,
+        "high": 2,
+        "medium": 4,
+        "extreme": 4
+      },
+      "changed_residents": {
+        "generated_resident.echo_terrace.002": {
+          "hunger": [
+            "extreme",
+            "medium"
+          ],
+          "livelihood_cycle_count": [
+            0,
+            1
+          ]
+        },
+        "generated_resident.echo_terrace.003": {
+          "hunger": [
+            "extreme",
+            "medium"
+          ]
+        },
+        "generated_resident.echo_terrace.004": {
+          "hunger": [
+            "extreme",
+            "medium"
+          ]
+        },
+        "generated_resident.echo_terrace.006": {
+          "fatigue": [
+            6,
+            5
+          ]
+        }
+      },
+      "changed_balances": {}
+    },
+    "frozen_81001/direct_risk": {
+      "elapsed_hours": 72,
+      "actions": 67,
+      "action_kinds": {
+        "travel": 5,
+        "player_life": 22,
+        "combat_encounter": 2,
+        "wait": 38
+      },
+      "waits": 38,
+      "player_food": 4,
+      "player_coins": 0,
+      "known_followups": 0,
+      "hunger": {
+        "low": 6,
+        "high": 2,
+        "medium": 1,
+        "extreme": 7
+      },
+      "changed_residents": {},
+      "changed_balances": {}
+    },
+    "frozen_81001/local_help": {
+      "elapsed_hours": 72,
+      "actions": 59,
+      "action_kinds": {
+        "travel": 1,
+        "player_life": 13,
+        "wait": 45
+      },
+      "waits": 45,
+      "player_food": 5,
+      "player_coins": 6,
+      "known_followups": 2,
+      "hunger": {
+        "low": 7,
+        "medium": 1,
+        "high": 1,
+        "extreme": 7
+      },
+      "changed_residents": {
+        "generated_resident.echo_landing.003": {
+          "hunger": [
+            "high",
+            "low"
+          ]
+        }
+      },
+      "changed_balances": {
+        "generated_resident.echo_landing.001": [
+          17,
+          11
+        ]
+      }
+    },
+    "heldout_85005/observer": {
+      "elapsed_hours": 72,
+      "actions": 72,
+      "action_kinds": {
+        "wait": 72
+      },
+      "waits": 72,
+      "player_food": 2,
+      "player_coins": 0,
+      "known_followups": 0,
+      "hunger": {
+        "medium": 4,
+        "low": 4,
+        "high": 1,
+        "extreme": 7
+      },
+      "changed_residents": {},
+      "changed_balances": {}
+    },
+    "heldout_85005/prepared": {
+      "elapsed_hours": 72,
+      "actions": 66,
+      "action_kinds": {
+        "travel": 7,
+        "player_life": 18,
+        "wait": 38,
+        "combat_encounter": 3
+      },
+      "waits": 38,
+      "player_food": 5,
+      "player_coins": 0,
+      "known_followups": 0,
+      "hunger": {
+        "medium": 5,
+        "low": 6,
+        "high": 2,
+        "extreme": 3
+      },
+      "changed_residents": {
+        "generated_resident.echo_terrace.001": {
+          "hunger": [
+            "high",
+            "low"
+          ],
+          "livelihood_cycle_count": [
+            1,
+            2
+          ]
+        },
+        "generated_resident.echo_terrace.002": {
+          "hunger": [
+            "extreme",
+            "low"
+          ]
+        },
+        "generated_resident.echo_terrace.003": {
+          "hunger": [
+            "extreme",
+            "high"
+          ]
+        },
+        "generated_resident.echo_terrace.004": {
+          "hunger": [
+            "extreme",
+            "medium"
+          ]
+        },
+        "generated_resident.echo_terrace.005": {
+          "health": [
+            79,
+            100
+          ]
+        },
+        "generated_resident.echo_terrace.006": {
+          "health": [
+            71,
+            100
+          ],
+          "hunger": [
+            "extreme",
+            "high"
+          ],
+          "livelihood_cycle_count": [
+            1,
+            2
+          ]
+        },
+        "generated_resident.echo_terrace.007": {
+          "health": [
+            86,
+            100
+          ]
+        }
+      },
+      "changed_balances": {}
+    },
+    "heldout_85005/direct_risk": {
+      "elapsed_hours": 72,
+      "actions": 67,
+      "action_kinds": {
+        "travel": 5,
+        "player_life": 22,
+        "combat_encounter": 2,
+        "wait": 38
+      },
+      "waits": 38,
+      "player_food": 4,
+      "player_coins": 0,
+      "known_followups": 0,
+      "hunger": {
+        "medium": 4,
+        "low": 4,
+        "high": 1,
+        "extreme": 7
+      },
+      "changed_residents": {},
+      "changed_balances": {}
+    },
+    "heldout_85005/local_help": {
+      "elapsed_hours": 72,
+      "actions": 59,
+      "action_kinds": {
+        "travel": 1,
+        "player_life": 12,
+        "wait": 46
+      },
+      "waits": 46,
+      "player_food": 5,
+      "player_coins": 6,
+      "known_followups": 3,
+      "hunger": {
+        "medium": 4,
+        "low": 4,
+        "high": 1,
+        "extreme": 7
+      },
+      "changed_residents": {
+        "generated_resident.echo_landing.001": {
+          "livelihood_cycle_count": [
+            3,
+            2
+          ]
+        },
+        "generated_resident.echo_landing.003": {
+          "livelihood_cycle_count": [
+            0,
+            1
+          ]
+        }
+      },
+      "changed_balances": {
+        "generated_resident.echo_landing.003": [
+          5,
+          4
+        ],
+        "generated_resident.echo_landing.005": [
+          5,
+          2
+        ]
+      }
+    },
+    "frozen_tool/tool_life": {
+      "elapsed_hours": 168,
+      "actions": 139,
+      "action_kinds": {
+        "travel": 9,
+        "player_life": 48,
+        "wait": 82
+      },
+      "waits": 82,
+      "player_food": 41,
+      "player_coins": 1,
+      "known_followups": 3,
+      "hunger": {
+        "low": 4,
+        "high": 2,
+        "medium": 2,
+        "extreme": 8
+      },
+      "changed_residents": {},
+      "changed_balances": {}
+    },
+    "tool_vs_observer": {
+      "observer_hunger": {
+        "low": 6,
+        "medium": 2,
+        "extreme": 8
+      },
+      "tool_hunger": {
+        "low": 4,
+        "high": 2,
+        "medium": 2,
+        "extreme": 8
+      },
+      "comparison_scope": "Equal initial native game truth, not byte-identical files: save_id and wall-clock save timestamps differ. The four-policy E3 branches separately share their exact native file.",
+      "changed_residents": {
+        "generated_resident.echo_landing.001": {
+          "livelihood_cycle_count": [
+            5,
+            3
+          ]
+        },
+        "generated_resident.echo_landing.002": {
+          "livelihood_cycle_count": [
+            2,
+            5
+          ]
+        },
+        "generated_resident.echo_landing.004": {
+          "hunger": [
+            "low",
+            "high"
+          ]
+        },
+        "generated_resident.echo_landing.005": {
+          "hunger": [
+            "medium",
+            "low"
+          ],
+          "livelihood_cycle_count": [
+            5,
+            4
+          ]
+        },
+        "generated_resident.echo_landing.007": {
+          "hunger": [
+            "low",
+            "high"
+          ],
+          "livelihood_cycle_count": [
+            5,
+            4
+          ]
+        },
+        "generated_resident.echo_landing.008": {
+          "hunger": [
+            "low",
+            "medium"
+          ]
+        }
+      }
+    }
+  },
+  "tool_recipes": {
+    "recipe.hand_gather.net_fisher": 3,
+    "recipe.net_fishing": 4,
+    "recipe.patch_cordage.generated_settlement.echo_landing": 1,
+    "recipe.reed_cordage": 1
+  },
+  "runtime_files": 236,
+  "presentation_only_changes_since_simulation_freeze": [
+    "scripts\\rebuild\\v5_live_location_viewer.gd"
+  ],
+  "boundary": "Legal code-agent evidence, not human play, fun, full RF6, or universal welfare improvement. Danger-to-resident causality remains hard to read in the current UI."
+}

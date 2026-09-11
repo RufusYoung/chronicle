@@ -1,0 +1,18 @@
+{
+  "createdUtc": "2026-09-11T01:23:14.3983848Z",
+  "sourceCommit": "abddb8618e2ef5df421a34288a1dce0d4a43ad4d",
+  "sourceDirty": false,
+  "kind": "Internal world prototype, not a submission candidate",
+  "files": [
+    {
+      "sha256": "91724F15024A3A545E28CCD83134403D31CE2323A38E51C95E4DFA282F732AB6",
+      "name": "Chronicle.exe",
+      "bytes": 104659456
+    },
+    {
+      "sha256": "FD0DEE625D92EBE9475712DB86F2C8D4C2038255BE1AA1DA392134E5C6F627DD",
+      "name": "Chronicle.pck",
+      "bytes": 45293460
+    }
+  ]
+}

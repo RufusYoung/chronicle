@@ -1,0 +1,37 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] integrated explicit household variant starts
+[PASS] four authored-anchor families get local empty pantries, no initial food
+[PASS] missing declared empty pantry cannot silently disappear from a save
+[PASS] controlled household starts
+[PASS] no remote pantry knowledge before observation
+[PASS] at-home inspection records supply horizon
+[PASS] forecasts multiple meals before anyone is starving
+[PASS] forecast preserves limited cautious travel tolerance
+[PASS] old experimental bootstrap keeps its previous travel budget
+[PASS] old forecast expires without remote refresh
+[PASS] test injection location_id
+[PASS] existing forecast funds a real pantry shipment
+[PASS] shipment quantity follows household budget, not recipient count
+[PASS] payer's private coins really reserved
+[PASS] known promise prevents a duplicate household trip
+[PASS] test injection location_id
+[PASS] physical deposit is a receipt for pantry storage, not fictitious individual meals
+[PASS] delivered food remains in actual cabinet until taken
+[PASS] service payment becomes income only after deposit
+[PASS] foreign courier has deposit permission only, not household withdrawal
+[PASS] test injection hunger
+[PASS] hungry member takes one real portion at home
+[PASS] cabinet and personal stock conserve goods
+[PASS] withdrawal traces delivered lot
+[PASS] test injection location_id
+[PASS] membership does not enable remote food access
+[PASS] pantry, memory, ownership and receipt save together
+[PASS] native integrated save restores
+[PASS] both integrated branches continue
+[PASS] whole native world continuation identical
+[PASS] test injection: carrier has no cash but real household need
+[PASS] poor household need is observed locally
+[PASS] unaffordable family shopping leads to real work search, not obsolete unpaid workplace
+[PASS] default remains unchanged until autonomous evaluation passes
+HOUSEHOLD_FOOD_BUDGET_RESULT PASS 34/34

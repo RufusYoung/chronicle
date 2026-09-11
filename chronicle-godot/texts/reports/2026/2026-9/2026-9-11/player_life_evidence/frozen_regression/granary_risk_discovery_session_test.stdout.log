@@ -1,0 +1,24 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 1. Challenge definitions load but stay hidden outside their locations
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 2. Arrival exposes preparation and direct-entry choices
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 3. Challenge option exposes risk, formula, and non-death consequence
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 4. Unprepared low roll resolves through the real check formula
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 5. Failure causes a persistent non-lethal injury
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 6. Failure grants no discovery and closes the resolved challenge
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 7. Failure becomes facts and cannot be retried in the same world
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 8. Stale challenge choice cannot consume time or duplicate consequences
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 9. Injury persists after retreating to the shop
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 10. Preparation consumes one hour and persists on the challenge target
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 11. Preparation disappears after use and changes the displayed formula
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 12. Unmarked or invalid test injection cannot change the challenge
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 13. The same low roll succeeds after preparation bonus
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 13a. Full preparation guarantees the granary's lowest legal roll
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 14. Success reveals the discovery site without fabricating an injury
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 15. Success creates a real owned item and updates player inventory
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 16. Item provenance records origin, discovery place, cause, and time
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 17. Discovery enters both facts and persistent WorldLog
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 18. Discovery remains owned after returning to the shop
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 19. Summary separates preparation, check, world ticks, and items
+[V5 GRANARY RISK DISCOVERY SESSION PASS] 20. Restart resets injury, discovery, and challenge counters
+[V5 GRANARY RISK DISCOVERY SESSION RESULT] PASS

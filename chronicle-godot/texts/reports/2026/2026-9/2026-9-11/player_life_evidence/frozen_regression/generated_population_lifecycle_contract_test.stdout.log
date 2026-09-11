@@ -1,0 +1,12 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 1. 生成居民具备可复现的出生日、生命阶段、存活状态和寿命
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 2. 测试注入的生日在每日结算中让未成年人真实成年并退出受抚养状态
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 3. 健康归零会留下可追溯历史实体，但当前人口立即减少且死者退出活动快照
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 4. 任职者死亡会清除当前职责，并用死亡事实形成真实组织空缺
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 5. 死者后续不再生产，次日由存活成年居民接替空缺职位
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 6. 死亡进入家庭 Chronicle，历史关系和持久引用保持完整
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 7. 存档往返精确保留死亡、历史实体、人口减少和组织继任
+[V5 POPULATION LIFECYCLE CONTRACT PASS] 8. 无测试注入推进到群体首个自然死亡日，年龄变化与死亡按同一种子完全复现
+[V5 POPULATION LIFECYCLE SAMPLE] {"autonomous_lifespan":{"adult_count":7,"aged_count":257,"death_count":1,"event_day_count":257,"first_death_day":3148},"dead_holder_id":"generated_resident.reed_bay.001","successor_id":"generated_resident.reed_bay.005"}
+[V5 POPULATION LIFECYCLE CONTRACT RESULT] PASS

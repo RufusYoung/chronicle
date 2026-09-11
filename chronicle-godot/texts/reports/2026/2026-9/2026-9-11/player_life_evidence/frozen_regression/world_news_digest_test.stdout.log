@@ -1,0 +1,45 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[WORLD NEWS DIGEST PASS] baseline macro WorldFact count remains complete at 192
+[WORLD NEWS DIGEST PASS] test injection macro WorldFact count remains complete at 202
+[WORLD NEWS DIGEST PASS] WorldNews count is lower than the pre-digest baseline
+[WORLD NEWS DIGEST PASS] 30-day baseline WorldNews count is substantially reduced
+[WORLD NEWS DIGEST PASS] exact WorldNews text repetition rate is at most 15 percent
+[WORLD NEWS DIGEST PASS] the same news_key is not published on consecutive days
+[WORLD NEWS DIGEST PASS] raid_supplies history continues accumulating during cooldown
+[WORLD NEWS DIGEST PASS] suppress_smugglers history continues accumulating during cooldown
+[WORLD NEWS DIGEST PASS] harvest_herbs history continues accumulating during cooldown
+[WORLD NEWS DIGEST PASS] at least three repeated action types produce staged news
+[WORLD NEWS DIGEST PASS] region tag changes still produce immediate WorldNews
+[WORLD NEWS DIGEST PASS] continuous event summaries are available
+[WORLD NEWS DIGEST PASS] day 3 test injection still changes WorldNews output
+[WORLD NEWS DIGEST PASS] day 3 test injection still changes final region state
+[WORLD NEWS DIGEST SUMMARY] facts=202 news=41 previous_news=98 histories=13 repeated_texts=0 repetition_rate=0.000
+[WORLD NEWS CONTINUOUS] raid_supplies | count=30 stage=5 | 走私者袭击补给线已持续 30 次，边境镇粮食压力仍在升高。
+[WORLD NEWS CONTINUOUS] escort_supplies | count=18 stage=4 | 守望者已护送 18 批补给，粮食危机仍未完全缓解。
+[WORLD NEWS CONTINUOUS] suppress_smugglers | count=12 stage=4 | 守望者清剿走私据点已持续 12 次，盘查与暗线活动同时增加。
+[WORLD NEWS STAGE] day=3 key=border_town|wardens|suppress_smugglers|warden_security_response count=3 stage=2 | 守望者连续清剿走私据点，路口盘查变多。
+[WORLD NEWS STAGE] day=3 key=border_town|smugglers|raid_supplies|scarcity_high_and_smuggler_raid count=3 stage=2 | 补给线已遇袭 3 次，边境镇的空货架越来越多。
+[WORLD NEWS STAGE] day=5 key=border_town|smugglers|raid_supplies|scarcity_high_and_smuggler_raid count=5 stage=3 | 补给线已遇袭 5 次，边境镇的空货架越来越多。
+[WORLD NEWS STAGE] day=7 key=border_town|wardens|suppress_smugglers|warden_security_response count=5 stage=3 | 走私者转入暗线，镇上公开冲突减少但传闻增多。
+[WORLD NEWS STAGE] day=8 key=border_town|wardens|escort_supplies|scarcity_high_and_smuggler_raid count=3 stage=2 | 已护送 3 批粮车，边境镇的粮食压力仍未解除。
+[WORLD NEWS STAGE] day=9 key=border_town|echo_cult|spread_visions|cult_ritual_and_mystic_pressure count=3 stage=2 | 镇民反复梦见同一片倒悬的湖面。
+[WORLD NEWS STAGE] day=10 key=border_town|smugglers|raid_supplies|scarcity_high_and_smuggler_raid count=10 stage=4 | 补给线已遇袭 10 次，边境镇粮食接近见底。
+[WORLD NEWS STAGE] day=10 key=old_ruins|echo_cult|gather_relics|cult_ritual_and_mystic_pressure count=3 stage=2 | 教团已 3 次带出遗物，遗迹附近的回声越发密集。
+[WORLD NEWS STAGE] day=11 key=border_town|wardens|escort_supplies|scarcity_high_and_smuggler_raid count=5 stage=3 | 已护送 5 批粮车，边境镇的粮食压力仍未解除。
+[WORLD NEWS STAGE] day=11 key=mirror_lake_forest|echo_cult|harvest_herbs|resource_pressure_along_lake_routes count=3 stage=2 | 湖岸药草变少，采药人开始深入危险地带。
+[WORLD NEWS STAGE] day=12 key=old_ruins|echo_cult|perform_ritual|cult_ritual_and_mystic_pressure count=3 stage=2 | 教团已举行 3 次仪式，遗迹神秘压力接近失控。
+[WORLD NEWS STAGE] day=13 key=border_town|smugglers|raid_supplies|scarcity_high_and_smuggler_raid count=13 stage=4 | 补给线已遇袭 13 次，边境镇粮食接近见底。
+[WORLD NEWS STAGE] day=13 key=old_ruins|echo_cult|gather_relics|cult_ritual_and_mystic_pressure count=4 stage=2 | 教团第 4 次带出遗物，遗迹神秘压力接近失控。
+[WORLD NEWS STAGE] day=16 key=border_town|wardens|suppress_smugglers|warden_security_response count=8 stage=3 | 清剿累计 8 次，走私者转入暗线，镇上传闻更多了。
+[WORLD NEWS STAGE] day=17 key=mirror_lake_forest|echo_cult|harvest_herbs|resource_pressure_along_lake_routes count=5 stage=3 | 草药短缺开始影响镇上的伤病治疗。
+[WORLD NEWS STAGE] day=18 key=border_town|wardens|escort_supplies|scarcity_high_and_smuggler_raid count=10 stage=4 | 已护送 10 批粮车，边境镇的粮食压力仍未解除。
+[WORLD NEWS STAGE] day=18 key=border_town|echo_cult|spread_visions|cult_ritual_and_mystic_pressure count=5 stage=3 | 越来越多镇民梦见倒悬湖面，白日里也有人听见回声。
+[WORLD NEWS STAGE] day=19 key=old_ruins|echo_cult|gather_relics|cult_ritual_and_mystic_pressure count=5 stage=3 | 教团第 5 次带出遗物，遗迹神秘压力接近失控。
+[WORLD NEWS STAGE] day=20 key=border_town|smugglers|raid_supplies|scarcity_high_and_smuggler_raid count=20 stage=5 | 补给线已遇袭 20 次，边境镇粮食接近见底。
+[WORLD NEWS STAGE] day=20 key=old_ruins|echo_cult|perform_ritual|cult_ritual_and_mystic_pressure count=5 stage=3 | 教团已举行 5 次仪式，遗迹神秘压力接近失控。
+[WORLD NEWS STAGE] day=23 key=border_town|wardens|suppress_smugglers|warden_security_response count=10 stage=4 | 第 10 次清剿后，边境镇秩序仍跌入危险线。
+[WORLD NEWS STAGE] day=27 key=border_town|wardens|escort_supplies|scarcity_high_and_smuggler_raid count=16 stage=4 | 已护送 16 批粮车，但补给速度仍追不上消耗。
+[WORLD NEWS STAGE] day=29 key=mirror_lake_forest|echo_cult|harvest_herbs|resource_pressure_along_lake_routes count=8 stage=3 | 草药已被集中采集 8 次，采药人开始深入危险地带。
+[WORLD NEWS STAGE] day=30 key=border_town|wardens|escort_supplies|scarcity_high_and_smuggler_raid count=18 stage=4 | 已护送 18 批粮车，但补给速度仍追不上消耗。
+[WORLD NEWS DIGEST RESULT] PASS

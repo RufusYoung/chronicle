@@ -5,6 +5,7 @@ from collections import Counter
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 from agent_play import PROJECT
 
@@ -51,18 +52,48 @@ def audit(root, package=None):
     checks["tool:actual_maintenance"] = tool["player_facts"].get("npc_work_maintained", 0) > 0
     checks["tool:finished_nonfood_recipe"] = recipes["recipe.reed_cordage"] > 0
     checks["tool:inventory_contains_new_tool"] = sum(i["quantity"] for i in tool["player"]["inventory"] if i["definition_id"] == "item.fiber_rope") > 1
+    observer = read(root / "tool_observer/comparison.json")["observer"]
+    tool_start = read(root / "frozen_tool/common_start.json")
+    observer_start = read(root / "tool_observer/common_start.json")
+    checks["tool:observer_equal_initial_truth_and_time"] = all(tool_start[key] == observer_start[key]
+        for key in ("bootstrap", "definition_manifest", "stores", "session", "world_time", "rng_states", "world_log", "agent_control")) and observer["elapsed_hours"] == tool["elapsed_hours"]
+    summaries["tool_vs_observer"] = {
+        "observer_hunger": observer["hunger"], "tool_hunger": tool["hunger"],
+        "comparison_scope": "Equal initial native game truth, not byte-identical files: save_id and wall-clock save timestamps differ. The four-policy E3 branches separately share their exact native file.",
+        "changed_residents": {actor: {key: [observer["resident_states"][actor].get(key), state.get(key)]
+                              for key in ("hunger", "health", "livelihood_cycle_count")
+                              if state.get(key) != observer["resident_states"][actor].get(key)}
+                              for actor, state in tool["resident_states"].items()},
+    }
+    summaries["tool_vs_observer"]["changed_residents"] = {actor: state for actor, state in summaries["tool_vs_observer"]["changed_residents"].items() if state}
     manifest = read(root / "runtime_manifest.json")
     checks["runtime:unchanged"] = all(hashlib.sha256((PROJECT / row["Path"]).read_bytes()).hexdigest().upper() == row["SHA256"] for row in manifest)
+    simulation_manifest = {row["Path"]: row["SHA256"] for row in read(root / "simulation_runtime_manifest.json")}
+    changed = [row["Path"] for row in manifest if simulation_manifest.get(row["Path"]) != row["SHA256"]]
+    checks["runtime:simulation_freeze_preserved"] = all(Path(path).as_posix() == "scripts/rebuild/v5_live_location_viewer.gd" for path in changed)
+    regression = read(root / "frozen_regression/results.json")
+    expected = {str(path.relative_to(PROJECT)).replace("\\", "/") for path in (PROJECT / "tests").rglob("*.gd")
+                if path.name != "generated_world_30_day_health_test.gd"}
+    checks["regression:complete_discovery"] = {row["Test"] for row in regression} == expected
+    checks["regression:all_passed"] = all(row["Passed"] for row in regression)
+    final_render = read(root / "final_render/results.json")
+    checks["regression:final_presentation_passed"] = {row["Test"] for row in final_render} == {name for name in expected if name.endswith("_render_test.gd")} and all(row["Passed"] for row in final_render)
     if package:
         build = read(package / "build_manifest.json")
         checks["package:clean_source"] = build["sourceDirty"] is False
+        prefix = PROJECT.name + "/"
+        tracked = set(subprocess.check_output(["git", "ls-tree", "-r", "-z", "--name-only", build["sourceCommit"], "--",
+            prefix + "scripts", prefix + "data", prefix + "scenes"], cwd=PROJECT.parent).decode("utf-8").split("\0"))
+        checks["package:runtime_matches_export_commit"] = all(prefix + Path(row["Path"]).as_posix() in tracked for row in manifest) and subprocess.run(
+            ["git", "diff", "--quiet", build["sourceCommit"], "--", prefix + "scripts", prefix + "data", prefix + "scenes"], cwd=PROJECT.parent).returncode == 0
         checks["package:binary_hashes"] = all(hashlib.sha256((package / row["name"]).read_bytes()).hexdigest().upper() == row["sha256"] for row in build["files"])
         for policy in ("observer", "prepared", "direct_risk", "local_help"):
             source = read(root / "frozen_81001" / f"{policy}.native.json")
-            packed = read(root / "packaged_81001" / f"{policy}.native.json")
+            packed = read(root / "packaged_final_81001" / f"{policy}.native.json")
             checks["package:native_parity:" + policy] = all(source[key] == packed[key] for key in ("stores", "world_time", "rng_states", "session", "world_log"))
     report = {"passed": all(checks.values()), "checks": checks, "summaries": summaries,
               "tool_recipes": dict(recipes), "runtime_files": len(manifest),
+              "presentation_only_changes_since_simulation_freeze": changed,
               "boundary": "Legal code-agent evidence, not human play, fun, full RF6, or universal welfare improvement. Danger-to-resident causality remains hard to read in the current UI."}
     (root / ("package_audit.json" if package else "source_audit.json")).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     for name, passed in checks.items():

@@ -1,0 +1,22 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] canon fixture starts
+[PASS] formal indexed history is immutable; direct test snapshots remain editable
+[PASS] editing a facts query cannot invalidate the formal index
+[PASS] actor index preserves order: actor
+[PASS] actor index preserves order: 
+[PASS] actor index preserves order: missing
+[PASS] index preserves exact fact_type and original order: test
+[PASS] index preserves exact fact_type and original order: other
+[PASS] index preserves exact fact_type and original order: 
+[PASS] index preserves exact fact_type and original order: missing
+[PASS] index preserves exact fact_type and original order: settlement_generated
+[PASS] legacy type alias is not mistaken for canonical fact_type
+[PASS] indexed rows remain immutable
+[PASS] query result array is detached
+[PASS] later append cannot enter old index
+[PASS] store replacement cannot clear old snapshot
+[PASS] store replacement cannot clear old actor index
+[PASS] mutable fixture does not use stale cached index
+[PASS] log count equals materialized history size
+SNAPSHOT_FACT_INDEX_RESULT 19/19

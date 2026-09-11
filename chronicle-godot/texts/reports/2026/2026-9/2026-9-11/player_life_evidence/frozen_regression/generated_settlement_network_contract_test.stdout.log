@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 1. 三聚落网络通过正式 SimSession 生成并启动
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 2. 三个场址、两条区域连接和三批居民均由同一种子网络生成
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 3. 场址命名空间隔离居民与家庭 ID，全部道路端点引用真实地点
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 4. 网络运行时保留场址和连接，同职业生计按所属聚落绑定库存
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 5. 每个聚落都生成三类可接收货物的真实贸易储备
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 6. 三日推进形成带两端库存、运力、数量和价格的跨聚落货流
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 7. 贸易后库存不透支、不超容，全部持久引用仍完整
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 8. 保留道路但移除贸易容量后，连续短缺会促成真实家庭迁移
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 9. 迁移会同步改变整户聚落、住址、当前位置与工作状态，旧岗位不再生产
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 10. 全精度磁盘存档保留三聚落网络、贸易水位与迁移后的居民真值
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 11. 相同种子可复现完全一致的聚落网络生成签名
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 12. 三组不同种子均保持结构、人口、库存与货流约束
+[V5 SETTLEMENT NETWORK CONTRACT PASS] 13. 重复道路或孤立场址会在生成阶段明确拒绝
+[V5 SETTLEMENT NETWORK SAMPLE] {"residents":30,"settlements":[{"dwelling_capacity":6,"generation_seed":81001,"hub_location_id":"generated_location.reed_bay.commons","population_target":24,"resident_capacity":33,"settlement_id":"generated_settlement.reed_bay","settlement_name":"苇岸埠","site_id":"reed_bay","terrain_id":"lake_marsh_edge","terrain_tags":["waterside","marsh","slope"]},{"dwelling_capacity":6,"generation_seed":81998,"hub_location_id":"generated_location.river_steps.commons","population_target":26,"resident_capacity":36,"settlement_id":"generated_settlement.river_steps","settlement_name":"石渡坞","site_id":"river_steps","terrain_id":"river_terrace","terrain_tags":["riverside","fertile","roadside","slope"]},{"dwelling_capacity":6,"generation_seed":82995,"hub_location_id":"generated_location.wind_pass.commons","population_target":17,"resident_capacity":22,"settlement_id":"generated_settlement.wind_pass","settlement_name":"白坡坞","site_id":"wind_pass","terrain_id":"windy_upland","terrain_tags":["upland","windy","defensible","roadside"]}],"trade_count":8,"trade_sample":{"actor_id":"generated_settlement.river_steps","amount":5.0,"base_route_risk":1,"day":1,"destination_settlement_id":"generated_settlement.reed_bay","destination_stock_id":"resource_stock.reed_bay.trade.food","effective_route_risk":1,"environment_capacity_penalty":0.0,"environment_risk_increase":0,"fact_id":"fact.network_trade.reed_bay_river_steps.food.day1","fact_type":"settlement_trade_shipment","good_id":"food","link_id":"reed_bay_river_steps","material_transport_cost_reduction":0.0,"operational_material_item_ids":[],"organization_capacity_bonus":0.0,"organization_transport_cost_reduction":0.0,"source_fact_ids":[],"source_settlement_id":"generated_settlement.river_steps","source_stock_id":"resource_stock.river_steps.resource_river_steps_soil","summary":"石渡坞沿道路向苇岸埠调拨了 5.0 份外来口粮储备，参考估价每份 4.3 枚铜币；本批未结算货币。","target_id":"generated_settlement.reed_bay","transport_cost":0.75,"transport_cost_without_material":0.75,"transport_stock_id":"resource_stock.river_steps.traffic_river_steps_road","unit_price":4.25}}
+[V5 SETTLEMENT NETWORK CONTRACT RESULT] PASS

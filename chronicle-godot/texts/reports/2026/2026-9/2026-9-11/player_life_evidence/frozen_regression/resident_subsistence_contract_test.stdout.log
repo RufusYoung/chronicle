@@ -1,0 +1,102 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit adaptive subsistence world starts
+[PASS] controlled subsistence fixture 
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] three actual work hours produce no early food
+[PASS] subsistence does not advance occupational wages or production
+[PASS] partial local work saves
+[PASS] partial work restores from native disk
+[PASS] work transaction 15
+[PASS] work transaction 15
+[PASS] native partial-work continuation matches exactly
+[PASS] four hours yield four real personally carried portions
+[PASS] same commons input is actually consumed, no extra resource source
+[PASS] no minted wages or automatic permanent profession change
+[PASS] production proves actual place and lower-skilled work
+[PASS] controlled subsistence fixture absent
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] absent cannot create food
+[PASS] absent consumes no unauthorized input
+[PASS] controlled subsistence fixture traveling
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] traveling cannot create food
+[PASS] traveling consumes no unauthorized input
+[PASS] controlled subsistence fixture exhausted
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] exhausted cannot create food
+[PASS] exhausted consumes no unauthorized input
+[PASS] controlled subsistence fixture injured
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] injured cannot create food
+[PASS] injured consumes no unauthorized input
+[PASS] controlled subsistence fixture child
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] child cannot create food
+[PASS] child consumes no unauthorized input
+[PASS] controlled subsistence fixture permission_denied
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] permission_denied cannot create food
+[PASS] permission_denied consumes no unauthorized input
+[PASS] permission_denied is an observed failure, not hidden subsidy
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] test injection: restored access or supply permits actual work again
+[PASS] controlled subsistence fixture depleted
+[PASS] controlled arrival evidence
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] depleted cannot create food
+[PASS] depleted consumes no unauthorized input
+[PASS] depleted is an observed failure, not hidden subsidy
+[PASS] work transaction 12
+[PASS] work transaction 13
+[PASS] work transaction 14
+[PASS] work transaction 15
+[PASS] test injection: restored access or supply permits actual work again
+[PASS] old-rule world starts
+[PASS] exact historical manifest upgrades explicitly
+[PASS] definition migration never enables new behavior in an old world
+[PASS] controlled subsistence fixture 
+[PASS] controlled arrival evidence
+[PASS] unknown prices do not imply family purchasing failure
+[PASS] controlled personal quote evidence
+[PASS] one affordable meal does not meet remembered household demand; next-morning decision cites own quote
+[PASS] the same wallet covers a lone person's immediate meal
+[PASS] enough real money keeps purchasing available
+[PASS] old quote expires instead of becoming permanent world price knowledge
+[PASS] old explicit bootstrap retains one-meal affordability behavior
+[PASS] poor night worker can forgo the shift to prepare real daytime subsistence
+[PASS] old bootstrap still chooses its old night shift
+RESIDENT_SUBSISTENCE_RESULT PASS 99/99

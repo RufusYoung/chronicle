@@ -39,7 +39,12 @@ class ChronicleClient:
         self.diagnostics: deque[str] = deque(maxlen=40)
         self.session_id = ""
         self.revision = 0
-        binary = godot or find_godot()
+        if packaged:
+            binary = godot or os.environ.get("CHRONICLE_GODOT") or str(PROJECT.parent / "builds/h1-windows/Chronicle.exe")
+            if not shutil.which(binary) and not Path(binary).is_file():
+                raise FileNotFoundError("Export Chronicle first, or pass --godot with the packaged executable path.")
+        else:
+            binary = godot or find_godot()
         if packaged:
             binary = shutil.which(binary) or str(Path(binary).resolve())
         command = [binary, "--headless"]

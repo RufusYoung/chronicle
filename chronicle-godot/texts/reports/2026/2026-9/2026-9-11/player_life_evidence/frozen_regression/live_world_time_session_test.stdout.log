@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LIVE WORLD TIME SESSION PASS] 1. SimSession 从 fixture 载入世界时间
+[V5 LIVE WORLD TIME SESSION PASS] 2. 粮铺变化不再声明为固定延迟后果
+[V5 LIVE WORLD TIME SESSION PASS] 3. 时间推进前，收铺门板尚未出现在现场
+[V5 LIVE WORLD TIME SESSION PASS] 4. advance_time 让老陈根据共享状态自主选择保粮收铺
+[V5 LIVE WORLD TIME SESSION PASS] 5. 成功 Tick 后 Session 时钟前进一小时
+[V5 LIVE WORLD TIME SESSION PASS] 6. 世界 Tick 让门板出现并再次改高告示价格
+[V5 LIVE WORLD TIME SESSION PASS] 7. 世界 Tick 写入粮食压力和可追溯事实
+[V5 LIVE WORLD TIME SESSION PASS] 8. Tick 日志并入持久 Session WorldLog
+[V5 LIVE WORLD TIME SESSION PASS] 9. 后果只触发一次，但世界时间可以继续前进
+[V5 LIVE WORLD TIME SESSION PASS] 10. 重复等待不会复制已触发的事实和压力
+[V5 LIVE WORLD TIME SESSION PASS] 11. 非法 Tick 或时间参数不推进世界时钟
+[V5 LIVE WORLD TIME SESSION PASS] 12. 运行摘要区分玩家行动与世界 Tick
+[V5 LIVE WORLD TIME SESSION PASS] 13. 原 SimRunner 序列保持兼容且不会暗中推进时间
+[V5 LIVE WORLD TIME SESSION PASS] 14. 重载 fixture 会重置时钟并恢复 NPC 行动规则
+[V5 LIVE WORLD TIME SESSION RESULT] PASS

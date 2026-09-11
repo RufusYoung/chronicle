@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GENERATED RESIDENT CONTRACT PASS] 1. 原始夹具只提供聚落锚点，没有预写居民
+[V5 GENERATED RESIDENT CONTRACT PASS] 2. G2 夹具通过正式 SimSession 启动并注册 127 个定义
+[V5 GENERATED RESIDENT CONTRACT PASS] 3. 固定种子生成 12 名居民、3 至 4 个家庭并通过生成期完整性校验
+[V5 GENERATED RESIDENT CONTRACT PASS] 4. 每名居民都有唯一姓名、年龄、六维属性、性情、生计、家庭、住址和工作地
+[V5 GENERATED RESIDENT CONTRACT PASS] 5. 聚落至少生成渔业、农业和手工业三个基础生计角色
+[V5 GENERATED RESIDENT CONTRACT PASS] 6. 居民按家庭建立双向关系，家庭户主之间也形成聚落联系
+[V5 GENERATED RESIDENT CONTRACT PASS] 7. 劳动者初始物品与全部跨 Store 引用都指向真实实体
+[V5 GENERATED RESIDENT CONTRACT PASS] 8. 同一世界种子生成完全相同的实体、状态、关系、物品和生成摘要
+[V5 GENERATED RESIDENT CONTRACT PASS] 9. 不同种子会改变家庭规模、年龄、生计或家庭关系结构
+[V5 GENERATED RESIDENT CONTRACT PASS] 10. 推进十八小时后，居民持续生产真实物品，并通过进食避免全员极度饥饿
+[V5 GENERATED RESIDENT CONTRACT PASS] 11. 存档内含生成 bootstrap，往返后保留居民真值、种子和全部地点
+[V5 GENERATED RESIDENT CONTRACT PASS] 12. 生成配置引用不存在的聚落时明确拒绝启动
+[V5 GENERATED RESIDENT CONTRACT PASS] 13. 运行时出现悬空家庭引用时，正式存档引用检查明确拒绝
+[V5 GENERATED RESIDENT SAMPLE] [{"age":49,"household":"generated_household.generated_resident_hamlet.01","name":"杜砚","occupation":"net_fisher","temperament":"bold"},{"age":75,"household":"generated_household.generated_resident_hamlet.01","name":"杜岑","occupation":"retired","temperament":"sociable"},{"age":72,"household":"generated_household.generated_resident_hamlet.01","name":"杜川","occupation":"retired","temperament":"steady"},{"age":43,"household":"generated_household.generated_resident_hamlet.02","name":"罗照","occupation":"terrace_farmer","temperament":"reserved"},{"age":43,"household":"generated_household.generated_resident_hamlet.02","name":"罗岑","occupation":"reed_weaver","temperament":"steady"}]
+[V5 GENERATED RESIDENT CONTRACT RESULT] PASS
