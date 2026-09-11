@@ -1,5 +1,5 @@
 {
-  "passed": false,
+  "passed": true,
   "checks": {
     "frozen_81001/observer:aligned": true,
     "frozen_81001/observer:no_injection": true,
@@ -61,8 +61,11 @@
     "tool:observer_equal_initial_truth_and_time": true,
     "runtime:unchanged": true,
     "runtime:simulation_freeze_preserved": true,
+    "regression:complete_discovery": true,
+    "regression:all_passed": true,
+    "regression:final_presentation_passed": true,
     "package:clean_source": true,
-    "package:runtime_matches_export_commit": false,
+    "package:runtime_matches_export_commit": true,
     "package:binary_hashes": true,
     "package:native_parity:observer": true,
     "package:native_parity:prepared": true,

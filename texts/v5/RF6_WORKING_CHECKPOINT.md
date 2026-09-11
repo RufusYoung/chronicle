@@ -4,7 +4,7 @@ Updated 2026-09-11. Recovery context only; the single active plan remains `CHRON
 
 ## Source and Hypothesis
 
-- Branch `codex/player-agency-world-surface`, source HEAD `abddb86`, pushed. Final display cleanup, audit/client tools and evidence await a second verified source commit and clean re-export.
+- Branch `codex/player-agency-world-surface`, runtime/build source `b71ee27`, pushed. Final package evidence and closeout documents form a following documentation-only commit; use Git for its exact HEAD.
 - Formal player opts in via `player_life_version=1` / API `player_life_v1`. Authoritative body and physical travel, shared hunger, real food, wages, stock quotes, production, wear, maintenance and local reports are implemented. Old worlds retain their rules; experimental life/danger/community remain off by default.
 - No replacement money, inventory or history store. Owned player snapshot only opts this actor into existing resolvers, never into NPC autonomy. Details: `CHRONICLE_PLAYER_LIFE_CONTRACT_v5.1.md`.
 - Simulation frozen at `abddb86`; final display-only removal of empty tradeoff captions passed all 26 render tests. `player_life_evidence/runtime_manifest.json` contains 236 final hashes; `simulation_runtime_manifest.json` records the prior freeze. Do not change runtime without rerunning affected evidence.
@@ -22,15 +22,15 @@ Updated 2026-09-11. Recovery context only; the single active plan remains `CHRON
 
 - First full regression finished 155/156; one old community UI 720p overflow was fixed. Final full regression finished 156/156, summed durations 820.92 seconds. A subsequent display-only cleanup passed all 26 real render tests. Evidence is retained under `frozen_regression/` and `final_render/`.
 - The supplemental 168-hour observer finished: same initial game truth/time, different save IDs/timestamps. Both branches have eight extremely hungry residents, but three residents' hunger bands and multiple production counts differ. Preserve these mixed effects, not a universal improvement claim.
-- Source protocol 14/14, preliminary clean `abddb86` package protocol 14/14 and four native parity comparisons passed. Actual packaged UI loaded the formal seven-day and legacy thirty-day saves. Final display cleanup still requires a matching clean export and package rechecks.
+- Source protocol 14/14. Final clean `b71ee27` package protocol 14/14 in 41.864 seconds; four 72-hour strategies' native game truth matches source exactly. Actual package loaded/rendered the formal seven-day and legacy thirty-day saves in 4975.60/5670.11 ms. Audit 70/70, 236 runtime hashes, export-source tracking and EXE/PCK hashes match. Build manifest has `sourceDirty=false`.
 - All earlier sessions are closed. No active process, automation or separate task at this checkpoint.
 
 ## Next Executable Actions
 
-1. Commit verified final source/UI/client/audit tools, UID files, plans and evidence; push. Before export the workspace must be clean.
-2. `tools/export_windows.ps1` refreshes `builds/h1-windows`. Run actual package protocol tests and `play_player_life.py --packaged --godot C:/code/game/chronicle/builds/h1-windows/Chronicle.exe --output .../packaged_final_81001`; then `verify_player_life.py .../player_life_evidence --package builds/h1-windows` (70 expected checks).
-3. `verify_household_package_save.py` renders `tool_life.ui_probe.json` at 168 hours with `--expected-work-version 1`, and the previous thirty-day save for legacy continuity. The agent native envelope requires formal Live save wrapping; `prepare_agent_ui_probe.gd` already produced this probe while asserting unchanged game truth. Isolated startup probes preserve the manual player save.
-4. Update report/build evidence and active plan, commit/push. This integrated player/world milestone may be reported, but RF6 remains active; do not declare complete Demo/E3 readability. Next block is meaningful supply/work information, voluntary surplus sales/delivery and visible danger-to-resident aftermath, then content/assets/first experience.
+1. RF6 remains active. Next executable work is public local supply/work information with age, source, cost and a meaningful alternative to repeated waiting. Reuse current owned stock, actor presence and local knowledge; do not create an omniscient market feed.
+2. Integrate voluntary surplus sale/delivery with real buyers, payments and later meals, and observable danger-to-work/livelihood aftermath. Use the existing market, transactions and fact provenance; preserve refusal, absence and poverty counterexamples.
+3. Then finish data-only content expansion, canonical art/assets and a coherent first experience. This integrated player/world checkpoint is not full RF6, E3 readability or human play acceptance.
+4. Reproduction: `verify_player_life.py .../player_life_evidence --package builds/h1-windows` gives 70 checks. Final package runs are `packaged_final_81001/`, `package_protocol_final.log`, `package_life_save_final.json` and `package_legacy_day30_final.json`. Do not rerun everything before changing a candidate; use scoped tests, freeze, then broader package checks.
 
 ## Failed Approaches Kept
 
