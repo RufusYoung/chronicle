@@ -1,0 +1,16 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 MINIMUM CONTRACT FIXTURE PASS] 1. 最小合同 fixture 通过全部 Definition 与 Store 启动校验
+[V5 MINIMUM CONTRACT FIXTURE PASS] 2. 两名角色拥有同定义但耐久、来源和历史不同的冬衣实例
+[V5 MINIMUM CONTRACT FIXTURE PASS] 3. 两件冬衣分别由持有人装备且没有复制物品状态
+[V5 MINIMUM CONTRACT FIXTURE PASS] 4. food_count 只由玩家实际口粮堆叠聚合
+[V5 MINIMUM CONTRACT FIXTURE PASS] 5. 商店候选来自商人真实商品堆叠且不伪造报价
+[V5 MINIMUM CONTRACT FIXTURE PASS] 6. 可恢复伤势、两个雾盐印记样本与侦察技艺进入独立 Store
+[V5 MINIMUM CONTRACT FIXTURE PASS] 7. 口粮堆叠可拆分且总量投影保持一致
+[V5 MINIMUM CONTRACT FIXTURE PASS] 8. 多个真实口粮堆叠按稳定实例顺序共同承担一次消费
+[V5 MINIMUM CONTRACT FIXTURE PASS] 9. 耗尽的堆叠进入 destroyed holder，剩余实例仍可追溯
+[V5 MINIMUM CONTRACT FIXTURE PASS] 10. SaveEnvelope seed 可无损通过 JSON 编码与解码
+[V5 MINIMUM CONTRACT FIXTURE PASS] 11. Definition manifest 完整且顺序稳定
+[V5 MINIMUM CONTRACT FIXTURE PASS] 12. JSON 往返后的装备、物品历史与角色特征引用仍全部存在
+[V5 MINIMUM CONTRACT FIXTURE PASS] 13. 保存种子只含规范 Store 真值，不保存兼容别名或派生投影
+[V5 MINIMUM CONTRACT FIXTURE RESULT] PASS

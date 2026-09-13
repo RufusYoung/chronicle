@@ -63,7 +63,7 @@ func _run() -> void:
 		viewer.advance_time()
 		await _settle(viewer)
 	_check(heard, "actual local conversation presents the downstream food use")
-	_check("你上次采收" in JSON.stringify(viewer.current_view_data.feedback), "result names the reported consequence rather than generic acknowledgement")
+	_check("你先前补充的食物" in JSON.stringify(viewer.current_view_data.feedback), "result names the reported consequence rather than generic acknowledgement")
 	_check(viewer.action_dock.get_global_rect().end.y <= root.size.y, "followup controls remain visible")
 	await _capture("known_followup_900")
 	for route: Dictionary in viewer.view_model.session.get_travel_options():
@@ -84,7 +84,7 @@ func _run() -> void:
 			break
 	_check("路上" in viewer.current_view_data.location.title, "multi-hour travel is presented as being on the road")
 	_check(viewer.current_view_data.visible_people.is_empty(), "no origin or destination NPCs are falsely shown as present")
-	_check(viewer.current_view_data.actions.size() == 1 and viewer.current_view_data.actions[0].action_id == "continue", "only continuation is offered in transit")
+	_check(viewer.current_view_data.actions.all(func(row: Dictionary) -> bool: return row.action_id in ["continue", "journey_block"]), "only physical journey continuation is offered in transit")
 	await _capture("journey_900")
 	viewer.queue_free()
 	await process_frame

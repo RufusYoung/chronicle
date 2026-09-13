@@ -10,7 +10,7 @@ from pathlib import Path
 from agent_play import ChronicleClient
 
 
-def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=None):
+def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=None, variant="player_life_v1"):
     if not 48 <= hours <= 168:
         raise ValueError("Use a bounded 48..168 hour horizon")
     output.mkdir(parents=True, exist_ok=True)
@@ -23,8 +23,8 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
                 raise RuntimeError(json.dumps(response, ensure_ascii=False))
             return response
 
-        request("start", mode="play", scenario="echo_realm", seed=seed, economy_variant="player_life_v1")
-        base_slot = f"rf6_base_{seed}"
+        request("start", mode="play", scenario="echo_realm", seed=seed, economy_variant=variant)
+        base_slot = f"rf6_base_{seed}_{variant}"
         request("save", slot=base_slot, overwrite=True)
         base_bytes = (saves / (base_slot + ".json")).read_bytes()
         (output / "common_start.json").write_bytes(base_bytes)
@@ -53,12 +53,35 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
                 if policy == "observer":
                     choice = choose("wait")
                 elif choose("player_life", "continue"):
-                    choice = choose("player_life", "continue")
+                    choice = choose("player_life", "journey_block") or choose("player_life", "continue")
+                    if choice.get("hours", 1) > hours - elapsed:
+                        choice = choose("player_life", "continue")
                 elif choose("combat_encounter"):
                     visited_danger = True
                     approach = ("attack" if rounds == 0 else "withdraw") if policy == "direct_risk" else ("guard" if rounds % 3 < 2 else "attack")
                     choice = choose("combat_encounter", ":" + approach)
                     rounds += 1
+                elif policy in {"local_trade", "local_gift"}:
+                    if player.get("hunger") in {"high", "extreme"}:
+                        choice = choose("player_life", "eat")
+                    if choice is None:
+                        choice = choose("player_life", "inquire:")
+                    if choice is None and player["food_count"] > (4 if policy == "local_trade" else 2):
+                        choice = choose("player_life", "sell_food:" if policy == "local_trade" else "give_food:")
+                    if choice is None and player.get("fatigue", 0) >= 6:
+                        choice = choose("player_life", "rest_block") or choose("player_life", "rest")
+                    if choice is None and (time["hour"] >= 18 or time["hour"] < 6):
+                        choice = choose("player_life", "rest_block")
+                    if choice is None and len(observation.get("local_information", [])) < 2:
+                        choice = choose("player_life", "ask_local:")
+                    if choice is None and player["food_count"] < 8:
+                        choice = choose("player_life", "gather:")
+                        if choice is None and not any(c["id"].startswith("gather:") for c in response["choices"]):
+                            choice = next((c for c in choices if c["kind"] == "travel" and "采口粮" in c.get("purpose", "")), None) or choose("travel", "to_commons")
+                    if choice is None and player["food_count"] >= 8:
+                        choice = choose("travel", "to_commons")
+                    if choice and choice.get("hours", 1) > hours - elapsed:
+                        choice = None
                 elif policy == "tool_life":
                     def travel_to(fragment):
                         return choose("travel", fragment) or choose("travel", "to_commons")
@@ -174,7 +197,7 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
             for item in stores["items"]:
                 if item["item_def_id"] == "item.copper_coin":
                     balances[item["holder"]["id"]] += item["quantity"]
-            summary = {"seed": seed, "policy": policy, "elapsed_hours": hours, "legal_actions": len(records),
+            summary = {"seed": seed, "policy": policy, "variant": variant, "elapsed_hours": hours, "legal_actions": len(records),
                        "player": response["observation"]["player"], "combat_rounds": rounds,
                        "player_facts": dict(Counter(f.get("fact_type", "") for f in facts if f.get("actor_id") == "player")),
                        "tool_stage": tool_stage if policy == "tool_life" else None,
@@ -184,6 +207,10 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
                        "currency_balances": dict(balances), "total_coins": sum(balances.values()),
                        "hired_work": [f for f in facts if f.get("actor_id") == "player" and f.get("employer_id") and f.get("fact_type") == "npc_livelihood_produced"],
                        "witnessed_followups": response["observation"].get("player_life_followups", []),
+                       "local_information": response["observation"].get("local_information", []),
+                       "player_sales": [f for f in facts if f.get("fact_type") == "player_food_sold"],
+                       "player_gifts": [f for f in facts if f.get("fact_type") == "player_food_given"],
+                       "work_after_danger": [f for f in facts if f.get("danger_clearance_source_id")],
                        "same_start_sha256": hashlib.sha256(base_bytes).hexdigest(),
                        "evidence_kind": "legal_code_agent_play", "test_injection": False, "human_ui_play": False}
             summaries[policy] = summary
@@ -211,6 +238,7 @@ if __name__ == "__main__":
     parser.add_argument("--hours", type=int, default=72)
     parser.add_argument("--packaged", action="store_true")
     parser.add_argument("--godot")
-    parser.add_argument("--policies", nargs="+", choices=("observer", "prepared", "direct_risk", "local_help", "tool_life"))
+    parser.add_argument("--policies", nargs="+", choices=("observer", "prepared", "direct_risk", "local_help", "tool_life", "local_trade", "local_gift"))
+    parser.add_argument("--variant", choices=("player_life_v1", "player_life_v2"), default="player_life_v1")
     args = parser.parse_args()
-    play(args.output, seed=args.seed, hours=args.hours, packaged=args.packaged, godot=args.godot, policies=args.policies)
+    play(args.output, seed=args.seed, hours=args.hours, packaged=args.packaged, godot=args.godot, policies=args.policies, variant=args.variant)

@@ -1,0 +1,70 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] v2 bootstrap starts: 
+[PASS] public routes explain actual site uses
+[PASS] new player has not heard private quotes
+[PASS] controlled fixture loads through formal session
+[PASS] controlled case selects an existing funded adult
+[PASS] explicit counterexample setup commits through writer
+[PASS] present speaker gives a first-hand local account
+[PASS] specific information and observed age are retained
+[PASS] unchanged local question disappears
+[PASS] local information saves natively
+[PASS] v2 native restores
+[PASS] restored knowledge has same content and time
+[PASS] native numeric restoration does not refresh an unchanged question
+[PASS] old quotes explicitly expire instead of live remote refresh
+[PASS] controlled fixture loads through formal session
+[PASS] controlled case selects an existing funded adult
+[PASS] explicit counterexample setup commits through writer
+[PASS] hungry present adult offers a funded purchase
+[PASS] player consents to real local sale
+[PASS] player receives actual price
+[PASS] buyer really pays, no unlimited merchant money
+[PASS] goods leave player inventory
+[PASS] sale provenance names voluntary provider
+[PASS] recipient's actual later meal is visibly linked
+[PASS] satisfied buyer stops asking for the same sale
+[PASS] sale native checkpoint
+[PASS] sale restores using original item/exchange stores
+[PASS] trade, later meals and world continue identically
+[PASS] controlled fixture loads through formal session
+[PASS] controlled case selects an existing funded adult
+[PASS] explicit counterexample setup commits through writer
+[PASS] voluntary one-portion gift commits
+[PASS] gift costs real owned food
+[PASS] gift grants no invented money
+[PASS] gift reaches an actual meal, not just an acknowledgment
+[PASS] controlled fixture loads through formal session
+[PASS] controlled case selects an existing funded adult
+[PASS] explicit counterexample setup commits through writer
+[PASS] test injection marks seller counterpart in transit
+[PASS] stale offer cannot sell to someone who left
+[PASS] rejected stale action changes neither goods nor time
+[PASS] test injection removes buyer funds by transfer
+[PASS] poor buyer cannot create cash
+[PASS] giving remains a distinct voluntary alternative
+[PASS] old funded quote cannot bypass current affordability
+[PASS] controlled fixture loads through formal session
+[PASS] rest comparison same native checkpoint
+[PASS] individual-hour comparison loads
+[PASS] bounded rest replaces repeated clicks
+[PASS] batch rest executes every same hourly world/body change
+[PASS] long journey starts physically
+[PASS] bounded journey reaches real destination
+[PASS] no outstanding trip after continuous travel
+[PASS] controlled fixture loads through formal session
+[PASS] controlled case selects an existing funded adult
+[PASS] explicit counterexample setup commits through writer
+[PASS] controlled danger provenance fixture commits
+[PASS] NPC finishing blow retains actual player contribution without sole-credit fiction
+[PASS] offsite production knowledge does not teleport to player
+[PASS] expired retreat cannot explain unrelated later work
+[PASS] work attribution requires actual presence at the affected site
+[PASS] merely being in combat without damage is not credited for clearing the threat
+[PASS] controlled fixture loads through formal session
+[PASS] controlled case selects an existing funded adult
+[PASS] explicit counterexample setup commits through writer
+[PASS] v1 never silently acquires v2 sale or knowledge rules
+[PASS] mismatched compiled behavior version is rejected
+WORK_RECIPE_RESULT PASS 67/67

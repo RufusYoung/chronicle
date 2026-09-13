@@ -1,0 +1,49 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[WORLD SIM OBSERVER TEST] baseline start
+[WORLD SIM OBSERVER TEST] baseline complete
+[WORLD SIM OBSERVER TEST] test injection complete
+[WORLD SIM OBSERVER TEST] comparison complete
+[WORLD SIM OBSERVER TEST] Markdown export complete
+[WORLD SIM OBSERVER PASS] baseline observation completed
+[WORLD SIM OBSERVER PASS] test injection observation completed
+[WORLD SIM OBSERVER PASS] baseline contains 30 daily snapshots
+[WORLD SIM OBSERVER PASS] test injection run contains 30 daily snapshots
+[WORLD SIM OBSERVER PASS] every baseline day has region and faction summaries
+[WORLD SIM OBSERVER PASS] baseline includes world_news summaries
+[WORLD SIM OBSERVER PASS] baseline includes continuous event summaries
+[WORLD SIM OBSERVER PASS] baseline includes LeadCandidate summaries
+[WORLD SIM OBSERVER PASS] baseline includes adapted v0.3 lead summaries
+[WORLD SIM OBSERVER PASS] baseline includes lake town micro chain summaries
+[WORLD SIM OBSERVER PASS] baseline includes five state-derived lake town action candidates
+[WORLD SIM OBSERVER PASS] baseline includes isolated micro action result comparisons
+[WORLD SIM OBSERVER PASS] baseline includes traceable lake town reaction timeline
+[WORLD SIM OBSERVER PASS] baseline includes differentiated five-day action followups
+[WORLD SIM OBSERVER PASS] A/B comparison differs by day 10
+[WORLD SIM OBSERVER PASS] A/B LeadCandidate signatures differ
+[WORLD SIM OBSERVER PASS] A/B adapted lead signatures differ
+[WORLD SIM OBSERVER PASS] Markdown observation output exists
+[WORLD SIM OBSERVER PASS] Markdown observation output has required sections
+[WORLD SIM OBSERVER PASS] Markdown separates new news and continuous summaries
+[WORLD SIM OBSERVER PASS] Markdown includes the lake town micro chain section
+[WORLD SIM OBSERVER PASS] Markdown shows the complete micro scene causes
+[WORLD SIM OBSERVER PASS] Markdown includes micro action candidates and consequence comparisons
+[WORLD SIM OBSERVER PASS] observer output avoids repeated daily news text
+[WORLD SIM OBSERVER PASS] Markdown uses test injection terminology
+[WORLD SIM OBSERVER PASS] protected Demo files were not modified
+[OBSERVER BASELINE] facts=202 news=41 histories=13 candidates=40 adapted=40 types={"传闻":15,"河流":3,"烟柱":13,"足迹":9}
+[OBSERVER BASELINE REGION] border_town danger=66.69 order=0.00 scarcity=98.00 mystic=40.69 food=3.61 tags=danger_high, order_low, populated, resource_strained, scarcity_high, town, trade_route
+[OBSERVER BASELINE REGION] mirror_lake_forest danger=71.66 order=29.07 scarcity=35.09 mystic=65.59 food=73.66 tags=danger_high, forest, herb_rich, lake, order_low
+[OBSERVER BASELINE REGION] old_ruins danger=100.00 order=0.00 scarcity=58.96 mystic=100.00 food=28.66 tags=danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable
+[OBSERVER BASELINE FACTION] echo_cult power=72.30 wealth=48.10 hostility=0.00
+[OBSERVER BASELINE FACTION] smugglers power=42.60 wealth=100.00 hostility=0.00
+[OBSERVER BASELINE FACTION] wardens power=79.40 wealth=10.00 hostility=0.00
+[OBSERVER TEST INJECTION] facts=212 news=46 histories=12 candidates=39 adapted=39 types={"传闻":15,"河流":3,"烟柱":12,"足迹":9}
+[OBSERVER TEST INJECTION REGION] border_town danger=62.55 order=1.53 scarcity=75.37 mystic=40.69 food=32.61 tags=order_low, populated, resource_strained, scarcity_high, town, trade_route
+[OBSERVER TEST INJECTION REGION] mirror_lake_forest danger=71.66 order=29.07 scarcity=35.09 mystic=65.59 food=73.66 tags=danger_high, forest, herb_rich, lake, order_low
+[OBSERVER TEST INJECTION REGION] old_ruins danger=100.00 order=0.00 scarcity=58.96 mystic=100.00 food=28.66 tags=danger_high, mystic_surge, order_low, relic_rich, resource_strained, ruins, unstable
+[OBSERVER TEST INJECTION FACTION] echo_cult power=72.30 wealth=48.10 hostility=0.00
+[OBSERVER TEST INJECTION FACTION] smugglers power=43.20 wealth=100.00 hostility=8.00
+[OBSERVER TEST INJECTION FACTION] wardens power=82.80 wealth=5.00 hostility=-6.00
+[OBSERVER A/B] day10_difference=true news_delta=+5 leads_delta=-1 adapted_delta=-1 signatures_differ=true
+[WORLD SIM OBSERVER RESULT] PASS

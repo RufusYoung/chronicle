@@ -1,6 +1,23 @@
 # RF6 Working Checkpoint
 
-Updated 2026-09-11. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
+Updated 2026-09-13. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
+
+## Current Sep 13 Source Checkpoint
+
+- HEAD `0e291dd`, branch `codex/player-agency-world-surface`. The Sep 11 package remains at `b71ee27`; it does not yet contain this work. No unrelated user changes were present at start.
+- New explicit `player_life_version=2` / API `player_life_v2`, UI new-world life checkbox selects v2. V1 and old saves retain their economic rules.
+- `player_local_life.gd` connects voluntary paid food sales/gifts, actual resident meals, first-hand local information with 12-hour age/expiry, bounded hourly rest/travel, and public destination-use hints. It reuses Market, physical stock, provenance and existing bodies.
+- NPC production can reference an actual still-active danger retreat plus the player's recent damage contribution, including an NPC final blow. This is a limited removed-obstacle association, not sole credit or a universal welfare gain. Reports require physical observation or a present actual participant.
+- Shared UI now has purpose filters (work, trade/giving, talk, rest/travel) without new nested scrolling. Unread statements and private offer policies are stripped from public action rows. Filter/page changes consume no game time.
+- Focused contract currently 67/67; real render tests `player_life_render_test` and new `player_local_life_render_test` pass at 720p/900p. These are program-driven UI, with clearly labeled controlled fixtures in the latter, not human play.
+- First legal 72-hour four-policy candidate at `%TEMP%/chronicle-local-life-candidate1`: trade sells two portions for six coins, gift makes four transfers, prepared branch has a real resumed-work attribution; total coins stay 301. Trade/gift take 40/36 actions, observer 72. Gift ends with eight extremely hungry residents versus observer seven; preserve the negative outcome. Candidate predates final presentation/attribution guards, so rerun a frozen version before accepting it.
+- Runtime freeze is 237 hashes; final 81001 and held-out 86013 four-policy 72h comparisons, 81001 three-policy 168h comparison, and natural danger checkpoint rendering passed. Source audit 124/124. Full regression finished 157/158 (790.89s), only a stale capacity wording assertion failed; test-only correction passed the scoped rerun (4.85s). Final effective coverage is 158 with 27 actual renders, not a new 30-day health run.
+- Final source protocol transcript run passed 15/15 in 57.725s; all sessions are closed. Next: commit/push verified source with UIDs, clean export, actual packaged protocol/four-policy parity, and v2-week/v1-week/legacy-day30 package renders. Evidence is `chronicle-godot/texts/reports/2026/2026-9/2026-9-13/local_life_evidence/`. The old Sep 11 package is not current proof.
+- Seven-day trade makes one sale and 42 single-hour waits; gifts make 11 transfers, but observer/trade/gift each end with eight extremely hungry residents. Keep this negative density/welfare result. Next RF6 dependency after package closure is the existing data-only expansion, canon art/short incidents and first-experience gate, not indefinite single-seed food tuning.
+- Failed approaches: new `Array.has` version tests rejected JSON-restored float versions, freezing the loaded player's hunger/rest; fixed semantic numeric checks, with native continuation and unchanged-question tests. Public worksite guidance incorrectly assumed every generated worksite had a settlement field; fixed by its authored/generated production profile. Tall action filter buttons overflowed the dense 720p layout; compact existing styles fixed it without reducing text size. Early test method typo `build_view` was corrected to the real `build_view_data`.
+- No new asset, video, public submission, automation, task or model-setting change. Remaining RF6 data-only content expansion, canonical assets and the 15-25 minute first experience are still pending.
+
+## Previous Verified Checkpoint (Sep 11)
 
 ## Source and Hypothesis
 

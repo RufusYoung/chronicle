@@ -291,6 +291,44 @@ static func recovery_food(snapshot: Variant, id: String) -> Dictionary:
 	return {}
 
 
+# Associate resumed physical work with a real, still-active retreat window.
+# The player may have contributed damage while an NPC landed the final blow.
+static func work_clearance(snapshot: Variant, actor: String, location: String, tick: Dictionary, config: Dictionary) -> Dictionary:
+	if not enabled(config):
+		return {}
+	if snapshot.get_entity_state(actor, "location_id", "") != location or snapshot.get_entity_state(actor, "daily_route_id", "") != "":
+		return {}
+	var clear := {}
+	var contribution := ""
+	var facts: Array = snapshot.get_facts()
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		if fact.get("location_id") != location or fact.get("fact_type") != "world_danger_round":
+			continue
+		if clear.is_empty():
+			if not fact.get("threat_dispersed", false):
+				continue
+			clear = fact
+			if hour(tick) - hour(clear) >= int(config.retreat_hours) or active(snapshot.get_entity(str(clear.target_id)), tick, config):
+				return {}
+		elif fact.get("threat_dispersed", false):
+			break
+		if fact.get("target_id") != clear.target_id:
+			continue
+		if hour(clear) - hour(fact) > 6:
+			break
+		if fact.get("actor_id") == str(snapshot.player.id) and int(fact.get("enemy_health_after", 0)) < int(fact.get("enemy_health_before", 0)):
+			contribution = str(fact.fact_id)
+			break
+	if clear.is_empty() or contribution == "":
+		return {}
+	for fact: Dictionary in snapshot.get_facts_by_actor(actor):
+		if fact.get("actor_id") == actor and fact.get("fact_type") == "world_danger_contact" and fact.get("target_id") == clear.target_id \
+				and hour(fact) <= hour(clear) and hour(clear) - hour(fact) <= 24:
+			return {"fact_id": clear.fact_id, "source_fact_ids": [clear.fact_id, contribution, fact.fact_id]}
+	return {}
+
+
 static func _change(result: Variant, id: String, key: String, value: Variant) -> void:
 	result.add_state_change({"entity_id": id, "key": key, "to": value})
 

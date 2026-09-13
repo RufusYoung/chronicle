@@ -69,7 +69,8 @@ func _run() -> void:
 		and settlement_name in player_summary.text
 		and "湖湾镇" not in player_summary.text
 		and "生成地点" in location_context.text
-		and "支撑约 %d 人" % capacity in location_description.text,
+		and "场址容量估算约 %d 人" % capacity in location_description.text
+		and "能长期支撑" not in location_description.text,
 		"2. 页眉与地点正文显示当前生成结果，不再误写成湖湾镇剧情"
 	)
 	_check(
@@ -82,7 +83,7 @@ func _run() -> void:
 	)
 	_check(
 		settlement_name in knowledge.text
-		and "可长期支撑约 %d 人" % capacity in knowledge.text
+		and "场址容量估算约 %d 人" % capacity in knowledge.text
 		and "初始人口目标为 %d 人" % population in knowledge.text,
 		"4. 知识面板提供容量与人口关键信息，而不是只有生成结论"
 	)

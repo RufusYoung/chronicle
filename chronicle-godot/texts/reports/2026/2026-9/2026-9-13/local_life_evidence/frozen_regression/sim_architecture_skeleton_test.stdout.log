@@ -1,0 +1,11 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 SIM ARCHITECTURE SKELETON PASS] 1. SimContext 可实例化并导出上下文
+[V5 SIM ARCHITECTURE SKELETON PASS] 2. SimRegistry 可登记和读取定义
+[V5 SIM ARCHITECTURE SKELETON PASS] 3. EntityStore 可保存最小实体
+[V5 SIM ARCHITECTURE SKELETON PASS] 4. StateStore 可写入和读取状态
+[V5 SIM ARCHITECTURE SKELETON PASS] 5. ActionCandidate 可创建行动候选对象
+[V5 SIM ARCHITECTURE SKELETON PASS] 6. ActionAffordanceSystem 当前为空骨架
+[V5 SIM ARCHITECTURE SKELETON PASS] 7. TransactionResult 可表示空事务结果
+[V5 SIM ARCHITECTURE SKELETON PASS] 8. FactStore 可保存结构化事实
+[V5 SIM ARCHITECTURE SKELETON RESULT] PASS

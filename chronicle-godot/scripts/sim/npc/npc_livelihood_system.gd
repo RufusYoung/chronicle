@@ -12,6 +12,7 @@ const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 const WorkRecipe = preload("res://scripts/sim/economy/work_recipe_service.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const ItemSources = preload("res://scripts/sim/item/item_causal_sources.gd")
+const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
@@ -294,6 +295,12 @@ func resolve_work_tick(
 				if source not in sources:
 					sources.append(source)
 			production_fact["source_fact_ids"] = sources
+			if daily_life_config.get("player_life", {}).get("version", 0) == 2 and actor_id != str(snapshot.player.id):
+				var clearance := WorldDanger.work_clearance(snapshot, actor_id, str(profile.workplace_id), tick_event, daily_life_config.get("world_danger", {}))
+				if not clearance.is_empty():
+					production_fact["danger_clearance_source_id"] = clearance.fact_id
+					production_fact.source_fact_ids.append_array(clearance.source_fact_ids)
+					production_fact["observed_by_player"] = snapshot.player.get("daily_route_id", "") == "" and snapshot.player.get("location_id") == profile.workplace_id
 			var output_labels: Array[String] = []
 			for row: Dictionary in product_rows:
 				output_labels.append("%s × %d" % [registry.get_definition("item", str(row.item_def_id)).get("display_name", row.item_def_id), row.quantity])
@@ -491,7 +498,7 @@ func resolve_household_support(
 		var sources: Array = [str(food.get("relationship_fact_id", ""))] if external else []
 		if food_access_enabled:
 			var acquisition := str(food.get("provenance", {}).get("created_by_fact_id", ""))
-			if daily_life_config.get("player_life", {}).get("version", 0) == 1:
+			if int(daily_life_config.get("player_life", {}).get("version", 0)) in [1, 2]:
 				ItemSources.append_to(sources, food)
 			for history: Dictionary in food.get("history", []):
 				if history.get("event_type") in ["transferred", "split_from"]:
@@ -540,7 +547,7 @@ func resolve_household_support(
 		if food_access_enabled:
 			result.facts_added.back()["location_id"] = str(snapshot.get_entity_state(recipient_id, "location_id", ""))
 			result.facts_added.back()["in_transit"] = str(snapshot.get_entity_state(recipient_id, "daily_route_id", "")) != ""
-			if daily_life_config.get("player_life", {}).get("version", 0) == 1:
+			if int(daily_life_config.get("player_life", {}).get("version", 0)) in [1, 2]:
 				result.facts_added.back()["observed_by_player"] = snapshot.player.get("daily_route_id", "") == "" \
 					and snapshot.player.get("location_id", "") == result.facts_added.back().location_id \
 					and not result.facts_added.back().in_transit

@@ -1,0 +1,34 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] fixture starts
+[PASS] test food created
+[PASS] test equipment created
+[PASS] canonical item record is recursively frozen
+[PASS] preview shares unchanged item identity
+[PASS] preview uses preview validation dependencies
+[PASS] snapshot getters remain independent and editable
+[PASS] preview applies append_history
+[PASS] append_history replaces record without editing previous revision
+[PASS] preview applies transfer
+[PASS] transfer replaces record without editing previous revision
+[PASS] preview applies consume
+[PASS] consume replaces record without editing previous revision
+[PASS] preview applies increase_quantity
+[PASS] increase_quantity replaces record without editing previous revision
+[PASS] preview applies split_stack
+[PASS] split_stack replaces record without editing previous revision
+[PASS] preview applies adjust_durability
+[PASS] adjust_durability replaces record without editing previous revision
+[PASS] all preview operations leave live items unchanged
+[PASS] committed containers outlive the preview
+[PASS] old snapshot retains quantity, holder and history after commit
+[PASS] public item copies are editable
+[PASS] public item copies are editable
+[PASS] public history edits cannot alter item history
+[PASS] direct snapshot constructor isolates mutable data
+[PASS] later invalid operation rejects batch
+[PASS] rollback retains items and complete history
+[PASS] native item records reload
+[PASS] reload freezes nested history
+[PASS] native representation remains exact
+ITEM_COW_RESULT 31/31

@@ -1,0 +1,33 @@
+{
+	"checkpoint": "res://texts/reports/2026/2026-9/2026-9-13/local_life_evidence/prepared.ui_probe.json",
+	"checks": {
+		"hours": true,
+		"layout_720": true,
+		"layout_900": true,
+		"record_720": true,
+		"restored": true,
+		"scene_720": true,
+		"scene_900": true,
+		"truth:rng_states": true,
+		"truth:session": true,
+		"truth:stores": true,
+		"truth:world_log": true,
+		"truth:world_time": true
+	},
+	"hours": 72.0,
+	"passed": true,
+	"scope": "Actual renderer of legal agent checkpoint; no game action, injection or human UI play. Native world truth unchanged.",
+	"visible_followups": [
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_58",
+			"source_fact_id": "fact.world_danger_round.player.88",
+			"text": "第3天 18:00，你看见雷禾吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		},
+		{
+			"brief": "第3天，雷禾在危险退避期间完成了作业。你参与过交锋，完整经过见记录。",
+			"fact_id": "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_58",
+			"source_fact_id": "fact.world_danger_round.player.88",
+			"text": "雷禾在你面前完成了作业（你参与交锋后，威胁暂时退开；这次作业发生在退避期间）：第3天 18:00，雷禾花了4小时完成就地采食，耐寒块根 × 4留在本人行囊。"
+		}
+	]
+}

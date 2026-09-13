@@ -340,6 +340,7 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		var action := action_value as Dictionary
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(SharedSurface.action_width(self, actions.size()), 86)
+		button.set_meta("life_group", str(action.get("life_group", "")))
 		var kind := str(action.get("kind", "行动"))
 		var hint := str(action.get("hint", ""))
 		var cost := str(action.get("cost", "花费 1 小时"))
@@ -518,6 +519,8 @@ func _refresh_travel_options(options: Array) -> void:
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(0, 44)
 		button.text = str(option.get("label", "前往新的地点"))
+		if option.get("purpose", "") != "":
+			button.text += "\n" + str(option.purpose)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.add_theme_font_size_override("font_size", 12)

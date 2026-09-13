@@ -1,0 +1,16 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[V5 GENERATED SETTLEMENT RENDER PASS] 1. 正式地点界面可以载入生成聚落
+[V5 GENERATED SETTLEMENT RENDER PASS] 2. 页眉与地点正文显示当前生成结果，不再误写成湖湾镇剧情
+[V5 GENERATED SETTLEMENT RENDER PASS] 3. 目标和压力面板解释这座聚落为何形成及当前约束
+[V5 GENERATED SETTLEMENT RENDER PASS] 4. 知识面板提供容量与人口关键信息，而不是只有生成结论
+[V5 GENERATED SETTLEMENT RENDER PASS] 5. 生成集地提供可执行的现场检查，不再显示零项空行动区
+[V5 GENERATED SETTLEMENT RENDER PASS] 6. 多设施旅行列表在 1280x720 内完整展开，不需要局部滚动
+[V5 GENERATED SETTLEMENT RENDER PASS] 7. 生成聚落集地截图已写入
+[V5 GENERATED SETTLEMENT RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_generated_settlement_hub.png
+[V5 GENERATED SETTLEMENT RENDER PASS] 8. 点击生成道路后进入实际设施，并显示观察、行动、反馈和返回入口
+[V5 GENERATED SETTLEMENT RENDER PASS] 9. 旅行事实与设施内容在正式界面保持可读
+[V5 GENERATED SETTLEMENT RENDER PASS] 10. 生成设施截图已写入
+[V5 GENERATED SETTLEMENT RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_generated_settlement_facility.png
+[V5 GENERATED SETTLEMENT RENDER RESULT] PASS

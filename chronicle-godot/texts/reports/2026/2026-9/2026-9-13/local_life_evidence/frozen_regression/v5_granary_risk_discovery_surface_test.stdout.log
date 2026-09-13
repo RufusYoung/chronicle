@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 1. Granary risk surface loads
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 2. Shop starts without a local risk and shows health and inventory
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 3. Arrival makes the granary risk visible
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 4. Risk panel explains formula, preparation, retreat, and failure
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 5. Preparation and direct-entry controls come from live challenge options
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 6. Preparation advances time and gives concrete scene feedback
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 7. Preparation changes the formula and cannot be repeated
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 8. Entry shows the real roll formula and successful discovery
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 9. Success reveals the site and adds the item without injury
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 10. Preparation, check, discovery, and history are player-readable
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 11. Resolved challenge disappears instead of allowing duplicate loot
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 12. UI result is backed by stored item provenance
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 13. Discovery returns to the changed shop in the same world
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 14. UI keeps preparation, check, travel, and ticks distinct
+[V5 GRANARY RISK DISCOVERY SURFACE PASS] 15. Restart resets the complete risk and discovery loop
+[V5 GRANARY RISK DISCOVERY SURFACE RESULT] PASS

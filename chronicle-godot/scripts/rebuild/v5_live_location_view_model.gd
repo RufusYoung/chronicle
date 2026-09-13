@@ -467,6 +467,8 @@ func build_view_data() -> Dictionary:
 		"history": action_history.duplicate(true),
 		"world_log_count": session.get_world_log_entry_count(),
 	}
+	if not location.get("generation_source", {}).is_empty():
+		view.location.description = str(view.location.description).replace("能长期支撑约", "场址容量估算约")
 	# Reuse this projection only; never carry cached candidates across an action.
 	view["decision"] = _decision_view(snapshot, view, not encounter_options.is_empty())
 	if session.PlayerLife.enabled(session.fixture_source_data) and encounter_options.is_empty():
@@ -485,8 +487,14 @@ func build_view_data() -> Dictionary:
 		for followup: Dictionary in followups:
 			view.knowledge.append(followup.text)
 		if not followups.is_empty():
-			view.agency["world_summary"] = followups[0].text
+			view.agency["world_summary"] = followups[0].get("brief", followups[0].text)
 			view.agency["world_kind"] = "observed_followup"
+		var information: Array = session.PlayerLife.Local.known_information(session)
+		view["local_information"] = information
+		for info: Dictionary in information:
+			view.knowledge.append(info.text)
+		if session.PlayerLife.Local.enabled(session):
+			view.decision["rule"] = "先看路线下的用途。现货与短工只在场确认；出售换钱，分粮不保证回报。夜间可连续休息。"
 	if session.PlayerLife.enabled(session.fixture_source_data) and int(snapshot.player.get("daily_travel_remaining", 0)) > 0:
 		var destination: Dictionary = session.context.get_location(str(snapshot.player.daily_destination_id))
 		view.location.title = "前往" + str(destination.get("display_name", "目的地")) + "的路上"
@@ -787,7 +795,16 @@ func _action_rows(snapshot: Variant = null) -> Array:
 	if not combat_rows.is_empty():
 		return combat_rows
 	if session.PlayerLife.enabled(session.fixture_source_data):
-		return session.PlayerLife.options(session)
+		var life_rows: Array = session.PlayerLife.options(session)
+		for row: Dictionary in life_rows:
+			for internal: String in ["statement", "offer", "report"]:
+				row.erase(internal)
+			if session.PlayerLife.Local.enabled(session):
+				row["life_group"] = session.PlayerLife.Local.action_group(str(row.action_id))
+		if session.PlayerLife.Local.enabled(session):
+			life_rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+				return ["rest", "work", "trade", "talk"].find(a.life_group) < ["rest", "work", "trade", "talk"].find(b.life_group))
+		return life_rows
 	for option: Dictionary in session.get_investigation_options(snapshot):
 		var action_type := str(
 			option.get("action_type", "investigation")
@@ -1226,6 +1243,9 @@ func _travel_rows(snapshot: Variant = null) -> Array:
 					"这条路线当前还没有开放。"
 				)
 			)
+		var purpose: String = session.PlayerLife.Local.destination_guide(session, str(option.get("to_location_id", "")))
+		if purpose != "":
+			hint += "\n" + purpose + "；这说明地点用途，不是实时供货承诺。"
 		rows.append({
 			"route_id": str(option.get("route_id", "")),
 			"destination_name": str(option.get("destination_name", "未知地点")),
@@ -1234,6 +1254,7 @@ func _travel_rows(snapshot: Variant = null) -> Array:
 				cost_text,
 			],
 			"hours": hours,
+			"purpose": purpose,
 			"food_cost": food_cost,
 			"can_travel": can_travel,
 			"hint": hint,
@@ -3392,7 +3413,7 @@ func _status_detail(key: String, value: String) -> String:
 		"settlement_isolation:high": "可用来路很少，交换和求援都容易中断。",
 		"settlement_isolation:medium": "聚落有固定来路，但运量和可靠性仍然有限。",
 		"settlement_isolation:low": "多条稳定来路维持着人员与物资交换。",
-		"resource_strain:medium": "现有人口接近场址资源能够长期支撑的边缘。",
+		"resource_strain:medium": "现有人口接近场址容量估算；实际能否温饱还取决于生产和供给。",
 		"resource_strain:low": "场址资源对现有人口仍有余量。",
 		"resource_strain:high": "多项生产资源已经接近停产线，聚落难以维持现有人口。",
 		"migration_tendency:high": "持续短缺已经让部分家庭考虑离开。",
@@ -3517,7 +3538,7 @@ func _fact_text(
 ) -> String:
 	if fact_type == "settlement_generated":
 		var settlement_label := str(fact.get("settlement_name", target_name))
-		return "%s由当前场址形成，可长期支撑约 %d 人，初始人口目标为 %d 人。" % [
+		return "%s由当前场址形成，场址容量估算约 %d 人，初始人口目标为 %d 人；这不是温饱验证结果。" % [
 			settlement_label,
 			int(fact.get("resident_capacity", 0)),
 			int(fact.get("population_target", 0)),

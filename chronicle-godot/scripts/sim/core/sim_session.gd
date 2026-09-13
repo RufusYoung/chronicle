@@ -248,10 +248,12 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_community_rules_version")
 	if options.get("community_rules_version", 0) == 1:
 		fixture["community_rules"] = Community.PROFILE.duplicate(true)
-	if options.get("player_life_version", 0) not in [0, 1]:
+	if options.get("player_life_version", 0) not in [0, 1, 2]:
 		return _start_failure("unsupported_player_life_version")
 	if options.get("player_life_version", 0) == 1:
 		fixture["player_life"] = PlayerLife.PROFILE.duplicate(true)
+	elif options.get("player_life_version", 0) == 2:
+		fixture["player_life"] = PlayerLife.PROFILE_V2.duplicate(true)
 	if options.get("world_danger_version", 0) not in [0, 1]:
 		return _start_failure("unsupported_world_danger_version")
 	if options.get("world_danger_version", 0) == 1:

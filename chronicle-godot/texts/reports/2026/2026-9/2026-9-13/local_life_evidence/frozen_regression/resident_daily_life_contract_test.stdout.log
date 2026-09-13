@@ -1,0 +1,88 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS formal world starts
+PASS fixture contains a fisher
+PASS advance 1 hours
+PASS worker departs autonomously
+PASS departure does not teleport
+PASS commute is not work
+PASS in-transit person is not present at origin
+PASS native mid-journey save
+PASS mid-journey load
+PASS save retains explicit new rules
+PASS invalid journey save rejected: daily_destination_id
+PASS invalid journey save rejected: daily_travel_remaining
+PASS invalid journey save rejected: daily_departure_fact_id
+PASS invalid journey save rejected: daily_route_id
+PASS advance 1 hours
+PASS advance 1 hours
+PASS disk continuation preserves travel clock and world exactly at native precision
+PASS one hour completes home path
+PASS arrival hour does not count as work
+PASS actual person visible in formal local projection
+PASS advance 1 hours
+PASS continues along second edge
+PASS advance 1 hours
+PASS arrives at actual workplace
+PASS second arrival still is not work
+PASS advance 1 hours
+PASS only time spent at workplace advances production
+PASS advance 15 hours
+PASS worker returns home at night
+PASS night is rest not remote production
+PASS time at home restores fatigue
+PASS night watch works while daytime workers sleep
+PASS advance 28 hours
+PASS two days produce real goods despite travel costs
+PASS every production has actual location and arrival fact
+PASS all persisted references valid
+PASS no player action or commanded NPC travel
+PASS new state definitions accept all writes
+PASS same seed replay starts
+PASS advance 1 hours
+PASS advance 1 hours
+PASS advance 1 hours
+PASS advance 1 hours
+PASS advance 1 hours
+PASS advance 15 hours
+PASS advance 28 hours
+PASS same input timing gives same complete world
+PASS test injection: unwell worker fixture
+PASS advance 12 hours
+PASS ill worker rests without goods or wages
+PASS test injection: disconnected workplace
+PASS advance 8 hours
+PASS unreachable work is not replaced by a teleport
+PASS no production behind blocked path
+PASS same closed public route is disabled for traveler
+PASS direct travel cannot bypass closure
+PASS work resolver independently rejects off-site actor
+PASS route interruption fixture starts
+PASS advance 1 hours
+PASS advance 2 hours
+PASS missing onward connection halts journey
+PASS advance 1 hours
+PASS test injection: job change does not carry partial production to new workplace
+PASS long local journey fixture
+PASS advance 3 hours
+PASS advance 2 hours
+PASS test injection: blocked traveler stays in transit; neither arrival nor free return
+PASS advance 2 hours
+PASS reopened route resumes remaining travel cost
+PASS advance 1 hours
+PASS only completed journey reaches work
+PASS test injection: household food is not teleported from workplace
+PASS co-located household actually consumes one portion
+PASS traveler's food is unavailable at last-known origin
+PASS legacy fixture remains explicit legacy
+PASS legacy save loads without migration
+PASS legacy save is not silently opted into new rules
+PASS advance 12 hours
+PASS legacy continuation does not invent commuting
+PASS legacy production contract unchanged
+PASS unsupported rule version rejected
+PASS actual committed pre-activity checkpoint available
+PASS actual v3 manifest upgrades explicitly to v4
+PASS actual old world's complete Stores are untouched
+PASS actual old world retains old simulation rules
+RESIDENT_DAILY_LIFE_RESULT PASS 85/85

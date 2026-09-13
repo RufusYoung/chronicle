@@ -1,0 +1,20 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] insertion isolates caller data
+[PASS] records are recursively frozen
+[PASS] snapshot array is independent
+[PASS] public copies remain editable
+[PASS] public copies remain editable
+[PASS] public copies remain editable
+[PASS] public edits cannot alter history
+[PASS] direct snapshot constructor still isolates mutable caller data
+[PASS] native data roundtrips
+[PASS] load reapplies recursive protection
+[PASS] preview shares frozen record identity
+[PASS] uncommitted append stays private
+[PASS] post-commit clear cannot alter live array
+[PASS] invalid batch is rejected
+[PASS] entire batch rolls back
+[PASS] valid memory transaction commits
+[PASS] editing result cannot mutate committed memory
+MEMORY_HISTORY_RESULT 17/17

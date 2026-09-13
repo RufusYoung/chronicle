@@ -127,6 +127,12 @@ static func install(
 		back_to_scene.grab_focus())
 	back_to_scene.pressed.connect(func() -> void: receipt_button.grab_focus())
 	var actions: FlowContainer = viewer.get_node("%ActionButtons")
+	var groups := HBoxContainer.new()
+	groups.add_theme_constant_override("separation", 8)
+	hint.get_parent().add_child(groups)
+	hint.get_parent().move_child(groups, hint.get_index() + 1)
+	groups.hide()
+	surface.merge({"action_groups": groups, "action_filter": "", "action_hint": hint})
 	var pager := HBoxContainer.new()
 	pager.add_theme_constant_override("separation", 12)
 	actions.get_parent().get_parent().add_child(pager)
@@ -169,11 +175,55 @@ static func paginate_actions(surface: Dictionary, viewer: Control, actions: Flow
 	if signature != surface["action_signature"]:
 		surface["action_page"] = 0
 		surface["action_signature"] = signature
+	_refresh_action_groups(surface, viewer, actions)
+	_apply_action_page(surface, viewer, actions)
+
+
+static func _refresh_action_groups(surface: Dictionary, viewer: Control, actions: FlowContainer) -> void:
+	var counts := {}
+	for button: Button in actions.get_children():
+		var group := str(button.get_meta("life_group", ""))
+		if group != "":
+			counts[group] = int(counts.get(group, 0)) + 1
+	var bar: HBoxContainer = surface.action_groups
+	for child: Node in bar.get_children():
+		bar.remove_child(child)
+		child.queue_free()
+	bar.visible = not counts.is_empty()
+	(surface.action_hint as Control).visible = counts.is_empty()
+	if not counts.has(str(surface.action_filter)):
+		surface.action_filter = ""
+	if counts.is_empty():
+		return
+	var labels := {"": "全部", "work": "谋生", "trade": "买卖与分粮", "talk": "交谈", "rest": "休整与赶路"}
+	var group := ButtonGroup.new()
+	for key: String in labels:
+		if key != "" and not counts.has(key):
+			continue
+		var button := Button.new()
+		button.text = "%s %d" % [labels[key], actions.get_child_count() if key == "" else counts[key]]
+		button.toggle_mode = true
+		button.button_group = group
+		button.button_pressed = str(surface.action_filter) == key
+		button.set_meta("action_group", key)
+		button.tooltip_text = "只筛选行动，不推进时间。"
+		button.custom_minimum_size = Vector2(72, 28)
+		button.add_theme_font_size_override("font_size", Style.FONT_BODY)
+		Style.apply_decision_button(button, "normal", false, true)
+		bar.add_child(button)
+		button.pressed.connect(_select_action_group.bind(surface, viewer, actions, key))
+
+
+static func _select_action_group(surface: Dictionary, viewer: Control, actions: FlowContainer, key: String) -> void:
+	surface.action_filter = key
+	surface.action_page = 0
 	_apply_action_page(surface, viewer, actions)
 
 
 static func _apply_action_page(surface: Dictionary, viewer: Control, actions: FlowContainer) -> void:
-	var count := actions.get_child_count()
+	var candidates: Array = actions.get_children().filter(func(button: Button) -> bool:
+		return str(surface.get("action_filter", "")) == "" or button.get_meta("life_group", "") == surface.action_filter)
+	var count := candidates.size()
 	var pages := maxi(1, ceili(float(count) / ACTION_PAGE_SIZE))
 	var page := clampi(int(surface["action_page"]), 0, pages - 1)
 	surface["action_page"] = page
@@ -182,8 +232,10 @@ static func _apply_action_page(surface: Dictionary, viewer: Control, actions: Fl
 	(surface["next"] as Button).disabled = page == pages - 1
 	(surface["page_label"] as Label).text = "行动 %d–%d / %d · 翻页不推进时间" % [
 		page * ACTION_PAGE_SIZE + 1, mini((page + 1) * ACTION_PAGE_SIZE, count), count]
+	for child: Button in actions.get_children():
+		child.hide()
 	for index: int in count:
-		var button := actions.get_child(index) as Button
+		var button := candidates[index] as Button
 		button.custom_minimum_size.y = 86
 		button.visible = index >= page * ACTION_PAGE_SIZE and index < (page + 1) * ACTION_PAGE_SIZE
 		button.custom_minimum_size.x = action_width(viewer, mini(ACTION_PAGE_SIZE, count - page * ACTION_PAGE_SIZE))

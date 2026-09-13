@@ -1,0 +1,89 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] start shared-world assistance fixture
+[PASS] controlled fixture loads through formal session
+[PASS] requester actually observes household pantry
+[PASS] request originates from firsthand pantry and hunger
+[PASS] unheard remote request cannot spend donor goods
+[PASS] test injection: controlled physical presence
+[PASS] request conveyed in a real colocated conversation
+[PASS] unknown rule does not forbid voluntary use of one's own surplus
+[PASS] donor representative adopts rule from known needs
+[PASS] explicit household address opens one bounded assistance request
+[PASS] test injection: controlled physical presence
+[PASS] closed route cannot receive a delivery promise
+[PASS] real donor money limits accepted assistance
+[PASS] eligible contact yields a formal decision
+[PASS] assistance decision commits atomically
+[PASS] reuse physical food-hauling exchange rather than a new inventory
+[PASS] donor's actual fee is escrowed
+[PASS] native order validates receiver consent and message source
+[PASS] forged receiver is rejected
+[PASS] ordinary paid hauling still requires a real fee
+[PASS] native save while goods and cash are in transit
+[PASS] native load preserves active assistance contract
+[PASS] second native branch loads
+[PASS] aid continues through the world clock
+[PASS] full native aid continuation agrees
+[PASS] no remote delivery or early fee
+[PASS] test injection: controlled physical presence
+[PASS] delivery enters the actual recipient pantry
+[PASS] carrier paid only on delivery
+[PASS] test injection: controlled physical presence
+[PASS] requester must physically take delivered food
+[PASS] actual receipt changes future cooperation trust
+[PASS] completed assistance preserves all native references
+[PASS] controlled fixture loads through formal session
+[PASS] requester actually observes household pantry
+[PASS] request originates from firsthand pantry and hunger
+[PASS] unheard remote request cannot spend donor goods
+[PASS] test injection: controlled physical presence
+[PASS] request conveyed in a real colocated conversation
+[PASS] unknown rule does not forbid voluntary use of one's own surplus
+[PASS] donor representative adopts rule from known needs
+[PASS] explicit household address opens one bounded assistance request
+[PASS] test injection: controlled physical presence
+[PASS] closed route cannot receive a delivery promise
+[PASS] real donor money limits accepted assistance
+[PASS] eligible contact yields a formal decision
+[PASS] assistance decision commits atomically
+[PASS] heard reserve rule prevents dispatch despite affordable surplus
+[PASS] withholding spends no cash
+[PASS] controlled fixture loads through formal session
+[PASS] requester actually observes household pantry
+[PASS] request originates from firsthand pantry and hunger
+[PASS] unheard remote request cannot spend donor goods
+[PASS] test injection: controlled physical presence
+[PASS] request conveyed in a real colocated conversation
+[PASS] unknown rule does not forbid voluntary use of one's own surplus
+[PASS] donor representative adopts rule from known needs
+[PASS] explicit household address opens one bounded assistance request
+[PASS] heard need creates an actor choice using personally observed surplus
+[PASS] test injection: controlled physical presence
+[PASS] closed route cannot receive a delivery promise
+[PASS] real donor money limits accepted assistance
+[PASS] test injection: select the self-delivery candidate
+[PASS] eligible contact yields a formal decision
+[PASS] assistance decision commits atomically
+[PASS] reuse physical food-hauling exchange rather than a new inventory
+[PASS] donor's actual fee is escrowed
+[PASS] native order validates receiver consent and message source
+[PASS] forged receiver is rejected
+[PASS] self delivery cannot invent paid income
+[PASS] self delivery cannot silently assign another worker
+[PASS] zero fee same-party order requires explicit self delivery
+[PASS] native save while goods and cash are in transit
+[PASS] native load preserves active assistance contract
+[PASS] second native branch loads
+[PASS] aid continues through the world clock
+[PASS] full native aid continuation agrees
+[PASS] non-carter donor autonomously follows the accepted delivery
+[PASS] no remote delivery or early fee
+[PASS] test injection: controlled physical presence
+[PASS] delivery enters the actual recipient pantry
+[PASS] carrier paid only on delivery
+[PASS] test injection: controlled physical presence
+[PASS] requester must physically take delivered food
+[PASS] actual receipt changes future cooperation trust
+[PASS] completed assistance preserves all native references
+WORK_RECIPE_RESULT PASS 86/86

@@ -1,0 +1,20 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] boundary world starts
+[PASS] reject changed behavior bootstrap: missing_profile
+[PASS] reject changed behavior bootstrap: nested_mismatch
+[PASS] reject changed behavior bootstrap: invalid_compiled
+[PASS] real mid-route boundary
+[PASS] reject corrupt body/journey reference: location_id
+[PASS] reject corrupt body/journey reference: daily_destination_id
+[PASS] reject corrupt body/journey reference: daily_travel_remaining
+[PASS] reject corrupt body/journey reference: settlement_id
+[PASS] controlled fixture loads through formal session
+[PASS] present funded employer eligible
+[PASS] employer in transit is not present
+[PASS] shared resolver rejects remote delivery too
+[PASS] unfunded employer offers no wage
+[PASS] denied work creates no player cash
+[PASS] worldwide totals and offsite production are not player knowledge
+[PASS] physical local work is visible
+WORK_RECIPE_RESULT PASS 17/17

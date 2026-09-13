@@ -1,0 +1,33 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] lake_town starts
+[PASS] lake_town acquires runtime data
+[PASS] lake_town snapshot edits cannot reach live Stores or Context
+[PASS] lake_town a fresh snapshot retains every original projection field
+[PASS] lake_town next tick commits
+[PASS] lake_town commits cannot change an old snapshot
+[PASS] lake_town holder query retains order and full history: player
+[PASS] lake_town holder query retains order and full history: missing
+[PASS] lake_town holder result edits cannot reach the snapshot or live world
+[PASS] six additional hours did change the live world
+[PASS] generated_network starts
+[PASS] generated_network acquires runtime data
+[PASS] generated_network snapshot edits cannot reach live Stores or Context
+[PASS] generated_network a fresh snapshot retains every original projection field
+[PASS] generated_network next tick commits
+[PASS] generated_network commits cannot change an old snapshot
+[PASS] generated_network holder query retains order and full history: player
+[PASS] generated_network holder query retains order and full history: missing
+[PASS] generated_network holder result edits cannot reach the snapshot or live world
+[PASS] six additional hours did change the live world
+[PASS] echo_realm starts
+[PASS] echo_realm acquires runtime data
+[PASS] echo_realm snapshot edits cannot reach live Stores or Context
+[PASS] echo_realm a fresh snapshot retains every original projection field
+[PASS] echo_realm next tick commits
+[PASS] echo_realm commits cannot change an old snapshot
+[PASS] echo_realm holder query retains order and full history: player
+[PASS] echo_realm holder query retains order and full history: missing
+[PASS] echo_realm holder result edits cannot reach the snapshot or live world
+[PASS] six additional hours did change the live world
+SNAPSHOT_OWNERSHIP_RESULT 30/30

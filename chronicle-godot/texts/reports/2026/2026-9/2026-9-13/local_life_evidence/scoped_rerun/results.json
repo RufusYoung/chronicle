@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/v5_generated_settlement_render_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 4.85,
+  "UnexpectedErrors": []
+}

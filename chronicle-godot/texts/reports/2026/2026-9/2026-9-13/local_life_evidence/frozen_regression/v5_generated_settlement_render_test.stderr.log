@@ -1,0 +1,5 @@
+ERROR: 2. 页眉与地点正文显示当前生成结果，不再误写成湖湾镇剧情
+   at: push_error (core/variant/variant_utility.cpp:1024)
+   GDScript backtrace (most recent call first):
+       [0] _finish (res://tests/rebuild/v5_generated_settlement_render_test.gd:162)
+       [1] _run (res://tests/rebuild/v5_generated_settlement_render_test.gd:133)

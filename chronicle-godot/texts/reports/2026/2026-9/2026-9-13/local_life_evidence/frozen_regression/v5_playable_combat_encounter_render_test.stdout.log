@@ -1,0 +1,16 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[V5 PLAYABLE COMBAT RENDER PASS] 1. Seed 516 render state reaches encounter
+[V5 PLAYABLE COMBAT RENDER PASS] 2. Render viewport is exactly 1280x720
+[V5 PLAYABLE COMBAT RENDER PASS] 2a. Action dock is inside the viewport ([P: (32.0, 602.0), S: (1216.0, 92.0)])
+[V5 PLAYABLE COMBAT RENDER PASS] 2b. Risk text is inside the viewport
+[V5 PLAYABLE COMBAT RENDER PASS] 2c. Feedback text is inside the viewport
+[V5 PLAYABLE COMBAT RENDER PASS] 2d. All three encounter buttons fit inside the action dock
+[V5 PLAYABLE COMBAT RENDER PASS] 2e. Encounter evidence and minimum rolls are rendered
+[V5 PLAYABLE COMBAT RENDER PASS] 3. Encounter screenshot is written
+[V5 PLAYABLE COMBAT RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_playable_combat_encounter.png
+[V5 PLAYABLE COMBAT RENDER PASS] 4. Resolved feedback is visible and encounter buttons stay consumed
+[V5 PLAYABLE COMBAT RENDER PASS] 5. Result screenshot is written
+[V5 PLAYABLE COMBAT RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_playable_combat_result.png
+[V5 PLAYABLE COMBAT RENDER RESULT] PASS

@@ -87,7 +87,7 @@ func _world_options(seed_value: int, integrated: bool, work_rules: bool = false,
 		integrated = true
 		work_rules = true
 		danger_rules = true
-		options["player_life_version"] = 1
+		options["player_life_version"] = 2
 	if integrated and initial_scenario == "echo_realm":
 		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
 			"household_food_budget_version": 1, "resident_subsistence_version": 1})

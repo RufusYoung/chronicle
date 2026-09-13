@@ -13,11 +13,14 @@ const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd
 const Recipe = preload("res://scripts/sim/economy/work_recipe_service.gd")
 const Work = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const Danger = preload("res://scripts/sim/combat/world_danger_system.gd")
+const Local = preload("res://scripts/sim/player/player_local_life.gd")
 const PROFILE := {"version": 1, "help_wage": 3, "employer_food_limit": 8}
+const PROFILE_V2 := {"version": 2, "help_wage": 3, "employer_food_limit": 8}
 
 
 static func enabled(fixture: Dictionary) -> bool:
-	return fixture.get("player_life", {}).get("version", 0) == 1
+	var version: Variant = fixture.get("player_life", {}).get("version", 0)
+	return version == 1 or version == 2
 
 
 static func configure(fixture: Dictionary) -> String:
@@ -26,7 +29,8 @@ static func configure(fixture: Dictionary) -> String:
 		return "player_life_not_dictionary"
 	if config.is_empty():
 		return "player_life_missing_bootstrap" if fixture.has("player_life_generated") or fixture.get("resident_daily_life", {}).has("player_life") else ""
-	if config.size() != PROFILE.size() or not PROFILE.keys().all(func(key: String) -> bool: return config.get(key) == PROFILE[key]):
+	var expected: Dictionary = PROFILE_V2 if config.get("version") == 2 else PROFILE
+	if config.size() != expected.size() or not expected.keys().all(func(key: String) -> bool: return config.get(key) == expected[key]):
 		return "unsupported_player_life_profile"
 	if not fixture.has("work_rules_generated"):
 		return "player_life_requires_work_framework"
@@ -36,7 +40,7 @@ static func configure(fixture: Dictionary) -> String:
 		return "player_life_requires_subsistence"
 	if fixture.has("player_life_generated"):
 		var generated: Variant = fixture.player_life_generated
-		if not generated is Dictionary or generated.get("version") != 1 or str(generated.get("settlement_id", "")) == "":
+		if not generated is Dictionary or generated.get("version") != config.version or str(generated.get("settlement_id", "")) == "":
 			return "player_life_compiled_invalid"
 		return "" if fixture.resident_daily_life.get("player_life", {}) == config else "player_life_compiled_mismatch"
 	var location := str(fixture.location_id)
@@ -56,7 +60,7 @@ static func configure(fixture: Dictionary) -> String:
 	# The controlled body consumes food through needs, not an additional route toll.
 	for route: Dictionary in fixture.get("travel_routes", []):
 		route["food_cost"] = 0
-	fixture["player_life_generated"] = {"version": 1, "settlement_id": settlement}
+	fixture["player_life_generated"] = {"version": config.version, "settlement_id": settlement}
 	return ""
 
 
@@ -133,7 +137,9 @@ static func options(session: Variant) -> Array:
 	var view: Variant = snapshot(session.context, session.stores, session.get_time_summary())
 	var actor: Dictionary = view.get_entity(str(session.context.actor_id))
 	if actor.states.get("daily_route_id", "") != "":
-		return [row("continue", "继续赶路", "尚需 %d 小时；途中不能交易或作业，饥饿仍会增长。" % actor.states.daily_travel_remaining)]
+		var traveling := [row("continue", "继续赶路", "尚需 %d 小时；途中不能交易或作业，饥饿仍会增长。" % actor.states.daily_travel_remaining)]
+		traveling.append_array(Local.options(session, view, actor))
+		return traveling
 	if not session.get_combat_encounter_options().is_empty():
 		return []
 	var rows: Array = []
@@ -141,8 +147,9 @@ static func options(session: Variant) -> Array:
 	if not food.is_empty() and actor.states.get("hunger", "none") != "none":
 		rows.append(row("eat", "吃一份随身食物", "消耗1份食物和1小时，饥饿降低两级，也能支持伤后恢复。"))
 	rows.append(row("rest", "休息一小时", "恢复疲劳，世界和饥饿不会暂停；伤势恢复还需要真实食物。"))
+	rows.append_array(Local.options(session, view, actor))
 	for report: Dictionary in available_reports(session, view):
-		var option := row("inquire:" + str(report.speaker_id), "问%s：那批粮后来呢？" % report.speaker_name,
+		var option := row("inquire:" + str(report.speaker_id), "问%s：后来怎么样？" % report.speaker_name,
 			"对方会谈自己亲历的新情况；已经问过且没有变化时，不会反复出现。")
 		option["report"] = report
 		rows.append(option)
@@ -271,6 +278,8 @@ static func execute(session: Variant, id: String) -> Dictionary:
 	if selected.is_empty():
 		return {"success": false, "error": "player_life_option_unavailable"}
 	var actor := str(session.context.actor_id)
+	if Local.handles(id):
+		return Local.execute(session, selected[0])
 	if id == "continue":
 		var advanced: Dictionary = session.advance_time(1, "player_journey")
 		var remaining: int = session.stores.state_store.get_state(actor, "daily_travel_remaining", 0)
@@ -292,6 +301,8 @@ static func execute(session: Variant, id: String) -> Dictionary:
 			"source_fact_ids": [report.update_id, report.contribution_id], "related_update_id": report.update_id,
 			"contribution_id": report.contribution_id, "report_fact_type": report.fact_type,
 			"summary": report.text})
+		if Local.enabled(session):
+			result.facts_added.back()["brief"] = report.get("brief", report.text)
 		result.mark_resolved("player_heard_livelihood_update")
 		if not session.writer.apply_result(result, session.stores):
 			return {"success": false, "error": result.error_reason}
@@ -425,9 +436,19 @@ static func observed_followups(session: Variant) -> Array:
 	for index: int in range(facts.size() - 1, -1, -1):
 		var fact: Dictionary = facts[index]
 		if fact.get("fact_type") == "player_heard_livelihood_update" and fact.get("actor_id") == str(session.context.actor_id):
-			rows.append({"fact_id": fact.fact_id, "source_fact_id": fact.related_update_id, "text": fact.summary})
+			rows.append({"fact_id": fact.fact_id, "source_fact_id": fact.related_update_id, "text": fact.summary,
+				"brief": fact.get("brief", fact.summary)})
 			if rows.size() >= 3:
 				break
+			continue
+		if Local.enabled(session) and fact.has("danger_clearance_source_id") and fact.get("observed_by_player", false):
+			var source := _contribution(session, fact.get("source_fact_ids", []))
+			if source != "":
+				var person: Dictionary = session.stores.entity_store.get_entity(str(fact.actor_id))
+				rows.append({"fact_id": fact.fact_id, "source_fact_id": source,
+					"text": Local.aftermath_text(session, person, fact, source, false), "brief": Local.aftermath_brief(person, fact)})
+				if rows.size() >= 3:
+					break
 			continue
 		if fact.get("fact_type") not in ["npc_self_meal", "npc_household_shared_food", "npc_cross_household_shared_food"] \
 				or not fact.get("observed_by_player", false):
@@ -437,7 +458,7 @@ static func observed_followups(session: Variant) -> Array:
 			continue
 		var name: String = session.stores.entity_store.get_entity(str(fact.target_id)).get("display_name", "眼前的人")
 		rows.append({"fact_id": fact.fact_id, "source_fact_id": source,
-			"text": "第%d天 %02d:00，你看见%s吃下了食物。这批库存有你参与采收的补充；混合存放后不逐份区分来源。" % [fact.day, fact.hour, name]})
+			"text": "第%d天 %02d:00，你看见%s吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。" % [fact.day, fact.hour, name]})
 		if rows.size() >= 3:
 			break
 	return rows
@@ -481,14 +502,16 @@ static func available_reports(session: Variant, view: Variant) -> Array:
 		for index: int in range(facts.size() - 1, -1, -1):
 			var fact: Dictionary = facts[index]
 			if fact.get("actor_id") != person.id or heard.has(str(fact.fact_id)) \
-					or fact.get("fact_type") not in ["household_pantry_stored", "household_food_delivered", "npc_self_meal", "npc_household_shared_food"]:
+					or (fact.get("fact_type") not in ["household_pantry_stored", "household_food_delivered", "npc_self_meal", "npc_household_shared_food"]
+						and not (Local.enabled(session) and fact.has("danger_clearance_source_id"))):
 				continue
 			var source := _contribution(session, fact.get("source_fact_ids", []))
 			if source == "" or heard_outcomes.has("%s|%s|%s" % [person.id, source, fact.fact_type]):
 				continue
 			reports.append({"speaker_id": person.id, "speaker_name": person.display_name, "update_id": fact.fact_id,
 				"contribution_id": source, "fact_type": fact.fact_type,
-				"text": "%s谈起你上次采收后的相关情况：第%d天，%s" % [person.display_name, fact.day, fact.summary]})
+				"brief": Local.aftermath_brief(person, fact),
+				"text": Local.aftermath_text(session, person, fact, source) if Local.enabled(session) else "%s谈起你上次采收后的相关情况：第%d天，%s" % [person.display_name, fact.day, fact.summary]})
 			break
 	return reports
 
@@ -505,6 +528,10 @@ static func _contribution(session: Variant, sources: Array) -> String:
 		visited[id] = true
 		var fact: Dictionary = session.stores.fact_store.get_fact(id)
 		if fact.get("actor_id") == str(session.context.actor_id) and fact.get("fact_type") == "npc_livelihood_produced":
+			return id
+		if Local.enabled(session) and (fact.get("contributor_id") == str(session.context.actor_id) \
+				or (fact.get("actor_id") == str(session.context.actor_id) and fact.get("fact_type") == "world_danger_round" \
+					and int(fact.get("enemy_health_after", 0)) < int(fact.get("enemy_health_before", 0)))):
 			return id
 		pending.append_array(fact.get("source_fact_ids", []))
 	return ""

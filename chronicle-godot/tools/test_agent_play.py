@@ -16,6 +16,41 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_local_information_and_v2_native_restore(self):
+        with client(timeout=90) as game:
+            opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                  economy_variant="player_life_v2")
+            self.assertTrue(opened["ok"], opened)
+            self.assertEqual(opened["observation"]["local_information"], [])
+            self.assertTrue(any(c.get("purpose") for c in opened["choices"] if c["kind"] == "travel"))
+            for choice in opened["choices"]:
+                self.assertFalse({"statement", "offer", "report"}.intersection(choice))
+            for _ in range(12):
+                ask = next((c for c in opened["choices"] if c["kind"] == "player_life"
+                            and c["id"].startswith("ask_local:") and c["enabled"]), None)
+                if ask:
+                    break
+                wait = next(c for c in opened["choices"] if c["kind"] == "wait" and c["enabled"])
+                opened = game.request("act", choice_id=wait["choice_id"])
+                self.assertTrue(opened["ok"], opened)
+            self.assertIsNotNone(ask, "No adult came through the commons within twelve hours")
+            heard = game.request("act", choice_id=ask["choice_id"])
+            self.assertTrue(heard["ok"], heard)
+            self.assertEqual(len(heard["observation"]["local_information"]), 1)
+            self.assertIn("告诉你", heard["observation"]["feedback"]["body"])
+            slot = f"local_information_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            restored = game.request("load", slot=slot)
+            self.assertTrue(restored["ok"], restored)
+            self.assertEqual(restored["observation"], heard["observation"])
+            self.assertEqual(restored["choices"], heard["choices"])
+            wait = next(c for c in restored["choices"] if c["kind"] == "wait" and c["enabled"])
+            continued = game.request("act", choice_id=wait["choice_id"])
+            self.assertTrue(continued["ok"], continued)
+            self.assertGreater(continued["observation"]["local_information"][0]["age_hours"],
+                               restored["observation"]["local_information"][0]["age_hours"])
+            self.assertEqual(game.request("inspect")["error"], "omniscient_inspection_disabled_in_play_mode")
+
     def test_player_body_journey_and_native_restore(self):
         with client(timeout=90) as game:
             opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,

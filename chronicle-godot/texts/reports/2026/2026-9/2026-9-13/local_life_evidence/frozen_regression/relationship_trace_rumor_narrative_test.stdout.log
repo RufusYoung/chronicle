@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 1. RelationshipStore 能加载 relationship_axis_defs
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 2. gratitude 被 clamp 在 0 到 100
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 3. trust 支持 -100 到 100
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 4. 给陈米食物后 gratitude +15，trust +5，fear -5
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 5. 报告伊莱后 resentment +25，trust -20，discipline_respect +15
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 6. 替伊莱隐瞒后 gratitude +15，trust +15，debt +10
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 7. TraceStore 能保存 trace
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 8. RumorStore 能保存 rumor seed
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 9. NarrativeSurfaceAdapter 能为给食物生成 summary
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 10. 报告伊莱后，TransactionResult 包含 trace
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 11. 报告伊莱后，TransactionResult 包含 rumor seed
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 12. 报告伊莱后，NarrativeResult 不为空
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 13. 替伊莱隐瞒后，不生成 rumor seed
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE PASS] 14. TransactionWorldWriter 能把 facts / states / relationships / memories / traces / rumors 写入对应 store
+[V5 RELATIONSHIP TRACE RUMOR NARRATIVE RESULT] PASS
