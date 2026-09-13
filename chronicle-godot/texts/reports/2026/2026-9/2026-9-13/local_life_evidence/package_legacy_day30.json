@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "checkpoint_sha256": "524b049832c475886df435bf6496462eaaa73f13620780de43d6fb94bc0551fe",
+  "checkpoint": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe\\canon_livelihood_phase_81001\\day30.json",
+  "sample": {
+    "elapsed_hours": 720,
+    "ok": true,
+    "profile": "day7",
+    "renderer": "gl_compatibility",
+    "save_exists": true,
+    "save_path": "user://tests/world_runtime_probe/day7.json",
+    "startup_message": "已继续上次保存的世界。此存档保留旧作业规则；「新世界」可体验工具损耗、修补和实际补货，原存档不会被转换。",
+    "process_to_frame_ms": 4483.822599984705,
+    "output": [
+      "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org",
+      "OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU",
+      "",
+      "CHRONICLE_WORLD_READY seed=81001 location=generated_location.echo_landing.commons",
+      "CHRONICLE_FIRST_CONTROLLABLE_FRAME {\"elapsed_hours\":720,\"ok\":true,\"profile\":\"day7\",\"renderer\":\"gl_compatibility\",\"save_exists\":true,\"save_path\":\"user://tests/world_runtime_probe/day7.json\",\"startup_message\":\"已继续上次保存的世界。此存档保留旧作业规则；「新世界」可体验工具损耗、修补和实际补货，原存档不会被转换。\"}"
+    ]
+  },
+  "scope": "Actual packaged renderer loads the specified native world with enabled controls. The existing probe label 'day7' means a minimum age, not this world's age. Read-only UI check; no UI wait or human play in this probe. Original test checkpoint restored byte-for-byte."
+}
