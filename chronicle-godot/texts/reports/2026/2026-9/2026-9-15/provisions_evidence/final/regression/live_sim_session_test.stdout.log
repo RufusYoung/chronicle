@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LIVE SIM SESSION PASS] 1. SimSession 能从 fixture 启动并持续持有世界
+[V5 LIVE SIM SESSION PASS] 2. Session 能把当前行动候选转换为 UI 可读字典
+[V5 LIVE SIM SESSION PASS] 3. 玩家可以按 action_id 执行当前候选
+[V5 LIVE SIM SESSION PASS] 4. 饥饿写回 StateStore，口粮消耗写回 ItemStore
+[V5 LIVE SIM SESSION PASS] 5. 状态变化后，过期候选不会再次出现
+[V5 LIVE SIM SESSION PASS] 6. Session 拒绝已经失效的玩家行动且不污染世界日志
+[V5 LIVE SIM SESSION PASS] 7. 同一 Session 可以连续执行不同玩家行动
+[V5 LIVE SIM SESSION PASS] 8. 接近人物会产生可读结果并成为一次性事实
+[V5 LIVE SIM SESSION PASS] 9. 新快照能读到连续行动留下的事实、记忆与关系
+[V5 LIVE SIM SESSION PASS] 10. WorldLog 持续记录四次已结算玩家行动
+[V5 LIVE SIM SESSION PASS] 11. Session 能输出供 UI、存档和测试使用的运行摘要
+[V5 LIVE SIM SESSION PASS] 12. 世界 Store 仍是纯数据对象，没有写入 Godot 场景树
+[V5 LIVE SIM SESSION PASS] 13. 原 SimRunner 已通过同一个 SimSession 保持兼容
+[V5 LIVE SIM SESSION PASS] 14. Runner 兼容路径仍写入原有三类湖湾镇事实
+[V5 LIVE SIM SESSION PASS] 15. 加载无效世界时清空旧 Session，不会继续操作残留状态
+[V5 LIVE SIM SESSION RESULT] PASS

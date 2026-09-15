@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 COMBAT EQUIPMENT PASS] 1. 装备战斗合同随正式定义和第七哨站世界启动
+[V5 COMBAT EQUIPMENT PASS] 2. 遭遇目标作为正式 Entity 接入世界
+[V5 COMBAT EQUIPMENT PASS] 3. 猎豕矛通过事实和物品事务创建
+[V5 COMBAT EQUIPMENT PASS] 4. 预览在行动前显示敌人、危险、工锤攻防和非死亡代价
+[V5 COMBAT EQUIPMENT PASS] 5. 统一 Modifier 同时解释已触发装备和未触发被动
+[V5 COMBAT EQUIPMENT PASS] 6. 相同世界与处理方式得到完全一致的预览
+[V5 COMBAT EQUIPMENT PASS] 7. 同骰点下工锤方案失败并以原子事务写入
+[V5 COMBAT EQUIPMENT PASS] 8. 失败写入健康、疲劳、伤势特质和工锤耐久履历
+[V5 COMBAT EQUIPMENT PASS] 9. 新伤势进入下一次检定并明确降低防守
+[V5 COMBAT EQUIPMENT PASS] 10. 玩家通过装备事务把主手从工锤换成猎豕矛
+[V5 COMBAT EQUIPMENT PASS] 11. 猎豕矛冲锋被动会命中，也会说明未命中的目标条件
+[V5 COMBAT EQUIPMENT PASS] 12. 同一骰点换成猎豕矛后成功，成功仍留下轻微装备磨损
+[V5 COMBAT EQUIPMENT PASS] 13. 同一遭遇提供撤离与交涉分数，并在选择前展示代价
+[V5 COMBAT EQUIPMENT PASS] 14. 解析器拒绝合同外骰值，不在内部偷偷重抽
+[V5 COMBAT EQUIPMENT PASS] 15. 战斗事实、伤势、装备与耐久经过存档往返保持一致
+[V5 COMBAT EQUIPMENT RESULT] PASS

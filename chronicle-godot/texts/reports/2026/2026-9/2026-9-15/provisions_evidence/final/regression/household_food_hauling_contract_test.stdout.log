@@ -1,0 +1,94 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit integrated variant starts
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] known family need and co-present owner create a paid agreement
+[PASS] food and fee reserved in one transaction
+[PASS] payer loses real coins; carrier has no income at acceptance
+[PASS] entrusted cargo is not the carrier's meal or resale stock
+[PASS] one real portion leaves depot
+[PASS] native custody and ownership references are valid
+[PASS] deleting the contract cannot orphan entrusted goods in a native save
+[PASS] at origin cannot deliver or accept a second contract
+[PASS] unpaid entrusted goods save
+[PASS] in-transit contract restores
+[PASS] native branches continue
+[PASS] full native continuation equal
+[PASS] test injection daily_route_id
+[PASS] test injection daily_travel_remaining
+[PASS] test injection location_id
+[PASS] actual arrival hands food to recipient and releases fee
+[PASS] exact food and earned money reach recipients
+[PASS] settled work does not repeat
+[PASS] settled native references pass
+[PASS] delivered goods can actually feed recipient
+[PASS] meal retains delivery provenance
+[PASS] controlled fixture starts
+[PASS] test injection location_id
+[PASS] no_memory cannot create paid shipment
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] test injection removes available goods without minting
+[PASS] no_cash cannot create paid shipment
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] absent_owner cannot create paid shipment
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] test injection daily_route_id
+[PASS] in_transit cannot create paid shipment
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] test injection removes available goods without minting
+[PASS] no_stock cannot create paid shipment
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] no_route cannot create paid shipment
+[PASS] controlled fixture starts
+[PASS] test injection hunger
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] no_need cannot create paid shipment
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] return scenario accepts
+[PASS] test injection location_id
+[PASS] test injection location_id
+[PASS] absent recipient receives neither cargo nor an invented receipt
+[PASS] overdue shipment enters return, without remote refund
+[PASS] cash stays sealed until physical return
+[PASS] test injection location_id
+[PASS] physical return restores goods and unearned fee
+[PASS] failed job does not create or lose food and money
+[PASS] returned order remains auditable
+[PASS] forged ownership rejected
+[PASS] promised fee cannot exceed actual escrow
+[PASS] malformed or forged agreement rejected: {"recipient_ids":[42]}
+[PASS] malformed or forged agreement rejected: {"delivered_ids":[null]}
+[PASS] malformed or forged agreement rejected: {"source_fact_ids":null}
+[PASS] malformed or forged agreement rejected: {"need_fact_ids":[false]}
+[PASS] malformed or forged agreement rejected: {"source_fact_ids":["fact.household_food_observed.generated_resident.echo_terrace.001.generated_resident.echo_terrace.003.60"]}
+[PASS] malformed or forged agreement rejected: {"party_a":"generated_resident.echo_terrace.005"}
+[PASS] malformed or forged agreement rejected: {"status":"settled"}
+[PASS] malformed or forged agreement rejected: {"recipient_ids":[]}
+[PASS] controlled fixture starts
+[PASS] co-present conversation committed
+[PASS] test injection location_id
+[PASS] unattended-return scenario accepts
+[PASS] test injection location_id
+[PASS] unattended order first becomes overdue
+[PASS] parcel returns to physical depot while owner absent
+[PASS] absent owner's money stays at depot
+[PASS] owner cannot remotely reclaim refund
+[PASS] test injection location_id
+[PASS] owner physically collects unearned-fee refund
+[PASS] round-trip ownership and native evidence remain valid
+[PASS] default and old worlds do not silently gain candidate rules
+HOUSEHOLD_FOOD_HAULING_RESULT PASS 91/91

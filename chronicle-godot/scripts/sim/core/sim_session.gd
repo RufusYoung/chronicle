@@ -266,16 +266,19 @@ func start_from_fixture_path(
 		fixture["work_rules"] = loader.load_json(WorkRules.DEFAULT_PATH)
 		if fixture.work_rules.is_empty():
 			return _start_failure("work_rules_not_loaded")
-	if options.get("content_extension_version", 0) not in [0, 1]:
+	if options.get("content_extension_version", 0) not in [0, 1, 2]:
 		return _start_failure("unsupported_content_extension_version")
-	if options.has("content_extension_path") and options.get("content_extension_version", 0) != 1:
+	if options.has("content_extension_path") and options.get("content_extension_version", 0) not in [1, 2]:
 		return _start_failure("content_path_requires_explicit_version")
-	if options.get("content_extension_version", 0) == 1:
-		if not options.get("content_extension_path", ContentExtension.DEFAULT_PATH) is String:
+	if options.get("content_extension_version", 0) in [1, 2]:
+		var content_path := ContentExtension.V2_PATH if options.content_extension_version == 2 else ContentExtension.DEFAULT_PATH
+		if not options.get("content_extension_path", content_path) is String:
 			return _start_failure("invalid_content_extension_path")
-		fixture["content_extension"] = loader.load_json(str(options.get("content_extension_path", ContentExtension.DEFAULT_PATH)))
+		fixture["content_extension"] = loader.load_json(str(options.get("content_extension_path", content_path)))
 		if fixture.content_extension.is_empty():
 			return _start_failure("content_extension_not_loaded")
+		if fixture.content_extension.get("version") != options.content_extension_version:
+			return _start_failure("content_extension_version_mismatch")
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -432,6 +435,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	content_error = ContentExtension.validate_compiled(fixture)
 	if content_error != "":
 		return _start_failure(content_error)
+	content_error = ContentExtension.configure_commons(fixture)
+	if content_error != "":
+		return _start_failure(content_error)
 	FoodStorage.configure_fixture(fixture, registry)
 	community_error = Community.configure(fixture)
 	if community_error != "":
@@ -492,6 +498,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	npc_need_profiles.append_array(
 		(fixture.get("npc_need_profiles", []) as Array).duplicate(true)
 	)
+	ContentExtension.Meal.configure_needs(npc_need_profiles, fixture)
 	world_tick_adapter.configure_autonomous_actions(
 		autonomous_action_rules
 	)
@@ -1340,6 +1347,7 @@ func recover_from_danger() -> Dictionary:
 			"beneficiary_id": actor, "provider_id": actor, "source_fact_ids": [fact.fact_id]})
 		transaction.add_state_change({"entity_id": actor, "key": "danger_rest_nourished_until", "to": now + 6})
 		transaction.add_state_change({"entity_id": actor, "key": "hunger", "degrade": 2})
+		ContentExtension.Meal.append(transaction, actor, food, fixture_source_data.get("content_extension", {}).get("meal_rules", {}), get_time_summary())
 	transaction.add_state_change({"entity_id": actor, "key": "daily_activity", "to": "resting"})
 	transaction.mark_resolved("world_danger_rest")
 	if not writer.apply_result(transaction, stores):

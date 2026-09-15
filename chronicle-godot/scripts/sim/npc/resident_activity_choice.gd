@@ -7,6 +7,7 @@ const Storage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
+const Meal = preload("res://scripts/sim/economy/meal_satiation.gd")
 const PROFILE := {"version": 1, "supply_enabled": true, "travel_cost": 3, "continuity_bonus": 8, "optional_rest_discount": 50,
 	"weights": {"home": 0, "rest": 80, "work": 35, "seek_work": 18,
 		"food": 48, "forage": 43, "care": 64, "cart": 36, "haul": 90,
@@ -85,6 +86,15 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 				var profile := Recipe.for_intent(base, str(row.intent_id))
 				if profile.has("choice_bias"):
 					factors["recipe_preference"] = int(profile.choice_bias)
+				var meal_rules: Dictionary = food_config.get("meal_rules", {})
+				if profile.get("products", []).any(func(p: Dictionary) -> bool: return Meal.hours(meal_rules, p) > 0):
+					var prepared := 0
+					var owned: Array = items + snapshot.get_items_for_holder(Storage.depot_id(str(actor.id)))
+					for food: Dictionary in owned:
+						if Meal.hours(meal_rules, food) > 0:
+							prepared += int(food.get("quantity", 0))
+					factors.erase("recipe_preference")
+					factors["prepared_meal_reserve"] = 12 if prepared < 2 else -30
 				if Food.is_food_producer(profile) and need_food:
 					factors["own_meal_output"] = 22
 				if location == row.goal and (not Storage.has_capacity(snapshot, str(actor.id), profile, food_config.get("worksite_storage", {})) \

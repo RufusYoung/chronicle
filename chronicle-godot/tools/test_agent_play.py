@@ -16,6 +16,28 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_provisions_variant_keeps_food_choice_and_benefit_public(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_content_v2")
+            self.assertTrue(response["ok"], response)
+            route = next(c for c in response["choices"] if c["kind"] == "travel" and c["id"].endswith("commons_to_fishery"))
+            response = game.request("act", choice_id=route["choice_id"])
+            for action in ("gather:net_fisher", "work:recipe.smoke_lake_fish"):
+                choice = next(c for c in response["choices"] if c["id"] == action and c["enabled"])
+                response = game.request("act", choice_id=choice["choice_id"])
+                self.assertTrue(response["ok"], response)
+            meal = next(c for c in response["choices"] if c["id"].startswith("eat") and "熏湖鱼" in c["label"])
+            self.assertIn("6小时", meal["hint"])
+            response = game.request("act", choice_id=meal["choice_id"])
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(response["observation"]["player"]["satiation_remaining_hours"], 5)
+            slot = f"provisions_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            loaded = game.request("load", slot=slot)
+            self.assertEqual(loaded["observation"], response["observation"])
+            self.assertEqual(loaded["choices"], response["choices"])
+
     def test_content_variant_public_choices_and_native_restore(self):
         with client(timeout=90) as game:
             opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,

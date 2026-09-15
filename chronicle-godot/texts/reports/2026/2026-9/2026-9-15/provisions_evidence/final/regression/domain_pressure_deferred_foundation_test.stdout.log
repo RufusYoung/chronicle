@@ -1,0 +1,21 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 1. PressureStore saves and queries pressure changes
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 2. ObligationStore saves and queries open obligations
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 3. ExchangeStore saves and queries open exchanges
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 4. DeferredConsequenceStore saves and queries pending consequences
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 5. TransactionResult supports pressure / obligation / exchange / deferred arrays
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 6. TransactionWorldWriter writes all new stores
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 7. SimSnapshot reads pressure / obligation / exchange / deferred stores
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 8. confirm_ration_record_with_cook binds confirm_ration_record_effect
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 9. trade_watch_duty_for_silence binds trade_watch_duty_for_silence_effect
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 10. delay_military_issue_until_after_patrol binds delay_issue_until_after_patrol_effect
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 11. confirm_ration_record_with_cook produces actor_confirmed_ration_record fact
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 12. confirm_ration_record_with_cook produces ration_record_attention pressure
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 13. trade_watch_duty_for_silence produces silence-for-watch-duty exchange
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 14. trade_watch_duty_for_silence produces watch_duty obligation
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 15. delay_military_issue_until_after_patrol produces pending deferred consequence
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 16. delay_military_issue_until_after_patrol produces unresolved_issue pressure
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 17. WorldLog records pressure and deferred counts
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION PASS] 18. RawRuleContractValidator PASS
+[V5 DOMAIN PRESSURE DEFERRED FOUNDATION RESULT] PASS

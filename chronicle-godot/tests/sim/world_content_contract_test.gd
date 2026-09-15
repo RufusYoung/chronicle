@@ -308,6 +308,8 @@ func _market_product_case(source: Variant, seller: String, item_id: String) -> v
 	var meals := Work.new().resolve_household_support(_snapshot(session), _tick(20), session.fixture_source_data.resident_daily_life)
 	_check(session.writer.apply_results(meals.results, session.stores), item_id + " purchased batch enters real meals")
 	_check(_quantity(session, buyer, item_id) == 0, item_id + " purchased food is consumed rather than only logged")
+	if session.fixture_source_data.get("content_extension", {}).get("version") == 2:
+		_check(session.stores.state_store.get_state(buyer, "hunger_sated_until", 0) > 0, item_id + " gives the NPC buyer the same real satiety as the player")
 
 
 func _validation_cases(base: Dictionary) -> void:

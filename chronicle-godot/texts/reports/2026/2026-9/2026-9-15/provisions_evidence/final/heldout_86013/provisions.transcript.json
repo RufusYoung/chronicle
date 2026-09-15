@@ -1,0 +1,6405 @@
+[
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 0,
+      "hour": 8,
+      "world_tick_count": 0
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 2,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　2 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 小镇",
+      "description": "回音港外·芦湾村落在湖泽交界、略高于季节水线的缓坡上。这里场址容量估算约 29 人，最先稳定下来的生计是苇编与修具、浅水网渔、短途转运、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "回音港外·芦湾村集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_fishery",
+        "label": "前往回音港外·芦湾村泊台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_reed_craft",
+        "label": "前往回音港外·芦湾村长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_road_carting",
+        "label": "前往回音港外·芦湾村车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_watch_service",
+        "label": "前往回音港外·芦湾村守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.a_to_b",
+        "label": "沿区域道路前往回音港外·河阶埠　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.echo_landing.commons_to_fishery",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 1,
+      "hour": 9,
+      "world_tick_count": 1
+    },
+    "feedback": {
+      "body": "沿路走了1小时，已经抵达回音港外·芦湾村泊台。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 1,
+      "hour": 9,
+      "world_tick_count": 1
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 2,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　2 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/gather:net_fisher",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 5,
+      "hour": 13,
+      "world_tick_count": 5
+    },
+    "feedback": {
+      "body": "旅人花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 4 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 5,
+      "hour": 13,
+      "world_tick_count": 5
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 2,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 4
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼 ×4",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　2 / 10\n伤势　无\n随身物品　鲜鱼 ×4、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.001",
+        "label": "问何苓：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+        "label": "帮何苓采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/work:recipe.smoke_lake_fish",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 7,
+      "hour": 15,
+      "world_tick_count": 7
+    },
+    "feedback": {
+      "body": "旅人花了2小时完成熏制湖鱼，熏湖鱼 × 2留在本人行囊。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 2 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 7,
+      "hour": 15,
+      "world_tick_count": 7
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 2
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼 ×2",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼 ×2、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.001",
+        "label": "问何苓：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.001:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给何苓",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.001:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给何苓",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.001:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给何苓",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+        "label": "帮何苓采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 8,
+      "hour": 16,
+      "world_tick_count": 8
+    },
+    "feedback": {
+      "body": "你吃掉一份熏湖鱼，饥饿减轻了。吃下后6小时内饥饿不增长；不能叠加，也不延长保存期。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 8,
+      "hour": 16,
+      "world_tick_count": 8
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "none",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 5,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.001",
+        "label": "问何苓：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.003",
+        "label": "问何砚：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.005",
+        "label": "问罗简：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_landing.001.echo_port_environs_v1_time_8.output.0",
+        "label": "向何苓买1件鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.001:net_fisher",
+        "label": "帮何苓采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.echo_landing.fishery_to_commons",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 9,
+      "hour": 17,
+      "world_tick_count": 9
+    },
+    "feedback": {
+      "body": "沿路走了1小时，已经抵达回音港外·芦湾村集地。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 9,
+      "hour": 17,
+      "world_tick_count": 9
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "none",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 4,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 小镇",
+      "description": "回音港外·芦湾村落在湖泽交界、略高于季节水线的缓坡上。这里场址容量估算约 29 人，最先稳定下来的生计是苇编与修具、浅水网渔、短途转运、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "回音港外·芦湾村集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_fishery",
+        "label": "前往回音港外·芦湾村泊台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_reed_craft",
+        "label": "前往回音港外·芦湾村长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_road_carting",
+        "label": "前往回音港外·芦湾村车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_watch_service",
+        "label": "前往回音港外·芦湾村守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.a_to_b",
+        "label": "沿区域道路前往回音港外·河阶埠　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.network.echo_shore_road.a_to_b",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 10,
+      "hour": 18,
+      "world_tick_count": 10
+    },
+    "feedback": {
+      "body": "你动身前往回音港外·河阶埠集地，途中不能同时工作或交易。",
+      "details": [
+        "同期世界变化（不全由你造成）：路程仍在继续，尚看不到目的地的情况。"
+      ],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 10,
+      "hour": 18,
+      "world_tick_count": 10
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 4,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "none",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 3,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　4 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 2,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "途中",
+      "description": "已经离开出发地，尚未抵达。还需2小时；不能查看两端人物的实时状态，也不能隔空交易或劳动。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "前往回音港外·河阶埠集地的路上"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/continue",
+        "label": "继续赶路",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/journey_block",
+        "label": "走完这段路",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/journey_block",
+    "after_time": {
+      "day": 1,
+      "elapsed_hours": 12,
+      "hour": 20,
+      "world_tick_count": 12
+    },
+    "feedback": {
+      "body": "2小时过去，已抵达回音港外·河阶埠集地。疲劳4→5，健康100→100，食物4→4。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 2 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 1,
+      "elapsed_hours": 12,
+      "hour": 20,
+      "world_tick_count": 12
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 5,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "none",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 1,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　5 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 村镇",
+      "description": "回音港外·河阶埠落在不易被小洪水淹没的河谷台地上。这里场址容量估算约 26 人，最先稳定下来的生计是坡田耕作、短途转运、苇编与修具、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_terrace.commons",
+      "title": "回音港外·河阶埠集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.007",
+        "label": "问温冬：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.worksite_food_withdrawn.generated_resident.echo_terrace.007.43.0",
+        "label": "向温冬买1件耐寒块根 · 2铜币",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest_block",
+        "label": "歇一阵，等天亮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_reed_craft",
+        "label": "前往回音港外·河阶埠长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_road_carting",
+        "label": "前往回音港外·河阶埠车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_terrace_farming",
+        "label": "前往回音港外·河阶埠坡田　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_watch_service",
+        "label": "前往回音港外·河阶埠守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.b_to_a",
+        "label": "沿区域道路前往回音港外·芦湾村　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest_block",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 18,
+      "hour": 2,
+      "world_tick_count": 18
+    },
+    "feedback": {
+      "body": "6小时过去，预定时间已到。疲劳5→0，健康100→100，食物4→4。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 6 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 18,
+      "hour": 2,
+      "world_tick_count": 18
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "none",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 村镇",
+      "description": "回音港外·河阶埠落在不易被小洪水淹没的河谷台地上。这里场址容量估算约 26 人，最先稳定下来的生计是坡田耕作、短途转运、苇编与修具、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_terrace.commons",
+      "title": "回音港外·河阶埠集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest_block",
+        "label": "歇一阵，等天亮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_reed_craft",
+        "label": "前往回音港外·河阶埠长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_road_carting",
+        "label": "前往回音港外·河阶埠车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_terrace_farming",
+        "label": "前往回音港外·河阶埠坡田　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_watch_service",
+        "label": "前往回音港外·河阶埠守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.b_to_a",
+        "label": "沿区域道路前往回音港外·芦湾村　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest_block",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 22,
+      "hour": 6,
+      "world_tick_count": 22
+    },
+    "feedback": {
+      "body": "4小时过去，预定时间已到。疲劳0→0，健康100→100，食物4→4。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 4 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 22,
+      "hour": 6,
+      "world_tick_count": 22
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 村镇",
+      "description": "回音港外·河阶埠落在不易被小洪水淹没的河谷台地上。这里场址容量估算约 26 人，最先稳定下来的生计是坡田耕作、短途转运、苇编与修具、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_terrace.commons",
+      "title": "回音港外·河阶埠集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_reed_craft",
+        "label": "前往回音港外·河阶埠长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_road_carting",
+        "label": "前往回音港外·河阶埠车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_terrace_farming",
+        "label": "前往回音港外·河阶埠坡田　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_watch_service",
+        "label": "前往回音港外·河阶埠守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.b_to_a",
+        "label": "沿区域道路前往回音港外·芦湾村　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.echo_terrace.commons_to_terrace_farming",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 23,
+      "hour": 7,
+      "world_tick_count": 23
+    },
+    "feedback": {
+      "body": "沿路走了1小时，已经抵达回音港外·河阶埠坡田。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 23,
+      "hour": 7,
+      "world_tick_count": 23
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/gather:terrace_farmer",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 27,
+      "hour": 11,
+      "world_tick_count": 27
+    },
+    "feedback": {
+      "body": "旅人花了4小时完成就地采食，耐寒块根 × 4留在本人行囊。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 4 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 27,
+      "hour": 11,
+      "world_tick_count": 27
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 2,
+      "food_count": 8,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.root_vegetable_portion",
+          "id": "fact.npc_livelihood.player.player_work.27.output.0",
+          "name": "耐寒块根",
+          "quantity": 4
+        },
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "耐寒块根 ×4",
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　8 份　健康　100　疲劳　2 / 10\n伤势　无\n随身物品　耐寒块根 ×4、鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.007",
+        "label": "问温冬：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份耐寒块根",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.007:terrace_farmer",
+        "label": "帮温冬采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/work:recipe.roast_roots",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 29,
+      "hour": 13,
+      "world_tick_count": 29
+    },
+    "feedback": {
+      "body": "旅人花了2小时完成烘烤根块，烤根块 × 3留在本人行囊。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 2 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 29,
+      "hour": 13,
+      "world_tick_count": 29
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 7,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 3
+        },
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×3",
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　7 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　烤根块 ×3、鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.007",
+        "label": "问温冬：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.007:terrace_farmer",
+        "label": "帮温冬采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/ask_local:generated_resident.echo_terrace.007",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 30,
+      "hour": 14,
+      "world_tick_count": 30
+    },
+    "feedback": {
+      "body": "温冬告诉你：\n我平常在回音港外·河阶埠坡田做坡田农，一轮要4小时；有料有工具、身体撑得住才做得完。\n材料：港外聚落耕地×0.75。工具：无需消耗工具耐久。\n我平常在回音港外·河阶埠坡田做烘烤根块，一轮要2小时；有料有工具、身体撑得住才做得完。\n材料：耐寒块根×4。工具：无需消耗工具耐久。\n我眼下没有能卖给你的余货。你可以另找在场的人；等在这里不保证有货。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 30,
+      "hour": 14,
+      "world_tick_count": 30
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 7,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 3
+        },
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×3",
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　7 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　烤根块 ×3、鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.007",
+        "label": "问温冬：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.npc_livelihood.generated_resident.echo_terrace.007.echo_port_environs_v1_time_10.output.0",
+        "label": "向温冬买1件耐寒块根 · 1铜币",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/ask_local:generated_resident.echo_terrace.007",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 31,
+      "hour": 15,
+      "world_tick_count": 31
+    },
+    "feedback": {
+      "body": "温冬告诉你：\n我平常在回音港外·河阶埠坡田做坡田农，一轮要4小时；有料有工具、身体撑得住才做得完。\n材料：港外聚落耕地×0.75。工具：无需消耗工具耐久。\n我平常在回音港外·河阶埠坡田做烘烤根块，一轮要2小时；有料有工具、身体撑得住才做得完。\n材料：耐寒块根×4。工具：无需消耗工具耐久。\n我现在能卖耐寒块根，余量12，每份1铜币；不替你预留。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 31,
+      "hour": 15,
+      "world_tick_count": 31
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 7,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 3
+        },
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×3",
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　7 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　烤根块 ×3、鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.002",
+        "label": "问陈溪：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.003",
+        "label": "问陈照：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.004",
+        "label": "问陈朔：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.005",
+        "label": "问温桑：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.006",
+        "label": "问温禾：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.002:terrace_farmer",
+        "label": "帮陈溪采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.003:terrace_farmer",
+        "label": "帮陈照采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.004:terrace_farmer",
+        "label": "帮陈朔采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.005:terrace_farmer",
+        "label": "帮温桑采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.006:terrace_farmer",
+        "label": "帮温禾采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给温禾",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 32,
+      "hour": 16,
+      "world_tick_count": 32
+    },
+    "feedback": {
+      "body": "你吃掉一份烤根块，饥饿减轻了。吃下后4小时内饥饿不增长；不能叠加，也不延长保存期。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": []
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 32,
+      "hour": 16,
+      "world_tick_count": 32
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 6,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 2
+        },
+        {
+          "condition": {},
+          "definition_id": "item.fresh_fish_portion",
+          "id": "fact.npc_livelihood.player.player_work.5.output.0",
+          "name": "鲜鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×2",
+        "鲜鱼",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 3,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　6 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　烤根块 ×2、鲜鱼、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.002",
+        "label": "问陈溪：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.003",
+        "label": "问陈照：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.004",
+        "label": "问陈朔：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.005",
+        "label": "问温桑：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.006",
+        "label": "问温禾：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "吃一份鲜鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "分1份鲜鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.002:terrace_farmer",
+        "label": "帮陈溪采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.003:terrace_farmer",
+        "label": "帮陈照采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.004:terrace_farmer",
+        "label": "帮陈朔采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.005:terrace_farmer",
+        "label": "帮温桑采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.006:terrace_farmer",
+        "label": "帮温禾采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.5.output.0",
+        "label": "售鲜鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给温禾",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.5.output.0",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 33,
+      "hour": 17,
+      "world_tick_count": 33
+    },
+    "feedback": {
+      "body": "你把1份鲜鱼交给陈溪，自己少了一份口粮，没有收钱。食物已在对方手中，不保证换来回报。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 33,
+      "hour": 17,
+      "world_tick_count": 33
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 2
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×2",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 2,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　烤根块 ×2、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.001",
+        "label": "问陈苇：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.002",
+        "label": "问陈溪：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.003",
+        "label": "问陈照：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.004",
+        "label": "问陈朔：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.005",
+        "label": "问温桑：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.006",
+        "label": "问温禾：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.001:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.001:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.002:terrace_farmer",
+        "label": "帮陈溪采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.003:terrace_farmer",
+        "label": "帮陈照采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.004:terrace_farmer",
+        "label": "帮陈朔采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.005:terrace_farmer",
+        "label": "帮温桑采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_terrace.006:terrace_farmer",
+        "label": "帮温禾采收",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/inquire:generated_resident.echo_terrace.002",
+        "label": "问陈溪：后来怎么样？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.001:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈苇",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.001:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给温禾",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.006:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/inquire:generated_resident.echo_terrace.002",
+    "after_time": {
+      "day": 2,
+      "elapsed_hours": 34,
+      "hour": 18,
+      "world_tick_count": 34
+    },
+    "feedback": {
+      "body": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 2,
+      "elapsed_hours": 34,
+      "hour": 18,
+      "world_tick_count": 34
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 3,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 2
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×2",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 1,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　3 / 10\n伤势　无\n随身物品　烤根块 ×2、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.001",
+        "label": "问陈苇：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.001:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.001:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest_block",
+        "label": "歇一阵，等天亮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.001:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈苇",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.001:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest_block",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 40,
+      "hour": 0,
+      "world_tick_count": 40
+    },
+    "feedback": {
+      "body": "6小时过去，预定时间已到。疲劳3→0，健康100→100，食物5→5。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 6 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 40,
+      "hour": 0,
+      "world_tick_count": 40
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 2
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×2",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　烤根块 ×2、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest_block",
+        "label": "歇一阵，等天亮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest_block",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 46,
+      "hour": 6,
+      "world_tick_count": 46
+    },
+    "feedback": {
+      "body": "6小时过去，预定时间已到。疲劳0→0，健康100→100，食物5→5。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 6 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 46,
+      "hour": 6,
+      "world_tick_count": 46
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 2
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×2",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　烤根块 ×2、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 坡田 · 食物来源",
+      "description": "可耕土层与坡面排水共同决定了田垄位置，居民在此种植耐放块根。",
+      "id": "generated_location.echo_terrace.terraces",
+      "title": "回音港外·河阶埠坡田"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:terrace_farmer",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.roast_roots",
+        "label": "烘烤根块",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.terrace_farmer",
+        "label": "坡田农",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.echo_terrace.terrace_farming_to_commons",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 47,
+      "hour": 7,
+      "world_tick_count": 47
+    },
+    "feedback": {
+      "body": "沿路走了1小时，已经抵达回音港外·河阶埠集地。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 47,
+      "hour": 7,
+      "world_tick_count": 47
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 5,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 2
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块 ×2",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　5 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　烤根块 ×2、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 村镇",
+      "description": "回音港外·河阶埠落在不易被小洪水淹没的河谷台地上。这里场址容量估算约 26 人，最先稳定下来的生计是坡田耕作、短途转运、苇编与修具、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_terrace.commons",
+      "title": "回音港外·河阶埠集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_reed_craft",
+        "label": "前往回音港外·河阶埠长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_road_carting",
+        "label": "前往回音港外·河阶埠车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_terrace_farming",
+        "label": "前往回音港外·河阶埠坡田　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_watch_service",
+        "label": "前往回音港外·河阶埠守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.b_to_a",
+        "label": "沿区域道路前往回音港外·芦湾村　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 48,
+      "hour": 8,
+      "world_tick_count": 48
+    },
+    "feedback": {
+      "body": "你吃掉一份烤根块，饥饿减轻了。吃下后4小时内饥饿不增长；不能叠加，也不延长保存期。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 48,
+      "hour": 8,
+      "world_tick_count": 48
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 3,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　烤根块、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 村镇",
+      "description": "回音港外·河阶埠落在不易被小洪水淹没的河谷台地上。这里场址容量估算约 26 人，最先稳定下来的生计是坡田耕作、短途转运、苇编与修具、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_terrace.commons",
+      "title": "回音港外·河阶埠集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.001",
+        "label": "问陈苇：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.002",
+        "label": "问陈溪：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.003",
+        "label": "问陈照：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.004",
+        "label": "问陈朔：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.005",
+        "label": "问温桑：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.006",
+        "label": "问温禾：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_terrace.007",
+        "label": "问温冬：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.001:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.001:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.002:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.005:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.006:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温禾",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.007:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给温冬",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.007:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给温冬",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_terrace.007:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给温冬",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.001:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈苇",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.001:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈苇",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.002:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈溪",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.003:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈照",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.004:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给陈朔",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.005:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给温桑",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.007:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "售烤根块给温冬",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.007:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "售熏湖鱼给温冬",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_terrace.007:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给温冬",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_reed_craft",
+        "label": "前往回音港外·河阶埠长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_road_carting",
+        "label": "前往回音港外·河阶埠车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_terrace_farming",
+        "label": "前往回音港外·河阶埠坡田　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_terrace.commons_to_watch_service",
+        "label": "前往回音港外·河阶埠守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.b_to_a",
+        "label": "沿区域道路前往回音港外·芦湾村　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.network.echo_shore_road.b_to_a",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 49,
+      "hour": 9,
+      "world_tick_count": 49
+    },
+    "feedback": {
+      "body": "你动身前往回音港外·芦湾村集地，途中不能同时工作或交易。",
+      "details": [
+        "同期世界变化（不全由你造成）：路程仍在继续，尚看不到目的地的情况。"
+      ],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 49,
+      "hour": 9,
+      "world_tick_count": 49
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 2,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　烤根块、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 2,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "途中",
+      "description": "已经离开出发地，尚未抵达。还需2小时；不能查看两端人物的实时状态，也不能隔空交易或劳动。",
+      "id": "generated_location.echo_terrace.commons",
+      "title": "前往回音港外·芦湾村集地的路上"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/continue",
+        "label": "继续赶路",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/journey_block",
+        "label": "走完这段路",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/journey_block",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 51,
+      "hour": 11,
+      "world_tick_count": 51
+    },
+    "feedback": {
+      "body": "2小时过去，已抵达回音港外·芦湾村集地。疲劳1→2，健康100→100，食物4→4。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 2 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 51,
+      "hour": 11,
+      "world_tick_count": 51
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 2,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　2 / 10\n伤势　无\n随身物品　烤根块、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 小镇",
+      "description": "回音港外·芦湾村落在湖泽交界、略高于季节水线的缓坡上。这里场址容量估算约 29 人，最先稳定下来的生计是苇编与修具、浅水网渔、短途转运、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "回音港外·芦湾村集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_fishery",
+        "label": "前往回音港外·芦湾村泊台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_reed_craft",
+        "label": "前往回音港外·芦湾村长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_road_carting",
+        "label": "前往回音港外·芦湾村车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_watch_service",
+        "label": "前往回音港外·芦湾村守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.a_to_b",
+        "label": "沿区域道路前往回音港外·河阶埠　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 52,
+      "hour": 12,
+      "world_tick_count": 52
+    },
+    "feedback": {
+      "body": "休息一小时，疲劳2→1，健康100→100；消耗0份食物，还剩4份。伤势恢复需要食物与持续休养。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 52,
+      "hour": 12,
+      "world_tick_count": 52
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　烤根块、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 小镇",
+      "description": "回音港外·芦湾村落在湖泽交界、略高于季节水线的缓坡上。这里场址容量估算约 29 人，最先稳定下来的生计是苇编与修具、浅水网渔、短途转运、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "回音港外·芦湾村集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_fishery",
+        "label": "前往回音港外·芦湾村泊台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_reed_craft",
+        "label": "前往回音港外·芦湾村长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_road_carting",
+        "label": "前往回音港外·芦湾村车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_watch_service",
+        "label": "前往回音港外·芦湾村守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.a_to_b",
+        "label": "沿区域道路前往回音港外·河阶埠　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 53,
+      "hour": 13,
+      "world_tick_count": 53
+    },
+    "feedback": {
+      "body": "休息一小时，疲劳1→0，健康100→100；消耗0份食物，还剩4份。伤势恢复需要食物与持续休养。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 53,
+      "hour": 13,
+      "world_tick_count": 53
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 4,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.roasted_root_portion",
+          "id": "fact.npc_livelihood.player.player_work.29.output.0",
+          "name": "烤根块",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "烤根块",
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　4 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　烤根块、熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 小镇",
+      "description": "回音港外·芦湾村落在湖泽交界、略高于季节水线的缓坡上。这里场址容量估算约 29 人，最先稳定下来的生计是苇编与修具、浅水网渔、短途转运、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "回音港外·芦湾村集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.003",
+        "label": "问何砚：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.004",
+        "label": "问罗黎：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.005",
+        "label": "问罗简：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份烤根块",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.004:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给罗黎",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.004:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给罗黎",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.004:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给罗黎",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.005:fact.npc_livelihood.player.player_work.29.output.0",
+        "label": "分1份烤根块给罗简",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给罗简",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.005:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给罗简",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_fishery",
+        "label": "前往回音港外·芦湾村泊台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_reed_craft",
+        "label": "前往回音港外·芦湾村长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_road_carting",
+        "label": "前往回音港外·芦湾村车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_watch_service",
+        "label": "前往回音港外·芦湾村守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.a_to_b",
+        "label": "沿区域道路前往回音港外·河阶埠　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/give_food:generated_resident.echo_landing.004:fact.npc_livelihood.player.player_work.29.output.0",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 54,
+      "hour": 14,
+      "world_tick_count": 54
+    },
+    "feedback": {
+      "body": "你把1份烤根块交给罗黎，自己少了一份口粮，没有收钱。食物已在对方手中，不保证换来回报。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 54,
+      "hour": 14,
+      "world_tick_count": 54
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "聚落 · 生成地点 · 公共集地 · 小镇",
+      "description": "回音港外·芦湾村落在湖泽交界、略高于季节水线的缓坡上。这里场址容量估算约 29 人，最先稳定下来的生计是苇编与修具、浅水网渔、短途转运、道路守望；设施和人口均来自同一场址生成结果。",
+      "id": "generated_location.echo_landing.commons",
+      "title": "回音港外·芦湾村集地"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.001",
+        "label": "问何苓：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/buy:fact.worksite_food_withdrawn.generated_resident.echo_landing.001.67.0",
+        "label": "向何苓买1件鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/buy:fact.worksite_food_withdrawn.generated_resident.echo_landing.001.85.0",
+        "label": "向何苓买1件鲜鱼 · 3铜币",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_fishery",
+        "label": "前往回音港外·芦湾村泊台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_reed_craft",
+        "label": "前往回音港外·芦湾村长工棚　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_road_carting",
+        "label": "前往回音港外·芦湾村车坪　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.commons_to_watch_service",
+        "label": "前往回音港外·芦湾村守望台　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "travel/generated_route.network.echo_shore_road.a_to_b",
+        "label": "沿区域道路前往回音港外·河阶埠　3 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "travel/generated_route.echo_landing.commons_to_fishery",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 55,
+      "hour": 15,
+      "world_tick_count": 55
+    },
+    "feedback": {
+      "body": "沿路走了1小时，已经抵达回音港外·芦湾村泊台。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 1 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 55,
+      "hour": 15,
+      "world_tick_count": 55
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.003",
+        "label": "问何砚：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.004",
+        "label": "问罗黎：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.005",
+        "label": "问罗简：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.003:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给何砚",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给罗简",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.005:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给罗简",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.003:net_fisher",
+        "label": "帮何砚采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/inquire:generated_resident.echo_landing.004",
+        "label": "问罗黎：后来怎么样？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_landing.005:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给罗简",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/inquire:generated_resident.echo_landing.004",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 56,
+      "hour": 16,
+      "world_tick_count": 56
+    },
+    "feedback": {
+      "body": "罗黎谈起后来的情况（你先前补充的食物）：第3天 14:00，罗黎吃下了一份自己留存的食物。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第3天，罗黎吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.55",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_54",
+        "text": "罗黎谈起后来的情况（你先前补充的食物）：第3天 14:00，罗黎吃下了一份自己留存的食物。"
+      },
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 56,
+      "hour": 16,
+      "world_tick_count": 56
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.003",
+        "label": "问何砚：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.004",
+        "label": "问罗黎：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.005",
+        "label": "问罗简：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.003:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给何砚",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.005:fact.npc_livelihood.player.player_work.7.output.0",
+        "label": "分1份熏湖鱼给罗简",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.005:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给罗简",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/help:generated_resident.echo_landing.003:net_fisher",
+        "label": "帮何砚采收",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_landing.005:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给罗简",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/gather:net_fisher",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 58,
+      "hour": 18,
+      "world_tick_count": 58
+    },
+    "feedback": {
+      "body": "天色或身体条件已不适合继续。已完成2/4小时；下次选择同一作业可接着做，换作业会重新准备。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 2 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第3天，罗黎吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.55",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_54",
+        "text": "罗黎谈起后来的情况（你先前补充的食物）：第3天 14:00，罗黎吃下了一份自己留存的食物。"
+      },
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 58,
+      "hour": 18,
+      "world_tick_count": 58
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 1,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "medium",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　1 / 10\n伤势　无\n随身物品　熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/ask_local:generated_resident.echo_landing.002",
+        "label": "问何冬：这里怎么谋生？",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "继续采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/give_food:generated_resident.echo_landing.002:item_instance.danger.journey_rations",
+        "label": "分1份旅行口粮给何冬",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:offer",
+        "label": "眼前的饥饿 · 按价出售一份",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/incident:food_at_hand:share",
+        "label": "眼前的饥饿 · 分出一份",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest_block",
+        "label": "歇一阵，等天亮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/sell_food:generated_resident.echo_landing.002:item_instance.danger.journey_rations",
+        "label": "售旅行口粮给何冬",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest_block",
+    "after_time": {
+      "day": 3,
+      "elapsed_hours": 63,
+      "hour": 23,
+      "world_tick_count": 63
+    },
+    "feedback": {
+      "body": "5小时过去，已经很饿，需要先考虑食物。疲劳1→0，健康100→100，食物3→3。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 5 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第3天，罗黎吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.55",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_54",
+        "text": "罗黎谈起后来的情况（你先前补充的食物）：第3天 14:00，罗黎吃下了一份自己留存的食物。"
+      },
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 3,
+      "elapsed_hours": 63,
+      "hour": 23,
+      "world_tick_count": 63
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 3,
+      "health": 100,
+      "hunger": "high",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.smoked_lake_fish",
+          "id": "fact.npc_livelihood.player.player_work.7.output.0",
+          "name": "熏湖鱼",
+          "quantity": 1
+        },
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "熏湖鱼",
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　3 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　熏湖鱼、旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份熏湖鱼",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/eat:item_instance.danger.journey_rations",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "继续采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/eat",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 64,
+      "hour": 0,
+      "world_tick_count": 64
+    },
+    "feedback": {
+      "body": "你吃掉一份熏湖鱼，饥饿减轻了。吃下后6小时内饥饿不增长；不能叠加，也不延长保存期。",
+      "details": [],
+      "eyebrow": "你的选择 · 已写回人物与世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第3天，罗黎吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.55",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_54",
+        "text": "罗黎谈起后来的情况（你先前补充的食物）：第3天 14:00，罗黎吃下了一份自己留存的食物。"
+      },
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 64,
+      "hour": 0,
+      "world_tick_count": 64
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 2,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 5,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　2 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "继续采集自己的口粮",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest_block",
+        "label": "歇一阵，等天亮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/rest_block",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 70,
+      "hour": 6,
+      "world_tick_count": 70
+    },
+    "feedback": {
+      "body": "6小时过去，预定时间已到。疲劳0→0，健康100→100，食物2→2。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 6 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第3天，罗黎吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.55",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_54",
+        "text": "罗黎谈起后来的情况（你先前补充的食物）：第3天 14:00，罗黎吃下了一份自己留存的食物。"
+      },
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  },
+  {
+    "before_time": {
+      "day": 4,
+      "elapsed_hours": 70,
+      "hour": 6,
+      "world_tick_count": 70
+    },
+    "before_player": {
+      "charisma": 6,
+      "coins": 0,
+      "constitution": 8,
+      "dexterity": 8,
+      "fatigue": 0,
+      "food_count": 2,
+      "health": 100,
+      "hunger": "low",
+      "injury": "none",
+      "inventory": [
+        {
+          "condition": {},
+          "definition_id": "item.travel_ration",
+          "id": "item_instance.danger.journey_rations",
+          "name": "旅行口粮",
+          "quantity": 2
+        },
+        {
+          "condition": {
+            "durability": 40,
+            "maximum_durability": 100,
+            "quality": "serviceable"
+          },
+          "definition_id": "item.waxed_winter_cloak",
+          "id": "item_instance.danger.worn_cloak",
+          "name": "上蜡冬衣",
+          "quantity": 1
+        }
+      ],
+      "items": [
+        "旅行口粮 ×2",
+        "上蜡冬衣 40/100"
+      ],
+      "living_body": true,
+      "mist_salt_echo": "none",
+      "perception": 10,
+      "role": "途经回音港外·芦湾村的旅人",
+      "satiation_remaining_hours": 0,
+      "strength": 7,
+      "summary": "身份　途经回音港外·芦湾村的旅人\n力量 7　敏捷 8　智慧 9\n魅力 6　体质 8　感知 10\n食物　2 份　健康　100　疲劳　0 / 10\n伤势　无\n随身物品　旅行口粮 ×2、上蜡冬衣 40/100",
+      "title": "无名旅人",
+      "travel_remaining": 0,
+      "wisdom": 9
+    },
+    "location": {
+      "context": "生产地点 · 生成地点 · 因地形成 · 浅水渔业 · 食物来源",
+      "description": "浅水木台依鱼群与可通行水面形成，网架、系船桩和分鱼石都靠近水线。",
+      "id": "generated_location.echo_landing.landing",
+      "title": "回音港外·芦湾村泊台"
+    },
+    "offered": [
+      {
+        "choice_id": "player_life/eat",
+        "label": "吃一份旅行口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/gather:net_fisher",
+        "label": "继续采集自己的口粮",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/rest",
+        "label": "休息一小时",
+        "kind": "player_life",
+        "enabled": true
+      },
+      {
+        "choice_id": "player_life/work:recipe.net_fishing",
+        "label": "网具捕捞",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "player_life/work:recipe.smoke_lake_fish",
+        "label": "熏制湖鱼",
+        "kind": "player_life",
+        "enabled": false
+      },
+      {
+        "choice_id": "travel/generated_route.echo_landing.fishery_to_commons",
+        "label": "返回聚落集地　1 小时",
+        "kind": "travel",
+        "enabled": true
+      },
+      {
+        "choice_id": "wait/one_hour",
+        "label": "等待一小时",
+        "kind": "wait",
+        "enabled": true
+      }
+    ],
+    "selected": "player_life/gather:net_fisher",
+    "after_time": {
+      "day": 4,
+      "elapsed_hours": 72,
+      "hour": 8,
+      "world_tick_count": 72
+    },
+    "feedback": {
+      "body": "旅人花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。",
+      "details": [],
+      "eyebrow": "你的选择 · 耗时 2 小时 · 已写回世界",
+      "status": "success",
+      "summary_details": [],
+      "title": "行动之后"
+    },
+    "witnessed_followups": [
+      {
+        "brief": "第3天，罗黎吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.55",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_54",
+        "text": "罗黎谈起后来的情况（你先前补充的食物）：第3天 14:00，罗黎吃下了一份自己留存的食物。"
+      },
+      {
+        "brief": "第2天，陈溪吃下了一份留存食物。这批库存有你的补充。",
+        "fact_id": "fact.player_heard_update.33",
+        "source_fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "text": "陈溪谈起后来的情况（你先前补充的食物）：第2天 17:00，陈溪吃下了一份自己留存的食物。"
+      },
+      {
+        "fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_33",
+        "source_fact_id": "fact.npc_livelihood.player.player_work.5",
+        "text": "第2天 17:00，你看见陈溪吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+      }
+    ]
+  }
+]

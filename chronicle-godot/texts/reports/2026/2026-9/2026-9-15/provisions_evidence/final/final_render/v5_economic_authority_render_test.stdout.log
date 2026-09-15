@@ -1,0 +1,19 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[ECONOMIC UI PASS] generated economic world starts
+[ECONOMIC UI PASS] one autonomous day pays wages
+[ECONOMIC UI PASS] existing records show real funds, payment and unpaid cargo boundary
+[ECONOMIC UI PASS] screenshot written: economic_funded_records
+[ECONOMIC UI IMAGE] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/economic_funded_records.png
+[ECONOMIC UI PASS] viewing balances and returning does not advance world time
+[ECONOMIC UI PASS] test injection transfers remaining funds to an actual person
+[ECONOMIC UI PASS] money drain applies without deleting currency
+[ECONOMIC UI PASS] real work planner declines unfunded shifts
+[ECONOMIC UI PASS] zero balance is explicit, not missing or negative
+[ECONOMIC UI PASS] current unfunded work is visible on decision surface without an inner scrollbar
+[ECONOMIC UI PASS] key consequence fits at 1280 by 720
+[ECONOMIC UI PASS] screenshot written: economic_unfunded_scene
+[ECONOMIC UI IMAGE] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/economic_unfunded_scene.png
+[ECONOMIC UI PASS] quota refusal has an explicit decision-surface reason and full record
+[ECONOMIC UI RESULT] PASS

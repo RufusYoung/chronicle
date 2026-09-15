@@ -475,10 +475,14 @@ func build_view_data() -> Dictionary:
 		view.decision["question"] = "把这几个小时用来备粮、赚取报酬，还是继续赶路？"
 		view.decision["rule"] = "采食归自己，短工产物给雇主。比较所需时间、身体状况和能拿到的东西。"
 		var stakes: Array = []
+		var sated := maxi(int(snapshot.player.get("hunger_sated_until", 0)) - session.PlayerLife.Meal.now(session.get_time_summary()), 0)
+		view.player["satiation_remaining_hours"] = sated
 		if int(snapshot.player.food_count) == 0:
 			stakes.append("行囊里没有食物。可以找现货，或白天去本地公用作业地采食")
 		else:
-			stakes.append("还有%d份随身食物；约%d小时后饥饿会加深一级" % [snapshot.player.food_count, maxi(6 - int(snapshot.player.get("hunger_elapsed_hours", 0)), 1)])
+			stakes.append("还有%d份随身食物；约%d小时后饥饿会加深一级" % [snapshot.player.food_count, sated + maxi(int(snapshot.player.get("hunger_interval_hours", 6)) - int(snapshot.player.get("hunger_elapsed_hours", 0)), 1)])
+		if sated > 0:
+			stakes.append("这餐还能维持%d小时饱腹，可留给赶路或作业" % sated)
 		if session.current_hour >= 15 and session.current_hour < 18:
 			stakes.append("天黑前仅剩%d小时作业时间，长活可能要留到明天" % (18 - session.current_hour))
 		view.decision["stakes"] = stakes
@@ -504,7 +508,7 @@ func build_view_data() -> Dictionary:
 		view.visible_observations = []
 		view.region_status = []
 		view.decision["question"] = "还在路上，继续前往目的地。"
-		view.decision["stakes"] = ["途中不能同时劳动或交易；饥饿照常增长"]
+		view.decision["stakes"] = ["途中不能同时劳动或交易；饱腹余效结束后饥饿继续增长"]
 	return view
 
 
@@ -2982,7 +2986,7 @@ func _state_change_text(change: Dictionary, snapshot: Variant = null) -> String:
 		snapshot = session.get_snapshot()
 	var entity_id := str(change.get("entity_id", ""))
 	var key := str(change.get("key", ""))
-	if key in ["danger_round_hour", "danger_opponent_id", "danger_advantage"]:
+	if key in ["danger_round_hour", "danger_opponent_id", "danger_advantage", "hunger_sated_until"]:
 		return ""
 	if key == "visible" and bool(change.get("to", false)):
 		return "%s出现在现场" % _entity_name(entity_id, snapshot)

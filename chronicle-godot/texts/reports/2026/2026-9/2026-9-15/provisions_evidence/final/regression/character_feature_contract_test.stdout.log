@@ -1,0 +1,24 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 CHARACTER FEATURE CONTRACT PASS] 1. 四类角色特征 Definition 以稳定 ID 通过严格注册
+[V5 CHARACTER FEATURE CONTRACT PASS] 2. Registry 拒绝缺少事实来源或阶段阈值倒序的 MarkDef
+[V5 CHARACTER FEATURE CONTRACT PASS] 2B. Registry rejects a Mark progress rule for an unaccepted fact
+[V5 CHARACTER FEATURE CONTRACT PASS] 3. Registry 将畸形 FeatureDef 安全返回为合同错误而不触发崩溃
+[V5 CHARACTER FEATURE CONTRACT PASS] 4. 角色特征测试拥有已注册的角色实体
+[V5 CHARACTER FEATURE CONTRACT PASS] 5. TalentAssignment 接受受控来源并拒绝同角色重复天赋
+[V5 CHARACTER FEATURE CONTRACT PASS] 6. 运行时 TraitInstance 没有来源事实时被拒绝
+[V5 CHARACTER FEATURE CONTRACT PASS] 7. 已写入 FactStore 的挑战伤势事实创建可追溯 TraitInstance
+[V5 CHARACTER FEATURE CONTRACT PASS] 8. 同一伤势事实不会重复创建 TraitInstance
+[V5 CHARACTER FEATURE CONTRACT PASS] 9. 同 ID 的伪造 payload 不能绕过 FactStore 规范事实触发 Mark
+[V5 CHARACTER FEATURE CONTRACT PASS] 10. MarkInstance 拒绝 Definition 未接受的来源事实类型
+[V5 CHARACTER FEATURE CONTRACT PASS] 11. SkillProgress 拒绝非练习事实及伪造的 XP
+[V5 CHARACTER FEATURE CONTRACT PASS] 12. Mark 阶段由事实进度推导且同一事实只贡献一次
+[V5 CHARACTER FEATURE CONTRACT PASS] 13. Skill XP 来自匹配职责事实，rank 由阈值推导且事实去重
+[V5 CHARACTER FEATURE CONTRACT PASS] 14. 不匹配侦察规则的职责事实不会伪造技艺成长
+[V5 CHARACTER FEATURE CONTRACT PASS] 15. 单实例 Trait 对事实幂等且拒绝显式载入第二个活动实例
+[V5 CHARACTER FEATURE CONTRACT PASS] 16. Session 接入特征 Store，CharacterProgress 从 StateStore 聚合属性
+[V5 CHARACTER FEATURE CONTRACT PASS] 17. 旧字段仅由空特征集合投影为兼容 none，不形成状态真值
+[V5 CHARACTER FEATURE CONTRACT PASS] 18. StateStore 拒绝直接写入由外部 Store 派生的旧投影字段
+[V5 CHARACTER FEATURE CONTRACT PASS] 19. 真实挑战失败由伤势事实创建 Trait，旧 injury 只作 Snapshot 投影
+[V5 CHARACTER FEATURE CONTRACT PASS] 20. 真实伤势实例保留产生它的世界事实 ID
+[V5 CHARACTER FEATURE CONTRACT RESULT] PASS

@@ -1,0 +1,46 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[PASS] lake: shared compact header
+[PASS] lake: same command typography and states
+[PASS] lake_1280: all visible text and controls fit; 
+[PASS] lake_1280: renderer evidence saved
+[PASS] lake_after_action: all visible text and controls fit; 
+[PASS] lake_after_action: renderer evidence saved
+[PASS] lake: direct receipt navigation
+[PASS] lake: full receipt contains the visible outcome
+[PASS] lake: return restores scene and keyboard focus
+[PASS] lake: reading consumes no resources, time or RNG
+[PASS] lake: reset requires a safe-default confirmation
+[PASS] lake: cancelled restart preserves the complete live state
+[PASS] lake: long result details are not discarded
+[PASS] lake_long_feedback: all visible text and controls fit; 
+[PASS] lake_long_feedback: renderer evidence saved
+[PASS] lake_character: all visible text and controls fit; 
+[PASS] lake_character: renderer evidence saved
+[PASS] lake_1600: all visible text and controls fit; 
+[PASS] lake_1600: renderer evidence saved
+[PASS] outpost: shared compact header
+[PASS] outpost: same command typography and states
+[PASS] outpost_1280: all visible text and controls fit; 
+[PASS] outpost_1280: renderer evidence saved
+[PASS] supplies can be purchased on the scene page
+[PASS] visible purchase changes actual inventory and payment
+[PASS] purchase feedback stays on the page where the action occurred
+[PASS] outpost_after_action: all visible text and controls fit; 
+[PASS] outpost_after_action: renderer evidence saved
+[PASS] outpost: direct receipt navigation
+[PASS] outpost: full receipt contains the visible outcome
+[PASS] outpost: return restores scene and keyboard focus
+[PASS] outpost: reading consumes no resources, time or RNG
+[PASS] outpost: reset requires a safe-default confirmation
+[PASS] outpost: cancelled restart preserves the complete live state
+[PASS] confirmed outpost restart clears this phase only
+[PASS] outpost: long result details are not discarded
+[PASS] outpost_long_feedback: all visible text and controls fit; 
+[PASS] outpost_long_feedback: renderer evidence saved
+[PASS] outpost_character: all visible text and controls fit; 
+[PASS] outpost_character: renderer evidence saved
+[PASS] outpost_1600: all visible text and controls fit; 
+[PASS] outpost_1600: renderer evidence saved
+UNIFIED_SURFACE_RESULT 42/42

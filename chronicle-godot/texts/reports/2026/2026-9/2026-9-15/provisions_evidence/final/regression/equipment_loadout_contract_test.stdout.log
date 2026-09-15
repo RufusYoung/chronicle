@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 EQUIPMENT CONTRACT PASS] 1. 三个 EquipmentSlotDef 以稳定 ID 进入严格 Registry
+[V5 EQUIPMENT CONTRACT PASS] 2. Registry 拒绝没有可接受标签和互斥组的装备位
+[V5 EQUIPMENT CONTRACT PASS] 2B. Registry 在槽位可用时拒绝 ItemDef 的未知装备位
+[V5 EQUIPMENT CONTRACT PASS] 3. 同一 ItemDef 可创建不同持有人、耐久与来源的装备实例
+[V5 EQUIPMENT CONTRACT PASS] 4. 没有来源 Fact 的装备写入被拒绝
+[V5 EQUIPMENT CONTRACT PASS] 5. 合法装备写入 Loadout 并在 ItemInstance 历史保留事实
+[V5 EQUIPMENT CONTRACT PASS] 6. ItemDef 不允许的装备位不会产生引用
+[V5 EQUIPMENT CONTRACT PASS] 7. 转移已装备物但不卸装时整笔事务拒绝且 Fact 不落地
+[V5 EQUIPMENT CONTRACT PASS] 8. 同笔 clear 与 transfer 通过预检并同步写入
+[V5 EQUIPMENT CONTRACT PASS] 9. 完全损坏已装备物但不卸装时整笔事务拒绝
+[V5 EQUIPMENT CONTRACT PASS] 10. 同笔 clear 与完全损坏可安全落地
+[V5 EQUIPMENT CONTRACT PASS] 11. Session 启动时接入装备位与 Loadout 合同
+[V5 EQUIPMENT CONTRACT PASS] 12. 第七哨站三件装备与随身物同时进入 InventoryView 投影
+[V5 EQUIPMENT CONTRACT PASS] 13. MarketStockView 只从实际 holder 派生且不伪造价格
+[V5 EQUIPMENT CONTRACT PASS] 14. EquipmentLoadout 只存在 Store，Snapshot 与摘要均为读取面
+[V5 EQUIPMENT CONTRACT RESULT] PASS

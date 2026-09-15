@@ -5,7 +5,8 @@ const Choice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 
 func _run() -> void:
 	var frozen := _runtime_hashes("res://scripts")
-	var pack: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Content.DEFAULT_PATH))
+	var provisions := "provisions_v2" in OS.get_cmdline_user_args()
+	var pack: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Content.V2_PATH if provisions else Content.DEFAULT_PATH))
 	pack.id = "heldout_content_extension"
 	var food: Dictionary = pack.item_defs[0].duplicate(true)
 	food.item_def_id = "item.chargrilled_lake_fish"
@@ -14,15 +15,19 @@ func _run() -> void:
 	food.tags = ["food", "processed_food", "grilled_fish"]
 	food.base_value = 6
 	pack.item_defs.append(food)
+	if provisions:
+		pack.meal_rules.foods[food.item_def_id] = {"satiation_hours": 3}
 	var recipe: Dictionary = pack.work_rules.overrides[0].recipe_variants[0].duplicate(true)
 	recipe.label = "炭烤湖鱼"
 	recipe.work_interval_hours = 3
 	recipe.work_recipe.recipe_id = "recipe.chargrill_fish"
 	recipe.products[0].item_def_id = food.item_def_id
 	pack.work_rules.overrides[0].recipe_variants.append(recipe)
-	var path := "user://tests/world_content/heldout_pack.json"
+	var directory := "user://tests/world_provisions" if provisions else "user://tests/world_content"
+	var path := directory + "/heldout_pack.json"
 	_write_json(path, pack)
 	var options := OPTIONS.duplicate(true)
+	options.content_extension_version = 2 if provisions else 1
 	options.content_extension_path = path
 	var live := Live.new()
 	_check(live.start(options).success, "third food and recipe start through formal external data path")
@@ -34,12 +39,14 @@ func _run() -> void:
 	var route: Dictionary = session.get_travel_options().filter(func(row: Dictionary) -> bool: return str(row.route_id).ends_with("commons_to_fishery"))[0]
 	_check(session.travel(route.route_id).success, "heldout player reaches real processing site")
 	_check(Life.options(session).any(func(row: Dictionary) -> bool: return row.action_id == "work:recipe.chargrill_fish" and "鲜鱼" in row.hint), "heldout recipe automatically reaches public player decisions with actual inputs")
+	if provisions:
+		_check(Life.options(session).any(func(row: Dictionary) -> bool: return row.action_id == "work:recipe.chargrill_fish" and "3小时内饥饿不增长" in row.hint), "third meal's distinct satiation reaches the public recipe")
 	_configuration_choices(session)
-	_check(session.save_to_path("user://tests/world_content/heldout_native.json").ok, "heldout definition embeds in native save")
+	_check(session.save_to_path(directory + "/heldout_native.json").ok, "heldout definition embeds in native save")
 	# Remove the external definition to prove that loading consumes the sealed bootstrap.
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	var restored := Session.new()
-	_check(restored.load_from_path("user://tests/world_content/heldout_native.json").success, "heldout native save restores without external data file")
+	_check(restored.load_from_path(directory + "/heldout_native.json").success, "heldout native save restores without external data file")
 	_check(restored.registry.has_definition("item", food.item_def_id), "restored registry still contains heldout food")
 	_check(session.advance_time(3, "heldout_continue").success and restored.advance_time(3, "heldout_continue").success and _signature(session) == _signature(restored), "heldout native continuation is identical")
 	for fault: String in ["unknown_input", "unused_item", "unused_override", "missing_resource"]:
@@ -52,7 +59,7 @@ func _run() -> void:
 		_write_json(path, invalid)
 		_check(not Live.new().start(options).success, "formal extension rejects " + fault)
 	_check(frozen == _runtime_hashes("res://scripts"), "all runtime script hashes unchanged across heldout expansion")
-	_write_json("user://tests/world_content/data_only_proof.json", {"runtime_hashes": frozen, "content_pack": pack,
+	_write_json(directory + "/data_only_proof.json", {"runtime_hashes": frozen, "content_pack": pack,
 		"checks": checks, "failures": failures, "evidence_kind": "data_only_extension_and_test_injection", "human_ui_play": false})
 	print("WORLD_CONTENT_DATA_ONLY_RESULT %s %d/%d" % ["PASS" if failures.is_empty() else "FAIL", checks - failures.size(), checks])
 	quit(0 if failures.is_empty() else 1)

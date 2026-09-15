@@ -2,7 +2,10 @@ extends RefCounted
 
 const Recipe = preload("res://scripts/sim/economy/work_recipe_service.gd")
 const Incidents = preload("res://scripts/sim/player/local_incident_options.gd")
+const Meal = preload("res://scripts/sim/economy/meal_satiation.gd")
+const Access = preload("res://scripts/sim/resource/resource_access.gd")
 const DEFAULT_PATH := "res://data/sim/raw/content/echo_port_life_v1.json"
+const V2_PATH := "res://data/sim/raw/content/echo_port_life_v2.json"
 
 
 static func validate(value: Variant) -> String:
@@ -10,11 +13,17 @@ static func validate(value: Variant) -> String:
 		return "content_extension_not_dictionary"
 	if value.is_empty():
 		return ""
-	if value.get("version") != 1 or not value.get("id") is String or str(value.id).is_empty():
+	if (value.get("version") != 1 and value.get("version") != 2) or not value.get("id") is String or str(value.id).is_empty():
 		return "unsupported_content_extension"
 	for key: String in value:
-		if key not in ["version", "id", "source_note", "item_defs", "work_rules", "resident_variants", "incidents", "world_danger"]:
+		if key not in ["version", "id", "source_note", "item_defs", "work_rules", "resident_variants", "incidents", "world_danger", "meal_rules", "visitor_commons"]:
 			return "unknown_content_extension_field:" + key
+	if value.get("version") == 1 and (value.has("meal_rules") or value.has("visitor_commons")):
+		return "new_life_rules_require_content_v2"
+	if value.get("version") == 2:
+		var visitors: Variant = value.get("visitor_commons")
+		if not visitors is Dictionary or visitors.size() != 1 or not Recipe._integer(visitors.get("daily_limit"), 1) or visitors.daily_limit > 4:
+			return "invalid_visitor_commons_limit"
 	for key: String in ["item_defs", "resident_variants", "incidents"]:
 		if not value.get(key, []) is Array:
 			return "invalid_content_extension_array:" + key
@@ -56,6 +65,10 @@ static func validate(value: Variant) -> String:
 			return "invalid_content_item_tags"
 		if not row.get("durability", {}) is Dictionary or not _fields(row.get("durability", {}), ["maximum"]):
 			return "unsupported_content_durability"
+	if value.get("version") == 2:
+		var error := Meal.validate(value.get("meal_rules"), value.get("item_defs", []))
+		if error != "":
+			return error
 	if value.has("work_rules"):
 		if not value.work_rules is Dictionary or not _fields(value.work_rules, ["version", "maintenance", "overrides"]):
 			return "unsupported_content_work_rules"
@@ -153,6 +166,8 @@ static func prepare(fixture: Dictionary) -> String:
 			# Native JSON restores integral numbers as floats, not different rules.
 			if JSON.parse_string(JSON.stringify(fixture.get(key))) != JSON.parse_string(JSON.stringify(expected)):
 				return "content_extension_rules_mismatch:" + key
+		if pack.get("version") == 2 and fixture.resident_daily_life.food_access.get("meal_rules", {}) != pack.meal_rules:
+			return "content_meal_rules_mismatch"
 		return ""
 	if fixture.get("player_life", {}).get("version") != 2 or fixture.get("work_rules", {}).is_empty():
 		return "content_extension_requires_player_life_v2"
@@ -165,6 +180,8 @@ static func prepare(fixture: Dictionary) -> String:
 			return "invalid_content_world_danger"
 		fixture.world_danger = pack.world_danger.duplicate(true)
 		fixture.world_danger["seed"] = int(fixture.get("challenge_seed", 1))
+	if pack.get("version") == 2:
+		fixture.resident_daily_life.food_access["meal_rules"] = pack.meal_rules.duplicate(true)
 	var variants: Array = pack.get("resident_variants", [])
 	var index := 0
 	for person: Dictionary in fixture.get("entities", []):
@@ -175,4 +192,37 @@ static func prepare(fixture: Dictionary) -> String:
 		person["content_variant_id"] = variant.id
 		index += 1
 	fixture["content_extension_generated"] = signature(pack)
+	return ""
+
+
+static func configure_commons(fixture: Dictionary) -> String:
+	var pack: Dictionary = fixture.get("content_extension", {})
+	if pack.get("version") != 2:
+		return ""
+	var sites := {}
+	for base: Dictionary in fixture.get("generated_livelihood_profiles", []):
+		for profile: Dictionary in Recipe.variants(base):
+			for input: Dictionary in profile.get("resource_inputs", []):
+				if not sites.has(input.stock_id):
+					sites[input.stock_id] = []
+				if profile.workplace_id not in sites[input.stock_id]:
+					sites[input.stock_id].append(profile.workplace_id)
+	for stock: Dictionary in fixture.get("initial_resource_stocks", []):
+		if stock.get("source_kind") != "natural_resource" or not sites.has(stock.stock_id):
+			continue
+		if not stock.has("access"):
+			return "visitor_commons_requires_managed_stock"
+		var fact_id := str(stock.access.source_fact_id) + ".visitors." + str(stock.stock_id)
+		var policy := {"daily_limit": pack.visitor_commons.daily_limit, "workplace_ids": sites[stock.stock_id], "source_fact_id": fact_id}
+		if fixture.has("content_commons_generated"):
+			if stock.access.get("version") != 2 or stock.access.get("visitors", {}) != policy:
+				return "visitor_commons_compiled_mismatch"
+			continue
+		stock.access["version"] = 2
+		stock.access["visitors"] = policy
+		stock.access["visitor_usage"] = {}
+		fixture.known_facts.append({"fact_id": fact_id, "fact_type": "resource_visitor_access_established",
+			"actor_id": stock.access.manager_id, "stock_ids": [stock.stock_id], "visitor_policy": policy.duplicate(true),
+			"source_fact_ids": [stock.access.source_fact_id], "summary": "地方公地允许到场访客在每日定额内采收；仍需投入劳动并消耗现有资源。"})
+	fixture["content_commons_generated"] = {"version": 1}
 	return ""

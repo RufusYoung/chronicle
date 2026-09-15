@@ -51,7 +51,10 @@ static func options(session: Variant, view: Variant, player: Dictionary) -> Arra
 	var remaining := int(player.states.get("daily_travel_remaining", 0))
 	if remaining > 0:
 		if remaining > 1:
-			rows.append(session.PlayerLife.row("journey_block", "走完这段路", "逐小时赶路，抵达即停；路上仍会变饿，不跳过世界结算。", "", remaining))
+			var hint := "逐小时赶路，抵达即停；路上仍会变饿，不跳过世界结算。"
+			if session.fixture_source_data.get("content_extension", {}).get("version") == 2:
+				hint = "逐小时赶路，抵达即停；饱腹余效用尽后继续变饿，不跳过世界结算。"
+			rows.append(session.PlayerLife.row("journey_block", "走完这段路", hint, "", remaining))
 		return rows
 	if not session.get_combat_encounter_options().is_empty():
 		return []

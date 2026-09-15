@@ -1,0 +1,25 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[LAKE TOWN LIVING SURFACE PASS] 1. build_living_surface_cards generates cards for key dates in 20 seeds
+[LAKE TOWN LIVING SURFACE PASS] 2. every LivingSurfaceCard has card_id/day/title/scene_summary
+[LAKE TOWN LIVING SURFACE PASS] 3. every LivingSurfaceCard has source_fact_ids or trace_ids
+[LAKE TOWN LIVING SURFACE PASS] 4. grain-taking day mentions Chen Mi and spoiled grain
+[LAKE TOWN LIVING SURFACE PASS] 5. guard-lock path produces a granary seal card
+[LAKE TOWN LIVING SURFACE PASS] 6. extreme hunger path produces collapse or help card
+[LAKE TOWN LIVING SURFACE PASS] 7. empty granary path produces empty-handed card
+[LAKE TOWN LIVING SURFACE PASS] 8. endured hunger path produces weakness or silent-child card
+[LAKE TOWN LIVING SURFACE PASS] 9. unsupported blank day does not create a major scene
+[LAKE TOWN LIVING SURFACE PASS] 10. People cards include old_chen and chen_mi
+[LAKE TOWN LIVING SURFACE PASS] 11. Location cards include shop and granary
+[LAKE TOWN LIVING SURFACE PASS] 12. numeric level conversion is correct
+[LAKE TOWN LIVING SURFACE PASS] 13. unknown fact type does not error and uses generic text
+[LAKE TOWN LIVING SURFACE PASS] 14. build_day_detail keeps old fields and adds living-surface fields
+[LAKE TOWN LIVING SURFACE PASS] 15. UI scene script parses headlessly
+[LAKE TOWN LIVING SURFACE PASS] 16. UI does not create WorldFact
+[LAKE TOWN LIVING SURFACE PASS] 17. UI does not modify state
+[LAKE TOWN LIVING SURFACE PASS] 18. unresolved_extreme_hunger remains zero
+[LAKE TOWN LIVING SURFACE PASS] 19. impossible_shop_state remains zero
+[LAKE TOWN LIVING SURFACE PASS] 20. dangling_major_fact remains zero
+[LAKE TOWN LIVING SURFACE PASS] 21. story_player.gd is unchanged
+[LAKE TOWN LIVING SURFACE PASS] 22. world_generation_v03.gd is unchanged
+[LAKE TOWN LIVING SURFACE RESULT] PASS

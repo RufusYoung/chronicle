@@ -1,0 +1,29 @@
+SCRIPT ERROR: Parse Error: Cannot infer the type of "provisions" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://scripts/sim/player/player_life.gd:142)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scripts/sim/world_tick/world_tick_adapter.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scripts/sim/core/sim_session.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scripts/sim/save/life_stage_transition_service.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scripts/rebuild/v5_live_location_view_model.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scripts/rebuild/v5_live_location_viewer.gd:0)
+ERROR: Failed to load script "res://scripts/rebuild/v5_live_location_viewer.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript.cpp:2907)
+SCRIPT ERROR: Invalid call. Nonexistent function 'configure' in base 'GDScript'.
+   at: V5SimSession.start_from_fixture_data (res://scripts/sim/core/sim_session.gd:448)
+   GDScript backtrace (most recent call first):
+       [0] start_from_fixture_data (res://scripts/sim/core/sim_session.gd:448)
+       [1] start_from_fixture_path (res://scripts/sim/core/sim_session.gd:282)
+       [2] start (res://scripts/rebuild/v5_live_location_view_model.gd:83)
+       [3] restart_session (res://scripts/rebuild/world_demo_viewer.gd:85)
+       [4] _ready (res://scripts/rebuild/v5_live_location_viewer.gd:79)
+       [5] _ready (res://scripts/rebuild/world_demo_viewer.gd:49)
+       [6] _run (res://tests/rebuild/household_life_render_test.gd:19)
+SCRIPT ERROR: Invalid access to property or key 'visible_people' on a base object of type 'Dictionary'.
+   at: _run (res://tests/rebuild/household_life_render_test.gd:38)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/rebuild/household_life_render_test.gd:38)
+       [1] _settle (res://tests/rebuild/household_life_render_test.gd:77)

@@ -1,0 +1,124 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit player life world starts: 
+[PASS] player body has authoritative position
+[PASS] world and player share six real hours
+[PASS] waiting creates actual hunger
+[PASS] real owned meal is consumed
+[PASS] meal is not free
+[PASS] meal reduces shared hunger scale
+[PASS] local alternative food site exists
+PLAYER_FOOD_SITE generated_location.echo_landing.landing
+[PASS] legal departure: 
+[PASS] arrival uses destination state
+PLAYER_OPTION 吃一份随身食物 eat 
+PLAYER_OPTION 休息一小时 rest 
+PLAYER_OPTION 采集自己的口粮 gather:net_fisher 
+PLAYER_GATHER {"hours":4,"player_life_feedback":{"body":"旅人花了4小时完成就地采食，鲜鱼 × 4留在本人行囊。","details":[],"status":"success","title":"行动之后"},"success":true}
+[PASS] shared gathering resolver succeeds
+[PASS] new food comes from real local work after starter food
+[PASS] native player life save
+[PASS] restore life state: 
+[PASS] full native state continues identically
+[PASS] controlled fixture loads through formal session
+[PASS] fresh paid-work branch follows real route
+PAID_CANDIDATE eat true
+PAID_CANDIDATE rest true
+PAID_CANDIDATE gather:net_fisher true
+PAID_CANDIDATE help:generated_resident.echo_landing.001:net_fisher true
+PAID_OUTCOME {"hours":4,"player_life_feedback":{"body":"你帮陶砚完成采收，4份产物交给对方，领取3枚实际铜币。","details":[],"status":"success","title":"行动之后"},"success":true}
+[PASS] paid gathering completes through common work resolver
+[PASS] employer pays real coins
+[PASS] wages transfer existing coins without minting
+[PASS] hired crop belongs to employer, not helper
+AFTER_WORK_OPTION 吃一份随身食物 
+AFTER_WORK_OPTION 休息一小时 
+AFTER_WORK_OPTION 采集自己的口粮 
+AFTER_WORK_OPTION 帮陶砚采收 
+AFTER_WORK_OPTION 帮叶遥采收 
+AFTER_WORK_OPTION 帮叶川采收 
+AFTER_WORK_OPTION 网具捕捞 缺少可用工具，现有工具可能已经磨损耗尽
+AFTER_WORK_OPTION 向陶砚买1件鲜鱼 · 3铜币 
+PLAYER_PURCHASE {"body":"你向陶砚支付3枚铜币，买下1件鲜鱼，已放入行囊。","details":[],"status":"success","title":"行动之后"}
+[PASS] earned coins purchase a present seller's stock
+[PASS] purchased food reaches real inventory
+[PASS] natural wage-to-food chain is actually exercised
+[PASS] co-located person reports a real later use
+[PASS] known consequence is retained for UI and saves
+[PASS] already told update is not offered indefinitely
+[PASS] natural paid-work followup actually reaches the actor
+[PASS] natural local paid-work opportunity exists
+[PASS] controlled fixture loads through formal session
+[PASS] fresh paid-work branch follows real route
+PAID_CANDIDATE eat true
+PAID_CANDIDATE rest true
+PAID_CANDIDATE gather:net_fisher true
+PAID_CANDIDATE help:generated_resident.echo_landing.001:net_fisher true
+PAID_OUTCOME {"hours":4,"player_life_feedback":{"body":"你帮陶砚完成采收，4份产物交给对方，领取3枚实际铜币。","details":[],"status":"success","title":"行动之后"},"success":true}
+[PASS] paid gathering completes through common work resolver
+[PASS] employer pays real coins
+[PASS] wages transfer existing coins without minting
+[PASS] hired crop belongs to employer, not helper
+AFTER_WORK_OPTION 吃一份随身食物 
+AFTER_WORK_OPTION 休息一小时 
+AFTER_WORK_OPTION 采集自己的口粮 
+AFTER_WORK_OPTION 帮陶砚采收 
+AFTER_WORK_OPTION 帮叶遥采收 
+AFTER_WORK_OPTION 帮叶川采收 
+AFTER_WORK_OPTION 网具捕捞 缺少可用工具，现有工具可能已经磨损耗尽
+AFTER_WORK_OPTION 向陶砚买1件鲜鱼 · 3铜币 
+PLAYER_PURCHASE {"body":"你向陶砚支付3枚铜币，买下1件鲜鱼，已放入行囊。","details":[],"status":"success","title":"行动之后"}
+[PASS] earned coins purchase a present seller's stock
+[PASS] purchased food reaches real inventory
+[PASS] natural wage-to-food chain is actually exercised
+[PASS] co-located person reports a real later use
+[PASS] known consequence is retained for UI and saves
+[PASS] already told update is not offered indefinitely
+[PASS] natural paid-work followup actually reaches the actor
+[PASS] natural local paid-work opportunity exists
+[PASS] controlled fixture loads through formal session
+[PASS] multi-hour legal departure
+[PASS] first hour does not teleport to end
+[PASS] save while physically in transit
+[PASS] restore mid-route: 
+[PASS] no nested travel
+[PASS] direct recovery entry cannot bypass journey
+[PASS] cannot use ground actions mid-route
+[PASS] journey and all residents resume identically
+[PASS] a real long route was tested
+[PASS] controlled fixture loads through formal session
+[PASS] failed physical attempt still consumes actual time
+[PASS] exhausted commons cannot create player food
+[PASS] failed work is not a free scouting action
+[PASS] resource counterexample exercised
+[PASS] test budget is transferred, not minted
+[PASS] controlled fixture loads through formal session
+[PASS] player purchases actual locally produced rope
+[PASS] a maker's real surplus is offered after retaining their own tool
+[PASS] legal tool journey to_commons
+[PASS] legal tool journey commons_to_fishery
+[PASS] carry purchased tool along real roads
+PLAYER_TOOL_WORK {"hours":4,"player_life_feedback":{"body":"旅人花了4小时完成网具捕捞，鲜鱼 × 12留在本人行囊。纤维绳索磨损1，剩余耐久3。","details":[],"status":"success","title":"行动之后"},"success":true}
+[PASS] same recipe works for the controlled actor
+[PASS] real tool increases yield over hand gathering
+[PASS] tool use actually wears the purchased instance
+[PASS] continue using the same finite tool
+[PASS] continue using the same finite tool
+[PASS] continue using the same finite tool
+[PASS] tool is genuinely exhausted by production
+[PASS] broken tool cannot produce another batch
+[PASS] legal tool journey to_commons
+[PASS] legal tool journey commons_to_reed_craft
+PLAYER_REPAIR_OPTION eat 
+PLAYER_REPAIR_OPTION rest 
+PLAYER_REPAIR_OPTION work:recipe.reed_cordage 缺少可用工具，现有工具可能已经磨损耗尽
+PLAYER_REPAIR_OPTION repair:recipe.patch_cordage.generated_settlement.echo_landing 
+PLAYER_TOOL_REPAIR {"hours":2,"player_life_feedback":{"body":"旅人花了2小时和实际材料修补旧工具，恢复部分耐久。修补次数有限，之后仍需换新。","details":[],"status":"success","title":"行动之后"},"success":true}
+[PASS] shared maintenance uses real local inputs
+[PASS] maintenance restores actual tool condition
+[PASS] save real tool trade/work/repair
+[PASS] native restore after tool maintenance
+[PASS] legacy default still starts
+[PASS] old world does not silently gain player hunger
+[PASS] old world does not gain new life actions
+WORK_RECIPE_RESULT PASS 82/82

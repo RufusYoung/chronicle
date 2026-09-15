@@ -18,6 +18,8 @@ func _run() -> void:
 	var options := Contract.OPTIONS.duplicate(true)
 	if args.size() > 1:
 		options.challenge_seed_override = int(args[1])
+	if args.size() > 3:
+		options.content_extension_version = int(args[3])
 	var live := Contract.Live.new()
 	var started: Dictionary = live.start(options)
 	if not started.get("success", false):
@@ -25,7 +27,7 @@ func _run() -> void:
 		quit(1)
 		return
 	var session: Variant = live.session
-	if args.size() > 2:
+	if args.size() > 2 and args[2] != "new":
 		var previous: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(args[2]))
 		var loaded: Dictionary = session.load_from_save_envelope(previous.get("envelope", {}))
 		if not loaded.get("success", false):
@@ -49,7 +51,8 @@ func _run() -> void:
 		days.append(row)
 		print("CONTENT_PROBE " + JSON.stringify(row))
 	var seconds := (Time.get_ticks_msec() - began) / 1000.0
-	var path := "user://tests/world_content/probe_%d_%d.json" % [options.challenge_seed_override, start_hour + hours]
+	var directory := "world_provisions" if options.content_extension_version == 2 else "world_content"
+	var path := "user://tests/%s/probe_%d_%d.json" % [directory, options.challenge_seed_override, start_hour + hours]
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))
 	var native_path := path.trim_suffix(".json") + ".save.json"
 	var saved: Dictionary = session.save_to_path(native_path)

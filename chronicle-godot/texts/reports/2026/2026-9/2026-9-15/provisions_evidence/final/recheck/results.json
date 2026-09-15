@@ -1,0 +1,8 @@
+{
+  "Test": "tests/sim/world_provisions_contract_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 51.85,
+  "UnexpectedErrors": []
+}

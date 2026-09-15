@@ -1,0 +1,269 @@
+[
+  {
+    "Test": "tests/rebuild/canon_world_render_test.gd",
+    "Passed": false,
+    "ExitCode": 1,
+    "TimedOut": false,
+    "Seconds": 4.74,
+    "UnexpectedErrors": [
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"provisions\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://scripts/rebuild/v5_live_location_viewer.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'configure' in base 'GDScript'."
+    ]
+  },
+  {
+    "Test": "tests/rebuild/community_life_render_test.gd",
+    "Passed": false,
+    "ExitCode": 1,
+    "TimedOut": false,
+    "Seconds": 3.75,
+    "UnexpectedErrors": [
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"provisions\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://scripts/rebuild/v5_live_location_viewer.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'configure' in base 'GDScript'.",
+      "SCRIPT ERROR: Invalid access to property or key 'location_id' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid access to property or key 'location_id' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid access to property or key 'location_id' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid access to property or key 'location_id' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid access to property or key 'location_id' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid access to property or key 'location_id' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid access to property or key 'location_id' on a base object of type 'Nil'."
+    ]
+  },
+  {
+    "Test": "tests/rebuild/household_life_render_test.gd",
+    "Passed": false,
+    "ExitCode": 1,
+    "TimedOut": false,
+    "Seconds": 48.12,
+    "UnexpectedErrors": [
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"provisions\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://scripts/rebuild/v5_live_location_viewer.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'configure' in base 'GDScript'.",
+      "SCRIPT ERROR: Invalid access to property or key 'visible_people' on a base object of type 'Dictionary'."
+    ]
+  },
+  {
+    "Test": "tests/rebuild/household_provisioning_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.5,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/player_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.76,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/player_local_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.09,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/resident_daily_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.18,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/resident_food_market_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.16,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_dynamic_settlement_resource_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.16,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_economic_authority_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.45,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_emergent_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.06,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_first_quarter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.71,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_first_year_close_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.52,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_organization_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.69,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_settlement_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.62,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_industry_lifecycle_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 22.45,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_life_incident_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.49,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_organization_lifecycle_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.49,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_playable_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.67,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_second_year_reception_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.38,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_absorption_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.17,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_capacity_adaptation_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.23,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_network_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 19.51,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_unified_surface_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.06,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/work_framework_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.32,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/worksite_food_storage_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.87,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/world_content_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.67,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/world_danger_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.69,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/world_provisions_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.42,
+    "UnexpectedErrors": []
+  }
+]

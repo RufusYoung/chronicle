@@ -1,0 +1,14 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 1. 能加载 basic_effect_templates.json
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 2. EffectTemplateResolver 能解析 inquiry_concealed_item_effect
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 3. TransactionResolver 能接受 SimSnapshot
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 4. ask_about_concealed_item 基于 snapshot 产生 actor_asked_about_concealed_item
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 5. ask_about_concealed_item 产生 being_questioned_about_hidden_item memory
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 6. ask_about_concealed_item 产生 target -> player fear +5
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 7. give_food_to_hungry_person 基于 snapshot 仍产生 hunger 降级
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 8. report_discipline_violation_to_superior 基于 snapshot 仍产生 trace / rumor / narrative
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 9. SimRunner 执行 conceal sequence 时，第一步不再是无事务写回
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 10. SimRunner WorldLog 中 conceal sequence 第一步包含 actor_asked_about_concealed_item
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE PASS] 11. WorldLog entry 的 resolver_context_source 为 SimSnapshot
+[V5 SNAPSHOT TRANSACTION EFFECT TEMPLATE RESULT] PASS

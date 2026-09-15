@@ -1,0 +1,21 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[FAIL] community world UI starts
+[FAIL] explicit UI option reaches native community rules
+[PASS] community control is available
+[FAIL] local organization has understandable membership information
+[FAIL] formal UI operation completed
+[FAIL] formal UI operation completed
+[FAIL] formal UI operation completed
+[FAIL] formal UI operation completed
+[FAIL] formal UI operation completed
+[FAIL] formal UI operation completed
+[FAIL] formal UI operation completed
+[FAIL] autonomous locally heard message reaches UI feedback with its actual content
+[PASS] 720p actions remain reachable
+[PASS] new-world options fit supported height
+[PASS] missing work dependency disables community option
+[PASS] disabled dependency cannot enable new behavior
+[PASS] program-driven render did not inject NPC actions
+COMMUNITY_LIFE_RENDER_RESULT ["community world UI starts", "explicit UI option reaches native community rules", "local organization has understandable membership information", "formal UI operation completed", "formal UI operation completed", "formal UI operation completed", "formal UI operation completed", "formal UI operation completed", "formal UI operation completed", "formal UI operation completed", "autonomous locally heard message reaches UI feedback with its actual content"]

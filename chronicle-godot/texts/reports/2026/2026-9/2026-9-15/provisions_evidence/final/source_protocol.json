@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "tests": 17,
+  "seconds": 98.969,
+  "command": "python -X utf8 chronicle-godot/tools/test_agent_play.py",
+  "evidence_kind": "real_source_protocol_process",
+  "note": "Recorded from the completed tool output. Subsequent runtime edit only hardened rejection of malformed v2 item-definition collections; successful world behavior was unchanged. Final v2 contract and package protocol cover the hardened version."
+}

@@ -1,0 +1,143 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] content v2 starts: 
+[PASS] controlled fixture loads through formal session
+[PASS] controlled fixture loads through formal session
+[PASS] controlled meal input applied
+[PASS] public choice names the food actually consumed
+[PASS] meal choice exposes actual satiety, not a generic benefit
+[PASS] formal meal consumes food
+[PASS] exactly one real portion consumed
+[PASS] same six hours elapse after the meal
+[PASS] controlled meal input applied
+[PASS] public choice names the food actually consumed
+[PASS] meal choice exposes actual satiety, not a generic benefit
+[PASS] formal meal consumes food
+[PASS] exactly one real portion consumed
+[PASS] same six hours elapse after the meal
+[PASS] raw meal hunger resumes normally
+[PASS] cooked meal delays actual hunger through the journey interval
+[PASS] meal timer saves
+[PASS] meal timer restores
+[PASS] time resumes beyond satiety expiry
+[PASS] meal does not stop future hunger and native continuation matches
+[PASS] a third food benefit is data-only
+[PASS] invalid meal duration rejected: -1
+[PASS] invalid meal duration rejected: 0
+[PASS] invalid meal duration rejected: 1.5
+[PASS] invalid meal duration rejected: 13
+[PASS] invalid meal duration rejected: inf
+[PASS] invalid meal duration rejected: 6
+[PASS] new meal semantics cannot be mislabeled v1
+[PASS] invalid item collections reject before typed meal lookup
+[PASS] invalid item collections reject before typed meal lookup
+[PASS] invalid item collections reject before typed meal lookup
+[PASS] controlled fixture loads through formal session
+[PASS] controlled timer overlap setup
+[PASS] partial multi-hour satiation overlap resolves
+[PASS] only two unprotected hours advance the existing need clock
+[PASS] first processed meal timer applies
+[PASS] second same-hour meal applies
+[PASS] repeated eating does not stack future hunger immunity
+[PASS] controlled fixture loads through formal session
+[PASS] wait through daytime threat without teleportation
+[PASS] travel legally: .network.
+[PASS] physical visitor journey
+[PASS] physical visitor journey
+[PASS] travel legally: commons_to_terrace_farming
+[PASS] wait until morning
+[PASS] wait until morning
+[PASS] wait until morning
+[PASS] wait until morning
+[PASS] wait until morning
+[PASS] wait until morning
+[PASS] wait until morning
+VISITOR_PROFILE [{"amount_per_cycle":0.75,"label":"港外聚落耕地","stock_id":"resource_stock.echo_terrace.resource_echo_terrace_soil"}]
+[PASS] published local visitor allowance exists
+[PASS] visitor sees a lawful, costed alternative
+[PASS] formal visitor gathering advances actual labor
+[PASS] visitor responds to the actual interruption: guard
+[PASS] visitor responds to the actual interruption: guard
+[PASS] visitor responds to the actual interruption: attack
+[PASS] visitor responds to the actual interruption: guard
+[PASS] visitor responds to the actual interruption: guard
+[PASS] visitor responds to the actual interruption: attack
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] formal visitor gathering advances actual labor
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] recover before resuming interrupted harvest
+[PASS] formal visitor gathering advances actual labor
+[PASS] visitor is not silently naturalized
+[PASS] actual harvest spends finite daily rights
+[PASS] real harvested food reaches visitor inventory
+[PASS] exhausted daily allowance blocks repetition with an alternative
+[PASS] stale option cannot bypass quota
+[PASS] spent visitor rights save
+[PASS] spent visitor rights restore
+[PASS] reloading does not reset quota
+[PASS] quota resets by day, not menu refresh
+[PASS] visitor cannot remotely use another town's commons
+[PASS] the same visitor policy accepts a resident actor from another town
+[PASS] writer refuses an unmetered visitor debit
+[PASS] writer refuses invented production provenance
+[PASS] combined debits cannot exceed one visitor allowance
+[PASS] failed visitor debit rolls back both resources and facts
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.smoke_lake_fish uses shared work transaction
+[PASS] recipe.smoke_lake_fish consumes exact physical inputs
+[PASS] recipe.smoke_lake_fish stores exact finished batch
+[PASS] recipe.smoke_lake_fish has one production, not both recipe variants
+[PASS] recipe.smoke_lake_fish cannot repeat after material is consumed
+[PASS] produced food market branch uses native state
+[PASS] food market test finds an existing funded buyer
+[PASS] test injection brings actual buyer to food seller
+[PASS] item.smoked_lake_fish automatically receives a real market quote
+[PASS] item.smoked_lake_fish sells through ordinary market transaction
+[PASS] item.smoked_lake_fish has physical ownership and exact payer/seller money
+[PASS] item.smoked_lake_fish purchased batch enters real meals
+[PASS] item.smoked_lake_fish purchased food is consumed rather than only logged
+[PASS] item.smoked_lake_fish gives the NPC buyer the same real satiety as the player
+[PASS] recipe.smoke_lake_fish enters ordinary food withdrawal
+[PASS] recipe.smoke_lake_fish reaches ordinary household meal resolver
+[PASS] recipe.smoke_lake_fish is actually eaten
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.smoke_lake_fish cannot process remotely
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.roast_roots uses shared work transaction
+[PASS] recipe.roast_roots consumes exact physical inputs
+[PASS] recipe.roast_roots stores exact finished batch
+[PASS] recipe.roast_roots has one production, not both recipe variants
+[PASS] recipe.roast_roots cannot repeat after material is consumed
+[PASS] produced food market branch uses native state
+[PASS] food market test finds an existing funded buyer
+[PASS] test injection brings actual buyer to food seller
+[PASS] item.roasted_root_portion automatically receives a real market quote
+[PASS] item.roasted_root_portion sells through ordinary market transaction
+[PASS] item.roasted_root_portion has physical ownership and exact payer/seller money
+[PASS] item.roasted_root_portion purchased batch enters real meals
+[PASS] item.roasted_root_portion purchased food is consumed rather than only logged
+[PASS] item.roasted_root_portion gives the NPC buyer the same real satiety as the player
+[PASS] recipe.roast_roots enters ordinary food withdrawal
+[PASS] recipe.roast_roots reaches ordinary household meal resolver
+[PASS] recipe.roast_roots is actually eaten
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.roast_roots cannot process remotely
+[PASS] new provision rules run autonomously for two days
+[PASS] natural world saved
+[PASS] natural world restored
+[PASS] native branches continue
+[PASS] full provision world has identical native continuation
+[PASS] old content world does not acquire nutrition or visitor rules
+[PASS] old commons remain resident only
+WORLD_PROVISIONS_RESULT PASS 139/139

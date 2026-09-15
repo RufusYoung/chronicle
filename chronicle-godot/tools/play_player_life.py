@@ -9,6 +9,7 @@ from pathlib import Path
 
 from agent_play import ChronicleClient
 from content_life_policy import ContentLifePolicy
+from provisions_policy import ProvisionsPolicy
 
 
 def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=None, variant="player_life_v1"):
@@ -38,7 +39,7 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
             at_danger_site = False
             tool_stage = "earn"
             tool_cycles = 0
-            content_policy = ContentLifePolicy()
+            content_policy = ProvisionsPolicy() if policy == "provisions" else ContentLifePolicy()
             for step in range(hours * 2):
                 observation = response["observation"]
                 time = observation["time"]
@@ -63,7 +64,7 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
                     approach = ("attack" if rounds == 0 else "withdraw") if policy == "direct_risk" else ("guard" if rounds % 3 < 2 else "attack")
                     choice = choose("combat_encounter", ":" + approach)
                     rounds += 1
-                elif policy == "content_life":
+                elif policy in {"content_life", "provisions"}:
                     choice = content_policy.choose(response, hours)
                 elif policy in {"local_trade", "local_gift"}:
                     if player.get("hunger") in {"high", "extreme"}:
@@ -179,7 +180,7 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
                           "offered": [{k: c.get(k) for k in ("choice_id", "label", "kind", "enabled")} for c in response["choices"]],
                           "selected": choice["choice_id"]}
                 response = request("act", choice_id=choice["choice_id"])
-                if policy == "content_life":
+                if policy in {"content_life", "provisions"}:
                     content_policy.record_success(choice)
                 record["after_time"] = response["observation"]["time"]
                 record["feedback"] = response["observation"].get("feedback", {})
@@ -207,7 +208,8 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
                        "player": response["observation"]["player"], "combat_rounds": rounds,
                        "player_facts": dict(Counter(f.get("fact_type", "") for f in facts if f.get("actor_id") == "player")),
                        "tool_stage": tool_stage if policy == "tool_life" else None,
-                       "content_policy_actions": sorted(content_policy.completed) if policy == "content_life" else [],
+                       "content_policy_actions": sorted(content_policy.completed) if policy in {"content_life", "provisions"} else [],
+                       "provisions_stage": content_policy.stage if policy == "provisions" else None,
                        "production": [f for f in facts if f.get("actor_id") == "player" and f.get("fact_type") in {"npc_livelihood_produced", "npc_work_maintained"}],
                        "hunger": dict(Counter(s.get("hunger", "none") for s in people.values())),
                        "resident_states": people, "save_sha256": hashlib.sha256(raw).hexdigest(),
@@ -245,7 +247,7 @@ if __name__ == "__main__":
     parser.add_argument("--hours", type=int, default=72)
     parser.add_argument("--packaged", action="store_true")
     parser.add_argument("--godot")
-    parser.add_argument("--policies", nargs="+", choices=("observer", "prepared", "direct_risk", "local_help", "tool_life", "local_trade", "local_gift", "content_life"))
-    parser.add_argument("--variant", choices=("player_life_v1", "player_life_v2", "world_content_v1"), default="player_life_v1")
+    parser.add_argument("--policies", nargs="+", choices=("observer", "prepared", "direct_risk", "local_help", "tool_life", "local_trade", "local_gift", "content_life", "provisions"))
+    parser.add_argument("--variant", choices=("player_life_v1", "player_life_v2", "world_content_v1", "world_content_v2"), default="player_life_v1")
     args = parser.parse_args()
     play(args.output, seed=args.seed, hours=args.hours, packaged=args.packaged, godot=args.godot, policies=args.policies, variant=args.variant)

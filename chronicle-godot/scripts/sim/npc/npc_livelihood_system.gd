@@ -3,6 +3,7 @@ class_name V5NpcLivelihoodSystem
 
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const Access = preload("res://scripts/sim/resource/resource_access.gd")
+const Meal = preload("res://scripts/sim/economy/meal_satiation.gd")
 const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodCarting = preload("res://scripts/sim/economy/resident_food_carting.gd")
@@ -214,6 +215,9 @@ func resolve_work_tick(
 			resource_change["reason"] = "livelihood_production"
 			resource_change["actor_id"] = actor_id
 			resource_change["day"] = int(tick_event.get("day", 0))
+			var stock: Dictionary = snapshot.get_resource_stock(str(input.stock_id))
+			if stock.get("access", {}).get("version") == 2:
+				resource_change["visitor_use"] = actor.states.get("settlement_id", "") != stock.access.manager_id
 			result.add_resource_change(resource_change)
 		if wage > 0:
 			treasury.append_payment(result, settlement_id, actor_id, wage, fact_id, _tick_value(tick_event), reserve)
@@ -376,6 +380,10 @@ func _work_denial_label(reason: String) -> String:
 			return "没有还能修补的自有工具"
 		"resource_shortage":
 			return "现场原料不足"
+		"visitor_not_at_worksite":
+			return "访客必须亲自在获准作业地，赶路途中不能采收"
+		"visitor_daily_limit":
+			return "今日访客采收额度不足；可加工随身材料、交易或换个去处"
 		"resident_use_denied", "resource_use_denied", "resource_access_denied":
 			return "没有该资源的生产使用权"
 	return "当前作业条件不满足，详细原因见记录"
@@ -554,6 +562,7 @@ func resolve_household_support(
 				result.facts_added.back()["observed_by_player"] = snapshot.player.get("daily_route_id", "") == "" \
 					and snapshot.player.get("location_id", "") == result.facts_added.back().location_id \
 					and not result.facts_added.back().in_transit
+		Meal.append(result, recipient_id, food, daily_life_config.get("food_access", {}).get("meal_rules", {}), tick_event)
 		if external:
 			result.add_trace({
 				"trace_id": "trace.npc_cross_household_food.%s.%s" % [

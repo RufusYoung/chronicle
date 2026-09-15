@@ -1,0 +1,43 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62001 可以启动生成居民社会压力世界
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62001 的每个家庭都由有来源的邻里事实接入聚落关系网
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62001 的家庭缺粮触发了跨家庭援助或求助受挫
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62001 的跨家庭援助消耗真实食物并形成感激、信任或债务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62001 的求助受挫具有关系来源并形成轻微怨气
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62001 推进五天后无悬空引用或失败的社会压力事务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62001 的跨家庭行为形成有事实来源的痕迹与每日聚落纪事
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62002 可以启动生成居民社会压力世界
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62002 的每个家庭都由有来源的邻里事实接入聚落关系网
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62002 的家庭缺粮触发了跨家庭援助或求助受挫
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62002 的跨家庭援助消耗真实食物并形成感激、信任或债务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62002 的求助受挫具有关系来源并形成轻微怨气
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62002 推进五天后无悬空引用或失败的社会压力事务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62002 的跨家庭行为形成有事实来源的痕迹与每日聚落纪事
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62003 可以启动生成居民社会压力世界
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62003 的每个家庭都由有来源的邻里事实接入聚落关系网
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62003 的家庭缺粮触发了跨家庭援助或求助受挫
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62003 的跨家庭援助消耗真实食物并形成感激、信任或债务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62003 的求助受挫具有关系来源并形成轻微怨气
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62003 推进五天后无悬空引用或失败的社会压力事务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62003 的跨家庭行为形成有事实来源的痕迹与每日聚落纪事
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62004 可以启动生成居民社会压力世界
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62004 的每个家庭都由有来源的邻里事实接入聚落关系网
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62004 的家庭缺粮触发了跨家庭援助或求助受挫
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62004 的跨家庭援助消耗真实食物并形成感激、信任或债务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62004 的求助受挫具有关系来源并形成轻微怨气
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62004 推进五天后无悬空引用或失败的社会压力事务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62004 的跨家庭行为形成有事实来源的痕迹与每日聚落纪事
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62005 可以启动生成居民社会压力世界
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62005 的每个家庭都由有来源的邻里事实接入聚落关系网
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62005 的家庭缺粮触发了跨家庭援助或求助受挫
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62005 的跨家庭援助消耗真实食物并形成感激、信任或债务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62005 的求助受挫具有关系来源并形成轻微怨气
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62005 推进五天后无悬空引用或失败的社会压力事务
+[V5 GENERATED SOCIAL PRESSURE PASS] seed 62005 的跨家庭行为形成有事实来源的痕迹与每日聚落纪事
+[V5 GENERATED SOCIAL PRESSURE PASS] 五种子合计生成邻里、工友和正式受雇三类有来源关系
+[V5 GENERATED SOCIAL PRESSURE PASS] 五种子同时出现跨家庭援助、求助受挫和未解除的真实稀缺
+[V5 GENERATED SOCIAL PRESSURE PASS] 五种子社会压力网络无悬空引用或失败事务
+[V5 GENERATED SOCIAL PRESSURE PASS] 五种子社会压力形成可供后续调查与界面投影消费的痕迹和纪事
+[V5 GENERATED SOCIAL PRESSURE BATCH] {"cross_household_meal_count":150,"daily_chronicle_count":25,"employment_fact_count":20,"failed_request_count":149,"failed_transaction_count":0,"invalid_reference_seed_count":0,"neighbor_fact_count":34,"seed_count":5,"seeds":[{"cross_household_meal_count":40,"daily_chronicle_count":5,"employment_fact_count":4,"failed_request_count":52,"household_count":3,"neighbor_fact_count":6,"reference_ok":true,"seed":62001,"social_trace_count":6,"transaction_ok":true,"unmet_food_fact_count":52,"workmate_fact_count":8},{"cross_household_meal_count":33,"daily_chronicle_count":5,"employment_fact_count":6,"failed_request_count":51,"household_count":3,"neighbor_fact_count":6,"reference_ok":true,"seed":62002,"social_trace_count":7,"transaction_ok":true,"unmet_food_fact_count":51,"workmate_fact_count":4},{"cross_household_meal_count":42,"daily_chronicle_count":5,"employment_fact_count":6,"failed_request_count":26,"household_count":4,"neighbor_fact_count":8,"reference_ok":true,"seed":62003,"social_trace_count":8,"transaction_ok":true,"unmet_food_fact_count":26,"workmate_fact_count":12},{"cross_household_meal_count":29,"daily_chronicle_count":5,"employment_fact_count":4,"failed_request_count":17,"household_count":3,"neighbor_fact_count":6,"reference_ok":true,"seed":62004,"social_trace_count":4,"transaction_ok":true,"unmet_food_fact_count":17,"workmate_fact_count":6},{"cross_household_meal_count":6,"daily_chronicle_count":5,"employment_fact_count":0,"failed_request_count":3,"household_count":4,"neighbor_fact_count":8,"reference_ok":true,"seed":62005,"social_trace_count":3,"transaction_ok":true,"unmet_food_fact_count":3,"workmate_fact_count":12}],"simulation_hours_per_seed":120,"social_trace_count":28,"unmet_food_fact_count":149,"workmate_fact_count":42}
+[V5 GENERATED SOCIAL PRESSURE RESULT] PASS

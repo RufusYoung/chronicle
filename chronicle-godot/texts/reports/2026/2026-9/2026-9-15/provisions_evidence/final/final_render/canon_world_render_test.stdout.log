@@ -1,0 +1,6 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[FAIL] default world boots
+[FAIL] default entry must use original world
+CANON_WORLD_RENDER_RESULT ["default world boots", "default entry must use original world"]

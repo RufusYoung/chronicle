@@ -101,6 +101,11 @@ func _resolve_need(
 		clock_key,
 		0
 	)), 0)
+	var pause_key := str(need.get("pause_until_state_key", ""))
+	if pause_key != "":
+		var until := int(snapshot.get_entity_state(actor_id, pause_key, 0))
+		var end_hour := maxi(int(tick_event.get("day", 1)) - 1, 0) * 24 + int(tick_event.get("hour", 0))
+		elapsed_hours -= clampi(until - (end_hour - elapsed_hours), 0, elapsed_hours)
 	var accumulated := old_clock + elapsed_hours
 	var step_count := int(accumulated / interval_hours)
 	var new_clock := posmod(accumulated, interval_hours)

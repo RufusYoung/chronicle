@@ -36,8 +36,26 @@ static func shape_error(stock: Dictionary, required: bool = false) -> String:
 	if not stock["access"] is Dictionary:
 		return "policy_not_dictionary"
 	var access: Dictionary = stock["access"]
-	if int(access.get("version", 0)) != 1 or str(access.get("manager_id", "")) == "":
+	if (access.get("version") != 1 and access.get("version") != 2) or str(access.get("manager_id", "")) == "":
 		return "policy_identity_invalid"
+	if access.get("version") == 1 and (access.has("visitors") or access.has("visitor_usage")):
+		return "visitors_require_policy_v2"
+	if access.get("version") == 2:
+		var visitors: Variant = access.get("visitors")
+		if not visitors is Dictionary or not visitors.get("workplace_ids") is Array or visitors.workplace_ids.is_empty() \
+				or not visitors.workplace_ids.all(func(id: Variant) -> bool: return id is String and id != "") \
+				or str(visitors.get("source_fact_id", "")) == "" or not access.get("visitor_usage") is Dictionary:
+			return "visitor_policy_invalid"
+		var limit: Variant = visitors.get("daily_limit")
+		if not (limit is int or limit is float) or not is_finite(float(limit)) or float(limit) <= 0 or float(limit) > 4:
+			return "visitor_limit_invalid"
+		for id: String in access.visitor_usage:
+			var usage: Variant = access.visitor_usage[id]
+			if id == "" or not usage is Dictionary or not usage.get("day") is float and not usage.get("day") is int:
+				return "visitor_usage_invalid"
+			if float(usage.day) != floor(float(usage.day)) or usage.day < 0 or not (usage.get("amount") is int or usage.get("amount") is float) \
+					or not is_finite(float(usage.amount)) or usage.amount < 0 or usage.amount > float(limit) + 0.0001:
+				return "visitor_usage_invalid"
 	if str(access.get("source_fact_id", "")) == "" or not access.get("resident_production") is bool:
 		return "policy_source_or_resident_rule_invalid"
 	if not access.get("manager_uses") is Array or not access.get("organization_grants") is Dictionary or not access.get("usage") is Dictionary:
@@ -61,12 +79,12 @@ static func shape_error(stock: Dictionary, required: bool = false) -> String:
 	return ""
 
 
-static func denial(snapshot: Variant, stock: Dictionary, actor_id: String, purpose: String, amount: float = 0, day: int = 0) -> String:
+static func denial(snapshot: Variant, stock: Dictionary, actor_id: String, purpose: String, amount: float = 0, day: int = -1) -> String:
 	if not stock.has("access"):
 		return ""
 	return _permission_error(stock, actor_id, snapshot.get_entity(actor_id),
 		str(snapshot.get_entity_state(actor_id, "settlement_id", "")),
-		str(snapshot.get_entity_state(actor_id, "life_status", "alive")), purpose, amount, day)
+		str(snapshot.get_entity_state(actor_id, "life_status", "alive")), purpose, amount, int(snapshot.world_time.get("day", 0)) if day < 0 else day)
 
 
 static func _permission_error(stock: Dictionary, actor_id: String, actor: Dictionary, settlement: String, life: String, purpose: String, amount: float, day: int) -> String:
@@ -83,7 +101,16 @@ static func _permission_error(stock: Dictionary, actor_id: String, actor: Dictio
 	if actor_id == str(access.get("manager_id", "")):
 		return "" if purpose in access.get("manager_uses", []) or purpose in ["grant_access", "revoke_access"] else "manager_use_denied"
 	if purpose == "livelihood_production":
-		return "" if str(actor.get("type", "")) == "person" and settlement == str(access.get("manager_id", "")) and bool(access.get("resident_production", false)) else "resident_use_denied"
+		if str(actor.get("type", "")) != "person":
+			return "resident_use_denied"
+		if settlement == str(access.get("manager_id", "")):
+			return "" if bool(access.get("resident_production", false)) else "resident_use_denied"
+		if access.get("version") != 2:
+			return "resident_use_denied"
+		var states: Dictionary = actor.get("states", {})
+		if states.get("daily_route_id", "") != "" or states.get("location_id", "") not in access.visitors.workplace_ids:
+			return "visitor_not_at_worksite"
+		return "" if amount <= visitor_remaining(stock, actor_id, day) + 0.0001 else "visitor_daily_limit"
 	var permission: Dictionary = access.get("organization_grants", {}).get(actor_id, {})
 	if not bool(permission.get("active", false)) or purpose not in permission.get("uses", []):
 		return "organization_not_authorized"
@@ -113,7 +140,9 @@ static func validate_change(change: Dictionary, stores: Dictionary) -> String:
 	var actor_id := str(change.get("actor_id", ""))
 	var entity_store: Variant = stores["entity_store"]
 	var states: Variant = stores["state_store"]
-	var error := _permission_error(stock, actor_id, entity_store.get_entity(actor_id),
+	var actor: Dictionary = entity_store.get_entity(actor_id)
+	actor["states"] = states.list_states(actor_id)
+	var error := _permission_error(stock, actor_id, actor,
 		str(states.get_state(actor_id, "settlement_id", "")), str(states.get_state(actor_id, "life_status", "alive")),
 		reason, amount, int(change.get("day", -1)))
 	if error != "":
@@ -124,6 +153,16 @@ static func validate_change(change: Dictionary, stores: Dictionary) -> String:
 	for id: Variant in sources:
 		if stores["fact_store"].get_fact(str(id)).is_empty():
 			return "source_unknown"
+	if reason == "livelihood_production" and stock.access.get("version") == 2:
+		var visitor := str(states.get_state(actor_id, "settlement_id", "")) != str(stock.access.manager_id)
+		if bool(change.get("visitor_use", false)) != visitor:
+			return "visitor_usage_must_be_recorded"
+		if visitor:
+			var production: Dictionary = stores.fact_store.get_fact(str(sources[0]))
+			if production.get("actor_id") != actor_id or production.get("day") != change.get("day") \
+					or production.get("location_id") != states.get_state(actor_id, "location_id", "") \
+					or production.get("fact_type") not in ["npc_livelihood_produced", "npc_work_maintained"]:
+				return "visitor_production_fact_mismatch"
 	if operation in ["grant_access", "revoke_access"]:
 		if reason != operation or actor_id != str(stock["access"]["manager_id"]):
 			return "grant_issuer_invalid"
@@ -158,6 +197,14 @@ static func validate_references(stores: Dictionary) -> String:
 		var fact: Dictionary = stores["fact_store"].get_fact(str(access["source_fact_id"]))
 		if not stores["entity_store"].has_entity(manager) or manager != str(stock.get("settlement_id", "")) or str(fact.get("fact_type", "")) != "resource_commons_established" or str(fact.get("actor_id", "")) != manager or str(stock.get("stock_id", "")) not in fact.get("stock_ids", []):
 			return "manager_or_source_invalid"
+		if access.get("version") == 2:
+			var source: Dictionary = stores.fact_store.get_fact(str(access.visitors.source_fact_id))
+			if source.get("fact_type") != "resource_visitor_access_established" or source.get("actor_id") != manager \
+					or stock.stock_id not in source.get("stock_ids", []) or source.get("visitor_policy") != access.visitors:
+				return "visitor_policy_source_invalid"
+			for id: String in access.visitor_usage:
+				if stores.entity_store.get_entity(id).get("type") != "person":
+					return "visitor_usage_actor_invalid"
 		for id: String in access["organization_grants"]:
 			var permission: Dictionary = access["organization_grants"][id]
 			var organization: Dictionary = stores["entity_store"].get_entity(id)
@@ -211,6 +258,18 @@ static func apply_metadata(stock: Dictionary, change: Dictionary) -> void:
 		var usage: Dictionary = access["usage"].get(id, {})
 		var used := float(usage.get("amount", 0)) if int(usage.get("day", -1)) == day else 0.0
 		access["usage"][id] = {"day": day, "amount": used + float(change.get("amount", 0))}
+	elif operation == "consume" and access.get("version") == 2 and change.get("visitor_use", false):
+		var id := str(change.actor_id)
+		var day := int(change.day)
+		var used := float(access.visitors.daily_limit) - visitor_remaining(stock, id, day)
+		access.visitor_usage[id] = {"day": day, "amount": used + float(change.amount)}
+
+
+static func visitor_remaining(stock: Dictionary, actor: String, day: int) -> float:
+	var access: Dictionary = stock.get("access", {})
+	var usage: Dictionary = access.get("visitor_usage", {}).get(actor, {})
+	var used := float(usage.get("amount", 0)) if int(usage.get("day", -1)) == day else 0.0
+	return maxf(float(access.get("visitors", {}).get("daily_limit", 0)) - used, 0)
 
 
 static func append_organization_access(result: Variant, snapshot: Variant, manager: String, organization: String, stock_ids: Array, source: String, day: int, revoke: bool = false) -> void:

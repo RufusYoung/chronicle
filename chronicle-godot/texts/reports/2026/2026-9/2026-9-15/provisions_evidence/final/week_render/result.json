@@ -1,0 +1,38 @@
+{
+	"checkpoint": "C:/code/game/chronicle/chronicle-godot/texts/reports/2026/2026-9/2026-9-15/provisions_evidence/final/week.ui.json",
+	"checks": {
+		"hours": true,
+		"layout_720": true,
+		"layout_900": true,
+		"record_720": true,
+		"restored": true,
+		"scene_720": true,
+		"scene_900": true,
+		"truth:rng_states": true,
+		"truth:session": true,
+		"truth:stores": true,
+		"truth:world_log": true,
+		"truth:world_time": true
+	},
+	"hours": 168.0,
+	"passed": true,
+	"scope": "Actual renderer of legal agent checkpoint; no game action, injection or human UI play. Native world truth unchanged.",
+	"visible_followups": [
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_128",
+			"source_fact_id": "fact.exchange.player_sale.127",
+			"text": "第6天 16:00，你看见叶牧吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		},
+		{
+			"brief": "第6天，叶荞吃下了一份留存食物。这批库存有你的补充。",
+			"fact_id": "fact.player_heard_update.126",
+			"source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.007.echo_port_environs_v1_time_126",
+			"text": "叶荞谈起后来的情况（你先前补充的食物）：第6天 14:00，叶荞吃下了一份自己留存的食物。"
+		},
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_landing.007.echo_port_environs_v1_time_126",
+			"source_fact_id": "fact.npc_livelihood.player.player_work.122",
+			"text": "第6天 14:00，你看见叶荞吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		}
+	]
+}

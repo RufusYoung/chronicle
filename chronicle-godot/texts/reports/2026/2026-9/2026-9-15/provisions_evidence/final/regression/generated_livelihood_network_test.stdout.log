@@ -1,0 +1,35 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62001 可以启动生成居民世界
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62001 的每名劳动者跨至少五个日历日完成多轮生产，没有一次性工作停滞
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62001 生成渔获、农产和手工品，物品数量与来源履历合法
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62001 的饥饿触发自食和家庭援助，援助真实改变关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62001 的居民均有有来源的同住、监护或受照料关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62001 推进五天后无悬空引用或被拒绝的生计事务
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62002 可以启动生成居民世界
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62002 的每名劳动者跨至少五个日历日完成多轮生产，没有一次性工作停滞
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62002 生成渔获、农产和手工品，物品数量与来源履历合法
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62002 的饥饿触发自食和家庭援助，援助真实改变关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62002 的居民均有有来源的同住、监护或受照料关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62002 推进五天后无悬空引用或被拒绝的生计事务
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62003 可以启动生成居民世界
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62003 的每名劳动者跨至少五个日历日完成多轮生产，没有一次性工作停滞
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62003 生成渔获、农产和手工品，物品数量与来源履历合法
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62003 的饥饿触发自食和家庭援助，援助真实改变关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62003 的居民均有有来源的同住、监护或受照料关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62003 推进五天后无悬空引用或被拒绝的生计事务
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62004 可以启动生成居民世界
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62004 的每名劳动者跨至少五个日历日完成多轮生产，没有一次性工作停滞
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62004 生成渔获、农产和手工品，物品数量与来源履历合法
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62004 的饥饿触发自食和家庭援助，援助真实改变关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62004 的居民均有有来源的同住、监护或受照料关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62004 推进五天后无悬空引用或被拒绝的生计事务
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62005 可以启动生成居民世界
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62005 的每名劳动者跨至少五个日历日完成多轮生产，没有一次性工作停滞
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62005 生成渔获、农产和手工品，物品数量与来源履历合法
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62005 的饥饿触发自食和家庭援助，援助真实改变关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62005 的居民均有有来源的同住、监护或受照料关系
+[V5 GENERATED LIVELIHOOD NETWORK PASS] seed 62005 推进五天后无悬空引用或被拒绝的生计事务
+[V5 GENERATED LIVELIHOOD NETWORK PASS] 五种子批量验收的停滞率、孤立人口和悬空引用均为零
+[V5 GENERATED LIVELIHOOD BATCH] {"invalid_reference_seed_count":0,"isolated_resident_count":0,"seed_count":5,"seeds":[{"isolated_resident_count":0,"livelihood_item_count":27,"production_fact_count":81,"reference_ok":true,"resident_count":12,"seed":62001,"self_meal_count":15,"shared_meal_count":15,"stalled_worker_count":0,"transaction_ok":true,"unmet_food_fact_count":52,"worker_count":7},{"isolated_resident_count":0,"livelihood_item_count":28,"production_fact_count":81,"reference_ok":true,"resident_count":12,"seed":62002,"self_meal_count":10,"shared_meal_count":30,"stalled_worker_count":0,"transaction_ok":true,"unmet_food_fact_count":51,"worker_count":7},{"isolated_resident_count":0,"livelihood_item_count":32,"production_fact_count":116,"reference_ok":true,"resident_count":12,"seed":62003,"self_meal_count":36,"shared_meal_count":35,"stalled_worker_count":0,"transaction_ok":true,"unmet_food_fact_count":26,"worker_count":10},{"isolated_resident_count":0,"livelihood_item_count":28,"production_fact_count":82,"reference_ok":true,"resident_count":12,"seed":62004,"self_meal_count":28,"shared_meal_count":62,"stalled_worker_count":0,"transaction_ok":true,"unmet_food_fact_count":17,"worker_count":7},{"isolated_resident_count":0,"livelihood_item_count":28,"production_fact_count":104,"reference_ok":true,"resident_count":12,"seed":62005,"self_meal_count":60,"shared_meal_count":54,"stalled_worker_count":0,"transaction_ok":true,"unmet_food_fact_count":3,"worker_count":8}],"shared_meal_count":196,"simulation_hours_per_seed":120,"stagnation_rate":0.0,"stalled_worker_count":0,"unmet_food_fact_count":149,"worker_count":39}
+[V5 GENERATED LIVELIHOOD NETWORK RESULT] PASS

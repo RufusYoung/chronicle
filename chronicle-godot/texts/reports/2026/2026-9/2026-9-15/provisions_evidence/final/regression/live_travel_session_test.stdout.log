@@ -1,0 +1,21 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LIVE TRAVEL SESSION PASS] 1. Session loads four locations but exposes only discovered routes
+[V5 LIVE TRAVEL SESSION PASS] 2. Snapshot projects only entities at the current location
+[V5 LIVE TRAVEL SESSION PASS] 3. Outbound route is generated from current world state
+[V5 LIVE TRAVEL SESSION PASS] 3a. A generous first-screen choice still leaves round-trip food
+[V5 LIVE TRAVEL SESSION PASS] 4. Travel consumes four hours and one food before switching location
+[V5 LIVE TRAVEL SESSION PASS] 5. Travel gives the helped family time to choose continued trade
+[V5 LIVE TRAVEL SESSION PASS] 6. Journey becomes a fact and a durable world-log entry
+[V5 LIVE TRAVEL SESSION PASS] 7. Arrival projects granary entities and hides shop entities
+[V5 LIVE TRAVEL SESSION PASS] 8. Arrival regenerates affordances from granary state
+[V5 LIVE TRAVEL SESSION PASS] 9. Only the return route is available at the granary
+[V5 LIVE TRAVEL SESSION PASS] 10. Granary supports the same data-driven investigation rules
+[V5 LIVE TRAVEL SESSION PASS] 11. Return travel consumes the remaining food and restores shop view
+[V5 LIVE TRAVEL SESSION PASS] 12. Returning reveals renewed hunger and closure without leaking granary entities
+[V5 LIVE TRAVEL SESSION PASS] 13. Routes expose a stable insufficient-food failure
+[V5 LIVE TRAVEL SESSION PASS] 14. Failed travel does not partially consume time or write logs
+[V5 LIVE TRAVEL SESSION PASS] 15. Summary separates journeys, actions, and world ticks
+[V5 LIVE TRAVEL SESSION PASS] 16. Existing deterministic runner remains compatible
+[V5 LIVE TRAVEL SESSION PASS] 17. Restart restores location, resources, and journey count
+[V5 LIVE TRAVEL SESSION RESULT] PASS
