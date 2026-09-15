@@ -33,12 +33,74 @@ static func matches(item: Dictionary, query: Dictionary) -> bool:
 	return any_tags.is_empty() or any_tags.any(func(tag: String) -> bool: return tag in item.get("tags", []))
 
 
+static func variants(profile: Dictionary) -> Array:
+	var rows: Array = [profile]
+	for spec: Dictionary in profile.get("recipe_variants", []):
+		var row := profile.duplicate(true)
+		row.erase("recipe_variants")
+		row.merge(spec, true)
+		rows.append(row)
+	return rows
+
+
+static func for_intent(profile: Dictionary, intent: String) -> Dictionary:
+	if intent.begins_with("work_supply:"):
+		intent = "recipe:" + intent.trim_prefix("work_supply:")
+	for row: Dictionary in variants(profile):
+		if intent == "recipe:" + str(row.get("work_recipe", {}).get("recipe_id", "")):
+			return row
+	return profile
+
+
+static func input_summary(profile: Dictionary, registry: Variant) -> String:
+	var materials: Array[String] = []
+	for input: Dictionary in profile.get("resource_inputs", []):
+		materials.append("%s×%s" % [input.get("label", "本地原料"), str(input.amount_per_cycle)])
+	for input: Dictionary in profile.get("work_recipe", {}).get("item_inputs", []):
+		materials.append("%s×%d" % [_query_label(input.query, registry), input.quantity])
+	var tools: Array[String] = []
+	for input: Dictionary in profile.get("work_recipe", {}).get("tools", []):
+		tools.append("%s，磨损%d格" % [_query_label(input.query, registry), input.wear])
+	return "材料：%s。工具：%s。" % ["、".join(materials), "；".join(tools) if not tools.is_empty() else "无需消耗工具耐久"]
+
+
+static func _query_label(query: Dictionary, registry: Variant) -> String:
+	var names: Array[String] = []
+	for definition: Dictionary in registry.list_definitions("item").values():
+		if matches(definition, query):
+			names.append(str(definition.get("display_name", definition.item_def_id)))
+	return "或".join(names)
+
+
 static func validate_profile(profile: Dictionary, definitions: Variant) -> String:
 	var value: Variant = profile.get("work_recipe", {})
 	if not value is Dictionary:
 		return "work_recipe_not_dictionary"
 	if value.is_empty():
-		return ""
+		return "recipe_variants_require_primary" if profile.has("recipe_variants") else ""
+	if not profile.get("recipe_variants", []) is Array:
+		return "invalid_recipe_variants"
+	var ids: Array = [str(value.get("recipe_id", ""))]
+	for spec: Variant in profile.get("recipe_variants", []):
+		if not spec is Dictionary or not spec.get("work_recipe") is Dictionary:
+			return "invalid_recipe_variant"
+		for key: String in spec:
+			if key not in ["label", "work_interval_hours", "products", "resource_inputs", "work_recipe", "choice_bias", "work_output_food"]:
+				return "unsupported_recipe_variant_field:" + key
+		if not _integer(spec.get("choice_bias", 0), 0) or int(spec.get("choice_bias", 0)) > 10:
+			return "invalid_recipe_choice_bias"
+		if spec.has("label") and (not spec.label is String or str(spec.label).strip_edges() == ""):
+			return "invalid_recipe_variant_label"
+		var id := str(spec.work_recipe.get("recipe_id", ""))
+		if id in ids:
+			return "duplicate_recipe_variant_id"
+		ids.append(id)
+		var child := profile.duplicate(true)
+		child.erase("recipe_variants")
+		child.merge(spec, true)
+		var error := validate_profile(child, definitions)
+		if error != "":
+			return error
 	if value.get("version") != 1 or not _integer(value.get("version"), 1):
 		return "unsupported_work_recipe_version"
 	for key: String in value:

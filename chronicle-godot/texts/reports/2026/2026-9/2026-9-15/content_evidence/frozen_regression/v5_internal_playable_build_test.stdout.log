@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 INTERNAL PLAYABLE BUILD PASS] 1. Normal launch uses the world bootstrap; the old slice remains an explicit regression scene
+[V5 INTERNAL PLAYABLE BUILD PASS] 2. Internal playable scene loads
+[V5 INTERNAL PLAYABLE BUILD PASS] 3. The first screen gives a specific objective and progress
+[V5 INTERNAL PLAYABLE BUILD PASS] 4. Onboarding states the slice boundary and reset action clearly
+[V5 INTERNAL PLAYABLE BUILD PASS] 5. Restart requires confirmation and defaults to the safe action
+[V5 INTERNAL PLAYABLE BUILD PASS] 6. A closed failure path becomes an honest playable endpoint
+[V5 INTERNAL PLAYABLE BUILD PASS] 7. Discovering the granary token advances the objective
+[V5 INTERNAL PLAYABLE BUILD PASS] 8. Finding Lu Huai's record points to expedition preparation
+[V5 INTERNAL PLAYABLE BUILD PASS] 9. Reaching the well explains the final choice and return
+[V5 INTERNAL PLAYABLE BUILD PASS] 10. Returning from the well creates an explicit playable endpoint
+[V5 INTERNAL PLAYABLE BUILD PASS] 11. Completing Lake Town can enter Seventh Outpost service
+[V5 INTERNAL PLAYABLE BUILD PASS] 12. Lake Town facts, one-way relationships, gear, and time enter the outpost
+[V5 INTERNAL PLAYABLE BUILD PASS] 13. The transitioned outpost session survives SaveEnvelope restore
+[V5 INTERNAL PLAYABLE BUILD PASS] 14. Confirmed restart clears end states and starts a fresh run
+[V5 INTERNAL PLAYABLE BUILD RESULT] PASS

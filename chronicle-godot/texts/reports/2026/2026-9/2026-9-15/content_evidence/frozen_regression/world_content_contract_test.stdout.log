@@ -1,0 +1,148 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] versioned content starts: 
+[PASS] content danger uses the selected world seed
+[PASS] embedded definitions registered in ordinary item registry
+[PASS] fisher keeps raw production and a processing alternative
+[PASS] unknown_item_effect rejected instead of ignored
+[PASS] unknown_npc_need rejected instead of ignored
+[PASS] unknown_monster_behavior rejected instead of ignored
+[PASS] unknown_incident_result rejected instead of ignored
+[PASS] unknown_work_field rejected instead of ignored
+[PASS] duplicate_npc rejected instead of ignored
+[PASS] invalid_mass rejected instead of ignored
+[PASS] malformed variant output fails before trait compilation
+[PASS] malformed variant output fails before trait compilation
+[PASS] malformed variant output fails before trait compilation
+[PASS] malformed variant output fails before trait compilation
+[PASS] changed definition cannot reuse an old compiled content marker
+[PASS] embedded content and compiled danger cannot diverge
+[PASS] old v2 worlds do not silently acquire new items or recipes
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.smoke_lake_fish uses shared work transaction
+[PASS] recipe.smoke_lake_fish consumes exact physical inputs
+[PASS] recipe.smoke_lake_fish stores exact finished batch
+[PASS] recipe.smoke_lake_fish has one production, not both recipe variants
+[PASS] recipe.smoke_lake_fish cannot repeat after material is consumed
+[PASS] produced food market branch uses native state
+[PASS] food market test finds an existing funded buyer
+[PASS] test injection brings actual buyer to food seller
+[PASS] item.smoked_lake_fish automatically receives a real market quote
+[PASS] item.smoked_lake_fish sells through ordinary market transaction
+[PASS] item.smoked_lake_fish has physical ownership and exact payer/seller money
+[PASS] item.smoked_lake_fish purchased batch enters real meals
+[PASS] item.smoked_lake_fish purchased food is consumed rather than only logged
+[PASS] recipe.smoke_lake_fish enters ordinary food withdrawal
+[PASS] recipe.smoke_lake_fish reaches ordinary household meal resolver
+[PASS] recipe.smoke_lake_fish is actually eaten
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.smoke_lake_fish cannot process remotely
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.roast_roots uses shared work transaction
+[PASS] recipe.roast_roots consumes exact physical inputs
+[PASS] recipe.roast_roots stores exact finished batch
+[PASS] recipe.roast_roots has one production, not both recipe variants
+[PASS] recipe.roast_roots cannot repeat after material is consumed
+[PASS] produced food market branch uses native state
+[PASS] food market test finds an existing funded buyer
+[PASS] test injection brings actual buyer to food seller
+[PASS] item.roasted_root_portion automatically receives a real market quote
+[PASS] item.roasted_root_portion sells through ordinary market transaction
+[PASS] item.roasted_root_portion has physical ownership and exact payer/seller money
+[PASS] item.roasted_root_portion purchased batch enters real meals
+[PASS] item.roasted_root_portion purchased food is consumed rather than only logged
+[PASS] recipe.roast_roots enters ordinary food withdrawal
+[PASS] recipe.roast_roots reaches ordinary household meal resolver
+[PASS] recipe.roast_roots is actually eaten
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.roast_roots cannot process remotely
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.double_light_cords uses shared work transaction
+[PASS] recipe.double_light_cords consumes exact physical inputs
+[PASS] recipe.double_light_cords stores exact finished batch
+[PASS] recipe.double_light_cords has one production, not both recipe variants
+[PASS] recipe.double_light_cords cannot repeat after material is consumed
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.double_light_cords cannot process remotely
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.rebind_fiber_rope uses shared work transaction
+[PASS] recipe.rebind_fiber_rope consumes exact physical inputs
+[PASS] recipe.rebind_fiber_rope stores exact finished batch
+[PASS] recipe.rebind_fiber_rope has one production, not both recipe variants
+[PASS] recipe.rebind_fiber_rope cannot repeat after material is consumed
+[PASS] controlled fixture loads through formal session
+[PASS] recipe.rebind_fiber_rope cannot process remotely
+[PASS] controlled fixture loads through formal session
+[PASS] item.light_reed_cord works as an existing rope capability
+[PASS] item.light_reed_cord wears its own definition durability
+[PASS] test injection exhausts item.light_reed_cord
+[PASS] item.light_reed_cord stops work at zero durability
+[PASS] item.light_reed_cord uses existing limited-repair capability
+[PASS] test injection places worn tool at repair site
+[PASS] item.light_reed_cord commits real repair labor
+[PASS] item.light_reed_cord commits real repair labor
+[PASS] item.light_reed_cord consumes fiber and restores only two durability
+[PASS] item.light_reed_cord cannot repair indefinitely
+[PASS] controlled fixture loads through formal session
+[PASS] item.doubled_reed_cord works as an existing rope capability
+[PASS] item.doubled_reed_cord wears its own definition durability
+[PASS] test injection exhausts item.doubled_reed_cord
+[PASS] item.doubled_reed_cord stops work at zero durability
+[PASS] item.doubled_reed_cord uses existing limited-repair capability
+[PASS] test injection places worn tool at repair site
+[PASS] item.doubled_reed_cord commits real repair labor
+[PASS] item.doubled_reed_cord commits real repair labor
+[PASS] item.doubled_reed_cord consumes fiber and restores only two durability
+[PASS] item.doubled_reed_cord cannot repair indefinitely
+[PASS] controlled fixture loads through formal session
+[PASS] controlled case selects an existing funded adult
+[PASS] explicit counterexample setup commits through writer
+[PASS] observing conditional incidents does not mutate the world
+[PASS] local food need offers sale and gift, not a mandatory story
+[PASS] incident identifies the actual present buyer
+[PASS] incident executes the real food sale once
+[PASS] incident awards no invented money beyond actual payment
+[PASS] resolved incident disappears during its cooldown
+[PASS] stale incident cannot be clicked indefinitely
+[PASS] underlying recipient meal remains visible
+[PASS] incident saves natively
+[PASS] incident restores: 
+[PASS] native load preserves incident cooldown
+[PASS] controlled fixture loads through formal session
+[PASS] worn-tool case reaches the fishery through ordinary travel
+[PASS] explicit worn-tool setup
+[PASS] worn cord offers paid-in-time work and tool-free gathering
+[PASS] worn incident executes underlying gather
+[PASS] alternative changes actual tool consumption: gather
+[PASS] worn incident resolves without forcing another step
+[PASS] controlled fixture loads through formal session
+[PASS] worn-tool case reaches the fishery through ordinary travel
+[PASS] explicit worn-tool setup
+[PASS] worn cord offers paid-in-time work and tool-free gathering
+[PASS] worn incident executes underlying work
+[PASS] alternative changes actual tool consumption: work
+[PASS] worn incident resolves without forcing another step
+[PASS] controlled fixture loads through formal session
+[PASS] previous processing intent does not make raw fishing falsely lack inputs
+[PASS] processing still requires owned raw fish
+[PASS] possible base work remains a candidate
+[PASS] procurement intent retains the selected recipe
+[PASS] arriving to buy material does not revert to the primary recipe
+[PASS] same real material is still needed at procurement time
+[PASS] decision information names actual material cost, not invented tool wear
+[PASS] controlled fixture loads through formal session
+[PASS] processing material can be available but unaffordable
+[PASS] funded counterexample transfers existing seller money, never mints it
+[PASS] processing intent buys raw material, not a replacement rope
+[PASS] processing material purchase commits
+[PASS] material acquisition transfers existing money
+[PASS] buyer physically carries all three processing inputs
+[PASS] correct recipe shortage clears after actual purchase
+[PASS] purchase site does not remotely execute the processing job
+[PASS] natural two days advance without test injection
+NATURAL_RECIPES {"recipe.hand_gather.net_fisher":1,"recipe.hand_gather.terrace_farmer":1,"recipe.net_fishing":4,"recipe.reed_cordage":2,"recipe.smoke_lake_fish":2,"recipe.terrace_farmer":1}
+[PASS] content world saves
+[PASS] embedded content restores: 
+[PASS] both native branches continue
+[PASS] full content state continues identically
+WORLD_CONTENT_RESULT PASS 144/144

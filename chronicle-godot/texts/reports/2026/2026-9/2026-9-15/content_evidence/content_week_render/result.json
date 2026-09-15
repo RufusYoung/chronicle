@@ -1,0 +1,37 @@
+{
+	"checkpoint": "res://texts/reports/2026/2026-9/2026-9-15/content_evidence/content_week.ui.json",
+	"checks": {
+		"hours": true,
+		"layout_720": true,
+		"layout_900": true,
+		"record_720": true,
+		"restored": true,
+		"scene_720": true,
+		"scene_900": true,
+		"truth:rng_states": true,
+		"truth:session": true,
+		"truth:stores": true,
+		"truth:world_log": true,
+		"truth:world_time": true
+	},
+	"hours": 168.0,
+	"passed": true,
+	"scope": "Actual renderer of legal agent checkpoint; no game action, injection or human UI play. Native world truth unchanged.",
+	"visible_followups": [
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_landing.005.echo_port_environs_v1_time_128",
+			"source_fact_id": "fact.npc_livelihood.player.player_work.9",
+			"text": "第6天 16:00，你看见叶砚吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		},
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_landing.004.echo_port_environs_v1_time_128",
+			"source_fact_id": "fact.npc_livelihood.player.player_work.9",
+			"text": "第6天 16:00，你看见叶牧吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		},
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_landing.006.echo_port_environs_v1_time_125",
+			"source_fact_id": "fact.npc_livelihood.player.player_work.9",
+			"text": "第6天 13:00，你看见叶遥吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		}
+	]
+}

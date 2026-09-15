@@ -1,0 +1,27 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 1. ObligationStore finds open due obligation by deadline and scope
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 2. ObligationStore ignores different scope_id
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 3. ObligationStore mark_due keeps status open and suppresses same trigger repeat
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 4. ExchangeStore finds open due exchange by deadline and scope
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 5. ExchangeStore mark_due keeps status open and suppresses same trigger repeat
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 6. trade_watch_duty_for_silence creates obligation with deadline and location scope
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 7. trade_watch_duty_for_silence creates exchange with deadline and location scope
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 8. trade action initializes obligation and exchange due_status = not_due
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 9. DueTriggerSystem creates obligation_due and exchange_due results
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 10. DueTriggerSystem does not directly write Store
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 11. TransactionWorldWriter writes obligation.due_status without changing status
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 12. TransactionWorldWriter writes exchange.due_status without changing status
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 13. due writeback records facts and attention pressure
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 14. include_due_checks=false does not trigger due checks
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 15. include_due_checks=true triggers obligation and exchange due
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 16. WorldTickAdapter writes due facts and due_status through writer
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 17. TickResult and WorldLog record due counts
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 18. different scope_id does not trigger obligation or exchange due
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 19. global scope due tick follows 24.2 and matches all scopes
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 20. repeated same trigger_key does not mark already due records again
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 21. TickEventSchema accepts include_due_checks and default due_kinds
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 22. TickEventSchema rejects unknown due_kinds
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 23. TickEventSchema rejects non-bool include_due_checks
+[V5 OBLIGATION EXCHANGE DUE TRIGGER PASS] 24. RawRuleContractValidator still PASS
+[V5 OBLIGATION EXCHANGE DUE TRIGGER RESULT] PASS

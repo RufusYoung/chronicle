@@ -1,0 +1,111 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 PLAYTEST UX REGRESSION PASS] 1. The first screen has safe resources and no premature granary shortcut
+[V5 PLAYTEST UX REGRESSION PASS] 2. Immediate feedback sits above secondary scene details
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: give_food_to_hungry_person:chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: give_food_to_hungry_person:chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Layout after give_food_to_hungry_person:chen_mi: 
+[V5 PLAYTEST UX REGRESSION PASS] 3. Giving food explains the result and removes the completed choice
+[V5 PLAYTEST UX REGRESSION PASS] 4. Repeating a completed choice cannot duplicate facts or history
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: read_visible_readable_object:old_chen_shop_price_notice
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: read_visible_readable_object:old_chen_shop_price_notice
+[V5 PLAYTEST UX REGRESSION PASS] Layout after read_visible_readable_object:old_chen_shop_price_notice: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: inspect_visible_trace:gray_grain_powder
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: inspect_visible_trace:gray_grain_powder
+[V5 PLAYTEST UX REGRESSION PASS] Layout after inspect_visible_trace:gray_grain_powder: 
+[V5 PLAYTEST UX REGRESSION PASS] 5. Two specific observations unlock travel and then disappear
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: old_chen_shop_to_abandoned_granary
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: old_chen_shop_to_abandoned_granary
+[V5 PLAYTEST UX REGRESSION PASS] Layout after old_chen_shop_to_abandoned_granary: 
+[V5 PLAYTEST UX REGRESSION PASS] 6. The generous route reaches the granary without a return softlock
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: inspect_visible_trace:abandoned_granary_mold_trace
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: inspect_visible_trace:abandoned_granary_mold_trace
+[V5 PLAYTEST UX REGRESSION PASS] Layout after inspect_visible_trace:abandoned_granary_mold_trace: 
+[V5 PLAYTEST UX REGRESSION PASS] 7. Reading the granary trace reveals its risk choices
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: abandoned_granary_to_old_chen_shop
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: abandoned_granary_to_old_chen_shop
+[V5 PLAYTEST UX REGRESSION PASS] Layout after abandoned_granary_to_old_chen_shop: 
+[V5 PLAYTEST UX REGRESSION PASS] 8. A legal generous opening always permits the full round trip
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: give_food_to_hungry_person:chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: give_food_to_hungry_person:chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Layout after give_food_to_hungry_person:chen_mi: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: read_visible_readable_object:old_chen_shop_price_notice
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: read_visible_readable_object:old_chen_shop_price_notice
+[V5 PLAYTEST UX REGRESSION PASS] Layout after read_visible_readable_object:old_chen_shop_price_notice: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: inspect_visible_trace:gray_grain_powder
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: inspect_visible_trace:gray_grain_powder
+[V5 PLAYTEST UX REGRESSION PASS] Layout after inspect_visible_trace:gray_grain_powder: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: old_chen_shop_to_abandoned_granary
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: old_chen_shop_to_abandoned_granary
+[V5 PLAYTEST UX REGRESSION PASS] Layout after old_chen_shop_to_abandoned_granary: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: inspect_visible_trace:abandoned_granary_mold_trace
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: inspect_visible_trace:abandoned_granary_mold_trace
+[V5 PLAYTEST UX REGRESSION PASS] Layout after inspect_visible_trace:abandoned_granary_mold_trace: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: prepare_granary_entry
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: prepare_granary_entry
+[V5 PLAYTEST UX REGRESSION PASS] Layout after prepare_granary_entry: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: enter_abandoned_granary
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: enter_abandoned_granary
+[V5 PLAYTEST UX REGRESSION PASS] Layout after enter_abandoned_granary: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: abandoned_granary_to_old_chen_shop
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: abandoned_granary_to_old_chen_shop
+[V5 PLAYTEST UX REGRESSION PASS] Layout after abandoned_granary_to_old_chen_shop: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: show_granary_measure_token_to_chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: show_granary_measure_token_to_chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Layout after show_granary_measure_token_to_chen_mi: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: investigate_public_granary_seal_records
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: investigate_public_granary_seal_records
+[V5 PLAYTEST UX REGRESSION PASS] Layout after investigate_public_granary_seal_records: 
+[V5 PLAYTEST UX REGRESSION PASS] 9. The revealed tax deed is offered as a readable clue
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: read_visible_readable_object:old_chen_public_granary_tax_deed
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: read_visible_readable_object:old_chen_public_granary_tax_deed
+[V5 PLAYTEST UX REGRESSION PASS] Layout after read_visible_readable_object:old_chen_public_granary_tax_deed: 
+[V5 PLAYTEST UX REGRESSION PASS] 10. Reading exposes the actual clue, records it, and removes the choice
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: request_favor_from_indebted_person:chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: request_favor_from_indebted_person:chen_mi
+[V5 PLAYTEST UX REGRESSION PASS] Layout after request_favor_from_indebted_person:chen_mi: 
+[V5 PLAYTEST UX REGRESSION PASS] 11. Chen Mi gives contextual Chinese help and the favor disappears
+[V5 PLAYTEST UX REGRESSION PASS] 12. Re-clicking the spent favor cannot duplicate facts or history
+[V5 PLAYTEST UX REGRESSION PASS] 13. Earlier conversations consume time: by 06:00 the ferry opens without an extra waiting step
+[V5 PLAYTEST UX REGRESSION PASS] 14. Reusing the completed rest action cannot skip another day
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: old_chen_shop_to_north_quay_record_house
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: old_chen_shop_to_north_quay_record_house
+[V5 PLAYTEST UX REGRESSION PASS] Layout after old_chen_shop_to_north_quay_record_house: 
+[V5 PLAYTEST UX REGRESSION PASS] 15. The archive danger is hidden before its rules and tide are read
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: read_visible_readable_object:north_quay_visiting_rules
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: read_visible_readable_object:north_quay_visiting_rules
+[V5 PLAYTEST UX REGRESSION PASS] Layout after read_visible_readable_object:north_quay_visiting_rules: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: inspect_visible_trace:north_quay_tide_marks
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: inspect_visible_trace:north_quay_tide_marks
+[V5 PLAYTEST UX REGRESSION PASS] Layout after inspect_visible_trace:north_quay_tide_marks: 
+[V5 PLAYTEST UX REGRESSION PASS] 16. Archive evidence unlocks the preparation and danger choices
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: prepare_flooded_archive_search
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: prepare_flooded_archive_search
+[V5 PLAYTEST UX REGRESSION PASS] Layout after prepare_flooded_archive_search: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: search_flooded_archive_stack
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: search_flooded_archive_stack
+[V5 PLAYTEST UX REGRESSION PASS] Layout after search_flooded_archive_stack: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: prepare_mist_salt_well_expedition
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: prepare_mist_salt_well_expedition
+[V5 PLAYTEST UX REGRESSION PASS] Layout after prepare_mist_salt_well_expedition: 
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: north_quay_record_house_to_mist_salt_well
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: north_quay_record_house_to_mist_salt_well
+[V5 PLAYTEST UX REGRESSION PASS] Layout after north_quay_record_house_to_mist_salt_well: 
+[V5 PLAYTEST UX REGRESSION PASS] 17. The well does not reveal consequences before the evidence
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: combat:mist_salt_well_claimant:retreat
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: combat:mist_salt_well_claimant:retreat
+[V5 PLAYTEST UX REGRESSION PASS] Layout after combat:mist_salt_well_claimant:retreat: 
+[V5 PLAYTEST UX REGRESSION PASS] 17a. A real encounter explains its result and consumes every approach
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: inspect_visible_trace:mist_salt_well_mouth_crust
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: inspect_visible_trace:mist_salt_well_mouth_crust
+[V5 PLAYTEST UX REGRESSION PASS] Layout after inspect_visible_trace:mist_salt_well_mouth_crust: 
+[V5 PLAYTEST UX REGRESSION PASS] 18. Testing the filaments gives information and unlocks return
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: read_visible_readable_object:mist_salt_well_warning_stone
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: read_visible_readable_object:mist_salt_well_warning_stone
+[V5 PLAYTEST UX REGRESSION PASS] Layout after read_visible_readable_object:mist_salt_well_warning_stone: 
+[V5 PLAYTEST UX REGRESSION PASS] 19. Reading the warning reveals the irreversible descent choice
+[V5 PLAYTEST UX REGRESSION PASS] Required button is available: mist_salt_well_to_north_quay_record_house
+[V5 PLAYTEST UX REGRESSION PASS] Choice is reachable on a visible page: mist_salt_well_to_north_quay_record_house
+[V5 PLAYTEST UX REGRESSION PASS] Layout after mist_salt_well_to_north_quay_record_house: 
+[V5 PLAYTEST UX REGRESSION PASS] 20. A UI-only successful run has a readable ending and at least 23 steps
+[V5 PLAYTEST UX REGRESSION RESULT] PASS

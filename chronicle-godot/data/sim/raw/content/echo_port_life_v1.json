@@ -1,0 +1,391 @@
+{
+  "version": 1,
+  "id": "echo_port_life_v1",
+  "source_note": "回音港与镜湖森林带为原设定锚点；下列沿岸加工方式、绳具、居民处境与单只野猪参数是生成生活细节，不增加大世界史实。食品仍使用共同的按份进食规则，尚无保鲜期和营养差异。",
+  "item_defs": [
+    {
+      "item_def_id": "item.smoked_lake_fish",
+      "definition_version": 1,
+      "display_name": "熏湖鱼",
+      "display_name_key": "item.smoked_lake_fish.name",
+      "item_kind": "food",
+      "tags": [
+        "food",
+        "processed_food",
+        "smoked_fish"
+      ],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 0.45,
+      "equip_slots": [],
+      "capabilities": [
+        "consume",
+        "trade",
+        "split_stack"
+      ],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 5
+    },
+    {
+      "item_def_id": "item.roasted_root_portion",
+      "definition_version": 1,
+      "display_name": "烤根块",
+      "display_name_key": "item.roasted_root_portion.name",
+      "item_kind": "food",
+      "tags": [
+        "food",
+        "processed_food",
+        "roasted_root"
+      ],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 0.4,
+      "equip_slots": [],
+      "capabilities": [
+        "consume",
+        "trade",
+        "split_stack"
+      ],
+      "durability": {},
+      "modifiers": [],
+      "base_value": 3
+    },
+    {
+      "item_def_id": "item.light_reed_cord",
+      "definition_version": 1,
+      "display_name": "细苇绳",
+      "display_name_key": "item.light_reed_cord.name",
+      "item_kind": "craft_good",
+      "tags": [
+        "craft_good",
+        "rope",
+        "livelihood_product"
+      ],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 0.3,
+      "equip_slots": [],
+      "capabilities": [
+        "consume",
+        "trade",
+        "split_stack"
+      ],
+      "durability": {
+        "maximum": 2
+      },
+      "modifiers": [],
+      "base_value": 3
+    },
+    {
+      "item_def_id": "item.doubled_reed_cord",
+      "definition_version": 1,
+      "display_name": "合股苇绳",
+      "display_name_key": "item.doubled_reed_cord.name",
+      "item_kind": "craft_good",
+      "tags": [
+        "craft_good",
+        "rope",
+        "livelihood_product"
+      ],
+      "stackable": true,
+      "max_stack": 20,
+      "base_mass": 0.6,
+      "equip_slots": [],
+      "capabilities": [
+        "consume",
+        "trade",
+        "split_stack"
+      ],
+      "durability": {
+        "maximum": 6
+      },
+      "modifiers": [],
+      "base_value": 9
+    }
+  ],
+  "work_rules": {
+    "version": 1,
+    "maintenance": [
+      {
+        "recipe_id": "recipe.patch_cordage",
+        "label": "用纤维修补绳具",
+        "resource_tags_all": [
+          "reeds",
+          "fiber"
+        ],
+        "amount_per_cycle": 1,
+        "work_interval_hours": 2,
+        "repairs": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "restore": 2,
+            "maximum_repairs": 1
+          }
+        ]
+      }
+    ],
+    "overrides": [
+      {
+        "product_query": {
+          "tags_all": [
+            "fish"
+          ]
+        },
+        "label": "网具捕捞",
+        "work_recipe": {
+          "version": 1,
+          "recipe_id": "recipe.net_fishing",
+          "item_inputs": [],
+          "tools": [
+            {
+              "query": {
+                "tags_all": [
+                  "rope"
+                ]
+              },
+              "wear": 1
+            }
+          ]
+        },
+        "initial_tools": [
+          {
+            "item_def_id": "item.fiber_rope",
+            "quantity": 1
+          }
+        ],
+        "recipe_variants": [
+          {
+            "label": "熏制湖鱼",
+            "work_interval_hours": 2,
+            "resource_inputs": [],
+            "products": [
+              {
+                "item_def_id": "item.smoked_lake_fish",
+                "quantity": 2
+              }
+            ],
+            "choice_bias": 10,
+            "work_recipe": {
+              "version": 1,
+              "recipe_id": "recipe.smoke_lake_fish",
+              "item_inputs": [
+                {
+                  "query": {
+                "item_def_id": "item.fresh_fish_portion"
+                  },
+                  "quantity": 3
+                }
+              ],
+              "tools": []
+            }
+          }
+        ]
+      },
+      {
+        "product_query": {
+          "tags_all": [
+            "root_vegetable"
+          ]
+        },
+        "recipe_variants": [
+          {
+            "label": "烘烤根块",
+            "work_interval_hours": 2,
+            "resource_inputs": [],
+            "products": [
+              {
+                "item_def_id": "item.roasted_root_portion",
+                "quantity": 3
+              }
+            ],
+            "choice_bias": 10,
+            "work_recipe": {
+              "version": 1,
+              "recipe_id": "recipe.roast_roots",
+              "item_inputs": [
+                {
+                  "query": {
+                "item_def_id": "item.root_vegetable_portion"
+                  },
+                  "quantity": 4
+                }
+              ],
+              "tools": []
+            }
+          }
+        ]
+      },
+      {
+        "product_query": {
+          "tags_all": [
+            "household_good",
+            "reed"
+          ]
+        },
+      "label": "捻细苇绳",
+      "work_interval_hours": 4,
+        "products": [
+          {
+            "item_def_id": "item.light_reed_cord",
+            "quantity": 1
+          }
+        ],
+        "work_recipe": {
+          "version": 1,
+          "recipe_id": "recipe.reed_cordage",
+          "item_inputs": [],
+          "tools": [
+            {
+              "query": {
+                "tags_all": [
+                  "rope"
+                ]
+              },
+              "wear": 1
+            }
+          ]
+        },
+        "initial_tools": [
+          {
+            "item_def_id": "item.fiber_rope",
+            "quantity": 1
+          }
+        ],
+        "recipe_variants": [
+          {
+            "label": "合股细苇绳",
+            "work_interval_hours": 2,
+            "resource_inputs": [],
+            "products": [
+              {
+                "item_def_id": "item.doubled_reed_cord",
+                "quantity": 1
+              }
+            ],
+            "choice_bias": 10,
+            "work_recipe": {
+              "version": 1,
+              "recipe_id": "recipe.double_light_cords",
+              "item_inputs": [
+                {
+                  "query": {
+                    "item_def_id": "item.light_reed_cord"
+                  },
+                  "quantity": 2
+                }
+              ],
+              "tools": []
+            }
+          },
+          {
+            "label": "旧式纤绳重新合股",
+            "work_interval_hours": 3,
+            "resource_inputs": [],
+            "products": [
+              {
+                "item_def_id": "item.doubled_reed_cord",
+                "quantity": 1
+              }
+            ],
+            "choice_bias": 10,
+            "work_recipe": {
+              "version": 1,
+              "recipe_id": "recipe.rebind_fiber_rope",
+              "item_inputs": [
+                {
+                  "query": {
+                    "item_def_id": "item.fiber_rope"
+                  },
+                  "quantity": 2
+                }
+              ],
+              "tools": []
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "resident_variants": [
+    {
+      "id": "careful_and_tired",
+      "states": {
+        "temperament": "cautious",
+        "hunger": "medium",
+        "fatigue": 7
+      }
+    },
+    {
+      "id": "bold_and_rested",
+      "states": {
+        "temperament": "bold",
+        "hunger": "low",
+        "fatigue": 1
+      }
+    }
+  ],
+  "world_danger": {
+    "version": 1,
+    "contacts_enabled": true,
+    "memory_hours": 24,
+    "retreat_hours": 30,
+    "recovery_hours": 12,
+    "rest_health_gain": 3,
+    "threat": {
+      "display_name": "田边护食的野猪",
+      "health": 32,
+      "attack": 15,
+      "defense": 18,
+      "escape_difficulty": 12,
+      "retreat_health": 14,
+      "damage": 8,
+      "start_hour": 8,
+      "end_hour": 17
+    }
+  },
+  "incidents": [
+    {
+      "id": "fraying_cord",
+      "title": "绳股起毛",
+      "body": "你随身的一件绳具只剩最后一格耐久。继续接作业要核对工具消耗，也可以暂时徒手采食。这里没有额外报酬，仍按所选行动结算。",
+      "condition": "worn_owned_tool",
+      "cooldown_hours": 24,
+      "responses": [
+        {
+          "id": "gather",
+          "label": "先徒手找点吃的",
+          "action_prefix": "gather:"
+        },
+        {
+          "id": "work",
+          "label": "查看能接的作业",
+          "action_prefix": "work:"
+        }
+      ]
+    },
+    {
+      "id": "food_at_hand",
+      "title": "眼前的饥饿",
+      "body": "在场有人正缺食物，而你带着多于两份口粮。可以分出一份，也可以提出买卖；对方可能没有钱。余粮属于你，离开或留着也不会触发惩罚。",
+      "condition": "present_food_need",
+      "cooldown_hours": 12,
+      "responses": [
+        {
+          "id": "share",
+          "label": "分出一份",
+          "action_prefix": "give_food:"
+        },
+        {
+          "id": "offer",
+          "label": "按价出售一份",
+          "action_prefix": "sell_food:"
+        }
+      ]
+    }
+  ]
+}

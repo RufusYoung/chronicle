@@ -14,6 +14,7 @@ const Recipe = preload("res://scripts/sim/economy/work_recipe_service.gd")
 const Work = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const Danger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const Local = preload("res://scripts/sim/player/player_local_life.gd")
+const Incidents = preload("res://scripts/sim/player/local_incident_options.gd")
 const PROFILE := {"version": 1, "help_wage": 3, "employer_food_limit": 8}
 const PROFILE_V2 := {"version": 2, "help_wage": 3, "employer_food_limit": 8}
 
@@ -131,7 +132,7 @@ static func tick(context: Variant, stores: Dictionary, time: Dictionary, profile
 	return ""
 
 
-static func options(session: Variant) -> Array:
+static func options(session: Variant, include_incidents: bool = true) -> Array:
 	if not enabled(session.fixture_source_data):
 		return []
 	var view: Variant = snapshot(session.context, session.stores, session.get_time_summary())
@@ -159,9 +160,11 @@ static func options(session: Variant) -> Array:
 			continue
 		var id := "gather:" + str(profile.occupation_id)
 		var reason := work_denial(session, actor, true)
-		rows.append(row(id, "采集自己的口粮", "采得至多%d份归自己携带；公用资源枯竭或危险会使作业中断。" % profile.products[0].quantity, reason, int(profile.work_interval_hours)))
+		if reason == "":
+			reason = content_resource_denial(session, view, actor, profile)
+		rows.append(work_option(actor, id, "采集自己的口粮", "采得至多%d份归自己携带；公用资源枯竭或危险会使作业中断。" % profile.products[0].quantity, reason, int(profile.work_interval_hours)))
 		for employer: Dictionary in employers(view, actor, session.fixture_source_data.player_life):
-			rows.append(row("help:" + str(employer.id) + ":" + str(profile.occupation_id), "帮%s采收" % employer.display_name,
+			rows.append(work_option(actor, "help:" + str(employer.id) + ":" + str(profile.occupation_id), "帮%s采收" % employer.display_name,
 				"产物交给对方，完成时领取%d铜币。对方离开、缺钱或资源不足会停工。" % PROFILE.help_wage, reason, int(profile.work_interval_hours)))
 	for entry: Dictionary in work_profiles(session, view, actor):
 		var profile: Dictionary = entry.profile
@@ -169,7 +172,9 @@ static func options(session: Variant) -> Array:
 		var reason := work_denial(session, actor, true)
 		if reason == "" and not plan.ok:
 			reason = Livelihood.new()._work_denial_label(str(plan.missing.denial))
-		var effect := "实际投入材料、使用并磨损手边的工具，成品由你携带。"
+		if reason == "":
+			reason = content_resource_denial(session, view, actor, profile)
+		var effect := Recipe.input_summary(profile, session.registry) + "成品由你携带。"
 		if entry.kind == "maintenance":
 			effect = "投入本地材料修补耐久耗尽的工具；修补次数和可恢复耐久均有限。"
 		else:
@@ -177,13 +182,16 @@ static func options(session: Variant) -> Array:
 			for product: Dictionary in profile.products:
 				outputs.append("%s×%d" % [session.registry.get_definition("item", str(product.item_def_id)).display_name, product.quantity])
 			effect = "产物：%s。" % "、".join(outputs) + effect
-		rows.append(row(entry.id, str(profile.label), effect, reason, int(profile.work_interval_hours)))
+		rows.append(work_option(actor, entry.id, str(profile.label), effect, reason, int(profile.work_interval_hours)))
 	for offer: Dictionary in offers(view, actor, config.food_access, session.stores, session.npc_livelihood_profiles):
 		var offered_item: Dictionary = session.stores.item_store.get_item(str(offer.item_instance_id))
 		var condition: Dictionary = offer.get("item", {}).get("condition", {})
 		var detail := "耐久%d/%d，耗尽后可尝试在作坊修补。" % [condition.durability, condition.maximum_durability] if condition.has("durability") else ""
 		var uses: Array[String] = []
-		for profile: Dictionary in session.npc_livelihood_profiles:
+		var uses_profiles: Array = []
+		for primary: Dictionary in session.npc_livelihood_profiles:
+			uses_profiles.append_array(Recipe.variants(primary))
+		for profile: Dictionary in uses_profiles:
 			for spec: Dictionary in profile.get("work_recipe", {}).get("tools", []):
 				if Recipe.matches(offered_item, spec.query):
 					var use := "可用于%s，每次磨损%d。" % [profile.label, spec.wear]
@@ -194,7 +202,7 @@ static func options(session: Variant) -> Array:
 		rows.append(row("buy:" + str(offer.item_instance_id), "向%s买1件%s · %d铜币" % [offer.seller_name, offer.display_name, offer.unit_price],
 			detail + "真实现货归你携带；对方保留基本口粮和自用作业工具。",
 			"铜币不足" if Food.balance(view.get_items_for_holder(str(actor.id)), str(actor.id)) < int(offer.unit_price) else ""))
-	return rows
+	return Incidents.decorate(session, rows) if include_incidents else rows
 
 
 static func row(id: String, label: String, hint: String, reason: String = "", hours: int = 1) -> Dictionary:
@@ -205,8 +213,41 @@ static func row(id: String, label: String, hint: String, reason: String = "", ho
 
 
 static func gather_profiles(session: Variant, view: Variant, actor: Dictionary) -> Array:
-	return Subsistence.candidates(actor, session.npc_livelihood_profiles,
+	return Subsistence.candidates(local_work_actor(session, actor), session.npc_livelihood_profiles,
 		session.fixture_source_data.resident_daily_life.food_access.subsistence, view)
+
+
+static func local_work_actor(session: Variant, actor: Dictionary) -> Dictionary:
+	# Candidate locality is not membership. Permission checks still read the real actor from Stores.
+	if int(session.fixture_source_data.get("content_extension", {}).get("version", 0)) == 1 and actor.states.get("daily_route_id", "") == "":
+		for profile: Dictionary in session.npc_livelihood_profiles:
+			if profile.get("workplace_id") == actor.states.get("location_id"):
+				var local := actor.duplicate(true)
+				local.states.settlement_id = profile.settlement_id
+				return local
+	return actor
+
+
+static func content_resource_denial(session: Variant, view: Variant, actor: Dictionary, profile: Dictionary) -> String:
+	if int(session.fixture_source_data.get("content_extension", {}).get("version", 0)) != 1:
+		return ""
+	var work := Livelihood.new()
+	var plan := work._resource_plan(profile, work._available_resource_amounts(view), view, str(actor.id))
+	if plan.ok:
+		return ""
+	return work._work_denial_label(str(plan.missing.denial)) if plan.missing.denial != "" else "%s不足" % plan.missing.label
+
+
+static func work_option(actor: Dictionary, id: String, label: String, hint: String, reason: String, hours: int) -> Dictionary:
+	var progress := 0
+	if actor.states.get("daily_intent_id", "") == id and actor.states.get("subsistence_workplace_id", "") == actor.states.get("location_id"):
+		progress = clampi(int(actor.states.get("subsistence_elapsed_hours", 0)), 0, hours - 1)
+	if progress > 0:
+		label = "继续" + label
+		hint = "已完成%d/%d小时，尚需%d小时；休息后可继续，换作业会丢失这次准备。" % [progress, hours, hours - progress] + hint
+	var option := row(id, label, hint, reason, hours - progress)
+	option["work_progress"] = {"completed_hours": progress, "total_hours": hours, "remaining_hours": hours - progress}
+	return option
 
 
 static func employers(view: Variant, actor: Dictionary, config: Dictionary) -> Array:
@@ -246,14 +287,18 @@ static func offers(view: Variant, actor: Dictionary, config: Dictionary, stores:
 
 static func work_profiles(session: Variant, view: Variant, actor: Dictionary) -> Array:
 	var rows: Array = []
-	for profile: Dictionary in session.npc_livelihood_profiles:
-		if not Recipe.enabled(profile) or profile.get("settlement_id") != actor.states.get("settlement_id") \
+	var local := local_work_actor(session, actor)
+	var profiles: Array = []
+	for base: Dictionary in session.npc_livelihood_profiles:
+		profiles.append_array(Recipe.variants(base))
+	for profile: Dictionary in profiles:
+		if not Recipe.enabled(profile) or profile.get("settlement_id") != local.states.get("settlement_id") \
 				or profile.get("workplace_id") != actor.states.get("location_id") or int(profile.get("wage_amount", 0)) > 0:
 			continue
 		var own := profile.duplicate(true)
 		own["actor_tags_all"] = ["player_controlled"]
 		rows.append({"id": "work:" + str(own.work_recipe.recipe_id), "profile": own, "kind": "production"})
-	for profile: Dictionary in Work.repair_profiles(view, actor, session.fixture_source_data.resident_daily_life):
+	for profile: Dictionary in Work.repair_profiles(view, local, session.fixture_source_data.resident_daily_life):
 		if profile.workplace_id != actor.states.location_id:
 			continue
 		var own := profile.duplicate(true)
@@ -274,7 +319,9 @@ static func work_denial(session: Variant, actor: Dictionary, next_hour: bool = f
 
 
 static func execute(session: Variant, id: String) -> Dictionary:
-	var selected: Array = options(session).filter(func(option: Dictionary) -> bool: return option.action_id == id and option.can_execute)
+	if id.begins_with("incident:"):
+		return Incidents.execute(session, id)
+	var selected: Array = options(session, false).filter(func(option: Dictionary) -> bool: return option.action_id == id and option.can_execute)
 	if selected.is_empty():
 		return {"success": false, "error": "player_life_option_unavailable"}
 	var actor := str(session.context.actor_id)

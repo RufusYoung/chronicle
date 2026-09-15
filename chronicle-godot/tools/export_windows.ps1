@@ -36,6 +36,7 @@ if ($smoke.ExitCode -ne 0 -or $smokeText -match '(?m)^(ERROR:|SCRIPT ERROR:)' -o
 }
 Copy-Item -LiteralPath (Join-Path $project 'texts\build\H1_WINDOWS_README.md') -Destination (Join-Path $output 'README.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\environments\ASSET_PROVENANCE.md') -Destination (Join-Path $output 'ASSET_PROVENANCE.md')
+Copy-Item -LiteralPath (Join-Path $project 'art\environments\ECHO_PORT_PROVENANCE.md') -Destination (Join-Path $output 'ECHO_PORT_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\fonts\SOURCE_HAN_SERIF_LICENSE.txt') -Destination (Join-Path $output 'SOURCE_HAN_SERIF_LICENSE.txt')
 Copy-Item -LiteralPath (Join-Path $project 'texts\build\GODOT_COPYRIGHT.txt') -Destination (Join-Path $output 'GODOT_COPYRIGHT.txt')
 $manifest = [ordered]@{

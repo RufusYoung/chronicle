@@ -1,0 +1,12 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 RAW RULE EFFECT BINDING PASS] 1. basic give_food_to_hungry_person carries give_food_help_effect
+[V5 RAW RULE EFFECT BINDING PASS] 2. basic ask_about_concealed_item carries inquiry_concealed_item_effect
+[V5 RAW RULE EFFECT BINDING PASS] 3. domain report_discipline_violation_to_superior carries discipline_report_effect
+[V5 RAW RULE EFFECT BINDING PASS] 4. ActionCandidate carries effect_template_id
+[V5 RAW RULE EFFECT BINDING PASS] 5. TransactionResolver resolves candidate.effect_template_id instead of guessing from rule_id
+[V5 RAW RULE EFFECT BINDING PASS] 6. test_inquiry_concealed_item_alias executes without TransactionResolver rule mapping
+[V5 RAW RULE EFFECT BINDING PASS] 7. test alias produces being_questioned_about_hidden_item memory
+[V5 RAW RULE EFFECT BINDING PASS] 8. test alias produces fear +5
+[V5 RAW RULE EFFECT BINDING PASS] 9. candidate_only returns an empty transaction result safely
+[V5 RAW RULE EFFECT BINDING RESULT] PASS

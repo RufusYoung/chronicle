@@ -1,0 +1,11 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PLAYER ACTION RECEIPT PASS] The transaction-only contract remains explicit for simulation injection
+[PLAYER ACTION RECEIPT PASS] Displayed cost uses the same duration as settlement, including rule overrides
+[PLAYER ACTION RECEIPT PASS] Session facade uses candidate duration, not a second UI clock
+[PLAYER ACTION RECEIPT PASS] A consumed choice cannot advance time or mutate logs a second time
+[PLAYER ACTION RECEIPT PASS] Injected tick failure is distinguished from an unapplied action
+[PLAYER ACTION RECEIPT PASS] A failed world tick cannot be retried by consuming the same choice again
+[PLAYER ACTION RECEIPT PASS] Causal receipts round-trip through the existing save envelope
+[PLAYER ACTION RECEIPT PASS] Loading retains direct versus routine consequences and their cause labels
+[PLAYER ACTION RECEIPT RESULT] PASS

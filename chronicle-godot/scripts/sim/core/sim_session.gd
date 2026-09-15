@@ -87,6 +87,7 @@ const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd
 const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const Subsistence = preload("res://scripts/sim/npc/resident_subsistence.gd")
 const WorkRules = preload("res://scripts/sim/economy/work_rules_setup.gd")
+const ContentExtension = preload("res://scripts/sim/generation/world_content_extension.gd")
 const Community = preload("res://scripts/sim/organization/local_cooperation.gd")
 const CommunityKnowledge = preload("res://scripts/sim/npc/community_knowledge.gd")
 const WorldDangerSetup = preload("res://scripts/sim/combat/world_danger_setup.gd")
@@ -265,6 +266,16 @@ func start_from_fixture_path(
 		fixture["work_rules"] = loader.load_json(WorkRules.DEFAULT_PATH)
 		if fixture.work_rules.is_empty():
 			return _start_failure("work_rules_not_loaded")
+	if options.get("content_extension_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_content_extension_version")
+	if options.has("content_extension_path") and options.get("content_extension_version", 0) != 1:
+		return _start_failure("content_path_requires_explicit_version")
+	if options.get("content_extension_version", 0) == 1:
+		if not options.get("content_extension_path", ContentExtension.DEFAULT_PATH) is String:
+			return _start_failure("invalid_content_extension_path")
+		fixture["content_extension"] = loader.load_json(str(options.get("content_extension_path", ContentExtension.DEFAULT_PATH)))
+		if fixture.content_extension.is_empty():
+			return _start_failure("content_extension_not_loaded")
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -281,6 +292,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	_reset_runtime()
 	if fixture.is_empty():
 		return _start_failure("fixture_not_loaded")
+	var content_error := ContentExtension.validate(fixture.get("content_extension", {}))
+	if content_error != "":
+		return _start_failure(content_error)
 	if not fixture.get("work_rules", {}) is Dictionary:
 		return _start_failure("work_rules_not_dictionary")
 	var community_error := Community.validate(fixture.get("community_rules", {}))
@@ -382,6 +396,12 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	organization_generation_report = (
 		organization_result.get("report", {}) as Dictionary
 	).duplicate(true)
+	content_error = ContentExtension.prepare(fixture)
+	if content_error != "":
+		return _start_failure(content_error)
+	danger_error = WorldDangerSetup.validate(fixture.get("world_danger", {}))
+	if danger_error != "":
+		return _start_failure(danger_error)
 	FoodAccess.configure_fixture(fixture)
 	if fixture.get("work_rules", {}).is_empty():
 		FoodStorage.configure_fixture(fixture)
@@ -403,9 +423,15 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		var failed := _start_failure("raw_definition_contract_invalid")
 		failed["definition_report"] = definition_report
 		return failed
+	content_error = ContentExtension.register_items(fixture, registry)
+	if content_error != "":
+		return _start_failure(content_error)
 	var work_rules_error := WorkRules.configure(fixture, registry)
 	if work_rules_error != "":
 		return _start_failure(work_rules_error)
+	content_error = ContentExtension.validate_compiled(fixture)
+	if content_error != "":
+		return _start_failure(content_error)
 	FoodStorage.configure_fixture(fixture, registry)
 	community_error = Community.configure(fixture)
 	if community_error != "":

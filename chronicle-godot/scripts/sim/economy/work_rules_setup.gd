@@ -42,6 +42,15 @@ static func configure(fixture: Dictionary, registry: Variant) -> String:
 		if not override.get("products", []) is Array or not override.get("initial_tools", []) is Array \
 				or not override.get("work_recipe", {}) is Dictionary:
 			return "invalid_work_rule_override_value"
+		if not override.get("recipe_variants", []) is Array:
+			return "invalid_recipe_variants"
+		for variant: Variant in override.get("recipe_variants", []):
+			if not variant is Dictionary or not variant.get("products", []) is Array:
+				return "invalid_recipe_variant"
+			for product: Variant in variant.get("products", []):
+				if not product is Dictionary or not Recipe._integer(product.get("quantity"), 1) \
+						or not registry.has_definition("item", str(product.get("item_def_id", ""))):
+					return "invalid_recipe_variant_product"
 		for product: Variant in override.get("products", []):
 			if not product is Dictionary or not Recipe._integer(product.get("quantity"), 1) \
 					or not registry.has_definition("item", str(product.get("item_def_id", ""))):
@@ -49,10 +58,13 @@ static func configure(fixture: Dictionary, registry: Variant) -> String:
 	if fixture.has("work_rules_generated"):
 		return _validate_profiles(fixture, registry)
 	var tools_by_profile := {}
+	var applied := {}
 	for profile: Dictionary in fixture.get("generated_livelihood_profiles", []):
 		if profile.get("products", []).is_empty() or profile.get("resource_inputs", []).is_empty():
 			continue
-		tools_by_profile[_key(profile)] = _apply_rules(profile, config, registry)
+		tools_by_profile[_key(profile)] = _apply_rules(profile, config, registry, applied)
+	if fixture.has("content_extension") and applied.size() != config.get("overrides", []).size():
+		return "content_work_override_not_applied"
 	for profile: Dictionary in fixture.get("settlement_network_runtime", {}).get("industry_occupation_templates", []):
 		if not profile.get("products", []).is_empty() and profile.products.all(func(p: Dictionary) -> bool: return registry.get_definition("item", str(p.item_def_id)).get("item_kind") != "currency"):
 			_apply_rules(profile, config, registry)
@@ -122,24 +134,35 @@ static func _validate_profiles(fixture: Dictionary, registry: Variant) -> String
 	return ""
 
 
-static func _apply_rules(profile: Dictionary, config: Dictionary, registry: Variant) -> Array:
+static func _apply_rules(profile: Dictionary, config: Dictionary, registry: Variant, applied: Variant = null) -> Array:
 	profile["work_recipe"] = {"version": 1, "recipe_id": "recipe." + str(profile.occupation_id), "item_inputs": [], "tools": []}
 	var tools: Array = []
-	for override: Dictionary in config.get("overrides", []):
+	for index: int in range(config.get("overrides", []).size()):
+		var override: Dictionary = config.overrides[index]
 		var applies: bool = profile.products.any(func(p: Dictionary) -> bool: return Recipe.matches(registry.get_definition("item", str(p.item_def_id)), override.product_query))
 		if not applies:
 			continue
+		if applied != null:
+			applied[index] = true
 		if override.has("products"):
 			profile["products"] = override.products.duplicate(true)
 		profile["work_recipe"] = override.get("work_recipe", profile.work_recipe).duplicate(true)
 		if override.has("label"):
 			profile["label"] = str(override.label)
+		if override.has("work_interval_hours"):
+			profile["work_interval_hours"] = override.work_interval_hours
+		if override.has("recipe_variants"):
+			profile["recipe_variants"] = override.recipe_variants.duplicate(true)
 		tools = override.get("initial_tools", []).duplicate(true)
 	_compile_product_traits(profile, registry)
 	return tools
 
 
 static func _compile_product_traits(profile: Dictionary, registry: Variant) -> void:
+	for variant: Dictionary in profile.get("recipe_variants", []):
+		variant["work_output_food"] = variant.get("products", profile.products).any(func(p: Dictionary) -> bool:
+			var definition: Dictionary = registry.get_definition("item", str(p.item_def_id))
+			return "food" in definition.get("tags", []) and "consume" in definition.get("capabilities", []))
 	profile["work_output_food"] = profile.products.any(func(p: Dictionary) -> bool:
 		var definition: Dictionary = registry.get_definition("item", str(p.item_def_id))
 		return "food" in definition.get("tags", []) and "consume" in definition.get("capabilities", []))

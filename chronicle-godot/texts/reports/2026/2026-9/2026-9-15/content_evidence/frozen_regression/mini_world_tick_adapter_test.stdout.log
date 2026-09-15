@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 MINI WORLD TICK ADAPTER PASS] 1. can create WorldTickAdapter
+[V5 MINI WORLD TICK ADAPTER PASS] 2. missing deferred_consequence_store returns failure without crash
+[V5 MINI WORLD TICK ADAPTER PASS] 3. delay_military_issue_until_after_patrol produces pending deferred consequence
+[V5 MINI WORLD TICK ADAPTER PASS] 4. pending deferred consequence trigger_key is after_patrol
+[V5 MINI WORLD TICK ADAPTER PASS] 5. apply_tick_event("after_patrol") triggers the consequence
+[V5 MINI WORLD TICK ADAPTER PASS] 6. tick trigger writes deferred_consequence_triggered fact
+[V5 MINI WORLD TICK ADAPTER PASS] 7. tick trigger sets deferred consequence status = triggered
+[V5 MINI WORLD TICK ADAPTER PASS] 8. tick trigger writes pressure change
+[V5 MINI WORLD TICK ADAPTER PASS] 9. tick result triggered_count = 1
+[V5 MINI WORLD TICK ADAPTER PASS] 10. WorldLog has entry_type = tick_event
+[V5 MINI WORLD TICK ADAPTER PASS] 11. WorldLog summary.tick_event_count >= 1
+[V5 MINI WORLD TICK ADAPTER PASS] 12. WorldLog summary.triggered_deferred_count >= 1
+[V5 MINI WORLD TICK ADAPTER PASS] 13. second apply_tick_event("after_patrol") does not retrigger triggered consequence
+[V5 MINI WORLD TICK ADAPTER PASS] 14. unmatched trigger_key does not trigger any consequence
+[V5 MINI WORLD TICK ADAPTER PASS] 15. RawRuleContractValidator still PASS
+[V5 MINI WORLD TICK ADAPTER RESULT] PASS

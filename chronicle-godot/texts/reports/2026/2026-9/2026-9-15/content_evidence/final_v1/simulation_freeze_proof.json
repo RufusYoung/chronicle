@@ -1,0 +1,622 @@
+{
+	"checks": 34,
+	"content_pack": {
+		"id": "heldout_content_extension",
+		"incidents": [
+			{
+				"body": "你随身的一件绳具只剩最后一格耐久。继续接作业要核对工具消耗，也可以暂时徒手采食。这里没有额外报酬，仍按所选行动结算。",
+				"condition": "worn_owned_tool",
+				"cooldown_hours": 24.0,
+				"id": "fraying_cord",
+				"responses": [
+					{
+						"action_prefix": "gather:",
+						"id": "gather",
+						"label": "先徒手找点吃的"
+					},
+					{
+						"action_prefix": "work:",
+						"id": "work",
+						"label": "查看能接的作业"
+					}
+				],
+				"title": "绳股起毛"
+			},
+			{
+				"body": "在场有人正缺食物，而你带着多于两份口粮。可以分出一份，也可以提出买卖；对方可能没有钱。余粮属于你，离开或留着也不会触发惩罚。",
+				"condition": "present_food_need",
+				"cooldown_hours": 12.0,
+				"id": "food_at_hand",
+				"responses": [
+					{
+						"action_prefix": "give_food:",
+						"id": "share",
+						"label": "分出一份"
+					},
+					{
+						"action_prefix": "sell_food:",
+						"id": "offer",
+						"label": "按价出售一份"
+					}
+				],
+				"title": "眼前的饥饿"
+			}
+		],
+		"item_defs": [
+			{
+				"base_mass": 0.45,
+				"base_value": 5.0,
+				"capabilities": [
+					"consume",
+					"trade",
+					"split_stack"
+				],
+				"definition_version": 1.0,
+				"display_name": "熏湖鱼",
+				"display_name_key": "item.smoked_lake_fish.name",
+				"durability": {
+
+				},
+				"equip_slots": [],
+				"item_def_id": "item.smoked_lake_fish",
+				"item_kind": "food",
+				"max_stack": 20.0,
+				"modifiers": [],
+				"stackable": true,
+				"tags": [
+					"food",
+					"processed_food",
+					"smoked_fish"
+				]
+			},
+			{
+				"base_mass": 0.4,
+				"base_value": 3.0,
+				"capabilities": [
+					"consume",
+					"trade",
+					"split_stack"
+				],
+				"definition_version": 1.0,
+				"display_name": "烤根块",
+				"display_name_key": "item.roasted_root_portion.name",
+				"durability": {
+
+				},
+				"equip_slots": [],
+				"item_def_id": "item.roasted_root_portion",
+				"item_kind": "food",
+				"max_stack": 20.0,
+				"modifiers": [],
+				"stackable": true,
+				"tags": [
+					"food",
+					"processed_food",
+					"roasted_root"
+				]
+			},
+			{
+				"base_mass": 0.3,
+				"base_value": 3.0,
+				"capabilities": [
+					"consume",
+					"trade",
+					"split_stack"
+				],
+				"definition_version": 1.0,
+				"display_name": "细苇绳",
+				"display_name_key": "item.light_reed_cord.name",
+				"durability": {
+					"maximum": 2.0
+				},
+				"equip_slots": [],
+				"item_def_id": "item.light_reed_cord",
+				"item_kind": "craft_good",
+				"max_stack": 20.0,
+				"modifiers": [],
+				"stackable": true,
+				"tags": [
+					"craft_good",
+					"rope",
+					"livelihood_product"
+				]
+			},
+			{
+				"base_mass": 0.6,
+				"base_value": 9.0,
+				"capabilities": [
+					"consume",
+					"trade",
+					"split_stack"
+				],
+				"definition_version": 1.0,
+				"display_name": "合股苇绳",
+				"display_name_key": "item.doubled_reed_cord.name",
+				"durability": {
+					"maximum": 6.0
+				},
+				"equip_slots": [],
+				"item_def_id": "item.doubled_reed_cord",
+				"item_kind": "craft_good",
+				"max_stack": 20.0,
+				"modifiers": [],
+				"stackable": true,
+				"tags": [
+					"craft_good",
+					"rope",
+					"livelihood_product"
+				]
+			},
+			{
+				"base_mass": 0.45,
+				"base_value": 6,
+				"capabilities": [
+					"consume",
+					"trade",
+					"split_stack"
+				],
+				"definition_version": 1.0,
+				"display_name": "炭烤湖鱼",
+				"display_name_key": "item.chargrilled_lake_fish.name",
+				"durability": {
+
+				},
+				"equip_slots": [],
+				"item_def_id": "item.chargrilled_lake_fish",
+				"item_kind": "food",
+				"max_stack": 20.0,
+				"modifiers": [],
+				"stackable": true,
+				"tags": [
+					"food",
+					"processed_food",
+					"grilled_fish"
+				]
+			}
+		],
+		"resident_variants": [
+			{
+				"id": "careful_and_tired",
+				"states": {
+					"fatigue": 7.0,
+					"hunger": "medium",
+					"temperament": "cautious"
+				}
+			},
+			{
+				"id": "bold_and_rested",
+				"states": {
+					"fatigue": 1.0,
+					"hunger": "low",
+					"temperament": "bold"
+				}
+			}
+		],
+		"source_note": "回音港与镜湖森林带为原设定锚点；下列沿岸加工方式、绳具、居民处境与单只野猪参数是生成生活细节，不增加大世界史实。食品仍使用共同的按份进食规则，尚无保鲜期和营养差异。",
+		"version": 1.0,
+		"work_rules": {
+			"maintenance": [
+				{
+					"amount_per_cycle": 1.0,
+					"label": "用纤维修补绳具",
+					"recipe_id": "recipe.patch_cordage",
+					"repairs": [
+						{
+							"maximum_repairs": 1.0,
+							"query": {
+								"tags_all": [
+									"rope"
+								]
+							},
+							"restore": 2.0
+						}
+					],
+					"resource_tags_all": [
+						"reeds",
+						"fiber"
+					],
+					"work_interval_hours": 2.0
+				}
+			],
+			"overrides": [
+				{
+					"initial_tools": [
+						{
+							"item_def_id": "item.fiber_rope",
+							"quantity": 1.0
+						}
+					],
+					"label": "网具捕捞",
+					"product_query": {
+						"tags_all": [
+							"fish"
+						]
+					},
+					"recipe_variants": [
+						{
+							"choice_bias": 10.0,
+							"label": "熏制湖鱼",
+							"products": [
+								{
+									"item_def_id": "item.smoked_lake_fish",
+									"quantity": 2.0
+								}
+							],
+							"resource_inputs": [],
+							"work_interval_hours": 2.0,
+							"work_recipe": {
+								"item_inputs": [
+									{
+										"quantity": 3.0,
+										"query": {
+											"item_def_id": "item.fresh_fish_portion"
+										}
+									}
+								],
+								"recipe_id": "recipe.smoke_lake_fish",
+								"tools": [],
+								"version": 1.0
+							}
+						},
+						{
+							"choice_bias": 10.0,
+							"label": "炭烤湖鱼",
+							"products": [
+								{
+									"item_def_id": "item.chargrilled_lake_fish",
+									"quantity": 2.0
+								}
+							],
+							"resource_inputs": [],
+							"work_interval_hours": 3,
+							"work_recipe": {
+								"item_inputs": [
+									{
+										"quantity": 3.0,
+										"query": {
+											"item_def_id": "item.fresh_fish_portion"
+										}
+									}
+								],
+								"recipe_id": "recipe.chargrill_fish",
+								"tools": [],
+								"version": 1.0
+							}
+						}
+					],
+					"work_recipe": {
+						"item_inputs": [],
+						"recipe_id": "recipe.net_fishing",
+						"tools": [
+							{
+								"query": {
+									"tags_all": [
+										"rope"
+									]
+								},
+								"wear": 1.0
+							}
+						],
+						"version": 1.0
+					}
+				},
+				{
+					"product_query": {
+						"tags_all": [
+							"root_vegetable"
+						]
+					},
+					"recipe_variants": [
+						{
+							"choice_bias": 10.0,
+							"label": "烘烤根块",
+							"products": [
+								{
+									"item_def_id": "item.roasted_root_portion",
+									"quantity": 3.0
+								}
+							],
+							"resource_inputs": [],
+							"work_interval_hours": 2.0,
+							"work_recipe": {
+								"item_inputs": [
+									{
+										"quantity": 4.0,
+										"query": {
+											"item_def_id": "item.root_vegetable_portion"
+										}
+									}
+								],
+								"recipe_id": "recipe.roast_roots",
+								"tools": [],
+								"version": 1.0
+							}
+						}
+					]
+				},
+				{
+					"initial_tools": [
+						{
+							"item_def_id": "item.fiber_rope",
+							"quantity": 1.0
+						}
+					],
+					"label": "捻细苇绳",
+					"product_query": {
+						"tags_all": [
+							"household_good",
+							"reed"
+						]
+					},
+					"products": [
+						{
+							"item_def_id": "item.light_reed_cord",
+							"quantity": 1.0
+						}
+					],
+					"recipe_variants": [
+						{
+							"choice_bias": 10.0,
+							"label": "合股细苇绳",
+							"products": [
+								{
+									"item_def_id": "item.doubled_reed_cord",
+									"quantity": 1.0
+								}
+							],
+							"resource_inputs": [],
+							"work_interval_hours": 2.0,
+							"work_recipe": {
+								"item_inputs": [
+									{
+										"quantity": 2.0,
+										"query": {
+											"item_def_id": "item.light_reed_cord"
+										}
+									}
+								],
+								"recipe_id": "recipe.double_light_cords",
+								"tools": [],
+								"version": 1.0
+							}
+						},
+						{
+							"choice_bias": 10.0,
+							"label": "旧式纤绳重新合股",
+							"products": [
+								{
+									"item_def_id": "item.doubled_reed_cord",
+									"quantity": 1.0
+								}
+							],
+							"resource_inputs": [],
+							"work_interval_hours": 3.0,
+							"work_recipe": {
+								"item_inputs": [
+									{
+										"quantity": 2.0,
+										"query": {
+											"item_def_id": "item.fiber_rope"
+										}
+									}
+								],
+								"recipe_id": "recipe.rebind_fiber_rope",
+								"tools": [],
+								"version": 1.0
+							}
+						}
+					],
+					"work_interval_hours": 4.0,
+					"work_recipe": {
+						"item_inputs": [],
+						"recipe_id": "recipe.reed_cordage",
+						"tools": [
+							{
+								"query": {
+									"tags_all": [
+										"rope"
+									]
+								},
+								"wear": 1.0
+							}
+						],
+						"version": 1.0
+					}
+				}
+			],
+			"version": 1.0
+		},
+		"world_danger": {
+			"contacts_enabled": true,
+			"memory_hours": 24.0,
+			"recovery_hours": 12.0,
+			"rest_health_gain": 3.0,
+			"retreat_hours": 30.0,
+			"threat": {
+				"attack": 15.0,
+				"damage": 8.0,
+				"defense": 18.0,
+				"display_name": "田边护食的野猪",
+				"end_hour": 17.0,
+				"escape_difficulty": 12.0,
+				"health": 32.0,
+				"retreat_health": 14.0,
+				"start_hour": 8.0
+			},
+			"version": 1.0
+		}
+	},
+	"evidence_kind": "data_only_extension_and_test_injection",
+	"failures": [],
+	"human_ui_play": false,
+	"runtime_hashes": {
+		"res://scripts/agent/agent_game_session.gd": "ff0bda04f28eefaf3e34e11a6252aa925fc5d7a4c178e2eecf2de11641a98b68",
+		"res://scripts/agent/agent_stdio_driver.gd": "f8c3c532d6e5b9c73e986e0039d5ca947a67333a746a25769783f2ef1c73457f",
+		"res://scripts/agent/agent_stdio_runner.gd": "37c901b5e3e4462bebc4d5934be5d7b586e712190fbe028d2b76b5e46d57182b",
+		"res://scripts/dev/lake_town_history_quality_auditor.gd": "780d42b3c47db16f79cb210209d4eef123ad905d4522e4e29384252d8d2b822d",
+		"res://scripts/dev/lake_town_history_variation_runner.gd": "59ec1239733dfb43adb6cd50885771645510c7c7b2c3bfbf5eb345643b172c7b",
+		"res://scripts/dev/lake_town_living_surface_builder.gd": "ef6994c0cd6538f3f7a1155f45a79822dca08a9d4733303cb066fc09b2c5b540",
+		"res://scripts/dev/lake_town_living_surface_templates.gd": "3ba272eab7cedca14ba27a4a6dd86fa7a533f1fe34889210b8880cb05b6c62a4",
+		"res://scripts/dev/lake_town_world_view_model.gd": "410dd5766919615cb43c78d650677bd12d809b80c7e79ab645bbab6eee292165",
+		"res://scripts/dev/lake_town_world_viewer.gd": "fe286c8d0f62bfee88f544e28bbaae42917fce113d36d904761c237c2fa84d8c",
+		"res://scripts/dev/lake_town_world_viewer_runner.gd": "13906d1998d9b1b15a14a4d53dccaee42482dc7734a12f5e0db6db6f53916a88",
+		"res://scripts/dev/local_story_module_runner.gd": "35ce9ee3e8232d4e29d0248bffaf5e436c466f905adab28a5ad2c3b34fb8fdfc",
+		"res://scripts/dev/world_sim_observer.gd": "f975964952ab8ae5b68717e0bad7a3794a159d565344f2e0eba52f0ff51b9d14",
+		"res://scripts/gen/chain_engine.gd": "411ec0fd6c50cab10a76219b4d0ed300ade2f93608a28cc7fcfecc3a53019039",
+		"res://scripts/gen/common/deep_merge.gd": "51b4bd895fb81ca23657ffaa87f9764fe5ba9ed99bca55add7541b00eaea480b",
+		"res://scripts/gen/common/json_util.gd": "27bb7bc5c2392792c6e03ca1ca60e8a3858585a048e57639e8bb589998628c8d",
+		"res://scripts/gen/common/weighted_pick.gd": "fbf0ce519ec1e54b345fae567e0cd51fc624cae0669359b9e5609755beab1ef3",
+		"res://scripts/gen/creatures_generator.gd": "18a86d2a80b67bd26e3c92b4be42819ef2f5cb588bdedb7f15b366d2c6530209",
+		"res://scripts/gen/event_generator.gd": "e5c657350218c42d829defe586c6aa5f8ba721e0cd7e032f025036081465d460",
+		"res://scripts/gen/npc_interactions.gd": "74b6ae9d0f8167013c058cfdfa1d220e6b16a33491456af827090956088c9b65",
+		"res://scripts/gen/proc/creature_variant_generator.gd": "89b521588c835016026d0163e267a6d4ff7b5c65522d384363c6872bcc89ee4c",
+		"res://scripts/gen/proc/equipment_generator.gd": "0e065657488badfc31abe49cd89def16240140480d4f7374d6d5f4e3d7f8c613",
+		"res://scripts/gen/region_generator.gd": "26ae70b2d8467d4f28f3c22565fe7bd1005695ad6439270b77f4d31f61be6c74",
+		"res://scripts/gen/region_loader.gd": "5718c350dcaba4dee890bb1319c5f17c708b0c939fbfdcbfbd2863494cb50524",
+		"res://scripts/gen/registry.gd": "f315bbea5c030d7b84aff79f5a8a467a87dde26ed399573991eb2e18a143b6c6",
+		"res://scripts/gen/resource_generator.gd": "46419ba5134f3646dfc1c7c71b99b216cb7f95aa1ee9d13913d3b5cd76afbe48",
+		"res://scripts/gen/world_generation_v03.gd": "44d3b9185c76d430548f21b6c413901274eae78d124b314818e6d1e768bfa84d",
+		"res://scripts/rebuild/live_world_save.gd": "2375fa8f29f3ebc3725e3a50476ccccc2bd2d93324d1343a6cddc0b429adb5c6",
+		"res://scripts/rebuild/region_graph.gd": "bbec01ffd5ecf9a6cfd1888ef9aca1a1a6075a3ea45bbc8c6e6d2a48a2aaf11f",
+		"res://scripts/rebuild/region_map_projection.gd": "f2e1ac05aa6cce6b7f4d94e14b9fefc580c282b0e9d5661fde139752273c012f",
+		"res://scripts/rebuild/v5_live_location_view_model.gd": "bf6a50de8f60a3c6cc5ae44df0958679ef930c2097e2efd6ea4b60c55b1ee459",
+		"res://scripts/rebuild/v5_live_location_viewer.gd": "71769071bb21ed53e951bff11d336fbc9b17857598a5f99b8bdf6fc3a1d3ab67",
+		"res://scripts/rebuild/v5_location_foundation_state.gd": "b0ce7e7c08b937aca79cbb52d2f51423fdd8f8ad5f8effbb6f881c41ea8486de",
+		"res://scripts/rebuild/v5_location_foundation_view_model.gd": "cd6ec05208820ecc495e5c8210c0c25787b6292b739b4f65a4f31dc1d80367ef",
+		"res://scripts/rebuild/v5_location_foundation_viewer.gd": "3f192c76df6547d9f11aef340ac28980f28fc4bec040410d3f5bc769b63d5861",
+		"res://scripts/rebuild/v5_seventh_outpost_view_model.gd": "02c54fead952b34c77ef762abf9aadf201aea86ae8b5423a8de030225067c401",
+		"res://scripts/rebuild/v5_seventh_outpost_viewer.gd": "4f7b69d468af30d4366bf18a7c8376d34c4ed75a08a2e7d5be5f7aa7c4b84537",
+		"res://scripts/rebuild/v5_shared_interface_style.gd": "83326b4fe8ffb292a1b1875940d448846c46cb5c8a811b1d9d1b0c9774b9ce62",
+		"res://scripts/rebuild/v5_shared_world_surface.gd": "9274df5e0b55348f18770e160b121a069c29f2db2043dd4be63aded5b51614f7",
+		"res://scripts/rebuild/world_bootstrap.gd": "05bc391ae94e898398049da116a5fdb2679754ccaa973369ff45e7f79743c926",
+		"res://scripts/rebuild/world_demo_viewer.gd": "6a8f6dd595b684f1a2266a992276ad4a8d0aee6401872a70fc7f11d23dd0566a",
+		"res://scripts/sim/action/action_affordance_system.gd": "360537abef01957d9aedee5dbedf6d96d2a264763648188b4542bc269b866458",
+		"res://scripts/sim/action/action_candidate.gd": "4c42c2a012808186a5fe83ffee29728de081259fd6ffd4f1b2afa586e869e788",
+		"res://scripts/sim/action/action_contract_resolver.gd": "28e76d1259b54ad6a567879b0c5a2f1a15b6760d66659897ec83d29626e744b7",
+		"res://scripts/sim/action/raw_rule_contract_validator.gd": "6e6e94dfc70ece3422f7429b1bb0b6800944c435d0f221b44561bcc2f6558d5b",
+		"res://scripts/sim/challenge/challenge_resolver.gd": "bb0427fcb5ee9bf8d811940ddaf2b079b4935356f900909cb60a8ebf845ac6c2",
+		"res://scripts/sim/character_feature/character_feature_store.gd": "d8e719817d751712fbdb0ca8c493f176a1e6f97213692b7ffdea7d771e9ddbff",
+		"res://scripts/sim/character_feature/character_progress_projector.gd": "e10b0e7a77aa2bcc53d9eebed2b5034eb826e06a22773f668c424608f93a2c4e",
+		"res://scripts/sim/chronicle/challenge_chronicle_builder.gd": "b0a665d35cc836acef50c42c854a76161d0b2f12d5926fb9d30f92a854bf87ff",
+		"res://scripts/sim/chronicle/chronicle_entry_builder.gd": "d14f4a49ab5c24feed90d3c01060fa806fd552834d023dbdfdc33184a95f1abd",
+		"res://scripts/sim/chronicle/chronicle_store.gd": "a84507cbb34ca2c9e59e92054ed81761bb3540e1c0c14bdad413d6277b3f461b",
+		"res://scripts/sim/combat/combat_encounter_director.gd": "ec0e664b01a8cdbc70d25ba5591f1c579135cc26e55b439988af0f53702cffea",
+		"res://scripts/sim/combat/combat_encounter_resolver.gd": "855a7dda7cc58c760dcf61b5d076906a822d197a6d617267e8932077b3d6fa82",
+		"res://scripts/sim/combat/world_danger_setup.gd": "7be7d7eed958e8de579d97035fe060d7f3bec94ef3a345672b94611fa1f107df",
+		"res://scripts/sim/combat/world_danger_system.gd": "96f17f773a4d2575af5d9bb260de30ff3007cb7373995546c82e06693145d229",
+		"res://scripts/sim/consequence/consequence_trigger_system.gd": "d870f3406b89d48a2f1b19ed1776af6e3d817055d87620e725e9ae5df8bf73e0",
+		"res://scripts/sim/consequence/due_resolution_policy.gd": "b5f498784ccd833c425529416e3002e359a86a3a186a8d86bf76dc98d39b8442",
+		"res://scripts/sim/consequence/due_resolution_system.gd": "b3f4a9e0e08f42657931b8222da8469d3d8b7136e715a008359af36ca6f344a3",
+		"res://scripts/sim/consequence/due_trigger_system.gd": "2d959fe6c116b4dd22980215cd295991d60d5ca110fc9cc6eb791dfad550cf23",
+		"res://scripts/sim/core/sim_context.gd": "b266eb35d9314d2998151c8ac86eab6c08096e943aa8c98c6a7989aaf2963a21",
+		"res://scripts/sim/core/sim_registry.gd": "c1fbff26783df11d37dd2efdd455fd3117e93fda1859be3b7fbad6be79a833f2",
+		"res://scripts/sim/core/sim_runner.gd": "ba2d2f43cbd5d549d124044995743aad426086fc8a3dd08020559e0a82e9b285",
+		"res://scripts/sim/core/sim_session.gd": "d9cda9c5cf42f3a20211e26fee41170650556a4f73b52be8a459b87c7e539e67",
+		"res://scripts/sim/core/sim_snapshot.gd": "6b9056c5545ade550781d1be8f41446b9bd387862a696880db0d169f0e0cfae0",
+		"res://scripts/sim/core/sim_snapshot_builder.gd": "64b4c1d552e16fd1cc95a86f21b47e25b06e32fb25ae8fede45030a95d55dc64",
+		"res://scripts/sim/core/sim_world_log.gd": "5dc72e2397975f397bf455d2b82c24361023b602a8b9f66b95312da72850bd20",
+		"res://scripts/sim/deferred/deferred_consequence_store.gd": "1bd13021e2df2387e377149f09511e2f84fe2d6a56792f18067c92a94c74aac6",
+		"res://scripts/sim/echo/return_echo_resolver.gd": "9b269008ef847d40aecb4467217460911a050d4a70b8fd91013b9a0d2e03e41c",
+		"res://scripts/sim/economy/economic_world_setup.gd": "7fed0fffbd62b98ea8488dc9cc44947e7c10fd8ac9139dbb278c1e759bf9be40",
+		"res://scripts/sim/economy/household_food_budget.gd": "31f66912fc85ecddbd12cce27f58b8302fab3d416d6cb2433fe3f3f411917ed1",
+		"res://scripts/sim/economy/household_food_hauling.gd": "6132c70bfe73321950803df619c03ebca0a6ef1647b8863a5860c9f14b4d0e10",
+		"res://scripts/sim/economy/local_procurement_system.gd": "5bb9f06b7467402a4687fa1042c789a11c8f1da7459add79c2b88202d0765ff7",
+		"res://scripts/sim/economy/market_service.gd": "825d17a9e3590f6d92a265014dfda529f74c2cec7adf20296fe9dd36f08c7589",
+		"res://scripts/sim/economy/operational_material_service.gd": "6ab3f7375902a18c900d31fccd9119689566a11d51cf46cb0db6dbb734d355ad",
+		"res://scripts/sim/economy/resident_food_access.gd": "ad16fd9b536a814d107109668cccc1f060c8b8c450c7d300a9f6390f7b98d308",
+		"res://scripts/sim/economy/resident_food_carting.gd": "08f5cb5fce201bf2c27f8ed14a04403aefcca45c7e00829bc9c4aee801591795",
+		"res://scripts/sim/economy/resident_work_opportunities.gd": "c047de0529773146a97fac9433a30663f78bdfaff51135196eb70c4d51565f58",
+		"res://scripts/sim/economy/treasury_transfer_planner.gd": "93a6fc55afdbc28999f668bf7489cc43f00b72070321600f4f64f0df8fe50313",
+		"res://scripts/sim/economy/work_recipe_service.gd": "0b7ffa8da81c94a33cb6eeed6f753475c2ad02bff029b5590673b213728235f8",
+		"res://scripts/sim/economy/work_rules_setup.gd": "870a4082d95318767e8302142560b96dda3234599249343f8b471cf72f6912b7",
+		"res://scripts/sim/economy/worksite_food_storage.gd": "0ed65d0dbe6cef38da8cf1bbc31c79b633d547d4c38873b638252f597d6eed89",
+		"res://scripts/sim/entity/entity_store.gd": "93922692f155fb30584697d701d04ca7b13fc63fbf0a5abdecc61b8ed582e3e1",
+		"res://scripts/sim/equipment/equipment_loadout_store.gd": "c83d49ef13f8b9c2170edef1fb1d22220e4465ba6c07fa47e049a169f4b9bfe6",
+		"res://scripts/sim/exchange/exchange_store.gd": "84cfea7b739d22aa94d886261c550f26ffd5c3585952d366b015ea9dde419066",
+		"res://scripts/sim/fact/fact_store.gd": "4025184a2884a0788ab67594336ee5cdcd46971e4d91c7a5700ef2539f19cc6a",
+		"res://scripts/sim/generation/canon_world_setup.gd": "9ac0d4208044643ab62b4f38b502cd8cebc99a05eaa6e82a73b40166f97ba6bf",
+		"res://scripts/sim/generation/organization_generator.gd": "6508b20220b3f4f3002c5d31ac1a9de6eef8ed07bc137fcbb3e3f318f8b3e4ac",
+		"res://scripts/sim/generation/resident_generator.gd": "32b9fffb5ff7dbf6ec5e49269cc8438f811d19651a8d157a584c8c007872ce71",
+		"res://scripts/sim/generation/settlement_generator.gd": "ab77574d5e83eb92639ddf30a8691b0943b6e2b882839c24e49a1fbc32f2d064",
+		"res://scripts/sim/generation/settlement_network_generator.gd": "68aa0b6ce8f346d3b65ed77f1dda6d00912acea1e1e70fbaba78c6e73981cc4e",
+		"res://scripts/sim/generation/world_content_extension.gd": "7a26deec85343e2939d029118a18c85347e5c8a5aa18bee49cb1604ad2619059",
+		"res://scripts/sim/history_quality_audit.gd": "6e2279bec548ad6ad6718a932c9697a602c89f154001ae53666800cff8e81743",
+		"res://scripts/sim/investigation/investigation_chronicle_builder.gd": "e0c62094cee88665c26c67549f771215142f48f13c6f165a27ea28d30df63c4b",
+		"res://scripts/sim/investigation/investigation_lead_store.gd": "2ebd13f0d8913d244944d4de70f2e90c869c3fbcced6156752941cb88dee8049",
+		"res://scripts/sim/investigation/investigation_resolver.gd": "29ed042af4f8f7eca6a21f40cbf3448d3415cf04aa0e2b1a9e2fc85bc4bb3bb0",
+		"res://scripts/sim/item/item_causal_sources.gd": "7b42aa090835e601484132a55c6102871d34f3cc917437f7a3954323261e095b",
+		"res://scripts/sim/item/item_consumption_planner.gd": "a0b26ff0258c0873f26125827fd2a1d26ee6c734f5b642388af50664c3bdcb07",
+		"res://scripts/sim/item/item_store.gd": "175beb963bcc86b51f2f4b6c68782006175393261ccd33177471fb1e537d2850",
+		"res://scripts/sim/lake_town_branch_closure_system.gd": "0fcc0f4314bcf8b8f4760d203f3eee7afaf6157f94c02d71c5619073c9705e85",
+		"res://scripts/sim/lake_town_food_chain.gd": "a0480dc402127ca93c5de1eb828b1e8ddc544e695fac3a9ca2397c087690c267",
+		"res://scripts/sim/lake_town_hunger_closure_system.gd": "f0c237f1e2ccd523681dcdd04b978642c7ea3e711bc1a46371baf31513646ba6",
+		"res://scripts/sim/lake_town_reaction_system.gd": "1d818032f46cdec9c759829fa8fccba00aadb6716b95a5a88acd50a8bf9818f7",
+		"res://scripts/sim/lake_town_recovery_system.gd": "2a430506ff2a644a0fb95a914cf1123bb76f89c36add2a3a3c1f79a82a113c30",
+		"res://scripts/sim/lake_town_seed_profile.gd": "5ba053ca4c2ad9a5b3d45484d27ec350540e3652097debaf4cdcca58c2647cfd",
+		"res://scripts/sim/life_project/life_project_controller.gd": "8f1c8fd7312cef10d132fc3eacf7d618fa884db371b632812358b2cbff9b790d",
+		"res://scripts/sim/local_story_module.gd": "b5971c81dd3e4265aa42ac76564047a189f6488e403011a0db2d77353302ac9d",
+		"res://scripts/sim/local_story_pipeline.gd": "cf85bfd4aaa30d37907f2e94ac3f15a30ae5a6ded12ad2d138b0d12c4a8ef400",
+		"res://scripts/sim/memory/memory_store.gd": "4d0c0f6b5ebb465c3ece55e7c34f7fb75ce4980f042c1773161b44b40b20e7f2",
+		"res://scripts/sim/micro_action_resolver.gd": "4cc89b4defaf18cebdff58d976e2f7746695239766ca1f8c8cc53106a0f2e7cc",
+		"res://scripts/sim/migration/settlement_absorption_system.gd": "efc8686ab90ec507d7a434b6ea37ad4633e218493ac9fa73d2a51c7315a0ab84",
+		"res://scripts/sim/modules/lake_town_food_crisis_module.gd": "b718021e7289dd6c742a95ed630ea63809ceaeca3dbdcd850129e07f13a2e3a6",
+		"res://scripts/sim/narrative/narrative_surface_adapter.gd": "fb129b9d7daf266d83e9c1e3b77f99162a20b078471d7a760b8cc7a3a6e59e30",
+		"res://scripts/sim/npc/community_assistance.gd": "6c186ce2a1477fa6a66bc97639c3eba680ef369cc27a91db23783a793ed93b0d",
+		"res://scripts/sim/npc/community_knowledge.gd": "034c85c3039f48cac2e42b0d426c87b81e89ee4d392f674a87a959768e513918",
+		"res://scripts/sim/npc/community_life.gd": "7f35d296ffd019aeb50c12aadab80866e517ffaf0419e85b0d0316e8ee450086",
+		"res://scripts/sim/npc/household_provisioning.gd": "f8f8c0a1790fe6a8bb7eb55fa79df83ca683cf7caca7356b48edfb4982a22ab3",
+		"res://scripts/sim/npc/npc_decision_system.gd": "53d84138a5ae866ef207ad0d788bd1927178cc47eba837f7ae391e67997f7d2c",
+		"res://scripts/sim/npc/npc_livelihood_system.gd": "843fa4aab4c037a72ae1ff63af0883969ab2d98d8300969663fdd8d9b0bade47",
+		"res://scripts/sim/npc/npc_need_system.gd": "034a1d62c21d06aa587bf2b1a18ec53d726409ce6e81e50bdb23164b9e8d6829",
+		"res://scripts/sim/npc/npc_social_followup_system.gd": "a3f554a7f503c47b0d780c48ccd84547675701ab4c84dfd256fe546aae920705",
+		"res://scripts/sim/npc/resident_activity_choice.gd": "267afb5ff670103234afcf7b91661bbcd62a8e8b6374a907755af4db7725949a",
+		"res://scripts/sim/npc/resident_daily_life_system.gd": "3ee56a8c9466370b1aa5a39290a9d310a595c407974cf29bec1d5f1a8574a556",
+		"res://scripts/sim/npc/resident_subsistence.gd": "e035fd4ba683a720c566561dfcf1d1a53c8c7cc217ee6ca6557c08dba48312bd",
+		"res://scripts/sim/obligation/obligation_store.gd": "5aba3533f121972871d5dd220156eec6be56a45dacac6079f181037c60e4f4c9",
+		"res://scripts/sim/organization/local_cooperation.gd": "3d7675655f7c4c54607805e0a9ef890ba9c1aac92c9d9f815b247862d936b835",
+		"res://scripts/sim/organization/organization_lifecycle_system.gd": "4c7ca778fd5b9164733ecc6482dc8b59abb30e8e83f4331b979bd4607a444879",
+		"res://scripts/sim/organization/organization_response_system.gd": "0d54bc60b3a63cbb166c14301d539c439d182b559071dd8daf6300ede681b9fb",
+		"res://scripts/sim/organization/organization_runtime_system.gd": "4d8dd86638fa6c7cc06e6cf7f67c56a9dcb1d788161ad1a733b559ebba9cf0b0",
+		"res://scripts/sim/player/local_incident_options.gd": "f800ed96195c4c21cf15eb640774f15e80e75b8ae5fc02b3cac80e3db1104840",
+		"res://scripts/sim/player/player_life.gd": "e39e2cf7170ce3b27c1ec498a2b790286828f0f6715d9d7a2a50b266781a2430",
+		"res://scripts/sim/player/player_local_life.gd": "7ae57c714f8d2426b09f75d3a6f2dc9a6a225b0d8a1af38fcc33dbf1695ec4b7",
+		"res://scripts/sim/player_world_actions.gd": "8bdf4fc9ff0c12b861b3ee8fb48c0c471341d5745f667756dbf4c1d0dd1b95fe",
+		"res://scripts/sim/population/family_generation_system.gd": "79054c5cfbeb77151ba51f22da64ad70b009add9aa34240273ab5f3598339be0",
+		"res://scripts/sim/population/labor_absorption_system.gd": "793ef53ec753a1168bf5e882f2e14fc7f703a77fa12f741cd0fe8d4895627b5f",
+		"res://scripts/sim/population/population_lifecycle_system.gd": "ded686ea07c1846fc2aea2d1a54d0a7126994af154dc731fa046f6397ac80fef",
+		"res://scripts/sim/pressure/pressure_store.gd": "69fbe079b4abfff4432787e040c5f534c50eefb7b78c3557fda3757999930ad1",
+		"res://scripts/sim/region_sim_profile.gd": "73249437d01db57b03d5b30e1f4b043efc5884d7628f36d3351e9bc4d8a5e1a9",
+		"res://scripts/sim/relationship/relationship_store.gd": "4b70447ef0ff0bc8873b488d5f27e3395a4f0cc85cc4b5b288814bfb84c32800",
+		"res://scripts/sim/resource/resource_access.gd": "1e11489d8a99266ce846dca508277eeba58e6f2c7afd4113500f52cb1ece7a64",
+		"res://scripts/sim/resource/resource_stock_store.gd": "759725c9e4d6f1770eee9fd5e02d717c7ba0c27e095926ea3196c859bfbb2185",
+		"res://scripts/sim/resource/route_pressure_query.gd": "f816c2486cd9c4aab806e4e5bffc75f403cecedf365b76a194cef4a84787302b",
+		"res://scripts/sim/resource/settlement_environment_system.gd": "a35269738eae1834d9229bf7d9a7fe03b8eafcdf35d531c1512a07a7c39d25b0",
+		"res://scripts/sim/resource/settlement_network_system.gd": "0772c4dd31716efdd87db20e58d08445738e344253f1d7cb40136023ed610207",
+		"res://scripts/sim/resource/settlement_resource_system.gd": "6b4cf60befd7310e6529a1f81795862df73f8883589d8cd6d36fdd85bcdd20b9",
+		"res://scripts/sim/rumor/rumor_store.gd": "38b93106771284c290249b85c134e24062ea8cbd4974323803beb15fd52d3a1e",
+		"res://scripts/sim/save/life_stage_transition_relay.gd": "9dcc24b9033a4372ffb21c32d5897efbbf5e9abd4511064115351527db9dec9e",
+		"res://scripts/sim/save/life_stage_transition_service.gd": "5f5bed372e4931897b56750f156381fd67a22476e0f2f40b3fe19e3eb062d0a4",
+		"res://scripts/sim/save/save_envelope_service.gd": "1a5653423f8a1e5411dc6715317a15e1724746c547097481eabba215aceb2df1",
+		"res://scripts/sim/settlement/industry_lifecycle_system.gd": "39841aa54d815c6c80ca1e66475ab5d65015f6ffff703651edbb4e3d1497cd8d",
+		"res://scripts/sim/settlement/industry_runtime_catalog.gd": "fb3688abaf2d00b0552d47263ef695867b5a203a92eaf35130fe0bf86b121fbf",
+		"res://scripts/sim/settlement/settlement_capacity_adaptation_system.gd": "9c04fc7fceb6503b408d3898c3a46c557f27e26446be105e2f4f725ff27242d0",
+		"res://scripts/sim/state/state_store.gd": "0e0e8ebdcc2d3067e9a8c85223c98ab2ddb94850a2d247fa15dc434326a20d0f",
+		"res://scripts/sim/trace/trace_store.gd": "d509d3828e985af343bd8c5843add6c449506c95eee9d5c7ee0933a8b9b68d5e",
+		"res://scripts/sim/transaction/effect_protocol_resolver.gd": "e0f1ca6c6a6b2bb26b17791faca9a5418ec80b31356a695faa75f2e6f4d9c3fc",
+		"res://scripts/sim/transaction/effect_template_resolver.gd": "c1a47ba6cdfef23b4d4983ba6a8002c3175ae64470e8e1179ea703080d7eda11",
+		"res://scripts/sim/transaction/transaction_resolver.gd": "1e7a28b5124876205233cb007b87ad556054358bd199463b4d4db7f46f1689d9",
+		"res://scripts/sim/transaction/transaction_result.gd": "6f535a770ba6b26eac3d231b3f2c1f28c5a4d0e17d4834f04c964b9992fdd337",
+		"res://scripts/sim/transaction/transaction_world_writer.gd": "342cb29294591e3feee4330d20de11b0cff12d51ce400569129a234f0f44d66b",
+		"res://scripts/sim/travel/travel_resolver.gd": "088c3a4c8bef06390276b37a4ef0c5d6fecfac6193ea73027cbaf18270bab927",
+		"res://scripts/sim/world_news_digest.gd": "b3f6f1bfb85bcae119e15127d56798b5bc1d84dbd2b443e30ccfcd338bdfd9e3",
+		"res://scripts/sim/world_sim_debug_runner.gd": "5c4cb1a1e800ba5f204eb0162fab3d9fd4c86f7d8ceb0999066095bb952041a3",
+		"res://scripts/sim/world_sim_lead_adapter.gd": "11e45a78d11f480b06debe701c082141c2ce65fb81c22ac2275e3fe3e5f3956c",
+		"res://scripts/sim/world_sim_state.gd": "a83a50691cbcea60001cb06e7342ce67b8a1253ffe98a3b036ce4e98fbcec524",
+		"res://scripts/sim/world_simulator.gd": "951360ab72c8fd45056bd25f103102ace5b0493fa9d6f52e05c8b8ea15eb4ceb",
+		"res://scripts/sim/world_tick/tick_event_schema.gd": "22a462a66cad80c26d52ce88c1118852160bbed5af7cc8d1180434230d3b9455",
+		"res://scripts/sim/world_tick/world_tick_adapter.gd": "c7054dad301e00809c397986eced99d5b91ffd4bd08b7c4e28d975139bb1e3e5",
+		"res://scripts/sim/world_to_leads_projector.gd": "2b0cb725d12ad8650fddba585b220bb3b1aaa3ce163ed5700f043e2b1c773c4e",
+		"res://scripts/sys/RNG.gd": "57481de4b8ee0a04998b981cd4e12a9fdaaf98eb89322147fdfefa49f11959e4",
+		"res://scripts/sys/WorldState.gd": "841e649dd4a479c19062ff1050d1d62078f634c3518e0efc841ba5c54190add6"
+	}
+}

@@ -1,0 +1,13 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 FAMILY GENERATION CONTRACT PASS] 1. 家庭世代配置从正式居民定义取得文化、姓名池和确定性种子
+[V5 FAMILY GENERATION CONTRACT PASS] 2. 无测试注入的长期推进会形成孕育、延迟出生和真实人口变化
+[V5 FAMILY GENERATION CONTRACT PASS] 3. 未结伴成年人会依据亲缘边界、关系和住房形成伴侣与新家庭
+[V5 FAMILY GENERATION CONTRACT PASS] 4. 新生儿拥有完整实体、生命周期、继承属性、亲子关系和家庭 Chronicle
+[V5 FAMILY GENERATION CONTRACT PASS] 5. 第一代运行期新生儿成年后能够形成家庭并产生第二代
+[V5 FAMILY GENERATION CONTRACT PASS] 6. 自然死亡会转移真实物品，测试注入的绝户家庭软退场且历史仍可追溯
+[V5 FAMILY GENERATION CONTRACT PASS] 7. 同一种子完整复现家族史，不同种子产生不同伴侣、出生与家庭历史
+[V5 FAMILY GENERATION CONTRACT PASS] 8. 多世代人物、家庭、亲缘、遗产和 Chronicle 可精确存档恢复
+[V5 FAMILY GENERATION CONTRACT PASS] 9. 缩短周期的测试注入证明家庭系统经正式 WorldTick 产生孕育与次日出生
+[V5 FAMILY GENERATION SAMPLE] {"active_population":49,"births":26,"conceptions":26,"deaths":7,"households_extinguished":0,"households_formed":3,"inheritances":3,"initial_population":30,"maximum_generation":2,"partnerships":10,"second_generation_births":9,"seed":81001,"years":35}
+[V5 FAMILY GENERATION CONTRACT RESULT] PASS

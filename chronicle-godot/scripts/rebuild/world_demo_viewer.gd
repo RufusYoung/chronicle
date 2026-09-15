@@ -3,6 +3,7 @@ extends "res://scripts/rebuild/v5_live_location_viewer.gd"
 
 const Graph = preload("res://scripts/rebuild/region_graph.gd")
 const REED_ART = preload("res://art/environments/reed_bank_landing_v1.png")
+const ECHO_ART = preload("res://art/environments/echo_port_landing_v1.png")
 const DEFAULT_SAVE := "user://world_demo/manual.json"
 
 @export var save_path: String = DEFAULT_SAVE
@@ -13,6 +14,7 @@ const DEFAULT_SAVE := "user://world_demo/manual.json"
 @export var initial_community_rules: bool = false
 @export var initial_world_danger: bool = false
 @export var initial_player_life: bool = false
+@export var initial_content_extension: bool = false
 var busy := false
 var last_operation: Dictionary = {}
 var _worker: Thread
@@ -30,12 +32,15 @@ var _region_heading: Label
 var _road_text: Label
 var _picture: TextureRect
 var _picture_caption: Label
+var _canon_details: AcceptDialog
+var _canon_details_button: Button
 var _seed_input: SpinBox
 var _livelihood_rules: CheckBox
 var _work_rules: CheckBox
 var _community_rules: CheckBox
 var _danger_rules: CheckBox
 var _player_life: CheckBox
+var _content_extension: CheckBox
 var _startup := true
 var _startup_message := ""
 
@@ -72,17 +77,22 @@ func restart_session() -> void:
 					_startup_message += "此存档保留旧谋生规则；「新世界」可体验家庭口粮、送粮和替代采食，原存档不会被转换。"
 				elif initial_work_rules and not view_model.session.fixture_source_data.has("work_rules"):
 					_startup_message += "此存档保留旧作业规则；「新世界」可体验工具损耗、修补和实际补货，原存档不会被转换。"
+				if initial_content_extension and not view_model.session.fixture_source_data.has("content_extension"):
+					_startup_message += "此存档保留原生活内容；创建「沿岸生活扩展」新世界可体验加工、绳具与短插曲。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
-		view_model.start(_world_options(initial_seed, initial_livelihood_rules, initial_work_rules, initial_community_rules, initial_world_danger, initial_player_life))
+		view_model.start(_world_options(initial_seed, initial_livelihood_rules, initial_work_rules, initial_community_rules, initial_world_danger, initial_player_life, initial_content_extension))
 		refresh_view()
 	else:
-		_begin_operation("start", [_world_options(int(_seed_input.value), _livelihood_rules.button_pressed, _work_rules.button_pressed, _community_rules.button_pressed, _danger_rules.button_pressed, _player_life.button_pressed)])
+		_begin_operation("start", [_world_options(int(_seed_input.value), _livelihood_rules.button_pressed, _work_rules.button_pressed, _community_rules.button_pressed, _danger_rules.button_pressed, _player_life.button_pressed, _content_extension.button_pressed)])
 
 
-func _world_options(seed_value: int, integrated: bool, work_rules: bool = false, community_rules: bool = false, danger_rules: bool = false, player_life: bool = false) -> Dictionary:
+func _world_options(seed_value: int, integrated: bool, work_rules: bool = false, community_rules: bool = false, danger_rules: bool = false, player_life: bool = false, content_extension: bool = false) -> Dictionary:
 	var options := {"scenario": initial_scenario, "challenge_seed_override": seed_value}
+	if content_extension and initial_scenario == "echo_realm":
+		player_life = true
+		options["content_extension_version"] = 1
 	if player_life:
 		integrated = true
 		work_rules = true
@@ -126,7 +136,9 @@ func refresh_view(projected: Dictionary = {}) -> void:
 		roads.append("%s ↔ %s    %d 小时" % [names.get(road.from, "未知"), names.get(road.to, "未知"), road.hours])
 	_road_text.text = "\n".join(roads) + "\n\n线路示意，不代表真实方位或比例。\n回到「现场」选择路线；查看区域不推进时间。"
 	var at_reed: bool = region.get("current_settlement_id", "") == "generated_settlement.reed_bay"
+	_picture.texture = REED_ART
 	_picture.visible = at_reed
+	_canon_details_button.hide()
 	_picture_caption.text = ("苇岸水边 · 地点美术样例\n静态环境画，不代表实时天气、人物或货物数量。"
 		if at_reed else "%s\n此处的地点画面尚未制作。" % location_title.text)
 	if not canon.is_empty():
@@ -138,6 +150,12 @@ func refresh_view(projected: Dictionary = {}) -> void:
 		background.append("\n" + str(canon.description))
 		background.append("\n" + str(canon.scope_note))
 		_picture_caption.text = "\n".join(background)
+		_canon_details.dialog_text = _picture_caption.text
+		if view_model.session.fixture_source_data.has("content_extension"):
+			_picture.texture = ECHO_ART
+			_picture.show()
+			_picture_caption.text = "回音港外 · 镜湖北岸\n静态环境插画，不代表实时天气、人物与货物。\n只有地图中的两处聚落正在运行；大世界其余文明尚未运行。"
+			_canon_details_button.show()
 
 
 func _begin_operation(method: String, arguments: Array = []) -> Dictionary:
@@ -340,7 +358,7 @@ func _install_save_controls() -> void:
 	new_world_form.add_child(_community_rules)
 	_danger_rules = CheckBox.new()
 	_danger_rules.text = "实体危险实验：居民遇险、连续交锋与伤后休养"
-	_danger_rules.button_pressed = initial_world_danger
+	_danger_rules.button_pressed = initial_world_danger or initial_player_life or initial_content_extension
 	_danger_rules.visible = initial_scenario == "echo_realm"
 	_danger_rules.disabled = not (_livelihood_rules.button_pressed and _work_rules.button_pressed)
 	var refresh_danger := func(_pressed: bool) -> void:
@@ -351,14 +369,25 @@ func _install_save_controls() -> void:
 	_player_life = CheckBox.new()
 	_player_life.text = "玩家生活：饥饿、出行、采食与短工（含危险实验）"
 	_player_life.tooltip_text = "仅新世界生效，自动启用居民生活、作业与危险；原存档不转换。"
-	_player_life.button_pressed = initial_player_life
+	_player_life.button_pressed = initial_player_life or initial_content_extension
 	_player_life.visible = initial_scenario == "echo_realm"
 	_player_life.toggled.connect(func(pressed: bool) -> void:
 		if pressed:
 			_livelihood_rules.button_pressed = true
 			_work_rules.button_pressed = true
-			_danger_rules.button_pressed = true)
+			_danger_rules.button_pressed = true
+		elif _content_extension != null:
+			_content_extension.button_pressed = false)
 	new_world_form.add_child(_player_life)
+	_content_extension = CheckBox.new()
+	_content_extension.text = "沿岸生活扩展：加工食品、绳具取舍与短插曲"
+	_content_extension.tooltip_text = "仅新世界生效，包含玩家生活；旧存档保留原物品定义与规则。"
+	_content_extension.button_pressed = initial_content_extension
+	_content_extension.visible = initial_scenario == "echo_realm"
+	_content_extension.toggled.connect(func(pressed: bool) -> void:
+		if pressed:
+			_player_life.button_pressed = true)
+	new_world_form.add_child(_content_extension)
 
 
 func _confirmation(title_text: String, message: String, action: String) -> ConfirmationDialog:
@@ -427,3 +456,12 @@ func _install_region_page() -> void:
 	_picture_caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_picture_caption.add_theme_font_size_override("font_size", 14)
 	right.add_child(_picture_caption)
+	_canon_details = AcceptDialog.new()
+	_canon_details.title = "回响之境 · 原设定背景"
+	_canon_details.get_label().autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_canon_details.get_label().custom_minimum_size.x = 620
+	add_child(_canon_details)
+	_canon_details_button = Button.new()
+	_canon_details_button.text = "查看原设定背景"
+	_canon_details_button.pressed.connect(func() -> void: _canon_details.popup_centered(Vector2i(660, 480)))
+	right.add_child(_canon_details_button)

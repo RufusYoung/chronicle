@@ -1,0 +1,15 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 1. 会话加载同一地点的两个正式遭遇候选
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 1a. 没有陆槐记录时即使身在旧井也不会凭空出现候选
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 2. 默认种子沿正式调查和远行流程抵达旧井
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 3. 种子 516 从两个合格候选中稳定选出盐雾拾荒客
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 4. 界面反复刷新不会改抽另一个遭遇
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 5. 未解决候选经过存档往返仍保持原选择
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 6. 相同世界内容可以用另一正式种子抵达同一地点
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 7. 种子 517 选择盐壳獠豕并只暴露它的可观察特征
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 8. 低粮压世界沿同一流程抵达旧井
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 9. 地区粮压不高时拾荒客被排除，只剩野兽候选
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 10. 被选遭遇结算后消费整个独占组，不串出第二个候选
+[V5 COMBAT ENCOUNTER DIRECTOR PASS] 11. 未被选择的候选不能在结算后补做或污染日志
+[V5 COMBAT ENCOUNTER DIRECTOR RESULT] PASS

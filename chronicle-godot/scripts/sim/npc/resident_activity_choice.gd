@@ -79,19 +79,23 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 			factors["known_need"] = 6
 		if row.kind == "work":
 			factors["fatigue"] = -int(states.get("fatigue", 0)) * 2
-			for profile: Dictionary in profiles:
-				if profile.get("occupation_id") != states.get("occupation_id") or profile.get("workplace_id") != row.goal:
+			for base: Dictionary in profiles:
+				if base.get("occupation_id") != states.get("occupation_id") or base.get("workplace_id") != row.goal:
 					continue
+				var profile := Recipe.for_intent(base, str(row.intent_id))
+				if profile.has("choice_bias"):
+					factors["recipe_preference"] = int(profile.choice_bias)
 				if Food.is_food_producer(profile) and need_food:
 					factors["own_meal_output"] = 22
 				if location == row.goal and (not Storage.has_capacity(snapshot, str(actor.id), profile, food_config.get("worksite_storage", {})) \
 						or (Recipe.enabled(profile) and not Recipe.new(snapshot, registry).plan_inputs(profile, str(actor.id), "preview", 0).ok)):
 					factors["known_work_blocked"] = -100
-				if int(states.get("livelihood_elapsed_hours", 0)) > 0:
+				if int(states.get("livelihood_elapsed_hours", 0)) > 0 and (base.get("recipe_variants", []).is_empty() or states.get("work_elapsed_recipe_id") == profile.work_recipe.recipe_id):
 					factors["unfinished_work"] = mini(int(states.livelihood_elapsed_hours), int(profile.get("work_interval_hours", 1))) * 2
 				if WorkOpportunities.knows_work_blocked(snapshot, actor, profile, snapshot.world_time):
 					factors["known_work_blocked"] = -100
-		if row.goal == states.get("daily_goal_id") and row.activity == states.get("daily_activity"):
+		if row.goal == states.get("daily_goal_id") and row.activity == states.get("daily_activity") \
+				and (not str(row.intent_id).begins_with("recipe:") or row.intent_id == states.get("daily_intent_id")):
 			factors["continuity"] = int(config.continuity_bonus)
 		row["score"] = 0
 		for value: int in factors.values():

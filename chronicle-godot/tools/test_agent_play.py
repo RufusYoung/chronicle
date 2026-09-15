@@ -16,6 +16,27 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_content_variant_public_choices_and_native_restore(self):
+        with client(timeout=90) as game:
+            opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                  economy_variant="world_content_v1")
+            self.assertTrue(opened["ok"], opened)
+            route = next(c for c in opened["choices"] if c["kind"] == "travel" and c["id"].endswith("commons_to_fishery"))
+            arrived = game.request("act", choice_id=route["choice_id"])
+            self.assertTrue(arrived["ok"], arrived)
+            processing = next(c for c in arrived["choices"] if c["id"] == "work:recipe.smoke_lake_fish")
+            self.assertIn("鲜鱼", processing["hint"])
+            self.assertIn("无需消耗工具耐久", processing["hint"])
+            self.assertFalse(processing["enabled"], "New player has no raw processing input")
+            self.assertFalse(any({"offer", "statement", "report"}.intersection(c) for c in arrived["choices"]))
+            slot = f"content_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            restored = game.request("load", slot=slot)
+            self.assertTrue(restored["ok"], restored)
+            self.assertEqual(restored["observation"], arrived["observation"])
+            self.assertEqual(restored["choices"], arrived["choices"])
+            self.assertEqual(game.request("inspect")["error"], "omniscient_inspection_disabled_in_play_mode")
+
     def test_local_information_and_v2_native_restore(self):
         with client(timeout=90) as game:
             opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,

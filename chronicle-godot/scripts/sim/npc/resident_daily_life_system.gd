@@ -107,6 +107,15 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 		if use_choice:
 			Choice.propose(proposals, "rest" if activity == "resting" else ("work" if activity == "working" else ("seek_work" if activity == "seeking_work" else "home")), goal, activity, reason)
 			proposals.back()["mandatory_rest"] = must_rest
+			if activity == "working":
+				for base: Dictionary in profiles:
+					if base.get("occupation_id") != states.get("occupation_id") or base.get("workplace_id") != workplace or base.get("recipe_variants", []).is_empty():
+						continue
+					proposals.pop_back()
+					for profile: Dictionary in WorkOpportunities.Recipe.variants(base):
+						Choice.propose(proposals, "work", workplace, "working", "到岗做" + str(profile.label), [], "recipe:" + str(profile.work_recipe.recipe_id))
+						proposals.back().rule_id += ":" + str(profile.work_recipe.recipe_id)
+					break
 		if FoodAccess.enabled(food_config) and not must_rest:
 			var family := FamilyFood.request(snapshot, actor, tick, food_config.get("household_provisioning", {}))
 			if Budget.enabled(food_config.get("household_budget", {})):
@@ -235,9 +244,9 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 					if bool(choice_config.get("supply_enabled", true)):
 						for site: String in WorkOpportunities.supply_sites(snapshot, actor, profiles, demand, network, registry, tick):
 							if site == workplace:
-								Choice.propose(proposals, "resupply", site, "seeking_work", "先回作业地检查自己存下的备用用品，不需要向自己的货柜付钱", demand.source_fact_ids, "work_supply")
+								Choice.propose(proposals, "resupply", site, "seeking_work", "先回作业地检查自己存下的备用用品，不需要向自己的货柜付钱", demand.source_fact_ids, str(demand.get("intent_id", "work_supply")))
 							elif FoodAccess.balance(food_items, id) > 0:
-								Choice.propose(proposals, "resupply", site, "seeking_work", "作业用品不足，去已知的生产地当面询价", demand.source_fact_ids, "work_supply")
+								Choice.propose(proposals, "resupply", site, "seeking_work", "作业用品不足，去已知的生产地当面询价", demand.source_fact_ids, str(demand.get("intent_id", "work_supply")))
 			var effective_choice := choice_config.duplicate(true)
 			if WorldDanger.enabled(danger_rules):
 				effective_choice["danger_hour"] = WorldDanger.hour(tick)

@@ -77,6 +77,10 @@ H1 已增加发布包入口，直接启动 `Chronicle.exe --headless -- --agent-
 | `household_budget_v1` | 上述送粮与家庭粮柜、备粮记忆；单独启用仍会长期缺粮。 |
 | `household_livelihood_v1` | 粮柜、预算、送粮与受资源权限约束的替代采食共同运行。 |
 | `work_framework_v1` | 在家庭生计上启用共享配方、非食品货柜、工具磨损/有限维修、实际补货及统一活动取舍。 |
+| `world_danger_v1` | 共享实体危险、受伤、退避与连续战斗；不是完整生态。 |
+| `player_life_v1` | 同一世界内的正式旅人生计和身体规则。 |
+| `player_life_v2` | 增加有时效的本地知情、真实余粮交易/分粮与逐小时连续休整。 |
+| `world_content_v1` | 玩家生活 v2、危险与显式沿岸数据包；加工食品、不同绳具、配方取舍与条件短插曲。 |
 | `community_life_v1` | 在作业框架上显式启用有限消息、到访、地方约定与有真实付款者的邻里托运。RF4 尚在验证，不代表已通过可玩性验收。 |
 
 查看家庭生计基线可显式选择 `household_livelihood_v1`。`world` 模式的逐小时世界演算不会注入 NPC 指令；`play` 模式仍只能执行返回的合法选项。这是居民生活联调，不意味着当前正式玩家人生已完成。配置和限制见[家庭生活合同](../v5/CHRONICLE_HOUSEHOLD_LIVELIHOOD_CONTRACT_v5.1.md)。

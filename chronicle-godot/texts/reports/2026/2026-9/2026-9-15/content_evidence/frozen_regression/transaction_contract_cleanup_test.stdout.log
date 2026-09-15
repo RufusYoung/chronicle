@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 1. all basic_action_rules have transaction_mode
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 2. all domain_action_rules have transaction_mode
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 3. all test_action_rules have transaction_mode
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 4. effect_template mode requires effect_template_id
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 5. candidate_only mode has no effect_template_id
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 6. effect_template_id exists in basic_effect_templates.json
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 7. RawRuleContractValidator returns ok for current rules
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 8. ActionCandidate carries transaction_mode
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 9. TransactionResolver returns resolved for effect_template mode
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 10. TransactionResolver resolves approach_visible_person
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 11. Approach writes one fact without unrelated side effects
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 12. missing effect_template_id returns invalid_contract without legacy fallback
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 13. test_inquiry_concealed_item_alias still executes without Resolver rule mapping
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 14. SimRunner WorldLog records transaction_mode and contract_status
+[V5 TRANSACTION CONTRACT CLEANUP PASS] 15. SimWorldLog summary counts resolved / candidate_only / invalid_contract
+[V5 TRANSACTION CONTRACT CLEANUP RESULT] PASS

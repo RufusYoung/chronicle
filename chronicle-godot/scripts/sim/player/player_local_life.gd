@@ -97,7 +97,11 @@ static func local_statement(session: Variant, view: Variant, player: Dictionary,
 	for profile: Dictionary in session.npc_livelihood_profiles:
 		if profile.get("occupation_id") != person.states.get("occupation_id") or profile.get("workplace_id") != person.states.get("workplace_id"):
 			continue
-		workplaces.append({"location_id": profile.workplace_id, "label": profile.label, "hours": profile.work_interval_hours})
+		for recipe: Dictionary in session.PlayerLife.Recipe.variants(profile):
+			var work := {"location_id": recipe.workplace_id, "label": recipe.label, "hours": recipe.work_interval_hours}
+			if not profile.get("recipe_variants", []).is_empty():
+				work["inputs"] = session.PlayerLife.Recipe.input_summary(recipe, session.registry)
+			workplaces.append(work)
 	var stock: Array = []
 	for offer: Dictionary in session.PlayerLife.offers(view, player, session.fixture_source_data.resident_daily_life.food_access, session.stores, session.npc_livelihood_profiles):
 		if offer.policy.seller_entity_id == person.id:
@@ -124,6 +128,8 @@ static func statement_text(session: Variant, person: Dictionary, info: Dictionar
 	for work: Dictionary in info.workplaces:
 		lines.append("我平常在%s做%s，一轮要%d小时；有料有工具、身体撑得住才做得完。" % [
 			session.context.locations.get(str(work.location_id), {}).get("display_name", "本地作业地"), work.label, work.hours])
+		if work.has("inputs"):
+			lines.append(str(work.inputs))
 	if info.workplaces.is_empty():
 		lines.append("我眼下没有固定的生产作业可以介绍。白天去本地泊台或公用作业地，也可以自己采口粮。")
 	if info.stock.is_empty():

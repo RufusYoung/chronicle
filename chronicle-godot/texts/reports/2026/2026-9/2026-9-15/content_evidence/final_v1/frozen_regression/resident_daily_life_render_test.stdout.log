@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+CHRONICLE_WORLD_READY seed=81001 location=generated_location.reed_bay.commons
+PASS residents start at home, not preplaced for screenshot
+PASS UI operation succeeded
+PASS UI operation succeeded
+PASS waiting alone brings real residents through commons
+PASS arrival information is rendered
+PASS local arrival is prioritized over distant resource recovery
+PASS UI operation succeeded
+PASS UI operation succeeded
+PASS UI operation succeeded
+PASS traveler reaches workplace through legal route
+PASS same workers are visibly at work
+PASS local work feedback names a present person and their actual work reason
+PASS people do not push action dock outside viewport
+RESIDENT_DAILY_LIFE_RENDER_RESULT PASS

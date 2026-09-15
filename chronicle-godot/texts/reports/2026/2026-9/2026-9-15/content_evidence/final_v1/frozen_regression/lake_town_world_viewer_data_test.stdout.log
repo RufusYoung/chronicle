@@ -1,0 +1,23 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[LAKE TOWN WORLD VIEWER DATA PASS] 1. build_view_data generates 20 seed results
+[LAKE TOWN WORLD VIEWER DATA PASS] 2. every seed has seed_summary
+[LAKE TOWN WORLD VIEWER DATA PASS] 3. every seed has timeline
+[LAKE TOWN WORLD VIEWER DATA PASS] 4. every timeline contains a lake town WorldFact
+[LAKE TOWN WORLD VIEWER DATA PASS] 5. every seed has quality_summary
+[LAKE TOWN WORLD VIEWER DATA PASS] 6. unresolved_extreme_hunger remains zero
+[LAKE TOWN WORLD VIEWER DATA PASS] 7. impossible_shop_state remains zero
+[LAKE TOWN WORLD VIEWER DATA PASS] 8. dangling_major_fact remains zero
+[LAKE TOWN WORLD VIEWER DATA PASS] 9. build_day_detail returns all additions for the selected day
+[LAKE TOWN WORLD VIEWER DATA PASS] 10. NPC snapshot includes old_chen and chen_mi
+[LAKE TOWN WORLD VIEWER DATA PASS] 11. location snapshot includes shop and granary
+[LAKE TOWN WORLD VIEWER DATA PASS] 12. every fact row contains fact_id/day/type
+[LAKE TOWN WORLD VIEWER DATA PASS] 13. every trace row contains trace_id/source_fact_id
+[LAKE TOWN WORLD VIEWER DATA PASS] 14. every memory row contains memory_id or id
+[LAKE TOWN WORLD VIEWER DATA PASS] 15. every narratable row contains narratable_state_id or id
+[LAKE TOWN WORLD VIEWER DATA PASS] 16. raw signature is readable
+[LAKE TOWN WORLD VIEWER DATA PASS] 17. ViewModel readers do not mutate input results
+[LAKE TOWN WORLD VIEWER DATA PASS] 18. UI scene parses headlessly and contains no state writes
+[LAKE TOWN WORLD VIEWER DATA PASS] 19. story_player.gd is unchanged
+[LAKE TOWN WORLD VIEWER DATA PASS] 20. world_generation_v03.gd is unchanged
+[LAKE TOWN WORLD VIEWER DATA RESULT] PASS

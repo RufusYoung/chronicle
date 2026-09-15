@@ -1,0 +1,9 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GROWTH TRANSITION PASS] 1. A confirmed first winter builds a target-specific transition package
+[V5 GROWTH TRANSITION PASS] 2. Growth, outpost state, fixed people, shared items, equipment, and the transition fact enter atomically
+[V5 GROWTH TRANSITION PASS] 3. The transitioned character can continue simulation with earned growth
+[V5 GROWTH TRANSITION PASS] 4. The continued transition survives SaveEnvelope restore
+[V5 GROWTH TRANSITION PASS] 5. A late invalid reference leaves the real target session untouched
+[V5 GROWTH TRANSITION PASS] 6. Existing schema v3 stage snapshots migrate without breaking restart
+[V5 GROWTH TRANSITION RESULT] PASS

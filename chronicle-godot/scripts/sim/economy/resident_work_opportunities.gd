@@ -12,12 +12,23 @@ const Access = preload("res://scripts/sim/resource/resource_access.gd")
 static func assigned_profile(actor: Dictionary, profiles: Array) -> Dictionary:
 	for profile: Dictionary in profiles:
 		if profile.get("occupation_id") == actor.states.get("occupation_id") and profile.get("settlement_id") == actor.states.get("settlement_id"):
-			return profile
+			return Recipe.for_intent(profile, str(actor.states.get("daily_intent_id", "")))
 	return {}
 
 
 static func need(snapshot: Variant, actor: Dictionary, profiles: Array) -> Dictionary:
-	var profile := assigned_profile(actor, profiles)
+	var demand := need_for_profile(snapshot, actor, assigned_profile(actor, profiles))
+	if not demand.is_empty() and profiles.any(func(profile: Dictionary) -> bool:
+		return profile.get("occupation_id") == actor.states.get("occupation_id") and profile.get("settlement_id") == actor.states.get("settlement_id") and not profile.get("recipe_variants", []).is_empty()):
+		demand["intent_id"] = "work_supply:" + str(demand.recipe_id)
+	return demand
+
+
+static func is_supply_intent(intent: String) -> bool:
+	return intent == "work_supply" or intent.begins_with("work_supply:")
+
+
+static func need_for_profile(snapshot: Variant, actor: Dictionary, profile: Dictionary) -> Dictionary:
 	if not Recipe.enabled(profile):
 		return {}
 	var items: Array = snapshot.get_items_for_holder(str(actor.id))
@@ -81,7 +92,10 @@ static func supply_sites(snapshot: Variant, actor: Dictionary, profiles: Array, 
 			if ends[0] == actor.states.get("settlement_id") and ends[1] not in settlements:
 				settlements.append(ends[1])
 	var sites: Array = []
+	var expanded: Array = []
 	for profile: Dictionary in profiles:
+		expanded.append_array(Recipe.variants(profile))
+	for profile: Dictionary in expanded:
 		if profile.get("settlement_id") not in settlements:
 			continue
 		for output: Dictionary in profile.get("products", []):
@@ -101,7 +115,7 @@ static func recently_failed(snapshot: Variant, actor: String, site: String, dema
 
 
 static func knows_work_blocked(snapshot: Variant, actor: Dictionary, profile: Dictionary, tick: Dictionary) -> bool:
-	if not need(snapshot, actor, [profile]).is_empty():
+	if not need_for_profile(snapshot, actor, profile).is_empty():
 		return true
 	var site := str(profile.get("workplace_id", ""))
 	if actor.states.get("location_id") == site and actor.states.get("daily_route_id", "") == "":
@@ -111,6 +125,8 @@ static func knows_work_blocked(snapshot: Variant, actor: Dictionary, profile: Di
 					or Access.denial(snapshot, stock, str(actor.id), "livelihood_production", float(input.amount_per_cycle), int(tick.get("day", 0))) != "":
 				return true
 	for fact: Dictionary in snapshot.get_facts_by_actor(str(actor.id)):
+		if fact.has("recipe_id") and fact.recipe_id != profile.get("work_recipe", {}).get("recipe_id"):
+			continue
 		if fact.get("fact_type") in ["npc_livelihood_blocked_resource", "npc_wage_work_declined"] \
 				and fact.get("work_kind") == "occupation" and fact.get("location_id") == site and _hour(tick) - _hour(fact) < 6:
 			return true
@@ -168,7 +184,7 @@ static func stock_offers(snapshot: Variant, seller: Dictionary, buyer: String, p
 
 
 static func plan_purchase(snapshot: Variant, actor: Dictionary, profiles: Array, stores: Dictionary, tick: Dictionary) -> Dictionary:
-	if actor.states.get("daily_intent_id") != "work_supply" or actor.states.get("daily_route_id", "") != "" \
+	if not is_supply_intent(str(actor.states.get("daily_intent_id", ""))) or actor.states.get("daily_route_id", "") != "" \
 			or actor.states.get("daily_activity") != "seeking_work" or not actor.states.get("alive", true):
 		return {}
 	var demand := need(snapshot, actor, profiles)
@@ -197,7 +213,7 @@ static func plan_purchase(snapshot: Variant, actor: Dictionary, profiles: Array,
 			continue
 		var sources: Array = demand.source_fact_ids.duplicate()
 		Recipe._add_item_sources(sources, offer.item)
-		var summary := "%s为恢复作业，向在场的%s支付 %d 枚铜币买下%d件%s；工具已由本人携带，仍要走回作业地。" % [actor.display_name,
+		var summary := "%s为恢复作业，向在场的%s支付 %d 枚铜币买下%d件%s；用品已由本人携带，仍要走回作业地。" % [actor.display_name,
 			offer.seller_name, int(offer.unit_price) * int(demand.quantity), demand.quantity, offer.display_name]
 		var plan := Market.new().plan_trade(offer.policy, {"buyer_entity_id": buyer, "item_instance_id": offer.item_instance_id,
 			"quantity": demand.quantity, "quoted_unit_price": offer.unit_price, "maximum_total_price": money,

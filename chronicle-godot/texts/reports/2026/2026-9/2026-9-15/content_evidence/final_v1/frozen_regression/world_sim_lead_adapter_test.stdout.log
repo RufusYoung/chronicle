@@ -1,0 +1,24 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[WORLD SIM LEAD ADAPTER PASS] world_sim produced LeadCandidate values
+[WORLD SIM LEAD ADAPTER PASS] adapter produced v0.3 clue dictionaries
+[WORLD SIM LEAD ADAPTER PASS] adapter preserved candidate count
+[WORLD SIM LEAD ADAPTER PASS] all required v0.3 fields are present
+[WORLD SIM LEAD ADAPTER PASS] all types belong to the four v0.3 clue types
+[WORLD SIM LEAD ADAPTER PASS] freshness and risk stay within 0.0 to 1.0
+[WORLD SIM LEAD ADAPTER PASS] every adapted clue has an action hint
+[WORLD SIM LEAD ADAPTER PASS] every adapted clue has world_cause
+[WORLD SIM LEAD ADAPTER PASS] every adapted clue has related_fact_id
+[WORLD SIM LEAD ADAPTER PASS] every adapted clue has world_sim origin
+[WORLD SIM LEAD ADAPTER PASS] same seed produces reproducible adapted clues
+[WORLD SIM LEAD ADAPTER PASS] day 3 test injection changes adapted clue signatures
+[WORLD SIM LEAD ADAPTER PASS] adapter does not create world facts
+[WORLD SIM LEAD ADAPTER PASS] adapter does not create LeadCandidate values
+[ADAPTER SUMMARY] candidates=40 adapted=40 types={"传闻":15,"河流":3,"烟柱":13,"足迹":9}
+[ADAPTER A/B] baseline=40 intervention=39 signatures_differ=true
+[ADAPTER SAMPLE] 烟柱 | 远处商队烟迹 | 东南 | cause=scarcity_high_and_smuggler_raid | fact=fact_d01_005_raid_supplies | actions=调查, 护送, 劫掠, 放任
+[ADAPTER SAMPLE] 传闻 | 关于旧遗迹异象的传闻 | 北方 | cause=cult_ritual_and_mystic_pressure | fact=fact_d01_003_region_daily_shift | actions=观察, 打断, 跟随, 报告
+[ADAPTER SAMPLE] 足迹 | 道旁新设的盘查痕迹 | 东南 | cause=warden_security_response | fact=fact_d01_004_suppress_smugglers | actions=配合盘查, 询问, 绕过关卡, 举报走私
+[ADAPTER SAMPLE] 足迹 | 林中迁徙足迹 | 西北 | cause=beast_migration | fact=fact_d03_017_region_daily_shift | actions=狩猎, 跟随, 设陷, 警告旅人
+[ADAPTER SAMPLE] 传闻 | 镇上的低声传闻 | 东南 | cause=smuggler_information_market | fact=fact_d03_016_region_daily_shift | actions=核实, 购买情报, 散播消息, 报告
+[WORLD SIM LEAD ADAPTER RESULT] PASS

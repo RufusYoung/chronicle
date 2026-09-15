@@ -1,0 +1,6 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 RISK OUTCOME PASS] 1. Modified risk produces a visible clean outcome
+[V5 RISK OUTCOME PASS] 2. Failed roll atomically applies consequence and traceable fact
+[V5 RISK OUTCOME PASS] 3. Patrol outcome also advances its accumulated mark
+[V5 RISK OUTCOME RESULT] PASS

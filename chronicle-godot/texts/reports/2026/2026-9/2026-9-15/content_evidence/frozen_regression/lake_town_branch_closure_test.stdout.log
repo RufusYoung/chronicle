@@ -1,0 +1,26 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[LAKE TOWN BRANCH CLOSURE PASS] 1. guard lock plus high hunger triggers child blocked
+[LAKE TOWN BRANCH CLOSURE PASS] 2. guard lock does not directly generate grain taking
+[LAKE TOWN BRANCH CLOSURE PASS] 3. guard notices the child at least one day after blocking
+[LAKE TOWN BRANCH CLOSURE PASS] 4. empty granary leads to an empty-handed return
+[LAKE TOWN BRANCH CLOSURE PASS] 5. Old Chen can see Chen Mi return empty-handed
+[LAKE TOWN BRANCH CLOSURE PASS] 6. enduring extreme hunger weakens Chen Mi
+[LAKE TOWN BRANCH CLOSURE PASS] 7. a concerned neighbor notices the weakened child
+[LAKE TOWN BRANCH CLOSURE PASS] 8. early creditor pressure can lead to a delay request
+[LAKE TOWN BRANCH CLOSURE PASS] 9. strict creditor conditions can reject the delay request
+[LAKE TOWN BRANCH CLOSURE PASS] 10. another family's grain path creates tracks or rumor
+[LAKE TOWN BRANCH CLOSURE PASS] 11. extreme stress and debt force an abnormal closure
+[LAKE TOWN BRANCH CLOSURE PASS] 12. a reopened shop can remain half-open under high debt
+[LAKE TOWN BRANCH CLOSURE PASS] 13. every branch-closure WorldFact has cause_fact_ids
+[LAKE TOWN BRANCH CLOSURE PASS] 14. every branch-closure Trace has source_fact_id
+[LAKE TOWN BRANCH CLOSURE PASS] 15. a closure key is not generated again on later days
+[LAKE TOWN BRANCH CLOSURE PASS] 16. auditor identifies an impossible extreme open-shop state
+[LAKE TOWN BRANCH CLOSURE PASS] 17. auditor identifies a major path with no follow-up
+[LAKE TOWN BRANCH CLOSURE PASS] 18. corrected 20-seed batch has no impossible shop state
+[LAKE TOWN BRANCH CLOSURE PASS] 19. every seed with an alternative path has closure depth
+[LAKE TOWN BRANCH CLOSURE PASS] 20. mixed_or_unclassified is not an unreasoned default
+[LAKE TOWN BRANCH CLOSURE PASS] 21. multi-seed output contains the quality audit summary
+[LAKE TOWN BRANCH CLOSURE PASS] 22. multi-seed output contains at least five closure samples
+[LAKE TOWN BRANCH CLOSURE SUMMARY] seeds=20 impossible=0 dangling=0 unresolved_hunger=0 average_depth=3.10 outcomes={"empty_granary_returned_empty":1,"forced_shop_closure_no_theft":2,"guard_locked_guard_attention":6,"mixed_interwoven":2,"silent_hunger_decline":4,"theft_helped_recovery":3,"theft_sickness_debt":2}
+[LAKE TOWN BRANCH CLOSURE RESULT] PASS

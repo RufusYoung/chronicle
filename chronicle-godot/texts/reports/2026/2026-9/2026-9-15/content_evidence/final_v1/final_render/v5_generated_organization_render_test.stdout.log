@@ -1,0 +1,19 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[V5 GENERATED ORGANIZATION RENDER PASS] 1. 正式地点界面可以载入生成组织场景
+[V5 GENERATED ORGANIZATION RENDER PASS] 2. 同一正式会话生成三个可展示组织
+[V5 GENERATED ORGANIZATION RENDER PASS] 3. 苇岸埠面板显示组织目标、职位和真实成员
+[V5 GENERATED ORGANIZATION RENDER PASS] 4. 白坡坞面板显示由防御高地与风险道路生成的守路队
+[V5 GENERATED ORGANIZATION RENDER PASS] 5. 白坡坞创始组织截图已写入
+[V5 GENERATED ORGANIZATION RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_generated_organization_wind_pass.png
+[V5 GENERATED ORGANIZATION RENDER PASS] 6. 守路队消耗真实运力后的巡守行动与结果进入正式界面
+[V5 GENERATED ORGANIZATION RENDER PASS] 7. 白坡坞组织巡守截图已写入
+[V5 GENERATED ORGANIZATION RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_generated_organization_wind_pass_patrol.png
+[V5 GENERATED ORGANIZATION RENDER PASS] 8. 创始成员迁出后界面保留组织并把两个职位显示为空缺
+[V5 GENERATED ORGANIZATION RENDER PASS] 9. 白坡坞职位空缺截图已写入
+[V5 GENERATED ORGANIZATION RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_generated_organization_wind_pass_vacancy.png
+[V5 GENERATED ORGANIZATION RENDER PASS] 10. 持续迁出只剩一名成年候选时补入一人，并保留一个空缺压力
+[V5 GENERATED ORGANIZATION RENDER PASS] 11. 白坡坞自主补位截图已写入
+[V5 GENERATED ORGANIZATION RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_generated_organization_wind_pass_restaffed.png
+[V5 GENERATED ORGANIZATION RENDER RESULT] PASS

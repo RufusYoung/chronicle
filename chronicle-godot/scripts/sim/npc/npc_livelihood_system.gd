@@ -84,6 +84,7 @@ func resolve_work_tick(
 		var profile: Dictionary = profiles_by_scope.get(
 			profile_key, profiles_by_scope.get(fallback_key, {})
 		)
+		profile = WorkRecipe.for_intent(profile, str(actor.states.get("daily_intent_id", "")))
 		if foraging:
 			profile = temporary
 		if maintaining:
@@ -170,6 +171,8 @@ func resolve_work_tick(
 					"聚落可支付的薪酬不足" if wage_missing else ((_work_denial_label(str(blocked_resource.get("denial", ""))) if structured_work else "没有该资源的生产使用权") if str(blocked_resource.get("denial", "")) != "" else str(blocked_resource.get("label", "生产资源")) + "不足"),
 				],
 			})
+			if structured_work:
+				result.facts_added.back()["recipe_id"] = profile.work_recipe.recipe_id
 			result.add_state_change({
 				"entity_id": actor_id,
 				"key": elapsed_key,

@@ -1,0 +1,75 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] both projections start
+[PASS] lake_town initial: each expensive UI projection executes once
+[PASS] lake_town initial: full shared/unshared view parity
+[PASS] lake_town initial: Stores, time, RNG and log parity
+[PASS] lake_town initial: returned arrays do not become cross-action caches
+[PASS] legal action succeeds
+[PASS] after help: each expensive UI projection executes once
+[PASS] after help: full shared/unshared view parity
+[PASS] after help: Stores, time, RNG and log parity
+[PASS] after help: returned arrays do not become cross-action caches
+[PASS] stale action still rejected
+[PASS] after stale action: each expensive UI projection executes once
+[PASS] after stale action: full shared/unshared view parity
+[PASS] after stale action: Stores, time, RNG and log parity
+[PASS] after stale action: returned arrays do not become cross-action caches
+[PASS] legal wait succeeds
+[PASS] after wait: each expensive UI projection executes once
+[PASS] after wait: full shared/unshared view parity
+[PASS] after wait: Stores, time, RNG and log parity
+[PASS] after wait: returned arrays do not become cross-action caches
+[PASS] both projections start
+[PASS] lake_town initial: each expensive UI projection executes once
+[PASS] lake_town initial: full shared/unshared view parity
+[PASS] lake_town initial: Stores, time, RNG and log parity
+[PASS] lake_town initial: returned arrays do not become cross-action caches
+[PASS] legal action succeeds
+[PASS] after help: each expensive UI projection executes once
+[PASS] after help: full shared/unshared view parity
+[PASS] after help: Stores, time, RNG and log parity
+[PASS] after help: returned arrays do not become cross-action caches
+[PASS] stale action still rejected
+[PASS] after stale action: each expensive UI projection executes once
+[PASS] after stale action: full shared/unshared view parity
+[PASS] after stale action: Stores, time, RNG and log parity
+[PASS] after stale action: returned arrays do not become cross-action caches
+[PASS] legal wait succeeds
+[PASS] after wait: each expensive UI projection executes once
+[PASS] after wait: full shared/unshared view parity
+[PASS] after wait: Stores, time, RNG and log parity
+[PASS] after wait: returned arrays do not become cross-action caches
+[PASS] both projections start
+[PASS] generated_network initial: each expensive UI projection executes once
+[PASS] generated_network initial: full shared/unshared view parity
+[PASS] generated_network initial: Stores, time, RNG and log parity
+[PASS] generated_network initial: returned arrays do not become cross-action caches
+[PASS] generated world has a legal route
+[PASS] legal travel succeeds
+[PASS] after travel: each expensive UI projection executes once
+[PASS] after travel: full shared/unshared view parity
+[PASS] after travel: Stores, time, RNG and log parity
+[PASS] after travel: returned arrays do not become cross-action caches
+[PASS] legal wait succeeds
+[PASS] after wait: each expensive UI projection executes once
+[PASS] after wait: full shared/unshared view parity
+[PASS] after wait: Stores, time, RNG and log parity
+[PASS] after wait: returned arrays do not become cross-action caches
+[PASS] both projections start
+[PASS] generated_network initial: each expensive UI projection executes once
+[PASS] generated_network initial: full shared/unshared view parity
+[PASS] generated_network initial: Stores, time, RNG and log parity
+[PASS] generated_network initial: returned arrays do not become cross-action caches
+[PASS] generated world has a legal route
+[PASS] legal travel succeeds
+[PASS] after travel: each expensive UI projection executes once
+[PASS] after travel: full shared/unshared view parity
+[PASS] after travel: Stores, time, RNG and log parity
+[PASS] after travel: returned arrays do not become cross-action caches
+[PASS] legal wait succeeds
+[PASS] after wait: each expensive UI projection executes once
+[PASS] after wait: full shared/unshared view parity
+[PASS] after wait: Stores, time, RNG and log parity
+[PASS] after wait: returned arrays do not become cross-action caches
+WORLD_PROJECTION_REUSE_RESULT 72/72

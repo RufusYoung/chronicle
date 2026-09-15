@@ -369,7 +369,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				livelihood_events.append_array(policies.events)
 			if int(daily_life_config.get("activity_choice", {}).get("version", 0)) == 1:
 				for actor: Dictionary in activity_snapshot.get_entities_by_type("person"):
-					if stores.state_store.get_state(str(actor.id), "daily_intent_id", "") != "work_supply" \
+					if not WorkOpportunities.is_supply_intent(str(stores.state_store.get_state(str(actor.id), "daily_intent_id", ""))) \
 							or stores.state_store.get_state(str(actor.id), "daily_activity", "") != "seeking_work" \
 							or stores.state_store.get_state(str(actor.id), "daily_route_id", "") != "":
 						continue

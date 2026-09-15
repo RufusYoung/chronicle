@@ -1,0 +1,12 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 UNIFIED ACTION CONTRACT PASS] 1. 冬季生活项目可加载统一行动合同
+[V5 UNIFIED ACTION CONTRACT PASS] 2. 已装备冬衣把严寒巡查风险从 6 降至 4，并提供来源说明
+[V5 UNIFIED ACTION CONTRACT PASS] 3. 特征事实通过统一 TransactionResult 写入
+[V5 UNIFIED ACTION CONTRACT PASS] 4. 感知不足时 1 级侦察满足任一条件，四类修正共同得出风险 6
+[V5 UNIFIED ACTION CONTRACT PASS] 5. 装备、伤势、印记和技能均给出可读且可追踪的风险修正
+[V5 UNIFIED ACTION CONTRACT PASS] 6. 后置 Store 失败会拒绝整笔事务，前置 Fact 与状态均不落地
+[V5 UNIFIED ACTION CONTRACT PASS] 7. 显式 Effect operations 经统一结果和 Writer 成功推进真实值勤
+[V5 UNIFIED ACTION CONTRACT PASS] 8. 无效 Effect 协议在 Store 预检前被拒绝且不写入状态
+[V5 UNIFIED ACTION CONTRACT PASS] 9. 调查 Effect 保留内部 create 操作并经统一 Writer 落地
+[V5 UNIFIED ACTION CONTRACT RESULT] PASS

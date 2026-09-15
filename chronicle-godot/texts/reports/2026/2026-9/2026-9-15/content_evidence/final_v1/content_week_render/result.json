@@ -1,0 +1,40 @@
+{
+	"checkpoint": "res://texts/reports/2026/2026-9/2026-9-15/content_evidence/final_v1/content_week_final.ui.json",
+	"checks": {
+		"hours": true,
+		"layout_720": true,
+		"layout_900": true,
+		"record_720": true,
+		"restored": true,
+		"scene_720": true,
+		"scene_900": true,
+		"truth:rng_states": true,
+		"truth:session": true,
+		"truth:stores": true,
+		"truth:world_log": true,
+		"truth:world_time": true
+	},
+	"hours": 168.0,
+	"passed": true,
+	"scope": "Actual renderer of legal agent checkpoint; no game action, injection or human UI play. Native world truth unchanged.",
+	"visible_followups": [
+		{
+			"brief": "第2天，陶砚吃下了一份留存食物。这批库存有你的补充。",
+			"fact_id": "fact.player_heard_update.78",
+			"source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.001.echo_port_environs_v1_time_36",
+			"text": "陶砚谈起后来的情况（你先前补充的食物）：第2天 20:00，陶砚吃下了一份自己留存的食物。"
+		},
+		{
+			"brief": "第3天，陶川吃下了一份留存食物。这批库存有你的补充。",
+			"fact_id": "fact.player_heard_update.75",
+			"source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.002.echo_port_environs_v1_time_42",
+			"text": "陶川谈起后来的情况（你先前补充的食物）：第3天 02:00，陶川吃下了一份自己留存的食物。"
+		},
+		{
+			"brief": "第3天，陶砚把食物存进了粮柜。这批库存有你的补充。",
+			"fact_id": "fact.player_heard_update.54",
+			"source_fact_id": "fact.pantry_transfer.generated_resident.echo_landing.001.72",
+			"text": "陶砚谈起后来的情况（你先前补充的食物）：第3天 00:00，陶砚自愿向家中粮柜存入 1 份口粮。共有粮食只在家中取用，个人铜币不共享。"
+		}
+	]
+}

@@ -1,0 +1,14 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 NPC RESIDENT NETWORK PASS] 1. 居民网络载入三种时间驱动、十一条规则和新增居民
+[V5 NPC RESIDENT NETWORK PASS] 2. 十二小时内同时发生生产、劳动收入、跨地觅食和交易
+[V5 NPC RESIDENT NETWORK PASS] 3. 主供应失败后，闻简会先求助再自行改找备用食源
+[V5 NPC RESIDENT NETWORK PASS] 4. 闻简和周拓都能从石苇处完成真实库存与零钱交换
+[V5 NPC RESIDENT NETWORK PASS] 5. 两名消费者会在岗位挣钱，交易不再耗尽初始零钱后停止
+[V5 NPC RESIDENT NETWORK PASS] 6. 玩家留在市场时不会直接获知北埠的异地生产
+[V5 NPC RESIDENT NETWORK PASS] 7. 玩家后来抵达北埠，可以从人物、鱼篓和传闻发现生产历史
+[V5 NPC RESIDENT NETWORK PASS] 8. 推进到三十六小时后仍会产生新食物、新收入和新交易
+[V5 NPC RESIDENT NETWORK PASS] 9. 重复生活循环刷新同类传闻与痕迹，不会无限积累（传闻 5，痕迹 12）
+[V5 NPC RESIDENT NETWORK PASS] 10. 缓解陈米饥饿后老陈继续营业，闻简无需改找备用供应
+[V5 NPC RESIDENT NETWORK PASS] 11. 同一居民在不同外部输入下形成不同交易对象和生活历史
+[V5 NPC RESIDENT NETWORK RESULT] PASS

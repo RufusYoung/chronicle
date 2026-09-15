@@ -1,0 +1,21 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 1. Deferred investigation surface loads
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 2. No investigation appears before the causal clue exists
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 3. Token recognition opens a visible investigation direction
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 4. UI presents investigation and daily-life time choices together
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 5. Recognition feedback explains where the new choice came from
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 6. Deferring consumes an hour and confirms the lead remains
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 7. Records expose deferred status; repeat defer is removed and investigation remains
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 7b. Returning from records restores the investigation controls
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 8. Chen Mi stance and defer chronicle are visible in the scene
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 9. Player can continue ordinary life while the lead persists
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 10. Resumed search consumes three hours and recalls the defer path
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 11. Search feedback exposes relationship and follow-up direction
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 12. Investigation reveals a concrete readable record in the scene
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 13. Facts and Chen Mi's resolved stance remain player-readable
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 14. Resolved lead disappears and shows the resumed chronicle branch
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 15. Item and action history preserve both choices
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 16. UI outcome is backed by lead, chronicle, and item stores
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE PASS] 17. Restart clears the complete investigation branch
+[V5 DEFERRED GRANARY INVESTIGATION SURFACE RESULT] PASS

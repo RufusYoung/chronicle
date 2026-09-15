@@ -1,8 +1,30 @@
 # RF6 Working Checkpoint
 
-Updated 2026-09-13. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
+Updated 2026-09-15. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
 
-## Current Sep 13 Source Checkpoint
+## Current Sep 15 Source Validation
+
+- Runtime source is ready for a verified Git checkpoint from HEAD `397f0fb` on `codex/player-agency-world-surface`; Windows package still needs clean export and actual checks. No running sessions at this checkpoint. Continue through package closure, not another mechanism.
+- Final evidence: `chronicle-godot/texts/reports/2026/2026-9/2026-9-15/content_evidence/final_v1/`. Source audit 217/217, content contract 162/162, data-only heldout 34/34, full regular 161/161 (1006.24s), final complete render 28/28 (188.77s), source protocol 16/16 (93.203s). Final display-only fix followed by all legal replays; 168 script hashes and simulation freeze boundary checked.
+- Two passive weeks and two same-start four-policy 72h comparisons complete. Policies observer/content_life/prepared/local_gift; gifts affect people, prepared combat alone does not change the sampled end-state people. Heldout 86013 gift extreme hunger 6 versus observer 8, 81001 stays 8. Money conserved. Legal artisan week completes thin/strong cord, net fishing with actual wear, smoking, gift and six combat rounds; 94 actions, seven one-hour waits, ten extreme-hunger residents. Repeated late journeys remain. No human play or full RF6 acceptance.
+- Fixed public remaining work time, physically local cross-town candidate enumeration without membership/resource access grants, and internal combat-state keys in the actual receipt. Formal content remains explicit version 1; old saves retain rules.
+- Native content UI checkpoint: `final_v1/content_week_final.ui.json`, renderer evidence `final_v1/content_week_render/`. Old v2: Sep13 `local_life_evidence/v2_week.ui_probe.json`; old day30 path can be read from Sep13 `package_legacy_day30.json`.
+- Next executable action: commit/push all verified scoped changes and evidence, export cleanly with `tools/export_windows.ps1`, package protocol16, four-policy 81001/72h parity, content-week/old-v2-week/legacy-day30 actual package renders, then `verify_world_content.py <final_v1> --package builds/h1-windows`. Finalize report/plan, commit/push closeout. Build remains internal, not a submission candidate.
+- Failed probes and pre-fix evidence retained outside `final_v1/`. Initial probe used a separate full-precision JSON rendering of fact ratios; now it reads native serialization after checked save. Do not relax all numerical comparisons or invent new Store/save rules. Latest UI conversion uses a distinct filename because the helper correctly rejects overwriting.
+
+## Earlier Sep 15 Integration Notes (Historical)
+
+- Resumed after user interruption. Branch `codex/player-agency-world-surface`, HEAD `397f0fb`; previous package `ad0ec1b`. No surviving processes at resume; current changes belong to this content integration.
+- Explicit `content_extension_version=1` / API `world_content_v1` embeds a validated bundle. Two processed foods, two rope durabilities, processing/alternate material recipes, two adult initial configurations, finite-threat parameters and two short contextual incidents use the same Stores and executors. Old saves keep their bootstrap. No nutrition, spoilage, new monster class or general plot generator is implied.
+- Generic per-occupation alternatives preserve recipe-specific procurement. Fixed malformed output validation, JSON integral-number comparison and lost danger seed. Early probes retained under `content_evidence/exploratory` are not current seed-correct evidence.
+- Focused contract 128/128, third-food external-data proof 26/26 (runtime hashes unchanged, native restore after deleting the external definition). Actual 720p/900p render passes including sale/disappearance and the new canon illustration. Controlled cases explicitly use test injection; none is human play.
+- `art/environments/echo_port_landing_v1.png`: built-in image_gen, original Mirror Lake/Echo Port anchors, original retained, catalog/provenance recorded. Actual region layout inspected. Static illustration, not current weather/population/inventory.
+- Both 168h passive samples 81001/86013 finished and were copied into `chronicle-godot/texts/reports/2026/2026-9/2026-9-15/content_evidence/`. Both process fish and cordage; 86013 also roasts roots and rebinds fiber rope. Still audit actual trade/use/meal ancestry, not recipe totals alone.
+- 81001 three-policy 72h legal run finished. Artisan buys a real thin cord but partial jobs and foraging delay crafting; prepared branch resolves five combat rounds. All three end with eight extremely hungry residents, money 301. Source protocol 16/16, 84.595s.
+- Active exec sessions when recorded: full regression 17858; legal week 55693; second-seed legal 72h 11562. Poll/close before final. Remaining: causal audit, legal checkpoint rendering, Git checkpoint/clean export, actual package protocol/native/render, report. Runtime NOT delivered yet. No new task/automation/model setting.
+- Keep density/welfare limitations in existing RF6 first-experience acceptance. Author recipe preference is not profit optimisation. Three-day partial jobs, repeated travel and continued hunger are negative results, not reasons to guarantee supplies or tune one seed endlessly.
+
+## Previous Sep 13 Source Checkpoint
 
 - Runtime/export source `ad0ec1b`, branch `codex/player-agency-world-surface`, pushed. `builds/h1-windows` now contains this v2 runtime and clean manifest. Following closeout commit changes evidence/docs only; use Git for exact HEAD. No unrelated user changes were present at start.
 - New explicit `player_life_version=2` / API `player_life_v2`, UI new-world life checkbox selects v2. V1 and old saves retain their economic rules.

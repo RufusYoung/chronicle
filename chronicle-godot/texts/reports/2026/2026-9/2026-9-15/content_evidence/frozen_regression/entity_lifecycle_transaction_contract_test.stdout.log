@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 1. G4-C1 实体生命周期合同通过正式 SimSession 启动
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 2. 同一事务创建实体、初始状态和真实成员关系
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 3. 创建操作由同事务事实追溯，并进入序列化事务结果
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 4. 新建组织无需重启会话即可进入正式地点投影
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 5. 目标变更通过实体事务提交并立即改变正式界面投影
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 6. 修改不可变 type 会在预演中拒绝，事实与实体均不受污染
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 7. 未知来源事实不能创建运行期实体
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 8. 后续资源透支会让已预演的实体与事实整体回滚
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 9. 批量事务后项失败时，前项状态与事实不会部分提交
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 10. 合法批量事务按顺序提交全部结果，并报告批量原子提交
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 11. 重复实体 ID 在预演中拒绝，不提交配套事实
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 12. 玩家身份标签不可移除，实体也不能被通用退役操作撤销
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 13. 软退役保留实体和历史关系，但运行界面不再把它当作当前组织
+[V5 ENTITY LIFECYCLE CONTRACT PASS] 14. 磁盘存档精确保留创建、目标历史、软退役和跨 Store 引用
+[V5 ENTITY LIFECYCLE SAMPLE] {"created":{"description":"由持续粮压促成的临时地方组织。","display_name":"苇岸临时粮议会","goal":"协调本地口粮。","id":"runtime_organization.reed_bay.relief_council","positions":[],"resource_stock_ids":[],"runtime_response":{},"settlement_id":"generated_settlement.reed_bay","tags":["institution","organization","generated_organization","runtime_organization"],"type":"institution"},"retired":{"description":"由持续粮压促成的临时地方组织。","display_name":"苇岸临时粮议会","goal":"优先照料断粮家庭，并公开记录每次调拨。","id":"runtime_organization.reed_bay.relief_council","lifecycle_status":"retired","positions":[],"resource_stock_ids":[],"retired_day":4,"retired_fact_id":"fact.runtime_organization_retired.reed_bay.relief_council","retirement_reason":"粮压缓解后临时职责结束","runtime_response":{},"settlement_id":"generated_settlement.reed_bay","tags":["institution","organization","generated_organization","runtime_organization"],"type":"institution"},"updated_goal":"优先照料断粮家庭，并公开记录每次调拨。","writer_report":{"error":"","ok":true,"phase":"committed","store_count":17}}
+[V5 ENTITY LIFECYCLE CONTRACT RESULT] PASS

@@ -1,0 +1,13 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LOCATION FOUNDATION PASS] 1. 初始状态存在角色状态
+[V5 LOCATION FOUNDATION PASS] 2. 初始状态存在湖湾镇地点
+[V5 LOCATION FOUNDATION PASS] 3. 初始状态存在地区状态
+[V5 LOCATION FOUNDATION PASS] 4. 执行 approach_chen_mi 后出现陈米相关叙述
+[V5 LOCATION FOUNDATION PASS] 5. 执行 inspect_price_notice 后获得粮价线索
+[V5 LOCATION FOUNDATION PASS] 6. 获得线索后线索列表能显示
+[V5 LOCATION FOUNDATION PASS] 7. 点击线索能生成线索行动卡数据
+[V5 LOCATION FOUNDATION PASS] 8. 生涯面板 summary 至少返回可开始方向
+[V5 LOCATION FOUNDATION PASS] 9. 市场打听会更新粮食状态并新增北路商队线索
+[V5 LOCATION FOUNDATION PASS] 10. 长期停留会写入已完成经历
+[V5 LOCATION FOUNDATION RESULT] PASS

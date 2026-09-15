@@ -1,0 +1,57 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] versioned world starts
+[PASS] new bootstrap contains explicit carting config
+[PASS] test injection fixture starts
+[PASS] three existing coins buy only three bulk portions
+[PASS] bulk purchase uses real market transaction
+[PASS] food and currency conserved on pickup
+[PASS] no outside working capital or income on pickup
+[PASS] unsold cargo stops another purchase
+[PASS] bulk surplus price and purpose recorded
+[PASS] same-place resale is not a transport service
+[PASS] paid cargo saves natively
+[PASS] paid cargo restores
+[PASS] restore preserves stock and coins
+[PASS] actual route exists from pickup to stall
+[PASS] test injection fixture starts
+[PASS] dispatch commits formal travel
+[PASS] dispatch cannot teleport cargo or person
+[PASS] cannot transact while traveling
+[PASS] in-transit cargo saves
+[PASS] in-transit cargo restores
+[PASS] both branches advance
+[PASS] native continuation keeps whole state identical
+[PASS] test injection fixture starts
+[PASS] blocked route result commits
+[PASS] cargo cannot cross a missing route
+[PASS] test injection fixture starts
+[PASS] transported lot retains paid source
+[PASS] finite buyer pays actual cost plus one per portion
+[PASS] retail exchange commits
+[PASS] carter receives buyer coins, not treasury wages
+[PASS] buyer really pays
+[PASS] seller retains a real meal
+[PASS] retail conserves all food and money
+[PASS] income links back to purchased and transported goods
+[PASS] fed stock prevents infinite sales
+[PASS] meal consumes the delivered lot with retail source
+[PASS] actual meal commits
+[PASS] all references audited
+[PASS] test injection fixture starts
+[PASS] no carter sale when absent
+[PASS] test injection fixture starts
+[PASS] no carter sale when no_cash
+[PASS] test injection fixture starts
+[PASS] no carter sale when dead
+[PASS] test injection fixture starts
+[PASS] no carter sale when no_need
+[PASS] test injection fixture starts
+[PASS] no inventory means no pickup
+[PASS] test injection fixture starts
+[PASS] carting version removes timer wage even at old workplace
+[PASS] test injection fixture starts
+[PASS] legacy bootstrap preserves old wage rule
+[PASS] fractional business configuration rejected
+[PASS] explicit prior world rules remain available
+FOOD_CARTING_RESULT PASS 54/54

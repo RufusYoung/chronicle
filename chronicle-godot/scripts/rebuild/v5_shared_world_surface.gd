@@ -195,7 +195,7 @@ static func _refresh_action_groups(surface: Dictionary, viewer: Control, actions
 		surface.action_filter = ""
 	if counts.is_empty():
 		return
-	var labels := {"": "全部", "work": "谋生", "trade": "买卖与分粮", "talk": "交谈", "rest": "休整与赶路"}
+	var labels := {"": "全部", "incident": "眼前插曲", "work": "谋生", "trade": "买卖与分粮", "talk": "交谈", "rest": "休整与赶路"}
 	var group := ButtonGroup.new()
 	for key: String in labels:
 		if key != "" and not counts.has(key):

@@ -1,0 +1,20 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+[V5 SETTLEMENT NETWORK RENDER PASS] 1. 正式地点界面可以载入三聚落网络
+[V5 SETTLEMENT NETWORK RENDER PASS] 2. 三聚落网络启动并在一天内形成可展示的货流
+[V5 SETTLEMENT NETWORK RENDER PASS] 3. 苇岸埠面板显示人口、劳动力、资源、邻居与最近货流
+[V5 SETTLEMENT NETWORK RENDER PASS] 4. 试玩目标说明货流来自世界模拟而非预写事件
+[V5 SETTLEMENT NETWORK RENDER PASS] 5. 苇岸埠网络截图已写入
+[V5 SETTLEMENT NETWORK RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_network_reed_bay.png
+[V5 SETTLEMENT NETWORK RENDER PASS] 6. 无测试注入等待时，苇岸埠相邻道路会自主出现环境压力
+[V5 SETTLEMENT NETWORK RENDER PASS] 7. 地点面板显示受阻道路、当前有效运力与结束日期
+[V5 SETTLEMENT NETWORK RENDER PASS] 8. 时间推进反馈说明事故成因、持续时间与机械影响
+[V5 SETTLEMENT NETWORK RENDER PASS] 9. 自主道路压力截图已写入
+[V5 SETTLEMENT NETWORK RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_network_route_pressure.png
+[V5 SETTLEMENT NETWORK RENDER PASS] 10. 测试注入的迁移事实会显示方向与整户人数
+[V5 SETTLEMENT NETWORK RENDER PASS] 11. 生成道路允许从苇岸埠前往石渡坞
+[V5 SETTLEMENT NETWORK RENDER PASS] 12. 抵达石渡坞后切换为当地资源和两侧邻接关系
+[V5 SETTLEMENT NETWORK RENDER PASS] 13. 石渡坞网络截图已写入
+[V5 SETTLEMENT NETWORK RENDER PATH] C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/tests/v5_network_river_steps.png
+[V5 SETTLEMENT NETWORK RENDER RESULT] PASS

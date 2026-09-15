@@ -1,7 +1,15 @@
 {
   "version": 1,
-  "updated": "2026-09-05",
+  "updated": "2026-09-15",
   "files": [
+    {
+      "path": "environments/echo_port_landing_v1.png",
+      "status": "runtime",
+      "source": "",
+      "provenance": "environments/ECHO_PORT_PROVENANCE.md",
+      "bytes": 3165417,
+      "sha256": "1b6f67664eee7f34e71315f4b3a3e3fc39629d58beef996586eb96b56298ba57"
+    },
     {
       "path": "environments/reed_bank_landing_v1.png",
       "status": "runtime",

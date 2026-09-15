@@ -1,0 +1,25 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LIVE LOCATION VIEWER PASS] 1. 动态地点局面场景可以独立加载
+[V5 LIVE LOCATION VIEWER PASS] 2. 初始画面来自湖湾镇模拟 fixture，而不是静态演示状态
+[V5 LIVE LOCATION VIEWER PASS] 3. 当前快照投影出可见人物、可读物件和可检查痕迹
+[V5 LIVE LOCATION VIEWER PASS] 4. 地区和机构状态被翻译为玩家可读的局面压力
+[V5 LIVE LOCATION VIEWER PASS] 5. 底部按钮由 SimSession 当前候选动态生成
+[V5 LIVE LOCATION VIEWER PASS] 6. 开场不再用模态说明阻塞首次行动
+[V5 LIVE LOCATION VIEWER PASS] 7. 点击给食物后，玩家和陈米的持续状态立即刷新
+[V5 LIVE LOCATION VIEWER PASS] 8. 结算叙事与关键状态、关系变化一起反馈
+[V5 LIVE LOCATION VIEWER PASS] 9. 陈米不再严重饥饿后，过期的给食物按钮消失
+[V5 LIVE LOCATION VIEWER PASS] 10. 旧行动即使被外部重复调用也不会污染世界日志
+[V5 LIVE LOCATION VIEWER PASS] 11. 连续调查会把已确认事实投影到认知栏
+[V5 LIVE LOCATION VIEWER PASS] 12. 玩家看到的是连续行动历史，不是一次性测试输出
+[V5 LIVE LOCATION VIEWER PASS] 13. 模拟内部标识没有泄漏到玩家界面
+[V5 LIVE LOCATION VIEWER PASS] 14. 独立场景可以重新载入初始局面
+[V5 LIVE LOCATION VIEWER PASS] 15. 需求变化会让异地 NPC 走进当前地点，并说明来意与自主原因
+[V5 LIVE LOCATION VIEWER PASS] 16. 交易受阻后出现可介入的求助、传闻和现场痕迹
+[V5 LIVE LOCATION VIEWER PASS] 17. 传闻按钮直接写明要听取的具体主题
+[V5 LIVE LOCATION VIEWER PASS] 18. 听取后显示完整信息、写入认知并移除同一按钮
+[V5 LIVE LOCATION VIEWER PASS] 18a. 花时间打听消息时，闻简不会暂停自己的行程等待玩家
+[V5 LIVE LOCATION VIEWER PASS] 18b. 对照流程先帮助闻简，机会仍在
+[V5 LIVE LOCATION VIEWER PASS] 19. 玩家介入会缓解闻简的饥饿，并立即移除过期选项
+[V5 LIVE LOCATION VIEWER PASS] 20. 闻简返岗后离开本地投影，反馈只使用玩家可读地点名
+[V5 LIVE LOCATION VIEWER RESULT] PASS

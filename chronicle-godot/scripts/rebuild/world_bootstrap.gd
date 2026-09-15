@@ -8,6 +8,7 @@ func _ready() -> void:
 		return
 	var scene := load("res://scenes/rebuild/world_demo.tscn") as PackedScene
 	var viewer = scene.instantiate()
+	viewer.initial_content_extension = true
 	var probe := "--startup-probe" in OS.get_cmdline_user_args()
 	if probe:
 		# Isolate diagnostics from the player's manual save, including failed probes.

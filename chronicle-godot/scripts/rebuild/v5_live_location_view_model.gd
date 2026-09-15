@@ -800,10 +800,10 @@ func _action_rows(snapshot: Variant = null) -> Array:
 			for internal: String in ["statement", "offer", "report"]:
 				row.erase(internal)
 			if session.PlayerLife.Local.enabled(session):
-				row["life_group"] = session.PlayerLife.Local.action_group(str(row.action_id))
+				row["life_group"] = "incident" if row.has("incident_id") else session.PlayerLife.Local.action_group(str(row.action_id))
 		if session.PlayerLife.Local.enabled(session):
 			life_rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-				return ["rest", "work", "trade", "talk"].find(a.life_group) < ["rest", "work", "trade", "talk"].find(b.life_group))
+				return ["incident", "rest", "work", "trade", "talk"].find(a.life_group) < ["incident", "rest", "work", "trade", "talk"].find(b.life_group))
 		return life_rows
 	for option: Dictionary in session.get_investigation_options(snapshot):
 		var action_type := str(
@@ -2863,7 +2863,9 @@ func _tick_detail_lines(result_data: Dictionary) -> Array:
 	var rows: Array[String] = []
 	var snapshot: Variant = session.get_snapshot()
 	for change: Dictionary in result_data.get("state_changes", []):
-		rows.append(_state_change_text(change, snapshot))
+		var state_text := _state_change_text(change, snapshot)
+		if state_text != "":
+			rows.append(state_text)
 	for pressure: Dictionary in result_data.get("pressure_changes", []):
 		if str(pressure.get("pressure_type", "")) == "market_shortage":
 			rows.append("老陈铺子周围的粮食压力继续上升")
@@ -2960,7 +2962,9 @@ func _result_detail_lines(
 			_attribute_number(requirement.get("required", 0)),
 		])
 	for change: Dictionary in transaction.get("state_changes", []):
-		rows.append(_state_change_text(change, snapshot))
+		var state_text := _state_change_text(change, snapshot)
+		if state_text != "":
+			rows.append(state_text)
 	for change: Dictionary in transaction.get("relationship_changes", []):
 		rows.append(_relationship_change_text(change, snapshot))
 	for change: Dictionary in transaction.get("item_changes", []):
@@ -2978,6 +2982,8 @@ func _state_change_text(change: Dictionary, snapshot: Variant = null) -> String:
 		snapshot = session.get_snapshot()
 	var entity_id := str(change.get("entity_id", ""))
 	var key := str(change.get("key", ""))
+	if key in ["danger_round_hour", "danger_opponent_id", "danger_advantage"]:
+		return ""
 	if key == "visible" and bool(change.get("to", false)):
 		return "%s出现在现场" % _entity_name(entity_id, snapshot)
 	if key == "visible" and not bool(change.get("to", true)):

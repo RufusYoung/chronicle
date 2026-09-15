@@ -1,0 +1,55 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] new work and choice world starts
+[PASS] healthy equipped worker chooses income-producing work
+[PASS] candidate order does not determine life choice
+[PASS] capable professional does not replace the same output with a dominated hand-gather recipe
+[PASS] exhausted worker chooses recovery over work
+[PASS] off-shift permission to rest does not override an available subsistence action
+[PASS] necessary bodily recovery remains stronger than optional subsistence
+[PASS] an available household delivery competes with work in the same ranker
+[PASS] controlled fixture loads through formal session
+[PASS] actual daily-life adapter commits ranked choice
+[PASS] formal activity keeps chosen purpose and competing candidates
+[PASS] controlled fixture loads through formal session
+[PASS] repair uses ordinary work executor hour 12
+[PASS] repair uses ordinary work executor hour 13
+[PASS] repair actually restores partial durability and consumes material
+[PASS] one source-backed maintenance event
+[PASS] used repair allowance cannot become infinite rejuvenation
+[PASS] repair history and unfinished-purpose state persist
+[PASS] repair full native roundtrip agrees
+[PASS] controlled fixture loads through formal session
+[PASS] seller creates a rope from real labor and reeds
+[PASS] no remote seller trade or speculative world write
+[PASS] onsite buyer can obtain a produced tool through real quote
+[PASS] atomic work-supply payment and physical transfer commit
+[PASS] no reward money minted by tool demand
+[PASS] purchased tool removes shortage and permits return-to-work candidate
+[PASS] same purchase cannot be applied twice
+[PASS] controlled fixture loads through formal session
+[PASS] test injection moves wallet without destroying money or references
+[PASS] unaffordable control retains real stock
+[PASS] a real seller cannot supply a buyer without payment
+[PASS] two independent generated buyers exist
+[PASS] controlled fixture loads through formal session
+[PASS] contested goods are produced once
+[PASS] both quotes observe the same unreserved supply
+[PASS] first buyer obtains actual tool
+[PASS] second concurrent quote cannot spend money or reuse the transferred tool
+[PASS] controlled fixture loads through formal session
+[PASS] explicit cash-poor control preserves total money
+[PASS] cash-poor owner still makes a legal daily choice
+[PASS] own stock retrieval does not require buyer money
+[PASS] controlled fixture loads through formal session
+[PASS] first work hour commits only progress
+[PASS] test injection interrupts activity
+[PASS] rest cannot simultaneously count as work
+[PASS] resume same workplace and recipe
+[PASS] resume same workplace and recipe
+[PASS] resume same workplace and recipe
+[PASS] one full work block, no bonus production for pause or resume
+[PASS] previous behavior fixture starts
+[PASS] v5 exact manifest migrates explicitly
+[PASS] migration does not turn on work or decision rules
+WORK_RECIPE_RESULT PASS 52/52
