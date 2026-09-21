@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "checked_files": 247,
+  "source_commit": "f5f77b4394e35e68cf8cf237ec35ccb9bf8744c0",
+  "checked_utc": "2026-09-21T09:06:40.9477067Z",
+  "changed_files": [],
+  "scope": "scripts/data/scenes byte hashes still match all seven frozen evaluations; later changes only add tests and evidence"
+}

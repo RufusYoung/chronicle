@@ -95,6 +95,7 @@ def audit(path):
               "replies": replies, "heard_replies": len(heard), "counterproposals": counters,
               "negotiated_deliveries": resumed, "people": people,
               "broken_sources": references, "test_injections": counts["test_injection"],
+              "hunger_metric_scope": "Probe extreme_person_hours includes all living occupation-bearing actors, including the inactive traveler. The people table and its health/meal metrics include generated residents only.",
               "boundary": "Passive observations; inspect causal chains and ablations before accepting a phase."}
     result = path.parent / "result.json"
     if result.exists():

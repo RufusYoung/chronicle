@@ -77,6 +77,18 @@ func _run() -> void:
 	var forged := report.duplicate(true)
 	forged.payload.delivery_request.quantity = 3
 	_check(not Assistance._negotiated(_snapshot(session), _snapshot(session).get_entity(donor), forged, config, Knowledge.hour(tick)), "larger demand cannot masquerade as accepted counterproposal")
+	_check(session.save_to_path("user://tests/world_integration_contract/known_counterproposal.json").ok,
+		"controlled known counterproposal saved before any accepted order")
+	var autonomous := Session.new()
+	var autonomous_loaded: Dictionary = autonomous.load_from_path("user://tests/world_integration_contract/known_counterproposal.json")
+	_check(autonomous_loaded.get("success", false), "known counterproposal restores before autonomous choice")
+	if autonomous_loaded.get("success", false):
+		_check(autonomous.advance_time(48, "controlled_negotiation_autonomy", {"scope_type": "global", "scope_id": "", "source": "test_injection"}).success,
+			"known counterproposal continues forty-eight hours without calling order or moving people")
+		var autonomous_deliveries: Array = _snapshot(autonomous).get_facts().filter(func(f: Dictionary) -> bool:
+			return f.get("fact_type") == "food_hauling_stocked" and f.get("negotiation_reply_id", "") != "")
+		_check(not autonomous_deliveries.is_empty(), "ordinary resident choice accepts and delivers known negotiated request")
+		_check(autonomous.validate_persistent_references().ok, "autonomous negotiation continuation retains valid provenance")
 	requests[0]["self_delivery"] = true
 	var accepted := _order(session, donor, requests[0], tick, hauling, route_finder)
 	_check(accepted.has("transaction") and session.writer.apply_result(accepted.transaction, session.stores), "renewed cooperation uses actual hauling contract")

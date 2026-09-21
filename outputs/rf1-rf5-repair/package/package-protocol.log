@@ -1,0 +1,26 @@
+test_agent_flow_and_receipt (test_agent_play.TransportTest.test_agent_flow_and_receipt) ... ok
+test_body_rules_apply_through_legal_protocol_and_native_save (test_agent_play.TransportTest.test_body_rules_apply_through_legal_protocol_and_native_save) ... ok
+test_canon_world_and_play_entry (test_agent_play.TransportTest.test_canon_world_and_play_entry) ... ok
+test_community_in_actual_process (test_agent_play.TransportTest.test_community_in_actual_process) ... ok
+test_content_variant_public_choices_and_native_restore (test_agent_play.TransportTest.test_content_variant_public_choices_and_native_restore) ... ok
+test_family_provisioning_in_actual_process (test_agent_play.TransportTest.test_family_provisioning_in_actual_process) ... ok
+test_fragmented_unicode_frame (test_agent_play.TransportTest.test_fragmented_unicode_frame) ... ok
+test_frame_bounds_and_truncation (test_agent_play.TransportTest.test_frame_bounds_and_truncation) ... ok
+test_generated_region_and_cross_town_travel (test_agent_play.TransportTest.test_generated_region_and_cross_town_travel) ... ok
+test_integrated_danger_uses_legal_travel_combat_and_retreat (test_agent_play.TransportTest.test_integrated_danger_uses_legal_travel_combat_and_retreat) ... ok
+test_integrated_household_work_in_actual_process (test_agent_play.TransportTest.test_integrated_household_work_in_actual_process) ... ok
+test_integrated_world_legal_actions_and_embedded_restore (test_agent_play.TransportTest.test_integrated_world_legal_actions_and_embedded_restore) ... ok
+test_jsonl_cli (test_agent_play.TransportTest.test_jsonl_cli) ... ok
+test_local_information_and_v2_native_restore (test_agent_play.TransportTest.test_local_information_and_v2_native_restore) ... ok
+test_malformed_json_does_not_desynchronize (test_agent_play.TransportTest.test_malformed_json_does_not_desynchronize) ... ok
+test_natural_interrupted_work_explains_actual_cause_and_progress (test_agent_play.TransportTest.test_natural_interrupted_work_explains_actual_cause_and_progress) ... ok
+test_opt_in_worksite_stock_in_actual_process (test_agent_play.TransportTest.test_opt_in_worksite_stock_in_actual_process) ... ok
+test_player_body_journey_and_native_restore (test_agent_play.TransportTest.test_player_body_journey_and_native_restore) ... ok
+test_provisions_variant_keeps_food_choice_and_benefit_public (test_agent_play.TransportTest.test_provisions_variant_keeps_food_choice_and_benefit_public) ... ok
+test_timeout_owns_and_reaps_process (test_agent_play.TransportTest.test_timeout_owns_and_reaps_process) ... ok
+test_work_framework_in_actual_process (test_agent_play.TransportTest.test_work_framework_in_actual_process) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 63.761s
+
+OK

@@ -7,8 +7,12 @@
 - `final-regression/`:171/171 source regression scripts, including actual renderer checks. The legacy dedicated long-run test is excluded by the standard runner; seven new thirty-day passive runs supply the scoped long-horizon evidence.
 - `equipment-final/`:53 controlled checks, including third data-defined equipment produced with finite inputs, equipped, consumed by a combat modifier and restored from embedded bootstrap.
 - `negotiation-final/`:34 controlled checks. Initial stock/presence/conversations are test injections; after agreement the normal clock carries goods to the pantry and the household takes and eats them.
+- `negotiation-autonomy/`:final39/39 checks. A separate native branch starts with the known counterproposal but no accepted order. Forty-eight ordinary hours make the resident autonomously accept and deliver; no test-driven order or repositioning during that continuation.
+- `package/`:clean-source build manifest,21/21 actual packaged protocol log, new/legacy30-day actual renderer checks, startup samples and247 matching runtime hashes. No independent human or clean-machine acceptance is implied.
 
 Audit ordering matters: a buyer's passive must apply after their purchase. Earlier use by the craftsperson is not evidence of purchased equipment changing the buyer's combat. The audit-tool unit test guards this distinction.
+
+The probe's extreme-person-hours includes every living occupation-bearing actor, including the inactive traveler. Health and meal-gap rows describe generated residents only. The inactive traveler stays under the same rules in all paired runs; raw hunger totals must not be relabeled resident-only totals.
 
 Native checkpoint paths and byte hashes are recorded in each audit. Large intermediate saves are not duplicated into Git. Reproduce from the repository root, using Godot4.6.3 and Python3:
 

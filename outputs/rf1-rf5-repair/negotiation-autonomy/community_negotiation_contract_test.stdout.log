@@ -1,0 +1,42 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] negotiation world starts
+[PASS] controlled fixture loads through formal session
+[PASS] firsthand household demand
+[PASS] request has physical pantry source
+[PASS] test injection: controlled physical presence
+[PASS] initial request physically heard
+[PASS] own local needs establish reserve policy
+[PASS] reserve policy refuses original amount
+[PASS] refusal is recorded without goods movement
+[PASS] donor forms bounded counteroffer from own refusal
+[PASS] one refusal creates one conditional two-portion reply
+[PASS] reply is not telepathically received
+[PASS] ordinary nonrepresentative can choose to convey own reply without waiting for loneliness
+[PASS] test injection: controlled physical presence
+[PASS] test injection: controlled physical presence
+[PASS] reply crosses actual second conversation
+[PASS] requester revises still-unmet need
+[PASS] heard reply bounds counterproposal
+[PASS] unheard counterproposal cannot bypass refusal
+[PASS] counterproposal crosses return conversation
+[PASS] known bounded agreement reopens cooperation
+[PASS] expired reply cannot authorize later agreement
+[PASS] larger demand cannot masquerade as accepted counterproposal
+[PASS] controlled known counterproposal saved before any accepted order
+[PASS] known counterproposal restores before autonomous choice
+[PASS] known counterproposal continues forty-eight hours without calling order or moving people
+[PASS] ordinary resident choice accepts and delivers known negotiated request
+[PASS] autonomous negotiation continuation retains valid provenance
+[PASS] renewed cooperation uses actual hauling contract
+[PASS] in-transit goods retain agreement provenance
+[PASS] all request reply and contract references validate
+[PASS] native negotiated delivery save
+[PASS] native negotiated delivery restore: 
+[PASS] controlled agreement continues twelve hours through ordinary world clock
+[PASS] negotiated two portions travel and reach actual pantry without moving carrier in test
+[PASS] recipient household continues its own day after delivery
+[PASS] household physically takes food descended from negotiated delivery
+[PASS] negotiated delivery is consumed through ordinary household meal mechanism
+[PASS] delivered negotiation retains valid native provenance
+WORK_RECIPE_RESULT PASS 39/39

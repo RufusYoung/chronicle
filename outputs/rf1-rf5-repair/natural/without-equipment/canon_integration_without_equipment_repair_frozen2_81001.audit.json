@@ -716,6 +716,7 @@
   ],
   "broken_sources": [],
   "test_injections": 1,
+  "hunger_metric_scope": "Probe extreme_person_hours includes all living occupation-bearing actors, including the inactive traveler. The people table and its health/meal metrics include generated residents only.",
   "boundary": "Passive observations; inspect causal chains and ablations before accepting a phase.",
   "extreme_person_hours": 2282,
   "activity_hours": {

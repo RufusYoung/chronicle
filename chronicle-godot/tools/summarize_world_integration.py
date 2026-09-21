@@ -72,6 +72,7 @@ def summarize(root):
         "passed": all(checks.values()),
         "rows": rows,
         "natural_negotiated_delivery_observed": any(r["negotiated_deliveries"] for r in natural),
+        "hunger_metric_scope": "Extreme-person-hours include the inactive traveler; health and meal-gap metrics describe generated residents only. Keep this scope when reporting percentages.",
         "boundary": "Structural integration evidence, not sustainable nutrition, a full ecology or human play acceptance. Ablations are test interventions. Zero negotiated deliveries must be reported separately from controlled agreement tests and ordinary resumed aid.",
     }
 
