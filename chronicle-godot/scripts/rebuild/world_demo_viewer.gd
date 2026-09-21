@@ -79,6 +79,8 @@ func restart_session() -> void:
 					_startup_message += "此存档保留旧作业规则；「新世界」可体验工具损耗、修补和实际补货，原存档不会被转换。"
 				if initial_content_extension and not view_model.session.fixture_source_data.has("content_extension"):
 					_startup_message += "此存档保留原生活内容；创建「沿岸生活扩展」新世界可体验加工、绳具与短插曲。"
+				elif initial_content_extension and not view_model.session.fixture_source_data.has("integration_rules"):
+					_startup_message += "此存档保留原规则；沿岸新世界才启用居民装备、缺货反馈与减量协商，旧世界不会被自动升级。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
@@ -94,6 +96,8 @@ func _world_options(seed_value: int, integrated: bool, work_rules: bool = false,
 		player_life = true
 		options["content_extension_version"] = 2
 		options["body_rules_version"] = 1
+		options["integration_rules_version"] = 1
+		community_rules = true
 	if player_life:
 		integrated = true
 		work_rules = true
@@ -381,7 +385,7 @@ func _install_save_controls() -> void:
 			_content_extension.button_pressed = false)
 	new_world_form.add_child(_player_life)
 	_content_extension = CheckBox.new()
-	_content_extension.text = "沿岸生活扩展：身体代价、备餐与访客采收"
+	_content_extension.text = "沿岸生活整合：谋生、装备与邻里协商"
 	_content_extension.tooltip_text = "仅新世界生效，包含玩家生活；旧存档保留原物品定义与规则。"
 	_content_extension.button_pressed = initial_content_extension
 	_content_extension.visible = initial_scenario == "echo_realm"

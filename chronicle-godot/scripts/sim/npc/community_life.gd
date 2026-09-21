@@ -30,15 +30,31 @@ static func proposals(snapshot: Variant, actor: Dictionary, tick: Dictionary, co
 	var representative: bool = group.get("representative_id") == actor.id
 	var dispatch_sources: Array = []
 	var return_sources: Array = []
+	var negotiation_visits: Array = []
+	var known := Knowledge.latest(snapshot, str(actor.id), Knowledge.hour(tick))
 	if representative and bool(config.get("messages_enabled", true)):
-		for report: Dictionary in Knowledge.latest(snapshot, str(actor.id), Knowledge.hour(tick)).values():
+		for report: Dictionary in known.values():
 			if report.subject_id == actor.id and (report.payload.get("needs_food", false) or report.payload.get("food_available", false)) \
 					or report.subject_id == group.id and report.topic == "policy":
 				dispatch_sources.append(str(report.source_fact_id))
 			var subject: Dictionary = snapshot.get_entity(str(report.subject_id))
 			if report.topic in ["supply", "need"] and subject.get("states", {}).get("settlement_id") != settlement:
 				return_sources.append(str(report.source_fact_id))
-	if need == 0 and dispatch_sources.is_empty() and return_sources.is_empty():
+	if config.get("negotiation_version") == 1 and bool(config.get("messages_enabled", true)):
+		for report: Dictionary in known.values():
+			if report.topic == "aid_reply" and report.payload.requester_id != actor.id:
+				var recipient: Dictionary = snapshot.get_entity(str(report.payload.requester_id))
+				negotiation_visits.append({"settlement_id": recipient.states.settlement_id,
+					"location_id": report.payload.meeting_location_id, "sources": [report.source_fact_id], "negotiation": true})
+			elif report.topic == "need" and report.subject_id == actor.id:
+				var request: Dictionary = report.payload.get("delivery_request", {})
+				var reply: Dictionary = known.get("aid_reply:" + str(request.get("negotiation_partner_id", "")), {})
+				if not request.has("negotiation_reply_id") or reply.is_empty():
+					continue
+				var donor: Dictionary = snapshot.get_entity(str(reply.subject_id))
+				negotiation_visits.append({"settlement_id": donor.states.settlement_id,
+					"location_id": reply.location_id, "sources": [report.source_fact_id, reply.source_fact_id], "negotiation": true})
+	if need == 0 and dispatch_sources.is_empty() and return_sources.is_empty() and negotiation_visits.is_empty():
 		return rows
 	var neighbors: Array = [settlement]
 	if representative or actor.states.get("temperament") in ["sociable", "bold"]:
@@ -47,12 +63,12 @@ static func proposals(snapshot: Variant, actor: Dictionary, tick: Dictionary, co
 				neighbors.append(str(link.settlement_b_id))
 			elif link.settlement_b_id == settlement:
 				neighbors.append(str(link.settlement_a_id))
-	var destinations: Array = []
+	var destinations: Array = negotiation_visits.duplicate(true)
 	for site: Dictionary in network.get("sites", []):
 		if site.settlement_id not in neighbors:
 			continue
 		destinations.append({"settlement_id": site.settlement_id, "location_id": site.hub_location_id, "sources": []})
-	for report: Dictionary in Knowledge.latest(snapshot, str(actor.id), Knowledge.hour(tick)).values():
+	for report: Dictionary in known.values():
 		if report.topic != "need" or report.subject_id == actor.id or not report.payload.has("meeting_location_id"):
 			continue
 		var subject: Dictionary = snapshot.get_entity(str(report.subject_id))
@@ -76,12 +92,14 @@ static func proposals(snapshot: Variant, actor: Dictionary, tick: Dictionary, co
 		if Knowledge.hour(tick) - recent < int(config.visit_retry_hours):
 			continue
 		var news: Array = dispatch_sources if foreign else return_sources
-		var dispatch := not news.is_empty() and Knowledge.hour(tick) - last_delivered >= 24
+		var dispatch: bool = site.get("negotiation", false) or (not news.is_empty() and Knowledge.hour(tick) - last_delivered >= 24)
 		if need == 0 and not dispatch:
 			continue
 		var reason := "许久没有与人好好说话，去集地或对方告知的住处走访"
 		if dispatch:
 			reason = "带着本地口粮和互助约定的消息去邻聚落当面联络" if foreign else "把亲自听到的邻聚落近况带回来，当面告诉本地人"
+		if site.get("negotiation", false):
+			reason = "把拒绝答复或减量请求带到对方告知的地点，当面商谈；对方不一定仍在那里"
 		Choice.propose(rows, "social", goal, "socializing", reason, (news if dispatch else []) + site.sources, "community_visit")
 		rows.back()["social_need"] = need
 		rows.back()["representative"] = representative
@@ -114,6 +132,15 @@ func observe(snapshot: Variant, tick: Dictionary, config: Dictionary, budget_con
 				"recipient_ids": home_need.targets.map(func(t: Dictionary) -> String: return str(t.target_id)),
 				"pantry_source_fact_id": home_need.source_fact_ids[0]}
 			family_sources.append_array(home_need.source_fact_ids)
+			if config.get("negotiation_version") == 1:
+				for reply: Dictionary in known.values():
+					if reply.topic != "aid_reply" or reply.payload.get("requester_id") != id:
+						continue
+					payload.delivery_request.quantity = mini(int(payload.delivery_request.quantity), int(reply.payload.maximum_portions))
+					payload.delivery_request["negotiation_reply_id"] = reply.source_fact_id
+					payload.delivery_request["negotiation_partner_id"] = reply.subject_id
+					family_sources.append(str(reply.source_fact_id))
+					break
 		var last_meal: Dictionary = {}
 		for fact: Dictionary in snapshot.get_facts_by_actor(id):
 			if fact.get("fact_type") in ["npc_self_meal", "npc_household_shared_food", "npc_cross_household_shared_food"] and fact.get("target_id", fact.get("actor_id")) == id \
@@ -122,6 +149,8 @@ func observe(snapshot: Variant, tick: Dictionary, config: Dictionary, budget_con
 		if not last_meal.is_empty() and now - Knowledge.hour(last_meal) < 12:
 			family_sources.append(str(last_meal.fact_id))
 		_observe(result, person, "need", payload, known, tick, config, family_sources)
+		if config.get("negotiation_version") == 1:
+			_observe_reply(result, snapshot, person, known, tick, config)
 		var stock := Storage.stock_holder(snapshot, id)
 		if person.states.get("location_id") == person.states.get("workplace_id"):
 			var quantity := Food.food_quantity(items, id)
@@ -227,10 +256,36 @@ func _observe(result: Variant, person: Dictionary, topic: String, payload: Dicti
 		summary = "%s记得亲自见过的家人仍缺粮，准备向别人说明家里的需要。" % person.display_name
 	if topic == "supply":
 		summary = "%s在作业地检查了自己实际持有的食物，共 %d 份。" % [person.display_name, int(payload.portions_seen)]
+	elif topic == "aid_reply":
+		summary = "%s说明拒绝整批援助的原因：本地需要留粮。若对方仍缺粮，可以重新商量不超过%d份，发货时仍须保住自家的口粮。答复尚未送达对方。" % [person.display_name, int(payload.maximum_portions)]
+	elif payload.get("delivery_request", {}).has("negotiation_reply_id"):
+		summary = "%s实际听到了对方的留粮答复，仍有需要，改为请求%d份；对方仍可拒绝。" % [person.display_name, int(payload.delivery_request.quantity)]
 	fact.merge({"topic": topic, "subject_id": person.id, "location_id": person.states.location_id,
 		"payload": payload, "summary": summary, "source_fact_ids": sources})
 	result.add_fact(fact)
 	result.add_memory(direct_memory(fact, int(config.memory_hours)))
+
+
+func _observe_reply(result: Variant, snapshot: Variant, person: Dictionary, known: Dictionary, tick: Dictionary, config: Dictionary) -> void:
+	var existing := {}
+	var refusals: Array = []
+	for fact: Dictionary in snapshot.get_facts_by_actor(str(person.id)):
+		if fact.get("topic") == "aid_reply":
+			existing[str(fact.get("payload", {}).get("refusal_fact_id", ""))] = true
+		elif fact.get("fact_type") == "community_aid_withheld" and fact.has("request_root_fact_id"):
+			refusals.append(fact)
+	for refusal: Dictionary in refusals:
+		if existing.has(refusal.fact_id) or Knowledge.hour(tick) - Knowledge.hour(refusal) >= int(config.memory_hours):
+			continue
+		var request: Dictionary = snapshot.get_fact(str(refusal.request_root_fact_id))
+		var delivery: Dictionary = request.get("payload", {}).get("delivery_request", {})
+		if delivery.is_empty():
+			continue
+		var payload := {"requester_id": refusal.requester_id, "refusal_fact_id": refusal.fact_id,
+			"request_root_fact_id": request.fact_id, "maximum_portions": mini(2, int(delivery.quantity)),
+			"meeting_location_id": delivery.home_location_id}
+		_observe(result, person, "aid_reply", payload, known, tick, config, [refusal.fact_id])
+		break
 
 
 static func _same_payload(a: Dictionary, b: Dictionary) -> bool:
@@ -264,6 +319,8 @@ static func _report_priority(report: Dictionary, receiver: Dictionary, now: int)
 		priority = 80
 	elif report.topic == "need" and report.payload.get("needs_food", false):
 		priority = 60
+	elif report.topic == "aid_reply":
+		priority = 180 if report.payload.get("requester_id") == receiver.id else 110
 	return priority - (now - int(report.observed_hour)) - int(report.hops) * 8 + (4 if report.subject_id == receiver.id else 0)
 
 
@@ -279,6 +336,7 @@ static func _message(report: Dictionary, snapshot: Variant) -> String:
 			return description
 		"supply": return "%s在%s检查作业地的自有食物，共 %d 份，%s" % [name, time, int(report.payload.portions_seen), "可能有余粮出售" if report.payload.food_available else "当时没有余粮"]
 		"policy": return "%s在%s提出：%s" % [name, time, str(report.payload.get("description", "调整售粮约定"))]
+		"aid_reply": return "%s在%s拒绝了整批送粮，但愿意在留足口粮后再商量至多%d份；仍需把减量请求送回去" % [name, time, int(report.payload.maximum_portions)]
 	return "一条未确认的近况"
 
 

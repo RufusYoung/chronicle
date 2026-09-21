@@ -1,0 +1,54 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit danger world starts: 
+[PASS] finite threat exists before any actor meets it
+[PASS] distant threat cannot offer a player fight
+[PASS] three autonomous days: 
+DANGER_NATURAL world_danger_contact 15
+[PASS] natural world produces world_danger_contact
+DANGER_NATURAL world_danger_round 32
+[PASS] natural world produces world_danger_round
+DANGER_NATURAL actor_injured_during_combat 3
+[PASS] natural world produces actor_injured_during_combat
+DANGER_NATURAL actor_rested_with_injury 111
+[PASS] natural world produces actor_rested_with_injury
+[PASS] native save
+[PASS] native restore: 
+[PASS] all native stores and clocks continue identically
+[PASS] controlled fixture loads through formal session
+[PASS] guard uses ordinary transaction
+[PASS] guard creates a real next-round advantage
+[PASS] guard does not invent attack damage
+[PASS] guard advantage enters the shared attack contract
+[PASS] attack commits
+[PASS] attack changes persistent threat health
+[PASS] attack spends preparation
+[PASS] withdrawal commits
+[PASS] withdrawal does not teleport home
+[PASS] successful withdrawal ends current engagement
+[PASS] withdrawal grants a real departure window
+[PASS] an entity marked dead cannot threaten anyone
+[PASS] controlled fixture loads through formal session
+[PASS] controlled fixture loads through formal session
+[PASS] NPC weapon base bonus and conditional anti-charge passive both apply
+[PASS] armed NPC attack commits
+[PASS] equipment changes same-body low-roll outcome
+[PASS] actual equipped weapon wears
+[PASS] failed withdrawal commits injury through shared resolver
+[PASS] body_outer armor receives real damage, not a nonexistent body slot
+[PASS] injury belongs to NPC CharacterFeatureStore
+[PASS] remote actor cannot attack this threat
+[PASS] controlled fixture loads through formal session
+[PASS] unfed rest remains a legal way to reduce fatigue
+[PASS] unfed rest cannot create health recovery
+[PASS] unfed rest reduces actual fatigue
+[PASS] compiled bootstrap and rest cannot regrant starting food
+[PASS] controlled fixture loads through formal session
+[PASS] healthy but tired actor can rest
+[PASS] fatigue-only rest does not waste scarce recovery food
+[PASS] native world has real private danger memories
+[PASS] cannot extend remembered danger forever by editing a native save
+[PASS] cannot restore an opponent at a different location
+[PASS] cannot fabricate twelve recovery hours without their actual source facts
+[PASS] deleting recovery provenance cannot bypass native validation
+WORK_RECIPE_RESULT PASS 47/47

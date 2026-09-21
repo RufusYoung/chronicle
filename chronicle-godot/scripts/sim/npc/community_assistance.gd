@@ -22,6 +22,7 @@ static func requests(snapshot: Variant, owner: Dictionary, tick: Dictionary, con
 		if subject.get("states", {}).get("settlement_id") == owner.states.get("settlement_id") or snapshot.get_relation(str(owner.id), str(subject.id), "trust", 0) < 0:
 			continue
 		var request: Dictionary = report.payload.delivery_request
+		var negotiated := _negotiated(snapshot, owner, report, config, now)
 		var recently_sent := false
 		for order: Dictionary in snapshot.exchanges:
 			if order.get("party_a") == owner.id and order.get("pantry_id") == request.pantry_id \
@@ -34,7 +35,7 @@ static func requests(snapshot: Variant, owner: Dictionary, tick: Dictionary, con
 			if fact.get("fact_type") == "community_aid_withheld" and fact.get("requester_id") == report.subject_id \
 					and fact.get("community_policy_id") == policy.get("source_fact_id", ""):
 				declined = true
-		if declined:
+		if declined and not negotiated:
 			continue
 		var targets: Array = request.recipient_ids.map(func(id: String) -> Dictionary: return {"target_id": id})
 		var sources: Array = [report.source_fact_id]
@@ -44,14 +45,30 @@ static func requests(snapshot: Variant, owner: Dictionary, tick: Dictionary, con
 			"targets": targets, "pantry_portions": mini(int(request.quantity), int(config.aid_portions)),
 			"source_fact_ids": sources, "community_request_id": report.source_fact_id,
 			"request_root_fact_id": report.root_fact_id, "requester_id": report.subject_id,
-			"community_policy_id": str(policy.get("source_fact_id", "")), "community_withheld": policy.get("payload", {}).get("policy") == "reserve",
+			"community_policy_id": str(policy.get("source_fact_id", "")), "community_withheld": policy.get("payload", {}).get("policy") == "reserve" and not negotiated,
 			"retained_portions": retained, "maximum_hours": int(config.aid_travel_hours),
 			"trust": int(snapshot.get_relation(str(owner.id), str(subject.id), "trust", 0)), "observed_hour": report.observed_hour})
+		if negotiated:
+			rows.back()["negotiation_reply_id"] = request.negotiation_reply_id
 	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if a.trust != b.trust:
 			return a.trust > b.trust
 		return a.observed_hour < b.observed_hour if a.observed_hour != b.observed_hour else a.requester_id < b.requester_id)
 	return rows
+
+
+static func _negotiated(snapshot: Variant, owner: Dictionary, report: Dictionary, config: Dictionary, now: int) -> bool:
+	var request: Dictionary = report.payload.delivery_request
+	if config.get("negotiation_version") != 1 or request.get("negotiation_partner_id") != owner.id:
+		return false
+	var heard: Dictionary = snapshot.get_fact(str(request.get("negotiation_reply_id", "")))
+	var reply: Dictionary = snapshot.get_fact(str(heard.get("root_fact_id", heard.get("fact_id", ""))))
+	if heard.get("actor_id") != report.subject_id or heard.get("topic") != "aid_reply" \
+			or reply.get("actor_id") != owner.id or reply.get("topic") != "aid_reply" \
+			or reply.get("payload", {}).get("requester_id") != report.subject_id \
+			or now >= Knowledge.hour(reply) + int(config.memory_hours):
+		return false
+	return int(request.quantity) > 0 and int(request.quantity) <= int(reply.payload.get("maximum_portions", 0))
 
 
 static func proposals(snapshot: Variant, actor: Dictionary, tick: Dictionary, config: Dictionary, budget_config: Dictionary) -> Array:

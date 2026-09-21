@@ -5,7 +5,8 @@ param(
     [string]$RunLabel = 'frozen3',
     [int[]]$Seeds = @(81001, 82002, 83003),
     [switch]$SkipAblations,
-    [ValidateSet('work', 'community', 'danger')][string]$Framework = 'work',
+    [string]$OnlyAblation = '',
+    [ValidateSet('work', 'community', 'danger', 'integration')][string]$Framework = 'work',
     [ValidateRange(1, 30)][int]$Days = 7,
     [ValidateRange(30, 1800)][int]$CaseTimeoutSeconds = 900,
     [string]$OutputDirectory = ''
@@ -28,7 +29,9 @@ function Get-RuntimeManifest {
     }) | ConvertTo-Json -Depth 3 -Compress
 }
 $manifest = Get-RuntimeManifest
-$configuration = [ordered]@{ Framework = $Framework; Days = $Days; Seeds = @($Seeds); SkipAblations = [bool]$SkipAblations; RunLabel = $RunLabel } | ConvertTo-Json -Depth 3 -Compress
+$config = [ordered]@{ Framework = $Framework; Days = $Days; Seeds = @($Seeds); SkipAblations = [bool]$SkipAblations; RunLabel = $RunLabel }
+if ($OnlyAblation -ne '') { $config['OnlyAblation'] = $OnlyAblation }
+$configuration = $config | ConvertTo-Json -Depth 3 -Compress
 if ($Resume -and (Get-Content -LiteralPath (Join-Path $OutputDirectory 'run_configuration.json') -Raw -Encoding UTF8).Trim() -ne $configuration) {
     throw 'Cannot resume with different seeds, duration or mechanisms.'
 }
@@ -39,12 +42,18 @@ if ($Resume -and (Get-Content -LiteralPath (Join-Path $OutputDirectory 'runtime_
 $manifest | Set-Content -LiteralPath (Join-Path $OutputDirectory 'runtime_manifest.json') -Encoding UTF8
 $prefix = 'canon_' + $Framework + '_'
 $cases = @($Seeds | ForEach-Object { @{ Mode = $prefix + $RunLabel; Seed = $_ } })
+if ($OnlyAblation -ne '' -and $SkipAblations) { throw 'OnlyAblation and SkipAblations conflict.' }
 if (-not $SkipAblations) {
-    $ablations = switch ($Framework) { 'work' { @('repair', 'supply', 'wear') } 'community' { @('messages', 'policy', 'social') } 'danger' { @('contact') } }
+    $ablations = switch ($Framework) { 'work' { @('repair', 'supply', 'wear') } 'community' { @('messages', 'policy', 'social') } 'danger' { @('contact') } 'integration' { @('equipment', 'negotiation', 'livelihood') } }
+    if ($OnlyAblation -ne '') {
+        if ($OnlyAblation -notin $ablations) { throw 'Unsupported ablation for this framework.' }
+        $cases = @()
+        $ablations = @($OnlyAblation)
+    }
     $cases += $ablations | ForEach-Object {
         @{ Mode = $prefix + 'without_' + $_ + '_' + $RunLabel; Seed = $Seeds[0] }
     }
-    if ($Framework -eq 'danger') {
+    if ($Framework -eq 'danger' -and $OnlyAblation -eq '') {
         $cases += @{ Mode = $prefix + 'community_' + $RunLabel; Seed = $Seeds[0] }
     }
 }
@@ -63,7 +72,7 @@ foreach ($case in $cases) {
         Write-Host ('RUN {0} PID={1}' -f $label, $process.Id)
         $finished = $process.WaitForExit($CaseTimeoutSeconds * 1000)
         if (-not $finished) {
-            Stop-Process -Id $process.Id -Force
+            & taskkill.exe /PID $process.Id /T /F | Out-Null
             $process.WaitForExit()
         }
         $exitCode = $process.ExitCode
@@ -76,7 +85,7 @@ foreach ($case in $cases) {
         ([string](Get-Content -LiteralPath $stdout -Raw -Encoding UTF8) -match 'FOOD_ECONOMY_RESULT PASS')
     if ($passed) {
         $directory = Join-Path $env:APPDATA ('Godot\app_userdata\CHRONICLE_GODOT\tests\food_economy_probe\' + $label)
-        $audit = switch ($Framework) { 'work' { 'audit_work_framework.py' } 'community' { 'audit_community_life.py' } 'danger' { 'audit_world_danger.py' } }
+        $audit = switch ($Framework) { 'work' { 'audit_work_framework.py' } 'community' { 'audit_community_life.py' } 'danger' { 'audit_world_danger.py' } 'integration' { 'audit_world_integration.py' } }
         & $Python (Join-Path $PSScriptRoot $audit) (Join-Path $directory ('day' + $Days + '.json')) --output (Join-Path $OutputDirectory ($label + '.audit.json'))
         $passed = $LASTEXITCODE -eq 0
         Copy-Item -LiteralPath (Join-Path $directory 'result.json') -Destination (Join-Path $OutputDirectory ($label + '.probe.json'))

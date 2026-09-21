@@ -1,0 +1,75 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit body world starts
+[PASS] one shared body rule for sixteen residents and traveller
+[PASS] new body identities valid
+[PASS] unfed body and autonomous residents advance 47 hours
+[PASS] ignoring hunger loses real health, not merely a label
+[PASS] partial strain survives between pulses
+[PASS] native partial strain saved
+[PASS] native body restored: 
+[PASS] both worlds continue
+[PASS] native continuation including all residents identical
+[PASS] invalid body clock rejected: -1
+[PASS] invalid body clock rejected: 6
+[PASS] invalid body clock rejected: 1.5
+[PASS] invalid body clock rejected: 2
+[PASS] deleting body flag cannot bypass saved rules
+[PASS] controlled fixture loads through formal session
+[PASS] batched need step commits
+[PASS] only six of seven hours were extreme; hunger alone stops at 40
+[PASS] batch boundary leaves correct partial clock
+[PASS] controlled injury below hunger floor
+[PASS] floor never heals injuries or creates health
+[PASS] controlled fixture loads through formal session
+[PASS] no free food regranted
+[PASS] exhausted traveller can physically reach local commons
+[PASS] emergency gathering remains legal with explicit added fatigue
+[PASS] real four-hour gathering
+[PASS] four actual portions, not a free rescue reward
+[PASS] starving work charges actual shared fatigue
+[PASS] eat gathered food
+[PASS] eating stops strain but does not instantly heal
+[PASS] nourished recovery remains possible
+[PASS] health recovery consumes real nourishment and time
+[PASS] self-rescue world saves
+[PASS] controlled fixture loads through formal session
+[PASS] NPC work commits low
+[PASS] NPC has same hunger work cost as player low
+[PASS] controlled fixture loads through formal session
+[PASS] NPC work commits extreme
+[PASS] NPC has same hunger work cost as player extreme
+[PASS] controlled fixture loads through formal session
+[PASS] public combat preview resolves
+[PASS] public combat preview resolves
+[PASS] public combat preview resolves
+[PASS] same-roll actual combat commits
+[PASS] hunger changes actual same-roll outcome, not just its preview
+[PASS] controlled fixture loads through formal session
+[PASS] public combat preview resolves
+[PASS] same-body real score changes, escape kept viable: attack
+[PASS] public combat preview resolves
+[PASS] same-body real score changes, escape kept viable: guard
+[PASS] public combat preview resolves
+[PASS] same-body real score changes, escape kept viable: withdraw
+[PASS] same-roll actual combat commits
+[PASS] hunger changes actual same-roll outcome, not just its preview
+[PASS] controlled fixture loads through formal session
+[PASS] public combat preview resolves
+[PASS] public combat preview resolves
+[PASS] public combat preview resolves
+[PASS] same-roll actual combat commits
+[PASS] hunger changes actual same-roll outcome, not just its preview
+[PASS] controlled fixture loads through formal session
+[PASS] public combat preview resolves
+[PASS] same-body real score changes, escape kept viable: attack
+[PASS] public combat preview resolves
+[PASS] same-body real score changes, escape kept viable: guard
+[PASS] public combat preview resolves
+[PASS] same-body real score changes, escape kept viable: withdraw
+[PASS] same-roll actual combat commits
+[PASS] hunger changes actual same-roll outcome, not just its preview
+[PASS] old content rules still run
+[PASS] old worlds do not silently acquire hunger damage
+[PASS] unversioned lethality change rejected
+BODY_CONDITION_RESULT PASS 72/72

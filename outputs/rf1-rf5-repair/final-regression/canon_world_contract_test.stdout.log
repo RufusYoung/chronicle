@@ -1,0 +1,109 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] authored catalog references valid
+[PASS] six original macro regions and seventeen organizations
+[PASS] conflicting authored geography retained as unresolved
+[PASS] prepared copy does not mutate input
+[PASS] preparation idempotent
+[PASS] embedded save snapshot does not depend on current file path
+[PASS] unknown embedded canon version rejected
+[PASS] prototype cannot silently become a canon anchor
+[PASS] test injection: unsupported salt water resource rejected
+[PASS] test injection: outside-scope terrain rejected
+[PASS] dangling faction rejected
+[PASS] duplicate authored id rejected
+[PASS] cyclic place ancestry rejected
+[PASS] western kingdom cannot become lake community by scope typo
+[PASS] incomplete embedded labels rejected before projection
+[PASS] canon formal start 81001
+[PASS] runtime scope has two distinct small settlements
+[PASS] public geography matches authored anchor
+[PASS] sixteen residents, not port city population
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] catalog factions not fabricated as live organizations
+[PASS] day of autonomous world time
+[PASS] no player actions in passive sample
+[PASS] native runtime reference audit
+[PASS] canon and native world saved
+[PASS] canon world restored
+[PASS] all Stores time RNG and history restored
+[PASS] authored background restored without reskin
+[PASS] native continuation equal
+[PASS] canon formal start 82002
+[PASS] runtime scope has two distinct small settlements
+[PASS] public geography matches authored anchor
+[PASS] sixteen residents, not port city population
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] catalog factions not fabricated as live organizations
+[PASS] day of autonomous world time
+[PASS] no player actions in passive sample
+[PASS] native runtime reference audit
+[PASS] canon and native world saved
+[PASS] canon world restored
+[PASS] all Stores time RNG and history restored
+[PASS] authored background restored without reskin
+[PASS] native continuation equal
+[PASS] canon formal start 81001
+[PASS] runtime scope has two distinct small settlements
+[PASS] public geography matches authored anchor
+[PASS] sixteen residents, not port city population
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] generated place preserves parent anchor
+[PASS] catalog factions not fabricated as live organizations
+[PASS] day of autonomous world time
+[PASS] no player actions in passive sample
+[PASS] native runtime reference audit
+[PASS] canon and native world saved
+[PASS] canon world restored
+[PASS] all Stores time RNG and history restored
+[PASS] authored background restored without reskin
+[PASS] native continuation equal
+[PASS] seeds retain different actual world states
+[PASS] same seed reproduces complete day-one continuation
+[PASS] legacy synthetic network retained
+[PASS] legacy world is not promoted to authored geography
+CANON_WORLD_CONTRACT_RESULT 106 checks PASS

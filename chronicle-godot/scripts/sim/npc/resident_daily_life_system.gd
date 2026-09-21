@@ -180,7 +180,8 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 					decision_intent = "subsistence"
 					if use_choice:
 						Choice.propose(proposals, "forage", goal, activity, reason, decision_sources, decision_intent)
-					break
+					if not config.get("integration_rules", {}).get("livelihood_enabled", false):
+						break
 			var self_reserve := 1 if FoodStorage.enabled(food_config.get("worksite_storage", {})) else 0
 			var useful_return := true
 			if self_reserve > 0 and location == home and not family.has("pantry_id"):
@@ -411,14 +412,16 @@ func _food_goal(snapshot: Variant, actor: Dictionary, routes: Array, profiles: A
 		return ""
 	var own_settlement := str(states.get("settlement_id", ""))
 	var away := str(locations.get(location, {}).get("settlement_id", own_settlement)) != own_settlement
-	if not business and not away and (hour < int(config.get("shopping_start_hour", 12)) or hour > int(config.get("shopping_end_hour", 17))):
+	var integrated: bool = config.get("subsistence", {}).get("integration_version") == 1
+	var urgent: bool = integrated and states.get("hunger") == "extreme"
+	if not business and not away and not urgent and (hour < int(config.get("shopping_start_hour", 12)) or hour > int(config.get("shopping_end_hour", 17))):
 		return ""
 	# A food producer can satisfy this need by continuing real production.
 	for profile: Dictionary in profiles:
 		if str(profile.get("workplace_id", "")) == str(states.get("workplace_id", "")) \
 				and str(profile.get("occupation_id", "")) == str(states.get("occupation_id", "")) \
 				and FoodAccess.is_food_producer(profile):
-			if not profile.has("work_recipe") or not WorkOpportunities.knows_work_blocked(snapshot, actor, profile, tick):
+			if not integrated and (not profile.has("work_recipe") or not WorkOpportunities.knows_work_blocked(snapshot, actor, profile, tick)):
 				return ""
 	var individual_knowledge := CommunityKnowledge.enabled(config.get("community_rules", {}))
 	var cache_key := str(actor.id) if individual_knowledge else own_settlement + (".cart" if Carting.is_carter(actor, config.get("carting", {})) else "")
@@ -432,6 +435,8 @@ func _food_goal(snapshot: Variant, actor: Dictionary, routes: Array, profiles: A
 			var reports := CommunityKnowledge.supply_reports(snapshot, str(actor.id), CommunityKnowledge.hour(tick)).filter(func(m: Dictionary) -> bool: return m.location_id == site)
 			# Recent positive testimony is worth checking before another merely familiar empty site.
 			costs[site] = distance * 3 - (18 if not reports.is_empty() else 0)
+			if integrated and not WorldDanger.known_danger(snapshot, str(actor.id), site, CommunityKnowledge.hour(tick)).is_empty():
+				costs[site] += 75
 		sites.sort_custom(func(a: String, b: String) -> bool: return costs[a] < costs[b] if costs[a] != costs[b] else a < b)
 	elif Carting.enabled(config.get("carting", {})):
 		var distances := {}

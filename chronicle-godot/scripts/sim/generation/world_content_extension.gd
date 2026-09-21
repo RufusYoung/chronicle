@@ -163,6 +163,10 @@ static func prepare(fixture: Dictionary) -> String:
 			var expected: Dictionary = pack[key].duplicate(true)
 			if key == "world_danger":
 				expected["seed"] = int(fixture.get("challenge_seed", 1))
+				if fixture.has("integration_generated"):
+					expected["integration_version"] = 1
+					if fixture.get("integration_rules", {}).get("livelihood_enabled", false):
+						expected["foraging"] = fixture.integration_rules.threat_foraging.duplicate(true)
 			# Native JSON restores integral numbers as floats, not different rules.
 			if JSON.parse_string(JSON.stringify(fixture.get(key))) != JSON.parse_string(JSON.stringify(expected)):
 				return "content_extension_rules_mismatch:" + key

@@ -95,6 +95,7 @@ const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const ActivityChoice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 const Body = preload("res://scripts/sim/npc/body_condition.gd")
+const Integration = preload("res://scripts/sim/generation/world_integration.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 7
@@ -284,6 +285,10 @@ func start_from_fixture_path(
 			return _start_failure("content_extension_not_loaded")
 		if fixture.content_extension.get("version") != options.content_extension_version:
 			return _start_failure("content_extension_version_mismatch")
+	if options.get("integration_rules_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_integration_rules_version")
+	if options.get("integration_rules_version", 0) == 1:
+		fixture["integration_rules"] = loader.load_json(Integration.DEFAULT_PATH)
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -434,6 +439,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	content_error = ContentExtension.register_items(fixture, registry)
 	if content_error != "":
 		return _start_failure(content_error)
+	var integration_error := Integration.register_items(fixture, registry)
+	if integration_error != "":
+		return _start_failure(integration_error)
 	var work_rules_error := WorkRules.configure(fixture, registry)
 	if work_rules_error != "":
 		return _start_failure(work_rules_error)
@@ -456,6 +464,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	var body_error := Body.configure(fixture)
 	if body_error != "":
 		return _start_failure(body_error)
+	integration_error = Integration.configure(fixture, registry)
+	if integration_error != "":
+		return _start_failure(integration_error)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -2519,6 +2530,9 @@ func _validate_save_references(restored_hour: int = -1) -> Dictionary:
 	var body_error := Body.validate_save(fixture_source_data, stores)
 	if body_error != "":
 		return _save_failure(body_error, "references")
+	var integration_error := Integration.validate_save(fixture_source_data, stores)
+	if integration_error != "":
+		return _save_failure(integration_error, "references")
 	var community_error := Community.validate_references(fixture_source_data, stores, context.locations)
 	if community_error != "":
 		return _save_failure(community_error, "references")

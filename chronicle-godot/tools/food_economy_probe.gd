@@ -21,6 +21,13 @@ func _run() -> void:
 	var model := Live.new()
 	var scenario := "echo_realm" if mode.begins_with("canon") else "generated_network"
 	var options := {"scenario": scenario, "challenge_seed_override": seed}
+	if mode.begins_with("canon_integration"):
+		options.merge({"household_food_hauling_version": 1, "worksite_food_storage_version": 1,
+			"household_food_budget_version": 1, "resident_subsistence_version": 1, "work_rules_version": 1,
+			"community_rules_version": 1, "world_danger_version": 1, "player_life_version": 2,
+			"content_extension_version": 2, "body_rules_version": 1, "integration_rules_version": 1})
+		if mode.begins_with("canon_integration_without_"):
+			options.erase("integration_rules_version")
 	if mode.begins_with("canon_carting") or mode.begins_with("canon_depot"):
 		options["food_carting_version"] = 1
 	if mode.begins_with("canon_depot"):
@@ -55,6 +62,20 @@ func _run() -> void:
 		quit(1)
 		return
 	var fixture: Dictionary = model.session.fixture_source_data.duplicate(true)
+	if mode.begins_with("canon_integration_without_"):
+		var disabled := ""
+		for mechanism: String in ["equipment", "negotiation", "livelihood"]:
+			if mode.begins_with("canon_integration_without_" + mechanism + "_"):
+				disabled = mechanism + "_enabled"
+		if disabled == "":
+			push_error("Unknown integration ablation")
+			quit(1)
+			return
+		fixture["integration_rules"] = JSON.parse_string(FileAccess.get_file_as_string("res://data/sim/raw/content/echo_port_integration_v1.json"))
+		fixture.integration_rules[disabled] = false
+		fixture.known_facts.append({"fact_id": "test_injection." + mode, "fact_type": "test_injection", "disabled_mechanism": disabled,
+			"summary": "测试注入：从相同身体与世界初始条件禁用一种整合机制，不补发钱物。"})
+		_check(model.session.start_from_fixture_data(fixture, model.session.rule_source_paths.duplicate()).success, "same-source integration ablation")
 	if mode.begins_with("canon_danger_without_contact"):
 		fixture.world_danger.contacts_enabled = false
 		fixture.resident_daily_life.world_danger.contacts_enabled = false
@@ -146,7 +167,7 @@ func _run() -> void:
 		_check(ok, "day_%d" % day)
 		rows.append({"elapsed_days": day, "simulation_ms": (Time.get_ticks_usec() - began) / 1000.0})
 		print("FOOD_ECONOMY_DAY %s %d" % [mode, day])
-		if mode.begins_with("canon_community") and day < days and day % 7 == 0:
+		if (mode.begins_with("canon_community") or mode.begins_with("canon_integration")) and day < days and day % 7 == 0:
 			_check(model.save_to_path(output + "/day%d.json" % day, true).success, "weekly diagnostic checkpoint")
 	var checkpoint := output + "/day%d.json" % days
 	_check(model.save_to_path(checkpoint, true).success, "native save")
@@ -186,11 +207,11 @@ func _run() -> void:
 
 
 func _scope(mode: String) -> String:
-	if mode.begins_with("canon_work_without") or mode.begins_with("canon_community_without"):
+	if mode.begins_with("canon_work_without") or mode.begins_with("canon_community_without") or mode.begins_with("canon_integration_without"):
 		return "Passive counterexample with explicit initial mechanism ablation; no actor actions"
 	if mode in ["canon_without_family", "canon_without_carting", "canon_budget_without_hauling", "canon_livelihood_withdraw_reopen", "canon_livelihood_without_subsistence", "canon_livelihood_without_affordability", "local_only"]:
 		return "Passive counterexample with explicitly disabled rule; no actor actions"
-	for prefix: String in ["canon_depot", "canon_carting", "canon_haul", "canon_budget", "canon_cooperation", "canon_livelihood", "canon_work", "canon_community", "batch"]:
+	for prefix: String in ["canon_depot", "canon_carting", "canon_haul", "canon_budget", "canon_cooperation", "canon_livelihood", "canon_work", "canon_community", "canon_integration", "batch"]:
 		if mode.begins_with(prefix):
 			return "Passive opt-in configuration experiment; no actor actions"
 	return "Passive default world; no actor actions"

@@ -142,7 +142,8 @@ func _try_order(snapshot: Variant, carrier: Dictionary, owner: Dictionary, depot
 				return {}
 		var withheld := _fact("fact.community_aid_withheld.%s.%d" % [owner.id, hour], "community_aid_withheld", owner, tick,
 			"%s能承担这次送粮，但听到的本地留粮约定尚未解除，暂不接受邻聚落的送粮请求。货与钱仍归本人。" % owner.display_name, need.source_fact_ids)
-		withheld.merge({"target_id": carrier.id, "requester_id": need.requester_id, "community_policy_id": need.community_policy_id})
+		withheld.merge({"target_id": carrier.id, "requester_id": need.requester_id, "community_policy_id": need.community_policy_id,
+			"request_root_fact_id": need.get("request_root_fact_id", "")})
 		var refusal := Result.new()
 		refusal.add_fact(withheld)
 		refusal.mark_resolved("community_aid_withheld")
@@ -178,6 +179,8 @@ func _try_order(snapshot: Variant, carrier: Dictionary, owner: Dictionary, depot
 			order[key] = need[key]
 	if need.get("self_delivery", false):
 		order["self_delivery"] = true
+	if need.has("negotiation_reply_id"):
+		order["negotiation_reply_id"] = need.negotiation_reply_id
 	result.add_exchange(order)
 	var destination := "邻聚落请求者的共有粮柜" if need.has("community_request_id") else ("家中共有粮柜" if need.has("pantry_id") else "家人手中")
 	var fact := _fact(fact_id, "food_hauling_accepted", carrier, tick,
@@ -190,6 +193,9 @@ func _try_order(snapshot: Variant, carrier: Dictionary, owner: Dictionary, depot
 	if need.get("self_delivery", false):
 		fact["self_delivery"] = true
 		fact.summary = "%s决定暂放手边工作，亲自把 %d 份自有口粮送到邻聚落请求者的粮柜。货物已单独装好，只能实际送达或原路带回，没有额外报酬。" % [owner.display_name, amount]
+	if need.has("negotiation_reply_id"):
+		fact["negotiation_reply_id"] = need.negotiation_reply_id
+		fact.summary += " 对方实际听到拒绝后提出了减量请求，本次重新协商成行，仍保留自家所需。"
 	result.add_fact(fact)
 	result.mark_resolved("food_hauling_accepted")
 	return {"transaction": result, "events": [fact]}
@@ -239,6 +245,8 @@ func _progress(snapshot: Variant, carrier: Dictionary, order: Dictionary, tick: 
 				fact.summary = "%s亲自把 %d 份自有口粮送入约定的邻里粮柜；这趟路花了自己的时间，没有运费收入。" % [carrier.display_name, int(order.quantity)]
 			if order.has("community_request_id"):
 				fact["community_request_id"] = order.community_request_id
+				if order.has("negotiation_reply_id"):
+					fact["negotiation_reply_id"] = order.negotiation_reply_id
 				if not order.get("self_delivery", false):
 					fact.summary += " 这是%s听到请求后自愿出粮并付运费的邻里援助。" % snapshot.get_entity(str(order.party_a)).display_name
 	elif order.status == "in_transit" and place == order.destination_location_id:
@@ -370,9 +378,23 @@ static func validate_order(order: Dictionary, stores: Dictionary, locations: Dic
 			return "invalid_community_food_haul_permission"
 		if not _known_at(stores, str(order.party_a), str(request.fact_id), int(order.created_tick)):
 			return "invalid_community_food_haul_expired_request"
+		var negotiated := false
+		if order.has("negotiation_reply_id"):
+			var reply: Dictionary = stores.fact_store.get_fact(str(order.negotiation_reply_id))
+			var reply_root: Dictionary = stores.fact_store.get_fact(str(reply.get("root_fact_id", "")))
+			negotiated = terms.get("negotiation_reply_id") == order.negotiation_reply_id \
+				and terms.get("negotiation_partner_id") == order.party_a and accepted.get("negotiation_reply_id") == order.negotiation_reply_id \
+				and reply.get("actor_id") == order.requester_id and reply.get("topic") == "aid_reply" \
+				and reply_root.get("actor_id") == order.party_a and reply_root.get("topic") == "aid_reply" \
+				and reply_root.get("payload", {}).get("requester_id") == order.requester_id \
+				and int(order.quantity) <= int(reply_root.get("payload", {}).get("maximum_portions", 0)) \
+				and _known_at(stores, str(order.party_a), str(reply_root.get("fact_id", "")), int(order.created_tick)) \
+				and _known_at(stores, str(order.requester_id), str(reply.fact_id), Family.absolute_hour(root))
+			if not negotiated:
+				return "invalid_community_food_haul_negotiation"
 		if order.get("community_policy_id", "") != "" and (policy.get("topic") != "policy" or policy_root.get("fact_type") != "community_policy_changed" \
 				or policy.get("actor_id") != order.party_a or policy.get("fact_id") not in order.need_fact_ids \
-				or policy_root.get("payload", {}).get("policy") not in ["open", "relief"] or order.party_a not in group.get("member_ids", []) \
+				or (policy_root.get("payload", {}).get("policy") not in ["open", "relief"] and not negotiated) or order.party_a not in group.get("member_ids", []) \
 				or Family.absolute_hour(policy) > int(order.created_tick)):
 			return "invalid_community_food_haul_permission"
 		if not policy.is_empty() and not _known_at(stores, str(order.party_a), str(policy.fact_id), int(order.created_tick)):

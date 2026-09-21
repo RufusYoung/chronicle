@@ -1,0 +1,35 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit warehouse world starts
+[PASS] food producer has stable worksite storage, no second inventory
+[PASS] controlled fixture starts
+[PASS] real food production profile located
+[PASS] full inventory blocks further production
+[PASS] full store does not harvest, consume inputs or advance a production cycle
+[PASS] fed on-shift producer does not keep filling a bottomless backpack
+[PASS] before leaving, loads a finite household bundle
+[PASS] withdrawal uses atomic item transfer
+[PASS] warehouse and carried portions are distinct real stacks
+[PASS] cannot repeat withdrawal beyond carry target
+[PASS] controlled fixture starts
+[PASS] owner cannot take warehouse goods from home
+[PASS] being at the field does not authorize taking another person's stock
+[PASS] absent owner cannot sell storage remotely
+[PASS] market rejects a forged warehouse seller
+[PASS] owner can sell a real stored portion at the worksite
+[PASS] warehouse sale removes exact stock
+[PASS] payment goes to the producer, not an invented shop budget
+[PASS] controlled fixture starts
+[PASS] changed workplace cannot create food in a remote old warehouse
+[PASS] controlled fixture starts
+[PASS] consumption or sale reopens production capacity
+[PASS] resumed production commits
+[PASS] new batch lands at worksite, not on producer
+[PASS] full store saves
+[PASS] full store restores
+[PASS] both native branches continue
+[PASS] full world continuation is identical
+[PASS] custodian substitution rejected
+[PASS] unknown storage location rejected
+[PASS] failed balance experiment is not silently enabled in default world
+WORKSITE_FOOD_STORAGE_RESULT PASS 32/32

@@ -1,0 +1,33 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62001 可以启动二阶社会演化世界
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62001 生成有家庭来源的伴侣、亲子或手足事实
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62001 的实物偿债可追溯到食物援助、物品履历和已结算交换
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62001 的重复拒绝争执可追溯并改变关系与聚落压力
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62001 的二阶社会事务全部提交且无悬空引用
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62002 可以启动二阶社会演化世界
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62002 生成有家庭来源的伴侣、亲子或手足事实
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62002 的实物偿债可追溯到食物援助、物品履历和已结算交换
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62002 的重复拒绝争执可追溯并改变关系与聚落压力
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62002 的二阶社会事务全部提交且无悬空引用
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62003 可以启动二阶社会演化世界
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62003 生成有家庭来源的伴侣、亲子或手足事实
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62003 的实物偿债可追溯到食物援助、物品履历和已结算交换
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62003 的重复拒绝争执可追溯并改变关系与聚落压力
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62003 的二阶社会事务全部提交且无悬空引用
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62004 可以启动二阶社会演化世界
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62004 生成有家庭来源的伴侣、亲子或手足事实
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62004 的实物偿债可追溯到食物援助、物品履历和已结算交换
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62004 的重复拒绝争执可追溯并改变关系与聚落压力
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62004 的二阶社会事务全部提交且无悬空引用
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62005 可以启动二阶社会演化世界
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62005 生成有家庭来源的伴侣、亲子或手足事实
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62005 的实物偿债可追溯到食物援助、物品履历和已结算交换
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62005 的重复拒绝争执可追溯并改变关系与聚落压力
+[V5 GENERATED SOCIAL FOLLOWUP PASS] seed 62005 的二阶社会事务全部提交且无悬空引用
+[V5 GENERATED SOCIAL FOLLOWUP PASS] 五种子合计生成亲缘与师徒两类有来源关系
+[V5 GENERATED SOCIAL FOLLOWUP PASS] 五种子形成真实实物偿还，且每次偿还对应一个已结算交换
+[V5 GENERATED SOCIAL FOLLOWUP PASS] 五种子中的重复拒绝会升级为争执并积累组织救济需求
+[V5 GENERATED SOCIAL FOLLOWUP PASS] 五种子二阶社会演化无悬空引用或失败事务
+[V5 GENERATED SOCIAL FOLLOWUP BATCH] {"conflict_fact_count":48,"failed_followup_transaction_count":0,"food_relief_demand":96,"invalid_reference_seed_count":0,"kinship_fact_count":78,"mentorship_fact_count":22,"repayment_exchange_count":48,"repayment_fact_count":48,"seed_count":5,"seeds":[{"conflict_fact_count":14,"food_relief_demand":28,"kinship_fact_count":20,"mentorship_fact_count":4,"reference_ok":true,"repayment_exchange_count":9,"repayment_fact_count":9,"seed":62001,"transaction_ok":true},{"conflict_fact_count":17,"food_relief_demand":34,"kinship_fact_count":14,"mentorship_fact_count":4,"reference_ok":true,"repayment_exchange_count":13,"repayment_fact_count":13,"seed":62002,"transaction_ok":true},{"conflict_fact_count":10,"food_relief_demand":20,"kinship_fact_count":10,"mentorship_fact_count":8,"reference_ok":true,"repayment_exchange_count":13,"repayment_fact_count":13,"seed":62003,"transaction_ok":true},{"conflict_fact_count":7,"food_relief_demand":14,"kinship_fact_count":20,"mentorship_fact_count":0,"reference_ok":true,"repayment_exchange_count":7,"repayment_fact_count":7,"seed":62004,"transaction_ok":true},{"conflict_fact_count":0,"food_relief_demand":0,"kinship_fact_count":14,"mentorship_fact_count":6,"reference_ok":true,"repayment_exchange_count":6,"repayment_fact_count":6,"seed":62005,"transaction_ok":true}],"simulation_hours_per_seed":168}
+[V5 GENERATED SOCIAL FOLLOWUP RESULT] PASS

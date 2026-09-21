@@ -4,6 +4,7 @@ class_name V5ResidentSubsistence
 const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
 const Family = preload("res://scripts/sim/npc/household_provisioning.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
+const Knowledge = preload("res://scripts/sim/npc/community_knowledge.gd")
 const PROFILE := {"version": 1, "work_hours": 4, "portions": 4, "minimum_health": 40,
 	"minimum_age": 18, "retry_hours": 12, "maximum_travel_hours": 4,
 	"household_affordability_version": 1, "quote_memory_hours": 24}
@@ -36,10 +37,14 @@ static func candidates(actor: Dictionary, profiles: Array, config: Dictionary, s
 			or int(state.get("age_years", 0)) < int(config.minimum_age) or int(state.get("health", 0)) < int(config.minimum_health) \
 			or not bool(state.get("alive", true)) or state.get("life_status", "alive") != "alive":
 		return rows
+	var known_sites: Array = []
+	if config.get("integration_version") == 1 and snapshot != null:
+		for report: Dictionary in Knowledge.supply_reports(snapshot, str(actor.id), Family.absolute_hour(snapshot.world_time)):
+			known_sites.append(str(report.location_id))
 	for profile: Dictionary in profiles:
-		if profile.get("settlement_id") != state.get("settlement_id") or not Food.is_food_producer(profile):
+		if (profile.get("settlement_id") != state.get("settlement_id") and profile.get("workplace_id") not in known_sites) or not Food.is_food_producer(profile):
 			continue
-		if profile.get("occupation_id") == state.get("occupation_id"):
+		if profile.get("occupation_id") == state.get("occupation_id") and config.get("integration_version") != 1:
 			if not profile.has("work_recipe") or snapshot == null:
 				return []
 			if not WorkOpportunities.knows_work_blocked(snapshot, actor, profile, snapshot.world_time):
@@ -72,6 +77,8 @@ static func decision(snapshot: Variant, actor: Dictionary, items: Array, family:
 	# A failed purchase is remembered; an empty wallet does not require omniscient price knowledge.
 	var money := Food.balance(items, str(actor.id))
 	var sources: Array = family.get("source_fact_ids", []).duplicate()
+	if config.get("integration_version") == 1 and actor.states.get("hunger") == "extreme":
+		return {"reason": "已经极饿，现钱和作业计划都不能代替这一餐，尝试在自己知道的公用食源采食", "source_fact_ids": sources}
 	if money == 0:
 		return {"reason": "口粮不足且没有买粮钱，尝试在已知公用作业地采食", "source_fact_ids": sources}
 	var household_budget := int(config.get("household_affordability_version", 0)) == 1

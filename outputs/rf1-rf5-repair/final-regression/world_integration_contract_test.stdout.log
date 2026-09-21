@@ -1,0 +1,24 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] explicit integrated world starts: 
+[PASS] native save
+[PASS] native restore: 
+[PASS] previous world still starts
+[PASS] old world acquires no new equipment definitions
+[PASS] test injection: repeated controlled feeding tick 0: 
+[PASS] test injection: repeated controlled feeding tick 1: 
+[PASS] test injection: repeated controlled feeding tick 2: 
+[PASS] test injection: repeated controlled feeding tick 3: 
+[PASS] test injection: repeated controlled feeding tick 4: 
+[PASS] test injection: repeated controlled feeding tick 5: 
+[PASS] finite work precedes one wildlife meal
+[PASS] wildlife consumes same finite resource stock as residents
+[PASS] feeding gives finite respite
+[PASS] resident cannot use wildlife permission to bypass commons rules
+[PASS] feeding permission cannot exceed configured finite meal
+[PASS] threat cannot consume remote resources
+[PASS] configured diet cannot consume unrelated material
+[PASS] sated threat does not eat again or emit an infinite event
+[PASS] depleted food cannot create a meal or forced respite
+[PASS] changed compiled rules cannot masquerade as old integration
+WORLD_INTEGRATION_CONTRACT 21/21

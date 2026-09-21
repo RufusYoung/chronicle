@@ -5,6 +5,7 @@ const Combat = preload("res://scripts/sim/combat/combat_encounter_resolver.gd")
 const Builder = preload("res://scripts/sim/core/sim_snapshot_builder.gd")
 const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
 const Body = preload("res://scripts/sim/npc/body_condition.gd")
+const ThreatSubsistence = preload("res://scripts/sim/combat/threat_subsistence.gd")
 
 
 static func enabled(config: Dictionary) -> bool:
@@ -101,7 +102,11 @@ func definition(snapshot: Variant, actor_id: String, threat: Dictionary, config:
 	var hit := {"base_health_loss": 6, "fatigue_gain": fatigue_cost, "injury": injury,
 		"injury_label": "战斗挫伤", "durability_slot": "body_outer", "durability_loss": 2}
 	var safe := {"fatigue_gain": fatigue_cost, "durability_slot": "main_hand", "durability_loss": 1}
-	return {"encounter_id": "world_danger." + str(threat.id), "enemy": enemy,
+	var integrated: bool = config.get("integration_version") == 1
+	var context_tags: Array = []
+	if integrated and (int(snapshot.world_time.get("hour", 12)) < 7 or int(snapshot.world_time.get("hour", 12)) >= 18):
+		context_tags.append("dim_light")
+	return {"encounter_id": "world_danger." + str(threat.id), "enemy": enemy, "context_tags": context_tags,
 		"description": "这是仍在持续的交锋。每次选择占用一小时的周旋与寻找机会，世界其余地方照常生活。",
 		"approaches": [
 			{"approach_id": "attack", "label": "抓住空隙进攻", "score_target": "combat.attack", "attack_bonus": advantage - hunger_penalty,
@@ -111,7 +116,7 @@ func definition(snapshot: Variant, actor_id: String, threat: Dictionary, config:
 				"difficulty": int(enemy.attack), "action_tags": ["defend"], "success": safe, "failure": hit,
 				"effect_description": "成功积累 2 点优势，上限 4，改善下一次进攻或脱离；仍耗费时间与体力。"},
 			{"approach_id": "withdraw", "label": "寻找退路，脱离接触", "score_target": "combat.escape", "escape_bonus": advantage,
-				"difficulty": int(enemy.escape_difficulty), "action_tags": ["withdraw"], "success": safe, "failure": hit,
+				"difficulty": int(enemy.escape_difficulty), "action_tags": ["withdraw", "combat_retreat"] if integrated else ["withdraw"], "success": safe, "failure": hit,
 				"effect_description": "成功打开两小时离场窗口，可以沿原道路离开；失败会受伤，不能瞬移回家。"}
 		]}
 
@@ -187,6 +192,12 @@ func run_tick(context: Variant, stores: Dictionary, tick: Dictionary, config: Di
 		return output
 	var snapshot: Variant = Builder.new().build_snapshot(context, stores, true, tick)
 	if not contacts_only:
+		var foraging: Variant = ThreatSubsistence.resolve(snapshot, tick, config)
+		if not writer.apply_result(foraging, stores):
+			return {"ok": false, "error": "threat_foraging_rejected"}
+		output.results.append(foraging)
+		output.events.append_array(foraging.facts_added)
+		snapshot = Builder.new().build_snapshot(context, stores, true, tick)
 		var recovering: Variant = recovery(snapshot, tick, config)
 		if not writer.apply_result(recovering, stores):
 			return {"ok": false, "error": recovering.error_reason}

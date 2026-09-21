@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "equipment_enabled": true,
+  "negotiation_enabled": true,
+  "livelihood_enabled": true,
+  "threat_foraging": {"resource_tags_all": ["food", "roots"], "amount": 0.5, "work_hours": 6, "sated_hours": 18},
+  "item_defs": [
+    {
+      "item_def_id": "item.knotted_fiber_whip", "definition_version": 1,
+      "display_name": "绳结短鞭", "display_name_key": "item.knotted_fiber_whip.name",
+      "item_kind": "weapon", "tags": ["weapon", "main_hand", "fiber_gear", "melee_weapon"],
+      "stackable": false, "max_stack": 1, "base_mass": 0.7, "equip_slots": ["main_hand"],
+      "capabilities": ["equip", "trade", "repair"], "durability": {"maximum": 12}, "base_value": 5,
+      "modifiers": [{"modifier_id": "knotted_whip_reach", "target": "combat.attack", "operation": "add", "value": 2,
+        "when": [{"kind": "action_tag", "tag": "combat_melee"}], "explain_text": "绳结短鞭让你能从稍远处反击。"}]
+    },
+    {
+      "item_def_id": "item.woven_reed_vest", "definition_version": 1,
+      "display_name": "苇编护衣", "display_name_key": "item.woven_reed_vest.name",
+      "item_kind": "equipment", "tags": ["clothing", "armor_outer", "fiber_gear"],
+      "stackable": false, "max_stack": 1, "base_mass": 1.3, "equip_slots": ["body_outer"],
+      "capabilities": ["equip", "trade", "repair"], "durability": {"maximum": 16}, "base_value": 6,
+      "modifiers": [{"modifier_id": "reed_vest_guard", "target": "combat.guard", "operation": "add", "value": 2,
+        "when": [{"kind": "action_tag", "tag": "combat"}], "explain_text": "层叠苇片缓冲擦碰，但受击后会磨坏。"}]
+    }
+  ],
+  "recipes": [
+    {"label": "编制苇片护衣", "work_interval_hours": 6, "choice_bias": 0,
+      "products": [{"item_def_id": "item.woven_reed_vest", "quantity": 1}],
+      "work_recipe": {"version": 1, "recipe_id": "recipe.reed_vest", "tools": [{"query": {"tags_all": ["rope"]}, "wear": 1}],
+        "item_inputs": []}},
+    {"label": "搓结防身短鞭", "work_interval_hours": 4, "choice_bias": 0,
+      "products": [{"item_def_id": "item.knotted_fiber_whip", "quantity": 1}],
+      "work_recipe": {"version": 1, "recipe_id": "recipe.knotted_whip", "tools": [{"query": {"tags_all": ["rope"]}, "wear": 1}],
+        "item_inputs": []}}
+  ],
+  "maintenance": {"label": "用纤维修补护具与绳鞭", "work_interval_hours": 2,
+    "work_recipe": {"version": 1, "recipe_id": "recipe.patch_fiber_gear", "tools": [], "item_inputs": [],
+      "repairs": [{"query": {"tags_all": ["fiber_gear"]}, "restore": 4, "maximum_repairs": 2, "maximum_remaining": 3}]}}
+}

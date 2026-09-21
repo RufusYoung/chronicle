@@ -1,0 +1,1948 @@
+{
+  "save": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe\\canon_integration_without_negotiation_repair_frozen2_87029\\day30.json",
+  "save_sha256": "63d7b02c4f1a8d890ff9f26c36910d466b3fed5667cd4a02ef6459d3f501d2c6",
+  "world_time": {
+    "day": 31,
+    "elapsed_hours": 720,
+    "hour": 8,
+    "tick": 720
+  },
+  "counts": {
+    "settlement_generated": 2,
+    "settlement_industry_selected": 8,
+    "settlement_resource_stock_established": 7,
+    "settlement_trade_reserve_established": 4,
+    "settlement_network_generated": 1,
+    "resident_generation_completed": 2,
+    "household_generated": 4,
+    "resident_generated": 16,
+    "generated_social_relation": 100,
+    "reserve_dwelling_generated": 2,
+    "initial_treasury_endowment": 2,
+    "resource_commons_established": 2,
+    "initial_work_tool_owned": 6,
+    "resource_visitor_access_established": 4,
+    "test_injection": 1,
+    "household_pantry_observed": 1126,
+    "community_observation": 1830,
+    "resident_activity_changed": 6199,
+    "settlement_resource_pressure_changed": 2,
+    "region_resource_pressure_changed": 1,
+    "settlement_trade_shipment": 29,
+    "settlement_network_migration_evaluated": 31,
+    "actor_rested_with_injury": 682,
+    "community_policy_changed": 50,
+    "npc_need_changed": 1611,
+    "world_threat_fed": 30,
+    "household_food_observed": 940,
+    "npc_household_food_unmet": 297,
+    "npc_livelihood_produced": 263,
+    "food_hauling_no_contract": 59,
+    "resident_food_purchased": 70,
+    "resident_food_purchase_unmet": 192,
+    "resident_equipped": 15,
+    "worksite_food_withdrawn": 95,
+    "community_conversation": 216,
+    "community_message_heard": 557,
+    "npc_household_shared_food": 132,
+    "npc_self_meal": 598,
+    "household_pantry_stored": 131,
+    "settlement_trade_reserve_consumed": 90,
+    "actor_hunger_strain": 228,
+    "household_pantry_taken": 187,
+    "npc_cross_household_food_request_failed": 116,
+    "world_danger_contact": 97,
+    "actor_resolved_combat_encounter": 160,
+    "world_danger_round": 160,
+    "actor_injured_during_combat": 40,
+    "npc_cross_household_shared_food": 66,
+    "world_danger_cleared": 66,
+    "npc_food_debt_repaid": 8,
+    "work_supply_unmet": 95,
+    "npc_wage_paid": 17,
+    "community_aid_withheld": 1,
+    "work_supply_purchased": 4,
+    "community_visit_unmet": 21,
+    "npc_work_maintained": 6,
+    "npc_food_request_conflict": 6,
+    "food_hauling_accepted": 3,
+    "food_hauling_stocked": 3
+  },
+  "copper_coins": {
+    "initial": 287,
+    "current_including_escrow": 287,
+    "conserved": true
+  },
+  "gear_definitions": [
+    "item.knotted_fiber_whip",
+    "item.woven_reed_vest"
+  ],
+  "work_supply_purchases": [
+    {
+      "actor_id": "generated_resident.echo_terrace.007",
+      "day": 6,
+      "fact_id": "fact.exchange.work_supply.generated_resident.echo_terrace.007.155",
+      "fact_type": "work_supply_purchased",
+      "fields": {
+        "currency_item_def_id": "item.copper_coin",
+        "item_def_id": "item.woven_reed_vest",
+        "market_policy_id": "work_supply.generated_resident.echo_terrace.003",
+        "purpose_id": "equipment:body_outer",
+        "purpose_obligation_id": "",
+        "purpose_target_id": "",
+        "quantity": 1,
+        "total_price": 6,
+        "unit_price": 6
+      },
+      "goods_source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105.output.0",
+      "hour": 11,
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "purpose_id": "equipment:body_outer",
+      "purpose_obligation_id": "",
+      "purpose_target_id": "",
+      "query": {
+        "capabilities_all": [
+          "equip"
+        ],
+        "tags_all": [
+          "armor_outer"
+        ]
+      },
+      "source_fact_ids": [
+        "fact.world_danger_round.generated_resident.echo_terrace.007.132",
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.125",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.001.135",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.005.63",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.63"
+      ],
+      "stock_entity_id": "worksite_food_store.generated_resident.echo_terrace.003",
+      "summary": "白苇记得亲见的危险，向在场的白简支付 6 枚铜币买下苇编护衣；没有凭空获得武器或护具。",
+      "target_id": "generated_resident.echo_terrace.003",
+      "tick": 155
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.001",
+      "day": 10,
+      "fact_id": "fact.exchange.work_supply.generated_resident.echo_terrace.001.251",
+      "fact_type": "work_supply_purchased",
+      "fields": {
+        "currency_item_def_id": "item.copper_coin",
+        "item_def_id": "item.woven_reed_vest",
+        "market_policy_id": "work_supply.generated_resident.echo_terrace.008",
+        "purpose_id": "equipment:body_outer",
+        "purpose_obligation_id": "",
+        "purpose_target_id": "",
+        "quantity": 1,
+        "total_price": 6,
+        "unit_price": 6
+      },
+      "goods_source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55.output.0",
+      "hour": 11,
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "purpose_id": "equipment:body_outer",
+      "purpose_obligation_id": "",
+      "purpose_target_id": "",
+      "query": {
+        "capabilities_all": [
+          "equip"
+        ],
+        "tags_all": [
+          "armor_outer"
+        ]
+      },
+      "source_fact_ids": [
+        "fact.world_danger_round.generated_resident.echo_terrace.001.204",
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55",
+        "fact.resident_equipped.generated_resident.echo_terrace.008.155.body_outer",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.125",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.212",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.202",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.005.63",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.007.212",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.63",
+        "fact.exchange.work_supply.generated_resident.echo_terrace.007.155",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.004.186"
+      ],
+      "stock_entity_id": "generated_resident.echo_terrace.008",
+      "summary": "白冬记得亲见的危险，向在场的白澜支付 6 枚铜币买下苇编护衣；没有凭空获得武器或护具。",
+      "target_id": "generated_resident.echo_terrace.008",
+      "tick": 251
+    },
+    {
+      "actor_id": "generated_resident.echo_landing.007",
+      "day": 14,
+      "fact_id": "fact.exchange.work_supply.generated_resident.echo_landing.007.347",
+      "fact_type": "work_supply_purchased",
+      "fields": {
+        "currency_item_def_id": "item.copper_coin",
+        "item_def_id": "item.doubled_reed_cord",
+        "market_policy_id": "work_supply.generated_resident.echo_landing.002",
+        "purpose_id": "recipe.net_fishing",
+        "purpose_obligation_id": "",
+        "purpose_target_id": "",
+        "quantity": 1,
+        "total_price": 9,
+        "unit_price": 9
+      },
+      "goods_source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_297.output.0",
+      "hour": 11,
+      "location_id": "generated_location.echo_landing.work_shed",
+      "purpose_id": "recipe.net_fishing",
+      "purpose_obligation_id": "",
+      "purpose_target_id": "",
+      "query": {
+        "tags_all": [
+          "rope"
+        ]
+      },
+      "source_fact_ids": [
+        "fact.initial_work_tool.generated_resident.echo_landing.007.0",
+        "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_243",
+        "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_297",
+        "fact.exchange.resident_food.generated_resident.echo_landing.007.183",
+        "fact.exchange.resident_food.generated_resident.echo_landing.002.206",
+        "fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_118",
+        "fact.exchange.resident_food.generated_resident.echo_landing.006.185",
+        "fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_162",
+        "fact.exchange.resident_food.generated_resident.echo_landing.006.203",
+        "fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_209",
+        "fact.exchange.resident_food.generated_resident.echo_landing.006.303",
+        "fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_237",
+        "fact.npc_livelihood.generated_resident.echo_landing.006.echo_port_environs_v1_time_66"
+      ],
+      "stock_entity_id": "worksite_food_store.generated_resident.echo_landing.002",
+      "summary": "梅桑为恢复作业，向在场的陈苇支付 9 枚铜币买下1件合股苇绳；用品已由本人携带，仍要走回作业地。",
+      "target_id": "generated_resident.echo_landing.002",
+      "tick": 347
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.007",
+      "day": 15,
+      "fact_id": "fact.exchange.work_supply.generated_resident.echo_terrace.007.371",
+      "fact_type": "work_supply_purchased",
+      "fields": {
+        "currency_item_def_id": "item.copper_coin",
+        "item_def_id": "item.knotted_fiber_whip",
+        "market_policy_id": "work_supply.generated_resident.echo_terrace.008",
+        "purpose_id": "equipment:main_hand",
+        "purpose_obligation_id": "",
+        "purpose_target_id": "",
+        "quantity": 1,
+        "total_price": 5,
+        "unit_price": 5
+      },
+      "goods_source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8.output.0",
+      "hour": 11,
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "purpose_id": "equipment:main_hand",
+      "purpose_obligation_id": "",
+      "purpose_target_id": "",
+      "query": {
+        "capabilities_all": [
+          "equip"
+        ],
+        "tags_all": [
+          "melee_weapon"
+        ]
+      },
+      "source_fact_ids": [
+        "fact.world_danger_round.generated_resident.echo_terrace.007.227",
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8",
+        "fact.resident_equipped.generated_resident.echo_terrace.008.280.main_hand",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.125",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.303",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.202",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.63",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.007.302",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.260",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.007.234"
+      ],
+      "stock_entity_id": "generated_resident.echo_terrace.008",
+      "summary": "白苇记得亲见的危险，向在场的白澜支付 5 枚铜币买下绳结短鞭；没有凭空获得武器或护具。",
+      "target_id": "generated_resident.echo_terrace.008",
+      "tick": 371
+    }
+  ],
+  "equipment_purchases": [
+    {
+      "actor_id": "generated_resident.echo_terrace.007",
+      "day": 6,
+      "fact_id": "fact.exchange.work_supply.generated_resident.echo_terrace.007.155",
+      "fact_type": "work_supply_purchased",
+      "fields": {
+        "currency_item_def_id": "item.copper_coin",
+        "item_def_id": "item.woven_reed_vest",
+        "market_policy_id": "work_supply.generated_resident.echo_terrace.003",
+        "purpose_id": "equipment:body_outer",
+        "purpose_obligation_id": "",
+        "purpose_target_id": "",
+        "quantity": 1,
+        "total_price": 6,
+        "unit_price": 6
+      },
+      "goods_source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105.output.0",
+      "hour": 11,
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "purpose_id": "equipment:body_outer",
+      "purpose_obligation_id": "",
+      "purpose_target_id": "",
+      "query": {
+        "capabilities_all": [
+          "equip"
+        ],
+        "tags_all": [
+          "armor_outer"
+        ]
+      },
+      "source_fact_ids": [
+        "fact.world_danger_round.generated_resident.echo_terrace.007.132",
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.125",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.001.135",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.005.63",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.63"
+      ],
+      "stock_entity_id": "worksite_food_store.generated_resident.echo_terrace.003",
+      "summary": "白苇记得亲见的危险，向在场的白简支付 6 枚铜币买下苇编护衣；没有凭空获得武器或护具。",
+      "target_id": "generated_resident.echo_terrace.003",
+      "tick": 155
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.001",
+      "day": 10,
+      "fact_id": "fact.exchange.work_supply.generated_resident.echo_terrace.001.251",
+      "fact_type": "work_supply_purchased",
+      "fields": {
+        "currency_item_def_id": "item.copper_coin",
+        "item_def_id": "item.woven_reed_vest",
+        "market_policy_id": "work_supply.generated_resident.echo_terrace.008",
+        "purpose_id": "equipment:body_outer",
+        "purpose_obligation_id": "",
+        "purpose_target_id": "",
+        "quantity": 1,
+        "total_price": 6,
+        "unit_price": 6
+      },
+      "goods_source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55.output.0",
+      "hour": 11,
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "purpose_id": "equipment:body_outer",
+      "purpose_obligation_id": "",
+      "purpose_target_id": "",
+      "query": {
+        "capabilities_all": [
+          "equip"
+        ],
+        "tags_all": [
+          "armor_outer"
+        ]
+      },
+      "source_fact_ids": [
+        "fact.world_danger_round.generated_resident.echo_terrace.001.204",
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55",
+        "fact.resident_equipped.generated_resident.echo_terrace.008.155.body_outer",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.125",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.212",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.202",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.005.63",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.007.212",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.63",
+        "fact.exchange.work_supply.generated_resident.echo_terrace.007.155",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.004.186"
+      ],
+      "stock_entity_id": "generated_resident.echo_terrace.008",
+      "summary": "白冬记得亲见的危险，向在场的白澜支付 6 枚铜币买下苇编护衣；没有凭空获得武器或护具。",
+      "target_id": "generated_resident.echo_terrace.008",
+      "tick": 251
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.007",
+      "day": 15,
+      "fact_id": "fact.exchange.work_supply.generated_resident.echo_terrace.007.371",
+      "fact_type": "work_supply_purchased",
+      "fields": {
+        "currency_item_def_id": "item.copper_coin",
+        "item_def_id": "item.knotted_fiber_whip",
+        "market_policy_id": "work_supply.generated_resident.echo_terrace.008",
+        "purpose_id": "equipment:main_hand",
+        "purpose_obligation_id": "",
+        "purpose_target_id": "",
+        "quantity": 1,
+        "total_price": 5,
+        "unit_price": 5
+      },
+      "goods_source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8.output.0",
+      "hour": 11,
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "purpose_id": "equipment:main_hand",
+      "purpose_obligation_id": "",
+      "purpose_target_id": "",
+      "query": {
+        "capabilities_all": [
+          "equip"
+        ],
+        "tags_all": [
+          "melee_weapon"
+        ]
+      },
+      "source_fact_ids": [
+        "fact.world_danger_round.generated_resident.echo_terrace.007.227",
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8",
+        "fact.resident_equipped.generated_resident.echo_terrace.008.280.main_hand",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.125",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.303",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.202",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.008.63",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.007.302",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.003.260",
+        "fact.exchange.resident_food.generated_resident.echo_terrace.007.234"
+      ],
+      "stock_entity_id": "generated_resident.echo_terrace.008",
+      "summary": "白苇记得亲见的危险，向在场的白澜支付 5 枚铜币买下绳结短鞭；没有凭空获得武器或护具。",
+      "target_id": "generated_resident.echo_terrace.008",
+      "tick": 371
+    }
+  ],
+  "equipped": [
+    {
+      "actor_id": "generated_resident.echo_terrace.008",
+      "day": 1,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.41.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 17,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8"
+      ],
+      "summary": "白澜穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_landing.002",
+      "day": 3,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_landing.002.87.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 15,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_54.output.0",
+      "location_id": "generated_location.echo_landing.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_54"
+      ],
+      "summary": "陈苇穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.008",
+      "day": 3,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.88.body_outer",
+      "fact_type": "resident_equipped",
+      "hour": 16,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "body_outer",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55"
+      ],
+      "summary": "白澜穿戴了自己实际拥有的苇编护衣，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.003",
+      "day": 3,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.91.body_outer",
+      "fact_type": "resident_equipped",
+      "hour": 19,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_58.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "body_outer",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_58"
+      ],
+      "summary": "白简穿戴了自己实际拥有的苇编护衣，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_landing.002",
+      "day": 5,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_landing.002.136.body_outer",
+      "fact_type": "resident_equipped",
+      "hour": 16,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_103.output.0",
+      "location_id": "generated_location.echo_landing.work_shed",
+      "slot_id": "body_outer",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_103"
+      ],
+      "summary": "陈苇穿戴了自己实际拥有的苇编护衣，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.008",
+      "day": 6,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.155.body_outer",
+      "fact_type": "resident_equipped",
+      "hour": 11,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_78.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "body_outer",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_78"
+      ],
+      "summary": "白澜穿戴了自己实际拥有的苇编护衣，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.007",
+      "day": 6,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.007.156.body_outer",
+      "fact_type": "resident_equipped",
+      "hour": 12,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "body_outer",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105",
+        "fact.exchange.work_supply.generated_resident.echo_terrace.007.155"
+      ],
+      "summary": "白苇穿戴了自己实际拥有的苇编护衣，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.003",
+      "day": 7,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.187.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 19,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_154.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_154"
+      ],
+      "summary": "白简穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.001",
+      "day": 10,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.001.252.body_outer",
+      "fact_type": "resident_equipped",
+      "hour": 12,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "body_outer",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55",
+        "fact.exchange.work_supply.generated_resident.echo_terrace.001.251"
+      ],
+      "summary": "白冬穿戴了自己实际拥有的苇编护衣，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.008",
+      "day": 11,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.280.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 16,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_247.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_247"
+      ],
+      "summary": "白澜穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.007",
+      "day": 15,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.007.372.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 12,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8",
+        "fact.exchange.work_supply.generated_resident.echo_terrace.007.371"
+      ],
+      "summary": "白苇穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.008",
+      "day": 26,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.637.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 13,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_604.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_604"
+      ],
+      "summary": "白澜穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.008",
+      "day": 28,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.683.body_outer",
+      "fact_type": "resident_equipped",
+      "hour": 11,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_368.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "body_outer",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_368"
+      ],
+      "summary": "白澜穿戴了自己实际拥有的苇编护衣，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.003",
+      "day": 28,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.691.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 19,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_247.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_247",
+        "fact.npc_food_debt_repaid.generated_resident.echo_terrace.008.generated_resident.echo_terrace.003.day_28"
+      ],
+      "summary": "白简穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    },
+    {
+      "actor_id": "generated_resident.echo_terrace.003",
+      "day": 29,
+      "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.712.main_hand",
+      "fact_type": "resident_equipped",
+      "hour": 16,
+      "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_679.output.0",
+      "location_id": "generated_location.echo_terrace.work_shed",
+      "slot_id": "main_hand",
+      "source_fact_ids": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_679"
+      ],
+      "summary": "白简穿戴了自己实际拥有的绳结短鞭，准备应对下一次危险。"
+    }
+  ],
+  "equipment_chains": [
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_103.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_103",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_81.output.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_81.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_landing.002",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_landing.002.136.body_outer",
+          "slot_id": "slot.body_outer",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 16
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_125.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_125",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_81.output.0",
+          "remaining_durability": 0,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_81.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 16
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_342.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_342",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_318.output.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_318.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_54.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_54",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "remaining_durability": 3,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_landing.002",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_landing.002.87.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "generated_resident.echo_terrace.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_79.output.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_79.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.007",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.007.156.body_outer",
+          "slot_id": "slot.body_outer",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.178",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.227",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.395",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.419",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.468",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.491",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.492",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.539",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.587",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.635",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.636",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.683",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.706"
+      ],
+      "purchase_facts": [
+        "fact.exchange.work_supply.generated_resident.echo_terrace.007.155"
+      ],
+      "purchased_then_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.178",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.227",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.395",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.419",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.468",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.491",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.492",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.539",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.587",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.635",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.636",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.683",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.706"
+      ],
+      "wear": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.468",
+          "from": 16,
+          "to": 14
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.491",
+          "from": 14,
+          "to": 12
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.635",
+          "from": 12,
+          "to": 10
+        }
+      ],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 10
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_129.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_terrace.003",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_129",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_79.output.0",
+          "remaining_durability": 0,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_79.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 16
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_154.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "generated_resident.echo_terrace.008",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_154",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.003.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.003.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.003",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.187.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.203",
+          "from": 12,
+          "to": 11
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.251",
+          "from": 11,
+          "to": 10
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.298",
+          "from": 10,
+          "to": 9
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.323",
+          "from": 9,
+          "to": 8
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.395",
+          "from": 8,
+          "to": 7
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.491",
+          "from": 7,
+          "to": 6
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.563",
+          "from": 6,
+          "to": 5
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.635",
+          "from": 5,
+          "to": 4
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.681",
+          "from": 4,
+          "to": 3
+        }
+      ],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 3
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_58.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "generated_resident.echo_terrace.003",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_58",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.003.0",
+          "remaining_durability": 3,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.003.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.003",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.91.body_outer",
+          "slot_id": "slot.body_outer",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.177",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.203",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.251",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.298",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.323",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.395",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.491",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.563",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.635",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.003.681"
+      ],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 16
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_679.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "generated_resident.echo_terrace.003",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_679",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.doubled_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_226.output.0",
+          "remaining_durability": 5,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_226.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.003",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.712.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_247.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "generated_resident.echo_terrace.003",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_247",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_82.output.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_82.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.008",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.280.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        },
+        {
+          "entity_id": "generated_resident.echo_terrace.003",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.003.691.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.417",
+          "from": 12,
+          "to": 11
+        }
+      ],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 11
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_368.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "generated_resident.echo_terrace.008",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_368",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_82.output.0",
+          "remaining_durability": 0,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_82.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.008",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.683.body_outer",
+          "slot_id": "slot.body_outer",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.731",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.732"
+      ],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 16
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "generated_resident.echo_terrace.001",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.008.0",
+          "remaining_durability": 2,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.008.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.008",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.88.body_outer",
+          "slot_id": "slot.body_outer",
+          "transaction_id": ""
+        },
+        {
+          "entity_id": "generated_resident.echo_terrace.001",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.001.252.body_outer",
+          "slot_id": "slot.body_outer",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.130",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.131",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.132",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.299",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.300",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.419",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.420",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.466",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.490",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.563",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.564",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.611",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.634",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.659",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.660",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.731",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.732"
+      ],
+      "purchase_facts": [
+        "fact.exchange.work_supply.generated_resident.echo_terrace.001.251"
+      ],
+      "purchased_then_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.299",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.300",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.419",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.420",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.466",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.490",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.563",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.564",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.611",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.634",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.659",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.660",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.731",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.732"
+      ],
+      "wear": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.131",
+          "from": 16,
+          "to": 14
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.300",
+          "from": 14,
+          "to": 12
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.420",
+          "from": 12,
+          "to": 10
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.564",
+          "from": 10,
+          "to": 8
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.660",
+          "from": 8,
+          "to": 6
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.001.732",
+          "from": 6,
+          "to": 4
+        }
+      ],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 4
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_604.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "generated_resident.echo_terrace.008",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_604",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.doubled_reed_cord",
+          "item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_583.output.0",
+          "remaining_durability": 5,
+          "source_item_instance_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_583.output.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.008",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.637.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.660",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.732"
+      ],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.659",
+          "from": 12,
+          "to": 11
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.731",
+          "from": 11,
+          "to": 10
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.732",
+          "from": 10,
+          "to": 9
+        }
+      ],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 9
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_78.output.0",
+      "definition": "item.woven_reed_vest",
+      "holder": {
+        "id": "generated_resident.echo_terrace.008",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_78",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.008.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.008.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.008",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.155.body_outer",
+          "slot_id": "slot.body_outer",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.417",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.659",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.660"
+      ],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.660",
+          "from": 16,
+          "to": 14
+        }
+      ],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 14
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "generated_resident.echo_terrace.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.008.0",
+          "remaining_durability": 3,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.008.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [
+        {
+          "entity_id": "generated_resident.echo_terrace.008",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.008.41.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        },
+        {
+          "entity_id": "generated_resident.echo_terrace.007",
+          "event_type": "equipped",
+          "fact_id": "fact.resident_equipped.generated_resident.echo_terrace.007.372.main_hand",
+          "slot_id": "slot.main_hand",
+          "transaction_id": ""
+        }
+      ],
+      "combat_modifier_facts": [
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.58",
+        "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.131"
+      ],
+      "purchase_facts": [
+        "fact.exchange.work_supply.generated_resident.echo_terrace.007.371"
+      ],
+      "purchased_then_modifier_facts": [],
+      "wear": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.57",
+          "from": 12,
+          "to": 11
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.58",
+          "from": 11,
+          "to": 10
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.60",
+          "from": 10,
+          "to": 9
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.130",
+          "from": 9,
+          "to": 8
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.008.132",
+          "from": 8,
+          "to": 7
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.395",
+          "from": 7,
+          "to": 6
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.419",
+          "from": 6,
+          "to": 5
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.492",
+          "from": 5,
+          "to": 4
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.539",
+          "from": 4,
+          "to": 3
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.587",
+          "from": 7,
+          "to": 6
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.636",
+          "from": 6,
+          "to": 5
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.683",
+          "from": 5,
+          "to": 4
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.combat_encounter.world_danger.world_threat.field_boar.generated_resident.echo_terrace.007.706",
+          "from": 4,
+          "to": 3
+        }
+      ],
+      "repairs": [
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.npc_livelihood.generated_resident.echo_terrace.007.echo_port_environs_v1_time_514",
+          "from": 3,
+          "to": 7
+        },
+        {
+          "event_type": "durability_changed",
+          "fact_id": "fact.npc_livelihood.generated_resident.echo_terrace.007.echo_port_environs_v1_time_682",
+          "from": 3,
+          "to": 7
+        }
+      ],
+      "repair_inputs": [
+        [
+          {
+            "amount": 1.0,
+            "resource_label": "田沟芦苇",
+            "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+          }
+        ],
+        [
+          {
+            "amount": 1.0,
+            "resource_label": "田沟芦苇",
+            "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+          }
+        ]
+      ],
+      "used_after_repair": true,
+      "durability": 7
+    }
+  ],
+  "recipes": {
+    "recipe.net_fishing": 20,
+    "recipe.knotted_whip": 7,
+    "recipe.hand_gather.net_fisher": 64,
+    "recipe.smoke_lake_fish": 60,
+    "recipe.hand_gather.terrace_farmer": 50,
+    "recipe.terrace_farmer": 18,
+    "recipe.roast_roots": 6,
+    "recipe.reed_vest": 8,
+    "recipe.reed_cordage": 9,
+    "recipe.patch_cordage.generated_settlement.echo_landing": 3,
+    "recipe.double_light_cords": 4,
+    "recipe.patch_cordage.generated_settlement.echo_terrace": 1,
+    "recipe.patch_fiber_gear.generated_settlement.echo_terrace": 2
+  },
+  "replies": [],
+  "heard_replies": 0,
+  "counterproposals": [],
+  "negotiated_deliveries": [],
+  "people": [
+    {
+      "id": "generated_resident.echo_landing.001",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 51,
+      "last_meal": 740,
+      "maximum_meal_gap_hours": 26,
+      "current_meal_gap_hours": 12,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.002",
+      "health": 100,
+      "hunger": "extreme",
+      "activity": "arrived",
+      "meals": 51,
+      "last_meal": 736,
+      "maximum_meal_gap_hours": 26,
+      "current_meal_gap_hours": 16,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.003",
+      "health": 100,
+      "hunger": "high",
+      "activity": "home",
+      "meals": 46,
+      "last_meal": 742,
+      "maximum_meal_gap_hours": 51,
+      "current_meal_gap_hours": 10,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.004",
+      "health": 100,
+      "hunger": "extreme",
+      "activity": "home",
+      "meals": 42,
+      "last_meal": 738,
+      "maximum_meal_gap_hours": 51,
+      "current_meal_gap_hours": 14,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.005",
+      "health": 100,
+      "hunger": "extreme",
+      "activity": "arrived",
+      "meals": 55,
+      "last_meal": 734,
+      "maximum_meal_gap_hours": 32,
+      "current_meal_gap_hours": 18,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.006",
+      "health": 100,
+      "hunger": "high",
+      "activity": "arrived",
+      "meals": 54,
+      "last_meal": 738,
+      "maximum_meal_gap_hours": 22,
+      "current_meal_gap_hours": 14,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.007",
+      "health": 100,
+      "hunger": "high",
+      "activity": "arrived",
+      "meals": 48,
+      "last_meal": 740,
+      "maximum_meal_gap_hours": 20,
+      "current_meal_gap_hours": 12,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.008",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 54,
+      "last_meal": 746,
+      "maximum_meal_gap_hours": 26,
+      "current_meal_gap_hours": 6,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_terrace.001",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 51,
+      "last_meal": 744,
+      "maximum_meal_gap_hours": 47,
+      "current_meal_gap_hours": 8,
+      "injuries": 7
+    },
+    {
+      "id": "generated_resident.echo_terrace.002",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "home",
+      "meals": 35,
+      "last_meal": 747,
+      "maximum_meal_gap_hours": 75,
+      "current_meal_gap_hours": 5,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_terrace.003",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 47,
+      "last_meal": 742,
+      "maximum_meal_gap_hours": 46,
+      "current_meal_gap_hours": 10,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_terrace.004",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 53,
+      "last_meal": 746,
+      "maximum_meal_gap_hours": 43,
+      "current_meal_gap_hours": 6,
+      "injuries": 12
+    },
+    {
+      "id": "generated_resident.echo_terrace.005",
+      "health": 86,
+      "hunger": "low",
+      "activity": "arrived",
+      "meals": 52,
+      "last_meal": 752,
+      "maximum_meal_gap_hours": 42,
+      "current_meal_gap_hours": 0,
+      "injuries": 7
+    },
+    {
+      "id": "generated_resident.echo_terrace.006",
+      "health": 98,
+      "hunger": "low",
+      "activity": "arrived",
+      "meals": 51,
+      "last_meal": 752,
+      "maximum_meal_gap_hours": 42,
+      "current_meal_gap_hours": 0,
+      "injuries": 7
+    },
+    {
+      "id": "generated_resident.echo_terrace.007",
+      "health": 100,
+      "hunger": "low",
+      "activity": "arrived",
+      "meals": 53,
+      "last_meal": 750,
+      "maximum_meal_gap_hours": 40,
+      "current_meal_gap_hours": 2,
+      "injuries": 4
+    },
+    {
+      "id": "generated_resident.echo_terrace.008",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 53,
+      "last_meal": 742,
+      "maximum_meal_gap_hours": 41,
+      "current_meal_gap_hours": 10,
+      "injuries": 3
+    }
+  ],
+  "broken_sources": [],
+  "test_injections": 1,
+  "boundary": "Passive observations; inspect causal chains and ablations before accepting a phase.",
+  "extreme_person_hours": 2276,
+  "activity_hours": {
+    "generated_resident.echo_landing.001": {
+      "arrived": 149,
+      "foraging": 92,
+      "resting": 238,
+      "seeking_food": 1,
+      "seeking_work": 10,
+      "socializing": 12,
+      "traveling": 177,
+      "working": 41
+    },
+    "generated_resident.echo_landing.002": {
+      "arrived": 191,
+      "foraging": 35,
+      "resting": 242,
+      "seeking_food": 2,
+      "socializing": 11,
+      "traveling": 191,
+      "working": 48
+    },
+    "generated_resident.echo_landing.003": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_landing.004": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_landing.005": {
+      "arrived": 183,
+      "foraging": 88,
+      "resting": 236,
+      "seeking_food": 21,
+      "socializing": 2,
+      "traveling": 187,
+      "working": 3
+    },
+    "generated_resident.echo_landing.006": {
+      "arrived": 185,
+      "foraging": 42,
+      "resting": 112,
+      "seeking_food": 10,
+      "socializing": 16,
+      "traveling": 185,
+      "working": 170
+    },
+    "generated_resident.echo_landing.007": {
+      "arrived": 149,
+      "foraging": 1,
+      "home": 4,
+      "resting": 241,
+      "seeking_food": 19,
+      "seeking_work": 9,
+      "socializing": 22,
+      "traveling": 149,
+      "working": 126
+    },
+    "generated_resident.echo_landing.008": {
+      "arrived": 185,
+      "foraging": 4,
+      "home": 1,
+      "resting": 212,
+      "seeking_food": 19,
+      "seeking_work": 20,
+      "socializing": 8,
+      "traveling": 225,
+      "working": 46
+    },
+    "generated_resident.echo_terrace.001": {
+      "arrived": 164,
+      "blocked": 39,
+      "foraging": 4,
+      "resting": 199,
+      "seeking_food": 7,
+      "seeking_work": 17,
+      "socializing": 13,
+      "traveling": 231,
+      "working": 46
+    },
+    "generated_resident.echo_terrace.002": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.003": {
+      "arrived": 191,
+      "blocked": 24,
+      "foraging": 34,
+      "resting": 213,
+      "seeking_food": 12,
+      "seeking_work": 4,
+      "socializing": 5,
+      "traveling": 199,
+      "working": 38
+    },
+    "generated_resident.echo_terrace.004": {
+      "arrived": 137,
+      "blocked": 60,
+      "foraging": 44,
+      "resting": 276,
+      "seeking_food": 10,
+      "seeking_work": 6,
+      "socializing": 4,
+      "traveling": 173,
+      "working": 10
+    },
+    "generated_resident.echo_terrace.005": {
+      "arrived": 194,
+      "blocked": 41,
+      "foraging": 44,
+      "resting": 128,
+      "seeking_food": 21,
+      "seeking_work": 13,
+      "socializing": 7,
+      "traveling": 242,
+      "working": 30
+    },
+    "generated_resident.echo_terrace.006": {
+      "arrived": 190,
+      "blocked": 44,
+      "foraging": 48,
+      "resting": 132,
+      "seeking_food": 21,
+      "seeking_work": 13,
+      "socializing": 8,
+      "traveling": 246,
+      "working": 18
+    },
+    "generated_resident.echo_terrace.007": {
+      "arrived": 154,
+      "blocked": 31,
+      "home": 24,
+      "resting": 240,
+      "seeking_food": 5,
+      "seeking_work": 11,
+      "socializing": 17,
+      "traveling": 177,
+      "working": 61
+    },
+    "generated_resident.echo_terrace.008": {
+      "arrived": 191,
+      "blocked": 18,
+      "foraging": 28,
+      "resting": 229,
+      "seeking_food": 10,
+      "seeking_work": 1,
+      "socializing": 5,
+      "traveling": 195,
+      "working": 43
+    },
+    "player": {
+      "home": 720
+    }
+  }
+}

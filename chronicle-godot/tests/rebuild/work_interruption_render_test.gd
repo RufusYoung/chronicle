@@ -10,6 +10,13 @@ func _run() -> void:
 	viewer.save_path = output + "/absent_" + Crypto.new().generate_random_bytes(8).hex_encode() + ".json"
 	viewer.initial_seed = 86021
 	viewer.initial_content_extension = true
+	# This regression's timetable belongs to the previous bootstrap, not new-world balance.
+	var legacy = preload("res://scripts/rebuild/v5_live_location_view_model.gd").new()
+	var options: Dictionary = preload("res://tests/sim/world_integration_contract_test.gd").options(86021)
+	options.erase("integration_rules_version")
+	options.erase("community_rules_version")
+	_check(legacy.start(options).success, "legacy interruption timetable starts explicitly")
+	_check(legacy.save_to_path(viewer.save_path, true).success, "legacy bootstrap persists for actual UI restore")
 	root.add_child(viewer)
 	await process_frame
 	viewer.perform_travel("generated_route.echo_landing.commons_to_fishery")

@@ -1,0 +1,14 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LIFE INCIDENT PASS] 1. Quarter starts without a preselected incident
+[V5 LIFE INCIDENT PASS] 2. A forced test injection only selects an incident whose state cause is true
+[V5 LIFE INCIDENT PASS] 3. Pending incident replaces duties and cannot advance time twice
+[V5 LIFE INCIDENT PASS] 4. Save restore preserves the unresolved incident and its responses
+[V5 LIFE INCIDENT PASS] 5. One response applies one bounded transaction and clears the incident
+[V5 LIFE INCIDENT PASS] 6. Incidental response records evidence without opening a Chronicle storyline
+[V5 LIFE INCIDENT PASS] 7. The same response cannot be settled repeatedly
+[V5 LIFE INCIDENT PASS] 8. Minimum step gap prevents back-to-back incident cards
+[V5 LIFE INCIDENT PASS] 9. Test injection cannot bypass a false world-state condition
+[V5 LIFE INCIDENT PASS] 10. The same seed and duty choices replay the same incident sequence
+[V5 LIFE INCIDENT PASS] 11. Different run seeds produce at least three state-valid incidents
+[V5 LIFE INCIDENT RESULT] PASS

@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 1. 原始场址没有预写聚落、设施、道路或居民
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 2. 正式 SimSession 先生成聚落再生成居民，两层完整性校验均通过
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 3. 人口目标由地形、资源和交通承载力反推且不超过容量
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 4. 产业生成可执行设施及双向内部道路，全部地点引用真实存在
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 5. 生成居民只进入实际形成的产业，工作地点来自聚落生成绑定
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 6. 容量与产业选择写入带种子和来源的事实及生成签名
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 7. 正式旅行可从生成集地进入设施，现场有可观察对象并能返回
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 8. 生成设施承接正式生计循环，居民会在其中生产真实物品
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 9. 同一场址与种子产生完全相同的聚落和居民生成摘要
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 10. 五个种子全部满足容量与完整性约束，并形成至少两种结构
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 11. 改变地形、资源和交通会因明确分数来源改变产业结构
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 12. 存档往返保留聚落、居民、当前位置及两层生成报告，不会重抽
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 13. 推进五天后生成家庭发生真实食物援助或求助受挫且引用完整
+[V5 GENERATED SETTLEMENT CONTRACT PASS] 14. 未定义地形会在聚落生成阶段明确拒绝，不产生半成品世界
+[V5 GENERATED SETTLEMENT SAMPLE] {"capacity":31,"industries":["reed_craft","fishery","terrace_farming","salt_gathering","road_carting"],"name":"芦湾坞","population":22,"pressures":{"flood_risk":"medium","food_pressure":"high","public_order":"stable","resource_strain":"medium","settlement_isolation":"medium"}}
+[V5 GENERATED SETTLEMENT CONTRACT RESULT] PASS

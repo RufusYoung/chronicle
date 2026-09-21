@@ -1,0 +1,19 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 ITEM INSTANCE CONTRACT PASS] 1. ItemDef 以稳定 ID 进入严格 Registry
+[V5 ITEM INSTANCE CONTRACT PASS] 2. Registry 拒绝非堆叠多数量、负质量和非法耐久 ItemDef
+[V5 ITEM INSTANCE CONTRACT PASS] 3. ItemStore 拒绝未知 Definition 与悬空 holder
+[V5 ITEM INSTANCE CONTRACT PASS] 4. 非堆叠数量受限且运行时创建不能伪造 fixture 来源
+[V5 ITEM INSTANCE CONTRACT PASS] 5. 运行时创建拒绝小数数量和预制历史，合法实例可创建
+[V5 ITEM INSTANCE CONTRACT PASS] 6. Store 只保存 holder 与 item_instance_id，旧别名仅在读取时派生
+[V5 ITEM INSTANCE CONTRACT PASS] 7. transfer 原子改变 holder 并写入事实历史
+[V5 ITEM INSTANCE CONTRACT PASS] 8. 缺失事实的 transfer 被原子拒绝
+[V5 ITEM INSTANCE CONTRACT PASS] 9. 耐久变化受 Definition 上限约束且越界写入被拒绝
+[V5 ITEM INSTANCE CONTRACT PASS] 10. split_stack 保留总量并允许新堆叠进入合法 holder
+[V5 ITEM INSTANCE CONTRACT PASS] 11. increase_quantity 合并合法堆叠、写入来源历史并拒绝越过上限
+[V5 ITEM INSTANCE CONTRACT PASS] 12. 完全消耗将 holder 变为 destroyed 且不能重新转移
+[V5 ITEM INSTANCE CONTRACT PASS] 13. container holder 拒绝直接自包含循环
+[V5 ITEM INSTANCE CONTRACT PASS] 14. Session 接入 ItemDef 与 ItemStore 合同且 StateStore 不保存库存数组
+[V5 ITEM INSTANCE CONTRACT PASS] 15. 真实发现物只以 holder 存储，旧库存数组由 Snapshot 当场派生
+[V5 ITEM INSTANCE CONTRACT PASS] 16. StateStore 拒绝伪造 inventory_item_ids 第二真值
+[V5 ITEM INSTANCE CONTRACT RESULT] PASS

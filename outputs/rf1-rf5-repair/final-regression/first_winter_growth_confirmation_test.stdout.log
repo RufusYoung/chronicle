@@ -1,0 +1,9 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 GROWTH CONFIRMATION PASS] 1. Growth cannot be confirmed before the stage ends
+[V5 GROWTH CONFIRMATION PASS] 2. A reward outside the lived route is rejected without mutation
+[V5 GROWTH CONFIRMATION PASS] 3. Confirmation atomically writes attribute, talent, fact, and Chronicle
+[V5 GROWTH CONFIRMATION PASS] 4. The confirmed candidate remains visible but cannot be claimed twice
+[V5 GROWTH CONFIRMATION PASS] 5. Save restore preserves the reward and repeat protection
+[V5 GROWTH CONFIRMATION PASS] 6. A conflicting talent grant rolls back every preceding change
+[V5 GROWTH CONFIRMATION RESULT] PASS

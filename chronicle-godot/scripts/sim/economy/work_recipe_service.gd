@@ -138,7 +138,7 @@ static func validate_profile(profile: Dictionary, definitions: Variant) -> Strin
 			if not input is Dictionary:
 				return "invalid_work_recipe_input"
 			for key: String in input:
-				if key not in (["query", "restore", "maximum_repairs"] if collection == "repairs" else ["query", "quantity", "wear"]):
+				if key not in (["query", "restore", "maximum_repairs", "maximum_remaining"] if collection == "repairs" else ["query", "quantity", "wear"]):
 					return "unknown_work_recipe_input_field:" + key
 			if not input.get("query") is Dictionary or input.query.is_empty():
 				return "missing_work_recipe_query"
@@ -159,6 +159,8 @@ static func validate_profile(profile: Dictionary, definitions: Variant) -> Strin
 				return "invalid_work_recipe_" + numeric_key
 			if collection == "repairs" and not _integer(input.get("maximum_repairs"), 1):
 				return "invalid_work_recipe_repair_limit"
+			if collection == "repairs" and not _integer(input.get("maximum_remaining", 0), 0):
+				return "invalid_work_recipe_repair_threshold"
 			var suitable := false
 			for definition: Dictionary in definitions.list_definitions("item").values():
 				if matches(definition, input.query) and definition.get("item_kind") != "currency":
@@ -274,7 +276,9 @@ func plan_inputs(profile: Dictionary, actor: String, fact_id: String, tick: int)
 
 static func repairable(item: Dictionary, spec: Dictionary, source_snapshot: Variant) -> bool:
 	if int(item.get("quantity", 0)) < 1 or not matches(item, spec.query) \
-			or int(item.get("condition", {}).get("durability", -1)) != 0 \
+			or int(item.get("condition", {}).get("durability", -1)) < 0 \
+			or int(item.get("condition", {}).get("durability", -1)) > int(spec.get("maximum_remaining", 0)) \
+			or int(item.get("condition", {}).get("durability", -1)) >= int(item.get("condition", {}).get("maximum_durability", 0)) \
 			or int(item.get("condition", {}).get("maximum_durability", 0)) < 1:
 		return false
 	var repairs := 0

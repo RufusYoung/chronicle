@@ -1,0 +1,23 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] insertion isolates caller data
+[PASS] historical fact is frozen
+[PASS] nested dictionaries and arrays are frozen
+[PASS] snapshot container cannot clear live history
+[PASS] public deep copies remain editable
+[PASS] public deep copies remain editable
+[PASS] public deep copies remain editable
+[PASS] public deep copies remain editable
+[PASS] public edits cannot change recorded facts
+[PASS] save restores facts
+[PASS] load reapplies recursive protection
+[PASS] preview shares only frozen record identity
+[PASS] uncommitted append cannot enter live array or index
+[PASS] post-commit preview clear cannot erase live containers
+[PASS] batch rejects missing state store
+[PASS] failed batch rolls back even earlier facts
+[PASS] rollback preserves fact index
+[PASS] successful fact transaction commits
+[PASS] transaction result cannot mutate committed history
+[PASS] duplicate IDs remain idempotent
+FACT_HISTORY_RESULT 20/20

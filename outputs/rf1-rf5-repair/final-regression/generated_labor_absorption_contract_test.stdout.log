@@ -1,0 +1,14 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 LABOR ABSORPTION PASS] 1. 生成聚落携带本地劳动力规则与产业岗位档案
+[V5 LABOR ABSORPTION PASS] 2. 测试注入的居民成年当天先进入可观察的求职状态
+[V5 LABOR ABSORPTION PASS] 3. 一天后岗位容量、能力和聚落产业把求职者写入真实职业与工作地
+[V5 LABOR ABSORPTION PASS] 4. 就业事务同步更新生产标签、来源事实、同事关系与家庭 Chronicle
+[V5 LABOR ABSORPTION PASS] 5. 新就业居民由正式生计系统消耗工作周期并产生真实物品
+[V5 LABOR ABSORPTION PASS] 6. 零岗位反事实保留失业并记录求职压力，不伪造职业
+[V5 LABOR ABSORPTION PASS] 7. 相同家庭已有的职业经验会在能力相近时影响岗位匹配
+[V5 LABOR ABSORPTION PASS] 8. 无成年测试注入的 35 年路径会让运行期出生者成年并进入本地岗位
+[V5 LABOR ABSORPTION PASS] 9. 同种子就业史精确复现，不同种子形成不同代际劳动力史
+[V5 LABOR ABSORPTION PASS] 10. 存档往返精确保留新职业、生产历史、关系与来源引用
+[V5 LABOR ABSORPTION SAMPLE] {"family_match":{"household_occupation_id":"net_fisher","occupation_id":"net_fisher","ok":true,"resident_id":"generated_resident.reed_bay.003"},"first_hired_resident":"generated_resident.reed_bay.005","first_occupation":"salt_gatherer","generational_labor":{"born_adult_hire_count":9,"employment_count":17,"maximum_hired_generation":1}}
+[V5 LABOR ABSORPTION RESULT] PASS

@@ -1,0 +1,865 @@
+{
+  "save": "C:\\Users\\x4473\\AppData\\Roaming\\Godot\\app_userdata\\CHRONICLE_GODOT\\tests\\food_economy_probe\\canon_integration_without_equipment_repair_frozen2_81001\\day30.json",
+  "save_sha256": "f22fb59d73341cedaa2278b9eb9e5345a9e9d33c7999b103331df2b83db6b972",
+  "world_time": {
+    "day": 31,
+    "elapsed_hours": 720,
+    "hour": 8,
+    "tick": 720
+  },
+  "counts": {
+    "settlement_generated": 2,
+    "settlement_industry_selected": 8,
+    "settlement_resource_stock_established": 7,
+    "settlement_trade_reserve_established": 4,
+    "settlement_network_generated": 1,
+    "resident_generation_completed": 2,
+    "household_generated": 4,
+    "resident_generated": 16,
+    "generated_social_relation": 88,
+    "reserve_dwelling_generated": 2,
+    "initial_treasury_endowment": 2,
+    "resource_commons_established": 2,
+    "initial_work_tool_owned": 5,
+    "resource_visitor_access_established": 4,
+    "test_injection": 1,
+    "household_pantry_observed": 1260,
+    "community_observation": 1688,
+    "resident_activity_changed": 5931,
+    "settlement_resource_pressure_changed": 2,
+    "region_resource_pressure_changed": 1,
+    "settlement_trade_shipment": 29,
+    "settlement_network_migration_evaluated": 31,
+    "actor_rested_with_injury": 784,
+    "community_policy_changed": 57,
+    "world_danger_contact": 131,
+    "actor_resolved_combat_encounter": 204,
+    "world_danger_round": 204,
+    "npc_need_changed": 1704,
+    "world_threat_fed": 30,
+    "household_food_observed": 905,
+    "npc_household_food_unmet": 294,
+    "npc_cross_household_food_request_failed": 82,
+    "npc_livelihood_produced": 211,
+    "food_hauling_accepted": 6,
+    "food_hauling_no_contract": 77,
+    "resident_food_purchased": 76,
+    "resident_food_purchase_unmet": 183,
+    "worksite_food_withdrawn": 41,
+    "community_conversation": 168,
+    "community_message_heard": 368,
+    "npc_household_shared_food": 141,
+    "food_hauling_stocked": 6,
+    "npc_self_meal": 679,
+    "household_pantry_taken": 233,
+    "settlement_trade_reserve_consumed": 90,
+    "actor_hunger_strain": 234,
+    "actor_injured_during_combat": 46,
+    "npc_cross_household_shared_food": 23,
+    "world_danger_cleared": 79,
+    "household_pantry_stored": 146,
+    "npc_wage_paid": 19,
+    "community_visit_unmet": 44,
+    "npc_food_request_conflict": 8,
+    "work_supply_unmet": 56,
+    "npc_work_maintained": 4,
+    "resident_aged": 1,
+    "npc_food_debt_repaid": 13
+  },
+  "copper_coins": {
+    "initial": 301,
+    "current_including_escrow": 301,
+    "conserved": true
+  },
+  "gear_definitions": [
+    "item.knotted_fiber_whip",
+    "item.woven_reed_vest"
+  ],
+  "work_supply_purchases": [],
+  "equipment_purchases": [],
+  "equipped": [],
+  "equipment_chains": [
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_175.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_175",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_268.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_268",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "remaining_durability": 0,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_274.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_274",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_78.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_78",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "remaining_durability": 3,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_82.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.002.echo_port_environs_v1_time_82",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "remaining_durability": 2,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_173.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_173",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_177.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_177",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "remaining_durability": 0,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_271.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_271",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "remaining_durability": 1,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_316.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_316",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "remaining_durability": 0,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_54.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_54",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "remaining_durability": 3,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_58.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_landing.007",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_landing.007.echo_port_environs_v1_time_58",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "港外浅滩芦苇",
+          "stock_id": "resource_stock.echo_landing.resource_echo_landing_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "remaining_durability": 2,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_landing.007.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_534.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_terrace.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_534",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.002.0",
+          "remaining_durability": 3,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    },
+    {
+      "item_id": "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_538.output.0",
+      "definition": "item.knotted_fiber_whip",
+      "holder": {
+        "id": "worksite_food_store.generated_resident.echo_terrace.002",
+        "kind": "entity"
+      },
+      "production_fact": "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_538",
+      "production_inputs": [
+        {
+          "amount": 1.0,
+          "resource_label": "田沟芦苇",
+          "stock_id": "resource_stock.echo_terrace.resource_echo_terrace_reeds"
+        }
+      ],
+      "production_tools": [
+        {
+          "item_def_id": "item.fiber_rope",
+          "item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.002.0",
+          "remaining_durability": 2,
+          "source_item_instance_id": "item.fact.initial_work_tool.generated_resident.echo_terrace.002.0",
+          "wear": 1.0
+        }
+      ],
+      "equipped": [],
+      "combat_modifier_facts": [],
+      "purchase_facts": [],
+      "purchased_then_modifier_facts": [],
+      "wear": [],
+      "repairs": [],
+      "repair_inputs": [],
+      "used_after_repair": false,
+      "durability": 12
+    }
+  ],
+  "recipes": {
+    "recipe.net_fishing": 10,
+    "recipe.hand_gather.net_fisher": 88,
+    "recipe.terrace_farmer": 11,
+    "recipe.hand_gather.terrace_farmer": 63,
+    "recipe.smoke_lake_fish": 4,
+    "recipe.knotted_whip": 13,
+    "recipe.patch_cordage.generated_settlement.echo_landing": 4,
+    "recipe.roast_roots": 3
+  },
+  "replies": [],
+  "heard_replies": 0,
+  "counterproposals": [],
+  "negotiated_deliveries": [],
+  "people": [
+    {
+      "id": "generated_resident.echo_landing.001",
+      "health": 100,
+      "hunger": "low",
+      "activity": "arrived",
+      "meals": 55,
+      "last_meal": 752,
+      "maximum_meal_gap_hours": 29,
+      "current_meal_gap_hours": 0,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.002",
+      "health": 100,
+      "hunger": "high",
+      "activity": "arrived",
+      "meals": 58,
+      "last_meal": 740,
+      "maximum_meal_gap_hours": 28,
+      "current_meal_gap_hours": 12,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.003",
+      "health": 100,
+      "hunger": "high",
+      "activity": "home",
+      "meals": 54,
+      "last_meal": 742,
+      "maximum_meal_gap_hours": 36,
+      "current_meal_gap_hours": 10,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.004",
+      "health": 100,
+      "hunger": "high",
+      "activity": "arrived",
+      "meals": 58,
+      "last_meal": 740,
+      "maximum_meal_gap_hours": 26,
+      "current_meal_gap_hours": 12,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.005",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 60,
+      "last_meal": 747,
+      "maximum_meal_gap_hours": 21,
+      "current_meal_gap_hours": 5,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.006",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 59,
+      "last_meal": 746,
+      "maximum_meal_gap_hours": 20,
+      "current_meal_gap_hours": 6,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.007",
+      "health": 100,
+      "hunger": "low",
+      "activity": "arrived",
+      "meals": 60,
+      "last_meal": 752,
+      "maximum_meal_gap_hours": 22,
+      "current_meal_gap_hours": 0,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_landing.008",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 59,
+      "last_meal": 746,
+      "maximum_meal_gap_hours": 27,
+      "current_meal_gap_hours": 6,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_terrace.001",
+      "health": 100,
+      "hunger": "extreme",
+      "activity": "traveling",
+      "meals": 50,
+      "last_meal": 738,
+      "maximum_meal_gap_hours": 36,
+      "current_meal_gap_hours": 14,
+      "injuries": 5
+    },
+    {
+      "id": "generated_resident.echo_terrace.002",
+      "health": 98,
+      "hunger": "extreme",
+      "activity": "arrived",
+      "meals": 46,
+      "last_meal": 734,
+      "maximum_meal_gap_hours": 42,
+      "current_meal_gap_hours": 18,
+      "injuries": 14
+    },
+    {
+      "id": "generated_resident.echo_terrace.003",
+      "health": 100,
+      "hunger": "high",
+      "activity": "home",
+      "meals": 41,
+      "last_meal": 738,
+      "maximum_meal_gap_hours": 48,
+      "current_meal_gap_hours": 14,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_terrace.004",
+      "health": 100,
+      "hunger": "high",
+      "activity": "home",
+      "meals": 40,
+      "last_meal": 738,
+      "maximum_meal_gap_hours": 48,
+      "current_meal_gap_hours": 14,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_terrace.005",
+      "health": 100,
+      "hunger": "low",
+      "activity": "arrived",
+      "meals": 54,
+      "last_meal": 752,
+      "maximum_meal_gap_hours": 39,
+      "current_meal_gap_hours": 0,
+      "injuries": 0
+    },
+    {
+      "id": "generated_resident.echo_terrace.006",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "arrived",
+      "meals": 52,
+      "last_meal": 744,
+      "maximum_meal_gap_hours": 33,
+      "current_meal_gap_hours": 8,
+      "injuries": 7
+    },
+    {
+      "id": "generated_resident.echo_terrace.007",
+      "health": 100,
+      "hunger": "medium",
+      "activity": "home",
+      "meals": 46,
+      "last_meal": 746,
+      "maximum_meal_gap_hours": 42,
+      "current_meal_gap_hours": 6,
+      "injuries": 4
+    },
+    {
+      "id": "generated_resident.echo_terrace.008",
+      "health": 100,
+      "hunger": "low",
+      "activity": "arrived",
+      "meals": 51,
+      "last_meal": 750,
+      "maximum_meal_gap_hours": 44,
+      "current_meal_gap_hours": 2,
+      "injuries": 16
+    }
+  ],
+  "broken_sources": [],
+  "test_injections": 1,
+  "boundary": "Passive observations; inspect causal chains and ablations before accepting a phase.",
+  "extreme_person_hours": 2282,
+  "activity_hours": {
+    "generated_resident.echo_landing.001": {
+      "arrived": 193,
+      "foraging": 26,
+      "home": 1,
+      "resting": 148,
+      "seeking_food": 17,
+      "seeking_work": 15,
+      "socializing": 14,
+      "traveling": 281,
+      "working": 25
+    },
+    "generated_resident.echo_landing.002": {
+      "arrived": 163,
+      "foraging": 96,
+      "resting": 260,
+      "seeking_food": 11,
+      "socializing": 5,
+      "traveling": 163,
+      "working": 22
+    },
+    "generated_resident.echo_landing.003": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_landing.004": {
+      "arrived": 169,
+      "foraging": 59,
+      "resting": 240,
+      "seeking_food": 16,
+      "socializing": 12,
+      "traveling": 189,
+      "working": 35
+    },
+    "generated_resident.echo_landing.005": {
+      "arrived": 201,
+      "foraging": 54,
+      "resting": 79,
+      "seeking_food": 26,
+      "socializing": 15,
+      "traveling": 201,
+      "working": 144
+    },
+    "generated_resident.echo_landing.006": {
+      "arrived": 181,
+      "home": 1,
+      "resting": 248,
+      "seeking_food": 34,
+      "seeking_work": 24,
+      "socializing": 10,
+      "traveling": 193,
+      "working": 29
+    },
+    "generated_resident.echo_landing.007": {
+      "arrived": 167,
+      "foraging": 41,
+      "resting": 274,
+      "seeking_food": 17,
+      "seeking_work": 17,
+      "socializing": 11,
+      "traveling": 167,
+      "working": 26
+    },
+    "generated_resident.echo_landing.008": {
+      "arrived": 165,
+      "foraging": 84,
+      "resting": 248,
+      "seeking_food": 8,
+      "socializing": 10,
+      "traveling": 181,
+      "working": 24
+    },
+    "generated_resident.echo_terrace.001": {
+      "arrived": 132,
+      "blocked": 41,
+      "home": 64,
+      "resting": 252,
+      "seeking_food": 7,
+      "socializing": 18,
+      "traveling": 154,
+      "working": 52
+    },
+    "generated_resident.echo_terrace.002": {
+      "arrived": 122,
+      "blocked": 79,
+      "foraging": 64,
+      "resting": 287,
+      "seeking_food": 7,
+      "socializing": 2,
+      "traveling": 150,
+      "working": 9
+    },
+    "generated_resident.echo_terrace.003": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.004": {
+      "home": 360,
+      "resting": 360
+    },
+    "generated_resident.echo_terrace.005": {
+      "arrived": 172,
+      "blocked": 42,
+      "foraging": 48,
+      "resting": 206,
+      "seeking_food": 20,
+      "socializing": 6,
+      "traveling": 187,
+      "working": 39
+    },
+    "generated_resident.echo_terrace.006": {
+      "arrived": 138,
+      "blocked": 51,
+      "foraging": 44,
+      "resting": 198,
+      "seeking_food": 21,
+      "socializing": 7,
+      "traveling": 169,
+      "working": 92
+    },
+    "generated_resident.echo_terrace.007": {
+      "arrived": 152,
+      "blocked": 41,
+      "foraging": 52,
+      "home": 28,
+      "resting": 168,
+      "seeking_food": 24,
+      "socializing": 16,
+      "traveling": 239
+    },
+    "generated_resident.echo_terrace.008": {
+      "arrived": 108,
+      "blocked": 81,
+      "foraging": 47,
+      "home": 15,
+      "resting": 302,
+      "seeking_food": 23,
+      "socializing": 5,
+      "traveling": 139
+    },
+    "player": {
+      "home": 720
+    }
+  }
+}

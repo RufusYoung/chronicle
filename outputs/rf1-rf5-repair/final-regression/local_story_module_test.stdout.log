@@ -1,0 +1,36 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[LOCAL STORY MODULE PASS] 1. lake town module returns the expected module_id
+[LOCAL STORY MODULE PASS] 2. module description includes locations, NPCs, pressures, and outputs
+[LOCAL STORY MODULE PASS] 3. RegionSimProfile wraps lake_town_seed_profile
+[LOCAL STORY MODULE PASS] 4. RegionSimProfile writes conditions without creating WorldFact
+[LOCAL STORY MODULE PASS] 5. LocalStoryPipeline runs the lake town module for 30 days
+[LOCAL STORY MODULE PASS] 6. pipeline results include facts, traces, memories, and narratable states
+[LOCAL STORY MODULE PASS] 7. pipeline runs at least 20 seeds
+[LOCAL STORY MODULE PASS] 8. same-seed reproducibility remains stable
+[LOCAL STORY MODULE PASS] 9. different seeds retain meaningful history variation
+[LOCAL STORY MODULE PASS] 10. unresolved_extreme_hunger remains zero
+[LOCAL STORY MODULE PASS] 11. dangling_major_fact remains zero
+[LOCAL STORY MODULE PASS] 12. impossible_shop_state remains zero
+[LOCAL STORY MODULE PASS] 13. module wrapper matches legacy runner key statistics
+[LOCAL STORY MODULE PASS] 14. build_action_candidates works through the module interface
+[LOCAL STORY MODULE PASS] 15. resolve_action writes a fact, trace, and memory
+[LOCAL STORY MODULE PASS] 16. quality audit returns quality_flags through the module interface
+[LOCAL STORY MODULE PASS] 17. LocalStoryModule runtime files do not depend on formal UI
+[LOCAL STORY MODULE PASS] 18. story_player.gd is unchanged
+[LOCAL STORY MODULE PASS] 19. world_generation_v03.gd is unchanged
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/lake_town_hunger_closure_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/lake_town_branch_closure_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/lake_town_history_variation_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/lake_town_recovery_system_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/lake_town_reaction_system_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/micro_action_resolver_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/lake_town_food_chain_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/world_sim_observer_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/world_news_digest_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/world_sim_lead_adapter_test.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://scripts/sim/world_sim_debug_runner.gd
+[LOCAL STORY MODULE REGRESSION PASS] res://tests/project_cleanup_smoke.gd
+[LOCAL STORY MODULE PASS] 20. all required regression scripts pass
+[LOCAL STORY MODULE SUMMARY] {"dangling_major_fact_count":0,"days":30,"impossible_shop_state_count":0,"legacy_comparison":{"comparisons":{"all_reproducible":true,"dangling_major_fact_count":true,"impossible_shop_state_count":true,"outcome_counts":true,"seed_count":true,"unique_signature_count":true,"unresolved_extreme_hunger_count":true},"differences":[],"matches":true},"module_id":"lake_town_food_crisis","module_version":"0.1.0","outcome_counts":{"empty_granary_returned_empty":1,"forced_shop_closure_no_theft":2,"guard_locked_guard_attention":6,"mixed_interwoven":2,"silent_hunger_decline":4,"theft_helped_recovery":3,"theft_sickness_debt":2},"seed_count":20,"unique_signature_count":20,"unresolved_extreme_hunger_count":0}
+[LOCAL STORY MODULE RESULT] PASS

@@ -1,0 +1,8 @@
+{
+  "Test": "tests/sim/resident_equipment_contract_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 4.93,
+  "UnexpectedErrors": []
+}

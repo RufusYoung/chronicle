@@ -1,0 +1,35 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[LAKE TOWN REACTION SYSTEM PASS] lake town seed includes Ma Shen and Liu Zhangfang
+[LAKE TOWN REACTION SYSTEM PASS] Chen Mi cannot eat spoiled grain before taking it
+[LAKE TOWN REACTION SYSTEM PASS] Day 6 reaches the Chen Mi scene
+[LAKE TOWN REACTION SYSTEM PASS] baseline creates at least two micro reactions within three days
+[LAKE TOWN REACTION SYSTEM PASS] spoiled grain eating requires the hunger threshold
+[LAKE TOWN REACTION SYSTEM PASS] spoiled grain eating requires Chen Mi to hold spoiled grain
+[LAKE TOWN REACTION SYSTEM PASS] Chen Mi eating reaction resolves
+[LAKE TOWN REACTION SYSTEM PASS] eating spoiled grain lowers hunger
+[LAKE TOWN REACTION SYSTEM PASS] eating spoiled grain worsens health
+[LAKE TOWN REACTION SYSTEM PASS] eating spoiled grain creates fact, traces, and memory
+[LAKE TOWN REACTION SYSTEM PASS] sickness cannot occur without the spoiled grain eating reaction
+[LAKE TOWN REACTION SYSTEM PASS] sickness becomes available at least one day after eating
+[LAKE TOWN REACTION SYSTEM PASS] Old Chen discovery requires the hiding trace
+[LAKE TOWN REACTION SYSTEM PASS] Old Chen discovery uses traces, shop closure, and stress
+[LAKE TOWN REACTION SYSTEM PASS] Ma Shen does not notice before two closed-shop days
+[LAKE TOWN REACTION SYSTEM PASS] Ma Shen noticing requires closure duration and closed-shop trace
+[LAKE TOWN REACTION SYSTEM PASS] porridge requires prior notice, spare food, trust, and need
+[LAKE TOWN REACTION SYSTEM PASS] Ma Shen cannot bring porridge without spare food
+[LAKE TOWN REACTION SYSTEM PASS] creditor notice waits until patience reaches its threshold
+[LAKE TOWN REACTION SYSTEM PASS] creditor notice requires debt, closure duration, and patience
+[LAKE TOWN REACTION SYSTEM PASS] guard visit does not appear without a report fact
+[LAKE TOWN REACTION SYSTEM PASS] report branch can produce a guard visit on a later day
+[LAKE TOWN REACTION SYSTEM PASS] give-food branch prevents immediate spoiled grain eating
+[LAKE TOWN REACTION SYSTEM PASS] ignore branch has greater food or health risk than give-food branch
+[LAKE TOWN REACTION SYSTEM PASS] low-price purchase branch removes spoiled grain from Chen Mi
+[LAKE TOWN REACTION SYSTEM PASS] low-price purchase branch keeps hunger or fear pressure high
+[LAKE TOWN REACTION SYSTEM PASS] every reaction WorldFact has cause_fact_ids
+[LAKE TOWN REACTION SYSTEM PASS] every reaction Trace has source_fact_id
+[LAKE TOWN REACTION SYSTEM PASS] reaction facts do not repeat every day
+[LAKE TOWN REACTION SYSTEM PASS] same seed reproduces the reaction timeline
+[LAKE TOWN REACTION SYSTEM PASS] observer output contains reaction timeline and five-day branches
+[LAKE TOWN REACTION SUMMARY] baseline=chen_mi_ate_spoiled_grain, old_chen_discovered_spoiled_grain, ma_shen_noticed_closed_shop, chen_mi_fell_sick_from_spoiled_grain, ma_shen_brought_porridge give=7:ma_shen_noticed_closed_shop ignore=7:chen_mi_ate_spoiled_grain|7:old_chen_discovered_spoiled_grain|7:ma_shen_noticed_closed_shop|8:chen_mi_fell_sick_from_spoiled_grain|9:ma_shen_brought_porridge report=7:chen_mi_ate_spoiled_grain|7:old_chen_discovered_spoiled_grain|7:ma_shen_noticed_closed_shop|7:guard_checked_old_chen_shop buy=7:ma_shen_noticed_closed_shop|8:ma_shen_brought_porridge
+[LAKE TOWN REACTION SYSTEM RESULT] PASS

@@ -1,0 +1,270 @@
+{
+  "checks": {
+    "same_runtime": true,
+    "three_natural_worlds": true,
+    "held_out_87029_present": true,
+    "all_completed_30_days": true,
+    "money_and_references": true,
+    "natural_worlds_not_injected": true,
+    "natural_purchased_gear_used": true,
+    "natural_repaired_gear_reused": true,
+    "required_ablation_pairs": true
+  },
+  "passed": true,
+  "rows": [
+    {
+      "case": "canon_integration_repair_frozen2_81001",
+      "seed": 81001,
+      "ablation": "",
+      "native_runner_passed": true,
+      "elapsed_hours": 720,
+      "save_sha256": "32fc7ecf62b6abce5b36c1aee516f521efd4282bd225608772069326bc596093",
+      "coins": {
+        "initial": 301,
+        "current_including_escrow": 301,
+        "conserved": true
+      },
+      "sources_valid": true,
+      "test_injections": 0,
+      "gear_purchases": 2,
+      "gear_selections": 12,
+      "gear_modifier_applications": 61,
+      "produced_purchased_and_used": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_55.output.0"
+      ],
+      "produced_used_repaired_used_again": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_367.output.0",
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_8.output.0"
+      ],
+      "repair_cycles": 3,
+      "refusals": 0,
+      "replies": 0,
+      "heard_replies": 0,
+      "counterproposals": 0,
+      "negotiated_deliveries": 0,
+      "all_deliveries": 11,
+      "extreme_person_hours": 2498,
+      "minimum_final_health": 100,
+      "maximum_meal_gap_hours": 55,
+      "maximum_current_meal_gap_hours": 12,
+      "injuries": 26
+    },
+    {
+      "case": "canon_integration_repair_frozen2_82002",
+      "seed": 82002,
+      "ablation": "",
+      "native_runner_passed": true,
+      "elapsed_hours": 720,
+      "save_sha256": "1e83072f7eb5c9f985404072f2ac9aad0d43a0f63cce39552917fbf4a38af895",
+      "coins": {
+        "initial": 288,
+        "current_including_escrow": 288,
+        "conserved": true
+      },
+      "sources_valid": true,
+      "test_injections": 0,
+      "gear_purchases": 4,
+      "gear_selections": 14,
+      "gear_modifier_applications": 41,
+      "produced_purchased_and_used": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_102.output.0",
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_55.output.0"
+      ],
+      "produced_used_repaired_used_again": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_8.output.0"
+      ],
+      "repair_cycles": 2,
+      "refusals": 0,
+      "replies": 0,
+      "heard_replies": 0,
+      "counterproposals": 0,
+      "negotiated_deliveries": 0,
+      "all_deliveries": 7,
+      "extreme_person_hours": 2115,
+      "minimum_final_health": 94,
+      "maximum_meal_gap_hours": 45,
+      "maximum_current_meal_gap_hours": 36,
+      "injuries": 14
+    },
+    {
+      "case": "canon_integration_repair_frozen2_87029",
+      "seed": 87029,
+      "ablation": "",
+      "native_runner_passed": true,
+      "elapsed_hours": 720,
+      "save_sha256": "a076d04a25bbd2b3f10071e442029aad84c768dde6b10cdb58115d2ce27aa336",
+      "coins": {
+        "initial": 287,
+        "current_including_escrow": 287,
+        "conserved": true
+      },
+      "sources_valid": true,
+      "test_injections": 0,
+      "gear_purchases": 3,
+      "gear_selections": 22,
+      "gear_modifier_applications": 60,
+      "produced_purchased_and_used": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105.output.0",
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_78.output.0"
+      ],
+      "produced_used_repaired_used_again": [],
+      "repair_cycles": 0,
+      "refusals": 1,
+      "replies": 1,
+      "heard_replies": 3,
+      "counterproposals": 0,
+      "negotiated_deliveries": 0,
+      "all_deliveries": 13,
+      "extreme_person_hours": 2442,
+      "minimum_final_health": 60,
+      "maximum_meal_gap_hours": 74,
+      "maximum_current_meal_gap_hours": 38,
+      "injuries": 42
+    },
+    {
+      "case": "canon_integration_without_equipment_repair_frozen2_81001",
+      "seed": 81001,
+      "ablation": "equipment",
+      "native_runner_passed": true,
+      "elapsed_hours": 720,
+      "save_sha256": "f22fb59d73341cedaa2278b9eb9e5345a9e9d33c7999b103331df2b83db6b972",
+      "coins": {
+        "initial": 301,
+        "current_including_escrow": 301,
+        "conserved": true
+      },
+      "sources_valid": true,
+      "test_injections": 1,
+      "gear_purchases": 0,
+      "gear_selections": 0,
+      "gear_modifier_applications": 0,
+      "produced_purchased_and_used": [],
+      "produced_used_repaired_used_again": [],
+      "repair_cycles": 0,
+      "refusals": 0,
+      "replies": 0,
+      "heard_replies": 0,
+      "counterproposals": 0,
+      "negotiated_deliveries": 0,
+      "all_deliveries": 6,
+      "extreme_person_hours": 2282,
+      "minimum_final_health": 98,
+      "maximum_meal_gap_hours": 48,
+      "maximum_current_meal_gap_hours": 18,
+      "injuries": 46
+    },
+    {
+      "case": "canon_integration_without_livelihood_repair_frozen2_81001",
+      "seed": 81001,
+      "ablation": "livelihood",
+      "native_runner_passed": true,
+      "elapsed_hours": 720,
+      "save_sha256": "eac2847b6dc58fcac79c8b61d9968334788cf2047b0871d800f8d5413eb7e88d",
+      "coins": {
+        "initial": 301,
+        "current_including_escrow": 301,
+        "conserved": true
+      },
+      "sources_valid": true,
+      "test_injections": 1,
+      "gear_purchases": 2,
+      "gear_selections": 14,
+      "gear_modifier_applications": 57,
+      "produced_purchased_and_used": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_76.output.0",
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_82.output.0"
+      ],
+      "produced_used_repaired_used_again": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_8.output.0"
+      ],
+      "repair_cycles": 2,
+      "refusals": 0,
+      "replies": 0,
+      "heard_replies": 0,
+      "counterproposals": 0,
+      "negotiated_deliveries": 0,
+      "all_deliveries": 7,
+      "extreme_person_hours": 5051,
+      "minimum_final_health": 38,
+      "maximum_meal_gap_hours": 201,
+      "maximum_current_meal_gap_hours": 111,
+      "injuries": 22
+    },
+    {
+      "case": "canon_integration_without_negotiation_repair_frozen2_81001",
+      "seed": 81001,
+      "ablation": "negotiation",
+      "native_runner_passed": true,
+      "elapsed_hours": 720,
+      "save_sha256": "0fb3b97922ccace7667f30e7017a3b4908345d578d7b5ad294af4df9f4ebb9c5",
+      "coins": {
+        "initial": 301,
+        "current_including_escrow": 301,
+        "conserved": true
+      },
+      "sources_valid": true,
+      "test_injections": 1,
+      "gear_purchases": 2,
+      "gear_selections": 12,
+      "gear_modifier_applications": 61,
+      "produced_purchased_and_used": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_55.output.0"
+      ],
+      "produced_used_repaired_used_again": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_367.output.0",
+        "fact.npc_livelihood.generated_resident.echo_terrace.002.echo_port_environs_v1_time_8.output.0"
+      ],
+      "repair_cycles": 3,
+      "refusals": 0,
+      "replies": 0,
+      "heard_replies": 0,
+      "counterproposals": 0,
+      "negotiated_deliveries": 0,
+      "all_deliveries": 11,
+      "extreme_person_hours": 2498,
+      "minimum_final_health": 100,
+      "maximum_meal_gap_hours": 55,
+      "maximum_current_meal_gap_hours": 12,
+      "injuries": 26
+    },
+    {
+      "case": "canon_integration_without_negotiation_repair_frozen2_87029",
+      "seed": 87029,
+      "ablation": "negotiation",
+      "native_runner_passed": true,
+      "elapsed_hours": 720,
+      "save_sha256": "63d7b02c4f1a8d890ff9f26c36910d466b3fed5667cd4a02ef6459d3f501d2c6",
+      "coins": {
+        "initial": 287,
+        "current_including_escrow": 287,
+        "conserved": true
+      },
+      "sources_valid": true,
+      "test_injections": 1,
+      "gear_purchases": 3,
+      "gear_selections": 15,
+      "gear_modifier_applications": 49,
+      "produced_purchased_and_used": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.003.echo_port_environs_v1_time_105.output.0",
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_55.output.0"
+      ],
+      "produced_used_repaired_used_again": [
+        "fact.npc_livelihood.generated_resident.echo_terrace.008.echo_port_environs_v1_time_8.output.0"
+      ],
+      "repair_cycles": 2,
+      "refusals": 1,
+      "replies": 0,
+      "heard_replies": 0,
+      "counterproposals": 0,
+      "negotiated_deliveries": 0,
+      "all_deliveries": 3,
+      "extreme_person_hours": 2276,
+      "minimum_final_health": 86,
+      "maximum_meal_gap_hours": 75,
+      "maximum_current_meal_gap_hours": 18,
+      "injuries": 40
+    }
+  ],
+  "natural_negotiated_delivery_observed": false,
+  "boundary": "Structural integration evidence, not sustainable nutrition, a full ecology or human play acceptance. Ablations are test interventions. Zero negotiated deliveries must be reported separately from controlled agreement tests and ordinary resumed aid."
+}

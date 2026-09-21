@@ -1,0 +1,23 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 1. RawRuleContractValidator returns ok
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 2. hear_rumor_seed is effect_template
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 3. hear_rumor_seed binds hear_rumor_effect
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 4. request_favor_from_indebted_person is effect_template
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 5. request_favor_from_indebted_person binds request_favor_effect
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 6. ask_about_food_pressure_at_market is effect_template
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 7. ask_about_food_pressure_at_market binds ask_market_pressure_effect
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 8. hear_rumor_seed produces actor_heard_rumor_seed fact
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 9. hear_rumor_seed produces remembers_heard_rumor memory
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 10. 传闻候选显示具体主题，结算正文显示实际内容
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 11. 同一条传闻听过后不再生成可重复按钮
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 12. request_favor produces actor_requested_favor_from_target fact
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 13. request_favor produces target -> player debt -5
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 14. request_favor produces remembers_favor_requested memory
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 15. request_favor disappears after its first resolved use
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 16. ask_market_pressure produces actor_asked_about_market_pressure fact
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 17. ask_market_pressure produces learned_market_pressure memory
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 18. batch one results are resolved
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 19. batch one does not add TransactionResolver rule branches
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 PASS] 20. approaching a person now resolves a visible one-shot result
+[V5 CANDIDATE EFFECT TEMPLATE BATCH1 RESULT] PASS

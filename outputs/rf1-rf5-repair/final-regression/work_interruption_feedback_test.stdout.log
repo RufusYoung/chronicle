@@ -1,0 +1,18 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] natural interrupted-work world starts
+[PASS] walk to actual workplace
+[PASS] gather own food
+[PASS] learn from present employer
+[PASS] accepted operation is distinct from completed work
+[PASS] elapsed time differs from completed work progress
+[PASS] UI does not label interruption as success
+[PASS] public receipt names actual local cause, not a list of guesses
+[PASS] receipt states progress and real payment
+[PASS] full receipt gives conditional continuation, not guaranteed work
+[PASS] no fabricated payment or output
+[PASS] actual interrupted UI checkpoint retained
+[PASS] actual alternative remains available
+[PASS] natural replay native checkpoint
+[PASS] natural route contains no injection
+WORLD_CONTENT_RESULT PASS 15/15

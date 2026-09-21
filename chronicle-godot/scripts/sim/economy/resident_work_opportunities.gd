@@ -7,6 +7,7 @@ const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
 const Market = preload("res://scripts/sim/economy/market_service.gd")
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Access = preload("res://scripts/sim/resource/resource_access.gd")
+const Gear = preload("res://scripts/sim/equipment/resident_equipment.gd")
 
 
 static func assigned_profile(actor: Dictionary, profiles: Array) -> Dictionary:
@@ -18,6 +19,8 @@ static func assigned_profile(actor: Dictionary, profiles: Array) -> Dictionary:
 
 static func need(snapshot: Variant, actor: Dictionary, profiles: Array) -> Dictionary:
 	var demand := need_for_profile(snapshot, actor, assigned_profile(actor, profiles))
+	if demand.is_empty():
+		demand = Gear.need(snapshot, actor)
 	if not demand.is_empty() and profiles.any(func(profile: Dictionary) -> bool:
 		return profile.get("occupation_id") == actor.states.get("occupation_id") and profile.get("settlement_id") == actor.states.get("settlement_id") and not profile.get("recipe_variants", []).is_empty()):
 		demand["intent_id"] = "work_supply:" + str(demand.recipe_id)
@@ -145,6 +148,9 @@ static func reserved_for_work(snapshot: Variant, seller: Dictionary, profile: Di
 	var reserved := {}
 	var items: Array = snapshot.get_items_for_holder(str(seller.id))
 	items.append_array(snapshot.get_items_for_holder(holder))
+	for id: Variant in snapshot.get_equipment_loadout(str(seller.id)).get("slots", {}).values():
+		if id != null and str(id) != "":
+			reserved[str(id)] = 1
 	# Personal equipment is retained before reserving stock earmarked for sale.
 	for collection: String in ["tools", "item_inputs"]:
 		for spec: Dictionary in profile.get("work_recipe", {}).get(collection, []):
@@ -169,13 +175,23 @@ static func stock_offers(snapshot: Variant, seller: Dictionary, buyer: String, p
 		"stock_entity_id": holder, "location_id": seller.states.location_id, "sellable_item_tags_any": [],
 		"accepted_currency_item_def_ids": [Food.CURRENCY], "fact_type": "work_supply_purchased", "exchange_type": "work_supply_purchase"}
 	var rows: Array = []
-	for offer: Dictionary in Market.new().build_stock_view(policy, stores, buyer).get("offers", []):
+	var offered: Array = Market.new().build_stock_view(policy, stores, buyer).get("offers", [])
+	for offer: Dictionary in offered:
+		offer["policy"] = policy.duplicate(true)
+	if Gear.enabled(seller):
+		var carried_policy := policy.duplicate(true)
+		carried_policy.stock_entity_id = seller.id
+		for offer: Dictionary in Market.new().build_stock_view(carried_policy, stores, buyer).get("offers", []):
+			var carried: Dictionary = stores.item_store.get_item(str(offer.item_instance_id))
+			if "equip" in carried.get("capabilities", []):
+				offer["policy"] = carried_policy.duplicate(true)
+				offered.append(offer)
+	for offer: Dictionary in offered:
 		var item: Dictionary = stores.item_store.get_item(str(offer.item_instance_id))
 		var retained := int(reserved.get(item.item_instance_id, 0))
 		if int(offer.available_quantity) <= retained:
 			continue
 		offer["surplus"] = int(offer.available_quantity) - retained
-		offer["policy"] = policy.duplicate(true)
 		offer.policy["minimum_retained_quantity"] = retained
 		offer["seller_name"] = seller.display_name
 		offer["item"] = item
@@ -215,6 +231,8 @@ static func plan_purchase(snapshot: Variant, actor: Dictionary, profiles: Array,
 		Recipe._add_item_sources(sources, offer.item)
 		var summary := "%s为恢复作业，向在场的%s支付 %d 枚铜币买下%d件%s；用品已由本人携带，仍要走回作业地。" % [actor.display_name,
 			offer.seller_name, int(offer.unit_price) * int(demand.quantity), demand.quantity, offer.display_name]
+		if str(demand.recipe_id).begins_with("equipment:"):
+			summary = "%s记得亲见的危险，向在场的%s支付 %d 枚铜币买下%s；没有凭空获得武器或护具。" % [actor.display_name, offer.seller_name, int(offer.unit_price), offer.display_name]
 		var plan := Market.new().plan_trade(offer.policy, {"buyer_entity_id": buyer, "item_instance_id": offer.item_instance_id,
 			"quantity": demand.quantity, "quoted_unit_price": offer.unit_price, "maximum_total_price": money,
 			"exchange_id": "exchange.work_supply.%s.%d" % [buyer, _hour(tick)], "purpose_id": demand.recipe_id,
@@ -231,6 +249,10 @@ static func plan_purchase(snapshot: Variant, actor: Dictionary, profiles: Array,
 		"reason": "no_local_surplus" if offers.is_empty() else "unaffordable",
 		"summary": "%s未能补到作业用品：%s。记住这次扑空，暂时改做别的事。" % [actor.display_name,
 			"在场的人没有可出售的合用余货" if offers.is_empty() else "现货报价超过了手里的钱"]}
+	if Gear.enabled(actor):
+		fact["heard_by_ids"] = people.filter(func(p: Dictionary) -> bool:
+			return p.id != buyer and p.states.get("location_id") == location and p.states.get("daily_route_id", "") == "" \
+				and p.states.get("alive", true)).map(func(p: Dictionary) -> String: return str(p.id))
 	result.add_fact(fact)
 	result.mark_resolved("work_supply_unmet")
 	return {"transaction": result, "event": fact}

@@ -16,6 +16,63 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_integrated_danger_uses_legal_travel_combat_and_retreat(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_integration_v1")
+            self.assertTrue(response["ok"], response)
+            for hint in (".network.", "commons_to_terrace_farming"):
+                route = next(c for c in response["choices"] if c["kind"] == "travel" and hint in c["id"] and c["enabled"])
+                response = game.request("act", choice_id=route["choice_id"])
+                self.assertTrue(response["ok"], response)
+                while response["observation"]["player"]["travel_remaining"]:
+                    onward = next(c for c in response["choices"] if c["kind"] == "player_life" and c["id"] == "continue")
+                    response = game.request("act", choice_id=onward["choice_id"])
+                    self.assertTrue(response["ok"], response)
+            combat = [c for c in response["choices"] if c["kind"] == "combat_encounter" and c["enabled"]]
+            self.assertTrue(combat, response)
+            guard = next(c for c in combat if "防守" in c["label"])
+            response = game.request("act", choice_id=guard["choice_id"])
+            self.assertTrue(response["ok"], response)
+            self.assertIn("结算", json.dumps(response["observation"]["feedback"], ensure_ascii=False))
+            for _ in range(6):
+                retreat = next((c for c in response["choices"] if c["kind"] == "combat_encounter" and "脱离" in c["label"] and c["enabled"]), None)
+                if retreat is None:
+                    break
+                response = game.request("act", choice_id=retreat["choice_id"])
+                self.assertTrue(response["ok"], response)
+            self.assertFalse(any(c["kind"] == "combat_encounter" for c in response["choices"]))
+            route = next(c for c in response["choices"] if c["kind"] == "travel" and c["enabled"])
+            response = game.request("act", choice_id=route["choice_id"])
+            self.assertTrue(response["ok"], response)
+            slot = f"integrated_danger_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], response["observation"])
+
+    def test_integrated_world_legal_actions_and_embedded_restore(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_integration_v1")
+            self.assertTrue(response["ok"], response)
+            for choice in ("travel/generated_route.echo_landing.commons_to_fishery",
+                           "player_life/gather:net_fisher"):
+                self.assertTrue(any(c["choice_id"] == choice and c["enabled"] for c in response["choices"]))
+                response = game.request("act", choice_id=choice)
+                self.assertTrue(response["ok"], response)
+            meal = next(c for c in response["choices"] if c["kind"] == "player_life" and c["id"].startswith("eat") and c["enabled"])
+            response = game.request("act", choice_id=meal["choice_id"])
+            self.assertTrue(response["ok"], response)
+            for _ in range(18):
+                wait = next(c for c in response["choices"] if c["kind"] == "wait" and c["enabled"])
+                response = game.request("act", choice_id=wait["choice_id"])
+                self.assertTrue(response["ok"], response)
+            slot = f"integration_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            restored = game.request("load", slot=slot)
+            self.assertEqual(restored["observation"], response["observation"])
+            self.assertEqual(restored["choices"], response["choices"])
+            self.assertEqual(game.request("inspect")["error"], "omniscient_inspection_disabled_in_play_mode")
+
     def test_natural_interrupted_work_explains_actual_cause_and_progress(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=86021,

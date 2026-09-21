@@ -98,6 +98,15 @@ static func _permission_error(stock: Dictionary, actor_id: String, actor: Dictio
 		return "use_stock_kind_invalid"
 	if actor_id == "" or actor.is_empty() or str(actor.get("lifecycle_status", "active")) == "retired" or life == "dead":
 		return "actor_unavailable"
+	if purpose == "wildlife_foraging":
+		var forage: Dictionary = actor.get("foraging_rules", {})
+		var state: Dictionary = actor.get("states", {})
+		if actor.get("type") != "creature" or forage.is_empty() or kind != "natural_resource" \
+				or not state.get("alive", false) or state.get("location_id") != stock.get("location_id") \
+				or amount > float(forage.get("amount", 0)) \
+				or not forage.get("resource_tags_all", []).all(func(tag: String) -> bool: return tag in stock.get("tags", [])):
+			return "wildlife_food_or_presence_invalid"
+		return ""
 	if actor_id == str(access.get("manager_id", "")):
 		return "" if purpose in access.get("manager_uses", []) or purpose in ["grant_access", "revoke_access"] else "manager_use_denied"
 	if purpose == "livelihood_production":
@@ -153,6 +162,12 @@ static func validate_change(change: Dictionary, stores: Dictionary) -> String:
 	for id: Variant in sources:
 		if stores["fact_store"].get_fact(str(id)).is_empty():
 			return "source_unknown"
+	if reason == "wildlife_foraging":
+		var meal: Dictionary = stores.fact_store.get_fact(str(sources[0]))
+		if meal.get("fact_type") != "world_threat_fed" or meal.get("actor_id") != actor_id \
+				or meal.get("stock_id") != stock.stock_id or meal.get("amount") != change.get("amount") \
+				or meal.get("day") != change.get("day") or meal.get("location_id") != actor.states.get("location_id"):
+			return "wildlife_meal_fact_mismatch"
 	if reason == "livelihood_production" and stock.access.get("version") == 2:
 		var visitor := str(states.get_state(actor_id, "settlement_id", "")) != str(stock.access.manager_id)
 		if bool(change.get("visitor_use", false)) != visitor:

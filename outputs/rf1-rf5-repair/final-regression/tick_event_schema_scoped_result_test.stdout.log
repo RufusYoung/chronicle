@@ -1,0 +1,21 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 1. TickEventSchema validates a legal tick_event
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 2. missing tick_event_id fails validation
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 3. missing trigger_key fails validation
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 4. non-global scope without scope_id fails validation
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 5. max_triggers < 0 fails validation
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 6. WorldTickAdapter returns failure for illegal tick_event without crashing
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 7. delay_military_issue_until_after_patrol creates a scoped pending consequence
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 8. institution slice uses location scope and after_patrol triggers matching consequence
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 9. scoped tick writeback sets deferred consequence status = triggered
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 10. second same-scope after_patrol tick does not retrigger a triggered consequence
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 11. different scope_id after_patrol tick does not trigger the consequence
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 12. global after_patrol tick matches all pending scopes in this version
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 13. max_triggers = 1 triggers at most one matching consequence
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 14. tick result records tick_type / scope / matched_count / triggered_count
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 15. WorldLog tick entry records scoped tick information
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 16. WorldLog summary tracks scoped tick and triggered deferred counts
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 17. WorldLog query helpers find tick entries by id and scope
+[V5 TICK EVENT SCHEMA SCOPED RESULT PASS] 18. RawRuleContractValidator still PASS
+[V5 TICK EVENT SCHEMA SCOPED RESULT] PASS

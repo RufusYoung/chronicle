@@ -1,0 +1,10 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[V5 FIRST WINTER MARKET PASS] 1. First-winter fixture starts
+[V5 FIRST WINTER MARKET PASS] 2. Quote exposes stock, food pressure, trust, and price
+[V5 FIRST WINTER MARKET PASS] 3. Fixture initializes real currency, rations, and pressure
+[V5 FIRST WINTER MARKET PASS] 4. Stale quote rejects without mutating any store
+[V5 FIRST WINTER MARKET PASS] 5. Purchase atomically transfers goods and payment
+[V5 FIRST WINTER MARKET PASS] 6. Purchase leaves a fact, exchange, and pressure-sensitive next quote
+[V5 FIRST WINTER MARKET PASS] 7. Malformed currency policy fails explicitly without mutation
+[V5 FIRST WINTER MARKET RESULT] PASS

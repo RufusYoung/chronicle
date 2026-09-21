@@ -68,7 +68,10 @@ static func validate_memory(memory: Dictionary, stores: Dictionary, locations: D
 		return "save_community_memory_time_invalid"
 	if int(memory.expires_hour) != int(memory.observed_hour) + int(config.get("memory_hours", 48)) or (now >= 0 and int(memory.learned_hour) > now):
 		return "save_community_memory_time_invalid"
-	if memory.get("topic") not in ["supply", "need", "policy"] or not memory.get("payload") is Dictionary \
+	var topics: Array = ["supply", "need", "policy"]
+	if config.get("negotiation_version") == 1:
+		topics.append("aid_reply")
+	if memory.get("topic") not in topics or not memory.get("payload") is Dictionary \
 			or not locations.has(str(memory.get("location_id", ""))):
 		return "save_community_memory_shape_invalid"
 	var payload: Dictionary = memory.payload
@@ -94,6 +97,18 @@ static func validate_memory(memory: Dictionary, stores: Dictionary, locations: D
 			or root.get("payload") != memory.payload or hour(root) != int(memory.observed_hour) \
 			or root.get("location_id") != memory.location_id:
 		return "save_community_memory_root_mismatch"
+	if memory.topic == "aid_reply":
+		var refused: Dictionary = stores.fact_store.get_fact(str(payload.get("refusal_fact_id", "")))
+		var original: Dictionary = stores.fact_store.get_fact(str(payload.get("request_root_fact_id", "")))
+		if refused.get("fact_type") != "community_aid_withheld" or refused.get("actor_id") != memory.subject_id \
+				or refused.get("requester_id") != payload.get("requester_id") or refused.fact_id not in root.get("source_fact_ids", []) \
+				or original.get("fact_id", "") != refused.get("request_root_fact_id") or original.get("topic") != "need" \
+				or original.get("subject_id") != payload.get("requester_id") \
+				or original.get("payload", {}).get("delivery_request", {}).get("home_location_id") != payload.get("meeting_location_id") \
+				or hour(root) < hour(refused) or hour(refused) < hour(original) \
+				or not _integer(payload.get("maximum_portions")) or int(payload.maximum_portions) not in range(1, 3) \
+				or int(payload.maximum_portions) > int(original.get("payload", {}).get("delivery_request", {}).get("quantity", 0)):
+			return "save_community_reply_invalid"
 	if payload.has("delivery_request"):
 		if not payload.delivery_request is Dictionary:
 			return "save_community_delivery_request_invalid"
@@ -108,6 +123,14 @@ static func validate_memory(memory: Dictionary, stores: Dictionary, locations: D
 				or pantry.get("stock_location_id") != request.get("home_location_id") or "household_food_store" not in pantry.get("tags", []):
 			return "save_community_delivery_request_invalid"
 		var seen := {}
+		if request.has("negotiation_reply_id"):
+			var reply: Dictionary = stores.fact_store.get_fact(str(request.negotiation_reply_id))
+			var reply_root: Dictionary = stores.fact_store.get_fact(str(reply.get("root_fact_id", reply.get("fact_id", ""))))
+			if config.get("negotiation_version") != 1 or reply.get("actor_id") != memory.subject_id or reply.get("topic") != "aid_reply" \
+					or reply_root.get("payload", {}).get("requester_id") != memory.subject_id or reply_root.get("subject_id") != request.get("negotiation_partner_id") \
+					or int(request.quantity) > int(reply_root.get("payload", {}).get("maximum_portions", 0)) \
+					or request.negotiation_reply_id not in root.get("source_fact_ids", []) or hour(root) >= hour(reply_root) + int(config.memory_hours):
+				return "save_community_negotiation_invalid"
 		for recipient: Variant in request.recipient_ids:
 			if not recipient is String or seen.has(recipient) or recipient not in observation.get("recipient_ids", []):
 				return "save_community_delivery_request_invalid"

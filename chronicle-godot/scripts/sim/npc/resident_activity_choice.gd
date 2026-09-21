@@ -51,6 +51,8 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 	var hunger := str(states.get("hunger", "none"))
 	var items: Array = snapshot.get_items_for_holder(str(actor.id))
 	var need_food := Food.needs_food(actor, items)
+	var known_food_need: bool = rows.any(func(row: Dictionary) -> bool:
+		return row.kind in ["food", "forage", "care"] and not row.get("source_fact_ids", []).is_empty())
 	for source: Dictionary in rows:
 		var row := source.duplicate(true)
 		var hours := 0 if row.goal == location else int(router._next_edge(routes, location, row.goal).get("total_hours", 100000))
@@ -76,6 +78,11 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 			factors["optional_rest"] = -int(config.optional_rest_discount)
 		if row.kind in ["food", "forage"] and need_food:
 			factors["personal_hunger"] = 22 if hunger == "extreme" else 12
+		if config.get("livelihood_integration", false) and hunger == "extreme" and need_food:
+			if row.kind in ["resupply", "repair", "social", "aid"]:
+				factors["survival_before_investment"] = -40
+			elif row.kind in ["food", "forage"]:
+				factors["immediate_meal"] = 20
 		if row.kind in ["care", "food", "forage"] and not row.source_fact_ids.is_empty():
 			factors["known_need"] = 6
 		if row.kind == "work":
@@ -86,6 +93,29 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 				var profile := Recipe.for_intent(base, str(row.intent_id))
 				if profile.has("choice_bias"):
 					factors["recipe_preference"] = int(profile.choice_bias)
+				if config.get("equipment_integration", false):
+					var stock := 0
+					var sale_stock := 0
+					var reserved := WorkOpportunities.reserved_for_work(snapshot, actor, profile, Storage.depot_id(str(actor.id)))
+					for item: Dictionary in items + snapshot.get_items_for_holder(Storage.depot_id(str(actor.id))):
+						if int(item.get("condition", {}).get("maximum_durability", 0)) > 0 and int(item.condition.durability) == 0:
+							continue
+						if profile.products.any(func(p: Dictionary) -> bool: return p.item_def_id == item.item_def_id):
+							stock += int(item.quantity)
+							sale_stock += maxi(int(item.quantity) - int(reserved.get(item.item_instance_id, 0)), 0)
+					if profile.get("products", []).any(func(p: Dictionary) -> bool:
+						return not registry.get_definition("item", str(p.item_def_id)).get("equip_slots", []).is_empty()):
+						factors["own_equipment_stock"] = 20 if stock == 0 else -30
+					if sale_stock < 1:
+						for request: Dictionary in snapshot.get_facts_by_type("work_supply_unmet"):
+							if actor.id not in request.get("heard_by_ids", []) or request.get("reason") != "no_local_surplus" \
+									or int(config.get("danger_hour", 0)) - int(request.get("absolute_hour", 0)) >= 48:
+								continue
+							if profile.products.any(func(p: Dictionary) -> bool: return Recipe.matches(registry.get_definition("item", p.item_def_id), request.query)):
+								factors.erase("own_equipment_stock")
+								factors["heard_customer_demand"] = 45
+								row.source_fact_ids.append(str(request.fact_id))
+								break
 				var meal_rules: Dictionary = food_config.get("meal_rules", {})
 				if profile.get("products", []).any(func(p: Dictionary) -> bool: return Meal.hours(meal_rules, p) > 0):
 					var prepared := 0
@@ -96,7 +126,9 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 					factors.erase("recipe_preference")
 					factors["prepared_meal_reserve"] = 12 if prepared < 2 else -30
 				if Food.is_food_producer(profile) and need_food:
-					factors["own_meal_output"] = 22
+					factors["own_meal_output"] = 55 if config.get("livelihood_integration", false) and hunger == "extreme" else 22
+				if config.get("livelihood_integration", false) and Food.is_food_producer(profile) and known_food_need:
+					factors["known_food_output"] = 30
 				if location == row.goal and (not Storage.has_capacity(snapshot, str(actor.id), profile, food_config.get("worksite_storage", {})) \
 						or (Recipe.enabled(profile) and not Recipe.new(snapshot, registry).plan_inputs(profile, str(actor.id), "preview", 0).ok)):
 					factors["known_work_blocked"] = -100

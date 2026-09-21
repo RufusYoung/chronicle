@@ -183,6 +183,13 @@ func get_facts() -> Array:
 	return facts.duplicate()
 
 
+func get_fact(fact_id: String) -> Dictionary:
+	for fact: Dictionary in facts:
+		if fact.get("fact_id") == fact_id:
+			return fact.duplicate(true)
+	return {}
+
+
 func get_facts_by_type(fact_type: String) -> Array:
 	# Directly constructed snapshots can contain mutable fixture facts and use no
 	# cache. The builder supplies a detached index over FactStore's frozen records.

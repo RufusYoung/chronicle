@@ -1,0 +1,56 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[PASS] integrated equipment fixture starts
+[PASS] controlled fixture loads through formal session
+[PASS] unseen danger does not invent a purchase
+[PASS] test injection: prior encounter memory
+[PASS] controlled fixture loads through formal session
+[PASS] test injection: same danger in spare equipment branch
+[PASS] personally carried spare equipment is saleable after upgrade
+[PASS] currently worn armor remains reserved during spare sale
+[PASS] spare produces ordinary physical quote
+[PASS] spare trade commits through ordinary market
+[PASS] spare changes ownership without stripping seller's worn equipment
+[PASS] known danger creates armor demand
+[PASS] absent seller prevents remote purchase of visible depot stock
+[PASS] controlled fixture loads through formal session
+[PASS] test injection: same prior danger in affordability branch
+[PASS] test injection: transfer buyer's cash without destroying currency
+[PASS] real lack of coins prevents otherwise available gear purchase
+[PASS] physical seller and real stock produce quote
+[PASS] ordinary market transaction buys armor
+[PASS] payment conserved between buyer and actual seller
+[PASS] purchased item changes physical holder
+[PASS] resident wears owned armor
+[PASS] canonical body slot used
+[PASS] equipped item does not emit infinite repeated actions
+[PASS] worn item is not offered for sale
+[PASS] intact armor cannot consume a repair allowance
+[PASS] worn but unbroken armor can be repaired
+[PASS] legacy repair remains broken-only
+[PASS] controlled fixture loads through formal session
+[PASS] lantern retreat passive changes real preview only in dim light
+[PASS] native equipment purchase save
+[PASS] native equipment and payment restore
+[PASS] pre-integration bootstrap for data extension
+[PASS] controlled fixture loads through formal session
+[PASS] third definition uses ordinary work executor
+[PASS] third equipment really produced into owned stock
+[PASS] gear production spends finite raw material
+[PASS] gear production wears one tool without eating it
+[PASS] new data-only gear withdraws and equips through common system
+[PASS] new modifier reaches equipment evaluation
+[PASS] third data-only modifier reaches actual combat consumer without item-ID branch
+[PASS] embedded data-only gear save
+[PASS] embedded third definition restores without external definition file
+[PASS] controlled fixture loads through formal session
+[PASS] test injection: isolated repeat wear and partial labor
+[PASS] maintenance transaction commits
+[PASS] partial gear repair restores four condition at a real resource cost
+[PASS] test injection: isolated repeat wear and partial labor
+[PASS] maintenance transaction commits
+[PASS] partial gear repair restores four condition at a real resource cost
+[PASS] test injection: isolated repeat wear and partial labor
+[PASS] maintenance transaction commits
+[PASS] repair limit prevents indefinite renewal and wasted raw material
+WORK_RECIPE_RESULT PASS 53/53

@@ -1,0 +1,34 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+[LAKE TOWN FOOD CHAIN PASS] old_chen exists after initialization
+[LAKE TOWN FOOD CHAIN PASS] chen_mi exists after initialization
+[LAKE TOWN FOOD CHAIN PASS] old_chen_shop exists after initialization
+[LAKE TOWN FOOD CHAIN PASS] abandoned_granary exists after initialization
+[LAKE TOWN FOOD CHAIN PASS] spoiled_grain resource exists after initialization
+[LAKE TOWN FOOD CHAIN PASS] sufficient food conditions do not create a spoiled grain fact
+[LAKE TOWN FOOD CHAIN PASS] insufficient preconditions do not create the micro scene
+[LAKE TOWN FOOD CHAIN PASS] food pressure creates the lake town price rise fact
+[LAKE TOWN FOOD CHAIN PASS] old_chen family food falls under macro food pressure
+[LAKE TOWN FOOD CHAIN PASS] old_chen stress rises under macro food pressure
+[LAKE TOWN FOOD CHAIN PASS] chen_mi hunger rises as family food becomes insufficient
+[LAKE TOWN FOOD CHAIN PASS] low hunger prevents taking spoiled grain
+[LAKE TOWN FOOD CHAIN PASS] low hunger prevents taking spoiled grain and does not create the scene
+[LAKE TOWN FOOD CHAIN PASS] usable family food prevents taking spoiled grain
+[LAKE TOWN FOOD CHAIN PASS] usable family food prevents taking spoiled grain and does not create the scene
+[LAKE TOWN FOOD CHAIN PASS] enough parent money prevents taking spoiled grain
+[LAKE TOWN FOOD CHAIN PASS] enough parent money prevents taking spoiled grain and does not create the scene
+[LAKE TOWN FOOD CHAIN PASS] empty granary prevents taking spoiled grain
+[LAKE TOWN FOOD CHAIN PASS] empty granary prevents taking spoiled grain and does not create the scene
+[LAKE TOWN FOOD CHAIN PASS] all food search thresholds create the spoiled grain fact
+[LAKE TOWN FOOD CHAIN PASS] taking spoiled grain reduces granary stock by one
+[LAKE TOWN FOOD CHAIN PASS] chen_mi inventory contains spoiled_grain
+[LAKE TOWN FOOD CHAIN PASS] taking grain creates all required visible traces
+[LAKE TOWN FOOD CHAIN PASS] family crisis and high stress close old_chen_shop
+[LAKE TOWN FOOD CHAIN PASS] closing the shop creates the closed_shop trace
+[LAKE TOWN FOOD CHAIN PASS] the traceable micro scene is generated
+[LAKE TOWN FOOD CHAIN PASS] the micro scene references source_fact_ids
+[LAKE TOWN FOOD CHAIN PASS] the micro scene references trace_ids
+[LAKE TOWN FOOD CHAIN PASS] the same seed reproduces the lake town food chain
+[LAKE TOWN SUMMARY] facts=lake_town_food_price_rising, chen_mi_took_spoiled_grain, old_chen_closed_shop_due_to_family_crisis, chen_mi_ate_spoiled_grain, old_chen_discovered_spoiled_grain, ma_shen_noticed_closed_shop, chen_mi_fell_sick_from_spoiled_grain, ma_shen_brought_porridge, ma_shen_kept_checking_on_chen_mi, old_chen_reopened_shop_half_day traces=price_rise_notice, child_hiding_bag, spoiled_grain_bag, grain_dust_on_sleeve, granary_missing_grain, closed_shop, spoiled_grain_crumbs, stomach_pain_sign, overturned_grain_bag, neighbor_footprints_at_shop, whispered_market_rumor, sick_child_at_shop_door, empty_porridge_bowl_at_door, neighbor_visit_marks, half_open_shop_door, limited_goods_on_shelf scene_day=6
+[LAKE TOWN SCENE] 陈米藏着一袋发霉麦子 | sources=fact_d01_009_lake_town_food_price_rising, fact_d06_044_chen_mi_took_spoiled_grain, fact_d06_045_old_chen_closed_shop_due_to_family_crisis | traces=trace_closed_shop, trace_price_rise_notice, trace_child_hiding_bag, trace_spoiled_grain_bag
+[LAKE TOWN FOOD CHAIN RESULT] PASS

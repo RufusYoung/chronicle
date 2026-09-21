@@ -62,6 +62,7 @@ const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const CommunityLife = preload("res://scripts/sim/npc/community_life.gd")
 const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const Community = preload("res://scripts/sim/organization/local_cooperation.gd")
+const ResidentGear = preload("res://scripts/sim/equipment/resident_equipment.gd")
 const FoodAccess = preload("res://scripts/sim/economy/resident_food_access.gd")
 const FamilyFood = preload("res://scripts/sim/npc/household_provisioning.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
@@ -285,6 +286,15 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			need_changes.append_array(round_need_changes)
 
 		if DailyLife.enabled(daily_life_config):
+			if daily_life_config.get("integration_rules", {}).get("equipment_enabled", false):
+				var gear_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
+				for actor: Dictionary in gear_snapshot.get_entities_by_type("person"):
+					var equipped: Variant = ResidentGear.equip(gear_snapshot, actor, round_event)
+					if not writer.apply_result(equipped, stores):
+						return _failure_result(event, "resident_equipment_rejected:" + str(writer.last_report), stores)
+					if not equipped.is_empty():
+						livelihood_results.append(equipped)
+						livelihood_events.append_array(equipped.facts_added)
 			var danger_config: Dictionary = daily_life_config.get("world_danger", {})
 			if WorldDanger.enabled(danger_config):
 				var danger := WorldDanger.new().run_tick(context, stores, round_event, danger_config, registry, writer)
