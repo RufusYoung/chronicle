@@ -30,7 +30,21 @@ func _run() -> void:
 	await process_frame
 	var checks := {"restored": viewer._startup_message == "已继续上次保存的世界。",
 		"hours": viewer.view_model.session.elapsed_hours_since_start == loaded.envelope.world_time.elapsed_hours,
-		"layout_720": viewer.action_dock.get_global_rect().end.y <= root.size.y}
+		"layout_720": viewer.action_dock.get_global_rect().end.y <= root.size.y,
+		"header_720": viewer.get_node("%WorldHeader").get_global_rect().position.y >= 0}
+	var seen_routes: Array = []
+	if viewer.surface.has("travel_paging"):
+		var paging: Dictionary = viewer.surface.travel_paging
+		for page: int in viewer.travel_buttons.get_child_count():
+			for button: Button in viewer.travel_buttons.get_children():
+				if button.visible and button.get_meta("route_id") not in seen_routes:
+					seen_routes.append(button.get_meta("route_id"))
+			if paging.next.disabled:
+				break
+			paging.next.pressed.emit()
+		checks["all_routes_reachable"] = seen_routes.size() == viewer.travel_buttons.get_child_count()
+		while not paging.previous.disabled:
+			paging.previous.pressed.emit()
 	await RenderingServer.frame_post_draw
 	checks["scene_720"] = root.get_texture().get_image().save_png(output.path_join("scene_720.png")) == OK
 	(viewer.get_node("%OpenResultReceipt") as LinkButton).pressed.emit()
@@ -45,6 +59,11 @@ func _run() -> void:
 	await RenderingServer.frame_post_draw
 	checks["layout_900"] = viewer.action_dock.get_global_rect().end.y <= root.size.y
 	checks["scene_900"] = root.get_texture().get_image().save_png(output.path_join("scene_900.png")) == OK
+	root.size = Vector2i(1280, 720)
+	root.content_scale_size = root.size
+	await process_frame
+	await process_frame
+	checks["resize_back_720"] = viewer.action_dock.get_global_rect().end.y <= root.size.y and viewer.get_node("%WorldHeader").get_global_rect().position.y >= 0
 	var after: Dictionary = JSON.parse_string(JSON.stringify(viewer.view_model.session.build_save_envelope()))
 	for key: String in ["stores", "world_time", "session", "rng_states", "world_log"]:
 		checks["truth:" + key] = after[key] == loaded.envelope[key]

@@ -1,5 +1,6 @@
 extends RefCounted
 class_name V5NpcNeedSystem
+const Body = preload("res://scripts/sim/npc/body_condition.gd")
 
 const TransactionResultModel = preload(
 	"res://scripts/sim/transaction/transaction_result.gd"
@@ -42,6 +43,8 @@ func resolve_tick(
 					continue
 				var result_index := results.size()
 				results.append(result)
+				if not bool(resolved.get("changed", false)) and result.facts_added.any(func(f: Dictionary) -> bool: return f.get("observed_by_player", false)):
+					observed_result_indexes.append(result_index)
 				if bool(resolved.get("changed", false)):
 					var change: Dictionary = resolved.get("change", {})
 					change["result_index"] = result_index
@@ -127,6 +130,9 @@ func _resolve_need(
 		new_index = mini(current_index + step_count, scale.size() - 1)
 	var new_value: Variant = scale[new_index]
 	var changed: bool = new_value != current_value
+	if need_key == "hunger" and need.get("body_rules_version") == 1:
+		var to_extreme := maxi((scale.size() - 1 - current_index) * interval_hours - old_clock, 0)
+		Body.append_hunger(result, actor, snapshot, tick_event, maxi(elapsed_hours - to_extreme, 0), new_value == "extreme")
 	if not changed:
 		if not result.is_empty():
 			result.mark_resolved("npc_need_progress")

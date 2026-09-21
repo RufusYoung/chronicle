@@ -16,6 +16,26 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_body_rules_apply_through_legal_protocol_and_native_save(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_body_v1")
+            self.assertTrue(response["ok"], response)
+            for _ in range(24):
+                wait = next(c for c in response["choices"] if c["kind"] == "wait" and c["enabled"])
+                response = game.request("act", choice_id=wait["choice_id"])
+                self.assertTrue(response["ok"], response)
+            self.assertEqual(response["observation"]["player"]["health"], 98)
+            self.assertIn("持续极饿", json.dumps(response["observation"], ensure_ascii=False))
+            slot = f"body_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            loaded = game.request("load", slot=slot)
+            self.assertEqual(loaded["observation"], response["observation"])
+            meal = next(c for c in loaded["choices"] if c["id"] == "eat" and c["enabled"])
+            after = game.request("act", choice_id=meal["choice_id"])
+            self.assertEqual(after["observation"]["player"]["health"], 98)
+            self.assertEqual(after["observation"]["player"]["hunger"], "medium")
+
     def test_provisions_variant_keeps_food_choice_and_benefit_public(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,

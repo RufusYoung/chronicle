@@ -76,6 +76,7 @@ func _ready() -> void:
 	restart_button.pressed.connect(_request_restart)
 	restart_dialog.confirmed.connect(restart_session)
 	completion_dialog.confirmed.connect(_enter_seventh_outpost)
+	get_viewport().size_changed.connect(_refresh_compact_entities)
 	restart_session()
 
 
@@ -184,14 +185,7 @@ func refresh_view(projected: Dictionary = {}) -> void:
 	region_status.text = _format_status_rows(
 		current_view_data.get("region_status", []) as Array
 	)
-	visible_people.text = _format_entity_rows(
-		current_view_data.get("visible_people", []) as Array,
-		"这里没有值得留意的人。", true
-	)
-	visible_observations.text = _format_entity_rows(
-		current_view_data.get("visible_observations", []) as Array,
-		"眼前没有明显的物件或痕迹。", true
-	)
+	_refresh_compact_entities()
 	(surface["scene_record"] as RichTextLabel).text = "%s\n%s\n\n[b]在场的人[/b]\n%s\n\n[b]进入视线的东西[/b]\n%s" % [
 		location_title.text + " · " + location_context.text, location_description.text,
 		_format_entity_rows(current_view_data.get("visible_people", []), "此处无人"),
@@ -588,7 +582,15 @@ func _format_status_rows(rows: Array) -> String:
 	return "\n".join(output)
 
 
-func _format_entity_rows(rows: Array, empty_text: String, compact: bool = false) -> String:
+func _refresh_compact_entities() -> void:
+	visible_people.text = _format_entity_rows(
+		current_view_data.get("visible_people", []), "这里没有值得留意的人。", true,
+		3 if get_viewport_rect().size.y < 800 else 4)
+	visible_observations.text = _format_entity_rows(
+		current_view_data.get("visible_observations", []), "眼前没有明显的物件或痕迹。", true)
+
+
+func _format_entity_rows(rows: Array, empty_text: String, compact: bool = false, row_limit: int = 4) -> String:
 	if rows.is_empty():
 		return empty_text
 	var output: Array[String] = []
@@ -598,7 +600,7 @@ func _format_entity_rows(rows: Array, empty_text: String, compact: bool = false)
 			for row: Dictionary in rows:
 				if int(row.get("surface_priority", 0)) == priority:
 					display_rows.append(row)
-		display_rows = display_rows.slice(0, 4)
+		display_rows = display_rows.slice(0, row_limit)
 	else:
 		display_rows = rows
 	for row_value: Variant in display_rows:
@@ -611,8 +613,8 @@ func _format_entity_rows(rows: Array, empty_text: String, compact: bool = false)
 		if description != "" and not compact:
 			text += "　[color=#aeb6b3]%s[/color]" % description
 		output.append(text)
-	if compact and rows.size() > 4:
-		output.append("[color=#8f9c98]另有 %d 项现场信息，完整内容见「记录」。[/color]" % (rows.size() - 4))
+	if compact and rows.size() > row_limit:
+		output.append("[color=#8f9c98]另有 %d 项现场信息，完整内容见「记录」。[/color]" % (rows.size() - row_limit))
 	return "\n".join(output)
 
 
@@ -634,7 +636,7 @@ func _format_decision_context(
 			"；".join(stakes)
 		))
 	var world_summary := str(agency.get("world_summary", ""))
-	if world_summary != "":
+	if world_summary != "" and world_summary != str(current_view_data.get("feedback", {}).get("body", "")):
 		var first_event := world_summary.split(" | ")[0]
 		rows.append("[b]%s[/b] %s" % [
 			"你见过的后续" if str(agency.get("world_kind", "")) == "observed_followup" else ("世界自行发生" if str(agency.get("world_kind", "")) == "independent" else "行动期间"),

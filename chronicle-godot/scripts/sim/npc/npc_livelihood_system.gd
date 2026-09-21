@@ -4,6 +4,7 @@ class_name V5NpcLivelihoodSystem
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const Access = preload("res://scripts/sim/resource/resource_access.gd")
 const Meal = preload("res://scripts/sim/economy/meal_satiation.gd")
+const Body = preload("res://scripts/sim/npc/body_condition.gd")
 const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 const DailyLife = preload("res://scripts/sim/npc/resident_daily_life_system.gd")
 const FoodCarting = preload("res://scripts/sim/economy/resident_food_carting.gd")
@@ -333,7 +334,7 @@ func resolve_work_tick(
 			result.add_state_change({
 				"entity_id": actor_id,
 				"key": "fatigue",
-				"to": fatigue + 1,
+				"to": mini(fatigue + Body.work_fatigue(actor.get("states", {})), MAX_FATIGUE),
 			})
 		events.append({
 			"event_type": "livelihood_produced",

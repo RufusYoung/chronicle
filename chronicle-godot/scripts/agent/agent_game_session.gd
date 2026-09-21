@@ -84,6 +84,9 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
+	var body_rules: bool = variant == "world_body_v1"
+	if body_rules:
+		variant = "world_content_v2"
 	if variant not in ["default", "worksite_carting_v1", "worksite_hauling_v1", "household_budget_v1", "household_livelihood_v1", "work_framework_v1", "community_life_v1", "world_danger_v1", "player_life_v1", "player_life_v2", "world_content_v1", "world_content_v2"] or (variant != "default" and next_scenario != "echo_realm"):
 		return _error("invalid_economy_variant")
 	if next_mode not in ["world", "play"] or next_scenario not in ["echo_realm", "generated_network", "lake_town", "first_winter"]:
@@ -95,6 +98,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_model: Variant
 	var result: Dictionary
 	var options := {"challenge_seed_override": int(seed)}
+	if body_rules:
+		options["body_rules_version"] = 1
 	if variant == "worksite_carting_v1":
 		options.merge({"food_carting_version": 1, "worksite_food_storage_version": 1})
 	if variant == "worksite_hauling_v1":

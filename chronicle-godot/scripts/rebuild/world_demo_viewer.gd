@@ -93,6 +93,7 @@ func _world_options(seed_value: int, integrated: bool, work_rules: bool = false,
 	if content_extension and initial_scenario == "echo_realm":
 		player_life = true
 		options["content_extension_version"] = 2
+		options["body_rules_version"] = 1
 	if player_life:
 		integrated = true
 		work_rules = true
@@ -380,7 +381,7 @@ func _install_save_controls() -> void:
 			_content_extension.button_pressed = false)
 	new_world_form.add_child(_player_life)
 	_content_extension = CheckBox.new()
-	_content_extension.text = "沿岸生活扩展：备餐、访客采收与短插曲"
+	_content_extension.text = "沿岸生活扩展：身体代价、备餐与访客采收"
 	_content_extension.tooltip_text = "仅新世界生效，包含玩家生活；旧存档保留原物品定义与规则。"
 	_content_extension.button_pressed = initial_content_extension
 	_content_extension.visible = initial_scenario == "echo_realm"

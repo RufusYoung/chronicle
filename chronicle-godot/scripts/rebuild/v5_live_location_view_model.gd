@@ -475,11 +475,15 @@ func build_view_data() -> Dictionary:
 		view.decision["question"] = "把这几个小时用来备粮、赚取报酬，还是继续赶路？"
 		view.decision["rule"] = "采食归自己，短工产物给雇主。比较所需时间、身体状况和能拿到的东西。"
 		var stakes: Array = []
+		var body_condition: String = session.Body.describe(snapshot.player)
+		view.player["body_condition"] = body_condition
+		if session.Body.strained(snapshot.player):
+			stakes.append(body_condition)
 		var sated := maxi(int(snapshot.player.get("hunger_sated_until", 0)) - session.PlayerLife.Meal.now(session.get_time_summary()), 0)
 		view.player["satiation_remaining_hours"] = sated
 		if int(snapshot.player.food_count) == 0:
 			stakes.append("行囊里没有食物。可以找现货，或白天去本地公用作业地采食")
-		else:
+		elif snapshot.player.get("hunger") != "extreme":
 			stakes.append("还有%d份随身食物；约%d小时后饥饿会加深一级" % [snapshot.player.food_count, sated + maxi(int(snapshot.player.get("hunger_interval_hours", 6)) - int(snapshot.player.get("hunger_elapsed_hours", 0)), 1)])
 		if sated > 0:
 			stakes.append("这餐还能维持%d小时饱腹，可留给赶路或作业" % sated)
@@ -2986,7 +2990,7 @@ func _state_change_text(change: Dictionary, snapshot: Variant = null) -> String:
 		snapshot = session.get_snapshot()
 	var entity_id := str(change.get("entity_id", ""))
 	var key := str(change.get("key", ""))
-	if key in ["danger_round_hour", "danger_opponent_id", "danger_advantage", "hunger_sated_until"]:
+	if key in ["danger_round_hour", "danger_opponent_id", "danger_advantage", "hunger_sated_until", "hunger_strain_hours", "body_rules_version"]:
 		return ""
 	if key == "visible" and bool(change.get("to", false)):
 		return "%s出现在现场" % _entity_name(entity_id, snapshot)
@@ -2998,7 +3002,7 @@ func _state_change_text(change: Dictionary, snapshot: Variant = null) -> String:
 		return "随身食物 %s" % _signed_number(int(change.get("delta", 0)))
 	if entity_id == "player" and key == "health":
 		if change.has("to"):
-			return "健康降至 %d" % int(change.get("to", 0))
+			return "健康变为 %d" % int(change.get("to", 0))
 		return "健康 %s，现为 %d" % [
 			_signed_number(int(change.get("delta", 0))),
 			int(snapshot.get_player_value("health", 0)),

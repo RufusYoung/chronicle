@@ -257,7 +257,10 @@ static func paginate_travel(surface: Dictionary, viewer: Control, buttons: VBoxC
 		var pager := HBoxContainer.new()
 		pager.add_theme_constant_override("separation", 8)
 		buttons.get_parent().get_parent().add_child(pager)
-		var paging := {"page": 0, "signature": [], "pager": pager}
+		var paging := {"page": 0, "signature": [], "pager": pager, "page_size": TRAVEL_PAGE_SIZE}
+		viewer.resized.connect(func() -> void:
+			_update_travel_page_size(paging, viewer)
+			_step_travel_page(paging, buttons, 0))
 		for direction: int in [-1, 1]:
 			var button := Button.new()
 			button.name = "PreviousTravel" if direction < 0 else "NextTravel"
@@ -281,20 +284,29 @@ static func paginate_travel(surface: Dictionary, viewer: Control, buttons: VBoxC
 	if signature != paging["signature"]:
 		paging["page"] = 0
 		paging["signature"] = signature
+	_update_travel_page_size(paging, viewer)
 	_step_travel_page(paging, buttons, 0)
+
+
+static func _update_travel_page_size(paging: Dictionary, viewer: Control) -> void:
+	var page_size := 2 if viewer.get_viewport_rect().size.y < 800 else TRAVEL_PAGE_SIZE
+	var first_index := int(paging.page) * int(paging.page_size)
+	paging.page_size = page_size
+	paging.page = floori(float(first_index) / page_size)
 
 
 static func _step_travel_page(paging: Dictionary, buttons: VBoxContainer, delta: int) -> void:
 	var count := buttons.get_child_count()
-	var pages := maxi(ceili(float(count) / TRAVEL_PAGE_SIZE), 1)
+	var page_size := int(paging.page_size)
+	var pages := maxi(ceili(float(count) / page_size), 1)
 	var page := clampi(int(paging["page"]) + delta, 0, pages - 1)
 	paging["page"] = page
 	(paging["pager"] as Control).visible = pages > 1
 	(paging["previous"] as Button).disabled = page == 0
 	(paging["next"] as Button).disabled = page == pages - 1
-	(paging["label"] as Label).text = "路线 %d-%d / %d" % [page * TRAVEL_PAGE_SIZE + 1, mini((page + 1) * TRAVEL_PAGE_SIZE, count), count]
+	(paging["label"] as Label).text = "路线 %d-%d / %d" % [page * page_size + 1, mini((page + 1) * page_size, count), count]
 	for index: int in count:
-		(buttons.get_child(index) as Control).visible = index >= page * TRAVEL_PAGE_SIZE and index < (page + 1) * TRAVEL_PAGE_SIZE
+		(buttons.get_child(index) as Control).visible = index >= page * page_size and index < (page + 1) * page_size
 
 
 static func compact_feedback(feedback: Dictionary, max_details: int = 3) -> String:

@@ -248,6 +248,6 @@ if __name__ == "__main__":
     parser.add_argument("--packaged", action="store_true")
     parser.add_argument("--godot")
     parser.add_argument("--policies", nargs="+", choices=("observer", "prepared", "direct_risk", "local_help", "tool_life", "local_trade", "local_gift", "content_life", "provisions"))
-    parser.add_argument("--variant", choices=("player_life_v1", "player_life_v2", "world_content_v1", "world_content_v2"), default="player_life_v1")
+    parser.add_argument("--variant", choices=("player_life_v1", "player_life_v2", "world_content_v1", "world_content_v2", "world_body_v1"), default="player_life_v1")
     args = parser.parse_args()
     play(args.output, seed=args.seed, hours=args.hours, packaged=args.packaged, godot=args.godot, policies=args.policies, variant=args.variant)

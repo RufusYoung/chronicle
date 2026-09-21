@@ -17,6 +17,7 @@ const Local = preload("res://scripts/sim/player/player_local_life.gd")
 const Incidents = preload("res://scripts/sim/player/local_incident_options.gd")
 const Meal = preload("res://scripts/sim/economy/meal_satiation.gd")
 const Access = preload("res://scripts/sim/resource/resource_access.gd")
+const Body = preload("res://scripts/sim/npc/body_condition.gd")
 const PROFILE := {"version": 1, "help_wage": 3, "employer_food_limit": 8}
 const PROFILE_V2 := {"version": 2, "help_wage": 3, "employer_food_limit": 8}
 
@@ -101,13 +102,15 @@ static func validate_save(fixture: Dictionary, stores: Dictionary, locations: Di
 	return ""
 
 
-static func tick(context: Variant, stores: Dictionary, time: Dictionary, profiles: Array, writer: Variant) -> String:
+static func tick(context: Variant, stores: Dictionary, time: Dictionary, profiles: Array, writer: Variant, observed: Array = []) -> String:
 	var view: Variant = snapshot(context, stores, time)
 	var actor: Dictionary = view.get_entity(str(context.actor_id))
 	var data: Dictionary = Needs.new().resolve_tick(view, profiles, time, [actor])
 	for result: Variant in data.results:
 		if not writer.apply_result(result, stores):
 			return "player_need_rejected"
+		if result.facts_added.any(func(f: Dictionary) -> bool: return f.get("fact_type") == "actor_hunger_strain"):
+			observed.append(result)
 	var state: Dictionary = actor.states
 	if state.get("daily_route_id", "") != "":
 		var remaining := maxi(int(state.daily_travel_remaining) - 1, 0)
@@ -257,6 +260,8 @@ static func content_resource_denial(session: Variant, view: Variant, actor: Dict
 
 
 static func work_option(actor: Dictionary, id: String, label: String, hint: String, reason: String, hours: int) -> Dictionary:
+	if Body.enabled(actor.states):
+		hint += "完成一轮增加%d疲劳%s。" % [Body.work_fatigue(actor.states), "（极饿额外增加2）" if Body.strained(actor.states) else "；若届时极饿则额外增加2"]
 	var progress := 0
 	if actor.states.get("daily_intent_id", "") == id and actor.states.get("subsistence_workplace_id", "") == actor.states.get("location_id"):
 		progress = clampi(int(actor.states.get("subsistence_elapsed_hours", 0)), 0, hours - 1)
@@ -547,10 +552,17 @@ static func observed_followups(session: Variant) -> Array:
 
 
 static func local_tick_summary(session: Variant, result: Dictionary) -> String:
-	if session.stores.state_store.get_state(str(session.context.actor_id), "daily_route_id", "") != "":
-		return "路程仍在继续，尚看不到目的地的情况。"
 	var summaries: Array[String] = []
 	var witnessed := {}
+	# Personal harm must not be crowded out by two unrelated local activities.
+	for transaction: Dictionary in result.get("observed_need_results", []):
+		for fact: Dictionary in transaction.get("facts_added", []):
+			if fact.get("fact_type") == "actor_hunger_strain" and fact.get("actor_id") == str(session.context.actor_id):
+				witnessed[fact.fact_id] = true
+				summaries.append(str(fact.summary))
+	if session.stores.state_store.get_state(str(session.context.actor_id), "daily_route_id", "") != "":
+		summaries.append("路程仍在继续，尚看不到目的地的情况。")
+		return "\n".join(summaries)
 	for collection: String in ["results", "livelihood_results", "observed_need_results", "observed_autonomous_results", "danger_results"]:
 		for transaction: Dictionary in result.get(collection, []):
 			for fact: Dictionary in transaction.get("facts_added", []):

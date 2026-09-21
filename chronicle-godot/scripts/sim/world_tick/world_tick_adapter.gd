@@ -252,7 +252,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			resource_events.append_array(recovery_data.get("events", []))
 
 		if PlayerLife.enabled({"player_life": daily_life_config.get("player_life", {})}) and elapsed_hours > 0:
-			var player_error := PlayerLife.tick(context, stores, round_event, npc_need_profiles, writer)
+			var player_error := PlayerLife.tick(context, stores, round_event, npc_need_profiles, writer, observed_need_results)
 			if player_error != "":
 				return _failure_result(event, player_error, stores)
 		if not npc_need_profiles.is_empty():

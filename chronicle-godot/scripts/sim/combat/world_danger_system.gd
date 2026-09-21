@@ -4,6 +4,7 @@ const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Combat = preload("res://scripts/sim/combat/combat_encounter_resolver.gd")
 const Builder = preload("res://scripts/sim/core/sim_snapshot_builder.gd")
 const Food = preload("res://scripts/sim/economy/resident_food_access.gd")
+const Body = preload("res://scripts/sim/npc/body_condition.gd")
 
 
 static func enabled(config: Dictionary) -> bool:
@@ -94,16 +95,19 @@ func definition(snapshot: Variant, actor_id: String, threat: Dictionary, config:
 		"observable_features": ["只守着眼前这片觅食地，不会追到远处。", "身体状况 %d/%d；受到重创会退入灌丛。" % [int(threat.states.health), int(config.threat.health)],
 			"已稳住的优势 %d/4；进攻或撤离时消耗。" % advantage]}, true)
 	var fatigue_cost := 1 if int(actor.states.get("fatigue", 0)) < 10 else 0
+	var hunger_penalty := Body.combat_penalty(actor.states)
+	if hunger_penalty > 0:
+		enemy.observable_features.append("你正极饿：进攻和防守判定减2，撤离不受这项减值。")
 	var hit := {"base_health_loss": 6, "fatigue_gain": fatigue_cost, "injury": injury,
 		"injury_label": "战斗挫伤", "durability_slot": "body_outer", "durability_loss": 2}
 	var safe := {"fatigue_gain": fatigue_cost, "durability_slot": "main_hand", "durability_loss": 1}
 	return {"encounter_id": "world_danger." + str(threat.id), "enemy": enemy,
 		"description": "这是仍在持续的交锋。每次选择占用一小时的周旋与寻找机会，世界其余地方照常生活。",
 		"approaches": [
-			{"approach_id": "attack", "label": "抓住空隙进攻", "score_target": "combat.attack", "attack_bonus": advantage,
+			{"approach_id": "attack", "label": "抓住空隙进攻", "score_target": "combat.attack", "attack_bonus": advantage - hunger_penalty,
 				"action_tags": ["attack", "combat_melee"], "success": safe, "failure": hit,
 				"effect_description": "成功削减对方健康，未重创前仍需继续交锋；消耗已积累优势。"},
-			{"approach_id": "guard", "label": "稳住防守，寻找机会", "score_target": "combat.guard", "guard_bonus": 3,
+			{"approach_id": "guard", "label": "稳住防守，寻找机会", "score_target": "combat.guard", "guard_bonus": 3 - hunger_penalty,
 				"difficulty": int(enemy.attack), "action_tags": ["defend"], "success": safe, "failure": hit,
 				"effect_description": "成功积累 2 点优势，上限 4，改善下一次进攻或脱离；仍耗费时间与体力。"},
 			{"approach_id": "withdraw", "label": "寻找退路，脱离接触", "score_target": "combat.escape", "escape_bonus": advantage,

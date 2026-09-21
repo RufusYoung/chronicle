@@ -1,6 +1,17 @@
 # RF6 Working Checkpoint
 
-Updated 2026-09-15. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
+Updated 2026-09-21. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
+
+## Current Sep 21 Body Integration
+
+- Starting commit `cc171a4e40b8002e3b1993d0087aba8a56edd8fb`, branch `codex/player-agency-world-surface`, initially clean. No user changes reverted. Every report now recommends next-stage effort; extra-high remains recommended, no settings changed.
+- New explicit `world_body_v1` / `body_rules_version=1` reuses content v2, needs, work, combat and native save. Initial 17 actors share limited hunger damage, completed-work fatigue and attack/guard penalties. Old worlds keep old rules. See `CHRONICLE_BODY_CONDITION_CONTRACT_v5.1.md`.
+- Evidence in ignored `work/body-condition`; final archive planned at `outputs/body-condition-evidence.zip`. Preserve exploratory failures. No permanent death/full nutrition/new art/human play is claimed.
+- Legal source runs finished: three policies each for81001/72h,86013/72h,81001/168h; passive81001/86013 weeks finished. Protocol18/18. The non-eater ends health82/50, active policies100. Week provisions78 choices,6 combat rounds,4 gifts,9 changed residents,food6/coins12; observer/provisions/gift extreme residents5/4/5. Not universal benefit or human enjoyment.
+- Body contract strengthened from64 to72 checks: previous same-roll test could skip its actual outcome when no admissible boundary roll existed. Final uses explicitly injected equal threshold and roll, commits success/failure for both player and NPC. Self-rescue remains formally executed after labeled no-food/health40 setup.
+- Layout: own harm outranks unrelated meals; duplicate world summary removed;720p routes2/person rows3,900p routes3/person rows4. Reducing all observation rows initially hid the legacy active threat; reverted reduction for observations, preserving exact old danger test. Failed renders retained. Actual week and observer UI native truth unchanged, all routes reachable and resize back fits.
+- Source validation closed: regular165/165 (1038.80s), strengthened contract72/72 (23.06s), final render30/30 (176.59s), source audit119/119. All source sessions closed. The intermediate render29/30 failed because active threat was hidden; retained and fixed, then all30 rerun. First audit118/119 was a PowerShell single-result JSON object/array mismatch in the audit tool, fixed without changing runtime. Simulation unchanged during presentation fixes; audit compares manifests. Next executable actions: commit/push, clean Windows export, package protocol/three-policy parity/native renders, archive evidence, update final status. Do not claim package closure before these finish.
+- After delivery, continue the plan's first-experience integration, not another food/body balance campaign. RF6 overall and independent human testing remain open.
 
 ## Current Sep 15 Delivery
 

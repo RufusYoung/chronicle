@@ -94,6 +94,7 @@ const WorldDangerSetup = preload("res://scripts/sim/combat/world_danger_setup.gd
 const WorldDanger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const ActivityChoice = preload("res://scripts/sim/npc/resident_activity_choice.gd")
 const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
+const Body = preload("res://scripts/sim/npc/body_condition.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 7
@@ -255,6 +256,10 @@ func start_from_fixture_path(
 		fixture["player_life"] = PlayerLife.PROFILE.duplicate(true)
 	elif options.get("player_life_version", 0) == 2:
 		fixture["player_life"] = PlayerLife.PROFILE_V2.duplicate(true)
+	if options.get("body_rules_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_body_rules_version")
+	if options.get("body_rules_version", 0) == 1:
+		fixture["body_rules"] = Body.PROFILE.duplicate(true)
 	if options.get("world_danger_version", 0) not in [0, 1]:
 		return _start_failure("unsupported_world_danger_version")
 	if options.get("world_danger_version", 0) == 1:
@@ -448,6 +453,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	var player_error := PlayerLife.configure(fixture)
 	if player_error != "":
 		return _start_failure(player_error)
+	var body_error := Body.configure(fixture)
+	if body_error != "":
+		return _start_failure(body_error)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -499,6 +507,7 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		(fixture.get("npc_need_profiles", []) as Array).duplicate(true)
 	)
 	ContentExtension.Meal.configure_needs(npc_need_profiles, fixture)
+	Body.configure_needs(npc_need_profiles, fixture)
 	world_tick_adapter.configure_autonomous_actions(
 		autonomous_action_rules
 	)
@@ -2507,6 +2516,9 @@ func _migrate_store_save_data(value: Variant, migrations: Variant) -> Variant:
 
 
 func _validate_save_references(restored_hour: int = -1) -> Dictionary:
+	var body_error := Body.validate_save(fixture_source_data, stores)
+	if body_error != "":
+		return _save_failure(body_error, "references")
 	var community_error := Community.validate_references(fixture_source_data, stores, context.locations)
 	if community_error != "":
 		return _save_failure(community_error, "references")

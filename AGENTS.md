@@ -29,7 +29,7 @@ Reversible implementation and balance choices are engineering work. State and re
 
 ## Model and Context
 
-The user defaults to extra-high (极高) reasoning. Recommend Ultra in the checkpoint report only when the next integrated task has a concrete need for it; do not change global or task settings silently.
+The user defaults to extra-high (极高) reasoning. Every progress or checkpoint report must include a reasoning-effort recommendation for the next stage and a brief task-specific reason. Recommend Ultra only when the next integrated task has a concrete need for it; do not change global or task settings silently.
 
 The requested development model is GPT-6 Astra. Model configuration is not proof of the current task's runtime identity; report only verified configuration or tool results. Do not silently edit global settings or hard-code assumed model capabilities into game logic.
 

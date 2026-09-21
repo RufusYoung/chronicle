@@ -20,6 +20,8 @@ func _run() -> void:
 		options.challenge_seed_override = int(args[1])
 	if args.size() > 3:
 		options.content_extension_version = int(args[3])
+	if args.size() > 4:
+		options.body_rules_version = int(args[4])
 	var live := Contract.Live.new()
 	var started: Dictionary = live.start(options)
 	if not started.get("success", false):
@@ -52,6 +54,8 @@ func _run() -> void:
 		print("CONTENT_PROBE " + JSON.stringify(row))
 	var seconds := (Time.get_ticks_msec() - began) / 1000.0
 	var directory := "world_provisions" if options.content_extension_version == 2 else "world_content"
+	if options.get("body_rules_version", 0) == 1:
+		directory = "body_condition"
 	var path := "user://tests/%s/probe_%d_%d.json" % [directory, options.challenge_seed_override, start_hour + hours]
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))
 	var native_path := path.trim_suffix(".json") + ".save.json"
