@@ -460,9 +460,11 @@ static func work(session: Variant, id: String) -> Dictionary:
 		return {"success": false, "error": prepare.error_reason}
 	var summary := "作业暂时中断，已经用掉的时间不会退回。"
 	var hours := 0
+	var completed := false
 	for index: int in range(int(profile.work_interval_hours)):
-		if work_denial(session, actor, true) != "":
-			summary = "天色或身体条件已不适合继续。已完成%d/%d小时；下次选择同一作业可接着做，换作业会重新准备。" % [int(session.stores.state_store.get_state(actor_id, "subsistence_elapsed_hours", 0)), profile.work_interval_hours]
+		var denial := work_denial(session, actor, true)
+		if denial != "":
+			summary = denial + "，作业中断。"
 			break
 		var tick: Dictionary = session.advance_time(1, "player_work")
 		if not tick.get("success", false):
@@ -470,13 +472,16 @@ static func work(session: Variant, id: String) -> Dictionary:
 		hours += 1
 		view = snapshot(session.context, session.stores, session.get_time_summary())
 		actor = view.get_entity(actor_id)
-		if not session.get_combat_encounter_options().is_empty() or work_denial(session, actor) != "":
+		if not session.get_combat_encounter_options().is_empty():
+			summary = "眼前的危险打断了作业，需先处理遭遇。"
 			break
-		var employer_row: Dictionary = view.get_entity(employer)
-		if employer != "" and (employer_row.is_empty() or employer_row.states.get("location_id") != actor.states.location_id \
-				or employer_row.states.get("daily_route_id", "") != "" or not employer_row.states.get("alive", true) \
-				or employer_row.states.get("danger_opponent_id", "") != "" or Treasury.new(view).balance(employer) < int(PROFILE.help_wage)):
-			summary = "雇主已经离开现场、遇险或无法支付。采收停止，未凭空发薪；可以改为自己采食。"
+		denial = work_denial(session, actor)
+		if denial != "":
+			summary = denial + "，作业中断。"
+			break
+		denial = employer_work_denial(view, actor, employer)
+		if denial != "":
+			summary = denial + "，短工中断。"
 			break
 		var time: Dictionary = session.get_time_summary()
 		time.merge({"elapsed_hours": 1, "tick_event_id": "player_work.%d" % session.elapsed_hours_since_start}, true)
@@ -485,7 +490,6 @@ static func work(session: Variant, id: String) -> Dictionary:
 			{"actor": actor, "profile": profile, "kind": work_kind, "output_holder": employer if employer != "" else actor_id})
 		if resolved.has("error"):
 			return {"success": false, "error": resolved.error}
-		var completed := false
 		for result: Variant in resolved.results:
 			for fact: Dictionary in result.facts_added:
 				if fact.get("fact_type") in ["npc_livelihood_produced", "npc_work_maintained"]:
@@ -508,7 +512,32 @@ static func work(session: Variant, id: String) -> Dictionary:
 	finish.mark_resolved("player_work_paused")
 	if not session.writer.apply_result(finish, session.stores):
 		return {"success": false, "error": finish.error_reason}
-	return feedback({"success": true, "hours": hours}, summary)
+	var response := feedback({"success": true, "hours": hours, "work_completed": completed}, summary)
+	if not completed:
+		var progress := int(session.stores.state_store.get_state(actor_id, "subsistence_elapsed_hours", 0))
+		response["work_progress_hours"] = progress
+		response.player_life_feedback.merge({"status": "interrupted", "title": "作业中断",
+			"body": "%s\n本次用时%d小时，作业进度%d/%d小时；%s" % [summary, hours, progress, profile.work_interval_hours,
+				"未交货、未领工资。" if employer != "" else "尚未完成这一轮作业。"],
+			"details": ["同一作业保留进度，换作业会重计工时。" + ("续这份短工还需同一雇主在场且能付款；也可改为自己采食。" if employer != "" else "等条件允许后可继续。")],
+			"summary_details": ["同一作业保留进度；换作业重计。"]}, true)
+	return response
+
+
+static func employer_work_denial(view: Variant, actor: Dictionary, employer: String) -> String:
+	if employer == "":
+		return ""
+	var person: Dictionary = view.get_entity(employer)
+	var name := str(person.get("display_name", "雇主"))
+	if person.is_empty() or person.states.get("location_id") != actor.states.location_id or person.states.get("daily_route_id", "") != "":
+		return name + "已离开现场"
+	if not person.states.get("alive", true):
+		return name + "已无法继续雇用你"
+	if person.states.get("danger_opponent_id", "") != "":
+		return name + "正在应付眼前的危险"
+	if Treasury.new(view).balance(employer) < int(PROFILE.help_wage):
+		return "%s拿不出约定的%d铜币" % [name, PROFILE.help_wage]
+	return ""
 
 
 static func feedback(result: Dictionary, body: String) -> Dictionary:

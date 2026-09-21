@@ -4,6 +4,13 @@ Updated 2026-09-21. Recovery context only; the single active plan remains `CHRON
 
 ## Current Sep 21 Body Integration
 
+### Follow-on First-Experience Fix (Current)
+
+- Continued after body delivery `7a531c5`; precise interruption cause, elapsed vs completed work and continuation now exposed. Kept accepted-operation success distinct from actual work completion; interrupted receipt status is explicit. No wages, items, time or world rules changed.
+- New natural seed86021 contract15 checks and actual UI callbacks pass; whole native truth after the exact five original choices matches the pre-fix packaged world (bootstrap, definitions, all Stores/session/time/RNG/log). Eight player-related tests, body72/72 and provisions contract pass. Source protocol19/19 (85.140s). No full167-test rerun claimed;165 full regression was the body stage before this narrow feedback fix.
+- `work/first-experience` holds follow-on evidence; `replay.py` reproduces recorded public choices, not a new independent playtest. Current source sessions all closed. Next: commit and clean export, actual package19 protocol/replay and new/old native renders, archive and record final package identity. The body-stage archive is immutable and valid for `a53caeb`, not the later feedback runtime.
+- Next-stage effort recommendation: extra-high. First-experience decisions/presentation remain the active phase; no concrete Ultra requirement. No human play, video, added art or RF6 completion.
+
 - Starting commit `cc171a4e40b8002e3b1993d0087aba8a56edd8fb`, branch `codex/player-agency-world-surface`, initially clean. No user changes reverted. Every report now recommends next-stage effort; extra-high remains recommended, no settings changed.
 - New explicit `world_body_v1` / `body_rules_version=1` reuses content v2, needs, work, combat and native save. Initial 17 actors share limited hunger damage, completed-work fatigue and attack/guard penalties. Old worlds keep old rules. See `CHRONICLE_BODY_CONDITION_CONTRACT_v5.1.md`.
 - Evidence in ignored `work/body-condition`; final archive planned at `outputs/body-condition-evidence.zip`. Preserve exploratory failures. No permanent death/full nutrition/new art/human play is claimed.

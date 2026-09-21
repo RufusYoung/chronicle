@@ -16,6 +16,29 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_natural_interrupted_work_explains_actual_cause_and_progress(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=86021,
+                                    economy_variant="world_body_v1")
+            self.assertTrue(response["ok"], response)
+            for choice in ("travel/generated_route.echo_landing.commons_to_fishery",
+                           "player_life/gather:net_fisher",
+                           "player_life/ask_local:generated_resident.echo_landing.001",
+                           "player_life/help:generated_resident.echo_landing.001:net_fisher"):
+                self.assertTrue(any(c["choice_id"] == choice and c["enabled"] for c in response["choices"]))
+                response = game.request("act", choice_id=choice)
+                self.assertTrue(response["ok"], response)
+            observation = response["observation"]
+            self.assertEqual(observation["time"]["elapsed_hours"], 9)
+            self.assertEqual(observation["feedback"]["status"], "interrupted")
+            self.assertIn("陶苇已离开现场", observation["feedback"]["body"])
+            self.assertIn("2/4", observation["feedback"]["body"])
+            self.assertEqual(observation["player"]["coins"], 0)
+            self.assertEqual(observation["player"]["food_count"], 6)
+            slot = f"interrupted_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], observation)
+
     def test_body_rules_apply_through_legal_protocol_and_native_save(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
