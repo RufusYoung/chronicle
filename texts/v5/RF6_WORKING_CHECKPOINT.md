@@ -2,6 +2,10 @@
 
 Updated 2026-09-21. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
 
+## Reporting Boundary Correction (Sep 21)
+
+The user rejected stopping after hourly-sized internal checkpoints. The eight RF rounds remain the delivery/reporting units. Both Sep 21 development blocks below belong to RF6; calling them "two rounds" was incorrect. RF6 is NOT complete. On the next authorized development continuation, work through its remaining first-experience, meaningful-choice, UI, required art/audio and package acceptance, not merely the next fix. Commit/test/package checkpoints continue internally; do not end and wait for another "continue". Only the complete RF gate or a genuine user decision/blocker/pause permits a development stop. See AGENTS.md and the active plan for the corrected rule. This process-correction reply is not an RF completion report. Next-stage reasoning recommendation remains extra-high.
+
 ## Current Sep 21 Body Integration
 
 ### Follow-on First-Experience Fix (Current)
