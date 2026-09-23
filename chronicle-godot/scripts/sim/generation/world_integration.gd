@@ -14,6 +14,7 @@ static func load_pack(version: int) -> Dictionary:
 		pack.item_defs.append_array(adventure.item_defs)
 		pack.recipes.append_array(adventure.recipes)
 		pack["feature_defs"] = adventure.feature_defs
+		pack["combat_wear_version"] = adventure.combat_wear_version
 	return pack
 
 
@@ -25,6 +26,8 @@ static func validate(pack: Variant) -> String:
 			return "invalid_integration_flag:" + key
 	if not pack.get("item_defs") is Array or not pack.get("recipes") is Array or not pack.get("maintenance") is Dictionary:
 		return "invalid_integration_definitions"
+	if pack.has("combat_wear_version") and (pack.version != 2 or not Recipe._integer(pack.combat_wear_version, 1) or int(pack.combat_wear_version) != 1):
+		return "invalid_combat_wear_version"
 	var forage: Variant = pack.get("threat_foraging")
 	if not forage is Dictionary or not forage.get("resource_tags_all") is Array or forage.resource_tags_all.is_empty() \
 			or not forage.resource_tags_all.all(func(tag: Variant) -> bool: return tag is String and not tag.is_empty()) \
@@ -110,6 +113,9 @@ static func configure(fixture: Dictionary, registry: Variant) -> String:
 		fixture.resident_daily_life.food_access.subsistence["unavailable_quote_version"] = 1
 	fixture.resident_daily_life.world_danger["integration_version"] = 1
 	fixture.world_danger["integration_version"] = 1
+	if pack.get("combat_wear_version") == 1:
+		fixture.world_danger["combat_wear_version"] = 1
+		fixture.resident_daily_life.world_danger["combat_wear_version"] = 1
 	if pack.livelihood_enabled:
 		fixture.world_danger["foraging"] = pack.threat_foraging.duplicate(true)
 		fixture.resident_daily_life.world_danger["foraging"] = pack.threat_foraging.duplicate(true)

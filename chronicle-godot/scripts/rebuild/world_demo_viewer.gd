@@ -3,6 +3,7 @@ extends "res://scripts/rebuild/v5_live_location_viewer.gd"
 
 const Graph = preload("res://scripts/rebuild/region_graph.gd")
 const EquipmentJournal = preload("res://scripts/rebuild/equipment_journal_panel.gd")
+const PlayGuide = preload("res://scripts/rebuild/world_play_guide.gd")
 const REED_ART = preload("res://art/environments/reed_bank_landing_pixel_v1.png")
 const ECHO_ART = preload("res://art/environments/echo_port_landing_pixel_v1.png")
 const DEFAULT_SAVE := "user://world_demo/manual.json"
@@ -45,11 +46,13 @@ var _content_extension: CheckBox
 var _startup := true
 var _startup_message := ""
 var _equipment_journal: VBoxContainer
+var _play_guide: AcceptDialog
 
 
 func _ready() -> void:
 	super._ready()
 	_install_save_controls()
+	_play_guide = PlayGuide.install(self, restart_button.get_parent())
 	_install_region_page()
 	_equipment_journal = EquipmentJournal.new()
 	_equipment_journal.name = "行囊与成长"
@@ -219,8 +222,10 @@ func _process(_delta: float) -> void:
 	last_operation = _worker.wait_to_finish()
 	_worker = null
 	_restore_input()
+	var before := current_view_data
 	refresh_view(last_operation.view)
 	var result: Dictionary = last_operation.result
+	world_audio.play(WorldAudio.cue_for(_operation_name, result, before, current_view_data))
 	if not result.get("success", false):
 		_status.text = "未能完成：%s。未自动重试，请先核对现场与记录。" % str(result.get("error", result.get("error_reason", "unknown")))
 	elif _operation_name == "save_to_path":

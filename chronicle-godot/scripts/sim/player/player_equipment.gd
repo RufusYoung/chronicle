@@ -12,6 +12,8 @@ static func describe(item: Dictionary) -> String:
 	var lines: Array[String] = []
 	if item.get("condition", {}).has("durability"):
 		lines.append("耐久 %d/%d" % [item.condition.durability, item.condition.maximum_durability])
+		if int(item.condition.durability) <= 0:
+			lines.append("已损坏，被动失效；修补次数与材料仍有限")
 	elif item.get("durability", {}).has("maximum"):
 		lines.append("耐久上限%d" % int(item.durability.maximum))
 	for modifier: Dictionary in item.get("modifiers", []):
@@ -25,6 +27,8 @@ static func describe(item: Dictionary) -> String:
 					{"lte": "≤", "gte": "≥"}.get(condition.get("operator"), "="), condition.get("value")]
 			elif condition.get("kind") == "context_tag":
 				line += "（%s）" % {"dim_light": "昏暗时", "freezing": "严寒时"}.get(condition.get("tag"), condition.get("tag"))
+			elif condition.get("kind") == "action_tag" and condition.get("tag") != "combat":
+				line += "（%s）" % {"combat_melee": "近身进攻时", "combat_retreat": "撤离时"}.get(condition.get("tag"), condition.get("tag"))
 		lines.append(line)
 	return "；".join(lines)
 
@@ -106,12 +110,14 @@ static func journal(session: Variant) -> Dictionary:
 				xp = int(progress.practice_xp)
 				rank = int(progress.rank)
 		var thresholds: Array = definition.rank_thresholds
-		features.append({"name": definition.display_name, "state": "%d级 · %d/%s经验" % [rank, xp,
-			str(int(thresholds[rank + 1])) if rank + 1 < thresholds.size() else "已熟练"], "description": definition.description})
+		var progress_label := "%d/%d经验" % [xp, int(thresholds[rank + 1])] if rank + 1 < thresholds.size() else "已熟练 · %d经验" % xp
+		features.append({"id": definition.skill_def_id, "kind": "skill", "rank": rank, "xp": xp,
+			"name": definition.display_name, "state": "%d级 · %s" % [rank, progress_label], "description": definition.description})
 	for definition: Dictionary in session.fixture_source_data.integration_rules.feature_defs.trait:
 		var acquired: bool = store.list_trait_instances(actor).any(func(t: Dictionary) -> bool:
 			return t.trait_def_id == definition.trait_def_id and t.status == "active")
-		features.append({"name": definition.display_name, "state": "已形成" if acquired else "尚未形成",
+		features.append({"id": definition.trait_def_id, "kind": "trait", "acquired": acquired,
+			"name": definition.display_name, "state": "已形成" if acquired else "尚未形成",
 			"description": definition.description})
 	var catalog: Array = []
 	for definition: Dictionary in session.fixture_source_data.integration_rules.item_defs:
@@ -121,5 +127,7 @@ static func journal(session: Variant) -> Dictionary:
 		catalog.append({"name": definition.display_name, "definition_id": definition.item_def_id,
 			"state": "基础制作" if skill.is_empty() else "编织%d级制作" % int(skill.rank),
 			"description": describe(definition) + "。\n工棚制作%d小时，耗当地苇材与绳具耐久；也可向有余货的人购买。" % int(recipe.work_interval_hours)})
-	return {"items": items, "features": features, "catalog": catalog, "actions": options(session),
-		"note": "编织经验打开更复杂的装备；仍需材料、时间和工具。穿戴才有被动；途中与交锋中不能换装。"}
+	var note := "编织经验打开更复杂的装备；仍需材料、时间和工具。穿戴才有被动；途中与交锋中不能换装。"
+	if session.fixture_source_data.integration_rules.get("combat_wear_version") == 1:
+		note += "随身用具每轮交锋磨损1耐久，归零即失效并卸下。"
+	return {"items": items, "features": features, "catalog": catalog, "actions": options(session), "note": note}

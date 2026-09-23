@@ -29,6 +29,9 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(viewer.current_view_data.get("equipment_journal", {}).get("items", []).size() >= 3, "UI loads legally crafted native inventory")
+	var long_stock := [{"name": "货柜", "state_text": "完整数量与耐久清单".repeat(30), "state_brief": "12种现货 · 主人不在场，不能取货"}]
+	_check("12种现货" in viewer._format_entity_rows(long_stock, "", true) and "完整数量" not in viewer._format_entity_rows(long_stock, "", true), "compact stock uses semantic summary instead of unbounded item list")
+	_check("完整数量与耐久清单".repeat(30) in viewer._format_entity_rows(long_stock, ""), "records retain full stock details")
 	var journal: VBoxContainer = viewer._equipment_journal
 	viewer.surface.tabs.current_tab = journal.get_index()
 	var before := _signature(viewer.view_model)

@@ -9,11 +9,14 @@ const SharedInterfaceStyle = preload(
 )
 const SharedSurface = preload("res://scripts/rebuild/v5_shared_world_surface.gd")
 const PixelPortraits = preload("res://scripts/rebuild/pixel_portraits.gd")
+const WorldAudio = preload("res://scripts/rebuild/world_audio.gd")
 
 var view_model: Variant = null
 var current_view_data: Dictionary = {}
 var _playtest_end_state := ""
 var surface: Dictionary = {}
+var audio_settings_path := "user://presentation.cfg"
+var world_audio: Node
 
 @onready var location_title: Label = %LocationTitle
 @onready var location_context: Label = %LocationContext
@@ -73,6 +76,10 @@ func _ready() -> void:
 			history_text.get_parent().get_node("HistoryHeading"), history_text],
 	})
 	location_title.add_theme_font_size_override("font_size", SharedInterfaceStyle.FONT_TITLE)
+	world_audio = WorldAudio.new()
+	world_audio.settings_path = audio_settings_path
+	add_child(world_audio)
+	world_audio.install_control(restart_button.get_parent())
 	wait_button.pressed.connect(advance_time)
 	restart_button.pressed.connect(_request_restart)
 	restart_dialog.confirmed.connect(restart_session)
@@ -92,19 +99,19 @@ func restart_session() -> void:
 
 func perform_action(action_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_action(action_id)
-	refresh_view()
+	_finish_player_action(result, "perform_action")
 	return result
 
 
 func perform_travel(route_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_travel(route_id)
-	refresh_view()
+	_finish_player_action(result, "perform_travel")
 	return result
 
 
 func perform_challenge(option_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_challenge(option_id)
-	refresh_view()
+	_finish_player_action(result, "perform_challenge")
 	return result
 
 
@@ -115,44 +122,50 @@ func perform_combat_encounter(
 	var result: Dictionary = view_model.perform_combat_encounter(
 		option_id, metadata
 	)
-	refresh_view()
+	_finish_player_action(result, "perform_combat_encounter")
 	return result
 
 
 func perform_return_echo(option_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_return_echo(option_id)
-	refresh_view()
+	_finish_player_action(result, "perform_return_echo")
 	return result
 
 
 func perform_investigation(option_id: String) -> Dictionary:
 	var result: Dictionary = view_model.perform_investigation(option_id)
-	refresh_view()
+	_finish_player_action(result, "perform_investigation")
 	return result
 
 
 func advance_time() -> Dictionary:
 	var result: Dictionary = view_model.advance_time(1)
-	refresh_view()
+	_finish_player_action(result, "advance_time")
 	return result
 
 
 func act_player_life(id: String) -> Dictionary:
 	var result: Dictionary = view_model.act_player_life(id)
-	refresh_view()
+	_finish_player_action(result, "act_player_life")
 	return result
 
 
 func rest_for_recovery() -> Dictionary:
 	var result: Dictionary = view_model.rest_for_recovery()
-	refresh_view()
+	_finish_player_action(result, "rest_for_recovery")
 	return result
 
 
 func wait_until_north_quay_ferry() -> Dictionary:
 	var result: Dictionary = view_model.wait_until_north_quay_ferry()
-	refresh_view()
+	_finish_player_action(result, "wait_until_north_quay_ferry")
 	return result
+
+
+func _finish_player_action(result: Dictionary, method: String) -> void:
+	var before := current_view_data
+	refresh_view()
+	world_audio.play(WorldAudio.cue_for(method, result, before, current_view_data))
 
 
 func refresh_view(projected: Dictionary = {}) -> void:
@@ -660,7 +673,7 @@ func _format_entity_rows(rows: Array, empty_text: String, compact: bool = false,
 	for row_value: Variant in display_rows:
 		var row := row_value as Dictionary
 		var text := "[b]%s[/b]" % str(row.get("name", "未命名"))
-		var state_text := str(row.get("state_text", ""))
+		var state_text := str(row.get("state_brief", row.get("state_text", "")) if compact else row.get("state_text", ""))
 		if state_text != "":
 			text += "　[color=#d7b86e]%s[/color]" % state_text
 		var description := str(row.get("description", ""))

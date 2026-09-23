@@ -102,6 +102,10 @@ func definition(snapshot: Variant, actor_id: String, threat: Dictionary, config:
 	var hit := {"base_health_loss": 6, "fatigue_gain": fatigue_cost, "injury": injury,
 		"injury_label": "战斗挫伤", "durability_slot": "body_outer", "durability_loss": 2}
 	var safe := {"fatigue_gain": fatigue_cost, "durability_slot": "main_hand", "durability_loss": 1}
+	if config.get("combat_wear_version") == 1:
+		var utility_wear := [{"durability_slot": "utility", "durability_loss": 1}]
+		hit["additional_equipment_wear"] = utility_wear
+		safe["additional_equipment_wear"] = utility_wear
 	var integrated: bool = config.get("integration_version") == 1
 	var context_tags: Array = []
 	if integrated and (int(snapshot.world_time.get("hour", 12)) < 7 or int(snapshot.world_time.get("hour", 12)) >= 18):

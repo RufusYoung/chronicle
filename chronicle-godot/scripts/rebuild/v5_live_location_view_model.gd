@@ -1324,6 +1324,7 @@ func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 		"description": str(entity.get("description", "")),
 		"surface_priority": 2 if already_known else 0,
 		"state_text": state_text,
+		"state_brief": _object_state_text(entity, snapshot, true) if "worksite_food_store" in entity.get("tags", []) else state_text,
 		"portrait_age": int(states.get("age_years", -1)) if entity_type == "person" and entity_id.begins_with("generated_resident.") else -1,
 	}
 
@@ -3263,13 +3264,13 @@ func _person_state_text(states: Dictionary) -> String:
 	return "　".join(rows)
 
 
-func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
+func _object_state_text(entity: Dictionary, snapshot: Variant, compact: bool = false) -> String:
 	var entity_id := str(entity.get("id", ""))
 	if "world_threat" in entity.get("tags", []):
 		return "仍在守着觅食地 · 健康 %d · 需要绕开、驱赶或脱离" % int(entity.states.get("health", 0))
 	if "local_cooperation" in entity.get("tags", []):
 		var leader: Dictionary = snapshot.get_entity(str(entity.representative_id))
-		return "地方联络人：%s · %d 位成员\n消息要当面传递，约定不会自动通知所有人。" % [leader.get("display_name", entity.representative_id), entity.member_ids.size()]
+		return "地方联络人：%s · %d 位成员\n消息要当面传递，约定不会自动通知所有人。" % [leader.get("display_name", "尚未在此见到本人"), entity.member_ids.size()]
 	if "household_food_store" in entity.get("tags", []):
 		return "家中存粮 %d 份 · 家庭成员到场取用" % FoodStorage.quantity(snapshot.get_items(), entity_id)
 	if "worksite_food_store" in entity.get("tags", []):
@@ -3278,9 +3279,11 @@ func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 			and snapshot.get_entity_state(owner, "daily_route_id", "") == "" and bool(snapshot.get_entity_state(owner, "alive", true))
 		if int(session.world_tick_adapter.daily_life_config.get("food_access", {}).get("worksite_storage", {}).get("version", 0)) == 2:
 			var quantities := {}
+			var kinds := {}
 			for item: Dictionary in snapshot.get_items_for_holder(entity_id):
 				if int(item.quantity) <= 0:
 					continue
+				kinds[item.item_def_id] = true
 				var label := str(item.get("display_name", item.item_def_id))
 				if item.get("condition", {}).has("durability"):
 					label += "（耐久 %d/%d）" % [item.condition.durability, item.condition.maximum_durability]
@@ -3288,6 +3291,8 @@ func _object_state_text(entity: Dictionary, snapshot: Variant) -> String:
 			var goods: Array[String] = []
 			for label: String in quantities:
 				goods.append("%s × %d" % [label, quantities[label]])
+			if compact:
+				return "%d种现货 · %s\n数量与耐久清单见「记录」。" % [kinds.size(), "主人在场，可询价" if present else "主人不在场，不能取货"]
 			return "现场货柜：%s\n%s" % ["、".join(goods) if not goods.is_empty() else "空", "主人在场，可当面询价" if present else "主人不在场，货物不会自动交付"]
 		return "现场存粮 %d 份 · %s" % [FoodStorage.quantity(snapshot.get_items(), entity_id), "主人在场" if present else "主人不在场，不能取货交易"]
 	var entity_type := str(entity.get("type", ""))

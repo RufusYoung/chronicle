@@ -523,6 +523,10 @@ func _modifier_match_report(
 ) -> Dictionary:
 	var unmet: Array[String] = []
 	var source_data: Dictionary = entry.get("source_data", {})
+	if entry.get("source_kind") == "equipment":
+		var condition: Dictionary = source_data.get("condition", {})
+		if condition.has("durability") and int(condition.durability) <= 0:
+			unmet.append("装备已损坏，修复后才能生效")
 	if entry.get("source_kind") == "skill" and int(source_data.get(
 		"rank", 0
 	)) < int(modifier.get("minimum_rank", 0)):

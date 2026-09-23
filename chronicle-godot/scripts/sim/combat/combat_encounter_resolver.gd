@@ -323,6 +323,8 @@ func _append_consequences(
 	_append_equipment_wear(
 		result, snapshot, actor_id, fact_id, costs, time_summary
 	)
+	for wear: Dictionary in costs.get("additional_equipment_wear", []):
+		_append_equipment_wear(result, snapshot, actor_id, fact_id, wear, time_summary)
 	_append_configured_state_changes(
 		result,
 		consequence.get("state_changes", []),
@@ -489,6 +491,8 @@ func _potential_costs(
 		"durability_slot": str(consequence.get("durability_slot", "")),
 		"nonlethal": true,
 	}
+	if consequence.has("additional_equipment_wear"):
+		costs["additional_equipment_wear"] = consequence.additional_equipment_wear.duplicate(true)
 	var descriptions: Array[String] = []
 	if health_loss > 0:
 		descriptions.append("健康最多损失 %d，保留至少 1 点" % health_loss)
@@ -498,11 +502,17 @@ func _potential_costs(
 		descriptions.append("可能留下%s" % str(costs.get("injury_label", "伤势")))
 	if int(costs.get("durability_loss", 0)) > 0:
 		descriptions.append("%s装备耐久最多损失 %d" % [
-			str(costs.get("durability_slot", "对应栏位")),
+			_slot_label(str(costs.get("durability_slot", "对应栏位"))),
 			int(costs.get("durability_loss", 0)),
 		])
+	for wear: Dictionary in costs.get("additional_equipment_wear", []):
+		descriptions.append("%s装备耐久损失 %d" % [_slot_label(str(wear.durability_slot)), int(wear.durability_loss)])
 	costs["descriptions"] = descriptions
 	return costs
+
+
+static func _slot_label(slot: String) -> String:
+	return {"main_hand": "手持", "body_outer": "外衣", "utility": "随身用具"}.get(slot.trim_prefix("slot."), slot)
 
 
 func _approach(encounter: Dictionary, approach_id: String) -> Dictionary:

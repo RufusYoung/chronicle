@@ -217,6 +217,7 @@ def play(output, *, seed=81001, hours=72, packaged=False, godot=None, policies=N
                        "hired_work": [f for f in facts if f.get("actor_id") == "player" and f.get("employer_id") and f.get("fact_type") == "npc_livelihood_produced"],
                        "witnessed_followups": response["observation"].get("player_life_followups", []),
                        "local_information": response["observation"].get("local_information", []),
+                       "equipment_journal": response["observation"].get("equipment_journal", {}),
                        "player_sales": [f for f in facts if f.get("fact_type") == "player_food_sold"],
                        "player_gifts": [f for f in facts if f.get("fact_type") == "player_food_given"],
                        "work_after_danger": [f for f in facts if f.get("danger_clearance_source_id")],
@@ -248,6 +249,6 @@ if __name__ == "__main__":
     parser.add_argument("--packaged", action="store_true")
     parser.add_argument("--godot")
     parser.add_argument("--policies", nargs="+", choices=("observer", "prepared", "direct_risk", "local_help", "tool_life", "local_trade", "local_gift", "content_life", "provisions"))
-    parser.add_argument("--variant", choices=("player_life_v1", "player_life_v2", "world_content_v1", "world_content_v2", "world_body_v1"), default="player_life_v1")
+    parser.add_argument("--variant", choices=("player_life_v1", "player_life_v2", "world_content_v1", "world_content_v2", "world_body_v1", "world_adventure_v1"), default="player_life_v1")
     args = parser.parse_args()
     play(args.output, seed=args.seed, hours=args.hours, packaged=args.packaged, godot=args.godot, policies=args.policies, variant=args.variant)

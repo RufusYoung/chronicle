@@ -27,12 +27,42 @@ func run() -> void:
 	var old := Live.new()
 	check(old.start(options()).success, "previous integration remains usable")
 	check(not old.session.registry.has_definition("skill", "skill.coast_craft"), "old worlds do not gain new progression")
+	check(not old.session.fixture_source_data.world_danger.has("combat_wear_version"), "previous world keeps original combat wear")
 	_equipment_boundaries(model.session)
+	_utility_wear(model.session)
 	_trade_boundaries(model.session)
 	_legal_crafting(model)
 	_legal_subsistence_growth(settings)
 	print("WORLD_ADVENTURE_CONTRACT %d/%d" % [checks - failures.size(), checks])
 	quit(0 if failures.is_empty() else 1)
+
+
+func _utility_wear(base: Variant) -> void:
+	for succeeds: bool in [true, false]:
+		var fixture: Dictionary = base.fixture_source_data.duplicate(true)
+		fixture.initial_equipment_loadouts = []
+		fixture.initial_items.append({"item_instance_id": "test.last_buckler", "item_def_id": "item.reed_buckler",
+			"holder": {"kind": "entity", "id": "player"}, "quantity": 1, "condition": {"durability": 1}})
+		fixture.initial_equipment_loadouts.append({"entity_id": "player", "slots": {"utility": "test.last_buckler"}})
+		var session := Session.new()
+		var started: Dictionary = session.start_from_fixture_data(fixture, base.rule_source_paths)
+		check(started.success, "controlled utility wear fixture, not legal acquisition: " + str(started.get("error", "")))
+		if not started.success:
+			continue
+		var snapshot: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
+		var danger := Danger.new()
+		var encounter: Dictionary = danger.definition(snapshot, "player", snapshot.get_entity("world_threat.field_boar"), fixture.world_danger)
+		encounter.approaches[1].difficulty = 1 if succeeds else 100
+		var combat := Danger.Combat.new()
+		combat.configure(session.registry)
+		var resolved: Variant = combat.resolve_attempt(encounter, snapshot, "guard", 3, 81001, session.get_time_summary(), "player")
+		check(resolved.narrative_result.outcome == ("success" if succeeds else "failure"), "controlled combat takes requested branch")
+		check(session.writer.apply_result(resolved, session.stores), "utility wear shares combat transaction on both outcomes")
+		check(session.stores.item_store.get_item("test.last_buckler").condition.durability == 0, "real shield loses last durability")
+		check(session.stores.equipment_store.get_equipped_item_id("player", "utility") == "", "broken shield is automatically unequipped, not deleted")
+		var later: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
+		check(not combat.preview(encounter, later, "guard", "player").modifier_evaluations.any(func(row: Dictionary) -> bool:
+			return row.source_id == "test.last_buckler" and row.applied), "subsequent action no longer receives broken shield")
 
 
 func _legal_subsistence_growth(settings: Dictionary) -> void:
@@ -87,6 +117,28 @@ func _legal_crafting(model: Variant) -> void:
 	check(Equipment.journal(restored.session) == Equipment.journal(session), "native journal exactly preserves growth and equipment")
 	check(model.act_player_life("unequip:main_hand").get("success", false), "player can take equipment off")
 	check(session.stores.item_store.get_item(equip[0].item_instance_id).holder.id == session.context.actor_id, "unequip does not destroy or transfer item")
+	for _hour: int in 24:
+		if session.current_hour >= 7 and session.current_hour < 16:
+			break
+		var actions: Array = session.PlayerLife.options(session)
+		var meals: Array = actions.filter(func(row: Dictionary) -> bool: return str(row.action_id).begins_with("eat:") and row.can_execute)
+		var hunger: String = str(session.stores.state_store.get_state(str(session.context.actor_id), "hunger", "low"))
+		check(model.act_player_life(meals[0].action_id if hunger in ["high", "extreme"] and not meals.is_empty() else "rest").success, "legal overnight preparation for repair")
+	check(model.act_player_life("work:recipe.reed_quarterstaff").get("work_completed", false), "additional real craft wears the first cord to zero")
+	var repairs: Array = session.PlayerLife.options(session).filter(func(row: Dictionary) -> bool:
+		return str(row.action_id).begins_with("repair:") and row.can_execute)
+	check(not repairs.is_empty(), "legal worn tool has an available material repair: " + JSON.stringify(session.PlayerLife.options(session).filter(func(row: Dictionary) -> bool: return str(row.action_id).begins_with("repair:"))))
+	if not repairs.is_empty():
+		check(model.act_player_life(repairs[0].action_id).get("work_completed", false), "actual repair completes with time and material")
+		check(Equipment.journal(session).features.any(func(row: Dictionary) -> bool:
+			return row.id == "trait.repairers_grip" and row.acquired), "real repair grants grip experience, no injected growth")
+		var snapshot: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
+		var danger := Danger.new()
+		var encounter := danger.definition(snapshot, "player", snapshot.get_entity("world_threat.field_boar"), session.fixture_source_data.world_danger)
+		var resolver := Danger.Combat.new()
+		resolver.configure(session.registry)
+		check(resolver.preview(encounter, snapshot, "guard", "player").modifier_evaluations.any(func(row: Dictionary) -> bool:
+			return row.source_id == "trait.repairers_grip" and row.applied), "actual repair trait is read by later guard consumer")
 
 
 func _equipment_boundaries(base: Variant) -> void:
@@ -122,11 +174,62 @@ func _equipment_boundaries(base: Variant) -> void:
 		for approach: String in ["attack", "guard", "withdraw"]:
 			changed = changed or combat.preview(encounter, snapshot, approach, "player").effective_score != before[approach]
 		check(changed, "real combat consumer reads gear: " + str(definition.display_name))
+		if definition.item_def_id == "item.braced_reed_sleeve":
+			var healthy: Dictionary = combat.preview(encounter, snapshot, "attack", "player")
+			check(not healthy.modifier_evaluations.any(func(row: Dictionary) -> bool:
+				return row.modifier_id == "sleeve_counter" and row.applied), "healthy counterexample does not receive conditional sleeve attack")
+			# Isolated test snapshot only; no actor is injured in the legal acquisition branch.
+			snapshot.player.health = 60
+			snapshot.states = snapshot.states.duplicate(true)
+			snapshot.states.player.health = 60
+			var hurt: Dictionary = combat.preview(encounter, snapshot, "attack", "player")
+			check(int(hurt.effective_score) - int(healthy.effective_score) == 2, "low-health sleeve condition contributes exactly two attack")
+			snapshot.items = snapshot.items.duplicate(true)
+			for item: Dictionary in snapshot.items:
+				if item.item_instance_id == "test." + str(definition.item_def_id):
+					item.condition.durability = 0
+			var broken: Dictionary = combat.preview(encounter, snapshot, "attack", "player")
+			check(int(broken.effective_score) == int(healthy.effective_score), "broken sleeve cannot retain conditional bonus")
+			check(broken.modifier_evaluations.any(func(row: Dictionary) -> bool:
+				return row.modifier_id == "sleeve_counter" and not row.applied and "装备已损坏，修复后才能生效" in row.unmet_conditions), "broken passive explains why it is inactive")
+			for item: Dictionary in snapshot.items:
+				if item.item_instance_id == "test." + str(definition.item_def_id):
+					item.condition.durability = 4
+			check(combat.preview(encounter, snapshot, "attack", "player").effective_score == hurt.effective_score, "restored durability enables conditional passive again")
 		var clear := Result.new()
 		clear.add_equipment_change({"operation": "equipment_clear", "entity_id": "player", "slot_id": slot, "source_fact_ids": ["test.adventure_gear"]})
 		clear.mark_resolved("test_injection")
 		check(session.writer.apply_result(clear, session.stores), "controlled equipment cleanup")
 	check(not session.PlayerLife.execute(session, "equip:not_owned:main_hand").get("success", true), "forged item action rejected")
+	var builds := {
+		"offensive": ["bound_reed_pike", "light_reed_mantle", "casting_snare"],
+		"defensive": ["reed_quarterstaff", "layered_reed_cuirass", "reed_buckler"],
+		"escape": ["reed_quarterstaff", "light_reed_mantle", "rescue_harness"],
+	}
+	var scores := {}
+	for name: String in builds:
+		var change := Result.new()
+		for index: int in 3:
+			change.add_equipment_change({"operation": "equipment_set", "entity_id": "player",
+				"slot_id": ["main_hand", "body_outer", "utility"][index], "item_instance_id": "test.item." + builds[name][index],
+				"source_fact_ids": ["test.adventure_gear"]})
+		change.mark_resolved("test_injection")
+		check(session.writer.apply_result(change, session.stores), "controlled three-slot loadout: " + name)
+		var snapshot: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
+		var encounter := system.definition(snapshot, "player", snapshot.get_entity("world_threat.field_boar"), fixture.world_danger)
+		scores[name] = {}
+		for approach: String in ["attack", "guard", "withdraw"]:
+			scores[name][approach] = combat.preview(encounter, snapshot, approach, "player").effective_score
+		var clear := Result.new()
+		for slot: String in ["main_hand", "body_outer", "utility"]:
+			clear.add_equipment_change({"operation": "equipment_clear", "entity_id": "player", "slot_id": slot, "source_fact_ids": ["test.adventure_gear"]})
+		clear.mark_resolved("test_injection")
+		check(session.writer.apply_result(clear, session.stores), "controlled loadout cleared")
+	check(scores.offensive.attack > scores.defensive.attack and scores.offensive.attack > scores.escape.attack, "offensive build has distinct real attack advantage")
+	check(scores.defensive.guard > scores.offensive.guard and scores.defensive.guard > scores.escape.guard, "defensive build has distinct real guard advantage")
+	check(scores.escape.withdraw > scores.offensive.withdraw and scores.escape.withdraw > scores.defensive.withdraw, "escape build has distinct real withdrawal advantage")
+	check(scores.defensive.withdraw < scores.offensive.withdraw and scores.offensive.guard < scores.defensive.guard, "specialization retains costs; no build dominates all three")
+	print("CONTROLLED_LOADOUT_SCORES " + JSON.stringify(scores))
 
 
 func _trade_boundaries(base: Variant) -> void:
@@ -155,6 +258,13 @@ func _trade_boundaries(base: Variant) -> void:
 	check(sales.size() == 1, "actual missing tool creates one finite offer")
 	if sales.is_empty():
 		return
+	var absent := Result.new()
+	absent.add_state_change({"entity_id": buyer, "key": "location_id", "to": "generated_location.echo_landing.landing"})
+	absent.mark_resolved("test_injection")
+	check(session.writer.apply_result(absent, session.stores), "controlled absent-buyer branch")
+	check(not session.PlayerLife.execute(session, sales[0].action_id).get("success", true), "stale quote cannot sell to a buyer who left")
+	absent.state_changes[0].to = "generated_location.echo_landing.commons"
+	check(session.writer.apply_result(absent, session.stores), "restore controlled buyer presence")
 	var coins := session.PlayerLife.Food.balance(view.get_items_for_holder("player"), "player")
 	var buyer_coins := session.PlayerLife.Food.balance(view.get_items_for_holder(buyer), buyer)
 	check(sales[0].can_execute, "buyer can pay actual quote")

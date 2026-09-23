@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "combat_wear_version": 1,
   "source_note": "镜湖北岸生成生活细节；苇材与绳具来自有限库存。由 integration_rules v2 显式嵌入，旧存档不启用。",
   "item_defs": [
     {

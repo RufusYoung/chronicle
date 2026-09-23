@@ -15,6 +15,7 @@ var entries: VBoxContainer
 var page_label: Label
 var previous: Button
 var next: Button
+var note: Label
 
 
 func _ready() -> void:
@@ -23,7 +24,7 @@ func _ready() -> void:
 	title.text = "行囊与成长"
 	title.add_theme_font_size_override("font_size", Style.FONT_HEADING)
 	add_child(title)
-	var note := Label.new()
+	note = Label.new()
 	note.text = "物品提供准备，经历留下能力。查看与翻页不推进时间，穿戴花费1小时。"
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(note)
@@ -69,6 +70,7 @@ func _ready() -> void:
 
 func show_journal(value: Dictionary) -> void:
 	data = value
+	note.text = str(data.get("note", "")) + " 查看与翻页不耗时，穿戴花费1小时。"
 	_render()
 
 

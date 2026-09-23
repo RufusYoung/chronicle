@@ -28,7 +28,7 @@ class TransportTest(unittest.TestCase):
                 self.assertTrue(any(c["choice_id"] == choice and c["enabled"] for c in response["choices"]))
                 response = game.request("act", choice_id=choice)
                 self.assertTrue(response["ok"], response)
-            self.assertIn("沿岸编造", json.dumps(response["observation"]["feedback"], ensure_ascii=False))
+            self.assertIn("沿岸编织", json.dumps(response["observation"]["feedback"], ensure_ascii=False))
             equip = next(c for c in response["choices"] if c["kind"] == "player_life"
                          and c["id"].startswith("equip:") and c["enabled"])
             response = game.request("act", choice_id=equip["choice_id"])

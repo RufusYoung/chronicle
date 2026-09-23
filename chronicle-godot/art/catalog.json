@@ -262,6 +262,46 @@
       "provenance": "PIXEL_ASSET_PROVENANCE.md",
       "sha256": "00a6ccd7cf3b6f0e121543a1d197de63804f65d3db3c4af10f0bff42fb92f718",
       "status": "runtime"
+    },
+    {
+      "path": "audio/action_v1.wav",
+      "status": "runtime",
+      "source": "",
+      "provenance": "audio/PROVENANCE.md",
+      "bytes": 5804,
+      "sha256": "df6fa7b76f538ddce668da86174b955c930460d1fa819fc9e091104f2a73c4f3"
+    },
+    {
+      "path": "audio/arrival_v1.wav",
+      "status": "runtime",
+      "source": "",
+      "provenance": "audio/PROVENANCE.md",
+      "bytes": 15404,
+      "sha256": "49c5023d840e7576e9d10485fad1ae369c13cc96c5282e906883ef08a4bc62ec"
+    },
+    {
+      "path": "audio/work_v1.wav",
+      "status": "runtime",
+      "source": "",
+      "provenance": "audio/PROVENANCE.md",
+      "bytes": 9644,
+      "sha256": "23b3d4775007193623b46f4eb3a72266be539cb1f219f8a84ce54cdb14847dc2"
+    },
+    {
+      "path": "audio/warning_v1.wav",
+      "status": "runtime",
+      "source": "",
+      "provenance": "audio/PROVENANCE.md",
+      "bytes": 13484,
+      "sha256": "2de49585fa98d7e4c7cb50167805a4027f53faa182354fa788203e0b6b51655c"
+    },
+    {
+      "path": "audio/growth_v1.wav",
+      "status": "runtime",
+      "source": "",
+      "provenance": "audio/PROVENANCE.md",
+      "bytes": 26444,
+      "sha256": "d45e63cad915700909ba67c74c90d683cd24b79ca7b96cfc24bcc77705405647"
     }
   ]
 }

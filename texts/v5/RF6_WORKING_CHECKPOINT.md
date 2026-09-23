@@ -4,6 +4,18 @@ Updated 2026-09-23. Recovery context only; the single active plan remains `CHRON
 
 ## Sep 23 Active Work: Adventure Content, Not RF6 Completion
 
+### Latest Recovery Checkpoint
+
+This section supersedes the older Sep23 counts below. Source `fa7e61cd9461f3ca4ca55ac329a92f8d55a5aa02` is committed/pushed on `codex/player-agency-world-surface`. Its clean Windows package passed22/22 protocol tests, but does not yet contain the current follow-on edits. Dirty files are this task's audio/help, utility wear and presentation fixes; no unrelated user changes were reverted.
+
+- Pixel assets are already integrated:12 gear illustrations, two canon-anchored scenes,12 age-banded cosmetic portraits, shared pixel-grid icon; original nonpixel art archived/excluded, licensed readable Chinese font retained. New five original synthesized cues, saved local volume and three-page help are in the current candidate.
+- Current contract125/125 and legal growth19/19 pass. Four skills and four traits have actual consumers; controlled build comparisons are not natural acquisition claims. Utility combat wear is a separate embedded new-world flag; prior v2 saves keep their prior wear contract. Broken equipment cannot contribute modifiers.
+- Legal acquisition seed81001 obtained12/12 catalog entries in83 actions/240 game hours,248.524 wall seconds, without injection. Native reload is exact. `work/adventure-pixel/catalog_final_81001/` retains the sequence, native/UI checkpoint and actual render. This is not15-25 minutes of human play.
+- The240h stock list exposed a real720p layout overflow. Scene now shows semantic stock count/presence while Records retains full quantities/durability. Actual renderer `render_final/result.json` passes, world truth unchanged. Gear surface now36/36, all15 surface tests pass after headless audio suppression. Audio remains enabled/tested with the actual renderer; rapid headless exits previously leaked playback resources and were not accepted as passes.
+- Final source E3 comparisons are `agency_final_81001/` and held-out `agency_final_89037/`, four same-start policies each72h. Gift/trade change others and produce visible reports; neither proves general welfare improvement. Sales are recorded with buyer actor IDs, so read `player_sales`, not only player-actor fact counts. Do not attribute quiet danger solely to NPC victory; a retained quiet-field sample consumed its finite resource and retired.
+- Active regression sessions at this update:75454 regular (early UI audio cleanup failures pre-fix),71944 final actual-render suite. Surface rerun75799 has completed15/15. Poll/close and rerun remaining failed legacy tests; do not claim a clean full run from patched reruns.
+- Next: finish frozen regressions, integrated report/review form, commit/push, clean export, actual packaged22-test protocol/startup and240h/new/old native-load checks; archive evidence. RF6 remains unfinished until measured first experience and comprehension are validated. No human play this turn, no settings/task/automation changes. Next model GPT-6 Astra, extra-high: cross-system delivery verification, no concrete Ultra need.
+
 ### Pixel Direction Added During Work
 
 Latest Sep23 checkpoint supersedes the earlier counts below: adventure contract78/78; source public protocol22/22 (101.923s); actual adventure surface34/34 and pixel renderer55/55; art boundary tests9/9. Final wording fixes change "编造" to "编织". Headless import generated the new pixel-test UID; old integration-v1 save now explains that the gear/growth expansion requires a new world, never silently upgrades it.
