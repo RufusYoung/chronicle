@@ -285,10 +285,10 @@ func start_from_fixture_path(
 			return _start_failure("content_extension_not_loaded")
 		if fixture.content_extension.get("version") != options.content_extension_version:
 			return _start_failure("content_extension_version_mismatch")
-	if options.get("integration_rules_version", 0) not in [0, 1]:
+	if options.get("integration_rules_version", 0) not in [0, 1, 2]:
 		return _start_failure("unsupported_integration_rules_version")
-	if options.get("integration_rules_version", 0) == 1:
-		fixture["integration_rules"] = loader.load_json(Integration.DEFAULT_PATH)
+	if options.get("integration_rules_version", 0) in [1, 2]:
+		fixture["integration_rules"] = Integration.load_pack(int(options.integration_rules_version))
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (

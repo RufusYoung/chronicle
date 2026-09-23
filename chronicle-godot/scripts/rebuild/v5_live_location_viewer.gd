@@ -8,6 +8,7 @@ const SharedInterfaceStyle = preload(
 	"res://scripts/rebuild/v5_shared_interface_style.gd"
 )
 const SharedSurface = preload("res://scripts/rebuild/v5_shared_world_surface.gd")
+const PixelPortraits = preload("res://scripts/rebuild/pixel_portraits.gd")
 
 var view_model: Variant = null
 var current_view_data: Dictionary = {}
@@ -583,11 +584,64 @@ func _format_status_rows(rows: Array) -> String:
 
 
 func _refresh_compact_entities() -> void:
-	visible_people.text = _format_entity_rows(
-		current_view_data.get("visible_people", []), "这里没有值得留意的人。", true,
-		3 if get_viewport_rect().size.y < 800 else 4)
+	_refresh_people_with_portraits()
+	_refresh_portrait_details()
 	visible_observations.text = _format_entity_rows(
 		current_view_data.get("visible_observations", []), "眼前没有明显的物件或痕迹。", true)
+
+
+func _refresh_people_with_portraits() -> void:
+	var rows: Array = current_view_data.get("visible_people", [])
+	var limit := 3 if get_viewport_rect().size.y < 800 else 4
+	if rows.filter(func(row: Dictionary) -> bool: return int(row.get("portrait_age", -1)) >= 0).is_empty():
+		visible_people.text = ""
+		visible_people.text = _format_entity_rows(rows, "这里没有值得留意的人。", true, limit)
+		return
+	var displayed: Array = []
+	for priority: int in 3:
+		for row: Dictionary in rows:
+			if int(row.get("surface_priority", 0)) == priority:
+				displayed.append(row)
+	visible_people.clear()
+	visible_people.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if displayed.is_empty():
+		visible_people.append_text("这里没有值得留意的人。")
+		return
+	for index: int in mini(displayed.size(), limit):
+		var row: Dictionary = displayed[index]
+		if index > 0:
+			visible_people.append_text("\n")
+		var portrait := PixelPortraits.portrait(str(row.get("id", "")), int(row.get("portrait_age", -1)))
+		if portrait != null:
+			visible_people.add_image(portrait, 16, 16)
+			visible_people.append_text(" ")
+		visible_people.append_text(_format_entity_rows([row], "", true, 1))
+	if displayed.size() > limit:
+		visible_people.append_text("\n[color=#8f9c98]另有 %d 项现场信息，完整内容见「记录」。[/color]" % (displayed.size() - limit))
+
+
+func _refresh_portrait_details() -> void:
+	if not surface.has("portraits"):
+		return
+	var strip: HFlowContainer = surface.portraits
+	_clear_children(strip)
+	for row: Dictionary in current_view_data.get("visible_people", []):
+		var portrait := PixelPortraits.portrait(str(row.get("id", "")), int(row.get("portrait_age", -1)))
+		if portrait == null:
+			continue
+		var column := VBoxContainer.new()
+		strip.add_child(column)
+		var picture := TextureRect.new()
+		picture.texture = portrait
+		picture.custom_minimum_size = Vector2(80, 80)
+		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		picture.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		column.add_child(picture)
+		var name_label := Label.new()
+		name_label.text = str(row.get("name", ""))
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		column.add_child(name_label)
 
 
 func _format_entity_rows(rows: Array, empty_text: String, compact: bool = false, row_limit: int = 4) -> String:

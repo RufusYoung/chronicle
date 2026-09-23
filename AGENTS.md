@@ -28,12 +28,13 @@ Reversible implementation and balance choices are engineering work. State and re
 - Separate passive simulation, legal agent play, program-driven UI rendering, human UI play and test injection. Never call injected events player choices.
 - State who knows what, where they are, who owns the goods, what is spent, and what later becomes possible or impossible. Logging a consequence does not implement it.
 - Preserve source art in `chronicle-godot/art/`; keep `素材包` originals intact. Do not redistribute third-party game assets or code as Chronicle assets.
+- All shipped visual art is pixel art, including equipment, items, environments, characters, creatures and decorative UI. Follow `chronicle-godot/art/PIXEL_ART_DIRECTION.md`; archive superseded non-pixel sources, use nearest-neighbor texture filtering, and preserve readable Chinese text. A style change must not alter world or save truth.
 - Validate scoped changes, causal counterexamples, persistence and relevant regressions. Runtime changes require a refreshed Windows package and actual package smoke test, not export exit status alone.
 - Keep Git synchronized at verified checkpoints. Preserve user-authored changes; do not broadly restore a dirty workspace.
 
 ## Model and Context
 
-The user defaults to extra-high (极高) reasoning. Every progress or checkpoint report must include a reasoning-effort recommendation for the next stage and a brief task-specific reason. Recommend Ultra only when the next integrated task has a concrete need for it; do not change global or task settings silently.
+The user defaults to extra-high (极高) reasoning. Every progress or checkpoint report must include a model and reasoning-effort recommendation for the next stage and a brief task-specific reason. Recommend Ultra only when the next integrated task has a concrete need for it; do not change global or task settings silently.
 
 The requested development model is GPT-6 Astra. Model configuration is not proof of the current task's runtime identity; report only verified configuration or tool results. Do not silently edit global settings or hard-code assumed model capabilities into game logic.
 

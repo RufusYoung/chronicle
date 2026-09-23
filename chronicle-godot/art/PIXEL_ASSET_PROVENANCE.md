@@ -1,0 +1,36 @@
+# Pixel Art Assets, 2026-09-23
+
+All four raster images use built-in ImageGen, not a paid CLI/API fallback. The three edits use only Chronicle's own earlier generated artwork. Source outputs remain in `C:/Users/x4473/.codex/generated_images/019ebcb5-52c8-7163-88a8-7b5e49c7b379/`. Runtime files are byte-for-byte copies, not resized or painted through scripts. The targets in prompts are visual-density goals, not claims of exact generated pixel grids or palette counts. Actual sizes and hashes are in `catalog.json`.
+
+| Runtime file | Generated source filename | Use |
+| --- | --- | --- |
+| `icons/coastal_equipment_pixel_v1.png` | `exec-f933fb3c-ab41-4df3-9fce-6c6b9b1b9946.png` | Twelve existing equipment identities, inventory and local catalog |
+| `environments/echo_port_landing_pixel_v1.png` | `exec-15c774a7-51d7-4d81-845e-1c731f2706f0.png` | Canon Mirror Lake north shore, static backdrop |
+| `environments/reed_bank_landing_pixel_v1.png` | `exec-de78118e-dced-4307-bd30-d1085c047329.png` | Legacy reed-bank prototype, not promoted to canon |
+| `characters/lakeside_residents_pixel_v1.png` | `exec-a8c3a7d3-1c5b-4f08-9a5f-4f67084c857e.png` | Twelve generic civilian appearances in three age bands |
+
+The first reed-bank edit failed with a network error; only its successful retry is shipped. Earlier non-pixel images and the old Godot logo are archived in `source/pre_pixel/`, excluded from import/export. Their earlier provenance remains in `environments/` and `icons/`. `icons/icon.svg` is a newly authored crisp 32-unit pixel-grid book motif in editable SVG, replacing the engine placeholder. It uses only rectangular pixel shapes, not a raster generation workaround.
+
+Portraits have no independent story, equipment, profession or stat meaning. The generated resident's real age selects child/adult/elder; a stable cosmetic ID hash selects one of four appearances without consuming simulation RNG or mutating saves. There is no sex, ancestry or genetic-generation claim. Unknown ages and authored legacy people receive no guessed portrait. All twelve appearances are reused, not twelve unique NPCs or an unlimited character generator.
+
+## Equipment Prompt
+
+Use case: style-transfer. Edit target: the provided twelve equipment atlas for original fantasy RPG Chronicle. Redraw ALL twelve objects as genuine deliberately low-resolution 16-bit PIXEL ART, not painted images with a mosaic filter. Crisp square pixel clusters, hard stepped outlines, no antialiasing, no blur, no gradient, no bloom or soft shadow. Target visual density of 48x48 to 64x64 logical pixels per icon, enlarged nearest-neighbor; a restricted shared earthy palette of dark charcoal, ochre fiber, desaturated reed green and a few pale highlights. Maintain exactly the same object identities and reading order in a mathematically equal FOUR COLUMN by THREE ROW grid, twelve equal cells, each isolated centered with generous 15 percent transparent padding, no overlap: row1 knotted rope whip / sleeveless woven reed vest / jointed reed quarterstaff / bound reed spear; row2 tightly woven short club / round reed buckler / rescue rope waist harness / bundled casting net; row3 short reed mantle / thick layered reed cuirass / pair of cord sandals / reed bracer. Transparent background, no labels, no text, no grid lines or frames. Distinguish the light vest and thick cuirass by silhouette. Keep primitive materials and functional silhouettes; do not add metal weapons or jewels. Entirely replace the painterly treatment with visibly chunky, beautiful readable pixel sprites.
+
+Input: `source/pre_pixel/coastal_equipment_atlas_v1.png`. Generated grid has imperfect row spacing; runtime AtlasTexture regions follow visible bounds. No claim of perfect prompt compliance.
+
+## Mirror Lake Prompt
+
+Use case: style-transfer. Edit target: original Chronicle Mirror Lake north shore environment. Rebuild this exact scene as handcrafted 16-bit PIXEL ART suitable for a readable adventure-game location backdrop. Preserve inland mountain lake geography, cliffs, stone-and-timber lakeside houses on left, small wooden landing in foreground, nets, coiled rope, still freshwater on right and distant ridges. No sea, no new castle, no people, no text, no HUD. Radically simplify detail into deliberate large square pixel clusters on a visible low-resolution 384x256 logical grid, displayed enlarged nearest-neighbor. Hard stair-stepped edges and flat limited-color shading; NO painterly brushwork, smooth gradients, cinematic bloom, depth blur, antialiasing or photographic texture. A cohesive 32-color palette of slate blue lake, desaturated pine green, warm ochre timber and pale stone. Use a few broad bands for water reflections, crisp blocky clouds and clearly separated foreground/midground/background. Keep original broad composition and quiet sense of travel. Landscape 3:2 image. It must unmistakably look like pixel art at a glance.
+
+Input: `source/pre_pixel/echo_port_landing_v1.png`.
+
+## Reed Bank Prompt
+
+Convert this original Chronicle environment to crisp 16-bit pixel art, deliberately simplified and readable with clearly visible square pixels. Preserve central wooden workshop, path left, reed bundles, nets, water and boat right; remove people. Small freshwater reed-bank village, quiet daily life. Landscape 3:2, visual density of 384x256 logical pixels enlarged nearest-neighbor. Limited ochre, umber, reed green, slate blue and gray palette. Hard pixel edges, flat color steps, no painting, no photographic texture, no soft gradients or blur, no lettering, no interface, no new architecture.
+
+Input: `source/pre_pixel/reed_bank_landing_v1.png`.
+
+## Portrait Prompt
+
+Use case: stylized-concept. Asset type: original 16-bit PIXEL ART civilian portrait atlas for Chronicle, an inland mountain lake fantasy life RPG. Exactly twelve waist-up portraits in four equal columns and three equal rows, each fully inside its cell with 15 percent clear padding, transparent background, no frames, no letters or numbers. Row1: four different ordinary children, fully clothed in plain tunics, short dark hair / dark bob / brown tied hair / light short hair. Row2: four adult ordinary working villagers, diverse facial silhouettes, two masculine and two feminine presentations, short dark hair / braided dark hair / short brown beard / tied brown hair. Row3: four elderly villagers, two masculine and two feminine presentations, gray short hair / gray braid / short white beard / white tied hair. No weapons or held items, no uniform, no status symbols, simple plain flax and wool clothing in ochre, reed green, umber and slate. Each portrait faces slightly toward the viewer, neutral dignified expression, not caricature or cute chibi. Clearly differentiated child/adult/elder ages. Consistent approximately 64x64 logical-pixel density for each portrait, unmistakably large square pixel clusters, crisp staircase silhouettes, 3-4 flat color shades per material. Classic hand-crafted 16-bit sprites enlarged with nearest-neighbor, NOT illustrations or 3D. No anti-aliased smoothing, fine painted detail, soft shadows, bloom, text, watermark, grid lines. Shared restrained earthy palette. This atlas gives generic visual variety, not named heroes or invented character lore.

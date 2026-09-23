@@ -16,6 +16,32 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_adventure_crafting_gear_growth_and_native_restore(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_adventure_v1")
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(len(response["observation"]["equipment_journal"]["catalog"]), 12)
+            for choice in ("travel/generated_route.echo_landing.commons_to_reed_craft",
+                           "player_life/work:recipe.hand_twist_cord",
+                           "player_life/work:recipe.woven_sap"):
+                self.assertTrue(any(c["choice_id"] == choice and c["enabled"] for c in response["choices"]))
+                response = game.request("act", choice_id=choice)
+                self.assertTrue(response["ok"], response)
+            self.assertIn("沿岸编造", json.dumps(response["observation"]["feedback"], ensure_ascii=False))
+            equip = next(c for c in response["choices"] if c["kind"] == "player_life"
+                         and c["id"].startswith("equip:") and c["enabled"])
+            response = game.request("act", choice_id=equip["choice_id"])
+            self.assertTrue(response["ok"], response)
+            journal = response["observation"]["equipment_journal"]
+            self.assertEqual(len(journal["features"]), 8)
+            self.assertTrue(any(i["definition_id"] == "item.woven_sap" and i["equipped"] for i in journal["items"]))
+            self.assertFalse(any(c["choice_id"] == equip["choice_id"] for c in response["choices"]))
+            slot = f"adventure_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], response["observation"])
+            self.assertEqual(game.request("inspect")["error"], "omniscient_inspection_disabled_in_play_mode")
+
     def test_integrated_danger_uses_legal_travel_combat_and_retreat(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,

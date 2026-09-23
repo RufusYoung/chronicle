@@ -23,7 +23,7 @@ func _run() -> void:
 		viewer.wait_button.pressed.emit()
 		await _settle(viewer)
 	_check(not viewer.current_view_data.visible_people.is_empty(), "waiting alone brings real residents through commons")
-	_check("抵达" in viewer.visible_people.text, "arrival information is rendered")
+	_check("抵达" in viewer.visible_people.get_parsed_text(), "arrival information is rendered")
 	_check("抵达这里" in str(viewer.current_view_data.feedback.get("body", "")), "local arrival is prioritized over distant resource recovery")
 	await _screenshot("commons_10am.png")
 	var route_id := ""
@@ -36,7 +36,7 @@ func _run() -> void:
 		viewer.wait_button.pressed.emit()
 		await _settle(viewer)
 	_check(viewer.current_view_data.location.id == "generated_location.reed_bay.landing", "traveler reaches workplace through legal route")
-	_check("正在做工" in viewer.visible_people.text, "same workers are visibly at work")
+	_check("正在做工" in viewer.visible_people.get_parsed_text(), "same workers are visibly at work")
 	var feedback := str(viewer.current_view_data.feedback.get("body", ""))
 	var explains_work := false
 	for person: Dictionary in viewer.current_view_data.visible_people:

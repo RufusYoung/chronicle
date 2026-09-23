@@ -1,0 +1,12 @@
+# Coastal Equipment Atlas v1
+
+- Created: 2026-09-23, built-in ImageGen; no third-party game imagery supplied.
+- Archived source: `../source/pre_pixel/coastal_equipment_atlas_v1.png`. Superseded by the pixel atlas on 2026-09-23; retain the original alpha, do not ship it.
+- Generated source: `C:/Users/x4473/.codex/generated_images/019ebcb5-52c8-7163-88a8-7b5e49c7b379/exec-d9c09de6-eb3e-46de-a18b-464b50b3b754.png`.
+- Use: inventory and equipment reference. Illustrations do not indicate current durability or prove a simulated material property.
+- Layout: 4 columns, 3 rows. Use runtime AtlasTexture regions; source pixels are not modified. Hand-tuned row bounds follow the rendered objects rather than claiming a perfect generated grid.
+- Contents: knotted whip, reed vest, quarterstaff, bundled pike; woven sap, buckler, rescue harness, casting net; light mantle, layered cuirass, sandals, braced sleeve.
+
+## Prompt
+
+Use case: stylized-concept. Create one production-ready RPG inventory icon atlas for Chronicle, a grounded fantasy life and dangerous-travel game set at a freshwater lake shore. One single square image, exactly 4 columns and 3 rows of equal rectangular cells, 12 separate clearly centered inventory objects, no text, no letters, no numbers, no borders. Uniform very dark green-black background (#081211), generous empty margin in every cell, no objects crossing cell boundaries. Consistent hand-painted storybook fantasy rendering, muted straw gold and lake green, tactile woven reeds and fiber, clean silhouettes readable at 96px. Soft warm upper-left light; objects all fully visible, isolated, no characters, no UI, no logos. Row 1 left to right: (1) a short knotted fiber whip; (2) a sleeveless woven reed protective vest; (3) a long segmented reed quarterstaff held diagonally; (4) a sharpened bundled reed pike with bound fiber handle, diagonal. Row 2 left to right: (5) a dense tightly woven short cudgel; (6) a round small wicker buckler; (7) a looped rescue rope harness and belt; (8) a folded casting entanglement net with several loose loops. Row 3 left to right: (9) a short light reed travel mantle; (10) a heavy overlapping layered reed cuirass, noticeably bulkier than the first vest; (11) a pair of woven trail sandals with ankle ties; (12) a braced reed forearm sleeve with rigid strips. These are handmade low-tech plant-fiber survival items, not shiny metal artifacts, not magical loot. Evenly spaced grid aligned for deterministic rectangular AtlasTexture sampling. Output the finished atlas only.

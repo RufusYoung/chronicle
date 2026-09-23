@@ -118,6 +118,8 @@ static func recently_failed(snapshot: Variant, actor: String, site: String, dema
 
 
 static func knows_work_blocked(snapshot: Variant, actor: Dictionary, profile: Dictionary, tick: Dictionary) -> bool:
+	if not Recipe.skill_ready(snapshot, str(actor.id), profile):
+		return true
 	if not need_for_profile(snapshot, actor, profile).is_empty():
 		return true
 	var site := str(profile.get("workplace_id", ""))

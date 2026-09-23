@@ -100,11 +100,15 @@ static func install(
 	scene_record.name = "SceneDetailsRecord"
 	scene_record.owner = viewer
 	scene_record.unique_name_in_owner = true
+	var portraits := HFlowContainer.new()
+	portraits.name = "PresentPersonPortraits"
+	portraits.add_theme_constant_override("h_separation", 18)
+	record_content.add_child(portraits)
 	_move_nodes(slots.get("records", []), record_content)
 	old_main.hide()
 	tabs.tab_changed.connect(func(index: int) -> void: dock.visible = index == 0)
 	var surface := {"tabs": tabs, "situation": situation, "receipt": receipt,
-		"scene_record": scene_record, "action_page": 0, "action_signature": []}
+		"scene_record": scene_record, "portraits": portraits, "action_page": 0, "action_signature": []}
 	var receipt_button := LinkButton.new()
 	receipt_button.name = "OpenResultReceipt"
 	receipt_button.text = "查看完整结果"
@@ -195,7 +199,7 @@ static func _refresh_action_groups(surface: Dictionary, viewer: Control, actions
 		surface.action_filter = ""
 	if counts.is_empty():
 		return
-	var labels := {"": "全部", "incident": "眼前插曲", "work": "谋生", "trade": "买卖与分粮", "talk": "交谈", "rest": "休整与赶路"}
+	var labels := {"": "全部", "incident": "眼前插曲", "work": "谋生", "trade": "买卖与分粮", "talk": "交谈", "rest": "休整与赶路", "gear": "穿戴"}
 	var group := ButtonGroup.new()
 	for key: String in labels:
 		if key != "" and not counts.has(key):

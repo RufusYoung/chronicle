@@ -1,0 +1,1363 @@
+{
+  "version": 1,
+  "source_note": "镜湖北岸生成生活细节；苇材与绳具来自有限库存。由 integration_rules v2 显式嵌入，旧存档不启用。",
+  "item_defs": [
+    {
+      "item_def_id": "item.reed_quarterstaff",
+      "definition_version": 1,
+      "display_name": "长节苇杖",
+      "display_name_key": "item.reed_quarterstaff.name",
+      "item_kind": "weapon",
+      "tags": [
+        "fiber_gear",
+        "melee_weapon",
+        "main_hand"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "main_hand"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 14
+      },
+      "base_value": 6,
+      "modifiers": [
+        {
+          "modifier_id": "staff_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "防守+2"
+        },
+        {
+          "modifier_id": "staff_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "进攻+1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.bound_reed_pike",
+      "definition_version": 1,
+      "display_name": "束苇长枪",
+      "display_name_key": "item.bound_reed_pike.name",
+      "item_kind": "weapon",
+      "tags": [
+        "fiber_gear",
+        "melee_weapon",
+        "main_hand"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "main_hand"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 18
+      },
+      "base_value": 10,
+      "modifiers": [
+        {
+          "modifier_id": "pike_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 4,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "进攻+4"
+        },
+        {
+          "modifier_id": "pike_escape",
+          "target": "combat.escape",
+          "operation": "add",
+          "value": -1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "脱离-1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.woven_sap",
+      "definition_version": 1,
+      "display_name": "紧编短棍",
+      "display_name_key": "item.woven_sap.name",
+      "item_kind": "weapon",
+      "tags": [
+        "fiber_gear",
+        "melee_weapon",
+        "main_hand"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "main_hand"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 10
+      },
+      "base_value": 5,
+      "modifiers": [
+        {
+          "modifier_id": "sap_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 3,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "进攻+3"
+        },
+        {
+          "modifier_id": "sap_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": -1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "防守-1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.reed_buckler",
+      "definition_version": 1,
+      "display_name": "圆编小盾",
+      "display_name_key": "item.reed_buckler.name",
+      "item_kind": "equipment",
+      "tags": [
+        "fiber_gear",
+        "utility_gear",
+        "utility"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "utility"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 16
+      },
+      "base_value": 7,
+      "modifiers": [
+        {
+          "modifier_id": "buckler_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "防守+2"
+        },
+        {
+          "modifier_id": "buckler_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": -1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "进攻-1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.rescue_harness",
+      "definition_version": 1,
+      "display_name": "渡滩结绳带",
+      "display_name_key": "item.rescue_harness.name",
+      "item_kind": "equipment",
+      "tags": [
+        "fiber_gear",
+        "utility_gear",
+        "utility"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "utility"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 10
+      },
+      "base_value": 8,
+      "modifiers": [
+        {
+          "modifier_id": "harness_escape",
+          "target": "combat.escape",
+          "operation": "add",
+          "value": 3,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "脱离+3"
+        },
+        {
+          "modifier_id": "harness_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": -1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "进攻-1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.casting_snare",
+      "definition_version": 1,
+      "display_name": "抛撒缠网",
+      "display_name_key": "item.casting_snare.name",
+      "item_kind": "equipment",
+      "tags": [
+        "fiber_gear",
+        "utility_gear",
+        "utility"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "utility"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 8
+      },
+      "base_value": 9,
+      "modifiers": [
+        {
+          "modifier_id": "net_attack",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat_melee"
+            }
+          ],
+          "explain_text": "进攻+2"
+        },
+        {
+          "modifier_id": "net_escape",
+          "target": "combat.escape",
+          "operation": "add",
+          "value": 1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "脱离+1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.light_reed_mantle",
+      "definition_version": 1,
+      "display_name": "短裁苇披",
+      "display_name_key": "item.light_reed_mantle.name",
+      "item_kind": "equipment",
+      "tags": [
+        "fiber_gear",
+        "armor_outer",
+        "body_outer"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 1.5,
+      "equip_slots": [
+        "body_outer"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 9
+      },
+      "base_value": 5,
+      "modifiers": [
+        {
+          "modifier_id": "mantle_escape",
+          "target": "combat.escape",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "脱离+2"
+        },
+        {
+          "modifier_id": "mantle_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": 1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "防守+1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.layered_reed_cuirass",
+      "definition_version": 1,
+      "display_name": "叠层苇甲",
+      "display_name_key": "item.layered_reed_cuirass.name",
+      "item_kind": "equipment",
+      "tags": [
+        "fiber_gear",
+        "armor_outer",
+        "body_outer"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 1.5,
+      "equip_slots": [
+        "body_outer"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 24
+      },
+      "base_value": 14,
+      "modifiers": [
+        {
+          "modifier_id": "cuirass_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": 4,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "防守+4"
+        },
+        {
+          "modifier_id": "cuirass_escape",
+          "target": "combat.escape",
+          "operation": "add",
+          "value": -2,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "脱离-2"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.trail_sandals",
+      "definition_version": 1,
+      "display_name": "绑脚行路鞋",
+      "display_name_key": "item.trail_sandals.name",
+      "item_kind": "equipment",
+      "tags": [
+        "fiber_gear",
+        "utility_gear",
+        "utility"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "utility"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 14
+      },
+      "base_value": 6,
+      "modifiers": [
+        {
+          "modifier_id": "sandals_escape",
+          "target": "combat.escape",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "脱离+2"
+        },
+        {
+          "modifier_id": "sandals_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": -1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "防守-1"
+        }
+      ]
+    },
+    {
+      "item_def_id": "item.braced_reed_sleeve",
+      "definition_version": 1,
+      "display_name": "撑条护臂",
+      "display_name_key": "item.braced_reed_sleeve.name",
+      "item_kind": "equipment",
+      "tags": [
+        "fiber_gear",
+        "utility_gear",
+        "utility"
+      ],
+      "stackable": false,
+      "max_stack": 1,
+      "base_mass": 0.8,
+      "equip_slots": [
+        "utility"
+      ],
+      "capabilities": [
+        "equip",
+        "trade",
+        "repair"
+      ],
+      "durability": {
+        "maximum": 12
+      },
+      "base_value": 8,
+      "modifiers": [
+        {
+          "modifier_id": "sleeve_counter",
+          "target": "combat.attack",
+          "operation": "add",
+          "value": 2,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat_melee"
+            },
+            {
+              "kind": "state",
+              "key": "health",
+              "operator": "lte",
+              "value": 70
+            }
+          ],
+          "explain_text": "进攻+2"
+        },
+        {
+          "modifier_id": "sleeve_guard",
+          "target": "combat.guard",
+          "operation": "add",
+          "value": 1,
+          "when": [
+            {
+              "kind": "action_tag",
+              "tag": "combat"
+            }
+          ],
+          "explain_text": "防守+1"
+        }
+      ]
+    }
+  ],
+  "recipes": [
+    {
+      "label": "徒手搓一根细苇绳",
+      "work_interval_hours": 6,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.light_reed_cord",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.hand_twist_cord",
+        "tools": [],
+        "item_inputs": []
+      }
+    },
+    {
+      "label": "制作长节苇杖",
+      "work_interval_hours": 4,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.reed_quarterstaff",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.reed_quarterstaff",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": []
+      }
+    },
+    {
+      "label": "制作束苇长枪",
+      "work_interval_hours": 6,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.bound_reed_pike",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.bound_reed_pike",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": [],
+        "required_skill": {
+          "skill_def_id": "skill.coast_craft",
+          "rank": 1
+        }
+      }
+    },
+    {
+      "label": "制作紧编短棍",
+      "work_interval_hours": 3,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.woven_sap",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.woven_sap",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": []
+      }
+    },
+    {
+      "label": "制作圆编小盾",
+      "work_interval_hours": 4,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.reed_buckler",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.reed_buckler",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": []
+      }
+    },
+    {
+      "label": "制作渡滩结绳带",
+      "work_interval_hours": 4,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.rescue_harness",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.rescue_harness",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": [],
+        "required_skill": {
+          "skill_def_id": "skill.coast_craft",
+          "rank": 1
+        }
+      }
+    },
+    {
+      "label": "制作抛撒缠网",
+      "work_interval_hours": 5,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.casting_snare",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.casting_snare",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": [],
+        "required_skill": {
+          "skill_def_id": "skill.coast_craft",
+          "rank": 1
+        }
+      }
+    },
+    {
+      "label": "制作短裁苇披",
+      "work_interval_hours": 3,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.light_reed_mantle",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.light_reed_mantle",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": []
+      }
+    },
+    {
+      "label": "制作叠层苇甲",
+      "work_interval_hours": 7,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.layered_reed_cuirass",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.layered_reed_cuirass",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": [],
+        "required_skill": {
+          "skill_def_id": "skill.coast_craft",
+          "rank": 2
+        }
+      }
+    },
+    {
+      "label": "制作绑脚行路鞋",
+      "work_interval_hours": 3,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.trail_sandals",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.trail_sandals",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": []
+      }
+    },
+    {
+      "label": "制作撑条护臂",
+      "work_interval_hours": 4,
+      "choice_bias": 0,
+      "products": [
+        {
+          "item_def_id": "item.braced_reed_sleeve",
+          "quantity": 1
+        }
+      ],
+      "work_recipe": {
+        "version": 1,
+        "recipe_id": "recipe.braced_reed_sleeve",
+        "tools": [
+          {
+            "query": {
+              "tags_all": [
+                "rope"
+              ]
+            },
+            "wear": 1
+          }
+        ],
+        "item_inputs": [],
+        "required_skill": {
+          "skill_def_id": "skill.coast_craft",
+          "rank": 1
+        }
+      }
+    }
+  ],
+  "feature_defs": {
+    "skill": [
+      {
+        "skill_def_id": "skill.coast_craft",
+        "definition_version": 1,
+        "display_name": "沿岸编织",
+        "display_name_key": "skill.coast_craft.name",
+        "description": "完成制绳、编织或修补，熟练后能制作结绳带、缠网与叠层甲。",
+        "rank_thresholds": [
+          0,
+          8,
+          24,
+          60
+        ],
+        "practice_rules": [
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.hand_twist_cord"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.reed_quarterstaff"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.bound_reed_pike"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.woven_sap"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.reed_buckler"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.rescue_harness"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.casting_snare"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.light_reed_mantle"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.layered_reed_cuirass"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.trail_sandals"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.braced_reed_sleeve"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.reed_cordage"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.double_light_cords"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.rebind_fiber_rope"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.reed_vest"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 4,
+            "field_equals": {
+              "recipe_id": "recipe.knotted_whip"
+            }
+          },
+          {
+            "fact_type": "npc_work_maintained",
+            "xp": 4,
+            "field_equals": {}
+          }
+        ],
+        "modifiers": [],
+        "accepted_practice_fact_types": [
+          "npc_livelihood_produced",
+          "npc_work_maintained"
+        ]
+      },
+      {
+        "skill_def_id": "skill.coast_survival",
+        "definition_version": 1,
+        "display_name": "行路经验",
+        "display_name_key": "skill.coast_survival.name",
+        "description": "真实到达和采食积累经验；一级、二级各增加1点脱离能力。",
+        "rank_thresholds": [
+          0,
+          8,
+          24,
+          60
+        ],
+        "practice_rules": [
+          {
+            "fact_type": "actor_arrived",
+            "xp": 2,
+            "field_equals": {}
+          },
+          {
+            "fact_type": "resident_activity_changed",
+            "xp": 2,
+            "field_equals": {
+              "activity": "arrived"
+            }
+          },
+          {
+            "fact_type": "npc_livelihood_produced",
+            "xp": 2,
+            "field_equals": {
+              "work_kind": "subsistence"
+            }
+          }
+        ],
+        "modifiers": [
+          {
+            "modifier_id": "survival_escape",
+            "target": "combat.escape",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "脱离+1",
+            "minimum_rank": 1
+          },
+          {
+            "modifier_id": "survival_escape_2",
+            "target": "combat.escape",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "脱离+1",
+            "minimum_rank": 2
+          }
+        ],
+        "accepted_practice_fact_types": [
+          "actor_arrived",
+          "resident_activity_changed",
+          "npc_livelihood_produced"
+        ]
+      },
+      {
+        "skill_def_id": "skill.coast_melee",
+        "definition_version": 1,
+        "display_name": "近身应变",
+        "display_name_key": "skill.coast_melee.name",
+        "description": "实际进攻积累经验；一级、二级各增加1点进攻。",
+        "rank_thresholds": [
+          0,
+          8,
+          24,
+          60
+        ],
+        "practice_rules": [
+          {
+            "fact_type": "world_danger_round",
+            "xp": 4,
+            "field_equals": {
+              "approach_id": "attack"
+            }
+          }
+        ],
+        "modifiers": [
+          {
+            "modifier_id": "melee_attack",
+            "target": "combat.attack",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "进攻+1",
+            "minimum_rank": 1
+          },
+          {
+            "modifier_id": "melee_attack_2",
+            "target": "combat.attack",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "进攻+1",
+            "minimum_rank": 2
+          }
+        ],
+        "accepted_practice_fact_types": [
+          "world_danger_round"
+        ]
+      },
+      {
+        "skill_def_id": "skill.coast_guard",
+        "definition_version": 1,
+        "display_name": "稳守经验",
+        "display_name_key": "skill.coast_guard.name",
+        "description": "实际防守积累经验；一级、二级各增加1点防守。",
+        "rank_thresholds": [
+          0,
+          8,
+          24,
+          60
+        ],
+        "practice_rules": [
+          {
+            "fact_type": "world_danger_round",
+            "xp": 4,
+            "field_equals": {
+              "approach_id": "guard"
+            }
+          }
+        ],
+        "modifiers": [
+          {
+            "modifier_id": "guard_bonus",
+            "target": "combat.guard",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "防守+1",
+            "minimum_rank": 1
+          },
+          {
+            "modifier_id": "guard_bonus_2",
+            "target": "combat.guard",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "防守+1",
+            "minimum_rank": 2
+          }
+        ],
+        "accepted_practice_fact_types": [
+          "world_danger_round"
+        ]
+      }
+    ],
+    "trait": [
+      {
+        "trait_def_id": "trait.measured_retreat",
+        "definition_version": 1,
+        "display_name": "知退",
+        "display_name_key": "trait.measured_retreat.name",
+        "description": "成功脱离一次真实遭遇后，脱离+1。",
+        "trait_kind": "experience",
+        "persistent": true,
+        "allow_multiple_instances": false,
+        "source_fact_rules": [
+          {
+            "fact_type": "world_danger_round",
+            "stage_id": "settled",
+            "severity": 1,
+            "field_equals": {
+              "approach_id": "withdraw",
+              "outcome": "success"
+            }
+          }
+        ],
+        "modifiers": [
+          {
+            "modifier_id": "retreat_learned",
+            "target": "combat.escape",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "脱离+1"
+          }
+        ],
+        "stage_order": [
+          "settled"
+        ],
+        "terminal_stages": []
+      },
+      {
+        "trait_def_id": "trait.patient_defender",
+        "definition_version": 1,
+        "display_name": "守势习惯",
+        "display_name_key": "trait.patient_defender.name",
+        "description": "一次成功稳守留下习惯：防守+1，进攻-1。",
+        "trait_kind": "experience",
+        "persistent": true,
+        "allow_multiple_instances": false,
+        "source_fact_rules": [
+          {
+            "fact_type": "world_danger_round",
+            "stage_id": "settled",
+            "severity": 1,
+            "field_equals": {
+              "approach_id": "guard",
+              "outcome": "success"
+            }
+          }
+        ],
+        "modifiers": [
+          {
+            "modifier_id": "patient_guard",
+            "target": "combat.guard",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "防守+1"
+          },
+          {
+            "modifier_id": "patient_attack",
+            "target": "combat.attack",
+            "operation": "add",
+            "value": -1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "进攻-1"
+          }
+        ],
+        "stage_order": [
+          "settled"
+        ],
+        "terminal_stages": []
+      },
+      {
+        "trait_def_id": "trait.battle_scar_caution",
+        "definition_version": 1,
+        "display_name": "伤后的警觉",
+        "display_name_key": "trait.battle_scar_caution.name",
+        "description": "真实受伤后更重退路：脱离+1，进攻-1。伤势仍另行恢复。",
+        "trait_kind": "experience",
+        "persistent": true,
+        "allow_multiple_instances": false,
+        "source_fact_rules": [
+          {
+            "fact_type": "actor_injured_during_combat",
+            "stage_id": "settled",
+            "severity": 1,
+            "field_equals": {}
+          }
+        ],
+        "modifiers": [
+          {
+            "modifier_id": "scar_escape",
+            "target": "combat.escape",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "脱离+1"
+          },
+          {
+            "modifier_id": "scar_attack",
+            "target": "combat.attack",
+            "operation": "add",
+            "value": -1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "进攻-1"
+          }
+        ],
+        "stage_order": [
+          "settled"
+        ],
+        "terminal_stages": []
+      },
+      {
+        "trait_def_id": "trait.repairers_grip",
+        "definition_version": 1,
+        "display_name": "修补者的握持",
+        "display_name_key": "trait.repairers_grip.name",
+        "description": "完成实物修补后更熟悉器物受力：防守+1。",
+        "trait_kind": "experience",
+        "persistent": true,
+        "allow_multiple_instances": false,
+        "source_fact_rules": [
+          {
+            "fact_type": "npc_work_maintained",
+            "stage_id": "settled",
+            "severity": 1,
+            "field_equals": {}
+          }
+        ],
+        "modifiers": [
+          {
+            "modifier_id": "repair_grip",
+            "target": "combat.guard",
+            "operation": "add",
+            "value": 1,
+            "when": [
+              {
+                "kind": "action_tag",
+                "tag": "combat"
+              }
+            ],
+            "explain_text": "防守+1"
+          }
+        ],
+        "stage_order": [
+          "settled"
+        ],
+        "terminal_stages": []
+      }
+    ]
+  }
+}

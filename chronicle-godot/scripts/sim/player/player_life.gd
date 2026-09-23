@@ -18,6 +18,8 @@ const Incidents = preload("res://scripts/sim/player/local_incident_options.gd")
 const Meal = preload("res://scripts/sim/economy/meal_satiation.gd")
 const Access = preload("res://scripts/sim/resource/resource_access.gd")
 const Body = preload("res://scripts/sim/npc/body_condition.gd")
+const Equipment = preload("res://scripts/sim/player/player_equipment.gd")
+const WorkTrade = preload("res://scripts/sim/player/player_work_trade.gd")
 const PROFILE := {"version": 1, "help_wage": 3, "employer_food_limit": 8}
 const PROFILE_V2 := {"version": 2, "help_wage": 3, "employer_food_limit": 8}
 
@@ -190,7 +192,7 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 		var plan := Recipe.new(view, session.registry).plan_inputs(profile, str(actor.id), "preview", Danger.hour(view.world_time))
 		var reason := work_denial(session, actor, true)
 		if reason == "" and not plan.ok:
-			reason = Livelihood.new()._work_denial_label(str(plan.missing.denial))
+			reason = str(plan.missing.get("details", {}).get("message", Livelihood.new()._work_denial_label(str(plan.missing.denial))))
 		if reason == "":
 			reason = content_resource_denial(session, view, actor, profile)
 		var effect := Recipe.input_summary(profile, session.registry) + "成品由你携带。"
@@ -204,6 +206,14 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 			effect = "产物：%s。" % "、".join(outputs) + effect
 			effect += resource_hint(session, view, actor, profile)
 		rows.append(work_option(actor, entry.id, str(profile.label), effect, reason, int(profile.work_interval_hours)))
+		if Equipment.enabled(session):
+			if reason != "":
+				rows.back().known_effect = reason
+				rows.back().tradeoff = ""
+			elif not profile.products.is_empty():
+				var definition: Dictionary = session.registry.get_definition("item", str(profile.products[0].item_def_id))
+				if "equip" in definition.get("capabilities", []):
+					rows.back().known_effect = Equipment.describe(definition) + "。\n" + Recipe.input_summary(profile, session.registry)
 	for offer: Dictionary in offers(view, actor, config.food_access, session.stores, session.npc_livelihood_profiles):
 		var offered_item: Dictionary = session.stores.item_store.get_item(str(offer.item_instance_id))
 		var condition: Dictionary = offer.get("item", {}).get("condition", {})
@@ -223,6 +233,8 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 		rows.append(row("buy:" + str(offer.item_instance_id), "向%s买1件%s · %d铜币" % [offer.seller_name, offer.display_name, offer.unit_price],
 			detail + "真实现货归你携带；对方保留基本口粮和自用作业工具。",
 			"铜币不足" if Food.balance(view.get_items_for_holder(str(actor.id)), str(actor.id)) < int(offer.unit_price) else ""))
+	rows.append_array(Equipment.options(session))
+	rows.append_array(WorkTrade.options(session, view, actor))
 	return Incidents.decorate(session, rows) if include_incidents else rows
 
 
@@ -363,6 +375,10 @@ static func execute(session: Variant, id: String) -> Dictionary:
 	if selected.is_empty():
 		return {"success": false, "error": "player_life_option_unavailable"}
 	var actor := str(session.context.actor_id)
+	if id.begins_with("equip:") or id.begins_with("unequip:"):
+		return Equipment.execute(session, selected[0])
+	if id.begins_with("sell_work:"):
+		return WorkTrade.execute(session, selected[0])
 	if Local.handles(id):
 		return Local.execute(session, selected[0])
 	if id == "continue":
@@ -438,6 +454,8 @@ static func work(session: Variant, id: String) -> Dictionary:
 	for candidate: Dictionary in gather_profiles(session, view, actor):
 		if candidate.occupation_id == parts[-1] and candidate.workplace_id == actor.states.location_id:
 			profile = candidate
+			if Equipment.enabled(session):
+				work_kind = str(profile.get("work_kind", "production"))
 	if id.begins_with("work:") or id.begins_with("repair:"):
 		for entry: Dictionary in work_profiles(session, view, actor):
 			if entry.id == id:

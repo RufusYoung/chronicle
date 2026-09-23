@@ -34,8 +34,14 @@ def validate(project: Path) -> list[str]:
                 errors.append(f"Uncleared art outside quarantine: {relative}")
             if not source.is_file() or hashlib.sha256(source.read_bytes()).hexdigest() != digest:
                 errors.append(f"Backup copy differs from original: {relative}")
+        elif entry["status"] == "source_archive":
+            if not relative.startswith("source/") or not entry.get("provenance"):
+                errors.append(f"Invalid archived source: {relative}")
         elif entry["status"] != "runtime" or not entry.get("provenance"):
             errors.append(f"Missing release classification: {relative}")
+        if entry["status"] == "runtime" and path.suffix.lower() in {".png", ".jpg", ".jpeg", ".svg", ".webp"}:
+            if entry.get("visual_style") != "pixel_art":
+                errors.append(f"Runtime visual missing pixel-art review: {relative}")
         if not (art / entry["provenance"]).is_file():
             errors.append(f"Missing provenance: {relative}")
     for path in art.rglob("*"):
@@ -48,6 +54,8 @@ def validate(project: Path) -> list[str]:
             errors.append(f"Art outside dedicated directory: {relative}")
     if not (art / "reference/.gdignore").is_file():
         errors.append("Reference assets must be excluded from Godot import")
+    if not (art / "source/.gdignore").is_file():
+        errors.append("Archived sources must be excluded from Godot import")
     preset = (project / "export_presets.cfg").read_text(encoding="utf-8")
     for pattern in ("art/reference/*", "art/source/*", "素材包/*"):
         if pattern not in preset:
@@ -58,7 +66,7 @@ def validate(project: Path) -> list[str]:
             if path.suffix not in (".gd", ".tscn"):
                 continue
             for ref in re.findall(r'res://[^"\s]+', path.read_text(encoding="utf-8-sig")):
-                if ref.startswith(("res://素材包/", "res://art/reference/", "res://assets/")):
+                if ref.startswith(("res://素材包/", "res://art/reference/", "res://art/source/", "res://assets/")):
                     errors.append(f"Disallowed formal resource: {path.name}: {ref}")
                 if ref.startswith("res://art/") and not (project / ref[6:]).is_file():
                     errors.append(f"Missing formal art reference: {ref}")

@@ -104,8 +104,13 @@ static func validate_profile(profile: Dictionary, definitions: Variant) -> Strin
 	if value.get("version") != 1 or not _integer(value.get("version"), 1):
 		return "unsupported_work_recipe_version"
 	for key: String in value:
-		if key not in ["version", "recipe_id", "item_inputs", "tools", "repairs"]:
+		if key not in ["version", "recipe_id", "item_inputs", "tools", "repairs", "required_skill"]:
 			return "unknown_work_recipe_field:" + key
+	if value.has("required_skill"):
+		var skill: Variant = value.required_skill
+		if not skill is Dictionary or skill.size() != 2 or not _integer(skill.get("rank"), 1) \
+				or not definitions.has_definition("skill", str(skill.get("skill_def_id", ""))):
+			return "invalid_work_recipe_skill"
 	if not value.get("recipe_id") is String or str(value.recipe_id).strip_edges() == "":
 		return "missing_work_recipe_id"
 	if not _integer(profile.get("work_interval_hours"), 1):
@@ -179,6 +184,10 @@ func plan_inputs(profile: Dictionary, actor: String, fact_id: String, tick: int)
 	var error := validate_profile(profile, registry)
 	if error != "":
 		return _blocked(error)
+	var required: Dictionary = profile.work_recipe.get("required_skill", {})
+	if not skill_ready(snapshot, actor, profile):
+		return _blocked("work_skill_required", {"message": "%s需达到%d级；完成基础编织或实物修补可积累经验。" % [
+			registry.get_definition("skill", required.skill_def_id).get("display_name", "技艺"), required.rank]})
 	var place := str(profile.get("workplace_id", ""))
 	if place == "" or snapshot.get_entity_state(actor, "location_id", "") != place \
 			or snapshot.get_entity_state(actor, "daily_route_id", "") != "":
@@ -339,6 +348,16 @@ func append_products(result: Variant, profile: Dictionary, actor: String, storag
 
 static func _integer(value: Variant, minimum: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == float(int(value)) and int(value) >= minimum
+
+
+static func skill_ready(view: Variant, actor: String, profile: Dictionary) -> bool:
+	var required: Dictionary = profile.get("work_recipe", {}).get("required_skill", {})
+	if required.is_empty():
+		return true
+	for progress: Dictionary in view.get_skill_progress(actor):
+		if progress.skill_def_id == required.skill_def_id:
+			return int(progress.rank) >= int(required.rank)
+	return false
 
 
 static func _blocked(reason: String, details: Dictionary = {}) -> Dictionary:

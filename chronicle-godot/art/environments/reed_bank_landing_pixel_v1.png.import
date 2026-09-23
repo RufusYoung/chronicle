@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b6lkc1fevflqh"
-path="res://.godot/imported/reed_bank_landing_v1.png-bb93816a72a2d32fa2845dc93d561eb4.ctex"
+uid="uid://bxup1v0mffptl"
+path="res://.godot/imported/reed_bank_landing_pixel_v1.png-305b26761b5ee9e814d2097c9098924f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/environments/reed_bank_landing_v1.png"
-dest_files=["res://.godot/imported/reed_bank_landing_v1.png-bb93816a72a2d32fa2845dc93d561eb4.ctex"]
+source_file="res://art/environments/reed_bank_landing_pixel_v1.png"
+dest_files=["res://.godot/imported/reed_bank_landing_pixel_v1.png-305b26761b5ee9e814d2097c9098924f.ctex"]
 
 [params]
 

@@ -2,6 +2,8 @@
 
 日期：2026-09-05。
 
+2026-09-23：原图迁入 `art/source/pre_pixel/reed_bank_landing_v1.png`，不再用于运行或导出。正式替代为像素版，见 `../PIXEL_ASSET_PROVENANCE.md`；下文保留历史生成记录。
+
 ## 文件与使用范围
 
 - 文件：`art/environments/reed_bank_landing_v1.png`，1536 × 1024。2026-09-05 从 `assets/world/` 原样迁入。

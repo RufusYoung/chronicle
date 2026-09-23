@@ -165,11 +165,27 @@ func advance_time(hours: int = 1) -> Dictionary:
 
 func act_player_life(id: String) -> Dictionary:
 	latest_event_type = "player_life"
+	var previous: Array = session.PlayerLife.Equipment.journal(session).get("features", [])
 	latest_result = session.PlayerLife.execute(session, id)
+	_capture_growth(previous)
 	if latest_result.get("success", false):
 		action_history.append({"index": action_history.size() + 1, "event_type": "player_life",
 			"label": latest_result.get("player_life_feedback", {}).get("body", "生活行动"), "result": latest_result.duplicate(true)})
 	return latest_result
+
+
+func _capture_growth(previous: Array) -> void:
+	if not latest_result.get("success", false) or previous.is_empty():
+		return
+	var old := {}
+	for feature: Dictionary in previous:
+		old[feature.name] = feature.state
+	var changes: Array[String] = []
+	for feature: Dictionary in session.PlayerLife.Equipment.journal(session).get("features", []):
+		if old.get(feature.name) != feature.state:
+			changes.append("%s：%s → %s。%s" % [feature.name, old.get(feature.name, "尚未形成"), feature.state, feature.description])
+	if not changes.is_empty():
+		latest_result["growth_feedback"] = changes
 
 
 func rest_for_recovery() -> Dictionary:
@@ -242,11 +258,13 @@ func perform_travel(route_id: String) -> Dictionary:
 		return latest_result.duplicate(true)
 
 	var option := _find_travel_option(route_id)
+	var previous: Array = session.PlayerLife.Equipment.journal(session).get("features", [])
 	latest_result = session.travel(route_id, {
 		"tick_metadata": {
 			"source": "v5_live_location_surface",
 		},
 	})
+	_capture_growth(previous)
 	if bool(latest_result.get("success", false)):
 		action_history.append({
 			"index": action_history.size() + 1,
@@ -310,6 +328,7 @@ func perform_combat_encounter(
 		return latest_result.duplicate(true)
 
 	var option := _find_combat_encounter_option(option_id)
+	var previous: Array = session.PlayerLife.Equipment.journal(session).get("features", [])
 	var execution_metadata := {
 		"source": "v5_live_location_surface",
 	}
@@ -317,6 +336,7 @@ func perform_combat_encounter(
 	latest_result = session.execute_combat_encounter_option(
 		option_id, execution_metadata
 	)
+	_capture_growth(previous)
 	if bool(latest_result.get("success", false)):
 		action_history.append({
 			"index": action_history.size() + 1,
@@ -513,6 +533,7 @@ func build_view_data() -> Dictionary:
 		view.region_status = []
 		view.decision["question"] = "还在路上，继续前往目的地。"
 		view.decision["stakes"] = ["途中不能同时劳动或交易；饱腹余效结束后饥饿继续增长"]
+	view["equipment_journal"] = session.PlayerLife.Equipment.journal(session)
 	return view
 
 
@@ -808,10 +829,10 @@ func _action_rows(snapshot: Variant = null) -> Array:
 			for internal: String in ["statement", "offer", "report"]:
 				row.erase(internal)
 			if session.PlayerLife.Local.enabled(session):
-				row["life_group"] = "incident" if row.has("incident_id") else session.PlayerLife.Local.action_group(str(row.action_id))
+				row["life_group"] = "incident" if row.has("incident_id") else row.get("life_group", session.PlayerLife.Local.action_group(str(row.action_id)))
 		if session.PlayerLife.Local.enabled(session):
 			life_rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-				return ["incident", "rest", "work", "trade", "talk"].find(a.life_group) < ["incident", "rest", "work", "trade", "talk"].find(b.life_group))
+				return ["incident", "rest", "work", "trade", "talk", "gear"].find(a.life_group) < ["incident", "rest", "work", "trade", "talk", "gear"].find(b.life_group))
 		return life_rows
 	for option: Dictionary in session.get_investigation_options(snapshot):
 		var action_type := str(
@@ -1303,6 +1324,7 @@ func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 		"description": str(entity.get("description", "")),
 		"surface_priority": 2 if already_known else 0,
 		"state_text": state_text,
+		"portrait_age": int(states.get("age_years", -1)) if entity_type == "person" and entity_id.begins_with("generated_resident.") else -1,
 	}
 
 
@@ -2183,6 +2205,10 @@ func _feedback_view() -> Dictionary:
 	var hours := int(latest_result.get("hours", 0))
 	if hours > 0:
 		feedback["eyebrow"] = "你的选择 · 耗时 %d 小时 · 已写回世界" % hours
+	var growth: Array = latest_result.get("growth_feedback", [])
+	if not growth.is_empty():
+		feedback["details"] = growth + feedback.get("details", [])
+		feedback["summary_details"] = growth.slice(0, 1) + feedback.get("summary_details", [])
 	var tick_result: Dictionary = latest_result.get("tick_result", {})
 	var world_summary := _tick_narrative(tick_result)
 	if world_summary != "":

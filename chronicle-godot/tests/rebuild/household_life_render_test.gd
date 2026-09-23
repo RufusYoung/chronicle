@@ -38,7 +38,7 @@ func _run() -> void:
 		for person: Dictionary in viewer.current_view_data.visible_people:
 			if "正在采食口粮" in str(person.state_text):
 				_check(str(person.name) in viewer.surface.scene_record.text and "正在采食口粮" in viewer.surface.scene_record.text, "full scene record retains every resident's changed livelihood")
-				if not saw_foraging and str(person.name) in viewer.visible_people.text and "正在采食口粮" in viewer.visible_people.text:
+				if not saw_foraging and str(person.name) in viewer.visible_people.get_parsed_text() and "正在采食口粮" in viewer.visible_people.get_parsed_text():
 					saw_foraging = true
 					await _capture("foraging")
 			if "托运货包" in str(person.state_text):

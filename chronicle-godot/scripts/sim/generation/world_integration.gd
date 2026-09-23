@@ -3,10 +3,22 @@ extends RefCounted
 const Recipe = preload("res://scripts/sim/economy/work_recipe_service.gd")
 const WorkRules = preload("res://scripts/sim/economy/work_rules_setup.gd")
 const DEFAULT_PATH := "res://data/sim/raw/content/echo_port_integration_v1.json"
+const ADVENTURE_PATH := "res://data/sim/raw/content/echo_port_adventure_v1.json"
+
+
+static func load_pack(version: int) -> Dictionary:
+	var pack: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(DEFAULT_PATH))
+	if version == 2:
+		var adventure: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ADVENTURE_PATH))
+		pack.version = 2
+		pack.item_defs.append_array(adventure.item_defs)
+		pack.recipes.append_array(adventure.recipes)
+		pack["feature_defs"] = adventure.feature_defs
+	return pack
 
 
 static func validate(pack: Variant) -> String:
-	if not pack is Dictionary or pack.get("version") != 1:
+	if not pack is Dictionary or not Recipe._integer(pack.get("version"), 1) or int(pack.version) not in [1, 2]:
 		return "unsupported_world_integration"
 	for key: String in ["equipment_enabled", "negotiation_enabled", "livelihood_enabled"]:
 		if not pack.get(key) is bool:
@@ -28,6 +40,16 @@ static func register_items(fixture: Dictionary, registry: Variant) -> String:
 	var error := validate(fixture.integration_rules)
 	if error != "":
 		return error
+	if fixture.integration_rules.version == 2:
+		if not fixture.integration_rules.get("feature_defs") is Dictionary:
+			return "missing_adventure_features"
+		for kind: String in fixture.integration_rules.feature_defs:
+			if kind not in ["skill", "trait"] or not fixture.integration_rules.feature_defs[kind] is Array:
+				return "invalid_adventure_feature_kind"
+			for definition: Dictionary in fixture.integration_rules.feature_defs[kind]:
+				var id := str(definition.get(kind + "_def_id", ""))
+				if registry.has_definition(kind, id) or not registry.register_definition(kind, id, definition):
+					return "invalid_adventure_feature:" + id
 	for definition: Variant in fixture.integration_rules.item_defs:
 		if not definition is Dictionary or registry.has_definition("item", str(definition.get("item_def_id", ""))) \
 				or not registry.register_definition("item", str(definition.get("item_def_id", "")), definition):

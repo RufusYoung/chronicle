@@ -84,7 +84,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	var integration: bool = variant == "world_integration_v1"
+	var adventure: bool = variant == "world_adventure_v1"
+	var integration: bool = variant == "world_integration_v1" or adventure
 	var body_rules: bool = variant == "world_body_v1" or integration
 	if body_rules:
 		variant = "world_content_v2"
@@ -102,7 +103,7 @@ func _start(request: Dictionary) -> Dictionary:
 	if body_rules:
 		options["body_rules_version"] = 1
 	if integration:
-		options.merge({"integration_rules_version": 1, "community_rules_version": 1})
+		options.merge({"integration_rules_version": 2 if adventure else 1, "community_rules_version": 1})
 	if variant == "worksite_carting_v1":
 		options.merge({"food_carting_version": 1, "worksite_food_storage_version": 1})
 	if variant == "worksite_hauling_v1":
@@ -155,7 +156,7 @@ func _refresh() -> void:
 	var projected: Dictionary = model.build_view_data()
 	_view = {"visibility": "player_surface"}
 	# Never expose raw transaction history or save payloads through player observation.
-	for key: String in ["location", "playtest", "player", "player_life_followups", "local_information", "time", "region_status", "region_map", "visible_people",
+	for key: String in ["location", "playtest", "player", "equipment_journal", "player_life_followups", "local_information", "time", "region_status", "region_map", "visible_people",
 		"visible_observations", "decision", "agency", "risk", "knowledge", "investigation",
 		"chronicle", "feedback", "title", "subtitle", "phase_id", "day", "duration_days",
 		"complete", "objective", "ritual", "status", "market", "people", "incident", "completion"]:

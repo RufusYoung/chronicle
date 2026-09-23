@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clpxjmad74glt"
-path="res://.godot/imported/echo_port_landing_v1.png-6d69558034f0649902b6401c4ba373df.ctex"
+uid="uid://c0ga70iino42t"
+path="res://.godot/imported/coastal_equipment_pixel_v1.png-b682930831a53f05c1925bcf10a65107.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/environments/echo_port_landing_v1.png"
-dest_files=["res://.godot/imported/echo_port_landing_v1.png-6d69558034f0649902b6401c4ba373df.ctex"]
+source_file="res://art/icons/coastal_equipment_pixel_v1.png"
+dest_files=["res://.godot/imported/coastal_equipment_pixel_v1.png-b682930831a53f05c1925bcf10a65107.ctex"]
 
 [params]
 

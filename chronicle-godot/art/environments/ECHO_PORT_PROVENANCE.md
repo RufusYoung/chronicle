@@ -1,5 +1,7 @@
 # 镜湖北岸环境插画
 
+2026-09-23：原图迁入 `art/source/pre_pixel/echo_port_landing_v1.png`，不再用于运行或导出。正式替代为像素版，见 `../PIXEL_ASSET_PROVENANCE.md`；下文保留历史生成记录。
+
 - 文件：`echo_port_landing_v1.png`，1536 x 1024，2026-09-15。
 - 来源：Codex 内置 image_gen，本项目原创文字提示；无外部图片输入、无第三方游戏素材。
 - 原始输出：`C:/Users/x4473/.codex/generated_images/019ebcb5-52c8-7163-88a8-7b5e49c7b379/exec-1c342909-7069-4c2a-9746-650198b8b119.png`，保留原件，运行文件逐字节复制。

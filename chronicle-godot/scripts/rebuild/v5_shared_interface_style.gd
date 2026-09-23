@@ -27,7 +27,8 @@ static func panel_style(inset: bool = false) -> StyleBoxFlat:
 	box.set_border_width_all(0 if inset else 1)
 	if inset:
 		box.border_width_left = 3
-	box.set_corner_radius_all(4)
+	box.set_corner_radius_all(0)
+	box.anti_aliasing = false
 	box.content_margin_left = 12
 	box.content_margin_right = 12
 	box.content_margin_top = 8
@@ -52,7 +53,8 @@ static func apply_decision_button(
 	normal.bg_color = COLOR_SURFACE.lightened(0.035) if emphasized else COLOR_SURFACE
 	normal.border_color = accent.lightened(0.12) if emphasized else accent
 	normal.set_border_width_all(2 if emphasized else 1)
-	normal.set_corner_radius_all(5)
+	normal.set_corner_radius_all(0)
+	normal.anti_aliasing = false
 	normal.content_margin_left = 13.0
 	normal.content_margin_top = 4.0 if compact else 8.0
 	normal.content_margin_right = 13.0

@@ -2,8 +2,9 @@ extends "res://scripts/rebuild/v5_live_location_viewer.gd"
 ## Generated-world UI. The legacy viewer remains a synchronous regression fixture.
 
 const Graph = preload("res://scripts/rebuild/region_graph.gd")
-const REED_ART = preload("res://art/environments/reed_bank_landing_v1.png")
-const ECHO_ART = preload("res://art/environments/echo_port_landing_v1.png")
+const EquipmentJournal = preload("res://scripts/rebuild/equipment_journal_panel.gd")
+const REED_ART = preload("res://art/environments/reed_bank_landing_pixel_v1.png")
+const ECHO_ART = preload("res://art/environments/echo_port_landing_pixel_v1.png")
 const DEFAULT_SAVE := "user://world_demo/manual.json"
 
 @export var save_path: String = DEFAULT_SAVE
@@ -43,12 +44,17 @@ var _player_life: CheckBox
 var _content_extension: CheckBox
 var _startup := true
 var _startup_message := ""
+var _equipment_journal: VBoxContainer
 
 
 func _ready() -> void:
 	super._ready()
 	_install_save_controls()
 	_install_region_page()
+	_equipment_journal = EquipmentJournal.new()
+	_equipment_journal.name = "行囊与成长"
+	surface.tabs.add_child(_equipment_journal)
+	_equipment_journal.action_requested.connect(act_player_life)
 	get_tree().auto_accept_quit = false
 	get_window().close_requested.connect(_request_quit)
 	refresh_view(current_view_data)
@@ -81,6 +87,8 @@ func restart_session() -> void:
 					_startup_message += "此存档保留原生活内容；创建「沿岸生活扩展」新世界可体验加工、绳具与短插曲。"
 				elif initial_content_extension and not view_model.session.fixture_source_data.has("integration_rules"):
 					_startup_message += "此存档保留原规则；沿岸新世界才启用居民装备、缺货反馈与减量协商，旧世界不会被自动升级。"
+				elif initial_content_extension and int(view_model.session.fixture_source_data.get("integration_rules", {}).get("version", 0)) < 2:
+					_startup_message += "此存档保留原装备与成长规则；创建新世界可体验沿岸装备制作、穿戴与经历成长，原存档不会被转换。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
@@ -96,7 +104,7 @@ func _world_options(seed_value: int, integrated: bool, work_rules: bool = false,
 		player_life = true
 		options["content_extension_version"] = 2
 		options["body_rules_version"] = 1
-		options["integration_rules_version"] = 1
+		options["integration_rules_version"] = 2
 		community_rules = true
 	if player_life:
 		integrated = true
@@ -119,6 +127,9 @@ func refresh_view(projected: Dictionary = {}) -> void:
 	if busy:
 		return
 	super.refresh_view(projected)
+	if _equipment_journal != null:
+		_equipment_journal.show_journal(current_view_data.get("equipment_journal", {}))
+		surface.tabs.set_tab_hidden(_equipment_journal.get_index(), current_view_data.get("equipment_journal", {}).is_empty())
 	var canon: Dictionary = current_view_data.get("region_map", {}).get("canon", {})
 	brand_subtitle.text = "回响之境 / 镜湖北岸" if not canon.is_empty() else "北境三镇 / 测试世界"
 	# The generated-world observer prompt is background help, not a quest objective.
@@ -453,7 +464,7 @@ func _install_region_page() -> void:
 	_picture.texture = REED_ART
 	_picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_picture.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_picture.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_picture.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_picture.custom_minimum_size.y = 240
 	right.add_child(_picture)

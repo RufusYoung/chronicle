@@ -14,6 +14,7 @@ class ArtBoundaryTest(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.put("art/README.md", b"provenance")
         self.put("art/reference/.gdignore", b"")
+        self.put("art/source/.gdignore", b"")
         self.put("export_presets.cfg", b'exclude_filter="art/reference/*,art/source/*,\xe7\xb4\xa0\xe6\x9d\x90\xe5\x8c\x85/*"')
         self.put("art/icons/sample.svg", b"runtime")
         self.put("art/reference/legacy/sample.png", b"original")
@@ -24,7 +25,8 @@ class ArtBoundaryTest(unittest.TestCase):
             ("reference/legacy/sample.png", b"original", "reference_only", "素材包/sample.png"),
         ]:
             rows.append({"path": path, "sha256": hashlib.sha256(data).hexdigest(),
-                         "status": status, "source": source, "provenance": "README.md"})
+                         "status": status, "source": source, "provenance": "README.md",
+                         "visual_style": "pixel_art" if status == "runtime" else "reference"})
         self.put("art/catalog.json", json.dumps({"files": rows}).encode())
 
     def put(self, path, data):
@@ -60,6 +62,32 @@ class ArtBoundaryTest(unittest.TestCase):
         errors = validate(self.root)
         self.assertTrue(any("export exclusion" in row for row in errors))
         self.assertTrue(any("excluded from Godot import" in row for row in errors))
+
+    def test_pixel_review_required_for_runtime_visual(self):
+        path = self.root / "art/catalog.json"
+        catalog = json.loads(path.read_text())
+        catalog["files"][0].pop("visual_style")
+        path.write_text(json.dumps(catalog))
+        self.assertTrue(any("pixel-art review" in row for row in validate(self.root)))
+
+    def test_archived_source_is_not_a_runtime_resource(self):
+        self.put("art/source/old.png", b"source")
+        path = self.root / "art/catalog.json"
+        catalog = json.loads(path.read_text())
+        catalog["files"].append({"path": "source/old.png", "status": "source_archive",
+                                 "sha256": hashlib.sha256(b"source").hexdigest(),
+                                 "provenance": "README.md"})
+        path.write_text(json.dumps(catalog))
+        self.assertEqual(validate(self.root), [])
+        self.put("scripts/rebuild/invalid.gd", b'const X = preload("res://art/source/old.png")')
+        self.assertTrue(any("Disallowed formal" in row for row in validate(self.root)))
+
+    def test_source_archive_must_be_quarantined(self):
+        path = self.root / "art/catalog.json"
+        catalog = json.loads(path.read_text())
+        catalog["files"][0]["status"] = "source_archive"
+        path.write_text(json.dumps(catalog))
+        self.assertTrue(any("Invalid archived" in row for row in validate(self.root)))
 
 
 if __name__ == "__main__":

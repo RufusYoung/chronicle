@@ -1,18 +1,18 @@
 {
   "version": 1,
-  "updated": "2026-09-15",
+  "updated": "2026-09-23",
   "files": [
     {
-      "path": "environments/echo_port_landing_v1.png",
-      "status": "runtime",
+      "path": "source/pre_pixel/echo_port_landing_v1.png",
+      "status": "source_archive",
       "source": "",
       "provenance": "environments/ECHO_PORT_PROVENANCE.md",
       "bytes": 3165417,
       "sha256": "1b6f67664eee7f34e71315f4b3a3e3fc39629d58beef996586eb96b56298ba57"
     },
     {
-      "path": "environments/reed_bank_landing_v1.png",
-      "status": "runtime",
+      "path": "source/pre_pixel/reed_bank_landing_v1.png",
+      "status": "source_archive",
       "source": "",
       "provenance": "environments/ASSET_PROVENANCE.md",
       "bytes": 3244480,
@@ -27,8 +27,8 @@
       "sha256": "04f163fb935acd9c0caa79e535a43d510a724d25e584d36212e494a9f9db64f4"
     },
     {
-      "path": "icons/icon.svg",
-      "status": "runtime",
+      "path": "source/pre_pixel/icon.svg",
+      "status": "source_archive",
       "source": "",
       "provenance": "README.md",
       "bytes": 995,
@@ -201,6 +201,67 @@
       "provenance": "README.md",
       "bytes": 3690,
       "sha256": "d221ac9a4ca0a899966e1c128c7a95dd416fe530c3e1a6d768a4aa176d67741b"
+    },
+    {
+      "path": "source/pre_pixel/coastal_equipment_atlas_v1.png",
+      "bytes": 2359152,
+      "source": "",
+      "provenance": "icons/coastal_equipment_atlas_v1.md",
+      "sha256": "05de15c51cf73db3d7c4349bb411d3dc5ea2e82bae0a1c5c7e9acb8fe26cba0a",
+      "status": "source_archive"
+    },
+    {
+      "visual_style": "pixel_art",
+      "path": "icons/coastal_equipment_pixel_v1.png",
+      "bytes": 1562591,
+      "source": "",
+      "provenance": "PIXEL_ASSET_PROVENANCE.md",
+      "sha256": "c55afb0ef04f039f02c114bde52b7c881c1dbb72c0b5fae9250e0a80aeadc29c",
+      "status": "runtime",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "visual_style": "pixel_art",
+      "path": "environments/echo_port_landing_pixel_v1.png",
+      "bytes": 2064041,
+      "source": "",
+      "provenance": "PIXEL_ASSET_PROVENANCE.md",
+      "sha256": "2b6d719f652614a10fc537202b0ef9c6c4baceb2e9fd97e6cf57c747273b301b",
+      "status": "runtime",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "visual_style": "pixel_art",
+      "path": "environments/reed_bank_landing_pixel_v1.png",
+      "bytes": 2250371,
+      "source": "",
+      "provenance": "PIXEL_ASSET_PROVENANCE.md",
+      "sha256": "e3b76443f7548b798564ca3ec00bae00f3c3bbdb3e09ae4db241affe51cdd2ac",
+      "status": "runtime",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "visual_style": "pixel_art",
+      "path": "characters/lakeside_residents_pixel_v1.png",
+      "bytes": 1082685,
+      "source": "",
+      "provenance": "PIXEL_ASSET_PROVENANCE.md",
+      "sha256": "cda3b5105a9d7dd9ddf4659c21d2424152ff315d571b1a87befc37b011e4400e",
+      "status": "runtime",
+      "width": 1447,
+      "height": 1087
+    },
+    {
+      "visual_style": "pixel_art",
+      "path": "icons/icon.svg",
+      "bytes": 492,
+      "source": "",
+      "provenance": "PIXEL_ASSET_PROVENANCE.md",
+      "sha256": "00a6ccd7cf3b6f0e121543a1d197de63804f65d3db3c4af10f0bff42fb92f718",
+      "status": "runtime"
     }
   ]
 }
