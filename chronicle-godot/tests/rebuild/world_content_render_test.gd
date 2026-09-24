@@ -44,6 +44,10 @@ func _run() -> void:
 	await _capture("canon_background_720")
 	viewer._canon_details.hide()
 	viewer.surface.tabs.current_tab = 0
+	# The legacy incident wrapper remains a saved-world contract, not the v2 adventure UI.
+	var legacy_options: Dictionary = viewer._world_options(81001, true, true, true, true, true, true)
+	legacy_options.erase("journey_rules_version")
+	_check(viewer.view_model.start(legacy_options).success, "legacy content profile still starts without journey rules")
 	var target := _prepare_market(viewer.view_model.session)
 	var visible := Tx.new()
 	Life.set_state(visible, target, "visible", true)

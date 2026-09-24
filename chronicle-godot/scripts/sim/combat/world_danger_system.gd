@@ -221,7 +221,10 @@ func run_tick(context: Variant, stores: Dictionary, tick: Dictionary, config: Di
 			if old != "":
 				var previous: Dictionary = snapshot.get_entity(old)
 				if previous.get("states", {}).get("location_id") == actor.states.get("location_id") and actor.states.get("daily_route_id", "") == "":
-					var fact := _fact("world_danger_cleared", id, tick, previous, "%s亲眼看到对方退入灌丛，眼前暂时可以通行。" % actor.display_name)
+					var ending := departure_reason(snapshot, previous, tick, config)
+					var fact := _fact("world_danger_cleared", id, tick, previous, str(ending.summary))
+					fact["end_reason"] = ending.reason
+					fact["source_fact_ids"] = ending.source_fact_ids
 					result.add_fact(fact)
 					_remember(result, id, previous, tick, config, fact.fact_id, false)
 				_change(result, id, "danger_opponent_id", "")
@@ -259,6 +262,30 @@ func run_tick(context: Variant, stores: Dictionary, tick: Dictionary, config: Di
 		output.results.append(result)
 		output.events.append_array(result.facts_added.filter(func(row: Dictionary) -> bool: return str(row.get("fact_type", "")).begins_with("world_danger")))
 	return output
+
+
+static func departure_reason(snapshot: Variant, threat: Dictionary, tick: Dictionary, config: Dictionary) -> Dictionary:
+	var name := str(threat.get("display_name", "对方"))
+	var now := hour(tick)
+	if not threat.get("states", {}).get("alive", true):
+		return {"reason": "dead", "source_fact_ids": [], "summary": "%s已倒下，不再拦住这里；交锋结束。" % name}
+	var facts: Array = snapshot.get_facts()
+	for index: int in range(facts.size() - 1, -1, -1):
+		var fact: Dictionary = facts[index]
+		if hour(fact) > now:
+			continue
+		if fact.get("fact_type") == "world_threat_fed" and fact.get("actor_id") == threat.get("id") and int(fact.get("sated_until", 0)) > now:
+			return {"reason": "sated", "source_fact_ids": [fact.fact_id],
+				"summary": "%s吃饱后退入灌丛，交锋结束；它并未被击败，稍后可能回来。" % name}
+		if fact.get("fact_type") == "world_danger_round" and fact.get("target_id") == threat.get("id") \
+				and fact.get("threat_dispersed", false) and now - hour(fact) < int(config.retreat_hours):
+			var finisher := "你" if fact.get("actor_id") == snapshot.player.get("id") else str(snapshot.get_entity(str(fact.actor_id)).get("display_name", "在场的人"))
+			return {"reason": "driven_off", "source_fact_ids": [fact.fact_id],
+				"summary": "%s将%s击退，交锋结束；它退回灌丛养伤，眼前暂时可以通行。" % [finisher, name]}
+	if int(tick.hour) < int(config.threat.start_hour) or int(tick.hour) >= int(config.threat.end_hour):
+		return {"reason": "activity_ended", "source_fact_ids": [],
+			"summary": "%s离开觅食地，交锋随之结束；这不是击败它，下一次觅食时仍可能遇见。" % name}
+	return {"reason": "contact_lost", "source_fact_ids": [], "summary": "%s已不再与你接触，交锋结束；不能据此认定它已被击败。" % name}
 
 
 func recovery(snapshot: Variant, tick: Dictionary, config: Dictionary) -> Variant:

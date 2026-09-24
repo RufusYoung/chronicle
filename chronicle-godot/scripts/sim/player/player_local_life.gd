@@ -64,13 +64,15 @@ static func options(session: Variant, view: Variant, player: Dictionary) -> Arra
 	var food_config: Dictionary = session.fixture_source_data.resident_daily_life.food_access
 	for person: Dictionary in present(view, player):
 		if wants_food(view, person):
+			var offered_foods := {}
 			for item: Dictionary in view.get_items_for_holder(str(player.id)):
-				if not Food.is_food(item):
+				if not Food.is_food(item) or offered_foods.has(item.item_def_id):
 					continue
+				offered_foods[item.item_def_id] = true
 				var gift: Dictionary = session.PlayerLife.row("give_food:%s:%s" % [person.id, item.item_instance_id],
 					"分1份%s给%s" % [item.display_name, person.display_name],
 					"对方缺少口粮；当面交出自己的1份食物，不收钱、不保证回报。" + ("这是你最后一份口粮。" if int(view.player.food_count) == 1 else ""))
-				gift.merge({"recipient_id": person.id, "item_id": item.item_instance_id, "quantity": 1})
+				gift.merge({"recipient_id": person.id, "item_id": item.item_instance_id, "item_def_id": item.item_def_id, "quantity": 1})
 				rows.append(gift)
 			if person.states.get("hunger") in ["high", "extreme"] and int(person.states.get("age_years", 0)) >= 18:
 				for offer: Dictionary in Food.new()._seller_offers(view, player, str(person.id), str(player.id),
@@ -128,9 +130,12 @@ static func same_information(a: Variant, b: Variant) -> bool:
 
 static func statement_text(session: Variant, person: Dictionary, info: Dictionary) -> String:
 	var lines: Array[String] = ["%s告诉你：" % person.display_name]
+	var places: Array = []
 	for work: Dictionary in info.workplaces:
-		lines.append("我平常在%s做%s，一轮要%d小时；有料有工具、身体撑得住才做得完。" % [
-			session.context.locations.get(str(work.location_id), {}).get("display_name", "本地作业地"), work.label, work.hours])
+		if work.location_id not in places:
+			places.append(work.location_id)
+			lines.append("我平常在%s干活：" % session.context.locations.get(str(work.location_id), {}).get("display_name", "本地作业地"))
+		lines.append("%s，一轮要%d小时。" % [work.label, work.hours])
 		if work.has("inputs"):
 			lines.append(str(work.inputs))
 	if info.workplaces.is_empty():
@@ -143,6 +148,19 @@ static func statement_text(session: Variant, person: Dictionary, info: Dictionar
 	if info.needs_food:
 		lines.append("我现在也缺口粮；有钱才买得起，你不必替我承担。")
 	return "\n".join(lines)
+
+
+static func statement_brief(session: Variant, person: Dictionary, info: Dictionary) -> String:
+	var jobs: Array[String] = []
+	for work: Dictionary in info.workplaces:
+		jobs.append("%s（%d小时）" % [work.label, work.hours])
+	var stock: Array[String] = []
+	for offer: Dictionary in info.stock:
+		stock.append("%s %d份/%d铜币" % [offer.name, offer.quantity, offer.price])
+	var place: String = session.context.locations.get(str(info.location_id), {}).get("display_name", "这里")
+	return "%s：%s。\n现货：%s；余量/单价，当面交易，不预留。\n材料与工具需求见完整结果。" % [
+		person.display_name, "、".join(jobs) if not jobs.is_empty() else "在" + place + "暂未有固定作业",
+		"、".join(stock.slice(0, 3)) if not stock.is_empty() else "没有可卖余货"]
 
 
 static func execute(session: Variant, selected: Dictionary) -> Dictionary:
@@ -192,7 +210,10 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 		result.mark_resolved("player_food_given")
 	if not session.writer.apply_result(result, session.stores):
 		return {"success": false, "error": result.error_reason}
-	return session.PlayerLife.feedback(session.advance_time(1, "player_local_exchange"), summary)
+	var outcome: Dictionary = session.PlayerLife.feedback(session.advance_time(1, "player_local_exchange"), summary)
+	if id.begins_with("ask_local:"):
+		outcome.player_life_feedback["compact_body"] = statement_brief(session, view.get_entity(str(selected.speaker_id)), selected.statement)
+	return outcome
 
 
 static func advance_block(session: Variant, selected: Dictionary) -> Dictionary:
@@ -242,6 +263,8 @@ static func destination_guide(session: Variant, location: String) -> String:
 	if not enabled(session):
 		return ""
 	var place: Dictionary = session.context.locations.get(location, {})
+	if place.has("journey_purpose"):
+		return str(place.journey_purpose)
 	var home: String = session.stores.state_store.get_state(str(session.context.actor_id), "settlement_id", "")
 	var profiles: Array = session.npc_livelihood_profiles.filter(func(profile: Dictionary) -> bool: return profile.get("workplace_id") == location)
 	var settlement: String = str(profiles[0].settlement_id) if not profiles.is_empty() else str(place.get("generation_source", {}).get("settlement_id", ""))
@@ -263,11 +286,15 @@ static func aftermath_text(session: Variant, person: Dictionary, fact: Dictionar
 		context = "你先前出售的那批食物"
 	elif origin.get("fact_type") == "player_food_given":
 		context = "你先前分出的那份食物"
+	elif origin.get("fact_type") == "journey_choice":
+		context = "这一后续保留着你交回物品的来源；不是说全部结果都只靠你"
 	return "%s%s（%s）：第%d天 %02d:00，%s" % [person.display_name,
 		"谈起后来的情况" if heard else "在你面前完成了作业", context, fact.day, fact.get("hour", 0), fact.summary]
 
 
 static func aftermath_brief(person: Dictionary, fact: Dictionary) -> String:
+	if fact.get("fact_type") == "npc_livelihood_produced":
+		return "第%d天，%s用到你交回的物品完成了作业。完整经过见记录。" % [fact.day, person.display_name]
 	if fact.has("danger_clearance_source_id"):
 		return "第%d天，%s在危险退避期间完成了作业。你参与过交锋，完整经过见记录。" % [fact.day, person.display_name]
 	var action: String = {"npc_self_meal": "吃下了一份留存食物", "npc_household_shared_food": "给家人分了一份食物",

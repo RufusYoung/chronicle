@@ -249,6 +249,10 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 							elif FoodAccess.balance(food_items, id) > 0:
 								Choice.propose(proposals, "resupply", site, "seeking_work", "作业用品不足，去已知的生产地当面询价", demand.source_fact_ids, str(demand.get("intent_id", "work_supply")))
 			var effective_choice := choice_config.duplicate(true)
+			var guesthouse: Dictionary = actor.get("guesthouse_rules", {})
+			if not must_rest and guesthouse.get("version") == 1 and hour >= int(guesthouse.open_hour) and hour < int(guesthouse.close_hour):
+				Choice.propose(proposals, "work", str(guesthouse.location_id), "home", "晚间回客舍开门接待；没有客人就没有收入", [], "guesthouse")
+				proposals.back()["guesthouse_score"] = int(guesthouse.opening_score)
 			if WorldDanger.enabled(danger_rules):
 				effective_choice["danger_hour"] = WorldDanger.hour(tick)
 			var chosen := Choice.choose(proposals, actor, routes, self, snapshot, profiles, registry, effective_choice, food_config)
@@ -469,7 +473,7 @@ func _hub(network: Dictionary, settlement: String) -> String:
 
 
 func _public_place(locations: Dictionary, id: String) -> bool:
-	return locations.has(id) and "home" not in locations[id].get("tags", [])
+	return locations.has(id) and ("home" not in locations[id].get("tags", []) or "guesthouse" in locations[id].get("tags", []))
 
 
 func _change(result: Variant, id: String, states: Dictionary, key: String, value: Variant) -> void:

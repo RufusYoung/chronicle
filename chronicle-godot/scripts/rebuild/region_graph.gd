@@ -18,17 +18,27 @@ func show_region(value: Dictionary) -> void:
 		remove_child(child)
 		child.queue_free()
 	for site: Dictionary in data.get("sites", []):
-		var label := Label.new()
-		label.name = str(site.id)
-		label.text = str(site.name)
 		var current: bool = site.id == data.get("current_settlement_id", "")
+		var frame := PanelContainer.new()
+		frame.name = str(site.id)
+		frame.custom_minimum_size = NODE_SIZE
+		frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var style := StyleBoxFlat.new()
+		style.bg_color = Style.COLOR_SURFACE
+		style.border_color = Style.accent_for("travel") if current else Style.COLOR_DISABLED
+		style.set_border_width_all(2)
+		style.set_content_margin_all(6)
+		frame.add_theme_stylebox_override("panel", style)
+		add_child(frame)
+		var label := Label.new()
+		label.text = str(site.name)
 		label.text += "\n你在这里" if current else "\n" + str(site.terrain_label)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.add_theme_font_size_override("font_size", 16)
 		label.add_theme_color_override("font_color", Style.COLOR_TEXT_PRIMARY if current else Style.COLOR_TEXT_MUTED)
-		add_child(label)
+		frame.add_child(label)
 	_layout_nodes()
 
 
@@ -39,9 +49,9 @@ func _layout_nodes() -> void:
 		var fraction := float(i) / maxi(nodes.size() - 1, 1)
 		var point := Vector2(90 + fraction * maxf(size.x - 180, 0), size.y * (0.38 if i % 2 == 0 else 0.72))
 		positions[str((data.sites[i] as Dictionary).id)] = point
-		var label := nodes[i] as Label
-		label.position = point - NODE_SIZE / 2
-		label.size = NODE_SIZE
+		var frame := nodes[i] as PanelContainer
+		frame.size = NODE_SIZE.max(frame.get_combined_minimum_size())
+		frame.position = point - frame.size / 2
 	queue_redraw()
 
 
@@ -49,7 +59,3 @@ func _draw() -> void:
 	for road: Dictionary in data.get("roads", []):
 		if positions.has(road.from) and positions.has(road.to):
 			draw_line(positions[road.from], positions[road.to], Style.accent_for("travel"), 3, true)
-	for id: String in positions:
-		var rectangle := Rect2(positions[id] - NODE_SIZE / 2, NODE_SIZE)
-		draw_rect(rectangle, Style.COLOR_SURFACE)
-		draw_rect(rectangle, Style.accent_for("travel") if id == data.get("current_settlement_id", "") else Style.COLOR_DISABLED, false, 2)

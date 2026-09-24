@@ -28,7 +28,7 @@ func _run() -> void:
 	root.add_child(viewer)
 	await process_frame
 	await process_frame
-	var checks := {"restored": viewer._startup_message == "已继续上次保存的世界。",
+	var checks := {"restored": viewer._startup_message.begins_with("已继续上次保存的世界。"),
 		"hours": viewer.view_model.session.elapsed_hours_since_start == loaded.envelope.world_time.elapsed_hours,
 		"layout_720": viewer.action_dock.get_global_rect().end.y <= root.size.y,
 		"header_720": viewer.get_node("%WorldHeader").get_global_rect().position.y >= 0}
@@ -64,13 +64,13 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	checks["resize_back_720"] = viewer.action_dock.get_global_rect().end.y <= root.size.y and viewer.get_node("%WorldHeader").get_global_rect().position.y >= 0
-	var after: Dictionary = JSON.parse_string(JSON.stringify(viewer.view_model.session.build_save_envelope()))
+	var after: Dictionary = JSON.parse_string(JSON.stringify(viewer.view_model.session.build_save_envelope(), "", true, true))
 	for key: String in ["stores", "world_time", "session", "rng_states", "world_log"]:
 		checks["truth:" + key] = after[key] == loaded.envelope[key]
 	var passed := checks.values().all(func(ok: bool) -> bool: return ok)
 	var report := {"passed": passed, "checks": checks, "checkpoint": args[0], "hours": after.world_time.elapsed_hours,
 		"visible_followups": viewer.current_view_data.player_life_followups,
-		"scope": "Actual renderer of legal agent checkpoint; no game action, injection or human UI play. Native world truth unchanged."}
+		"scope": "Actual renderer of the supplied native checkpoint; this check performs no game action, injection or human UI play. Native world truth unchanged."}
 	var file := FileAccess.open(output.path_join("result.json"), FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "\t") + "\n")
 	viewer.queue_free()

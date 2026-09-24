@@ -534,6 +534,19 @@ func build_view_data() -> Dictionary:
 		view.decision["question"] = "还在路上，继续前往目的地。"
 		view.decision["stakes"] = ["途中不能同时劳动或交易；饱腹余效结束后饥饿继续增长"]
 	view["equipment_journal"] = session.PlayerLife.Equipment.journal(session)
+	if session.PlayerLife.Journey.enabled(session):
+		view["journey_journal"] = session.PlayerLife.Journey.journal(session)
+		for entry: Dictionary in view.journey_journal:
+			view.knowledge.append("第%d天 %02d时：%s" % [entry.day, entry.hour, entry.text])
+		var event: Dictionary = session.PlayerLife.Journey.current(session)
+		view["journey_event"] = {"id": event.id, "title": event.title, "body": event.body} if not event.is_empty() else {}
+		if not event.is_empty():
+			view.location.description = str(event.title) + "\n" + str(event.body)
+			view.decision.question = "你要怎样处理眼前的事？"
+			view.decision.rule = "比较取法、时间与风险。可以放弃，也可以先离开准备；有限物资不会刷新。"
+		elif encounter_options.is_empty() and int(snapshot.player.get("daily_travel_remaining", 0)) == 0:
+			view.decision.question = "继续探索，和人打交道，还是在这里停一会儿？"
+			view.decision.rule = "泊台通向回水洞，哨棚通向废灯台或断崖；村中的客舍夜里仍接待行路人。"
 	return view
 
 
@@ -832,7 +845,7 @@ func _action_rows(snapshot: Variant = null) -> Array:
 				row["life_group"] = "incident" if row.has("incident_id") else row.get("life_group", session.PlayerLife.Local.action_group(str(row.action_id)))
 		if session.PlayerLife.Local.enabled(session):
 			life_rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-				return ["incident", "rest", "work", "trade", "talk", "gear"].find(a.life_group) < ["incident", "rest", "work", "trade", "talk", "gear"].find(b.life_group))
+				return ["adventure", "incident", "rest", "work", "trade", "talk", "gear"].find(a.life_group) < ["adventure", "incident", "rest", "work", "trade", "talk", "gear"].find(b.life_group))
 		return life_rows
 	for option: Dictionary in session.get_investigation_options(snapshot):
 		var action_type := str(
@@ -1220,7 +1233,8 @@ func _combat_risk_view(snapshot: Variant = null) -> Dictionary:
 		])
 	return {
 		"active": true,
-		"title": "眼前的遭遇　%s" % str(enemy.get("danger_label", "未知")),
+		"encounter": true,
+		"title": "遭遇：%s" % str(enemy.get("display_name", "未知对手")),
 		"decision_evidence": "\n".join(features),
 		"description": "%s\n%s\n%s" % [
 			str(first.get("encounter_description", "")),
@@ -1229,7 +1243,7 @@ func _combat_risk_view(snapshot: Variant = null) -> Dictionary:
 		],
 		"check_text": "d6 检定　%s" % "　/　".join(checks),
 		"prepared": true,
-		"preparation_text": "当前装备与伤势已经计入每个选择的有效数值。",
+		"preparation_text": "装备与伤势已计入检定；损耗与失败代价见行动详情。",
 		"failure_hint": "每回合推进 1 小时，其他人物继续生活。成功未必结束交锋；撤离后仍须沿道路离开。" if first.get("world_danger", false) else "选择会立刻推进 1 小时并只结算一次；失败会留下明确代价，但不会立即死亡。",
 	}
 
@@ -1324,7 +1338,7 @@ func _entity_row(entity: Dictionary, snapshot: Variant) -> Dictionary:
 		"description": str(entity.get("description", "")),
 		"surface_priority": 2 if already_known else 0,
 		"state_text": state_text,
-		"state_brief": _object_state_text(entity, snapshot, true) if "worksite_food_store" in entity.get("tags", []) else state_text,
+		"state_brief": _person_state_text(states, true) if entity_type == "person" else (_object_state_text(entity, snapshot, true) if "worksite_food_store" in entity.get("tags", []) else state_text),
 		"portrait_age": int(states.get("age_years", -1)) if entity_type == "person" and entity_id.begins_with("generated_resident.") else -1,
 	}
 
@@ -3238,7 +3252,7 @@ func _location_context(location: Dictionary, snapshot: Variant) -> String:
 	return " · ".join(labels)
 
 
-func _person_state_text(states: Dictionary) -> String:
+func _person_state_text(states: Dictionary, compact: bool = false) -> String:
 	var rows: Array[String] = []
 	if states.get("danger_opponent_id", "") != "":
 		rows.append("正被危险缠住")
@@ -3248,7 +3262,7 @@ func _person_state_text(states: Dictionary) -> String:
 		var labels := {"working": "正在做工", "seeking_work": "正在寻找差事", "seeking_food": "正在寻找口粮", "arrived": "刚刚抵达",
 			"resting": "休息", "home": "在家", "blocked": "未能成行", "traveling": "正在路上", "foraging": "正在采食口粮", "socializing": "正在走访交谈"}
 		rows.append(str(labels.get(str(states.get("daily_activity", "")), "日常生活")))
-		if str(states.get("daily_activity", "")) == "blocked":
+		if not compact and str(states.get("daily_activity", "")) == "blocked":
 			rows.append(str(states.get("daily_activity_reason", "")))
 	if states.has("hunger"):
 		rows.append("饥饿：%s" % _hunger_label(str(states.get("hunger", ""))))

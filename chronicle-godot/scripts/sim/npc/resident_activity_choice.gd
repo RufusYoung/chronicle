@@ -87,6 +87,10 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 			factors["known_need"] = 6
 		if row.kind == "work":
 			factors["fatigue"] = -int(states.get("fatigue", 0)) * 2
+			if row.get("intent_id") == "guesthouse" and actor.get("guesthouse_rules", {}).get("version") == 1:
+				factors["evening_hosting"] = int(row.get("guesthouse_score", 0))
+				if need_food and hunger in ["high", "extreme"]:
+					factors["host_needs_food"] = -55
 			for base: Dictionary in profiles:
 				if base.get("occupation_id") != states.get("occupation_id") or base.get("workplace_id") != row.goal:
 					continue

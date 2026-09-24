@@ -6,6 +6,9 @@ const EquipmentJournal = preload("res://scripts/rebuild/equipment_journal_panel.
 const PlayGuide = preload("res://scripts/rebuild/world_play_guide.gd")
 const REED_ART = preload("res://art/environments/reed_bank_landing_pixel_v1.png")
 const ECHO_ART = preload("res://art/environments/echo_port_landing_pixel_v1.png")
+const CAVE_ART = preload("res://art/environments/mirror_lake_cave_pixel_v1.png")
+const BEACON_ART = preload("res://art/environments/mirror_lake_beacon_pixel_v1.png")
+const GUESTHOUSE_ART = preload("res://art/environments/mirror_lake_guesthouse_pixel_v1.png")
 const DEFAULT_SAVE := "user://world_demo/manual.json"
 
 @export var save_path: String = DEFAULT_SAVE
@@ -92,6 +95,8 @@ func restart_session() -> void:
 					_startup_message += "此存档保留原规则；沿岸新世界才启用居民装备、缺货反馈与减量协商，旧世界不会被自动升级。"
 				elif initial_content_extension and int(view_model.session.fixture_source_data.get("integration_rules", {}).get("version", 0)) < 2:
 					_startup_message += "此存档保留原装备与成长规则；创建新世界可体验沿岸装备制作、穿戴与经历成长，原存档不会被转换。"
+				elif initial_content_extension and not view_model.session.fixture_source_data.has("journey_rules"):
+					_startup_message += "这是旧世界；废灯台、回水洞与客舍从新世界开始启用，原存档规则保留。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
@@ -108,6 +113,7 @@ func _world_options(seed_value: int, integrated: bool, work_rules: bool = false,
 		options["content_extension_version"] = 2
 		options["body_rules_version"] = 1
 		options["integration_rules_version"] = 2
+		options["journey_rules_version"] = 1
 		community_rules = true
 	if player_life:
 		integrated = true
@@ -172,8 +178,16 @@ func refresh_view(projected: Dictionary = {}) -> void:
 		_canon_details.dialog_text = _picture_caption.text
 		if view_model.session.fixture_source_data.has("content_extension"):
 			_picture.texture = ECHO_ART
+			var location: Dictionary = view_model.session.context.location
+			if location.get("id") == "journey_location.lake_cave":
+				_picture.texture = CAVE_ART
+			elif location.get("id") == "journey_location.old_beacon":
+				_picture.texture = BEACON_ART
+			elif "guesthouse" in location.get("tags", []):
+				_picture.texture = GUESTHOUSE_ART
 			_picture.show()
-			_picture_caption.text = "回音港外 · 镜湖北岸\n静态环境插画，不代表实时天气、人物与货物。\n只有地图中的两处聚落正在运行；大世界其余文明尚未运行。"
+			var art_place: String = "镜湖北岸 · 区域环境" if _picture.texture == ECHO_ART else location_title.text
+			_picture_caption.text = "%s\n静态环境插画，不代表实时天气、人物、床位与货物。\n只有地图中的两处聚落正在运行；大世界其余文明尚未运行。" % art_place
 			_canon_details_button.show()
 
 

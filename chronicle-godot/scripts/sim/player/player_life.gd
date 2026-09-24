@@ -20,6 +20,8 @@ const Access = preload("res://scripts/sim/resource/resource_access.gd")
 const Body = preload("res://scripts/sim/npc/body_condition.gd")
 const Equipment = preload("res://scripts/sim/player/player_equipment.gd")
 const WorkTrade = preload("res://scripts/sim/player/player_work_trade.gd")
+const Journey = preload("res://scripts/sim/player/journey_events.gd")
+const Services = preload("res://scripts/sim/player/local_services.gd")
 const PROFILE := {"version": 1, "help_wage": 3, "employer_food_limit": 8}
 const PROFILE_V2 := {"version": 2, "help_wage": 3, "employer_food_limit": 8}
 
@@ -151,7 +153,8 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 		return traveling
 	if not session.get_combat_encounter_options().is_empty():
 		return []
-	var rows: Array = []
+	var rows: Array = Journey.options(session)
+	rows.append_array(Services.options(session))
 	var food: Dictionary = Danger.recovery_food(view, str(actor.id))
 	if not food.is_empty() and actor.states.get("hunger", "none") != "none":
 		if session.fixture_source_data.get("content_extension", {}).get("version") == 2:
@@ -235,7 +238,7 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 			"铜币不足" if Food.balance(view.get_items_for_holder(str(actor.id)), str(actor.id)) < int(offer.unit_price) else ""))
 	rows.append_array(Equipment.options(session))
 	rows.append_array(WorkTrade.options(session, view, actor))
-	return Incidents.decorate(session, rows) if include_incidents else rows
+	return Incidents.decorate(session, rows) if include_incidents and not Journey.enabled(session) else rows
 
 
 static func row(id: String, label: String, hint: String, reason: String = "", hours: int = 1) -> Dictionary:
@@ -375,6 +378,10 @@ static func execute(session: Variant, id: String) -> Dictionary:
 	if selected.is_empty():
 		return {"success": false, "error": "player_life_option_unavailable"}
 	var actor := str(session.context.actor_id)
+	if id.begins_with("adventure:"):
+		return Journey.execute(session, id)
+	if id.begins_with("service:"):
+		return Services.execute(session, id)
 	if id.begins_with("equip:") or id.begins_with("unequip:"):
 		return Equipment.execute(session, selected[0])
 	if id.begins_with("sell_work:"):
@@ -644,7 +651,8 @@ static func available_reports(session: Variant, view: Variant) -> Array:
 			var fact: Dictionary = facts[index]
 			if fact.get("actor_id") != person.id or heard.has(str(fact.fact_id)) \
 					or (fact.get("fact_type") not in ["household_pantry_stored", "household_food_delivered", "npc_self_meal", "npc_household_shared_food"]
-						and not (Local.enabled(session) and fact.has("danger_clearance_source_id"))):
+						and not (Local.enabled(session) and fact.has("danger_clearance_source_id"))
+						and not (Journey.enabled(session) and fact.get("fact_type") == "npc_livelihood_produced")):
 				continue
 			var source := _contribution(session, fact.get("source_fact_ids", []))
 			if source == "" or heard_outcomes.has("%s|%s|%s" % [person.id, source, fact.fact_type]):

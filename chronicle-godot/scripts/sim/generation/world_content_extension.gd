@@ -97,6 +97,36 @@ static func signature(pack: Dictionary) -> Dictionary:
 	return {"version": pack.version, "id": pack.id, "definition_hash": JSON.stringify(normalized, "", true, true).sha256_text()}
 
 
+static func _legacy_json(value: Variant) -> String:
+	# Godot 4.5 full-precision JSON used fixed decimals; 4.6 uses shortest round-trip numbers.
+	# Reproduce the old fingerprint, never discard it or accept a different definition.
+	if value is Dictionary:
+		var keys: Array = value.keys()
+		keys.sort()
+		var fields := PackedStringArray()
+		for key: String in keys:
+			fields.append(JSON.stringify(key) + ":" + _legacy_json(value[key]))
+		return "{" + ",".join(fields) + "}"
+	if value is Array:
+		var rows := PackedStringArray()
+		for row: Variant in value:
+			rows.append(_legacy_json(row))
+		return "[" + ",".join(rows) + "]"
+	if value is float or value is int:
+		var number := float(value)
+		if number == 0.0:
+			return "0.0"
+		return String.num(number, maxi(1, 17 - int(floor(log(absf(number)) / log(10.0)))))
+	return JSON.stringify(value)
+
+
+static func _signature_matches(pack: Dictionary, saved: Variant) -> bool:
+	if saved == signature(pack):
+		return true
+	var legacy := {"version": pack.version, "id": pack.id, "definition_hash": _legacy_json(pack).sha256_text()}
+	return saved == legacy
+
+
 static func register_items(fixture: Dictionary, registry: Variant) -> String:
 	for definition: Dictionary in fixture.get("content_extension", {}).get("item_defs", []):
 		if not registry.register_definition("item", str(definition.get("item_def_id", "")), definition):
@@ -155,7 +185,7 @@ static func prepare(fixture: Dictionary) -> String:
 	if pack.is_empty():
 		return "content_extension_missing_bootstrap" if fixture.has("content_extension_generated") else ""
 	if fixture.has("content_extension_generated"):
-		if fixture.content_extension_generated != signature(pack):
+		if not _signature_matches(pack, fixture.content_extension_generated):
 			return "content_extension_compiled_mismatch"
 		for key: String in ["work_rules", "world_danger"]:
 			if not pack.has(key):

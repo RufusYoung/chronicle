@@ -147,7 +147,7 @@ func _run() -> void:
 	)
 	_check(
 		risk_heading.visible
-		and "眼前的遭遇　高" in risk_heading.text
+		and "遭遇：盐雾拾荒客" in risk_heading.text
 		and "钩杆一直横在胸前" in risk_text.text
 		and "交战 需 4+" in risk_text.text
 		and "撤退 需 2+" in risk_text.text

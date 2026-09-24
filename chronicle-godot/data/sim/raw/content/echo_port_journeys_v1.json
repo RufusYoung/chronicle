@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "item_defs": [
+    {"item_def_id":"item.hearth_malt_drink","definition_version":1,"display_name_key":"item.hearth_malt_drink.name","display_name":"客舍麦饮","item_kind":"provision","tags":["guesthouse_drink"],"stackable":true,"max_stack":50,"base_mass":0.3,"base_value":2,"equip_slots":[],"capabilities":["consume"],"durability":{},"modifiers":[]}
+  ],
+  "sites": [
+    {"id":"old_beacon","parent":"generated_location.echo_landing.watch_post","name":"镜湖北岸·废灯台","description":"旧灯台的石阶断在半空。湖面一暗，台顶仍会闪出一点摇晃的光。","purpose":"攀登、辨认湖岸旧路；可找到护具","hours":1},
+    {"id":"lake_cave","parent":"generated_location.echo_landing.landing","name":"镜湖北岸·回水洞","description":"倒伏的柳树后有一道岩隙。水声从里面传来，洞口挂着旧船工留下的刻痕。","purpose":"有限的洞中遗物；看懂刻痕能减少风险","hours":1},
+    {"id":"cliff_path","parent":"generated_location.echo_terrace.watch_post","name":"镜湖北岸·断崖小径","description":"上坡的旧路被落石截断。一只旅行包挂在坡下的树根上，背带随着风摆动。","purpose":"取回旅行包；绳具可减小攀援风险","hours":1}
+  ],
+  "hosts": [
+    {"id":"landing_host","settlement":"generated_settlement.echo_landing","occupation":"net_fisher","name":"芦湾家店·客舍与小酒馆","purpose":"主人在家时可交易、借宿；晚间有麦饮与湖路见闻"},
+    {"id":"terrace_host","settlement":"generated_settlement.echo_terrace","occupation":"terrace_farmer","name":"石渡坡客舍","purpose":"晚间歇脚、交易；归还失物时当面交接"}
+  ],
+  "caches": [
+    {"id":"shore_box","location":"generated_location.echo_landing.landing","name":"搁在石缝里的木箱","items":[{"item_def_id":"item.light_reed_cord","quantity":2},{"item_def_id":"item.smoked_lake_fish","quantity":3}]},
+    {"id":"beacon_lockbox","location":"old_beacon","name":"灯台看守的旧木柜","items":[{"item_def_id":"item.reed_buckler","quantity":1},{"item_def_id":"item.roasted_root_portion","quantity":3}]},
+    {"id":"cave_bundle","location":"lake_cave","name":"岩台上的防水包","items":[{"item_def_id":"item.rescue_harness","quantity":1},{"item_def_id":"item.doubled_reed_cord","quantity":2}]},
+    {"id":"cliff_pack","location":"cliff_path","name":"挂在树根上的旅行包","items":[{"item_def_id":"item.trail_sandals","quantity":1},{"item_def_id":"item.smoked_lake_fish","quantity":4}]},
+    {"id":"fallen_cord","location":"generated_location.echo_landing.road_yard","name":"路旁无人看管的绳卷","items":[{"item_def_id":"item.doubled_reed_cord","quantity":3}]}
+  ],
+  "events": [
+    {"id":"shore_box","location":"generated_location.echo_landing.landing","title":"水里的敲击声","body":"木箱随着浪头撞上石壁。箱里不像装着重货，水却正在从裂缝里往外淌。箱盖上没有货主的记号。","cache":"shore_box","choices":[
+      {"id":"reach","label":"踏上湿石，把箱子拖回来","hours":1,"hint":"敏捷检定；成功获得绳和熏鱼，失败受伤，箱子漂走。","check":{"attribute":"dexterity","difficulty":14},"success":{"text":"你抓住箱沿，把它拉上岸。盖子掀开，绳卷外还包着几条熏鱼。","loot":[{"item_def_id":"item.light_reed_cord","quantity":2},{"item_def_id":"item.smoked_lake_fish","quantity":3}]},"failure":{"text":"湿石从脚下滑开。你磕伤了膝盖，木箱被浪头卷进了深水。","health":-6}},
+      {"id":"hook","label":"找根长枝，绕到下游捞箱子","hours":2,"hint":"多用一小时，无检定；同一箱物资不会刷新。","success":{"text":"你在背风处截住木箱。湿透的是外层布，里面的食物还完好。","loot":[{"item_def_id":"item.light_reed_cord","quantity":2},{"item_def_id":"item.smoked_lake_fish","quantity":3}]}},
+      {"id":"leave","label":"让它漂走","hours":0,"hint":"不耗时；放弃这只木箱。","success":{"text":"下一阵浪把木箱推远了。你沿岸继续走。"}}
+    ]},
+    {"id":"beacon_marks","location":"generated_location.echo_landing.watch_post","title":"夜里是谁点的灯","body":"旧哨棚柱上留着一张炭笔草图，画的是废灯台。旁边写着：北面的阶梯已塌，绕到背风侧，旧铁环还能抓。","choices":[
+      {"id":"study","label":"记下背风侧的攀登路线","hours":1,"hint":"获得旧路知识，之后上灯台可避开一次危险攀爬。","success":{"text":"你把石阶缺口与远处的台身对了一遍。背风侧有一条很窄的检修路。","marks":["beacon_safe_route"]}},
+      {"id":"ignore","label":"不耽搁，直接赶路","hours":0,"hint":"不获得路线知识，仍可自行探索灯台。","success":{"text":"你把草图留在柱上。灯台依然在那里。"}}
+    ]},
+    {"id":"beacon_climb","location":"old_beacon","title":"最后四级石阶","body":"石阶到这里断了。上面的门开着一条缝，风把门轴推得吱呀作响。木柜就在门后。","cache":"beacon_lockbox","choices":[
+      {"id":"known","label":"沿背风侧的检修路上去","hours":1,"requires":["beacon_safe_route"],"hint":"使用先前辨认的旧路，无检定。","success":{"text":"你侧身走过检修路，推开了门。柜子里是一面旧圆盾和几份干粮，灯的亮光只是嵌在墙里的反光石。","loot":[{"item_def_id":"item.reed_buckler","quantity":1},{"item_def_id":"item.roasted_root_portion","quantity":3}],"marks":["beacon_visited"]}},
+      {"id":"climb","label":"抓住裂缝攀上去","hours":1,"hint":"力量检定；失败损失8点健康，木柜尚在。","check":{"attribute":"strength","difficulty":15},"success":{"text":"指尖终于扣住门槛。你爬进台顶，找到一面圆盾和干粮。","loot":[{"item_def_id":"item.reed_buckler","quantity":1},{"item_def_id":"item.roasted_root_portion","quantity":3}],"marks":["beacon_visited"]},"failure":{"text":"石片从指下剥落。你跌回阶梯，肩膀撞在石沿上；这次没能进去。","health":-8,"keep_open":true}},
+      {"id":"leave","label":"放弃这只柜子","hours":0,"hint":"不耗时；结束这次探索。","success":{"text":"你退回完整的石阶。台顶的门又被风推开了一点。"}}
+    ]},
+    {"id":"cave_marks","location":"lake_cave","title":"船工刻下的三道线","body":"岩壁上刻着三道横线，旁边的旧箭头指向洞内。最下面的刻线已经被水磨平，另两道旁边留着一排手掌印。","choices":[
+      {"id":"read","label":"用灯光细看刻痕和脚印","hours":1,"hint":"感知检定；成功辨认安全岩台。","check":{"attribute":"perception","difficulty":13},"success":{"text":"手印不是涨水刻度，而是给后来者的扶手标记。贴着左壁的岩台能避开水下的坑。","marks":["cave_safe_ledge"]},"failure":{"text":"旧痕重叠，你无法确定哪一排是后来添的。只能靠自己的身手进去。"}},
+      {"id":"skip","label":"不研究刻痕，先看里面","hours":0,"hint":"不获得安全路线知识。","success":{"text":"你把注意力转向洞内。深处似乎有一块露出水面的岩台。"}}
+    ]},
+    {"id":"cave_bundle","location":"lake_cave","requires_done":["cave_marks"],"title":"岩台上的包裹","body":"一道水沟横在脚下。对面的岩台放着一只油布包，包角压着一枚褪色的客舍木签。水冷得让脚踝发麻。","cache":"cave_bundle","choices":[
+      {"id":"ledge","label":"照着手印沿左壁过去","hours":1,"requires":["cave_safe_ledge"],"hint":"用已知路线取得包裹；客舍主人或许认得它。","success":{"text":"你沿岩台取回油布包。里面有一套救援背具、两卷绳，木签上刻着芦湾客舍的名字。","loot":[{"item_def_id":"item.rescue_harness","quantity":1},{"item_def_id":"item.doubled_reed_cord","quantity":2}],"marks":["inn_lost_gear"]}},
+      {"id":"rope","label":"用绳保护自己，踏水过去","hours":1,"tool_tag":"rope","tool_wear":1,"hint":"绳具磨损1；力量检定，失败损失5点健康，可再来。","check":{"attribute":"strength","difficulty":12},"success":{"text":"绳头拴牢后，你把包裹拖回岸边。芦湾客舍的木签还系在背具上。","loot":[{"item_def_id":"item.rescue_harness","quantity":1},{"item_def_id":"item.doubled_reed_cord","quantity":2}],"marks":["inn_lost_gear"]},"failure":{"text":"暗坑比想象中深。绳把你拉住了，腿却在岩沿划开一道口子。","health":-5,"keep_open":true}},
+      {"id":"wade","label":"不系绳，独自越过水沟","hours":1,"hint":"敏捷检定较难；失败损失12点健康，可离开补给。","check":{"attribute":"dexterity","difficulty":16},"success":{"text":"你在滑倒前抓住岩台，把背具与绳带回洞口。木签指向芦湾客舍。","loot":[{"item_def_id":"item.rescue_harness","quantity":1},{"item_def_id":"item.doubled_reed_cord","quantity":2}],"marks":["inn_lost_gear"]},"failure":{"text":"水灌进衣领，你挣扎着退回入口。包裹还在对岸。","health":-12,"keep_open":true}},
+      {"id":"leave","label":"不取包裹，离开水沟","hours":0,"hint":"结束这次探索。","success":{"text":"你最后看了岩台一眼，沿来路退出洞口。"}}
+    ]},
+    {"id":"road_cord","location":"generated_location.echo_landing.road_yard","title":"落在路边的绳卷","body":"车辙边躺着三卷好绳，上面缠着芦湾客舍用来标货的红线。新鲜的拖痕一直通向村里。附近暂时没人。","cache":"fallen_cord","choices":[
+      {"id":"collect","label":"带走绳卷，之后再决定是否归还","hours":1,"hint":"取得三卷实物；可自用，也可在客舍当面归还两卷。","success":{"text":"你抖掉绳上的泥，把三卷绳装进包里。红线没有拆掉。","loot":[{"item_def_id":"item.doubled_reed_cord","quantity":3}],"marks":["found_host_cord"]}},
+      {"id":"leave","label":"摆到显眼的路碑旁","hours":0,"hint":"不获得物品；不消耗时间。","success":{"text":"你把绳卷放在干燥的路碑脚下，离开了车道。"}}
+    ]},
+    {"id":"return_cord","location":"landing_host","host":"landing_host","requires":["found_host_cord"],"title":"红线的主人","body":"客舍主人认出了包外的红线。那批绳原打算用来捕鱼，途中掉在路上。他愿意付4枚铜币，取回其中两卷。","choices":[
+      {"id":"return","label":"交还两卷绳，收4铜币","hours":1,"give":{"item_def_id":"item.doubled_reed_cord","quantity":2},"payment":-4,"trust":3,"hint":"绳真的进入主人的库存，之后可用于其作业；你保留一卷。","success":{"text":"他收下两卷绳，付清了铜币，把红线缠回绳头。这些绳会留给接下来的捕鱼作业。","marks":["cord_returned"]}},
+      {"id":"keep","label":"不做这笔交换，留下绳卷","hours":0,"hint":"保留自己的绳；不获得报酬与信任。","success":{"text":"你把绳卷收紧。主人没再开价，转身去看灶上的水。"}}
+    ]},
+    {"id":"return_harness","location":"landing_host","host":"landing_host","requires":["inn_lost_gear"],"title":"木签找到了主人","body":"主人用拇指擦掉木签上的泥，说这是旧渡口留下的背具。你可以留下防身，他也愿意用8枚铜币买回。","choices":[
+      {"id":"sell","label":"交出救援背具，收8铜币","hours":1,"give":{"item_def_id":"item.rescue_harness","quantity":1},"payment":-8,"trust":2,"hint":"失去背具，获得实际付款；装备在身上时需先卸下。","success":{"text":"他逐一检查了背具上的结，数出8枚铜币。你把木签也放回他手中。"}},
+      {"id":"keep","label":"留下背具，以后探路用","hours":0,"hint":"保留装备，没有额外报酬。","success":{"text":"主人点了点头，教你把肩带收紧：下次别让松绳勒住脖子。"}}
+    ]},
+    {"id":"cliff_pack","location":"cliff_path","title":"树根下的旅行包","body":"背包挂在坡下，已经没人回应你的呼喊。包上没有姓名，崖边的土却在一小块一小块往下掉。","cache":"cliff_pack","choices":[
+      {"id":"rope","label":"系绳下坡取包","hours":1,"tool_tag":"rope","tool_wear":2,"hint":"绳磨损2；力量检定，失败损失6点健康，仍可返回。","check":{"attribute":"strength","difficulty":13},"success":{"text":"绳把你的重量分散在树干上。你取回背包，里面的鞋还能穿，熏鱼也没有进水。","loot":[{"item_def_id":"item.trail_sandals","quantity":1},{"item_def_id":"item.smoked_lake_fish","quantity":4}]},"failure":{"text":"脚下的土沿塌了。你被绳拉住，胫骨仍撞上岩石。包还在下面。","health":-6,"keep_open":true}},
+      {"id":"detour","label":"绕远路从坡底接近","hours":3,"hint":"多耗时、消耗身体与食物，但不冒攀爬风险。","success":{"text":"坡底的路比预想中远。你终于够到背包，带回鞋和干粮时，天色已变了。","loot":[{"item_def_id":"item.trail_sandals","quantity":1},{"item_def_id":"item.smoked_lake_fish","quantity":4}]}},
+      {"id":"leave","label":"不值得冒险，放弃背包","hours":0,"hint":"不耗时，结束这处探索。","success":{"text":"你退离松软的崖边，挑了块结实的地面继续走。"}}
+    ]},
+    {"id":"night_talk","location":"landing_host","host":"landing_host","window":[18,6],"title":"灶火边的旧路","body":"灶上的水响了。主人把门闩搭在一旁，说起回水洞：从前船工不走水中间，岩壁上的手印才是路。","choices":[
+      {"id":"listen","label":"坐下来，问清那些手印","hours":1,"hint":"夜间交谈；获得安全入洞的具体知识。","success":{"text":"他用手指在桌上画了一段折线。进洞靠左，第二道横线以上还有一条窄岩台。你记下了这条路。","marks":["cave_safe_ledge"]}},
+      {"id":"short","label":"道谢，去做自己的事","hours":0,"hint":"不耗时，不获得详细路线。","success":{"text":"你谢过提醒。主人添了一根柴，把凳子挪回灶边。"}}
+    ]},
+    {"id":"terrace_stars","location":"terrace_host","host":"terrace_host","window":[18,6],"title":"没有收走的碗","body":"主人给窗边留了一只碗。一个常来赶夜路的人几天没有露面，往常会沿断崖小径走近路。你不必承诺什么，但可以听他说完。","choices":[
+      {"id":"listen","label":"听他讲那条断崖路","hours":1,"hint":"得知旅行包的位置；不会强制接任务，也不保证有人等待救援。","success":{"text":"他指向山坡背后。那人最后一次经过时，背包带已经磨得很薄。你记住了断崖小径，决定是否去看仍由你。","marks":["cliff_heard"]}},
+      {"id":"quiet","label":"陪他安静坐一会儿","hours":1,"trust":1,"hint":"花一小时陪伴，改变与在场主人的关系；没有物品奖励。","success":{"text":"你没有追问。过了一会儿，他把那只碗收进柜子，给你挪出靠火的位置。"}}
+    ]},
+    {"id":"beacon_view","location":"old_beacon","requires":["beacon_visited"],"title":"从高处看见的灯","body":"湖岸的灯一盏盏亮了。你终于能看清芦湾与石渡坡之间的路，那些白天被芦苇遮住的弯道连成了一条线。","choices":[
+      {"id":"remember","label":"辨认来路与两处客舍的位置","hours":1,"hint":"留下旅途记录；没有凭空的经验或金钱奖励。","success":{"text":"你把灯火与白天的路对上了。芦湾的客舍靠湖，石渡坡的客舍在坡上；夜里仍有人生火。","marks":["coast_seen"]}},
+      {"id":"down","label":"趁天色尚可，先下台阶","hours":0,"hint":"不耗时，结束眺望。","success":{"text":"你离开台顶，脚下的石阶渐渐隐进暗处。"}}
+    ]}
+  ]
+}

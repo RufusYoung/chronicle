@@ -96,6 +96,7 @@ const ActivityChoice = preload("res://scripts/sim/npc/resident_activity_choice.g
 const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 const Body = preload("res://scripts/sim/npc/body_condition.gd")
 const Integration = preload("res://scripts/sim/generation/world_integration.gd")
+const JourneySetup = preload("res://scripts/sim/generation/journey_content_setup.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 7
@@ -289,6 +290,10 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_integration_rules_version")
 	if options.get("integration_rules_version", 0) in [1, 2]:
 		fixture["integration_rules"] = Integration.load_pack(int(options.integration_rules_version))
+	if options.get("journey_rules_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_journey_rules_version")
+	if options.get("journey_rules_version", 0) == 1:
+		fixture["journey_rules"] = JSON.parse_string(FileAccess.get_file_as_string(JourneySetup.PATH))
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -442,6 +447,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	var integration_error := Integration.register_items(fixture, registry)
 	if integration_error != "":
 		return _start_failure(integration_error)
+	var journey_item_error := JourneySetup.register_items(fixture, registry)
+	if journey_item_error != "":
+		return _start_failure(journey_item_error)
 	var work_rules_error := WorkRules.configure(fixture, registry)
 	if work_rules_error != "":
 		return _start_failure(work_rules_error)
@@ -467,6 +475,9 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	integration_error = Integration.configure(fixture, registry)
 	if integration_error != "":
 		return _start_failure(integration_error)
+	var journey_error := JourneySetup.configure(fixture, registry)
+	if journey_error != "":
+		return _start_failure(journey_error)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -1334,6 +1345,15 @@ func _execute_world_combat(option_id: String) -> Dictionary:
 	var advanced := advance_time(1, "world_combat_round", {"scope_type": "global", "scope_id": "", "source": "world_combat"})
 	if not advanced.get("success", false):
 		return _combat_encounter_failure("world_combat_tick_failed", option_id)
+	if not result.narrative_result.get("ended", false):
+		var after: Variant = get_snapshot()
+		if WorldDanger.opponent(after, actor, get_time_summary(), fixture_source_data.world_danger).is_empty():
+			var ending := WorldDanger.departure_reason(after, after.get_entity(str(threat.id)), get_time_summary(), fixture_source_data.world_danger)
+			result.narrative_result["ended"] = true
+			result.narrative_result["end_reason"] = ending.reason
+			result.narrative_result["end_source_fact_ids"] = ending.source_fact_ids
+			result.narrative_result["title"] = "交锋结束"
+			result.narrative_result["summary"] += "\n" + str(ending.summary)
 	combat_encounter_count += 1
 	var log_entry := _build_combat_encounter_log_entry(option, result, combat_encounter_count, int(result.narrative_result.roll))
 	world_log.append_entry(log_entry)
@@ -2527,6 +2547,9 @@ func _migrate_store_save_data(value: Variant, migrations: Variant) -> Variant:
 
 
 func _validate_save_references(restored_hour: int = -1) -> Dictionary:
+	var journey_error := JourneySetup.validate_save(fixture_source_data, stores)
+	if journey_error != "":
+		return {"success": false, "error": journey_error}
 	var body_error := Body.validate_save(fixture_source_data, stores)
 	if body_error != "":
 		return _save_failure(body_error, "references")

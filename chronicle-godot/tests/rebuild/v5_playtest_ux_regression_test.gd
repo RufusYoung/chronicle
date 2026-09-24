@@ -311,7 +311,14 @@ func _press(container_path: String, meta_key: String, meta_value: String) -> voi
 		for frame: int in 4:
 			await process_frame
 	_check(button.is_visible_in_tree(), "Choice is reachable on a visible page: %s" % meta_value)
+	var before: int = viewer.view_model.session.elapsed_hours_since_start
 	button.pressed.emit()
+	await process_frame
+	if viewer._action_detail != null and viewer._action_detail.visible:
+		_check(viewer.view_model.session.elapsed_hours_since_start == before,
+			"Opening action details does not advance time: %s" % meta_value)
+		_check(not viewer._action_detail.dialog_text.is_empty(), "Action details explain the choice")
+		viewer._action_detail.get_ok_button().pressed.emit()
 	for frame: int in 4:
 		await process_frame
 	var layout_errors: Array[String] = []

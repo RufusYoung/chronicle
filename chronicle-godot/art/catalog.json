@@ -1,7 +1,40 @@
 {
   "version": 1,
-  "updated": "2026-09-23",
+  "updated": "2026-09-24",
   "files": [
+    {
+      "visual_style": "pixel_art",
+      "path": "environments/mirror_lake_cave_pixel_v1.png",
+      "bytes": 1628440,
+      "source": "",
+      "provenance": "environments/JOURNEY_PIXEL_PROVENANCE.md",
+      "sha256": "0b292ff26be2290406c1aad2b7808bdef6db0cef291e25ab347663cb3a120390",
+      "status": "runtime",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "visual_style": "pixel_art",
+      "path": "environments/mirror_lake_beacon_pixel_v1.png",
+      "bytes": 1895844,
+      "source": "",
+      "provenance": "environments/JOURNEY_PIXEL_PROVENANCE.md",
+      "sha256": "10869f2ecd776d299c2940c628be4e0f0bc218e98f5e0979c99cf5020fd05ebc",
+      "status": "runtime",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "visual_style": "pixel_art",
+      "path": "environments/mirror_lake_guesthouse_pixel_v1.png",
+      "bytes": 1605122,
+      "source": "",
+      "provenance": "environments/JOURNEY_PIXEL_PROVENANCE.md",
+      "sha256": "9fbab71a3d04b576d1c9c221dfb164a9d50bfc3d26af305a8ae11ac67907bef3",
+      "status": "runtime",
+      "width": 1536,
+      "height": 1024
+    },
     {
       "path": "source/pre_pixel/echo_port_landing_v1.png",
       "status": "source_archive",

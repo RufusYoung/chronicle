@@ -82,14 +82,37 @@ func _prepare_market(session: Variant) -> String:
 
 func _click_action(viewer: Variant, id: String) -> void:
 	var before: int = viewer.view_model.session.elapsed_hours_since_start
+	if not viewer.action_buttons.get_children().any(func(button: Button) -> bool: return button.get_meta("action_id", "") == id):
+		var match_rows: Array = viewer.current_view_data.actions.filter(func(row: Dictionary) -> bool: return row.action_id == id)
+		if not match_rows.is_empty():
+			if viewer.surface.intent_back.visible:
+				viewer.surface.intent_back.pressed.emit()
+			var family: String = viewer.ActionIntents.family(match_rows[0])
+			var parent: Button = await _reachable_button(viewer, "intent:" + family)
+			if parent != null:
+				parent.pressed.emit()
+				await process_frame
+	var target: Button = await _reachable_button(viewer, id)
+	_check(target != null, "rendered action exists: " + id)
+	if target == null:
+		return
+	_check(viewer.view_model.session.elapsed_hours_since_start == before, "filtering and pagination never spend game time")
+	target.pressed.emit()
+	await process_frame
+	if viewer._action_detail != null and viewer._action_detail.visible:
+		_check(viewer.view_model.session.elapsed_hours_since_start == before, "opening cost confirmation never spends game time")
+		viewer._action_detail.get_ok_button().pressed.emit()
+	await _settle(viewer)
+
+
+func _reachable_button(viewer: Variant, id: String) -> Button:
 	var target: Button
 	for button: Button in viewer.action_buttons.get_children():
 		if str(button.get_meta("action_id", "")) == id:
 			target = button
 			break
-	_check(target != null, "rendered action exists: " + id)
 	if target == null:
-		return
+		return null
 	for button: Button in viewer.surface.action_groups.get_children():
 		if button.get_meta("action_group", "") == target.get_meta("life_group", ""):
 			button.button_pressed = true
@@ -102,6 +125,4 @@ func _click_action(viewer: Variant, id: String) -> void:
 		(viewer.surface.next as Button).pressed.emit()
 		await process_frame
 	_check(target.is_visible_in_tree() and not target.disabled, "action is reachable through filters and normal pagination")
-	_check(viewer.view_model.session.elapsed_hours_since_start == before, "filtering and pagination never spend game time")
-	target.pressed.emit()
-	await _settle(viewer)
+	return target

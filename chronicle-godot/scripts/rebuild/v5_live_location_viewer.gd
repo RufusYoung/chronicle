@@ -10,6 +10,7 @@ const SharedInterfaceStyle = preload(
 const SharedSurface = preload("res://scripts/rebuild/v5_shared_world_surface.gd")
 const PixelPortraits = preload("res://scripts/rebuild/pixel_portraits.gd")
 const WorldAudio = preload("res://scripts/rebuild/world_audio.gd")
+const ActionIntents = preload("res://scripts/rebuild/action_intents.gd")
 
 var view_model: Variant = null
 var current_view_data: Dictionary = {}
@@ -17,6 +18,8 @@ var _playtest_end_state := ""
 var surface: Dictionary = {}
 var audio_settings_path := "user://presentation.cfg"
 var world_audio: Node
+var _intent_family := ""
+var _action_detail: ConfirmationDialog
 
 @onready var location_title: Label = %LocationTitle
 @onready var location_context: Label = %LocationContext
@@ -76,6 +79,7 @@ func _ready() -> void:
 			history_text.get_parent().get_node("HistoryHeading"), history_text],
 	})
 	location_title.add_theme_font_size_override("font_size", SharedInterfaceStyle.FONT_TITLE)
+	surface.intent_back.pressed.connect(_open_action_intent.bind(""))
 	world_audio = WorldAudio.new()
 	world_audio.settings_path = audio_settings_path
 	add_child(world_audio)
@@ -311,6 +315,10 @@ func _enter_seventh_outpost() -> void:
 
 func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 	_clear_children(action_buttons)
+	if _intent_family != "" and not actions.any(func(row: Dictionary) -> bool: return ActionIntents.family(row) == _intent_family):
+		_intent_family = ""
+	(surface.intent_back as Button).visible = _intent_family != ""
+	actions = ActionIntents.project(actions, _intent_family)
 	var executable_count := 0
 	for action_value: Variant in actions:
 		var action := action_value as Dictionary
@@ -335,6 +343,8 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		else "你愿意先把时间用在哪里？"
 	))
 	action_heading.text += "　%d 项可选" % executable_count
+	if _intent_family != "":
+		action_heading.text = "%s：选择具体对象与物品　%d 项可选" % [ActionIntents.LABELS[_intent_family], executable_count]
 	if blocked_count > 0:
 		action_heading.text += "　·　受限 %d 项" % blocked_count
 	action_hint.text = str(decision.get(
@@ -361,13 +371,16 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		var caption := str(action.get("label", "采取行动"))
 		if str(action.get("event_type", "")) == "challenge":
 			caption = caption.trim_suffix("%d小时" % int(action.get("hours", 1))).strip_edges()
+		var long_detail: bool = known_effect.length() > 72 or known_effect.length() + tradeoff.length() > 105 or action.get("event_type") == "combat_encounter"
 		button.text = "%s　[%s]\n%s" % [
 			caption,
 			cost,
-			known_effect,
+			known_effect.left(72) + ("…" if known_effect.length() > 72 else ""),
 		]
-		if tradeoff != "":
+		if tradeoff != "" and not long_detail:
 			button.text += "\n取舍：" + tradeoff
+		if long_detail:
+			button.text += "\n查看具体代价并确认"
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.add_theme_font_size_override("font_size", SharedInterfaceStyle.FONT_ACTION)
@@ -385,6 +398,8 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
 		match str(action.get("event_type", "player_action")):
+			"intent":
+				button.pressed.connect(_open_action_intent.bind(str(action.intent_family)))
 			"player_life":
 				button.pressed.connect(act_player_life.bind(str(action.action_id)))
 			"recovery":
@@ -438,7 +453,39 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 					)
 				)
 		action_buttons.add_child(button)
+		if long_detail:
+			var callbacks := button.pressed.get_connections()
+			for connection: Dictionary in callbacks:
+				button.pressed.disconnect(connection.callable)
+			button.pressed.connect(_show_action_detail.bind(action, callbacks))
 	SharedSurface.paginate_actions(surface, self, action_buttons)
+
+
+func _open_action_intent(family: String) -> void:
+	_intent_family = family
+	_refresh_actions(current_view_data.get("actions", []), current_view_data.get("decision", {}))
+	if action_buttons.get_child_count() > 0:
+		(action_buttons.get_child(0) as Button).grab_focus()
+
+
+func _show_action_detail(action: Dictionary, callbacks: Array) -> void:
+	if _action_detail != null:
+		_action_detail.queue_free()
+	_action_detail = ConfirmationDialog.new()
+	_action_detail.name = "ActionDetail"
+	_action_detail.title = str(action.label)
+	_action_detail.dialog_text = "%s\n\n耗时：%s\n\n%s" % [str(action.get("known_effect", "")), str(action.get("cost", "")), str(action.get("tradeoff", ""))]
+	_action_detail.get_label().autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_action_detail.get_label().custom_minimum_size.x = 520
+	_action_detail.get_label().add_theme_font_size_override("font_size", 18)
+	_action_detail.get_ok_button().text = "确认行动"
+	_action_detail.get_cancel_button().text = "返回选择"
+	add_child(_action_detail)
+	_action_detail.confirmed.connect(func() -> void:
+		for connection: Dictionary in callbacks:
+			(connection.callable as Callable).call())
+	_action_detail.popup_centered_clamped(Vector2i(580, 290), 0.9)
+	_action_detail.get_cancel_button().grab_focus()
 
 
 func _show_action_hint(kind: String, hint: String) -> void:
@@ -488,6 +535,18 @@ func _refresh_chronicle(chronicle: Dictionary) -> void:
 
 func _refresh_risk(risk: Dictionary) -> void:
 	var active := bool(risk.get("active", false))
+	var encounter: bool = active and risk.get("encounter", false)
+	var adventure: bool = not current_view_data.get("journey_event", {}).is_empty()
+	(surface.scene_details as Control).visible = not encounter and not adventure
+	location_description.add_theme_font_size_override("normal_font_size", 18 if adventure else SharedInterfaceStyle.FONT_BODY)
+	location_description.visible = not encounter
+	var risk_parent: VBoxContainer = surface.primary if encounter else surface.decision
+	if risk_heading.get_parent() != risk_parent:
+		risk_heading.reparent(risk_parent)
+		risk_text.reparent(risk_parent)
+	if encounter:
+		risk_parent.move_child(risk_heading, 3)
+		risk_parent.move_child(risk_text, 4)
 	goal_progress.visible = not active
 	goal_title.visible = not active
 	goal_summary.visible = not active

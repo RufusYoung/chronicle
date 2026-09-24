@@ -39,6 +39,7 @@ Copy-Item -LiteralPath (Join-Path $project 'texts\build\RF6_FIRST_EXPERIENCE_REV
 Copy-Item -LiteralPath (Join-Path $project 'art\environments\ASSET_PROVENANCE.md') -Destination (Join-Path $output 'ASSET_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\environments\ECHO_PORT_PROVENANCE.md') -Destination (Join-Path $output 'ECHO_PORT_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\PIXEL_ASSET_PROVENANCE.md') -Destination (Join-Path $output 'PIXEL_ASSET_PROVENANCE.md')
+Copy-Item -LiteralPath (Join-Path $project 'art\environments\JOURNEY_PIXEL_PROVENANCE.md') -Destination (Join-Path $output 'JOURNEY_PIXEL_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\PIXEL_ART_DIRECTION.md') -Destination (Join-Path $output 'PIXEL_ART_DIRECTION.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\audio\PROVENANCE.md') -Destination (Join-Path $output 'AUDIO_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\fonts\SOURCE_HAN_SERIF_LICENSE.txt') -Destination (Join-Path $output 'SOURCE_HAN_SERIF_LICENSE.txt')

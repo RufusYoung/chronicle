@@ -16,6 +16,25 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_original_short_adventure_choices_and_native_persistence(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_adventure_v2")
+            self.assertTrue(response["ok"], response)
+            response = game.request("act", choice_id="travel/generated_route.echo_landing.commons_to_fishery")
+            self.assertTrue(response["ok"], response)
+            self.assertIn("水里的敲击声", response["observation"]["location"]["description"])
+            self.assertTrue(any(c["id"] == "adventure:shore_box:leave" for c in response["choices"]))
+            self.assertNotIn("journey_rules", response["observation"])
+            self.assertNotIn("journey_event", response["observation"])
+            response = game.request("act", choice_id="player_life/adventure:shore_box:hook")
+            self.assertTrue(response["ok"], response)
+            self.assertIn("收入行囊", json.dumps(response["observation"]["feedback"], ensure_ascii=False))
+            self.assertFalse(any(c["id"].startswith("adventure:shore_box:") for c in response["choices"]))
+            slot = f"journey_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], response["observation"])
+
     def test_adventure_crafting_gear_growth_and_native_restore(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,

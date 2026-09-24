@@ -108,6 +108,7 @@ static func install(
 	old_main.hide()
 	tabs.tab_changed.connect(func(index: int) -> void: dock.visible = index == 0)
 	var surface := {"tabs": tabs, "situation": situation, "receipt": receipt,
+		"primary": primary, "decision": decision, "scene_details": details,
 		"scene_record": scene_record, "portraits": portraits, "action_page": 0, "action_signature": []}
 	var receipt_button := LinkButton.new()
 	receipt_button.name = "OpenResultReceipt"
@@ -131,6 +132,15 @@ static func install(
 		back_to_scene.grab_focus())
 	back_to_scene.pressed.connect(func() -> void: receipt_button.grab_focus())
 	var actions: FlowContainer = viewer.get_node("%ActionButtons")
+	var intent_back := Button.new()
+	intent_back.name = "BackToIntent"
+	intent_back.text = "返回行动分类"
+	intent_back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	Style.apply_command_button(intent_back)
+	hint.get_parent().add_child(intent_back)
+	hint.get_parent().move_child(intent_back, hint.get_index() + 1)
+	intent_back.hide()
+	surface["intent_back"] = intent_back
 	var groups := HBoxContainer.new()
 	groups.add_theme_constant_override("separation", 8)
 	hint.get_parent().add_child(groups)
@@ -199,7 +209,7 @@ static func _refresh_action_groups(surface: Dictionary, viewer: Control, actions
 		surface.action_filter = ""
 	if counts.is_empty():
 		return
-	var labels := {"": "全部", "incident": "眼前插曲", "work": "谋生", "trade": "买卖与分粮", "talk": "交谈", "rest": "休整与赶路", "gear": "穿戴"}
+	var labels := {"": "全部", "adventure": "眼前遭遇", "incident": "眼前插曲", "work": "谋生", "trade": "买卖与分粮", "talk": "交谈", "rest": "休整与赶路", "gear": "穿戴"}
 	var group := ButtonGroup.new()
 	for key: String in labels:
 		if key != "" and not counts.has(key):
@@ -314,7 +324,7 @@ static func _step_travel_page(paging: Dictionary, buttons: VBoxContainer, delta:
 
 
 static func compact_feedback(feedback: Dictionary, max_details: int = 3) -> String:
-	var body := str(feedback.get("body", ""))
+	var body := str(feedback.get("compact_body", feedback.get("body", "")))
 	var lines: Array[String] = [body]
 	var details: Array = feedback.get("summary_details", feedback.get("details", []))
 	for detail: Variant in details.slice(0, max_details):

@@ -27,11 +27,13 @@ Stage validation by risk: use focused contracts and a short natural run while ex
 
 Use the AI control protocol for legal play, a passive world runner for autonomy, and actual renderer checks for layout. None substitutes for independent human play. A useful result explains what a person can now decide or suffer, not merely how many facts or tests were produced.
 
+When real play exposes boredom, retain it as failed experience evidence. Conditional authored adventures can coexist with the causal world, but do not count their branches as autonomous emergence. Give a discovery concrete alternatives and finite consequences; a building called an inn is not a service until someone actually receives payment, spends stock and can be absent. Test that resident schedules really permit the advertised service without teleporting or freezing the host.
+
 For emergence claims, compare causal structures under frozen rules, not only seeds, names or event totals. Separate autonomous outcomes from injected counterexamples. Require downstream choices to consume changed state, and keep at least one held-out initial condition for a phase gate. A planned emergence round is a falsifiable target, not a guarantee that enough objects produce intelligence. Data-only expansion applies to implemented semantics; a new behavior remains engineering work.
 
 ## Continue Through Checkpoints
 
-When the active user request authorizes continuous work, implement, verify, record, commit/push and continue to the next ready dependency. Do not turn one bounded experiment into an artificial task endpoint. Follow the repository stopping criteria; at a substantive milestone, report its observed benefit and remaining limitations. No scheduled workaround is implied.
+When the active user request authorizes continuous work, implement, verify, record, commit/push and continue to the next ready dependency. The reporting unit is a named RF round with its full acceptance gate, not an experiment or a tested package. Interim updates describe progress only; model and reasoning recommendations belong only to the final round/task report. A failed human experience stays failed until new human evidence addresses it. Do not fabricate that evidence or silently mark the round complete; identify a genuine remaining external gate after finishing useful authorized engineering. No scheduled workaround is implied.
 
 Use `capture-emergent-work` for evidence-driven plan updates. Preserve completed status, merge duplicate follow-ups, and keep one current outcome. Put Chronicle-specific findings in project documents, not global skills or memory without authorization.
 
