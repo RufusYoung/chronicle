@@ -96,7 +96,8 @@ def main():
     # Only the scrypt hash is uploaded; plaintext password stays on Windows.
     upload(private / 'gateway.env', f'{PRIVATE}/gateway.env')
     remote(f'chmod 600 {PRIVATE}/gateway.env')
-    remote(f'sudo -n chown 1000:1000 {PRIVATE}/data')
+    if remote(f'stat -c %u:%g {PRIVATE}/data').strip() != '1000:1000':
+        raise RuntimeError('OAuth data must be owned by container uid/gid 1000; refusing to broaden permissions')
     remote(f'tar -xzf {release}/gateway.tar.gz -C {release}')
     result = remote(f'sudo -n docker compose --env-file {release}/compose.env -p chronicle-mcp -f {release}/compose.yml up -d --build')
     print(result)
