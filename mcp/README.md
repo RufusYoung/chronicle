@@ -30,13 +30,15 @@
 
 ## 开发与同步
 
-需要 Node.js 22、Python 3 和现有部署主机的 SSH 权限。MCP 依赖与游戏分离，不更改 Godot 运行时，也不需要 OpenAI API Key。
+需要 Node.js 22、Python 3 和现有部署主机的 SSH 权限。部署使用独立 Python 环境中的 Paramiko，一条持续 SSH 连接完成发布并严格核对已有 `known_hosts`，不自动接受陌生主机密钥。MCP 依赖与游戏分离，不更改 Godot 运行时，也不需要 OpenAI API Key。
 
 ```powershell
 npm --prefix mcp ci --ignore-scripts
 npm --prefix mcp test
 npm --prefix mcp audit --omit=dev --registry=https://registry.npmjs.org
 node mcp/snapshot.mjs
+python -m venv work/mcp/venv
+work/mcp/venv/Scripts/python -m pip install -r mcp/requirements-deploy.txt
 ```
 
 初次创建独立口令，拒绝覆盖，私有目录 ACL 仅当前用户和 SYSTEM：
@@ -48,7 +50,7 @@ node mcp/setup-private.mjs
 源码与文档验证、提交并推送后，发布新快照。部署脚本拒绝未提交的 MCP 源码，不将其他未提交内容算进快照。首次部署才需要 `--configure-proxy`；以后保留 OAuth 登录数据更新同一地址。
 
 ```powershell
-python -X utf8 mcp/deploy.py
+work/mcp/venv/Scripts/python -X utf8 mcp/deploy.py
 npm --prefix mcp run check:public
 ```
 

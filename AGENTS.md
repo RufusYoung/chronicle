@@ -35,7 +35,7 @@ Reversible implementation and balance choices are engineering work. State and re
 ## Private Discussion MCP
 
 - `mcp/README.md` documents the independently authenticated, read-only ChatGPT web endpoint. It serves a committed allowlisted snapshot, not the working tree or a running game. Do not add writes, arbitrary filesystem access, terminal execution or player saves without a new explicit request.
-- After a verified project checkpoint is committed and pushed, refresh the discussion snapshot with `python -X utf8 mcp/deploy.py` and verify using `npm --prefix mcp run check:public` when deployment credentials are available. Report a stale snapshot explicitly if deployment is unavailable. Never commit private credentials or log tool tokens.
+- After a verified project checkpoint is committed and pushed, refresh the discussion snapshot with `work/mcp/venv/Scripts/python -X utf8 mcp/deploy.py` and verify using `npm --prefix mcp run check:public` when deployment credentials are available. Setup is in `mcp/README.md`. Report a stale snapshot explicitly if deployment is unavailable. Never commit private credentials or log tool tokens.
 - An MCP delivery is infrastructure work; it does not complete RF6 or substitute for human gameplay evidence.
 
 ## Model and Context

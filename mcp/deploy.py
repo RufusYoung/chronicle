@@ -7,6 +7,7 @@ import pathlib
 import shlex
 import subprocess
 import tarfile
+import paramiko
 
 ROOT = pathlib.Path(__file__).resolve().parent
 REPO = ROOT.parent
@@ -17,16 +18,24 @@ BASE = '/home/yiwenzhi/chronicle-mcp'
 PRIVATE = f'{BASE}/private'
 CADDY_SOURCE = '/home/yiwenzhi/current/deploy/Caddyfile.ip-public'
 WEB = 'deploy-web-1'
-SSH = ['ssh', '-o', 'BatchMode=yes', '-i', str(KEY), HOST]
-SCP = ['scp', '-q', '-i', str(KEY)]
+CLIENT = None
 
 
 def remote(command):
-    return subprocess.check_output([*SSH, command], text=True, encoding='utf-8')
+    channel = CLIENT.get_transport().open_session(timeout=30)
+    channel.set_combine_stderr(True)
+    channel.exec_command(command)
+    output = channel.makefile('rb').read().decode('utf-8', errors='replace')
+    status = channel.recv_exit_status()
+    channel.close()
+    if status:
+        raise RuntimeError(f'Remote command failed ({status}): {command}\n{output}')
+    return output
 
 
 def upload(source, destination):
-    subprocess.run([*SCP, str(source), f'{HOST}:{destination}'], check=True)
+    with CLIENT.open_sftp() as sftp:
+        sftp.put(str(source), destination)
 
 
 def configure_proxy(release):
@@ -109,4 +118,15 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # One authenticated transport avoids bursts of independent SSH/SCP connections.
+    CLIENT = paramiko.SSHClient()
+    CLIENT.load_system_host_keys(str(pathlib.Path.home() / '.ssh/known_hosts'))
+    CLIENT.set_missing_host_key_policy(paramiko.RejectPolicy())
+    user, host = HOST.split('@')
+    try:
+        CLIENT.connect(host, username=user, key_filename=str(KEY), look_for_keys=False,
+                       allow_agent=False, timeout=20, banner_timeout=20, auth_timeout=20)
+        CLIENT.get_transport().set_keepalive(15)
+        main()
+    finally:
+        CLIENT.close()
