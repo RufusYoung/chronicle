@@ -1,0 +1,20 @@
+{
+  "name": "chronicle-private-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "snapshot": "node snapshot.mjs",
+    "setup": "node setup-private.mjs",
+    "check:public": "node public-check.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "express": "5.2.1",
+    "express-rate-limit": "8.7.0",
+    "zod": "3.25.76"
+  }
+}

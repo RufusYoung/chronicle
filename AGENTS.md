@@ -32,6 +32,12 @@ Reversible implementation and balance choices are engineering work. State and re
 - Validate scoped changes, causal counterexamples, persistence and relevant regressions. Runtime changes require a refreshed Windows package and actual package smoke test, not export exit status alone.
 - Keep Git synchronized at verified checkpoints. Preserve user-authored changes; do not broadly restore a dirty workspace.
 
+## Private Discussion MCP
+
+- `mcp/README.md` documents the independently authenticated, read-only ChatGPT web endpoint. It serves a committed allowlisted snapshot, not the working tree or a running game. Do not add writes, arbitrary filesystem access, terminal execution or player saves without a new explicit request.
+- After a verified project checkpoint is committed and pushed, refresh the discussion snapshot with `python -X utf8 mcp/deploy.py` and verify using `npm --prefix mcp run check:public` when deployment credentials are available. Report a stale snapshot explicitly if deployment is unavailable. Never commit private credentials or log tool tokens.
+- An MCP delivery is infrastructure work; it does not complete RF6 or substitute for human gameplay evidence.
+
 ## Model and Context
 
 The user defaults to extra-high (极高) reasoning. Per the Sep 24 clarification, include the next-stage model and reasoning-effort recommendation, with a brief task-specific reason, only in the formal report at the end of the integrated round/task. Do not repeat it in ordinary progress updates. Recommend Ultra only when the next integrated task has a concrete need for it; do not change global or task settings silently.

@@ -1,0 +1,8 @@
+*
+!package.json
+!package-lock.json
+!auth.mjs
+!server.mjs
+!catalog.mjs
+!tools.mjs
+!snapshot.json

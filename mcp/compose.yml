@@ -1,0 +1,22 @@
+services:
+  chronicle-mcp:
+    build: .
+    image: chronicle-private-mcp:1.0.0
+    container_name: chronicle-mcp
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 384m
+    cpus: 0.5
+    pids_limit: 64
+    tmpfs: [/tmp:size=16m]
+    env_file: ${CHRONICLE_ENV_FILE}
+    volumes:
+      - ${CHRONICLE_DATA_DIR}:/data
+    networks: [proxy]
+networks:
+  proxy:
+    external: true
+    name: deploy_default
