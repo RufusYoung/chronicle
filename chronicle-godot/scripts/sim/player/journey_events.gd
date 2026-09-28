@@ -7,7 +7,8 @@ const Sources = preload("res://scripts/sim/item/item_causal_sources.gd")
 
 
 static func enabled(session: Variant) -> bool:
-	return session.fixture_source_data.get("journey_rules", {}).get("version") == 1
+	var version: Variant = session.fixture_source_data.get("journey_rules", {}).get("version")
+	return version == 1 or version == 2
 
 
 static func knowledge(session: Variant) -> Dictionary:

@@ -232,13 +232,25 @@ func refresh_view(projected: Dictionary = {}) -> void:
 	_refresh_risk(current_view_data.get("risk", {}) as Dictionary)
 	_refresh_feedback(current_view_data.get("feedback", {}) as Dictionary)
 	_refresh_history(current_view_data.get("history", []) as Array)
-	_refresh_actions(
-		current_view_data.get("actions", []) as Array,
-		current_view_data.get("decision", {}) as Dictionary
-	)
-	_refresh_travel_options(
-		current_view_data.get("travel_options", []) as Array
-	)
+	var actions: Array = current_view_data.get("actions", []).duplicate(true)
+	var travel: Array = current_view_data.get("travel_options", [])
+	if not current_view_data.get("journey_guidance", {}).is_empty():
+		var paths: Array = []
+		for route: Dictionary in travel:
+			var choice: Dictionary = route.duplicate(true)
+			choice.merge({"action_id": "travel:" + str(route.route_id), "event_type": "travel",
+				"life_group": "travel", "action_type": "travel", "can_execute": route.can_travel,
+				"label": route.destination_name, "known_effect": route.purpose,
+				"compact_tradeoff": true}, true)
+			paths.append(choice)
+		if current_view_data.get("journey_event", {}).is_empty():
+			paths.append_array(actions)
+			actions = paths
+		else:
+			actions.append_array(paths)
+		travel = []
+	_refresh_actions(actions, current_view_data.get("decision", {}))
+	_refresh_travel_options(travel)
 
 
 func get_current_view_data() -> Dictionary:
@@ -377,7 +389,7 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 			cost,
 			known_effect.left(72) + ("…" if known_effect.length() > 72 else ""),
 		]
-		if tradeoff != "" and not long_detail:
+		if tradeoff != "" and not long_detail and not action.get("compact_tradeoff", false):
 			button.text += "\n取舍：" + tradeoff
 		if long_detail:
 			button.text += "\n查看具体代价并确认"
@@ -398,6 +410,8 @@ func _refresh_actions(actions: Array, decision: Dictionary = {}) -> void:
 		button.set_meta("action_id", str(action.get("action_id", "")))
 		_apply_action_button_style(button, str(action.get("action_type", "normal")))
 		match str(action.get("event_type", "player_action")):
+			"travel":
+				button.pressed.connect(perform_travel.bind(str(action.route_id)))
 			"intent":
 				button.pressed.connect(_open_action_intent.bind(str(action.intent_family)))
 			"player_life":

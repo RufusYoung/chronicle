@@ -16,6 +16,22 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_short_action_profile_and_partial_hour_save(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_adventure_v3")
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(response["observation"]["time"]["minute"], 0)
+            self.assertTrue(any("回水洞" in c.get("purpose", "") for c in response["choices"]))
+            response = game.request("act", choice_id="player_life/eat")
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(response["observation"]["time"]["minute"], 10)
+            self.assertEqual(response["observation"]["time"]["elapsed_hours"], 0)
+            self.assertIn("10 分钟", response["observation"]["feedback"]["eyebrow"])
+            slot = f"short_clock_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], response["observation"])
+
     def test_original_short_adventure_choices_and_native_persistence(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,

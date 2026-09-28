@@ -290,10 +290,11 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_integration_rules_version")
 	if options.get("integration_rules_version", 0) in [1, 2]:
 		fixture["integration_rules"] = Integration.load_pack(int(options.integration_rules_version))
-	if options.get("journey_rules_version", 0) not in [0, 1]:
+	if options.get("journey_rules_version", 0) not in [0, 1, 2]:
 		return _start_failure("unsupported_journey_rules_version")
-	if options.get("journey_rules_version", 0) == 1:
+	if options.get("journey_rules_version", 0) in [1, 2]:
 		fixture["journey_rules"] = JSON.parse_string(FileAccess.get_file_as_string(JourneySetup.PATH))
+		fixture.journey_rules.version = options.journey_rules_version
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -1756,12 +1757,15 @@ func advance_world(tick_event: Dictionary, elapsed_hours_delta: int = 0) -> Dict
 
 
 func get_time_summary() -> Dictionary:
-	return {
+	var time := {
 		"day": current_day,
 		"hour": current_hour,
 		"world_tick_count": world_tick_count,
 		"elapsed_hours": elapsed_hours_since_start,
 	}
+	if fixture_source_data.get("journey_rules", {}).get("version") == 2 and stores.has("state_store"):
+		time["minute"] = int(stores.state_store.get_state(str(context.actor_id), "player_action_minutes", 0))
+	return time
 
 
 func get_world_log_entries() -> Array:

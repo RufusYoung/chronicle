@@ -1,5 +1,7 @@
 extends RefCounted
 
+const Brief = preload("res://scripts/sim/player/brief_actions.gd")
+
 const Builder = preload("res://scripts/sim/core/sim_snapshot_builder.gd")
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Needs = preload("res://scripts/sim/npc/npc_need_system.gd")
@@ -87,6 +89,8 @@ static func validate_save(fixture: Dictionary, stores: Dictionary, locations: Di
 	if not enabled(fixture):
 		return ""
 	var state: Dictionary = stores.state_store.list_states(player)
+	if fixture.get("journey_rules", {}).get("version") == 2 and Brief.validate(state) != "":
+		return Brief.validate(state)
 	if "player_controlled" not in stores.entity_store.get_entity(player).get("tags", []) \
 			or state.get("location_id") != here or not locations.has(here) \
 			or state.get("settlement_id") != fixture.player_life_generated.settlement_id:
@@ -238,6 +242,7 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 			"铜币不足" if Food.balance(view.get_items_for_holder(str(actor.id)), str(actor.id)) < int(offer.unit_price) else ""))
 	rows.append_array(Equipment.options(session))
 	rows.append_array(WorkTrade.options(session, view, actor))
+	Brief.decorate(session, rows)
 	return Incidents.decorate(session, rows) if include_incidents and not Journey.enabled(session) else rows
 
 
@@ -403,7 +408,7 @@ static func execute(session: Variant, id: String) -> Dictionary:
 	if id.begins_with("inquire:"):
 		var report: Dictionary = selected[0].report
 		var result := Result.new()
-		result.add_fact({"fact_id": "fact.player_heard_update.%d" % session.elapsed_hours_since_start,
+		result.add_fact({"fact_id": "fact.player_heard_update." + Brief.stamp(session),
 			"fact_type": "player_heard_livelihood_update", "actor_id": actor, "speaker_id": report.speaker_id,
 			"location_id": session.context.location_id, "day": session.current_day, "hour": session.current_hour,
 			"source_fact_ids": [report.update_id, report.contribution_id], "related_update_id": report.update_id,
@@ -412,13 +417,14 @@ static func execute(session: Variant, id: String) -> Dictionary:
 		if Local.enabled(session):
 			result.facts_added.back()["brief"] = report.get("brief", report.text)
 		result.mark_resolved("player_heard_livelihood_update")
+		Brief.append(result, session)
 		if not session.writer.apply_result(result, session.stores):
 			return {"success": false, "error": result.error_reason}
-		return feedback(session.advance_time(1, "player_local_conversation"), report.text)
+		return feedback(Brief.advance(session, "player_local_conversation"), report.text)
 	if id == "eat" or id.begins_with("eat:"):
 		var food: Dictionary = session.stores.item_store.get_item(str(selected[0].meal_item_id)) if selected[0].has("meal_item_id") else Danger.recovery_food(view, actor)
 		var result := Result.new()
-		var fact_id := "fact.player_meal.%d" % session.elapsed_hours_since_start
+		var fact_id := "fact.player_meal." + Brief.stamp(session)
 		result.add_fact({"fact_id": fact_id, "fact_type": "actor_ate", "actor_id": actor, "source_id": actor,
 			"location_id": session.context.location_id, "day": session.current_day, "hour": session.current_hour,
 			"item_instance_id": food.item_instance_id, "summary": "你吃掉一份%s，饥饿减轻了。" % food.display_name})
@@ -430,9 +436,10 @@ static func execute(session: Variant, id: String) -> Dictionary:
 		Meal.append(result, actor, food, meal_rules(session), session.get_time_summary())
 		result.facts_added.back().summary += Meal.describe(meal_rules(session), food)
 		result.mark_resolved("player_meal")
+		Brief.append(result, session)
 		if not session.writer.apply_result(result, session.stores):
 			return {"success": false, "error": result.error_reason}
-		return feedback(session.advance_time(1, "player_meal"), result.facts_added[0].summary)
+		return feedback(Brief.advance(session, "player_meal"), result.facts_added[0].summary)
 	if id.begins_with("buy:"):
 		for offer: Dictionary in offers(view, view.get_entity(actor), session.fixture_source_data.resident_daily_life.food_access, session.stores, session.npc_livelihood_profiles):
 			if id != "buy:" + str(offer.item_instance_id) or int(offer.surplus) < 1:
@@ -440,12 +447,13 @@ static func execute(session: Variant, id: String) -> Dictionary:
 			var summary := "你向%s支付%d枚铜币，买下1件%s，已放入行囊。" % [offer.seller_name, offer.unit_price, offer.display_name]
 			var trade: Dictionary = Market.new().plan_trade(offer.policy, {"buyer_entity_id": actor,
 				"item_instance_id": offer.item_instance_id, "quantity": 1, "quoted_unit_price": offer.unit_price,
-				"exchange_id": "exchange.player_food.%d" % session.elapsed_hours_since_start, "summary": summary}, session.stores, session.get_time_summary())
+				"exchange_id": "exchange.player_food." + Brief.stamp(session), "summary": summary}, session.stores, session.get_time_summary())
 			if not trade.get("success", false):
 				return trade
+			Brief.append(trade.transaction, session)
 			if not session.writer.apply_result(trade.transaction, session.stores):
 				return {"success": false, "error": trade.transaction.error_reason}
-			return feedback(session.advance_time(1, "player_purchase"), summary)
+			return feedback(Brief.advance(session, "player_purchase"), summary)
 		return {"success": false, "error": "local_stock_changed"}
 	return work(session, id)
 

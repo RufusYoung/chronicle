@@ -7,6 +7,7 @@ const Market = preload("res://scripts/sim/economy/market_service.gd")
 const Sources = preload("res://scripts/sim/item/item_causal_sources.gd")
 const Danger = preload("res://scripts/sim/combat/world_danger_system.gd")
 const INFO_HOURS := 12
+const Brief = preload("res://scripts/sim/player/brief_actions.gd")
 
 
 static func enabled(session: Variant) -> bool:
@@ -62,6 +63,7 @@ static func options(session: Variant, view: Variant, player: Dictionary) -> Arra
 	if (session.current_hour >= 18 or session.current_hour < 6) and rest_hours > 1 and player.states.get("hunger") not in ["high", "extreme"]:
 		rows.append(session.PlayerLife.row("rest_block", "歇一阵，等天亮", "最多休息%d小时；饥饿达到严重、遇险或天亮即停。世界逐小时变化，伤后恢复照常耗粮。" % rest_hours, "", rest_hours))
 	var food_config: Dictionary = session.fixture_source_data.resident_daily_life.food_access
+	var orientation_offered := false
 	for person: Dictionary in present(view, player):
 		if wants_food(view, person):
 			var offered_foods := {}
@@ -74,7 +76,7 @@ static func options(session: Variant, view: Variant, player: Dictionary) -> Arra
 					"对方缺少口粮；当面交出自己的1份食物，不收钱、不保证回报。" + ("这是你最后一份口粮。" if int(view.player.food_count) == 1 else ""))
 				gift.merge({"recipient_id": person.id, "item_id": item.item_instance_id, "item_def_id": item.item_def_id, "quantity": 1})
 				rows.append(gift)
-			if person.states.get("hunger") in ["high", "extreme"] and int(person.states.get("age_years", 0)) >= 18:
+			if not Brief.enabled(session) and person.states.get("hunger") in ["high", "extreme"] and int(person.states.get("age_years", 0)) >= 18:
 				for offer: Dictionary in Food.new()._seller_offers(view, player, str(person.id), str(player.id),
 						str(player.states.location_id), food_config, session.stores, {}, false, view.world_time):
 					var affordable := int(Food.balance(view.get_items_for_holder(str(person.id)), str(person.id)) / int(offer.unit_price))
@@ -87,13 +89,50 @@ static func options(session: Variant, view: Variant, player: Dictionary) -> Arra
 					rows.append(sale)
 		if int(person.states.get("age_years", 0)) < 18:
 			continue
+		if Brief.enabled(session):
+			rows.append_array(reserve_sales(session, view, player, person, food_config))
 		var info := local_statement(session, view, player, person)
+		if Brief.enabled(session) and orientation_offered:
+			continue
 		if not info_available(view, str(player.id), str(person.id), info, Danger.hour(view.world_time)):
 			continue
 		var ask: Dictionary = session.PlayerLife.row("ask_local:" + str(person.id), "问%s：这里怎么谋生？" % person.display_name,
 			"问本人做什么、在哪儿开工和眼下能否买卖；消息会过时，不保证到场仍有货。")
 		ask.merge({"speaker_id": person.id, "statement": info})
+		if Brief.enabled(session):
+			ask.label = "向%s问路与打听买卖" % person.display_name
+			ask.hint = "记住此人的作业地点和本地去向；同样的介绍只问一次。现场买卖直接查看交易选项。"
+			ask.known_effect = ask.hint
 		rows.append(ask)
+		orientation_offered = true
+	return rows
+
+
+static func reserve_sales(session: Variant, view: Variant, player: Dictionary, person: Dictionary, config: Dictionary) -> Array:
+	var owned := Food.food_quantity(view.get_items_for_holder(str(person.id)), str(person.id))
+	var depot := Storage.stock_holder(view, str(person.id))
+	if depot != "":
+		owned += Food.food_quantity(view.get_items_for_holder(depot), depot)
+	var target := 8 if person.has("guesthouse_rules") else 4
+	var need := maxi(0, target - owned)
+	var rows: Array = []
+	if need == 0:
+		return rows
+	var seen := {}
+	for offer: Dictionary in Food.new()._seller_offers(view, player, str(person.id), str(player.id), str(player.states.location_id), config, session.stores, {}, false, view.world_time):
+		var item: Dictionary = session.stores.item_store.get_item(str(offer.item_instance_id))
+		if seen.has(item.item_def_id):
+			continue
+		seen[item.item_def_id] = true
+		var affordable := int(Food.balance(view.get_items_for_holder(str(person.id)), str(person.id)) / int(offer.unit_price))
+		var quantity := mini(need, mini(int(offer.surplus), affordable))
+		if quantity < 1:
+			continue
+		var sale: Dictionary = session.PlayerLife.row("sell_food:%s:%s" % [person.id, offer.item_instance_id],
+			"卖%d份%s给%s · 收%d铜币" % [quantity, offer.display_name, person.display_name, quantity * int(offer.unit_price)],
+			"对方为接下来备粮，还缺%d份；本次收%d份，付%d铜币。你至少保留%d份口粮。" % [need, quantity, quantity * int(offer.unit_price), config.seller_retained_portions])
+		sale.merge({"recipient_id": person.id, "item_id": offer.item_instance_id, "quantity": quantity, "offer": offer})
+		rows.append(sale)
 	return rows
 
 
@@ -111,14 +150,24 @@ static func local_statement(session: Variant, view: Variant, player: Dictionary,
 	for offer: Dictionary in session.PlayerLife.offers(view, player, session.fixture_source_data.resident_daily_life.food_access, session.stores, session.npc_livelihood_profiles):
 		if offer.policy.seller_entity_id == person.id:
 			stock.append({"item_id": offer.item_instance_id, "name": offer.display_name, "quantity": offer.surplus, "price": offer.unit_price})
-	return {"workplaces": workplaces, "stock": stock, "needs_food": wants_food(view, person), "location_id": person.states.location_id}
+	var statement := {"workplaces": workplaces, "stock": stock, "needs_food": wants_food(view, person), "location_id": person.states.location_id}
+	if Brief.enabled(session):
+		statement["topic"] = "local_orientation"
+		statement["settlement_id"] = person.states.get("settlement_id", "")
+	return statement
 
 
 static func info_available(view: Variant, player: String, speaker: String, statement: Dictionary, now: int) -> bool:
 	var facts: Array = view.get_facts_by_actor(player)
 	for index: int in range(facts.size() - 1, -1, -1):
 		var fact: Dictionary = facts[index]
+		if statement.get("topic") == "local_orientation" and fact.get("fact_type") == "player_local_information" \
+				and fact.get("statement", {}).get("topic") == "local_orientation" \
+				and fact.statement.get("settlement_id") == statement.get("settlement_id"):
+			return false
 		if fact.get("fact_type") == "player_local_information" and fact.get("speaker_id") == speaker:
+			if statement.get("topic") == "local_orientation":
+				return not same_information(fact.get("statement", {}).get("workplaces", []), statement.workplaces)
 			return not same_information(fact.get("statement", {}), statement) or now - int(fact.observed_hour) >= INFO_HOURS
 	return true
 
@@ -151,6 +200,15 @@ static func statement_text(session: Variant, person: Dictionary, info: Dictionar
 
 
 static func statement_brief(session: Variant, person: Dictionary, info: Dictionary) -> String:
+	if info.get("topic") == "local_orientation":
+		var place: String = session.context.locations.get(str(info.workplaces[0].location_id), {}).get("display_name", "本地") if not info.workplaces.is_empty() else "本地"
+		var lines: Array[String] = ["%s说：我平常在%s做活。要买卖，趁我在场直接谈，不必再问一遍。" % [person.display_name, place]]
+		if str(person.states.get("settlement_id", "")) == "generated_settlement.echo_landing":
+			lines.append("找旧路就去哨棚，柱上的草图画着废灯台；想探水洞，先到泊台，再沿湖走。")
+		else:
+			lines.append("坡上的哨棚通向断崖小径。路险，别只顾着找东西，留好回程的力气。")
+		lines.append("村中客舍有人在家才接待；晚间再去较合适。")
+		return "\n".join(lines)
 	var jobs: Array[String] = []
 	for work: Dictionary in info.workplaces:
 		jobs.append("%s（%d小时）" % [work.label, work.hours])
@@ -169,12 +227,14 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 		return advance_block(session, selected)
 	var view: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
 	var actor := str(session.context.actor_id)
-	var fact_id := "fact.player_local.%d" % session.elapsed_hours_since_start
+	var fact_id := "fact.player_local." + Brief.stamp(session)
 	var result := Result.new()
 	var summary := ""
 	if id.begins_with("ask_local:"):
 		var person: Dictionary = view.get_entity(str(selected.speaker_id))
 		summary = statement_text(session, person, selected.statement)
+		if Brief.enabled(session):
+			summary = statement_brief(session, person, selected.statement) + "\n\n" + summary
 		result.add_fact({"fact_id": fact_id, "fact_type": "player_local_information", "actor_id": actor,
 			"speaker_id": person.id, "location_id": session.context.location_id,
 			"day": session.current_day, "hour": session.current_hour, "observed_hour": Danger.hour(view.world_time),
@@ -189,7 +249,7 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 		summary = "你把%d份%s卖给%s，收到%d铜币。对方已经拿到食物，之后如何使用由其自行决定。" % [selected.quantity, offer.display_name, name, int(selected.quantity) * int(offer.unit_price)]
 		var trade: Dictionary = Market.new().plan_trade(policy, {"buyer_entity_id": selected.recipient_id,
 			"item_instance_id": selected.item_id, "quantity": selected.quantity, "quoted_unit_price": offer.unit_price,
-			"exchange_id": "exchange.player_sale.%d" % session.elapsed_hours_since_start, "summary": summary,
+			"exchange_id": "exchange.player_sale." + Brief.stamp(session), "summary": summary,
 			"trace_goods_sources": true}, session.stores, session.get_time_summary())
 		if not trade.get("success", false):
 			return trade
@@ -208,11 +268,15 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 		Market.new()._add_stack_transfer(result, item, 1, str(selected.recipient_id), "food", fact_id, fact_id, session.elapsed_hours_since_start)
 		result.item_changes.back()["expected_holder"] = {"kind": "entity", "id": actor}
 		result.mark_resolved("player_food_given")
+	Brief.append(result, session)
 	if not session.writer.apply_result(result, session.stores):
 		return {"success": false, "error": result.error_reason}
-	var outcome: Dictionary = session.PlayerLife.feedback(session.advance_time(1, "player_local_exchange"), summary)
+	var outcome: Dictionary = session.PlayerLife.feedback(Brief.advance(session, "player_local_exchange"), summary)
 	if id.begins_with("ask_local:"):
+		outcome.player_life_feedback.title = "%s的答复" % view.get_entity(str(selected.speaker_id)).display_name
 		outcome.player_life_feedback["compact_body"] = statement_brief(session, view.get_entity(str(selected.speaker_id)), selected.statement)
+	elif id.begins_with("sell_food:"):
+		outcome.player_life_feedback.title = "交易完成 · 收到%d铜币" % (int(selected.quantity) * int(selected.offer.unit_price))
 	return outcome
 
 

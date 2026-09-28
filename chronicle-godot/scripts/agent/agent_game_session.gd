@@ -84,7 +84,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	var journey: bool = variant == "world_adventure_v2"
+	var short_actions: bool = variant == "world_adventure_v3"
+	var journey: bool = variant == "world_adventure_v2" or short_actions
 	var adventure: bool = variant == "world_adventure_v1" or journey
 	var integration: bool = variant == "world_integration_v1" or adventure
 	var body_rules: bool = variant == "world_body_v1" or integration
@@ -104,7 +105,7 @@ func _start(request: Dictionary) -> Dictionary:
 	if body_rules:
 		options["body_rules_version"] = 1
 	if journey:
-		options["journey_rules_version"] = 1
+		options["journey_rules_version"] = 2 if short_actions else 1
 	if integration:
 		options.merge({"integration_rules_version": 2 if adventure else 1, "community_rules_version": 1})
 	if variant == "worksite_carting_v1":

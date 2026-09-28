@@ -50,6 +50,8 @@ var _startup := true
 var _startup_message := ""
 var _equipment_journal: VBoxContainer
 var _play_guide: AcceptDialog
+var _scene_picture: TextureRect
+var _scene_people: Label
 
 
 func _ready() -> void:
@@ -57,6 +59,20 @@ func _ready() -> void:
 	_install_save_controls()
 	_play_guide = PlayGuide.install(self, restart_button.get_parent())
 	_install_region_page()
+	_scene_picture = TextureRect.new()
+	_scene_picture.name = "SceneIllustration"
+	_scene_picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_scene_picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_scene_picture.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_scene_picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_scene_picture.tooltip_text = "静态像素环境画；人物、天气和物资以当前文字为准。"
+	surface.decision.add_child(_scene_picture)
+	surface.decision.move_child(_scene_picture, 0)
+	_scene_people = Label.new()
+	_scene_people.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_scene_people.add_theme_font_size_override("font_size", 15)
+	surface.primary.add_child(_scene_people)
+	get_viewport().size_changed.connect(_resize_scene_art)
 	_equipment_journal = EquipmentJournal.new()
 	_equipment_journal.name = "行囊与成长"
 	surface.tabs.add_child(_equipment_journal)
@@ -97,6 +113,8 @@ func restart_session() -> void:
 					_startup_message += "此存档保留原装备与成长规则；创建新世界可体验沿岸装备制作、穿戴与经历成长，原存档不会被转换。"
 				elif initial_content_extension and not view_model.session.fixture_source_data.has("journey_rules"):
 					_startup_message += "这是旧世界；废灯台、回水洞与客舍从新世界开始启用，原存档规则保留。"
+				elif initial_content_extension and view_model.session.fixture_source_data.get("journey_rules", {}).get("version") == 1:
+					_startup_message += "旧存档仍按整小时行动、只向急缺粮者售粮；「新世界」启用10分钟短行动与备粮收购。旧档不会被覆盖。"
 				refresh_view()
 				return
 			_startup_message = "存档无法读取，原文件已保留。已进入新世界；请勿覆盖原存档。错误：" + str(restored.get("error", "unknown"))
@@ -113,7 +131,7 @@ func _world_options(seed_value: int, integrated: bool, work_rules: bool = false,
 		options["content_extension_version"] = 2
 		options["body_rules_version"] = 1
 		options["integration_rules_version"] = 2
-		options["journey_rules_version"] = 1
+		options["journey_rules_version"] = 2
 		community_rules = true
 	if player_life:
 		integrated = true
@@ -189,6 +207,25 @@ func refresh_view(projected: Dictionary = {}) -> void:
 			var art_place: String = "镜湖北岸 · 区域环境" if _picture.texture == ECHO_ART else location_title.text
 			_picture_caption.text = "%s\n静态环境插画，不代表实时天气、人物、床位与货物。\n只有地图中的两处聚落正在运行；大世界其余文明尚未运行。" % art_place
 			_canon_details_button.show()
+	if _scene_picture != null:
+		_scene_picture.texture = _picture.texture
+		_scene_picture.visible = _picture.visible and not current_view_data.get("journey_guidance", {}).is_empty()
+		_resize_scene_art()
+		_scene_people.visible = _scene_picture.visible
+		var present_names: Array[String] = []
+		for person: Dictionary in current_view_data.get("visible_people", []):
+			present_names.append(str(person.get("name", "旅人")))
+		_scene_people.text = "在场：" + "、".join(present_names) if not present_names.is_empty() else "这里暂时没有可交谈的人。"
+		if _scene_picture.visible:
+			# The complete NPC/object inventory remains in Records, not another scrolling box.
+			surface.scene_details.hide()
+			location_description.add_theme_font_size_override("font_size", 16)
+			feedback_body.add_theme_font_size_override("normal_font_size", 16)
+
+
+func _resize_scene_art() -> void:
+	if _scene_picture != null:
+		_scene_picture.custom_minimum_size.y = 175 if get_viewport_rect().size.y < 800 else 240
 
 
 func _begin_operation(method: String, arguments: Array = []) -> Dictionary:
@@ -237,6 +274,11 @@ func _process(_delta: float) -> void:
 	_worker = null
 	_restore_input()
 	var before := current_view_data
+	if last_operation.result.get("success", false) and _operation_name == "act_player_life" \
+			and view_model.session.fixture_source_data.has("journey_rules"):
+		_intent_family = ""
+		surface.action_filter = ""
+		surface.tabs.current_tab = 0
 	refresh_view(last_operation.view)
 	var result: Dictionary = last_operation.result
 	world_audio.play(WorldAudio.cue_for(_operation_name, result, before, current_view_data))
@@ -249,7 +291,7 @@ func _process(_delta: float) -> void:
 	elif _operation_name == "load_from_path":
 		_status.text = "已恢复保存时的地点、时间与世界状态。"
 	else:
-		_status.text = "已结算。行动结果见「现场」，完整过程见「记录」。"
+		_status.text = str(current_view_data.get("feedback", {}).get("title", "已结算")) + "。下方是刚刚的结果；完整经过可在记录中查看。"
 	_quit_after_save = false
 
 

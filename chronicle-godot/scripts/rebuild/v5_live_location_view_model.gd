@@ -501,6 +501,7 @@ func build_view_data() -> Dictionary:
 			stakes.append(body_condition)
 		var sated := maxi(int(snapshot.player.get("hunger_sated_until", 0)) - session.PlayerLife.Meal.now(session.get_time_summary()), 0)
 		view.player["satiation_remaining_hours"] = sated
+		view.player["satiation_remaining_minutes"] = maxi(0, sated * 60 - int(session.get_time_summary().get("minute", 0)))
 		if int(snapshot.player.food_count) == 0:
 			stakes.append("行囊里没有食物。可以找现货，或白天去本地公用作业地采食")
 		elif snapshot.player.get("hunger") != "extreme":
@@ -547,6 +548,7 @@ func build_view_data() -> Dictionary:
 		elif encounter_options.is_empty() and int(snapshot.player.get("daily_travel_remaining", 0)) == 0:
 			view.decision.question = "继续探索，和人打交道，还是在这里停一会儿？"
 			view.decision.rule = "泊台通向回水洞，哨棚通向废灯台或断崖；村中的客舍夜里仍接待行路人。"
+		preload("res://scripts/rebuild/journey_scene_projection.gd").apply(session, view)
 	return view
 
 
@@ -2220,6 +2222,8 @@ func _feedback_view() -> Dictionary:
 	var hours := int(latest_result.get("hours", 0))
 	if hours > 0:
 		feedback["eyebrow"] = "你的选择 · 耗时 %d 小时 · 已写回世界" % hours
+	if latest_result.has("minutes"):
+		feedback["eyebrow"] = "你的选择 · 耗时 %d 分钟" % int(latest_result.minutes)
 	var growth: Array = latest_result.get("growth_feedback", [])
 	if not growth.is_empty():
 		feedback["details"] = growth + feedback.get("details", [])
@@ -3356,7 +3360,7 @@ func _time_view() -> Dictionary:
 	return {
 		"day": day,
 		"hour": hour,
-		"label": "第 %d 天　%02d:00" % [day, hour],
+		"label": "第 %d 天　%02d:%02d" % [day, hour, int(summary.get("minute", 0))],
 		"period": _time_period(hour),
 	}
 

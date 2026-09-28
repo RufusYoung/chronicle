@@ -6,6 +6,9 @@ const PATH := "res://data/sim/raw/content/echo_port_journeys_v1.json"
 static func register_items(fixture: Dictionary, registry: Variant) -> String:
 	if not fixture.get("journey_rules", {}) is Dictionary or not fixture.get("journey_rules", {}).get("item_defs", []) is Array:
 		return "journey_definitions_invalid"
+	if fixture.get("journey_rules", {}).get("version") == 2:
+		if not preload("res://scripts/sim/player/brief_actions.gd").register_states(registry):
+			return "journey_clock_definition_invalid"
 	for definition: Variant in fixture.get("journey_rules", {}).get("item_defs", []):
 		if not definition is Dictionary or not registry.register_definition("item", str(definition.get("item_def_id", "")), definition):
 			return "journey_item_definition_invalid"
@@ -100,7 +103,7 @@ static func configure(fixture: Dictionary, registry: Variant) -> String:
 
 
 static func validate(pack: Dictionary, registry: Variant) -> String:
-	if pack.get("version") != 1:
+	if pack.get("version") != 1 and pack.get("version") != 2:
 		return "journey_version_unsupported"
 	if not _keys_valid(pack, ["version", "item_defs", "sites", "hosts", "caches", "events"]):
 		return "journey_unknown_rule"

@@ -71,7 +71,7 @@ func _prepare_market(session: Variant) -> String:
 		"summary": "测试注入：将原有有钱成人放在现场并给予饥饿处境，玩家持有测试余粮；验证真实窗口和按钮，不称为自然游玩。"})
 	for pair: Array in [["location_id", session.context.location_id], ["home_location_id", session.context.location_id],
 		["daily_route_id", ""], ["daily_destination_id", ""], ["daily_travel_remaining", 0], ["daily_activity", "resting"],
-		["hunger", "high"], ["hunger_elapsed_hours", 0], ["fatigue", 9]]:
+		["hunger", "high"], ["hunger_elapsed_hours", 0], ["fatigue", 9], ["visible", true]]:
 		Life.set_state(result, target, str(pair[0]), pair[1])
 	result.add_item_change({"operation": "create", "item": {"item_instance_id": "test.player.render_food", "item_def_id": "item.fresh_fish_portion",
 		"holder": {"kind": "entity", "id": "player"}, "quantity": 8}, "source_fact_ids": ["test_injection.local_life_render"]})

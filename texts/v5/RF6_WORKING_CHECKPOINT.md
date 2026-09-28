@@ -1,6 +1,19 @@
 # RF6 Working Checkpoint
 
-Updated 2026-09-24. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
+Updated 2026-09-28. Recovery context only; the single active plan remains `CHRONICLE_WORLD_FIRST_PLAN_v5.1.md`.
+
+## Sep 28 Active: Candidate Human Recheck Failed Again
+
+Latest recovery checkpoint: source parent `b4c3a89feb36e6c64b54baedd726b286475df2ae`; preparing runtime commit, not exported yet. New profile `world_adventure_v3` / journey_rules2 adds native10-minute conversation/meal/trade/gift clock and funded reserve buying (4 personal /8 host), old versions keep old rules. New Scene projection puts concrete destinations in the main action area and existing pixel art on Scene; one orientation per settlement, visible named reply, return from action submenus. No reference-game assets/code imported.
+
+Focused new contract45/45, journey legacy36/36, full regular149/149, final actual renderer35/35 and source public protocol24/24 pass. Final route-card wording cleanup is covered by six-file journey rerun6/6. Two legal no-farming policies completed:81001 cave17actions14worldhours,2sales,13coins,health100;89037 beacon18actions15worldhours,1sale,8coins,health100. These are fast scripted legal routes, NOT human20-30-minute entertainment evidence. Logs/native checkpoints in ignored `work/adventure-experience/legal-source-final/`; render PNGs in user://tests/journey_experience_render. Both untouched263h user save and new native adventure render at720/900/back720 with exact world truth preserved. All test sessions closed at this note. Next: freeze/commit/push, clean Windows export and source/package parity, actual package UI probes, MCP refresh, honest report with remaining RF6 human/content limits.
+
+Failures retained: native JSON version arrives as float; fixed numeric equality, not integrity bypass. Finite-buyer tests now allow legitimate remaining quotes and separately test absent/poor/full. Two denial fixtures needed explicit source-fact provenance. Legal client's repeated save required overwrite=true. First full renderer32/35 exposed hidden extreme-hunger warning, legacy filter-reset overflow and stale one-hour meal assertion; fixed warning/filter scope and actual minute satiety display. Legal-native resize found art height did not shrink900->720; viewport resize now updates it, final probes pass. Original manual save hash verified unchanged `6F8CC884B32F0F09D8C3F2FBC699E731DA3CF3C45BAF7A084554BF7177DE8E93`.
+
+Initial inspection (historical): user reports repeated local questions, weak receipts, 22 food with no buyer, and farming/rest instead of adventure. This supersedes the Sep24 remaining-human-gate wording: actual negative feedback has arrived. Git began clean on codex/player-agency-world-surface. Before this task's edits the package exported273678e.
+
+Verified causes: local information equality included volatile quantities/instance IDs and ask advanced1h, so stock changes could immediately reopen the same question; sale required a present high/extreme-hunger adult with zero carried food; pixel scene pictures only appeared in Region. Existing journey content was hidden behind a front page prioritizing body/work choices. No subagents or new background services started.
+
 
 ## Sep 24 Active Remediation: Human First Experience Failed
 
