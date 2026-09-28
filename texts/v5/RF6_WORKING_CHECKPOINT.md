@@ -4,6 +4,20 @@ Updated 2026-09-28. Recovery context only; the single active plan remains `CHRON
 
 ## Sep 28 Active: Candidate Human Recheck Failed Again
 
+### Latest: Free-Roaming Player Rebuild In Verification
+
+Supersedes the old correction list below. Source parent41f47140fa816d7eccc1f0dd0cd0404ae36a939c, branch codex/player-agency-world-surface. Changes uncommitted; no export yet. User resumed implementation and confirmed authorization for supplied Life in Adventure art/code/text. Selected13 sprites in art/licensed_temporary with IDs/hashes/replacement ledger. No executable/middleware/code migration claimed.
+
+New default roaming_player.tscn calls the public legal Agent session, world_roaming_v1 / journey_rules3, independent native slot roaming_manual. Old UI behind --legacy-world-viewer; old263h manual untouched. Illustrated situation,3-4choices,persistent results,grouped trade,gear/attributes,map,records,menu/audio/quit. Twelve additional conditional nodes(24total),three sites/caches,short event/equipment minutes; no forced labor. Stores/transactions/bootstrap shared, old profiles retained.
+
+Contract60/60, native clock/equipment and invalid denial pass. Actual720/900/1080 first/result/pages render pass; legal interaction render covers gear/restore and natural field threat ending after two guards because it fed, not a player victory. Two code-agent policies previously passed33/37actions,17/20gamehours,2sales+1buy each,no jobs/gathering/crafting; not human playtime. Rerun final source/package after export. Evidence work/adventure-rework/roaming and user://tests/roaming_*_render.
+
+Failures retained: callbacks needed deferred signals; map/inventory overflow fixed; native numeric version float fixed; test inventory is Array not Dictionary; menu autowrap auto-size expanded to4827px, fixed manually broken nonwrapping help text. Final menu checks pass. Three unrelated generated report .import files are ours; remove before commit.
+
+Pre-export freeze:150/150 regular,37/37 renderer,25/25 source protocol(103.218s),11/11 art/audio Python checks pass. Expanded legal UI found duplicated full local answer overflowing720p; now uses compact_body with explicit full-record link. Final focused3/3 includes expanded trade/meal/work, real food sale and nonrepeating named answer, combat cost confirmation/cancel, audio/help/quit, and60/60 native contract. Final source policies pass33/37actions,17/20hours,health100,coins22/23. Original263h hash unchanged. Skill frontmatter passes; behavioral check preserves continue-after-failure and no-tests-as-human-proof boundaries.
+
+All owned sessions complete at freeze; no active processes. Next: commit/push runtime, clean export,25 packaged protocol tests, seven-truth-group policy comparison, actual package first frame, evidence/plan closeout and MCP refresh. Package not yet refreshed. RF6 human gate incomplete, no deadline extension. Ignore historical process IDs below.
+
 ### Packaged Corrective Task Evidence
 
 Runtime/export `c7bcbc4f6dbcb7cce397109d26a40565a851ace7` committed and pushed, clean package `sourceDirty=false`. Source protocol24/24; packaged24/24 in73.510s. Two no-farming legal policies match all seven native truth groups between source/package after restore and continuation. Actual package fresh and168h reach controllable frame; actual263h original-save renderer reaches world-ready without errors, original hash unchanged. All owned test/export/probe sessions are closed. Compact evidence and the exact failure/acceptance boundary are in the Sep28 adventure experience report. No RF6 completion or human-play claim.

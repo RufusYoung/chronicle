@@ -25,7 +25,7 @@ foreach ($file in @('Chronicle.exe', 'Chronicle.pck')) {
     if (-not (Test-Path -LiteralPath (Join-Path $output $file))) { throw "Missing $file" }
 }
 $smokeLog = Join-Path $output 'startup_smoke.log'
-$smoke = Start-Process -FilePath (Join-Path $output 'Chronicle.exe') -ArgumentList @('--headless', '--quit-after', '10', '--log-file', ('"' + $smokeLog + '"')) -WorkingDirectory $output -PassThru -WindowStyle Hidden
+$smoke = Start-Process -FilePath (Join-Path $output 'Chronicle.exe') -ArgumentList @('--headless', '--log-file', ('"' + $smokeLog + '"'), '--', '--startup-smoke') -WorkingDirectory $output -PassThru -WindowStyle Hidden
 if (-not $smoke.WaitForExit(120000)) {
     & taskkill.exe /PID $smoke.Id /T /F | Out-Null
     throw 'Standalone startup timed out.'
@@ -41,6 +41,7 @@ Copy-Item -LiteralPath (Join-Path $project 'art\environments\ECHO_PORT_PROVENANC
 Copy-Item -LiteralPath (Join-Path $project 'art\PIXEL_ASSET_PROVENANCE.md') -Destination (Join-Path $output 'PIXEL_ASSET_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\environments\JOURNEY_PIXEL_PROVENANCE.md') -Destination (Join-Path $output 'JOURNEY_PIXEL_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\PIXEL_ART_DIRECTION.md') -Destination (Join-Path $output 'PIXEL_ART_DIRECTION.md')
+Copy-Item -LiteralPath (Join-Path $project 'art\licensed_temporary\life_in_adventure\PROVENANCE.md') -Destination (Join-Path $output 'TEMPORARY_LICENSED_ART.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\audio\PROVENANCE.md') -Destination (Join-Path $output 'AUDIO_PROVENANCE.md')
 Copy-Item -LiteralPath (Join-Path $project 'art\fonts\SOURCE_HAN_SERIF_LICENSE.txt') -Destination (Join-Path $output 'SOURCE_HAN_SERIF_LICENSE.txt')
 Copy-Item -LiteralPath (Join-Path $project 'texts\build\GODOT_COPYRIGHT.txt') -Destination (Join-Path $output 'GODOT_COPYRIGHT.txt')

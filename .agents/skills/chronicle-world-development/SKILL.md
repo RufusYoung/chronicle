@@ -39,6 +39,8 @@ Use `capture-emergent-work` for evidence-driven plan updates. Preserve completed
 
 ## Learn from Reference Games
 
-Read accessible definitions, documented behavior and reproducible observations. Record source path/version, observed fact, inferred mechanism, Chronicle adaptation and test. Treat binary analysis as a focused investigation only when a concrete unanswered question requires it; do not label raw data or hypotheses recovered source code. Do not modify the reference installation or copy proprietary assets into the deliverable.
+Read accessible definitions, documented behavior and reproducible observations. Record source path/version, observed fact, inferred mechanism, Chronicle adaptation and test. Treat binary analysis as a focused investigation only when a concrete unanswered question requires it; do not label raw data or hypotheses recovered source code. Do not modify the reference installation. The user's 2026-09-28 authorization permits selected temporary reuse of the supplied Life in Adventure art, text and code. Keep it separately attributed, with source IDs, hashes and replacement records; do not import unrelated middleware or claim independent license verification.
+
+The player-facing priority is free roaming and adventure. Do not preserve the rejected dashboard layout or make all useful choices production jobs. Present one situation, its meaningful alternatives, then its actual outcome. Background simulation supports this experience; more simulation mechanisms alone are not proof that it has improved.
 
 Before changing this skill, validate its frontmatter and conduct a realistic behavioral check: ordinary round completion should continue, a failed local method should trigger diagnosis, and a material product decision should stop with one concise question. Skill wording does not itself prove execution improved.

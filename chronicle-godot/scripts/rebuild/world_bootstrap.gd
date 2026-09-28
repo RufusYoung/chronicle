@@ -6,18 +6,51 @@ func _ready() -> void:
 		var driver = load("res://scripts/agent/agent_stdio_driver.gd").new()
 		get_tree().quit(driver.run())
 		return
-	var scene := load("res://scenes/rebuild/world_demo.tscn") as PackedScene
+	var legacy := "--legacy-world-viewer" in OS.get_cmdline_user_args()
+	var scene := load("res://scenes/rebuild/world_demo.tscn" if legacy else "res://scenes/rebuild/roaming_player.tscn") as PackedScene
 	var viewer = scene.instantiate()
-	viewer.initial_content_extension = true
+	if legacy:
+		viewer.initial_content_extension = true
 	var probe := "--startup-probe" in OS.get_cmdline_user_args()
-	if probe:
+	var smoke := "--startup-smoke" in OS.get_cmdline_user_args()
+	if (probe or smoke) and legacy:
 		# Isolate diagnostics from the player's manual save, including failed probes.
 		viewer.save_path = ("user://tests/world_runtime_probe/day7.json"
 			if "--startup-probe-day7" in OS.get_cmdline_user_args()
 			else "user://tests/startup_probe/absent_" + Crypto.new().generate_random_bytes(8).hex_encode() + ".json")
+	elif probe or smoke:
+		viewer.auto_load = false
+		viewer.slot = "roaming_startup_probe"
 	add_child(viewer)
+	if smoke:
+		if legacy:
+			await get_tree().process_frame
+			get_tree().quit(0 if viewer.current_view_data.get("ready", false) and not viewer.busy else 1)
+			return
+		var deadline := Time.get_ticks_msec() + 30000
+		while viewer.busy and Time.get_ticks_msec() < deadline:
+			await get_tree().process_frame
+		get_tree().quit(0 if not viewer.busy and viewer.response.get("ok", false) else 1)
+		return
 	if probe:
-		await _probe_first_frame(viewer)
+		if legacy:
+			await _probe_first_frame(viewer)
+		else:
+			await _probe_roaming(viewer)
+
+
+func _probe_roaming(viewer: Variant) -> void:
+	if DisplayServer.get_name() == "headless":
+		push_error("Startup UI probe requires a real renderer.")
+		get_tree().quit(1)
+		return
+	var deadline := Time.get_ticks_msec() + 30000
+	while viewer.busy and Time.get_ticks_msec() < deadline:
+		await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	var ok: bool = not viewer.busy and viewer.response.get("ok", false) and viewer._picture.texture != null
+	print("CHRONICLE_FIRST_CONTROLLABLE_FRAME " + JSON.stringify({"ok": ok, "surface": "roaming", "profile": "world_roaming_v1", "renderer": RenderingServer.get_current_rendering_method()}))
+	get_tree().quit(0 if ok else 1)
 
 
 func _probe_first_frame(viewer: Variant) -> void:

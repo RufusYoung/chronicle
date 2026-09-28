@@ -89,7 +89,7 @@ static func validate_save(fixture: Dictionary, stores: Dictionary, locations: Di
 	if not enabled(fixture):
 		return ""
 	var state: Dictionary = stores.state_store.list_states(player)
-	if fixture.get("journey_rules", {}).get("version") == 2 and Brief.validate(state) != "":
+	if int(fixture.get("journey_rules", {}).get("version", 0)) in [2, 3] and Brief.validate(state) != "":
 		return Brief.validate(state)
 	if "player_controlled" not in stores.entity_store.get_entity(player).get("tags", []) \
 			or state.get("location_id") != here or not locations.has(here) \

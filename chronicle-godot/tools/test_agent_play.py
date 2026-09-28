@@ -16,6 +16,24 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_roaming_profile_legal_choices_and_persistent_knowledge(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_roaming_v1")
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(response["observation"]["journey_event"]["id"], "arrival_signs")
+            self.assertEqual(response["observation"]["player"]["coins"], 12)
+            response = game.request("act", choice_id="player_life/adventure:arrival_signs:forest")
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(response["receipt"]["control_source"], "code_agent")
+            self.assertEqual(response["observation"]["time"]["minute"], 10)
+            self.assertIn("桥索", response["observation"]["feedback"]["body"])
+            self.assertFalse(any(c["id"].startswith("adventure:arrival_signs:") for c in response["choices"]))
+            self.assertTrue(response["observation"]["journey_journal"])
+            slot = f"roaming_protocol_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot, overwrite=True)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], response["observation"])
+
     def test_short_action_profile_and_partial_hour_save(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
@@ -42,7 +60,8 @@ class TransportTest(unittest.TestCase):
             self.assertIn("水里的敲击声", response["observation"]["location"]["description"])
             self.assertTrue(any(c["id"] == "adventure:shore_box:leave" for c in response["choices"]))
             self.assertNotIn("journey_rules", response["observation"])
-            self.assertNotIn("journey_event", response["observation"])
+            self.assertEqual(response["observation"]["journey_event"]["id"], "shore_box")
+            self.assertNotIn("choices", response["observation"]["journey_event"])
             response = game.request("act", choice_id="player_life/adventure:shore_box:hook")
             self.assertTrue(response["ok"], response)
             self.assertIn("收入行囊", json.dumps(response["observation"]["feedback"], ensure_ascii=False))

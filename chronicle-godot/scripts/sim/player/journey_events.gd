@@ -4,11 +4,12 @@ const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Market = preload("res://scripts/sim/economy/market_service.gd")
 const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 const Sources = preload("res://scripts/sim/item/item_causal_sources.gd")
+const Brief = preload("res://scripts/sim/player/brief_actions.gd")
 
 
 static func enabled(session: Variant) -> bool:
 	var version: Variant = session.fixture_source_data.get("journey_rules", {}).get("version")
-	return version == 1 or version == 2
+	return version == 1 or version == 2 or version == 3
 
 
 static func knowledge(session: Variant) -> Dictionary:
@@ -29,6 +30,8 @@ static func current(session: Variant) -> Dictionary:
 	var known := knowledge(session)
 	var bindings: Dictionary = session.fixture_source_data.journey_generated.bindings
 	for event: Dictionary in session.fixture_source_data.journey_rules.events:
+		if event.get("excludes", []).any(func(mark: String) -> bool: return mark in known.marks):
+			continue
 		if event.id in known.closed or str(bindings.get(event.location, event.location)) != str(session.context.location_id):
 			continue
 		if not event.get("requires", []).all(func(mark: String) -> bool: return mark in known.marks) \
@@ -65,9 +68,10 @@ static func options(session: Variant) -> Array:
 			var value := int(session.stores.state_store.get_state(str(session.context.actor_id), str(choice.check.attribute), 0))
 			var chance := clampi(7 - (int(choice.check.difficulty) - value), 0, 6)
 			hint += " d6+%d 对 %d，成功机会%d/6。" % [value, choice.check.difficulty, chance]
+		var minutes := int(choice.get("minutes", int(choice.hours) * 60))
 		rows.append({"action_id": "adventure:" + str(event.id) + ":" + str(choice.id), "event_type": "player_life",
 			"label": choice.label, "hint": hint, "known_effect": hint, "hours": int(choice.hours),
-			"cost": "不耗时" if int(choice.hours) == 0 else "%d小时" % int(choice.hours),
+			"minutes": minutes, "cost": "不耗时" if minutes == 0 else ("%d分钟" % minutes if minutes < 60 else "%d小时%d分钟" % [minutes / 60, minutes % 60]),
 			"tradeoff": "", "can_execute": reason == "", "blocked_reason": reason,
 			"action_type": "life", "life_group": "adventure"})
 	return rows
@@ -187,11 +191,15 @@ static func execute(session: Variant, id: String) -> Dictionary:
 		result.add_fact({"fact_id": fact_id + ".learned." + mark, "fact_type": "journey_learned", "actor_id": actor,
 			"target_id": mark, "source_fact_ids": [fact_id], "day": session.current_day, "hour": session.current_hour, "summary": outcome.text})
 	result.mark_resolved("journey_choice")
+	if choice.has("minutes"):
+		Brief.append(result, session, int(choice.minutes))
 	if not session.writer.apply_result(result, session.stores):
 		session.challenge_rng.state = rng_before
 		return {"success": false, "error": result.error_reason}
 	var response: Dictionary = {"success": true, "hours": 0}
-	if int(choice.hours) > 0:
+	if choice.has("minutes"):
+		response = Brief.advance(session, "journey_choice", int(choice.minutes))
+	elif int(choice.hours) > 0:
 		response = session.advance_time(int(choice.hours), "journey_choice")
 	response["hours"] = int(session.elapsed_hours_since_start) - tick
 	response["player_life_feedback"] = {"title": event.title, "body": body, "details": [], "summary_details": []}

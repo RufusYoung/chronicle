@@ -56,6 +56,11 @@ static func options(session: Variant) -> Array:
 		if old != "":
 			rows.append(_row("unequip:" + slot, "取下" + str(session.stores.item_store.get_item(old).display_name),
 				"空出%s，物品留在行囊，相关被动不再生效。" % SLOT_NAMES[slot], slot, ""))
+	if session.fixture_source_data.get("journey_rules", {}).get("version") == 3:
+		for row: Dictionary in rows:
+			row["hours"] = 0
+			row["minutes"] = 10
+			row["cost"] = "10分钟"
 	return rows
 
 
@@ -68,7 +73,9 @@ static func _row(id: String, label: String, hint: String, slot: String, item: St
 static func execute(session: Variant, option: Dictionary) -> Dictionary:
 	var result := Result.new()
 	var actor := str(session.context.actor_id)
-	var fact_id := "fact.player_equipped.%d" % session.elapsed_hours_since_start
+	var brief: bool = session.fixture_source_data.get("journey_rules", {}).get("version") == 3
+	var clock = preload("res://scripts/sim/player/brief_actions.gd")
+	var fact_id := "fact.player_equipped." + (clock.stamp(session) if brief else str(session.elapsed_hours_since_start))
 	var clear: bool = str(option.item_instance_id) == ""
 	result.add_fact({"fact_id": fact_id, "fact_type": "player_equipment_changed", "actor_id": actor,
 		"day": session.current_day, "hour": session.current_hour, "location_id": session.context.location_id,
@@ -79,9 +86,11 @@ static func execute(session: Variant, option: Dictionary) -> Dictionary:
 		change["item_instance_id"] = option.item_instance_id
 	result.add_equipment_change(change)
 	result.mark_resolved("player_equipment_changed")
+	if brief:
+		clock.append(result, session)
 	if not session.writer.apply_result(result, session.stores):
 		return {"success": false, "error": result.error_reason}
-	var response: Dictionary = session.advance_time(1, "player_equipment")
+	var response: Dictionary = clock.advance(session, "player_equipment") if brief else session.advance_time(1, "player_equipment")
 	response["player_life_feedback"] = {"title": option.label, "body": option.hint, "details": [], "summary_details": []}
 	return response
 

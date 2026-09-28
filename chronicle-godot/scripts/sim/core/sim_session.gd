@@ -290,11 +290,10 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_integration_rules_version")
 	if options.get("integration_rules_version", 0) in [1, 2]:
 		fixture["integration_rules"] = Integration.load_pack(int(options.integration_rules_version))
-	if options.get("journey_rules_version", 0) not in [0, 1, 2]:
+	if options.get("journey_rules_version", 0) not in [0, 1, 2, 3]:
 		return _start_failure("unsupported_journey_rules_version")
-	if options.get("journey_rules_version", 0) in [1, 2]:
-		fixture["journey_rules"] = JSON.parse_string(FileAccess.get_file_as_string(JourneySetup.PATH))
-		fixture.journey_rules.version = options.journey_rules_version
+	if options.get("journey_rules_version", 0) in [1, 2, 3]:
+		fixture["journey_rules"] = JourneySetup.load_rules(int(options.journey_rules_version))
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -1354,7 +1353,7 @@ func _execute_world_combat(option_id: String) -> Dictionary:
 			result.narrative_result["end_reason"] = ending.reason
 			result.narrative_result["end_source_fact_ids"] = ending.source_fact_ids
 			result.narrative_result["title"] = "交锋结束"
-			result.narrative_result["summary"] += "\n" + str(ending.summary)
+			result.narrative_result["summary"] += "\n随后，" + str(ending.summary)
 	combat_encounter_count += 1
 	var log_entry := _build_combat_encounter_log_entry(option, result, combat_encounter_count, int(result.narrative_result.roll))
 	world_log.append_entry(log_entry)
@@ -1763,7 +1762,7 @@ func get_time_summary() -> Dictionary:
 		"world_tick_count": world_tick_count,
 		"elapsed_hours": elapsed_hours_since_start,
 	}
-	if fixture_source_data.get("journey_rules", {}).get("version") == 2 and stores.has("state_store"):
+	if int(fixture_source_data.get("journey_rules", {}).get("version", 0)) in [2, 3] and stores.has("state_store"):
 		time["minute"] = int(stores.state_store.get_state(str(context.actor_id), "player_action_minutes", 0))
 	return time
 

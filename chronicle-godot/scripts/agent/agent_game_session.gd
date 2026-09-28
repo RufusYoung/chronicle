@@ -20,6 +20,7 @@ var session_id: String = Crypto.new().generate_random_bytes(16).hex_encode()
 var mode: String = ""
 var scenario: String = ""
 var surface: String = ""
+var control_source: String = "code_agent"
 var model: Variant = null
 var _view: Dictionary = {}
 var _choices: Dictionary = {}
@@ -84,7 +85,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	var short_actions: bool = variant == "world_adventure_v3"
+	var roaming: bool = variant == "world_roaming_v1"
+	var short_actions: bool = variant == "world_adventure_v3" or roaming
 	var journey: bool = variant == "world_adventure_v2" or short_actions
 	var adventure: bool = variant == "world_adventure_v1" or journey
 	var integration: bool = variant == "world_integration_v1" or adventure
@@ -105,7 +107,7 @@ func _start(request: Dictionary) -> Dictionary:
 	if body_rules:
 		options["body_rules_version"] = 1
 	if journey:
-		options["journey_rules_version"] = 2 if short_actions else 1
+		options["journey_rules_version"] = 3 if roaming else (2 if short_actions else 1)
 	if integration:
 		options.merge({"integration_rules_version": 2 if adventure else 1, "community_rules_version": 1})
 	if variant == "worksite_carting_v1":
@@ -160,7 +162,7 @@ func _refresh() -> void:
 	var projected: Dictionary = model.build_view_data()
 	_view = {"visibility": "player_surface"}
 	# Never expose raw transaction history or save payloads through player observation.
-	for key: String in ["location", "playtest", "player", "equipment_journal", "player_life_followups", "local_information", "time", "region_status", "region_map", "visible_people",
+	for key: String in ["location", "playtest", "player", "journey_event", "journey_journal", "journey_guidance", "equipment_journal", "player_life_followups", "local_information", "time", "region_status", "region_map", "visible_people",
 		"visible_observations", "decision", "agency", "risk", "knowledge", "investigation",
 		"chronicle", "feedback", "title", "subtitle", "phase_id", "day", "duration_days",
 		"complete", "objective", "ritual", "status", "market", "people", "incident", "completion"]:
@@ -407,7 +409,7 @@ func _settled(result: Dictionary, cause: String, choice_id: String = "") -> Dict
 	var response := _response()
 	response["ok"] = bool(result.get("success", result.get("ok", false)))
 	response["receipt"] = {"cause": cause, "choice_id": choice_id, "world_time": _session().get_time_summary(),
-		"control_source": "code_agent", "success": response.ok,
+		"control_source": control_source, "success": response.ok,
 		"error": result.get("error", result.get("error_reason", "")),
 		"partial_commit_possible": not response.ok, "automatic_retry_safe": false}
 	return response

@@ -1,7 +1,7 @@
 extends RefCounted
 
 static func enabled(session: Variant) -> bool:
-	return session.fixture_source_data.get("journey_rules", {}).get("version") == 2
+	return int(session.fixture_source_data.get("journey_rules", {}).get("version", 0)) in [2, 3]
 
 
 static func register_states(registry: Variant) -> bool:
@@ -21,22 +21,23 @@ static func stamp(session: Variant) -> String:
 	return hour + "." + str(session.stores.state_store.get_state(str(session.context.actor_id), "player_action_sequence", 0)) if enabled(session) else hour
 
 
-static func append(result: Variant, session: Variant) -> void:
+static func append(result: Variant, session: Variant, minutes: int = 10) -> void:
 	if not enabled(session):
 		return
 	var actor := str(session.context.actor_id)
 	var state: Variant = session.stores.state_store
-	result.add_state_change({"entity_id": actor, "key": "player_action_minutes", "to": (int(state.get_state(actor, "player_action_minutes", 0)) + 10) % 60})
+	result.add_state_change({"entity_id": actor, "key": "player_action_minutes", "to": (int(state.get_state(actor, "player_action_minutes", 0)) + minutes) % 60})
 	result.add_state_change({"entity_id": actor, "key": "player_action_sequence", "to": int(state.get_state(actor, "player_action_sequence", 0)) + 1})
 
 
-static func advance(session: Variant, reason: String) -> Dictionary:
+static func advance(session: Variant, reason: String, minutes: int = 10) -> Dictionary:
 	if not enabled(session):
 		return session.advance_time(1, reason)
 	# Short actions retain a native remainder; each crossed hour runs the ordinary world tick.
-	var crossed: bool = session.stores.state_store.get_state(str(session.context.actor_id), "player_action_minutes", 0) == 0
-	var result: Dictionary = session.advance_time(1, reason) if crossed else {"success": true, "hours": 0}
-	result["minutes"] = 10
+	var remainder := int(session.stores.state_store.get_state(str(session.context.actor_id), "player_action_minutes", 0))
+	var crossed := minutes / 60 + (1 if remainder < minutes % 60 else 0)
+	var result: Dictionary = session.advance_time(crossed, reason) if crossed > 0 else {"success": true, "hours": 0}
+	result["minutes"] = minutes
 	return result
 
 

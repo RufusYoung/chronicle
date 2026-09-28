@@ -17,7 +17,16 @@ static func apply(session: Variant, view: Dictionary) -> void:
 		var target: String = directions.get(str(option.route_id), "")
 		var cue := ""
 		var priority := 9
-		if target.ends_with(".landing") and ("shore_box" not in known.closed or "cave_bundle" not in known.closed):
+		if target == "journey_location.forest_edge":
+			cue = "循着金属声，去林缘的溪谷看看"
+			priority = -1 if "bridge_heard" in known.marks else 1
+		elif target == "journey_location.broken_bridge":
+			cue = "沿溪谷找残桥，看看对岸的石屋"
+			priority = 0
+		elif target == "journey_location.waystone":
+			cue = "到旧路碑寻找从前行路人的痕迹"
+			priority = 0
+		elif target.ends_with(".landing") and ("shore_box" not in known.closed or "cave_bundle" not in known.closed):
 			cue = "沿湖去泊台；那里也通向回水洞"
 			priority = 0
 		elif target.ends_with("echo_landing.watch_post"):

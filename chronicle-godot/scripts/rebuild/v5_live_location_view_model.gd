@@ -540,7 +540,7 @@ func build_view_data() -> Dictionary:
 		for entry: Dictionary in view.journey_journal:
 			view.knowledge.append("第%d天 %02d时：%s" % [entry.day, entry.hour, entry.text])
 		var event: Dictionary = session.PlayerLife.Journey.current(session)
-		view["journey_event"] = {"id": event.id, "title": event.title, "body": event.body} if not event.is_empty() else {}
+		view["journey_event"] = {"id": event.id, "title": event.title, "body": event.body, "art": event.get("art", "")} if not event.is_empty() else {}
 		if not event.is_empty():
 			view.location.description = str(event.title) + "\n" + str(event.body)
 			view.decision.question = "你要怎样处理眼前的事？"
@@ -1236,6 +1236,7 @@ func _combat_risk_view(snapshot: Variant = null) -> Dictionary:
 	return {
 		"active": true,
 		"encounter": true,
+		"enemy_id": str(enemy.get("entity_id", "")),
 		"title": "遭遇：%s" % str(enemy.get("display_name", "未知对手")),
 		"decision_evidence": "\n".join(features),
 		"description": "%s\n%s\n%s" % [

@@ -3,10 +3,25 @@ extends RefCounted
 const PATH := "res://data/sim/raw/content/echo_port_journeys_v1.json"
 
 
+static func load_rules(version: int) -> Dictionary:
+	var pack: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(PATH))
+	pack.version = version
+	if version == 3:
+		var roaming: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/sim/raw/content/echo_port_roaming_v1.json"))
+		for key: String in ["sites", "caches", "events"]:
+			pack[key].append_array(roaming[key])
+		for event: Dictionary in pack.events:
+			for choice: Dictionary in event.choices:
+				if not choice.has("minutes"):
+					choice["minutes"] = 0 if choice.hours == 0 else (20 if choice.hours == 1 else int(choice.hours) * 20)
+				choice.hint = str(choice.hint).replace("多用一小时", "多花20分钟").replace("花一小时", "花20分钟")
+	return pack
+
+
 static func register_items(fixture: Dictionary, registry: Variant) -> String:
 	if not fixture.get("journey_rules", {}) is Dictionary or not fixture.get("journey_rules", {}).get("item_defs", []) is Array:
 		return "journey_definitions_invalid"
-	if fixture.get("journey_rules", {}).get("version") == 2:
+	if int(fixture.get("journey_rules", {}).get("version", 0)) in [2, 3]:
 		if not preload("res://scripts/sim/player/brief_actions.gd").register_states(registry):
 			return "journey_clock_definition_invalid"
 	for definition: Variant in fixture.get("journey_rules", {}).get("item_defs", []):
@@ -40,6 +55,11 @@ static func configure(fixture: Dictionary, registry: Variant) -> String:
 	var entity_ids: Array = []
 	var item_ids: Array = []
 	var route_ids: Array = []
+	if pack.version == 3:
+		# A new traveler's finite starting possessions, frozen in the native bootstrap.
+		_add_item(fixture, "traveler.coins", "item.copper_coin", 12, str(fixture.player.id), item_ids)
+		fixture.economic_generation_result.initial_currency_total += 12
+		_add_item(fixture, "traveler.provisions", "item.smoked_lake_fish", 4, str(fixture.player.id), item_ids)
 	for site: Dictionary in pack.sites:
 		if not fixture.locations.has(site.parent):
 			return "journey_parent_missing:" + str(site.parent)
@@ -103,7 +123,7 @@ static func configure(fixture: Dictionary, registry: Variant) -> String:
 
 
 static func validate(pack: Dictionary, registry: Variant) -> String:
-	if pack.get("version") != 1 and pack.get("version") != 2:
+	if not _integer(pack.get("version"), 1, 3):
 		return "journey_version_unsupported"
 	if not _keys_valid(pack, ["version", "item_defs", "sites", "hosts", "caches", "events"]):
 		return "journey_unknown_rule"
@@ -134,8 +154,13 @@ static func validate(pack: Dictionary, registry: Variant) -> String:
 			if not host.get(key) is String:
 				return "journey_host_invalid:" + key
 	for event: Dictionary in pack.events:
-		if not _keys_valid(event, ["id", "location", "title", "body", "cache", "host", "requires", "requires_done", "window", "choices"]):
+		var event_keys := ["id", "location", "title", "body", "cache", "host", "requires", "requires_done", "window", "choices"]
+		if pack.version == 3:
+			event_keys.append_array(["art", "excludes"])
+		if not _keys_valid(event, event_keys):
 			return "journey_unknown_event_field"
+		if not _marks_valid(event.get("excludes", [])) or not event.get("art", "") is String:
+			return "journey_roaming_presentation_invalid"
 		for key: String in ["location", "title", "body"]:
 			if not event.get(key) is String:
 				return "journey_event_text_invalid"
@@ -157,8 +182,13 @@ static func validate(pack: Dictionary, registry: Variant) -> String:
 			if not choice is Dictionary or not choice.get("id") is String or choice.id in choices:
 				return "journey_choice_id_invalid"
 			choices.append(choice.id)
-			if not _keys_valid(choice, ["id", "label", "hours", "hint", "check", "success", "failure", "requires", "tool_tag", "tool_wear", "give", "payment", "trust"]):
+			var choice_keys := ["id", "label", "hours", "hint", "check", "success", "failure", "requires", "tool_tag", "tool_wear", "give", "payment", "trust"]
+			if pack.version == 3:
+				choice_keys.append("minutes")
+			if not _keys_valid(choice, choice_keys):
 				return "journey_unknown_choice_field"
+			if choice.has("minutes") and (not _integer(choice.minutes, 0, 360) or int(choice.minutes) % 10 != 0):
+				return "journey_minutes_invalid"
 			if not _integer(choice.get("hours"), 0, 6) or not choice.get("label") is String or not choice.get("hint") is String:
 				return "journey_choice_invalid"
 			if not _marks_valid(choice.get("requires", [])) or not _integer(choice.get("payment", 0), -99, 99) or not _integer(choice.get("trust", 0), -10, 10):
