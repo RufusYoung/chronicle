@@ -1,0 +1,24 @@
+{
+	"checkpoint": "C:/code/game/chronicle/work/adventure-experience/cave-ui.json",
+	"checks": {
+		"all_routes_reachable": true,
+		"header_720": true,
+		"hours": true,
+		"layout_720": true,
+		"layout_900": true,
+		"record_720": true,
+		"resize_back_720": true,
+		"restored": true,
+		"scene_720": true,
+		"scene_900": true,
+		"truth:rng_states": true,
+		"truth:session": true,
+		"truth:stores": true,
+		"truth:world_log": true,
+		"truth:world_time": true
+	},
+	"hours": 13.0,
+	"passed": true,
+	"scope": "Actual renderer of the supplied native checkpoint; this check performs no game action, injection or human UI play. Native world truth unchanged.",
+	"visible_followups": []
+}

@@ -4,6 +4,14 @@ Updated 2026-09-28. Recovery context only; the single active plan remains `CHRON
 
 ## Sep 28 Active: Candidate Human Recheck Failed Again
 
+### Packaged Corrective Task Evidence
+
+Runtime/export `c7bcbc4f6dbcb7cce397109d26a40565a851ace7` committed and pushed, clean package `sourceDirty=false`. Source protocol24/24; packaged24/24 in73.510s. Two no-farming legal policies match all seven native truth groups between source/package after restore and continuation. Actual package fresh and168h reach controllable frame; actual263h original-save renderer reaches world-ready without errors, original hash unchanged. All owned test/export/probe sessions are closed. Compact evidence and the exact failure/acceptance boundary are in the Sep28 adventure experience report. No RF6 completion or human-play claim.
+
+Content density remains an engineering and product gap, not merely missing paperwork. Twelve authored nodes are unchanged. The next dependency-ready development work must add meaningful short encounters and readable consequences within the current plan, not more subsistence tuning. RF7/8 and the Sep28 freeze are unfulfilled; deadline risk is explicit. Refresh committed discussion MCP after pushing this evidence/documentation checkpoint, then check the public endpoint. Do not publish player save contents.
+
+### Pre-Export Recovery Notes (Historical)
+
 Latest recovery checkpoint: source parent `b4c3a89feb36e6c64b54baedd726b286475df2ae`; preparing runtime commit, not exported yet. New profile `world_adventure_v3` / journey_rules2 adds native10-minute conversation/meal/trade/gift clock and funded reserve buying (4 personal /8 host), old versions keep old rules. New Scene projection puts concrete destinations in the main action area and existing pixel art on Scene; one orientation per settlement, visible named reply, return from action submenus. No reference-game assets/code imported.
 
 Focused new contract45/45, journey legacy36/36, full regular149/149, final actual renderer35/35 and source public protocol24/24 pass. Final route-card wording cleanup is covered by six-file journey rerun6/6. Two legal no-farming policies completed:81001 cave17actions14worldhours,2sales,13coins,health100;89037 beacon18actions15worldhours,1sale,8coins,health100. These are fast scripted legal routes, NOT human20-30-minute entertainment evidence. Logs/native checkpoints in ignored `work/adventure-experience/legal-source-final/`; render PNGs in user://tests/journey_experience_render. Both untouched263h user save and new native adventure render at720/900/back720 with exact world truth preserved. All test sessions closed at this note. Next: freeze/commit/push, clean Windows export and source/package parity, actual package UI probes, MCP refresh, honest report with remaining RF6 human/content limits.

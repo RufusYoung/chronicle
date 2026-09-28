@@ -1,0 +1,50 @@
+[
+  {
+    "Test": "tests/rebuild/journey_experience_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.06,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/journey_surface_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.44,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/journey_content_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.73,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/journey_counterexample_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 2.55,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/journey_experience_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.12,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/journey_life_playthrough_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 73.06,
+    "UnexpectedErrors": []
+  }
+]

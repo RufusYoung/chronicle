@@ -1,0 +1,8 @@
+{
+  "Test": "tests/rebuild/player_local_life_render_test.gd",
+  "Passed": true,
+  "ExitCode": 0,
+  "TimedOut": false,
+  "Seconds": 4.45,
+  "UnexpectedErrors": []
+}

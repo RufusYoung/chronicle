@@ -1,0 +1,41 @@
+{
+	"checkpoint": "C:/Users/x4473/AppData/Roaming/Godot/app_userdata/CHRONICLE_GODOT/world_demo/manual.json",
+	"checks": {
+		"all_routes_reachable": true,
+		"header_720": true,
+		"hours": true,
+		"layout_720": true,
+		"layout_900": true,
+		"record_720": true,
+		"resize_back_720": true,
+		"restored": true,
+		"scene_720": true,
+		"scene_900": true,
+		"truth:rng_states": true,
+		"truth:session": true,
+		"truth:stores": true,
+		"truth:world_log": true,
+		"truth:world_time": true
+	},
+	"hours": 263.0,
+	"passed": true,
+	"scope": "Actual renderer of the supplied native checkpoint; this check performs no game action, injection or human UI play. Native world truth unchanged.",
+	"visible_followups": [
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_terrace.002.echo_port_environs_v1_time_203",
+			"source_fact_id": "fact.exchange.player_sale.202",
+			"text": "第9天 19:00，你看见雷禾吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		},
+		{
+			"brief": "第7天，陶砚给家人分了一份食物。这批库存有你的补充。",
+			"fact_id": "fact.player_heard_update.175",
+			"source_fact_id": "fact.npc_household_meal.generated_resident.echo_landing.002.echo_port_environs_v1_time_156",
+			"text": "陶砚谈起后来的情况（你先前补充的食物）：第7天 20:00，同住者拿出一份食物，先让陶川吃下。"
+		},
+		{
+			"fact_id": "fact.npc_household_meal.generated_resident.echo_landing.002.echo_port_environs_v1_time_80",
+			"source_fact_id": "fact.player_local.79",
+			"text": "第4天 16:00，你看见陶川吃下了食物。这批库存与你先前的行动有关；混合存放后不逐份区分来源。"
+		}
+	]
+}

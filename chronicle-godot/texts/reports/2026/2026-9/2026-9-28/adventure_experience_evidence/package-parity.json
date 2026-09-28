@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "source_only": false,
+  "seconds": 28.795936200069264,
+  "cases": [
+    {
+      "seed": 81001,
+      "policy": "cave",
+      "sales": 2,
+      "actions": 17,
+      "hours": 14,
+      "food": 1,
+      "coins": 13,
+      "health": 100
+    },
+    {
+      "seed": 89037,
+      "policy": "beacon",
+      "sales": 1,
+      "actions": 18,
+      "hours": 15,
+      "food": 2,
+      "coins": 8,
+      "health": 100
+    }
+  ],
+  "scope": "Scripted legal agent play, not human fun or an RF6 acceptance verdict."
+}
