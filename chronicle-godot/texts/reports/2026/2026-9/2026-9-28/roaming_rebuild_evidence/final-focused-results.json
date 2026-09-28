@@ -1,0 +1,26 @@
+[
+  {
+    "Test": "tests/rebuild/roaming_interaction_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.7,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/roaming_player_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.51,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/sim/roaming_journey_contract_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.29,
+    "UnexpectedErrors": []
+  }
+]

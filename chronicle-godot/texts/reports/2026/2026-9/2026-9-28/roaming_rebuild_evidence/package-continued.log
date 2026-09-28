@@ -1,0 +1,5 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 596.36 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+CHRONICLE_WORLD_READY {"elapsed_hours":20,"journey_version":3.0,"surface":"roaming"}
+CHRONICLE_FIRST_CONTROLLABLE_FRAME {"elapsed_hours":20,"ok":true,"profile":"world_roaming_v1","renderer":"gl_compatibility","surface":"roaming"}

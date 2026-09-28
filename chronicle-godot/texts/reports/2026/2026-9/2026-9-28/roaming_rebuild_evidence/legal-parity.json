@@ -1,0 +1,73 @@
+{
+  "cases": [
+    {
+      "seed": 81001,
+      "policy": "explorer",
+      "actions": 33,
+      "sales": 2,
+      "buys": 1,
+      "combat_rounds": 0,
+      "resolved_events": [
+        "arrival_signs",
+        "forest_sound",
+        "forest_satchel",
+        "bridge_crossing",
+        "bridge_equipment",
+        "forest_return",
+        "shore_box",
+        "beacon_marks",
+        "beacon_climb",
+        "beacon_view",
+        "night_talk",
+        "tell_bridge",
+        "host_remembers_bridge"
+      ],
+      "max_action_seconds": 0.4131321001332253,
+      "hours": 17,
+      "health": 100,
+      "food": 10,
+      "coins": 22
+    },
+    {
+      "seed": 89037,
+      "policy": "night",
+      "actions": 37,
+      "sales": 2,
+      "buys": 1,
+      "combat_rounds": 0,
+      "resolved_events": [
+        "arrival_signs",
+        "forest_sound",
+        "forest_satchel",
+        "bridge_crossing",
+        "bridge_equipment",
+        "forest_return",
+        "shore_box",
+        "notice_at_commons",
+        "waystone_marks",
+        "waystone_night",
+        "waystone_cache",
+        "night_talk",
+        "tell_bridge",
+        "host_remembers_bridge"
+      ],
+      "max_action_seconds": 0.36208319989964366,
+      "hours": 20,
+      "health": 100,
+      "food": 7,
+      "coins": 23
+    }
+  ],
+  "passed": true,
+  "source_only": false,
+  "kind": "legal_code_agent_play_not_human",
+  "truth_keys": [
+    "bootstrap",
+    "definition_manifest",
+    "stores",
+    "session",
+    "world_time",
+    "rng_states",
+    "world_log"
+  ]
+}

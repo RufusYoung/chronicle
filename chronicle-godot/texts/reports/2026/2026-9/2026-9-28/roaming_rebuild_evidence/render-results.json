@@ -1,0 +1,298 @@
+[
+  {
+    "Test": "tests/rebuild/body_condition_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.7,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/canon_world_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.42,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/community_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.16,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/household_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.26,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/household_provisioning_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.5,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/journey_experience_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.08,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/journey_surface_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.23,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/pixel_art_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.61,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/player_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 8.82,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/player_local_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.96,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/resident_daily_life_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.82,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/resident_food_market_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.36,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/roaming_interaction_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.69,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/roaming_player_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.82,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_dynamic_settlement_resource_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 6.47,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_economic_authority_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.65,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_emergent_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.67,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_first_quarter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.39,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_first_year_close_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.28,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_organization_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.57,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_generated_settlement_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.32,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_industry_lifecycle_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 19.89,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_life_incident_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.49,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_organization_lifecycle_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.27,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_playable_combat_encounter_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.63,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_second_year_reception_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.41,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_absorption_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 7.11,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_capacity_adaptation_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.23,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_settlement_network_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 19.36,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/v5_unified_surface_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.29,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/work_framework_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 9.39,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/work_interruption_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 5.2,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/worksite_food_storage_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.1,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/world_audio_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.52,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/world_content_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.19,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/world_danger_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 4.78,
+    "UnexpectedErrors": []
+  },
+  {
+    "Test": "tests/rebuild/world_provisions_render_test.gd",
+    "Passed": true,
+    "ExitCode": 0,
+    "TimedOut": false,
+    "Seconds": 3.71,
+    "UnexpectedErrors": []
+  }
+]

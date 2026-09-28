@@ -4,7 +4,13 @@ Updated 2026-09-28. Recovery context only; the single active plan remains `CHRON
 
 ## Sep 28 Active: Candidate Human Recheck Failed Again
 
-### Latest: Free-Roaming Player Rebuild In Verification
+### Latest: Rebuilt Candidate Ready For Human Experience Gate
+
+Runtime199566f plus probe UID commitdeebcae00b4c29906151c9fbea2d8e1f60e3d303 are pushed. Final clean export has sourceDirty=false; EXE SHA25691724F15024A3A545E28CCD83134403D31CE2323A38E51C95E4DFA282F732AB6, PCK SHA256AD66C0F2F12B5E010DF449A4D33C85582F3DAD39759EBB44393C75E2277640B5. UID-only re-export is byte-identical to the fully tested package.
+
+Final25/25 package protocol(72.518s), two-policy seven-truth-group native comparison and actual EXE20h continued first frame pass. Console-engine PCK resource test separately verifies all20h inventory pages720/900/back720. All owned test processes and sessions finished; original263h save hash remains6F8CC884B32F0F09D8C3F2FBC699E731DA3CF3C45BAF7A084554BF7177DE8E93. Do not relaunch an old loop below. No human-recheck or RF6 completion claim. Formal Sep28 roaming report and evidence folder describe complete scope and failed approaches. Remaining RF6 gate is revised human experience; deployed discussion snapshot version must be checked through its live metadata, not inferred from this document.
+
+### Historical Implementation And Verification Notes
 
 Supersedes the old correction list below. Source parent41f47140fa816d7eccc1f0dd0cd0404ae36a939c, branch codex/player-agency-world-surface. Changes uncommitted; no export yet. User resumed implementation and confirmed authorization for supplied Life in Adventure art/code/text. Selected13 sprites in art/licensed_temporary with IDs/hashes/replacement ledger. No executable/middleware/code migration claimed.
 
