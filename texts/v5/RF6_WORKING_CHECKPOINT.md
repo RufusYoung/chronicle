@@ -18,6 +18,8 @@ Pre-export freeze:150/150 regular,37/37 renderer,25/25 source protocol(103.218s)
 
 All owned sessions complete at freeze; no active processes. Next: commit/push runtime, clean export,25 packaged protocol tests, seven-truth-group policy comparison, actual package first frame, evidence/plan closeout and MCP refresh. Package not yet refreshed. RF6 human gate incomplete, no deadline extension. Ignore historical process IDs below.
 
+Post-freeze follow-up:045efce committed/pushed and clean-exported.25 package protocol checks passed72.037s; two policies match seven native truth groups; actual EXE new-entry first frame passes. External GDScript via release EXE timed out without useful output; owned process was stopped. Console engine --main-pack successfully loaded the exact exported resources and20h native save, exposing720p inventory overflow with three equipped items. Fix to two items per inventory page; add isolated --startup-probe-continued to verify true standalone load, distinct from external PCK render. Re-export required after this UI-only follow-up. No failed probe is counted as a pass.
+
 ### Packaged Corrective Task Evidence
 
 Runtime/export `c7bcbc4f6dbcb7cce397109d26a40565a851ace7` committed and pushed, clean package `sourceDirty=false`. Source protocol24/24; packaged24/24 in73.510s. Two no-farming legal policies match all seven native truth groups between source/package after restore and continuation. Actual package fresh and168h reach controllable frame; actual263h original-save renderer reaches world-ready without errors, original hash unchanged. All owned test/export/probe sessions are closed. Compact evidence and the exact failure/acceptance boundary are in the Sep28 adventure experience report. No RF6 completion or human-play claim.

@@ -23,7 +23,7 @@ func run() -> void:
 	if not equips.is_empty():
 		await act(viewer, str(equips[0].id))
 	viewer._navigate("inventory")
-	for offset: int in [0, 3]:
+	for offset: int in range(0, viewer.response.observation.equipment_journal.items.size(), 2):
 		viewer.offset = offset
 		viewer._render()
 		await layout_check(viewer, "inventory_" + str(offset))

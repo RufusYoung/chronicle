@@ -19,8 +19,9 @@ func _ready() -> void:
 			if "--startup-probe-day7" in OS.get_cmdline_user_args()
 			else "user://tests/startup_probe/absent_" + Crypto.new().generate_random_bytes(8).hex_encode() + ".json")
 	elif probe or smoke:
-		viewer.auto_load = false
-		viewer.slot = "roaming_startup_probe"
+		var continuing := "--startup-probe-continued" in OS.get_cmdline_user_args()
+		viewer.auto_load = continuing
+		viewer.slot = "roaming_startup_continued" if continuing else "roaming_startup_probe"
 	add_child(viewer)
 	if smoke:
 		if legacy:
@@ -49,7 +50,10 @@ func _probe_roaming(viewer: Variant) -> void:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	var ok: bool = not viewer.busy and viewer.response.get("ok", false) and viewer._picture.texture != null
-	print("CHRONICLE_FIRST_CONTROLLABLE_FRAME " + JSON.stringify({"ok": ok, "surface": "roaming", "profile": "world_roaming_v1", "renderer": RenderingServer.get_current_rendering_method()}))
+	var elapsed: int = viewer.response.get("observation", {}).get("time", {}).get("elapsed_hours", 0)
+	if "--startup-probe-continued" in OS.get_cmdline_user_args():
+		ok = ok and elapsed > 0
+	print("CHRONICLE_FIRST_CONTROLLABLE_FRAME " + JSON.stringify({"ok": ok, "elapsed_hours": elapsed, "surface": "roaming", "profile": "world_roaming_v1", "renderer": RenderingServer.get_current_rendering_method()}))
 	get_tree().quit(0 if ok else 1)
 
 

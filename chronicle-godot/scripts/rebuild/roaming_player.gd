@@ -404,7 +404,7 @@ func _render_collection() -> void:
 		_pager(_story, features.size(), 3)
 		return
 	var items: Array = journal.get("items", [])
-	for item: Dictionary in items.slice(offset, offset + 3):
+	for item: Dictionary in items.slice(offset, offset + 2):
 		var item_header := HBoxContainer.new()
 		_story.add_child(item_header)
 		var icon_texture: Texture2D = EquipmentPanel._icon(str(item.definition_id))
@@ -424,7 +424,7 @@ func _render_collection() -> void:
 				_action_button(actions, choice)
 	if items.is_empty():
 		_label(_story, "行囊暂时没有物品。", 20)
-	_pager(_story, items.size(), 3)
+	_pager(_story, items.size(), 2)
 
 
 func _pager(parent: Node, total: int, count: int) -> void:
