@@ -70,6 +70,7 @@ const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd
 const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
+const EquipmentIntents = preload("res://scripts/sim/situation/equipment_intents.gd")
 const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
@@ -303,6 +304,21 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				livelihood_results.append_array(danger.results)
 				livelihood_events.append_array(danger.events)
 			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
+			if daily_life_config.get("situation_rules", {}).get("version") == 1:
+				var requests: Variant = EquipmentIntents.requests(activity_snapshot, round_event, context.locations)
+				if not writer.apply_result(requests, stores):
+					return _failure_result(event, "equipment_requests_rejected", stores)
+				livelihood_results.append(requests)
+				livelihood_events.append_array(requests.facts_added)
+				for giver: Dictionary in activity_snapshot.get_entities_by_type("person"):
+					var support_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
+					var support: Variant = EquipmentIntents.assistance(support_snapshot, support_snapshot.get_entity(str(giver.id)), round_event)
+					if not writer.apply_result(support, stores):
+						return _failure_result(event, "equipment_assistance_rejected", stores)
+					if not support.is_empty():
+						livelihood_results.append(support)
+						livelihood_events.append_array(support.facts_added)
+				activity_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
 			var budget_config: Dictionary = daily_life_config.get("food_access", {}).get("household_budget", {})
 			if FoodBudget.enabled(budget_config):
 				var home_changed := false
@@ -498,6 +514,13 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			writer.apply_results(round_followup_results, stores)
 			social_followup_results.append_array(round_followup_results)
 			social_followup_events.append_array(followup_data.get("events", []))
+
+		if daily_life_config.get("situation_rules", {}).get("version") == 1:
+			var trace_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
+			var situation_traces: Variant = EquipmentIntents.witnessed_changes(trace_snapshot, livelihood_events, round_event, context.locations)
+			if not writer.apply_result(situation_traces, stores):
+				return _failure_result(event, "situation_traces_rejected:" + str(writer.last_report), stores)
+			livelihood_results.append(situation_traces)
 
 		if (
 			resource_store != null

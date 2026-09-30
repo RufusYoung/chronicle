@@ -24,6 +24,7 @@ static func build(response: Dictionary, page: String = "scene") -> Dictionary:
 	var location: Dictionary = view.get("location", {})
 	var event: Dictionary = view.get("journey_event", {})
 	var combat: Array = choices.filter(func(c: Dictionary) -> bool: return c.kind == "combat_encounter")
+	var situations: Array = view.get("situations", [])
 	var result := {"title": location.get("title", "镜湖北岸"), "body": location.get("description", ""),
 		"eyebrow": "自由漫游", "art": art(view), "choices": [], "page": page, "empty": ""}
 	match page:
@@ -31,6 +32,21 @@ static func build(response: Dictionary, page: String = "scene") -> Dictionary:
 			if not combat.is_empty():
 				result.merge({"title": view.risk.title, "body": str(view.risk.decision_evidence) + "\n进攻、防守或脱离都会占去这一轮。脱离后仍需选路离开。",
 					"eyebrow": "交锋仍在继续", "choices": combat}, true)
+			elif view.get("situation_mode", false):
+				result.eyebrow = "眼前的局面"
+				if not situations.is_empty():
+					var current: Dictionary = situations[0]
+					result.title = current.title
+					result.body = current.body
+					result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("subject_id") == current.subject_id and c.get("life_group") == "situation")
+				else:
+					result.body = "眼下没有可交谈的人。可以原地等候，也可以沿道路离开。"
+				var notices: Array = view.get("situation_notices", [])
+				if not notices.is_empty() and situations.is_empty():
+					result.body += "\n" + str(notices.back().text)
+				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
+					return c.kind == "travel" or c.id == "continue" or c.get("intent") == "follow" or (c.get("intent") == "wait" and c.get("minutes") == 10)))
+				result.empty = "可以查看地图、交谈或原地等候。没有强制的剧情入口。"
 			elif not event.is_empty():
 				result.merge({"title": event.title, "body": event.body, "eyebrow": "旅途中的一件事",
 					"choices": choices.filter(func(c: Dictionary) -> bool: return str(c.id).begins_with("adventure:"))}, true)
@@ -53,19 +69,22 @@ static func build(response: Dictionary, page: String = "scene") -> Dictionary:
 			var names: Array = view.get("visible_people", []).map(func(p: Dictionary) -> String: return str(p.get("name", p.get("display_name", ""))))
 			result.body = "在场：" + "、".join(names) if not names.is_empty() else "眼下没有可交谈的人。不必守着空屋，可以先走另一条路。"
 			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "talk")
+			if view.get("situation_mode", false):
+				result.body = "在场：" + "、".join(situations.map(func(s: Dictionary) -> String: return str(s.title))) if not situations.is_empty() else "眼下没有人在场，可以原地等候或离开。"
+				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "situation"))
 			result.empty = "暂时没有新的话题。已问到的信息保存在旅途记录。"
 		"trade":
 			result.art = LICENSED["3457"]
 			result.title = "当面买卖"
 			result.eyebrow = "真实现货 · 当场付款"
 			result.body = "选择买入、卖出或送出。钱和物品会交到对方手中；无人或无钱时不能成交。"
-			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "trade")
+			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "trade" or c.get("intent") in ["sell", "give", "fund"])
 			result.empty = "目前没有可交易的现货或买方。已有的食物可以留作旅粮，不必继续采集。"
 		"rest":
 			result.title = "歇一会儿，还是继续走"
 			result.eyebrow = "休整"
 			result.body = "一餐能支持几小时行路；只在身体需要时停下来。"
-			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "rest" or c.kind == "recovery")
+			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "rest" or c.kind in ["recovery", "wait"])
 			result.empty = "现在无法休整，先处理现场的威胁或走完当前路程。"
 		"work":
 			result.title = "在这里谋生"
@@ -103,5 +122,7 @@ static func art(view: Dictionary) -> String:
 
 
 static func family(row: Dictionary) -> String:
+	if row.get("action_type") == "situation":
+		return {"give": "赠送备用装备", "sell": "出售备用装备", "fund": "资助在场的人", "ask": "询问近况", "caution": "劝对方谨慎", "repair": "帮忙维修", "wait": "原地等候", "follow": "随人同行"}.get(str(row.get("intent", "")), "")
 	var prefix := str(row.id).get_slice(":", 0)
 	return {"eat": "吃一份食物", "buy": "买点东西", "sell_food": "出售食物", "give_food": "分一份食物", "sell_work": "出售制品", "ask_local": "问问本地消息", "inquire": "问问后来怎样了"}.get(prefix, "")

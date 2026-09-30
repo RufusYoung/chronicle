@@ -28,6 +28,8 @@ after(()=>{gateway.close(); rmSync(dir,{recursive:true,force:true});});
 test('allowlist rejects secrets, saves, traversal, binary assets and working directories',()=>{
   for(const path of ['../texts/a.md','texts/../AGENTS.md','C:/secret.md','texts\\a.md','/texts/a.md','texts//a.md','work/a.md','outputs/report.md','chronicle-godot/.godot/a.gd','texts/private/a.md','texts/token.md','chronicle-godot/data/manual.json','chronicle-godot/art/image.png','.env','mcp/auth.mjs']) assert.equal(allowedPath(path),false,path);
   assert.equal(allowedPath(PLAN),true); assert.equal(allowedPath('chronicle-godot/data/test.json'),true);
+  assert.equal(allowedPath('CHRONICLE_EMERGENT_SITUATION_BREAKTHROUGH_GUIDE_2026-09-30.md'),true);
+  assert.equal(allowedPath('unlisted-root-document.md'),false);
   assert.throws(()=>validateDocument('texts/source.md','-----BEGIN PRIVATE KEY-----'));
   assert.throws(()=>validateDocument('texts/source.md','a\0b'));
 });

@@ -10,6 +10,7 @@ func run() -> void:
 	root.size = Vector2i(1280, 720)
 	root.content_scale_size = root.size
 	var viewer = Scene.instantiate()
+	viewer.economy_variant = "world_roaming_v1"
 	viewer.auto_load = false
 	viewer.slot = "roaming_interaction_test"
 	root.add_child(viewer)
@@ -31,7 +32,7 @@ func run() -> void:
 	viewer.pending_result = false
 	viewer._navigate("scene")
 	await layout_check(viewer, "bridge_four_choices")
-	check(viewer._choices.get_child_count() == 4, "four real alternatives, including refusal, visible together")
+	check(viewer.Presentation.build(viewer.response, "scene").choices.size() == 4, "four real alternatives, including refusal, remain available")
 	await act(viewer, "adventure:bridge_crossing:round")
 	await layout_check(viewer, "bridge_result")
 	viewer._begin("save", {"slot": viewer.slot, "overwrite": true})
@@ -71,8 +72,9 @@ func run() -> void:
 	var questions: Array = viewer.response.choices.filter(func(c: Dictionary) -> bool: return str(c.id).begins_with("ask_local:") and c.enabled)
 	if not questions.is_empty():
 		await act(viewer, questions[0].id)
-		check("答复" in viewer._heading.text, "named concrete conversation feedback")
-		check("废灯台" in viewer._paragraph.text and "材料：" not in viewer._paragraph.text, "useful directions visible without duplicated full work description")
+		check("答复" in viewer.response.observation.feedback.title, "named concrete conversation feedback")
+		var inline_text: String = viewer._story.find_child("InlineOutcome", true, false).text
+		check("废灯台" in inline_text and "材料：" not in inline_text, "useful directions visible without duplicated full work description")
 		check(viewer.response.choices.all(func(c: Dictionary) -> bool: return not str(c.id).begins_with("ask_local:")), "same local question does not return")
 		await layout_check(viewer, "local_answer")
 	viewer._begin("start", {"mode": "play", "scenario": "echo_realm", "seed": 81001, "economy_variant": "world_roaming_v1"})
@@ -111,8 +113,9 @@ func run() -> void:
 				await layout_check(viewer, "combat_result_" + str(rounds))
 			check(rounds > 0, "multiple real combat callbacks tested")
 			check(viewer.response.choices.all(func(c: Dictionary) -> bool: return c.kind != "combat_encounter"), "threat eventually ends")
-			check("结束" in viewer._heading.text or "脱离" in viewer._heading.text, "ending is visible in main heading")
-			check("退" in viewer._paragraph.text or "离开" in viewer._paragraph.text or "吃饱" in viewer._paragraph.text, "actual end cause visible without opening log")
+			check("结束" in viewer.response.observation.feedback.title or "脱离" in viewer.response.observation.feedback.title, "ending is named in feedback")
+			var ending: String = viewer._story.find_child("InlineOutcome", true, false).text if not viewer.pending_result else viewer._paragraph.text
+			check("退" in ending or "离开" in ending or "吃饱" in ending, "actual end cause visible without opening log")
 	viewer.queue_free()
 	await process_frame
 	print("ROAMING_INTERACTION_RENDER " + ("PASS" if failures.is_empty() else str(failures)))
@@ -124,7 +127,7 @@ func act(viewer: Variant, id: String) -> void:
 	check(not rows.is_empty(), "legal action available " + id)
 	if rows.is_empty():
 		return
-	viewer._begin("act", {"choice_id": rows[0].choice_id})
+	viewer._begin("act", {"choice_id": rows[0].choice_id, "confirm": true})
 	await settled(viewer)
 	check(viewer.response.ok, "action settled " + id)
 

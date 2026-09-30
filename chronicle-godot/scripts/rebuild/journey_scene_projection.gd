@@ -2,6 +2,8 @@ extends RefCounted
 
 # Public geography and personal memories only; no remote NPC or inventory queries.
 static func apply(session: Variant, view: Dictionary) -> void:
+	if session.Situations.enabled(session):
+		return
 	if not session.PlayerLife.Journey.enabled(session) or int(view.player.get("travel_remaining", 0)) > 0:
 		return
 	var known: Dictionary = session.PlayerLife.Journey.knowledge(session)

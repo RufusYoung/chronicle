@@ -18,6 +18,7 @@ func run() -> void:
 	root.size = Vector2i(1280, 720)
 	root.content_scale_size = root.size
 	var viewer = Scene.instantiate()
+	viewer.economy_variant = "world_roaming_v1"
 	viewer.auto_load = false
 	viewer.slot = "render_test_isolated"
 	root.add_child(viewer)
@@ -40,8 +41,8 @@ func run() -> void:
 	check(offered.has_meta("choice_id"), "real choice button is bound")
 	offered.pressed.emit()
 	await settled(viewer)
-	check(viewer.pending_result, "action opens persistent result, not another list")
-	check(viewer._paragraph.text.contains("桥索"), "specific learned information shown immediately")
+	check(not viewer.pending_result, "ordinary action keeps scene available")
+	check(viewer._story.find_child("InlineOutcome", true, false).text.contains("桥索"), "specific learned information shown immediately inline")
 	check(viewer._status.text.contains("08:10"), "minute clock visible")
 	await capture("result_1280")
 	var hour: int = viewer.agent.model.session.elapsed_hours_since_start
@@ -51,7 +52,7 @@ func run() -> void:
 		await process_frame
 		check(viewer._root.get_global_rect().end.y <= root.size.y, page + " fits 720p")
 		await capture(page + "_1280")
-	check(viewer.pending_result and viewer._paragraph.text.contains("桥索"), "reading another page does not discard result")
+	check(not viewer.pending_result and viewer._story.find_child("InlineOutcome", true, false).text.contains("桥索"), "reading another page preserves nonblocking result")
 	check(viewer.agent.model.session.elapsed_hours_since_start == hour, "navigation does not run simulation")
 	viewer._menu.popup_centered()
 	await process_frame

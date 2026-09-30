@@ -97,6 +97,8 @@ const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 const Body = preload("res://scripts/sim/npc/body_condition.gd")
 const Integration = preload("res://scripts/sim/generation/world_integration.gd")
 const JourneySetup = preload("res://scripts/sim/generation/journey_content_setup.gd")
+const Situations = preload("res://scripts/sim/situation/situation_builder.gd")
+const EquipmentIntents = preload("res://scripts/sim/situation/equipment_intents.gd")
 
 const CONTENT_PACK_ID := "chronicle.base"
 const CONTENT_PACK_VERSION := 7
@@ -294,6 +296,15 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_journey_rules_version")
 	if options.get("journey_rules_version", 0) in [1, 2, 3]:
 		fixture["journey_rules"] = JourneySetup.load_rules(int(options.journey_rules_version))
+	if options.get("situation_rules_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_situation_rules_version")
+	if options.get("situation_rules_version", 0) == 1:
+		if options.get("journey_rules_version", 0) != 3:
+			return _start_failure("situations_require_roaming_clock")
+		fixture["situation_rules"] = EquipmentIntents.RULES.duplicate(true)
+		fixture.journey_rules.events = []
+		fixture.journey_rules.sites = []
+		fixture.journey_rules.caches = []
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -478,6 +489,12 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	var journey_error := JourneySetup.configure(fixture, registry)
 	if journey_error != "":
 		return _start_failure(journey_error)
+	if fixture.has("situation_rules"):
+		var situation_rules: Variant = fixture.situation_rules
+		if not situation_rules is Dictionary or situation_rules.size() != EquipmentIntents.RULES.size() \
+				or not EquipmentIntents.RULES.keys().all(func(key: String) -> bool: return situation_rules.get(key) == EquipmentIntents.RULES[key]) \
+				or fixture.get("journey_rules", {}).get("version") != 3 or not fixture.get("journey_rules", {}).get("events", []).is_empty():
+			return _start_failure("situation_bootstrap_mismatch")
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -546,7 +563,10 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 	world_tick_adapter.configure_settlement_network(
 		settlement_network_runtime
 	)
-	world_tick_adapter.configure_daily_life(fixture.get("resident_daily_life", {}), travel_routes)
+	var daily_config: Dictionary = fixture.get("resident_daily_life", {}).duplicate(true)
+	if fixture.has("situation_rules"):
+		daily_config["situation_rules"] = fixture.situation_rules.duplicate(true)
+	world_tick_adapter.configure_daily_life(daily_config, travel_routes)
 	var organization_runtime_config := (
 		fixture.get("organization_runtime", {}) as Dictionary
 	).duplicate(true)

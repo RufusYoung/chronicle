@@ -16,6 +16,29 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_situation_profile_uses_world_facts_and_native_clock(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_situation_v1")
+            self.assertTrue(response["ok"], response)
+            self.assertTrue(response["observation"]["situation_mode"])
+            self.assertNotIn("journey_event", response["observation"])
+            self.assertNotIn("world_facts", response["observation"])
+            self.assertFalse(any(c["id"].startswith("adventure:") for c in response["choices"]))
+            wait = next(c for c in response["choices"] if c.get("intent") == "wait" and c["minutes"] == 10)
+            response = game.request("act", choice_id=wait["choice_id"])
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(response["observation"]["time"]["minute"], 10)
+            question = next(c for c in response["choices"] if c.get("intent") == "ask")
+            response = game.request("act", choice_id=question["choice_id"])
+            self.assertTrue(response["ok"], response)
+            self.assertIn("说", response["observation"]["feedback"]["body"])
+            self.assertFalse(any(c["choice_id"] == question["choice_id"] for c in response["choices"]))
+            self.assertEqual(response["receipt"]["control_source"], "code_agent")
+            slot = f"situation_protocol_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot, overwrite=True)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], response["observation"])
+
     def test_roaming_profile_legal_choices_and_persistent_knowledge(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,

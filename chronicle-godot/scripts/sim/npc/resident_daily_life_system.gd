@@ -249,6 +249,7 @@ func resolve_tick(snapshot: Variant, tick: Dictionary, config: Dictionary,
 							elif FoodAccess.balance(food_items, id) > 0:
 								Choice.propose(proposals, "resupply", site, "seeking_work", "作业用品不足，去已知的生产地当面询价", demand.source_fact_ids, str(demand.get("intent_id", "work_supply")))
 			var effective_choice := choice_config.duplicate(true)
+			effective_choice["situation_version"] = int(config.get("situation_rules", {}).get("version", 0))
 			var guesthouse: Dictionary = actor.get("guesthouse_rules", {})
 			if not must_rest and guesthouse.get("version") == 1 and hour >= int(guesthouse.open_hour) and hour < int(guesthouse.close_hour):
 				Choice.propose(proposals, "work", str(guesthouse.location_id), "home", "晚间回客舍开门接待；没有客人就没有收入", [], "guesthouse")

@@ -1,8 +1,10 @@
 # Chronicle 项目级文档索引
 
-## 2026-09-30 暂停与整体报告
+## 2026-09-30 局面原型恢复与整体报告
 
-项目按用户要求暂停开发，仅完成现状整理。新版已收到负面真人体验反馈，RF6 未通过；用户确认时间显示本身正常。暂停状态以[活动计划顶部](C:/code/game/chronicle/texts/v5/CHRONICLE_WORLD_FIRST_PLAN_v5.1.md)为准，不自动执行历史“下一步”。
+用户在暂停整理后，明确授权按[涌现玩法突破指导](../CHRONICLE_EMERGENT_SITUATION_BREAKTHROUGH_GUIDE_2026-09-30.md)恢复局面原型修正。RF6 未通过；用户确认时间显示本身正常。当前状态以[活动计划顶部](C:/code/game/chronicle/texts/v5/CHRONICLE_WORLD_FIRST_PLAN_v5.1.md)为准，不自动执行历史“下一步”。
+
+- [局面原型实现与验收报告](../chronicle-godot/texts/reports/2026/2026-9/2026-9-30/2026-09-30_emergent_situation_prototype_report.md)：自然链、受控反例、合法游玩、界面与未通过的体验边界。
 
 - [详细项目暂停报告](C:/code/game/chronicle/texts/reports/2026/2026-9/2026-9-30/2026-09-30_project_pause_report.md)：实际实现、三个反馈的代码依据、设计偏移、八轮边界和可复用基础。
 - [历代设计文档分类索引](C:/code/game/chronicle/texts/CHRONICLE_DESIGN_DOCUMENT_INDEX.md)：原始 GDD、世界观、地区、势力、实现合同、参考研究及历史指令。

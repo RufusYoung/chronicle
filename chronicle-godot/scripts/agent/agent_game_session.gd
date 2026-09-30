@@ -85,7 +85,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	var roaming: bool = variant == "world_roaming_v1"
+	var situations: bool = variant == "world_situation_v1"
+	var roaming: bool = variant == "world_roaming_v1" or situations
 	var short_actions: bool = variant == "world_adventure_v3" or roaming
 	var journey: bool = variant == "world_adventure_v2" or short_actions
 	var adventure: bool = variant == "world_adventure_v1" or journey
@@ -104,6 +105,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_model: Variant
 	var result: Dictionary
 	var options := {"challenge_seed_override": int(seed)}
+	if situations:
+		options["situation_rules_version"] = 1
 	if body_rules:
 		options["body_rules_version"] = 1
 	if journey:
@@ -137,6 +140,9 @@ func _start(request: Dictionary) -> Dictionary:
 		next_model = LiveView.new()
 		options["scenario"] = next_scenario
 		result = next_model.start(options)
+		if result.get("success", false) and situations:
+			# Let the ordinary morning routines run before presenting the new world.
+			result = next_model.session.advance_time(int(next_model.session.fixture_source_data.situation_rules.initial_history_hours), "situation_initial_history")
 	if not result.get("success", false):
 		return _error("start_failed:%s" % str(result.get("error", "unknown")))
 	model = next_model
@@ -175,6 +181,18 @@ func _refresh() -> void:
 				return str(a.get("id", "")) < str(b.get("id", "")))
 	if surface == "location":
 		_location_choices(projected)
+		if _session().Situations.enabled(_session()):
+			_view["situations"] = _session().Situations.build(_session())
+			_view["situation_notices"] = _session().Situations.notices(_session())
+			_view["situation_mode"] = true
+			# The prototype publishes a bounded observation, never the old omniscient dashboard.
+			for key: String in _view.keys():
+				if key not in ["visibility", "location", "player", "time", "risk", "feedback", "equipment_journal", "situations", "situation_notices", "situation_mode"]:
+					_view.erase(key)
+			_view["knowledge"] = []
+			for fact: Dictionary in _session().stores.fact_store.list_facts():
+				if fact.get("actor_id") == _session().context.actor_id and fact.get("fact_type") in ["situation_inquiry", "situation_advice", "situation_fund", "equipment_given"]:
+					_view.knowledge.append("第%d天%02d时：%s" % [fact.day, fact.hour, fact.summary])
 	else:
 		_outpost_choices(projected)
 
@@ -195,7 +213,7 @@ func _location_choices(view: Dictionary) -> void:
 		_offer(kind, str(row.get("action_id", "")), row, bool(row.get("can_execute", true)))
 	for row: Dictionary in view.get("travel_options", []):
 		_offer("travel", str(row.get("route_id", "")), row, bool(row.get("can_travel", false)))
-	if not combat:
+	if not combat and not _session().Situations.enabled(_session()):
 		_offer("wait", "one_hour", {"label": "等待一小时", "cost": "1 小时", "hint": "世界继续结算，不能保证局势改善。"})
 	if bool(view.get("playtest", {}).get("completed", false)):
 		_offer("phase", "first_winter", {"label": "进入第七哨站", "requires_confirmation": true,

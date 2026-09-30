@@ -1,5 +1,13 @@
 # RF6 Working Checkpoint
 
+## Sep 30: Limited Resume, Situation Prototype 01
+
+The user resumed implementation under CHRONICLE_EMERGENT_SITUATION_BREAKTHROUGH_GUIDE_2026-09-30.md; this supersedes the pause below. The active plan's top section is authoritative. New world_situation_v1 uses real residents and zero authored events/sites/caches, shared stores, finite item/cash transactions and native save. Existing world_roaming_v1 and roaming_manual remain unchanged profiles; new UI slot is situation_manual. Ordinary actions give inline outcomes; in-place waiting is interruptible. No additional content or art imported.
+
+Engineering evidence: three 72-hour variants, a held-out autonomous seed, 90 legal code-agent actions, controlled ownership/repair/knowledge tests, same-roll consequence comparison and actual renderer checks. Native human acceptance is still absent and prior boredom remains negative evidence. The prototype is not RF6 completion. See the Sep30 emergent_situation_prototype_report for exact evidence and unsupported loans/escort claims. Preparing clean commit, Windows export/package checks and discussion snapshot refresh; do not mistake previous Sep28 package hashes for this build.
+
+Recovery baseline: parent19cbbbcddec5962daaef4349b8253d6201429de7, branch codex/player-agency-world-surface. Evidence: work/situation-* and user://tests/situation_surface_render. Failed approaches: authored side sites without events caused empty walking; removed only from new bootstrap. Journey.options did not include guesthouse services; waiting now compares Services.options. Ordinary inline results exposed combat overflow; all three combat actions now fit with cost confirmation. Controlled source ancestry is gift -> equip -> later decision, not a direct gift-only edge. Remaining product work is in the plan, not a second list here.
+
 ## Sep 30: Development Paused By User
 
 The user requested a detailed project report and an inventory of previous design documents, not implementation. New human feedback rejects repeated continue-result gates, empty-location backtracking and inaccessible waiting, and authored nodes as the primary adventure structure. The user explicitly confirms that the new UI already shows time; clock visibility is not a defect. RF6 remains incomplete and has new negative human evidence. Do not resume the implementation steps below until the user explicitly resumes development. Runtime baseline remains 4f6886a (clean export source deebcae); this review does not run tests, simulation or a new export. See the Sep30 pause report and texts/CHRONICLE_DESIGN_DOCUMENT_INDEX.md. No new development process was started.

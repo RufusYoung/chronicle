@@ -9,6 +9,53 @@ const ActionContractResolverModel = preload(
 var contract_resolver: Variant = ActionContractResolverModel.new()
 
 
+func situation_candidates(session: Variant, snapshot: Variant, situation: Dictionary) -> Array:
+	var rows: Array = []
+	var actor := str(session.context.actor_id)
+	var subject := str(situation.subject_id)
+	var person: Dictionary = snapshot.get_entity(subject)
+	var actions: Variant = session.PlayerLife.Situations
+	var intents: Variant = actions.Intents
+	if not intents.present(person, str(session.context.location_id)) or not session.get_combat_encounter_options().is_empty():
+		return rows
+	var latest: Dictionary = {}
+	for fact: Dictionary in snapshot.get_facts_by_actor(actor):
+		if fact.get("fact_type") == "situation_inquiry" and fact.get("subject_id") == subject:
+			latest = fact
+	if latest.is_empty() or intents.now(snapshot.world_time) - int(latest.absolute_hour) >= 6:
+		rows.append(actions.row("ask", subject, "问%s：眼下有什么打算？" % person.display_name,
+			"当面听取此人的需要和亲历，不读取远处真值。"))
+	var need: Dictionary = intents.Gear.need(snapshot, person)
+	if situation.has("known_query") and not need.is_empty() and need.query == situation.known_query:
+		var sources: Array = situation.player_known_facts
+		for item: Dictionary in intents.spare_items(snapshot, snapshot.get_entity(actor), need.query):
+			var gift: Dictionary = actions.row("give", subject, "把%s送给%s" % [item.display_name, person.display_name],
+				"交出一件自己的备用装备，不收钱，也不保证对方马上出发。", str(item.item_instance_id))
+			gift["item_id"] = item.item_instance_id
+			gift["sources"] = sources
+			rows.append(gift)
+			rows.append_array(actions.sale_options(session, snapshot, person, item, sources))
+		var coins: int = intents.Food.balance(snapshot.get_items_for_holder(actor), actor)
+		if coins > 0:
+			var already_helped: bool = snapshot.get_facts_by_actor(actor).any(func(f: Dictionary) -> bool:
+				return f.get("fact_type") == "situation_fund" and f.get("subject_id") == subject and intents.now(snapshot.world_time) - int(f.absolute_hour) < 6)
+			var payment: Dictionary = actions.row("fund", subject, "%s%s %d枚铜币" % ["再资助" if already_helped else "资助", person.display_name, mini(coins, 4)],
+				"钱交给本人，自行决定买装备、买食物或暂时留下；这不是贷款。")
+			payment["amount"] = mini(coins, 4)
+			payment["sources"] = sources
+			rows.append(payment)
+	if situation.has("known_query"):
+		var advised: bool = snapshot.get_facts_by_actor(actor).any(func(f: Dictionary) -> bool:
+			return f.get("fact_type") == "situation_advice" and f.get("subject_id") == subject and intents.now(snapshot.world_time) - int(f.absolute_hour) < 6)
+		if not advised:
+			var caution: Dictionary = actions.row("caution", subject, "劝%s先避开危险" % person.display_name,
+				"说出担忧；是否听取仍由本人按信任、饥饿和自己的需要决定。")
+			caution["sources"] = situation.player_known_facts
+			rows.append(caution)
+	rows.append_array(actions.repair_options(session, snapshot, person))
+	return rows
+
+
 func configure(source_registry: Variant) -> void:
 	contract_resolver.configure(source_registry)
 

@@ -140,7 +140,7 @@ func resolve_work_tick(
 		var wage := int(profile.get("wage_amount", 0))
 		var reserve := int(snapshot.get_entity_state(settlement_id, "treasury_reserve", 0))
 		var wage_missing := wage > 0 and treasury.balance(settlement_id) - reserve < wage
-		var material_plan := recipes.plan_inputs(profile, actor_id, fact_id, _tick_value(tick_event)) if structured_work else {"ok": true}
+		var material_plan := recipes.plan_inputs(profile, actor_id, fact_id, _tick_value(tick_event), str(controlled_work.get("repair_item_id", ""))) if structured_work else {"ok": true}
 		var proposed_resources := available_resources.duplicate() if structured_work else available_resources
 		var resource_plan := {"ok": false, "missing": {"label": "可支付薪酬", "amount": wage,
 			"available": maxi(treasury.balance(settlement_id) - reserve, 0), "denial": "treasury_insufficient"}} if wage_missing else (

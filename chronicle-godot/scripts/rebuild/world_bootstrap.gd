@@ -21,7 +21,8 @@ func _ready() -> void:
 	elif probe or smoke:
 		var continuing := "--startup-probe-continued" in OS.get_cmdline_user_args()
 		viewer.auto_load = continuing
-		viewer.slot = "roaming_startup_continued" if continuing else "roaming_startup_probe"
+		var prefix := "roaming" if "--authored-roaming" in OS.get_cmdline_user_args() else "situation"
+		viewer.slot = prefix + ("_startup_continued" if continuing else "_startup_probe")
 	add_child(viewer)
 	if smoke:
 		if legacy:
@@ -52,8 +53,9 @@ func _probe_roaming(viewer: Variant) -> void:
 	var ok: bool = not viewer.busy and viewer.response.get("ok", false) and viewer._picture.texture != null
 	var elapsed: int = viewer.response.get("observation", {}).get("time", {}).get("elapsed_hours", 0)
 	if "--startup-probe-continued" in OS.get_cmdline_user_args():
-		ok = ok and elapsed > 0
-	print("CHRONICLE_FIRST_CONTROLLABLE_FRAME " + JSON.stringify({"ok": ok, "elapsed_hours": elapsed, "surface": "roaming", "profile": "world_roaming_v1", "renderer": RenderingServer.get_current_rendering_method()}))
+		ok = ok and elapsed > 2 and FileAccess.file_exists(viewer.Agent.SAVE_ROOT + "play/echo_realm/" + viewer.slot + ".json")
+	var prototype: bool = viewer.response.get("observation", {}).get("situation_mode", false)
+	print("CHRONICLE_FIRST_CONTROLLABLE_FRAME " + JSON.stringify({"ok": ok, "elapsed_hours": elapsed, "surface": "roaming", "profile": "world_situation_v1" if prototype else "world_roaming_v1", "renderer": RenderingServer.get_current_rendering_method()}))
 	get_tree().quit(0 if ok else 1)
 
 

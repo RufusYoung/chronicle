@@ -23,6 +23,7 @@ const Body = preload("res://scripts/sim/npc/body_condition.gd")
 const Equipment = preload("res://scripts/sim/player/player_equipment.gd")
 const WorkTrade = preload("res://scripts/sim/player/player_work_trade.gd")
 const Journey = preload("res://scripts/sim/player/journey_events.gd")
+const Situations = preload("res://scripts/sim/situation/situation_actions.gd")
 const Services = preload("res://scripts/sim/player/local_services.gd")
 const PROFILE := {"version": 1, "help_wage": 3, "employer_food_limit": 8}
 const PROFILE_V2 := {"version": 2, "help_wage": 3, "employer_food_limit": 8}
@@ -158,6 +159,8 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 	if not session.get_combat_encounter_options().is_empty():
 		return []
 	var rows: Array = Journey.options(session)
+	if session.Situations.enabled(session):
+		rows.append_array(Situations.options(session))
 	rows.append_array(Services.options(session))
 	var food: Dictionary = Danger.recovery_food(view, str(actor.id))
 	if not food.is_empty() and actor.states.get("hunger", "none") != "none":
@@ -385,6 +388,8 @@ static func execute(session: Variant, id: String) -> Dictionary:
 	var actor := str(session.context.actor_id)
 	if id.begins_with("adventure:"):
 		return Journey.execute(session, id)
+	if id.begins_with("situation:"):
+		return Situations.execute(session, selected[0])
 	if id.begins_with("service:"):
 		return Services.execute(session, id)
 	if id.begins_with("equip:") or id.begins_with("unequip:"):
@@ -458,7 +463,7 @@ static func execute(session: Variant, id: String) -> Dictionary:
 	return work(session, id)
 
 
-static func work(session: Variant, id: String) -> Dictionary:
+static func work(session: Variant, id: String, service: Dictionary = {}) -> Dictionary:
 	var actor_id := str(session.context.actor_id)
 	var view: Variant = snapshot(session.context, session.stores, session.get_time_summary())
 	var actor: Dictionary = view.get_entity(actor_id)
@@ -476,6 +481,9 @@ static func work(session: Variant, id: String) -> Dictionary:
 			if entry.id == id:
 				profile = entry.profile
 				work_kind = entry.kind
+	if not service.is_empty():
+		profile = service.profile
+		work_kind = "maintenance"
 	if profile.is_empty():
 		return {"success": false, "error": "work_site_unavailable"}
 	var prepare := Result.new()
@@ -513,6 +521,8 @@ static func work(session: Variant, id: String) -> Dictionary:
 			summary = denial + "，作业中断。"
 			break
 		denial = employer_work_denial(view, actor, employer)
+		if not service.is_empty() and not Situations.repair_still_present(view, actor_id, service):
+			denial = "对方或待修物品已离开现场"
 		if denial != "":
 			summary = denial + "，短工中断。"
 			break
@@ -520,13 +530,21 @@ static func work(session: Variant, id: String) -> Dictionary:
 		time.merge({"elapsed_hours": 1, "tick_event_id": "player_work.%d" % session.elapsed_hours_since_start}, true)
 		var resolved: Dictionary = Livelihood.new().resolve_work_tick(view, session.npc_livelihood_profiles,
 			time, session.fixture_source_data.resident_daily_life, session.registry,
-			{"actor": actor, "profile": profile, "kind": work_kind, "output_holder": employer if employer != "" else actor_id})
+			{"actor": actor, "profile": profile, "kind": work_kind, "output_holder": employer if employer != "" else actor_id,
+			"repair_item_id": service.get("item_id", "")})
 		if resolved.has("error"):
 			return {"success": false, "error": resolved.error}
 		for result: Variant in resolved.results:
 			for fact: Dictionary in result.facts_added:
 				if fact.get("fact_type") in ["npc_livelihood_produced", "npc_work_maintained"]:
 					completed = true
+					if not service.is_empty():
+						fact["target_id"] = service.subject_id
+						fact.summary = "你为%s完成实物修补，材料已经消耗；装备仍归对方所有。" % view.get_entity(service.subject_id).display_name
+						Situations.Intents.append_trace(result, fact, fact.summary)
+						result.add_relationship_change({"source_id": service.subject_id, "target_id": actor_id, "axis": "trust", "delta": 2})
+						result.add_memory({"memory_id": "memory." + str(fact.fact_id), "owner_id": service.subject_id,
+							"memory_type": "equipment_help", "source_fact_id": fact.fact_id, "summary": fact.summary})
 					if employer != "":
 						if not Treasury.new(view).append_payment(result, employer, actor_id, PROFILE.help_wage, str(fact.fact_id), Danger.hour(time)):
 							return {"success": false, "error": "employer_payment_unavailable"}

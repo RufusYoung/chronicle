@@ -8,7 +8,8 @@ const EquipmentPanel = preload("res://scripts/rebuild/equipment_journal_panel.gd
 const WorldAudio = preload("res://scripts/rebuild/world_audio.gd")
 
 var agent = Agent.new()
-var slot := "roaming_manual"
+var slot := "situation_manual"
+var economy_variant := "world_situation_v1"
 var initial_seed := 81001
 var auto_load := true
 var busy := false
@@ -43,6 +44,10 @@ var _audio: Node
 
 
 func _ready() -> void:
+	if "--authored-roaming" in OS.get_cmdline_user_args():
+		economy_variant = "world_roaming_v1"
+		if slot == "situation_manual":
+			slot = "roaming_manual"
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	agent.control_source = "native_ui"
@@ -93,7 +98,7 @@ func _ready() -> void:
 	var help := VBoxContainer.new()
 	help.add_theme_constant_override("separation", 16)
 	_menu.add_child(help)
-	var instructions := _label(help, "自由漫游，无需先谋生。\n现场：阅读情境，作出选择，也可以拒绝。\n地图：查看路线，离开当前地点。\n行囊与人物：查看装备、属性和成长。\n买卖：对方必须在场，并且有钱或有货。\n行动结果会停留，点击继续再作决定。\n阅读不耗时；行动按按钮标注花费时间。\n事件随处境出现，不保证无限刷新。\n请主动保存。Esc 打开此菜单。", 18)
+	var instructions := _label(help, "自由漫游，无需先谋生。\n现场：看清局面，问话或用自己的物品介入。\n地图：查看路线，随时选择离开。\n行囊与人物：查看装备、属性和成长。\n买卖：对方必须在场，并且有钱或有货。\n普通结果留在现场，不必额外点击继续。\n阅读不耗时；等候可被眼前变化打断。\n未知的事情先问清楚，不保证一定有收获。\n请主动保存。Esc 打开此菜单。", 18)
 	instructions.custom_minimum_size.x = 620
 	instructions.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_audio.install_control(help)
@@ -103,7 +108,7 @@ func _ready() -> void:
 	quit_button.pressed.connect(func() -> void:
 		_menu.hide()
 		_ask("quit", "保存这次旅途并退出？也可以不保存退出。"))
-	_begin("start", {"mode": "play", "scenario": "echo_realm", "seed": initial_seed, "economy_variant": "world_roaming_v1"})
+	_begin("start", {"mode": "play", "scenario": "echo_realm", "seed": initial_seed, "economy_variant": economy_variant})
 
 
 func _request(command: String, fields: Dictionary) -> Dictionary:
@@ -150,19 +155,23 @@ func _process(_delta: float) -> void:
 			return
 	if command == "act":
 		_audio.play(WorldAudio.cue_for("act", settled.get("receipt", {}), before_view, response.observation))
-		pending_result = true
+		pending_result = int(response.observation.player.get("health", 100)) <= 0 \
+			or int(before_player.get("health", 100)) - int(response.observation.player.get("health", 100)) >= 20
 		page = "scene"
 		family = ""
 		offset = 0
 		delta_text = _changes(before_player, response.observation.player)
 	elif command in ["load", "start"]:
 		pending_result = false
+		before_view = {}
+		before_player = {}
+		delta_text = ""
 		page = "scene"
 		family = ""
 		offset = 0
 	_render()
 	if command in ["start", "load"]:
-		print("CHRONICLE_WORLD_READY " + JSON.stringify({"surface": "roaming", "journey_version": agent.model.session.fixture_source_data.get("journey_rules", {}).get("version"), "elapsed_hours": agent.model.session.elapsed_hours_since_start}))
+		print("CHRONICLE_WORLD_READY " + JSON.stringify({"surface": "roaming", "journey_version": agent.model.session.fixture_source_data.get("journey_rules", {}).get("version"), "situation_version": agent.model.session.fixture_source_data.get("situation_rules", {}).get("version", 0), "elapsed_hours": agent.model.session.elapsed_hours_since_start}))
 	if command == "save":
 		_toast.text = "旅途已保存。新版与旧版存档分开存放。"
 		_toast.show()
@@ -208,10 +217,10 @@ func _ask(action: String, text: String) -> void:
 
 func _confirm() -> void:
 	match _dialog_action:
-		"act": _begin("act", {"choice_id": _pending_choice_id})
+		"act": _begin("act", {"choice_id": _pending_choice_id, "confirm": true})
 		"new":
 			auto_load = false
-			_begin("start", {"mode": "play", "scenario": "echo_realm", "seed": initial_seed, "economy_variant": "world_roaming_v1"})
+			_begin("start", {"mode": "play", "scenario": "echo_realm", "seed": initial_seed, "economy_variant": economy_variant})
 		"load": _begin("load", {"slot": slot})
 		"quit":
 			_quit_after_save = true
@@ -275,6 +284,18 @@ func _render() -> void:
 		_label(_story, str(projected.eyebrow), 17).modulate = Color("bfaa7b")
 		_heading = _label(_story, str(projected.title), 28)
 		_paragraph = _label(_story, str(projected.body), 21)
+		if page == "scene" and not before_view.is_empty():
+			var feedback: Dictionary = response.get("observation", {}).get("feedback", {})
+			var result_line := _label(_story, str(feedback.get("compact_body", feedback.get("body", ""))), 17)
+			result_line.name = "InlineOutcome"
+			result_line.max_lines_visible = 2
+			result_line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			result_line.modulate = Color("dfc787")
+			result_line.visible = result_line.text != "" and not str(projected.body).contains(result_line.text)
+			var detail := LinkButton.new()
+			detail.text = "查看完整结果"
+			detail.pressed.connect(func() -> void: _navigate("journal"))
+			_story.add_child(detail)
 		_choices = VBoxContainer.new()
 		_choices.add_theme_constant_override("separation", 8)
 		_story.add_child(_choices)
@@ -313,6 +334,8 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 	var groups := {}
 	for row: Dictionary in rows:
 		var group := Presentation.family(row)
+		if page == "scene" and response.get("observation", {}).get("situation_mode", false) and row.get("kind") == "travel":
+			group = "选择去向"
 		if group != "":
 			if not groups.has(group):
 				groups[group] = []
@@ -335,6 +358,10 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 		_label(_choices, empty_text, 19)
 		return
 	var count := 4
+	if page == "scene":
+		count = 2 if get_viewport_rect().size.y < 850 else 3
+		if rows.any(func(row: Dictionary) -> bool: return row.get("kind") == "combat_encounter"):
+			count = 3
 	offset = clampi(offset, 0, maxi(0, visible_rows.size() - 1))
 	for row: Dictionary in visible_rows.slice(offset, offset + count):
 		if row.has("group"):
@@ -358,12 +385,10 @@ func _action_button(parent: Node, row: Dictionary) -> Button:
 	var text := title + ("  ·  " + cost if cost != "" else "")
 	if not enabled:
 		text += "\n" + str(row.get("blocked_reason", "当前无法执行"))
-	elif hint != "":
+	elif hint != "" and row.kind != "combat_encounter":
 		text += "\n" + hint
-	if row.kind == "combat_encounter":
-		text += "\n查看具体代价后决定"
 	var button := _button(parent, text, func() -> void:
-		if row.kind == "combat_encounter":
+		if row.kind == "combat_encounter" or row.get("requires_confirmation", false):
 			_pending_choice_id = str(row.choice_id)
 			_ask("act", title + "\n\n" + hint + "\n\n耗时：" + cost + "\n" + str(row.get("tradeoff", "")))
 		else:
@@ -373,6 +398,7 @@ func _action_button(parent: Node, row: Dictionary) -> Button:
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	button.add_theme_font_size_override("font_size", 17)
 	button.disabled = busy or not enabled
+	button.tooltip_text = hint
 	button.set_meta("choice_id", row.choice_id)
 	return button
 
@@ -392,6 +418,8 @@ func _render_collection() -> void:
 		_label(log_box, str(feedback.get("title", "")) + "\n" + str(feedback.get("body", "")), 20)
 		for detail: Variant in feedback.get("details", []):
 			_label(log_box, str(detail), 18)
+		for notice: Dictionary in view.get("situation_notices", []):
+			_label(log_box, str(notice.text), 18)
 		for entry: Variant in view.get("knowledge", []).duplicate():
 			_label(log_box, str(entry), 18)
 		return

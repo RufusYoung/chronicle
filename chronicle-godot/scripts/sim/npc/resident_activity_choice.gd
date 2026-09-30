@@ -66,6 +66,24 @@ static func choose(rows: Array, actor: Dictionary, routes: Array, router: Varian
 				if hunger == "extreme" and row.kind in ["food", "forage", "work"]:
 					factors["hunger_against_danger"] = 55
 				row.source_fact_ids.append(str(danger.source_fact_id))
+				if config.get("situation_version", 0) == 1:
+					var protection := 0
+					for item_id: Variant in snapshot.get_equipment_loadout(str(actor.id)).get("slots", {}).values():
+						var worn: Dictionary = snapshot.get_item(str(item_id))
+						if int(worn.get("condition", {}).get("durability", 0)) <= 0:
+							continue
+						for modifier: Dictionary in worn.get("modifiers", []):
+							# Anticipated safety includes general combat protection, not untriggered situational passives.
+							var unconditional_combat: bool = modifier.get("when", []).all(func(condition: Dictionary) -> bool:
+								return condition.get("kind") == "action_tag" and condition.get("tag") == "combat")
+							if unconditional_combat and modifier.get("target") in ["combat.guard", "combat.escape"] and modifier.get("operation") == "add":
+								protection += maxi(0, int(modifier.get("value", 0)))
+						Recipe._add_item_sources(row.source_fact_ids, worn)
+					factors["equipped_risk_confidence"] = mini(protection * 10, 45)
+					for advice: Dictionary in snapshot.get_facts_by_type("situation_advice"):
+						if advice.get("subject_id") == actor.id and int(config.danger_hour) - int(advice.absolute_hour) < 6:
+							factors["heard_caution"] = -mini(20, maxi(0, int(snapshot.get_relation(str(actor.id), str(advice.actor_id), "trust", 0))))
+							row.source_fact_ids.append(advice.fact_id)
 		if row.kind == "social":
 			factors["company_need"] = mini(int(row.get("social_need", 0)), 30)
 			factors["liaison"] = 8 if bool(row.get("representative", false)) else 0

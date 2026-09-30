@@ -178,7 +178,7 @@ static func validate_profile(profile: Dictionary, definitions: Variant) -> Strin
 	return ""
 
 
-func plan_inputs(profile: Dictionary, actor: String, fact_id: String, tick: int) -> Dictionary:
+func plan_inputs(profile: Dictionary, actor: String, fact_id: String, tick: int, repair_item_id: String = "") -> Dictionary:
 	if registry == null:
 		return _blocked("missing_work_registry")
 	var error := validate_profile(profile, registry)
@@ -259,7 +259,15 @@ func plan_inputs(profile: Dictionary, actor: String, fact_id: String, tick: int)
 			return _blocked("work_tool_missing_or_worn", {"query": spec.query, "required_durability": spec.wear})
 	for spec: Dictionary in profile.work_recipe.get("repairs", []):
 		var selected := false
-		for item: Dictionary in items:
+		var repair_items := items
+		if repair_item_id != "":
+			var target_item: Dictionary = snapshot.get_item(repair_item_id)
+			var owner := str(target_item.get("holder", {}).get("id", ""))
+			if target_item.get("holder", {}).get("kind") != "entity" or snapshot.get_entity_state(owner, "location_id", "") != place \
+					or snapshot.get_entity_state(owner, "daily_route_id", "") != "":
+				return _blocked("repair_owner_not_present")
+			repair_items = [target_item]
+		for item: Dictionary in repair_items:
 			var id := str(item.item_instance_id)
 			if int(next_consumed.get(id, 0)) >= int(item.quantity) or not repairable(item, spec, snapshot):
 				continue
