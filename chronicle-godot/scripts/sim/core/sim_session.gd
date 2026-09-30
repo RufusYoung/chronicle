@@ -296,12 +296,12 @@ func start_from_fixture_path(
 		return _start_failure("unsupported_journey_rules_version")
 	if options.get("journey_rules_version", 0) in [1, 2, 3]:
 		fixture["journey_rules"] = JourneySetup.load_rules(int(options.journey_rules_version))
-	if options.get("situation_rules_version", 0) not in [0, 1]:
+	if options.get("situation_rules_version", 0) not in [0, 1, 2]:
 		return _start_failure("unsupported_situation_rules_version")
-	if options.get("situation_rules_version", 0) == 1:
+	if options.get("situation_rules_version", 0) in [1, 2]:
 		if options.get("journey_rules_version", 0) != 3:
 			return _start_failure("situations_require_roaming_clock")
-		fixture["situation_rules"] = EquipmentIntents.RULES.duplicate(true)
+		fixture["situation_rules"] = EquipmentIntents.rules(int(options.situation_rules_version))
 		fixture.journey_rules.events = []
 		fixture.journey_rules.sites = []
 		fixture.journey_rules.caches = []
@@ -491,8 +491,8 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 		return _start_failure(journey_error)
 	if fixture.has("situation_rules"):
 		var situation_rules: Variant = fixture.situation_rules
-		if not situation_rules is Dictionary or situation_rules.size() != EquipmentIntents.RULES.size() \
-				or not EquipmentIntents.RULES.keys().all(func(key: String) -> bool: return situation_rules.get(key) == EquipmentIntents.RULES[key]) \
+		if not situation_rules is Dictionary or (situation_rules.get("version") != 1 and situation_rules.get("version") != 2) or situation_rules.size() != EquipmentIntents.RULES.size() \
+				or not EquipmentIntents.RULES.keys().all(func(key: String) -> bool: return situation_rules.get(key) == EquipmentIntents.rules(int(situation_rules.version))[key]) \
 				or fixture.get("journey_rules", {}).get("version") != 3 or not fixture.get("journey_rules", {}).get("events", []).is_empty():
 			return _start_failure("situation_bootstrap_mismatch")
 	registry.load_action_rules(raw_rule_paths)
@@ -1575,6 +1575,14 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 			return _travel_failure(departure.error_reason, route_id)
 		var first_hour := advance_time(1, "player_journey")
 		travel_count += 1
+		if fixture_source_data.get("situation_rules", {}).get("version") == 2 and first_hour.get("success", false) \
+			and get_combat_encounter_options().is_empty() and int(get_snapshot().player.health) >= int(pre_travel_snapshot.player.health):
+			var remaining: int = int(get_snapshot().player.get("daily_travel_remaining", 0))
+			if remaining > 0:
+				var continued: Dictionary = PlayerLife.Local.advance_block(self, {"action_id": "journey_block", "hours": remaining})
+				continued.merge({"route_id": route_id, "from_location_id": from_location_id, "to_location_id": to_location_id,
+					"hours": int(continued.get("hours", 0)) + 1, "time": get_time_summary()}, true)
+				return PlayerLife.feedback(continued, "动身并走过第一个小时后，" + str(continued.get("player_life_feedback", {}).get("body", "")))
 		var travel_summary := str(departure.facts_added[0].summary)
 		if first_hour.get("success", false) and context.location_id == to_location_id:
 			travel_summary = "沿路走了1小时，已经抵达%s。" % destination.display_name
@@ -2570,6 +2578,9 @@ func _migrate_store_save_data(value: Variant, migrations: Variant) -> Variant:
 
 
 func _validate_save_references(restored_hour: int = -1) -> Dictionary:
+	var continuity_error := preload("res://scripts/sim/situation/situation_continuity.gd").validate(self, restored_hour)
+	if continuity_error != "":
+		return _save_failure(continuity_error, "references")
 	var journey_error := JourneySetup.validate_save(fixture_source_data, stores)
 	if journey_error != "":
 		return {"success": false, "error": journey_error}

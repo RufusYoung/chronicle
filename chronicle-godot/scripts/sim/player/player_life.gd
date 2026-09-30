@@ -179,7 +179,8 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 			rows.append(row("eat", "吃一份随身食物", "消耗1份食物和1小时，饥饿降低两级，也能支持伤后恢复。"))
 	rows.append(row("rest", "休息一小时", "恢复疲劳，世界照常推进；饱腹余效也会消耗，伤势恢复需要真实食物。" if provisions else "恢复疲劳，世界和饥饿不会暂停；伤势恢复还需要真实食物。"))
 	rows.append_array(Local.options(session, view, actor))
-	for report: Dictionary in available_reports(session, view):
+	var reports: Array = [] if Situations.Continuity.enabled(session) else available_reports(session, view)
+	for report: Dictionary in reports:
 		var option := row("inquire:" + str(report.speaker_id), "问%s：后来怎么样？" % report.speaker_name,
 			"对方会谈自己亲历的新情况；已经问过且没有变化时，不会反复出现。")
 		option["report"] = report

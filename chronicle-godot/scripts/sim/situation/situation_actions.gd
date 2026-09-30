@@ -5,6 +5,19 @@ const Intents = preload("res://scripts/sim/situation/equipment_intents.gd")
 const Brief = preload("res://scripts/sim/player/brief_actions.gd")
 const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
+const Continuity = preload("res://scripts/sim/situation/situation_continuity.gd")
+
+
+static func statement(session: Variant, snapshot: Variant, person: Dictionary) -> Dictionary:
+	var declaration := Intents.declaration(snapshot, person, snapshot.world_time, session.context.locations, true)
+	if not declaration.is_empty():
+		return declaration
+	var destination := str(person.states.get("daily_goal_id", ""))
+	var place := str(session.context.locations.get(destination, {}).get("display_name", ""))
+	var reason := str(person.states.get("daily_activity_reason", ""))
+	return {"goal": reason if reason != "" else "暂时留在这里", "stated_destination_id": destination,
+		"source_fact_ids": [person.states.daily_departure_fact_id] if person.states.get("daily_departure_fact_id", "") != "" else [],
+		"summary": "%s说：%s%s。" % [person.display_name, reason if reason != "" else "暂时留在这里", "，眼下打算去" + place if place != "" and destination != session.context.location_id else ""]}
 
 
 static func row(intent: String, subject: String, label: String, hint: String, object: String = "") -> Dictionary:
@@ -21,6 +34,27 @@ static func options(session: Variant) -> Array:
 	var player: Dictionary = session.get_snapshot().player
 	if player.get("daily_route_id", "") != "" or not session.get_combat_encounter_options().is_empty():
 		return rows
+	if Continuity.enabled(session):
+		var snapshot: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
+		var read_topics := {}
+		for fact: Dictionary in snapshot.get_facts_by_actor(str(session.context.actor_id)):
+			if fact.get("fact_type") in ["situation_notice_read", "situation_inquiry"] and fact.has("query"):
+				read_topics[str(fact.subject_id) + JSON.stringify(fact.query)] = true
+		for notice: Dictionary in session.Situations.notices(session):
+			var source: Dictionary = snapshot.get_fact(str(notice.source_fact_id))
+			if source.get("fact_type") != "equipment_request" or read_topics.has(str(source.actor_id) + JSON.stringify(source.query)):
+				continue
+			var person: Dictionary = snapshot.get_entity(str(source.actor_id))
+			var read := row("read_notice", str(source.actor_id), "看看%s留下的口信" % person.display_name,
+				"口信来自这里的真实见闻；读清求助与地点，不保证本人仍在，也不保证事情尚未解决。", str(source.fact_id))
+			read["source_fact_id"] = source.fact_id
+			rows.append(read)
+		for lead: Dictionary in Continuity.leads(session, snapshot):
+			var purpose := "去看看%s提过的危险" % lead.name if lead.kind == "danger" else "循线找%s" % lead.name
+			var route := row("pursue", str(lead.subject_id), purpose, "线索来自%d小时前的%s。先往%s走；%s不是实时位置。" % [lead.age_hours, "亲见" if lead.kind == "seen" else "当面消息", lead.next_place, "消息已旧，" if lead.stale else ""], str(lead.location_id))
+			route.merge({"route_id": lead.route_id, "destination_id": lead.location_id, "hours": lead.hours, "minutes": int(lead.hours) * 60,
+				"cost": "%d小时到下一站" % lead.hours, "source_fact_id": lead.source_fact_id, "lead_kind": lead.kind}, true)
+			rows.append(route)
 	for notice: Dictionary in session.Situations.notices(session):
 		if notice.departure_to == "" or notice.witness_id != session.context.actor_id or int(notice.created_hour) != Intents.now(session.get_time_summary()):
 			continue
@@ -51,8 +85,25 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 		return wait_here(session, int(selected.minutes))
 	if selected.intent == "repair":
 		return session.PlayerLife.work(session, str(selected.action_id), selected)
+	if selected.intent == "pursue":
+		return journey(session, selected, "你循着已知消息出发。线索不是保证，抵达后仍需查看现场或问人。")
 	if selected.intent == "follow":
-		return session.PlayerLife.feedback(session.travel(str(selected.route_id)), "你沿刚看见的出发方向跟了上去。对方仍按自己的计划行动，没有保证会等你。")
+		return journey(session, selected, "你沿刚看见的出发方向跟了上去。对方仍按自己的计划行动，没有保证会等你。")
+	if selected.intent == "read_notice":
+		var source: Dictionary = session.stores.fact_store.get_fact(str(selected.source_fact_id))
+		var read := Result.new()
+		var tick: Dictionary = session.get_time_summary()
+		var fact := {"fact_id": "fact.situation." + Brief.stamp(session), "fact_type": "situation_notice_read",
+			"actor_id": session.context.actor_id, "subject_id": source.actor_id, "location_id": session.context.location_id,
+			"day": tick.day, "hour": tick.hour, "absolute_hour": Intents.now(tick), "observed_hour": Intents.now(source),
+			"query": source.query, "danger_location_id": source.danger_location_id, "goal": source.goal,
+			"source_fact_ids": [source.fact_id], "summary": "你读到第%d天%02d时留下的口信：%s\n这只是当时的消息。可循着线索找人，也可自己去查看险地。" % [source.day, source.hour, source.summary]}
+		read.add_fact(fact)
+		Brief.append(read, session)
+		read.mark_resolved("situation_notice_read")
+		if not session.writer.apply_result(read, session.stores):
+			return {"success": false, "error": "notice_read_rejected"}
+		return session.PlayerLife.feedback(Brief.advance(session, "situation_read"), fact.summary)
 	var snapshot: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
 	var actor := str(session.context.actor_id)
 	var person: Dictionary = snapshot.get_entity(str(selected.subject_id))
@@ -67,26 +118,48 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 	match selected.intent:
 		"ask":
 			fact.fact_type = "situation_inquiry"
-			var declaration := Intents.declaration(snapshot, person, tick, session.context.locations, true)
-			if not declaration.is_empty():
-				for key: String in ["query", "goal", "danger_location_id", "source_fact_ids"]:
+			var declaration := statement(session, snapshot, person)
+			for key: String in ["query", "goal", "danger_location_id", "stated_destination_id", "source_fact_ids"]:
+				if declaration.has(key):
 					fact[key] = declaration[key]
-				fact["statement"] = declaration.summary
-			else:
-				var goal := str(person.states.get("daily_goal_id", ""))
-				var place := str(session.context.locations.get(goal, {}).get("display_name", ""))
-				var activity := str(person.states.get("daily_activity_reason", ""))
-				fact["goal"] = activity if activity != "" else "暂时留在这里"
-				fact["statement"] = "%s说：%s%s。" % [person.display_name, fact.goal, "，眼下打算去" + place if place != "" and goal != session.context.location_id else ""]
-				var source := str(person.states.get("daily_departure_fact_id", ""))
-				if source != "":
-					fact.source_fact_ids.append(source)
+			fact["statement"] = declaration.summary
 			fact.summary = fact.statement
+			result.add_fact(fact)
+		"aftermath":
+			var news := Continuity.followup(snapshot, str(person.id), actor)
+			if news.is_empty():
+				return {"success": false, "error": "no_new_firsthand_update"}
+			fact.fact_type = "situation_heard_update"
+			fact.merge({"update_id": news.update_id, "contribution_id": news.contribution_id,
+				"source_fact_ids": [news.update_id, news.contribution_id], "known_location_id": news.location_id,
+				"update_key": news.key, "update_kind": news.kind, "update_hour": Intents.now(news)}, true)
+			fact.summary = "%s说起后来的事：第%d天%02d时，%s\n%s" % [person.display_name, news.day, news.hour, news.summary,
+				"还没有买成装备。你可以另找实物、劝其避险，或者就此离开。" if news.kind == "pending" else news.connection]
+			result.add_fact(fact)
+		"whereabouts":
+			var wanted := str(selected.wanted_id)
+			var name: String = snapshot.get_entity(wanted).get("display_name", "那个人")
+			var known: Dictionary = Continuity.sightings(snapshot, str(person.id)).get(wanted, {})
+			fact.fact_type = "situation_whereabouts"
+			fact.subject_id = wanted
+			fact["speaker_id"] = person.id
+			if known.is_empty():
+				fact.fact_type = "situation_unknown_whereabouts"
+				fact.summary = "%s摇头：我没有见到%s，不能给你指路。" % [person.display_name, name]
+			else:
+				fact.merge({"known_location_id": known.location_id, "observed_hour": known.observed_hour,
+					"source_fact_ids": [known.source_fact_id]}, true)
+				fact.summary = "%s说：%d小时前，我在%s见到%s。之后有没有离开，我不知道。" % [person.display_name,
+					Intents.now(tick) - int(known.observed_hour), session.context.locations.get(str(known.location_id), {}).get("display_name", "那里"), name]
 			result.add_fact(fact)
 		"give":
 			var item: Dictionary = snapshot.get_item(str(selected.item_id))
 			result = Intents.gift(snapshot, actor, str(person.id), item, id, tick, selected.get("sources", []))
 			fact = result.facts_added[0]
+			for slot: String in selected.get("clear_slots", []):
+				result.add_equipment_change({"operation": "equipment_clear", "entity_id": actor, "slot_id": slot, "source_fact_ids": [id]})
+			if selected.has("clear_slots"):
+				fact.summary += "\n你已卸下这件装备，原来的防护和被动不再对你生效。"
 		"sell":
 			var trade: Dictionary = Intents.Market.new().plan_trade(selected.policy, {"buyer_entity_id": person.id,
 				"item_instance_id": selected.item_id, "quantity": 1, "quoted_unit_price": selected.price,
@@ -118,6 +191,13 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 	if not session.writer.apply_result(result, session.stores):
 		return {"success": false, "error": "situation_write_rejected:" + str(session.writer.last_report)}
 	return session.PlayerLife.feedback(Brief.advance(session, "situation_action"), str(fact.summary))
+
+
+static func journey(session: Variant, selected: Dictionary, introduction: String) -> Dictionary:
+	var outcome: Dictionary = session.travel(str(selected.route_id))
+	if not outcome.get("success", false):
+		return outcome
+	return session.PlayerLife.feedback(outcome, introduction + "\n" + str(outcome.get("player_life_feedback", {}).get("body", "")))
 
 
 static func repair_options(session: Variant, snapshot: Variant, person: Dictionary) -> Array:

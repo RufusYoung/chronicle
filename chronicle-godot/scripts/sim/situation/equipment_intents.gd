@@ -11,6 +11,12 @@ const RULES := {"version": 1, "request_interval_hours": 6, "request_lifetime_hou
 	"friend_trust": 30, "help_reserve_coins": 6, "help_coins": 4, "initial_history_hours": 2}
 
 
+static func rules(version: int) -> Dictionary:
+	var config := RULES.duplicate(true)
+	config.version = version
+	return config
+
+
 static func present(person: Dictionary, location: String) -> bool:
 	var states: Dictionary = person.get("states", {})
 	return states.get("alive", true) and states.get("life_status", "alive") == "alive" \

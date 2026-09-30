@@ -18,7 +18,7 @@ const LICENSED := {
 }
 
 
-static func build(response: Dictionary, page: String = "scene") -> Dictionary:
+static func build(response: Dictionary, page: String = "scene", focus_subject: String = "") -> Dictionary:
 	var view: Dictionary = response.get("observation", {})
 	var choices: Array = response.get("choices", [])
 	var location: Dictionary = view.get("location", {})
@@ -34,10 +34,16 @@ static func build(response: Dictionary, page: String = "scene") -> Dictionary:
 					"eyebrow": "交锋仍在继续", "choices": combat}, true)
 			elif view.get("situation_mode", false):
 				result.eyebrow = "眼前的局面"
+				var selected_subject := focus_subject
 				if not situations.is_empty():
 					var current: Dictionary = situations[0]
+					for other: Dictionary in situations:
+						if other.subject_id == focus_subject:
+							current = other
 					result.title = current.title
 					result.body = current.body
+					if selected_subject == "":
+						selected_subject = str(current.subject_id)
 					result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("subject_id") == current.subject_id and c.get("life_group") == "situation")
 				else:
 					result.body = "眼下没有可交谈的人。可以原地等候，也可以沿道路离开。"
@@ -45,7 +51,9 @@ static func build(response: Dictionary, page: String = "scene") -> Dictionary:
 				if not notices.is_empty() and situations.is_empty():
 					result.body += "\n" + str(notices.back().text)
 				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
-					return c.kind == "travel" or c.id == "continue" or c.get("intent") == "follow" or (c.get("intent") == "wait" and c.get("minutes") == 10)))
+					return c.kind == "travel" or c.id in ["continue", "journey_block"] \
+						or (c.get("intent") in ["follow", "pursue", "read_notice"] and (situations.is_empty() or c.get("subject_id") == selected_subject)) \
+						or (c.get("intent") == "wait" and c.get("minutes") == 10)))
 				result.empty = "可以查看地图、交谈或原地等候。没有强制的剧情入口。"
 			elif not event.is_empty():
 				result.merge({"title": event.title, "body": event.body, "eyebrow": "旅途中的一件事",
@@ -61,6 +69,9 @@ static func build(response: Dictionary, page: String = "scene") -> Dictionary:
 			result.eyebrow = "镜湖北岸 · 可走的路"
 			result.body = "当前位置：" + str(location.get("title", "")) + "\n道路只说明去向，不保证远处有人等你。"
 			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.kind == "travel" or c.id == "continue")
+			if view.get("situation_continuity", false):
+				result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("intent") in ["pursue", "follow", "read_notice"]) + result.choices
+				result.body = "循着亲见或听到的消息去找人，也可以另选道路。消息会过时，抵达后须重新确认。"
 			result.choices.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.get("lead_priority", 5)) < int(b.get("lead_priority", 5)))
 			result.empty = "交锋尚未脱离，先回到现场处理眼前威胁。"
 		"talk":
@@ -92,6 +103,13 @@ static func build(response: Dictionary, page: String = "scene") -> Dictionary:
 			result.body = "长活会占去半天。冒险无需先做这些，缺钱或想留下生活时再考虑。"
 			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "work")
 			result.empty = "这里现在没有能做的工作。"
+	var seen := {}
+	result.choices = result.choices.filter(func(c: Dictionary) -> bool:
+		var id := str(c.choice_id)
+		if seen.has(id):
+			return false
+		seen[id] = true
+		return true)
 	return result
 
 
@@ -123,6 +141,15 @@ static func art(view: Dictionary) -> String:
 
 static func family(row: Dictionary) -> String:
 	if row.get("action_type") == "situation":
-		return {"give": "赠送备用装备", "sell": "出售备用装备", "fund": "资助在场的人", "ask": "询问近况", "caution": "劝对方谨慎", "repair": "帮忙维修", "wait": "原地等候", "follow": "随人同行"}.get(str(row.get("intent", "")), "")
+		if row.get("intent") == "give" and row.has("clear_slots"):
+			return "让出身上的装备"
+		return {"give": "赠送备用装备", "sell": "出售备用装备", "fund": "资助在场的人", "ask": "询问近况", "caution": "劝对方谨慎", "repair": "帮忙维修", "wait": "原地等候", "follow": "随人同行", "pursue": "循着线索出发", "whereabouts": "打听认识的人", "aftermath": "听听后来的事", "read_notice": "看看在此留下的口信"}.get(str(row.get("intent", "")), "")
 	var prefix := str(row.id).get_slice(":", 0)
 	return {"eat": "吃一份食物", "buy": "买点东西", "sell_food": "出售食物", "give_food": "分一份食物", "sell_work": "出售制品", "ask_local": "问问本地消息", "inquire": "问问后来怎样了"}.get(prefix, "")
+
+
+static func scene_rank(row: Dictionary) -> int:
+	if row.get("kind") == "combat_encounter":
+		return 0
+	return {"aftermath": 0, "read_notice": 5, "ask": 10, "give": 20, "fund": 21, "repair": 22, "caution": 23,
+		"sell": 24, "follow": 30, "pursue": 40, "whereabouts": 60, "wait": 90}.get(str(row.get("intent", "")), 50)

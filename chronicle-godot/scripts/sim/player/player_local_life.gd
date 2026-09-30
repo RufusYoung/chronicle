@@ -60,7 +60,12 @@ static func options(session: Variant, view: Variant, player: Dictionary) -> Arra
 	if not session.get_combat_encounter_options().is_empty():
 		return []
 	var rest_hours := mini(6, posmod(6 - int(session.current_hour), 24))
-	if (session.current_hour >= 18 or session.current_hour < 6) and rest_hours > 1 and player.states.get("hunger") not in ["high", "extreme"]:
+	if session.fixture_source_data.get("situation_rules", {}).get("version") == 2 and int(player.states.get("fatigue", 0)) > 2 and player.states.get("hunger") not in ["high", "extreme"]:
+		rest_hours = mini(6, int(player.states.fatigue) - 2)
+		var rest: Dictionary = session.PlayerLife.row("rest_block", "歇到恢复精神", "最多%d小时；疲劳降至2、饥饿、遇险或有人带来新消息时停下。世界照常运转。" % rest_hours, "", rest_hours)
+		rest["target_fatigue"] = 2
+		rows.append(rest)
+	elif (session.current_hour >= 18 or session.current_hour < 6) and rest_hours > 1 and player.states.get("hunger") not in ["high", "extreme"]:
 		rows.append(session.PlayerLife.row("rest_block", "歇一阵，等天亮", "最多休息%d小时；饥饿达到严重、遇险或天亮即停。世界逐小时变化，伤后恢复照常耗粮。" % rest_hours, "", rest_hours))
 	var food_config: Dictionary = session.fixture_source_data.resident_daily_life.food_access
 	var orientation_offered := false
@@ -282,6 +287,8 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 
 static func advance_block(session: Variant, selected: Dictionary) -> Dictionary:
 	var before: Variant = session.get_snapshot()
+	var situation_version: int = int(session.fixture_source_data.get("situation_rules", {}).get("version", 0))
+	var visible_before: String = session.PlayerLife.Situations.visible_signature(session) if situation_version == 2 and selected.action_id == "rest_block" else ""
 	var count := 0
 	var stop := "预定时间已到"
 	for index: int in range(int(selected.hours)):
@@ -299,6 +306,16 @@ static func advance_block(session: Variant, selected: Dictionary) -> Dictionary:
 		if selected.action_id == "rest_block" and current.player.hunger in ["high", "extreme"]:
 			stop = "已经很饿，需要先考虑食物"
 			break
+		if situation_version == 2:
+			if int(current.player.health) < int(before.player.health):
+				stop = "身体状况恶化，先停下来处理"
+				break
+			if selected.action_id == "rest_block" and selected.has("target_fatigue") and int(current.player.fatigue) <= int(selected.target_fatigue):
+				stop = "已恢复精神，可以继续上路"
+				break
+			if selected.action_id == "rest_block" and session.PlayerLife.Situations.visible_signature(session) != visible_before:
+				stop = "眼前的人或消息改变，先看看现场"
+				break
 	var after: Variant = session.get_snapshot()
 	return session.PlayerLife.feedback({"success": true, "hours": count}, "%d小时过去，%s。疲劳%d→%d，健康%d→%d，食物%d→%d。" % [
 		count, stop, before.player.fatigue, after.player.fatigue, before.player.health, after.player.health, before.player.food_count, after.player.food_count])

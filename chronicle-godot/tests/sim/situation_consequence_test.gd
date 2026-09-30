@@ -22,6 +22,9 @@ func _run() -> void:
 	_gift_consequence(base)
 	_funding_purchase(base)
 	_waiting_case(base)
+	var continuity := base.duplicate(true)
+	continuity.situation_rules = Intent.rules(2)
+	_gift_consequence(continuity)
 	_finish()
 
 
@@ -93,7 +96,7 @@ func _danger_choice(session: Variant, alternative: bool = false) -> Dictionary:
 	if alternative:
 		Choice.propose(rows, "home", SITE, "home", "测试注入：留在安全处")
 	var config: Dictionary = Choice.PROFILE.duplicate(true)
-	config.merge({"danger_hour": Intent.now(session.get_time_summary()), "situation_version": 1})
+	config.merge({"danger_hour": Intent.now(session.get_time_summary()), "situation_version": session.fixture_source_data.situation_rules.version})
 	return Choice.choose(rows, snap.get_entity(WHO), session.travel_routes, Daily.new(), snap, [], session.registry, config, {})
 
 

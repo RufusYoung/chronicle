@@ -1125,6 +1125,7 @@ func _combat_action_rows(snapshot: Variant = null) -> Array:
 			"action_id": str(option.get("option_id", "")),
 			"combat_option_id": str(option.get("option_id", "")),
 			"world_danger": option.get("world_danger", false),
+			"required_roll": int(preview.get("required_roll", 7)),
 			"event_type": "combat_encounter",
 			"label": "[%s·%s] %s" % [
 				approach_label,

@@ -4,10 +4,12 @@ extends RefCounted
 const Intents = preload("res://scripts/sim/situation/equipment_intents.gd")
 const Gear = preload("res://scripts/sim/equipment/resident_equipment.gd")
 const Affordance = preload("res://scripts/sim/action/action_affordance_system.gd")
+const Continuity = preload("res://scripts/sim/situation/situation_continuity.gd")
 
 
 static func enabled(session: Variant) -> bool:
-	return session.fixture_source_data.get("situation_rules", {}).get("version") == 1
+	var version: Variant = session.fixture_source_data.get("situation_rules", {}).get("version")
+	return version == 1 or version == 2
 
 
 static func build(session: Variant) -> Array:
@@ -29,11 +31,11 @@ static func build(session: Variant) -> Array:
 				visible_items.append({"id": id, "name": item.display_name, "damaged": int(item.condition.durability) < int(item.condition.maximum_durability)})
 		var knowledge: Dictionary = {}
 		for fact: Dictionary in snapshot.get_facts_by_actor(player):
-			if fact.get("fact_type") == "situation_inquiry" and fact.get("subject_id") == person.id:
+			if fact.get("fact_type") in ["situation_inquiry", "situation_notice_read"] and fact.get("subject_id") == person.id:
 				knowledge = fact
 		var request := Intents.latest_request(snapshot, str(person.id))
 		var heard: bool = not request.is_empty() and player in request.heard_by_ids and Intents.now(snapshot.world_time) < int(request.expires_hour)
-		var known: bool = not knowledge.is_empty() and Intents.now(snapshot.world_time) - int(knowledge.absolute_hour) < 6
+		var known: bool = not knowledge.is_empty() and (Continuity.enabled(session) or Intents.now(snapshot.world_time) - int(knowledge.absolute_hour) < 6)
 		var row := {"subject_id": person.id, "subjects": [person.id], "title": str(person.display_name),
 			"location_id": location, "goals": [], "blockers": [], "related_items": visible_items,
 			"visible_traces": [], "player_known_facts": [], "provenance": [], "urgency": "unknown",
@@ -49,8 +51,9 @@ static func build(session: Variant) -> Array:
 		if heard or known:
 			var source: Dictionary = request if heard and (not known or int(request.absolute_hour) > int(knowledge.absolute_hour)) else knowledge
 			row.player_known_facts.append(source.fact_id)
-			row.provenance.append({"kind": "heard_in_person", "fact_id": source.fact_id})
-			row.body += "\n你在第%d天%02d时听到：%s" % [source.day, source.hour, str(source.get("statement", source.get("summary", "")))]
+			var from_notice: bool = source.get("fact_type") == "situation_notice_read"
+			row.provenance.append({"kind": "read_notice" if from_notice else "heard_in_person", "fact_id": source.fact_id})
+			row.body += "\n" + str(source.summary) if from_notice else "\n你在第%d天%02d时听到：%s" % [source.day, source.hour, str(source.get("statement", source.get("summary", "")))]
 			row.goals = [source.get("goal", "本人没有提出装备需求")]
 			if source.has("query"):
 				row["known_query"] = source.query
@@ -60,6 +63,11 @@ static func build(session: Variant) -> Array:
 			row.body += " 可以问问近况；你还不知道此人的打算。"
 		row.provenance.append({"kind": "present_entity", "entity_id": person.id, "location_id": location})
 		row["affordances"] = Affordance.new().situation_candidates(session, snapshot, row)
+		if Continuity.enabled(session):
+			var updates: Array = row.affordances.filter(func(a: Dictionary) -> bool: return a.intent == "aftermath")
+			if not updates.is_empty():
+				row.score += 100
+				row.body = "%s想和你说说那之后的事。\n" % person.display_name + row.body
 		row.score += mini(row.affordances.size(), 5)
 		rows.append(row)
 	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.score > b.score if a.score != b.score else str(a.subject_id) < str(b.subject_id))

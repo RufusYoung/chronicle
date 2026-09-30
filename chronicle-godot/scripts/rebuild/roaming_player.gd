@@ -9,7 +9,7 @@ const WorldAudio = preload("res://scripts/rebuild/world_audio.gd")
 
 var agent = Agent.new()
 var slot := "situation_manual"
-var economy_variant := "world_situation_v1"
+var economy_variant := "world_situation_v2"
 var initial_seed := 81001
 var auto_load := true
 var busy := false
@@ -17,6 +17,7 @@ var response: Dictionary = {}
 var page := "scene"
 var family := ""
 var offset := 0
+var focus_subject := ""
 var pending_result := false
 var result_art := ""
 var before_player: Dictionary = {}
@@ -127,6 +128,9 @@ func _begin(command: String, fields: Dictionary = {}) -> void:
 	if command == "act":
 		before_view = response.get("observation", {}).duplicate(true)
 		before_player = before_view.get("player", {})
+		for choice: Dictionary in response.get("choices", []):
+			if choice.choice_id == fields.get("choice_id") and choice.has("subject_id"):
+				focus_subject = str(choice.subject_id)
 		result_art = Presentation.art(response.get("observation", {}))
 	_render()
 	_worker = Thread.new()
@@ -234,7 +238,9 @@ func _render() -> void:
 		child.free()
 	var header := HBoxContainer.new()
 	_root.add_child(header)
-	var brand := _label(header, "CHRONICLE  /  漫游", 24)
+	var older_world: bool = response.get("observation", {}).get("situation_mode", false) and not response.get("observation", {}).get("situation_continuity", false)
+	var brand := _label(header, "CHRONICLE  /  " + ("旧世界" if older_world else "漫游"), 24)
+	brand.tooltip_text = "此存档保留原来的世界规则。选择新旅途可体验新版；不会立即覆盖旧保存。" if older_world else ""
 	brand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_button(header, "保存", func() -> void: _begin("save", {"slot": slot, "overwrite": true}))
 	_button(header, "读档", func() -> void: _ask("load", "读取上次保存，会放弃当前尚未保存的进展。"))
@@ -272,7 +278,7 @@ func _render() -> void:
 	_story.size_flags_stretch_ratio = 1.55
 	_story.add_theme_constant_override("separation", 8)
 	_body.add_child(_story)
-	var projected := Presentation.build(response, page)
+	var projected := Presentation.build(response, page, focus_subject)
 	var path: String = result_art if pending_result and page == "scene" else str(projected.art)
 	if ResourceLoader.exists(path):
 		_picture.texture = load(path)
@@ -282,8 +288,36 @@ func _render() -> void:
 		_render_result()
 	else:
 		_label(_story, str(projected.eyebrow), 17).modulate = Color("bfaa7b")
+		var situations: Array = response.get("observation", {}).get("situations", [])
+		if page == "scene" and situations.size() > 1 and projected.eyebrow == "眼前的局面":
+			var selector := OptionButton.new()
+			selector.name = "SituationSelector"
+			selector.add_theme_font_size_override("font_size", 17)
+			for situation: Dictionary in situations:
+				selector.add_item("看一看：" + str(situation.title))
+				if situation.subject_id == focus_subject:
+					selector.select(selector.item_count - 1)
+			selector.item_selected.connect(func(index: int) -> void:
+				focus_subject = str(situations[index].subject_id)
+				family = ""
+				offset = 0
+				_render())
+			_story.add_child(selector)
 		_heading = _label(_story, str(projected.title), 28)
 		_paragraph = _label(_story, str(projected.body), 21)
+		if response.get("observation", {}).get("situation_continuity", false):
+			_paragraph.max_lines_visible = 5 if get_viewport_rect().size.y < 850 else 7
+			_paragraph.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			var full := LinkButton.new()
+			full.text = "查看完整现场描述"
+			full.pressed.connect(func() -> void:
+				_ask("information", str(projected.body))
+				_dialog.get_ok_button().text = "返回现场"
+				_dialog.popup_centered(Vector2i(650, 360)))
+			_story.add_child(full)
+			var paragraph := _paragraph
+			paragraph.resized.connect(func() -> void:
+				full.visible = paragraph.get_line_count() > paragraph.max_lines_visible)
 		if page == "scene" and not before_view.is_empty():
 			var feedback: Dictionary = response.get("observation", {}).get("feedback", {})
 			var result_line := _label(_story, str(feedback.get("compact_body", feedback.get("body", ""))), 17)
@@ -296,6 +330,9 @@ func _render() -> void:
 			detail.text = "查看完整结果"
 			detail.pressed.connect(func() -> void: _navigate("journal"))
 			_story.add_child(detail)
+			result_line.resized.connect(func() -> void:
+				detail.visible = result_line.get_line_count() > result_line.max_lines_visible \
+					or not feedback.get("details", []).is_empty() or str(feedback.get("body", "")) != result_line.text)
 		_choices = VBoxContainer.new()
 		_choices.add_theme_constant_override("separation", 8)
 		_story.add_child(_choices)
@@ -332,13 +369,17 @@ func _render_result() -> void:
 func _render_choices(rows: Array, empty_text: String) -> void:
 	var visible_rows: Array = []
 	var groups := {}
-	for row: Dictionary in rows:
+	var ordered: Array = rows.duplicate()
+	if page == "scene" and response.get("observation", {}).get("situation_mode", false):
+		ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return Presentation.scene_rank(a) < Presentation.scene_rank(b))
+	for row: Dictionary in ordered:
 		var group := Presentation.family(row)
 		if page == "scene" and response.get("observation", {}).get("situation_mode", false) and row.get("kind") == "travel":
 			group = "选择去向"
 		if group != "":
 			if not groups.has(group):
 				groups[group] = []
+				visible_rows.append({"group": group})
 			groups[group].append(row)
 		else:
 			visible_rows.append(row)
@@ -349,17 +390,18 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 			_render())
 		visible_rows = groups.get(family, [])
 	else:
-		for group: String in groups:
-			if groups[group].size() == 1:
-				visible_rows.append(groups[group][0])
-			else:
-				visible_rows.append({"group": group, "label": "%s · %d个选择" % [group, groups[group].size()]})
+		for index: int in range(visible_rows.size()):
+			var row: Dictionary = visible_rows[index]
+			if not row.has("group"):
+				continue
+			var group := str(row.group)
+			visible_rows[index] = groups[group][0] if groups[group].size() == 1 else {"group": group, "label": "%s · %d个选择" % [group, groups[group].size()]}
 	if visible_rows.is_empty():
 		_label(_choices, empty_text, 19)
 		return
 	var count := 4
 	if page == "scene":
-		count = 2 if get_viewport_rect().size.y < 850 else 3
+		count = 3
 		if rows.any(func(row: Dictionary) -> bool: return row.get("kind") == "combat_encounter"):
 			count = 3
 	offset = clampi(offset, 0, maxi(0, visible_rows.size() - 1))
@@ -385,7 +427,7 @@ func _action_button(parent: Node, row: Dictionary) -> Button:
 	var text := title + ("  ·  " + cost if cost != "" else "")
 	if not enabled:
 		text += "\n" + str(row.get("blocked_reason", "当前无法执行"))
-	elif hint != "" and row.kind != "combat_encounter":
+	elif hint != "" and row.kind != "combat_encounter" and page != "scene":
 		text += "\n" + hint
 	var button := _button(parent, text, func() -> void:
 		if row.kind == "combat_encounter" or row.get("requires_confirmation", false):
@@ -420,6 +462,9 @@ func _render_collection() -> void:
 			_label(log_box, str(detail), 18)
 		for notice: Dictionary in view.get("situation_notices", []):
 			_label(log_box, str(notice.text), 18)
+		for lead: Dictionary in view.get("people_leads", []):
+			_label(log_box, "%s · %s · %d小时前%s\n%s" % [lead.name, lead.place, lead.age_hours,
+				"（消息已旧）" if lead.stale else "（不是实时位置）", lead.text], 18)
 		for entry: Variant in view.get("knowledge", []).duplicate():
 			_label(log_box, str(entry), 18)
 		return

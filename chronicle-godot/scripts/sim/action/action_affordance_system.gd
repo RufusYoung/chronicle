@@ -22,19 +22,37 @@ func situation_candidates(session: Variant, snapshot: Variant, situation: Dictio
 	for fact: Dictionary in snapshot.get_facts_by_actor(actor):
 		if fact.get("fact_type") == "situation_inquiry" and fact.get("subject_id") == subject:
 			latest = fact
-	if latest.is_empty() or intents.now(snapshot.world_time) - int(latest.absolute_hour) >= 6:
+	var can_ask: bool = latest.is_empty() or intents.now(snapshot.world_time) - int(latest.absolute_hour) >= 6
+	if actions.Continuity.enabled(session) and not latest.is_empty():
+		can_ask = latest.get("statement", "") != actions.statement(session, snapshot, person).summary
+	if can_ask:
 		rows.append(actions.row("ask", subject, "问%s：眼下有什么打算？" % person.display_name,
 			"当面听取此人的需要和亲历，不读取远处真值。"))
 	var need: Dictionary = intents.Gear.need(snapshot, person)
 	if situation.has("known_query") and not need.is_empty() and need.query == situation.known_query:
 		var sources: Array = situation.player_known_facts
-		for item: Dictionary in intents.spare_items(snapshot, snapshot.get_entity(actor), need.query):
+		var equipment: Dictionary = snapshot.get_equipment_loadout(actor).get("slots", {})
+		var transferable: Array = intents.spare_items(snapshot, snapshot.get_entity(actor), need.query)
+		if actions.Continuity.enabled(session):
+			for worn: Dictionary in snapshot.get_items_for_holder(actor):
+				var slot := "body_outer" if "armor_outer" in need.query.get("tags_all", []) else "main_hand"
+				if intents.Gear.rating(worn, slot) > 0 and int(worn.get("condition", {}).get("durability", 0)) >= 4 \
+					and not transferable.any(func(i: Dictionary) -> bool: return i.item_instance_id == worn.item_instance_id):
+					transferable.append(worn)
+		for item: Dictionary in transferable:
 			var gift: Dictionary = actions.row("give", subject, "把%s送给%s" % [item.display_name, person.display_name],
 				"交出一件自己的备用装备，不收钱，也不保证对方马上出发。", str(item.item_instance_id))
 			gift["item_id"] = item.item_instance_id
 			gift["sources"] = sources
+			var slots: Array = equipment.keys().filter(func(slot: Variant) -> bool: return equipment[slot] == item.item_instance_id)
+			if not slots.is_empty():
+				gift["clear_slots"] = slots
+				gift.label = "把身上的%s让给%s" % [item.display_name, person.display_name]
+				gift.hint = "你将失去这件装备及其防护，空出的部位不会自动补装。对方如何使用由本人决定。失去：" + session.PlayerLife.Equipment.describe(item)
+				gift.known_effect = gift.hint
 			rows.append(gift)
-			rows.append_array(actions.sale_options(session, snapshot, person, item, sources))
+			if slots.is_empty():
+				rows.append_array(actions.sale_options(session, snapshot, person, item, sources))
 		var coins: int = intents.Food.balance(snapshot.get_items_for_holder(actor), actor)
 		if coins > 0:
 			var already_helped: bool = snapshot.get_facts_by_actor(actor).any(func(f: Dictionary) -> bool:
@@ -53,6 +71,25 @@ func situation_candidates(session: Variant, snapshot: Variant, situation: Dictio
 			caution["sources"] = situation.player_known_facts
 			rows.append(caution)
 	rows.append_array(actions.repair_options(session, snapshot, person))
+	if actions.Continuity.enabled(session):
+		var update: Dictionary = actions.Continuity.followup(snapshot, subject, actor)
+		if not update.is_empty():
+			rows.push_front(actions.row("aftermath", subject, "听%s说起后来的事" % person.display_name, "听本人讲述你的介入之后实际发生的事；不提供远方实时状态。"))
+		var asked_about := {}
+		for fact: Dictionary in snapshot.get_facts_by_actor(actor):
+			if fact.get("fact_type") in ["situation_whereabouts", "situation_unknown_whereabouts"] and fact.get("speaker_id") == subject \
+				and intents.now(snapshot.world_time) - intents.now(fact) < 6:
+				asked_about[str(fact.subject_id)] = true
+		var known_people := {}
+		for lead: Dictionary in actions.Continuity.knowledge(session, snapshot):
+			var wanted := str(lead.subject_id)
+			if wanted == subject or known_people.has(wanted) or asked_about.has(wanted) \
+				or intents.present(snapshot.get_entity(wanted), str(session.context.location_id)):
+				continue
+			known_people[wanted] = true
+			var inquiry: Dictionary = actions.row("whereabouts", subject, "向%s打听%s的去向" % [person.display_name, lead.name], "对方只会说自己见过的地点与时间，也可能不知道。", wanted)
+			inquiry["wanted_id"] = wanted
+			rows.append(inquiry)
 	return rows
 
 

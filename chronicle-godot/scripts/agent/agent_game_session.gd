@@ -85,7 +85,8 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	var situations: bool = variant == "world_situation_v1"
+	var situation_version := 2 if variant == "world_situation_v2" else 1
+	var situations: bool = variant in ["world_situation_v1", "world_situation_v2"]
 	var roaming: bool = variant == "world_roaming_v1" or situations
 	var short_actions: bool = variant == "world_adventure_v3" or roaming
 	var journey: bool = variant == "world_adventure_v2" or short_actions
@@ -106,7 +107,7 @@ func _start(request: Dictionary) -> Dictionary:
 	var result: Dictionary
 	var options := {"challenge_seed_override": int(seed)}
 	if situations:
-		options["situation_rules_version"] = 1
+		options["situation_rules_version"] = situation_version
 	if body_rules:
 		options["body_rules_version"] = 1
 	if journey:
@@ -191,8 +192,14 @@ func _refresh() -> void:
 					_view.erase(key)
 			_view["knowledge"] = []
 			for fact: Dictionary in _session().stores.fact_store.list_facts():
-				if fact.get("actor_id") == _session().context.actor_id and fact.get("fact_type") in ["situation_inquiry", "situation_advice", "situation_fund", "equipment_given"]:
+				if fact.get("actor_id") == _session().context.actor_id and fact.get("fact_type") in ["situation_inquiry", "situation_advice", "situation_fund", "equipment_given", "situation_heard_update", "situation_whereabouts", "situation_unknown_whereabouts", "situation_notice_read"]:
 					_view.knowledge.append("第%d天%02d时：%s" % [fact.day, fact.hour, fact.summary])
+			if _session().Situations.Continuity.enabled(_session()):
+				var snapshot: Variant = _session().PlayerLife.snapshot(_session().context, _session().stores, _session().get_time_summary())
+				_view["people_leads"] = _session().Situations.Continuity.knowledge(_session(), snapshot)
+				_view["situation_continuity"] = true
+				for situation: Dictionary in _view.situations:
+					situation.affordances = situation.affordances.map(_public_situation_choice)
 	else:
 		_outpost_choices(projected)
 
@@ -436,11 +443,26 @@ func _settled(result: Dictionary, cause: String, choice_id: String = "") -> Dict
 func _response() -> Dictionary:
 	var result := hello()
 	var choices: Array = _choices.values().duplicate(true)
+	if _view.get("situation_continuity", false):
+		choices = choices.map(_public_situation_choice)
 	choices.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return str(a.choice_id) < str(b.choice_id))
 	result.merge({"ok": true, "mode": mode, "scenario": scenario, "surface": surface,
 		"observation": _view.duplicate(true), "choices": choices}, true)
 	return result
+
+
+func _public_situation_choice(choice: Dictionary) -> Dictionary:
+	# Execution payloads stay server-side: a question must not contain its unheard answer.
+	var public := {}
+	for key: String in ["choice_id", "id", "kind", "label", "cost", "hint", "known_effect", "tradeoff", "warning",
+		"requires_confirmation", "enabled", "can_execute", "blocked_reason", "event_type", "action_id", "action_type", "life_group",
+		"minutes", "hours", "intent", "subject_id", "wanted_id", "item_id", "item_instance_id", "item_def_id", "slot_id", "clear_slots",
+		"price", "amount", "quantity", "route_id", "destination_id", "destination_name", "source_fact_id", "lead_kind", "purpose", "lead_priority",
+		"approach_id", "required_roll", "check_label"]:
+		if choice.has(key):
+			public[key] = choice[key]
+	return public
 
 
 func _error(reason: String) -> Dictionary:

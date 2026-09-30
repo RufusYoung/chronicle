@@ -71,6 +71,7 @@ const FoodBudget = preload("res://scripts/sim/economy/household_food_budget.gd")
 const IndustryCatalog = preload("res://scripts/sim/settlement/industry_runtime_catalog.gd")
 const WorkOpportunities = preload("res://scripts/sim/economy/resident_work_opportunities.gd")
 const EquipmentIntents = preload("res://scripts/sim/situation/equipment_intents.gd")
+const SituationContinuity = preload("res://scripts/sim/situation/situation_continuity.gd")
 const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 
 const ENTRY_TYPE_TICK_EVENT := "tick_event"
@@ -304,7 +305,7 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 				livelihood_results.append_array(danger.results)
 				livelihood_events.append_array(danger.events)
 			var activity_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
-			if daily_life_config.get("situation_rules", {}).get("version") == 1:
+			if int(daily_life_config.get("situation_rules", {}).get("version", 0)) in [1, 2]:
 				var requests: Variant = EquipmentIntents.requests(activity_snapshot, round_event, context.locations)
 				if not writer.apply_result(requests, stores):
 					return _failure_result(event, "equipment_requests_rejected", stores)
@@ -515,12 +516,17 @@ func apply_tick_event(context: Variant, stores: Dictionary, tick_event: Dictiona
 			social_followup_results.append_array(round_followup_results)
 			social_followup_events.append_array(followup_data.get("events", []))
 
-		if daily_life_config.get("situation_rules", {}).get("version") == 1:
+		if int(daily_life_config.get("situation_rules", {}).get("version", 0)) in [1, 2]:
 			var trace_snapshot = snapshot_builder.build_snapshot(context, stores, true, round_event)
 			var situation_traces: Variant = EquipmentIntents.witnessed_changes(trace_snapshot, livelihood_events, round_event, context.locations)
 			if not writer.apply_result(situation_traces, stores):
 				return _failure_result(event, "situation_traces_rejected:" + str(writer.last_report), stores)
 			livelihood_results.append(situation_traces)
+			if daily_life_config.situation_rules.version == 2:
+				var observations: Variant = SituationContinuity.observe(trace_snapshot, round_event, context.locations)
+				if not writer.apply_result(observations, stores):
+					return _failure_result(event, "situation_observations_rejected:" + str(writer.last_report), stores)
+				livelihood_results.append(observations)
 
 		if (
 			resource_store != null

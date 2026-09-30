@@ -16,6 +16,28 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_continuity_profile_retains_dated_knowledge_and_resolves_real_road(self):
+        with client(timeout=90) as game:
+            response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                    economy_variant="world_situation_v2")
+            self.assertTrue(response["ok"], response)
+            self.assertTrue(response["observation"]["situation_continuity"])
+            self.assertNotIn("world_facts", response["observation"])
+            question = next(c for c in response["choices"] if c.get("intent") == "ask")
+            response = game.request("act", choice_id=question["choice_id"])
+            self.assertTrue(response["ok"], response)
+            self.assertFalse(any(c["choice_id"] == question["choice_id"] for c in response["choices"]))
+            self.assertTrue(response["observation"]["people_leads"])
+            road = next(c for c in response["choices"] if c["kind"] == "travel" and c["hours"] > 1)
+            start = response["observation"]["time"]["elapsed_hours"]
+            response = game.request("act", choice_id=road["choice_id"])
+            self.assertTrue(response["ok"], response)
+            self.assertEqual(response["observation"]["time"]["elapsed_hours"] - start, road["hours"])
+            self.assertEqual(response["observation"]["location"]["title"], road["destination_name"])
+            slot = f"continuity_protocol_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot, overwrite=True)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], response["observation"])
+
     def test_situation_profile_uses_world_facts_and_native_clock(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,
