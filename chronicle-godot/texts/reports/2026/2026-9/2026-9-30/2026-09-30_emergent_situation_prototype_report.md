@@ -83,7 +83,33 @@
 
 日志在忽略目录 `work/situation-*`，实际渲染 PNG 在 `%APPDATA%/Godot/app_userdata/CHRONICLE_GODOT/tests/situation_surface_render`。不发布用户原始存档。
 
-最终 Windows 来源提交、哈希、真实包验收和 MCP 同步结果在本节完成后补录，不用旧包的结果代替。
+### 冻结交付与实际包验证
+
+运行时已提交并推送：`9bc87c7188ff5e4678a3fc519b7c5d2e7aabe1c3`。Windows 包从此干净提交导出，`sourceDirty=false`，生成时间为2026-09-30 10:57 UTC。后续仅报告和计划的提交不改变这份运行时来源。
+
+入口为 `builds/h1-windows/Chronicle.exe`，默认使用 `world_situation_v1` 与独立的 `situation_manual` 存档。旧版 `--authored-roaming` 及旧存档规则保留。这是内部世界原型，不是比赛提交候选。
+
+| 验证 | 结果与边界 |
+| --- | --- |
+| 常规回归 | 154/154，使用 PowerShell 7；不包含独立渲染组和30日长跑。 |
+| 定向集成 | 12/12；后果专项53/53项断言，包括真实所有权、后续选择、共同危险结算和保存。 |
+| 源码公开游玩协议 | 26/26，实际启动后台进程。 |
+| 导出 EXE 公开游玩协议 | 26/26，80.145秒；不是只检查导出退出码。 |
+| 关键实际渲染 | 新局面与旧漫游两组共3/3；自然39h存档在720p/900p/1080p显示具体问答和需求，资助后现场反馈、铜币12→8，无强制继续页。程序驱动，不是人测。 |
+| 源码/包一致性 | 同一39h原生存档经合法资助后完整公开 observation 相同；不将此称为全 Store 一致性验收。 |
+| 实际 Windows 启动 | 全新2h世界与39h续档均到达可控制画面，`gl_compatibility`，独立测试槽，不覆盖用户存档。 |
+| MCP 与素材 | 本地 MCP 9/9，素材校验通过；指导文档仅按确切文件名加入只读白名单。 |
+
+构建文件 SHA256：
+
+```text
+Chronicle.exe  91724F15024A3A545E28CCD83134403D31CE2323A38E51C95E4DFA282F732AB6
+Chronicle.pck  E53E375876B71C806483B00F72D620372FD8391DD07F0FADD72A0FC6A7D97E23
+```
+
+精简证据在 `work/situation-evidence/`，完整常规回归结果在 `work/situation-full-final/results.json`。保留最初 Windows PowerShell 5运行器将空进程退出码误报失败的记录；使用 PowerShell 7重跑全部154项通过，没有将误报运行计作成功。此交付未重跑30日长跑，也没有新增真人体验结论。
+
+私人讨论 MCP 随已提交文档发布只读快照。实际部署提交以 `work/mcp/deployment.json` 和服务 `project_overview` 为准，公网 OAuth 检查单独执行；服务验证不等于用户的 ChatGPT 网页会话已经重新连接。快照不包含上述日志、截图和玩家存档。
 
 ## 还没有完成
 
