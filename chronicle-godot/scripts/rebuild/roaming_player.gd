@@ -210,6 +210,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 func _ask(action: String, text: String) -> void:
 	_dialog_action = action
+	_dialog.title = "行动确认" if action == "act" else ("现场详情" if action == "information" else "请确认")
 	_discard_button.visible = action == "quit"
 	_dialog.get_ok_button().text = "保存并退出" if action == "quit" else "确认"
 	if action == "act":

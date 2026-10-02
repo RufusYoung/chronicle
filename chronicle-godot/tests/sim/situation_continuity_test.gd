@@ -83,6 +83,7 @@ func _run() -> void:
 	_check(old.initialized and not Continuity.enabled(old), "version1 remains version1")
 	_sacrifice_case(base)
 	_pending_case(base)
+	_funded_need_resolved_case(base)
 	_information_cases(base)
 	_zero_effect_advice(base)
 	_private_lineage(base)
@@ -133,6 +134,35 @@ func _pending_case(base: Dictionary) -> void:
 		_check(not corrupted.load_from_save_envelope(info).get("ok", false), "forged native envelope is rejected")
 		session.stores.memory_store.load_save_data(info.stores.memories)
 		_check(Continuity.validate(session) == "situation_sighting_reference_mismatch", "even a forged in-memory observation fails reference validation")
+
+
+func _funded_need_resolved_case(base: Dictionary) -> void:
+	var session: Variant = _prepared(base)
+	_ask(session)
+	var original_query: Dictionary = Intent.Gear.need(_snapshot(session), _snapshot(session).get_entity(WHO)).query.duplicate(true)
+	_check(session.PlayerLife.execute(session, _options(session, "fund")[0].action_id).success, "fund an actually stated protection need")
+	var gift: Dictionary = _options(session, "give")[0]
+	_check(session.PlayerLife.execute(session, gift.action_id).success, "later meet that protection need with actual equipment")
+	var equipped: Variant = Intent.Gear.equip(_snapshot(session), _snapshot(session).get_entity(WHO), session.get_time_summary())
+	_check(session.writer.apply_result(equipped, session.stores), "recipient equips the donated protection")
+	# Test injection: advance only the clock so pending answers are eligible, without changing people or goods.
+	session.current_hour += 1
+	var need: Dictionary = Intent.Gear.need(_snapshot(session), _snapshot(session).get_entity(WHO))
+	_check(not need.is_empty() and need.query != original_query, "weapon need can remain after protection is supplied")
+	var update := Continuity.followup(_snapshot(session), WHO, "player")
+	_check(update.get("kind") == "consequence", "actual equipment use takes precedence over pending funding")
+	var options := _options(session, "aftermath")
+	_check(not options.is_empty(), "recipient can discuss the equipped gift")
+	if options.is_empty():
+		return
+	_check(session.PlayerLife.execute(session, options[0].action_id).success, "hear the actual equipment reply through the formal action")
+	_check(Continuity.followup(_snapshot(session), WHO, "player").is_empty(), "new weapon need does not claim the supplied protection is still missing")
+	_check(session.save_to_path("user://tests/situations/funded_need_resolved.json").ok, "resolved need persists")
+	var restored := Session.new()
+	var loaded: Dictionary = restored.load_from_path("user://tests/situations/funded_need_resolved.json")
+	_check(loaded.success, "resolved need reloads: " + str(loaded))
+	if loaded.success:
+		_check(Continuity.followup(_snapshot(restored), WHO, "player").is_empty(), "reload does not reopen superseded funding need")
 
 
 func _travel_case(agent: Variant) -> void:

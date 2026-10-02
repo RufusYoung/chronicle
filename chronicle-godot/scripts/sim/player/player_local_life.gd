@@ -208,7 +208,9 @@ static func statement_brief(session: Variant, person: Dictionary, info: Dictiona
 	if info.get("topic") == "local_orientation":
 		var place: String = session.context.locations.get(str(info.workplaces[0].location_id), {}).get("display_name", "本地") if not info.workplaces.is_empty() else "本地"
 		var lines: Array[String] = ["%s说：我平常在%s做活。要买卖，趁我在场直接谈，不必再问一遍。" % [person.display_name, place]]
-		if str(person.states.get("settlement_id", "")) == "generated_settlement.echo_landing":
+		if session.Situations.enabled(session):
+			lines.append("想找人，先去集地或他的作业地；没碰上可以向在场的人问去向。听来的消息可能已经过时。")
+		elif str(person.states.get("settlement_id", "")) == "generated_settlement.echo_landing":
 			lines.append("找旧路就去哨棚，柱上的草图画着废灯台；想探水洞，先到泊台，再沿湖走。")
 		else:
 			lines.append("坡上的哨棚通向断崖小径。路险，别只顾着找东西，留好回程的力气。")

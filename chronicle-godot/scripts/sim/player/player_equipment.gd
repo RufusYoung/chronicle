@@ -95,6 +95,24 @@ static func execute(session: Variant, option: Dictionary) -> Dictionary:
 	return response
 
 
+static func combat_growth_warning(session: Variant, approach: String) -> String:
+	if not enabled(session):
+		return ""
+	var store: Variant = session.stores.character_feature_store
+	var actor := str(session.context.actor_id)
+	var active: Array = store.list_trait_instances(actor).filter(func(t: Dictionary) -> bool: return t.status == "active")
+	var derivations: Dictionary = store.describe_fact_derivations({"fact_type": "world_danger_round", "actor_id": actor,
+		"approach_id": approach, "outcome": "success"})
+	var warnings: Array[String] = []
+	for id: String in derivations.trait_def_ids:
+		var definition: Dictionary = store.trait_defs[id]
+		if not definition.get("persistent", false) or active.any(func(t: Dictionary) -> bool: return t.trait_def_id == id):
+			continue
+		if definition.get("modifiers", []).any(func(m: Dictionary) -> bool: return m.get("operation") == "add" and float(m.get("value", 0)) < 0):
+			warnings.append("成功后会形成长期特质「%s」：%s" % [definition.display_name, definition.description])
+	return "\n".join(warnings)
+
+
 static func journal(session: Variant) -> Dictionary:
 	if not enabled(session):
 		return {}

@@ -131,6 +131,15 @@ static func followup(snapshot: Variant, person: String, player: String) -> Dicti
 		var need := Intents.Gear.need(snapshot, snapshot.get_entity(person))
 		if need.is_empty():
 			continue
+		# A later weapon need must not reopen an earlier request for protection.
+		var funded_query := {}
+		for source_id: String in gift.get("source_fact_ids", []):
+			var source_fact: Dictionary = snapshot.get_fact(source_id)
+			if source_fact.has("query") and (source_fact.get("subject_id") == person or source_fact.get("actor_id") == person):
+				funded_query = source_fact.query
+				break
+		if funded_query.is_empty() or funded_query != need.query:
+			continue
 		var status := "还没拿到能用的装备，这件事还没有办成"
 		var source := str(gift.fact_id)
 		for j: int in range(facts.size() - 1, -1, -1):
@@ -143,7 +152,7 @@ static func followup(snapshot: Variant, person: String, player: String) -> Dicti
 		var attempt_fact: Dictionary = snapshot.get_fact(source)
 		var key := str(gift.fact_id) + ":pending:" + str(attempt_fact.get("reason", "unresolved"))
 		if heard.has(key):
-			return {}
+			continue
 		return {"update_id": source, "contribution_id": gift.fact_id, "summary": status,
 			"day": snapshot.world_time.day, "hour": snapshot.world_time.hour,
 			"location_id": snapshot.get_entity(person).states.location_id, "kind": "pending", "key": key}
@@ -222,15 +231,28 @@ static func direction(session: Variant, destination: String) -> Dictionary:
 static func leads(session: Variant, snapshot: Variant) -> Array:
 	var rows: Array = []
 	var seen := {}
-	for known: Dictionary in knowledge(session, snapshot):
+	var known_rows := knowledge(session, snapshot)
+	# A stated destination supersedes the sighting made during that conversation.
+	# A later sighting supersedes that old intention; neither tracks remote truth.
+	known_rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		if int(a.observed_hour) != int(b.observed_hour):
+			return int(a.observed_hour) > int(b.observed_hour)
+		if (a.kind == "intention") != (b.kind == "intention"):
+			return a.kind == "intention"
+		return str(a.source_fact_id) < str(b.source_fact_id))
+	for known: Dictionary in known_rows:
 		var destination := str(known.location_id)
-		var key := str(known.subject_id) + ":" + str(known.kind) + ":" + destination
+		var is_danger: bool = known.kind == "danger"
+		var key := "danger:" + destination if is_danger else "person:" + str(known.subject_id)
 		if seen.has(key):
+			continue
+		seen[key] = true
+		var person: Dictionary = snapshot.get_entity(str(known.subject_id))
+		if not is_danger and Intents.present(person, str(session.context.location_id)) and person.get("states", {}).get("visible", false):
 			continue
 		var path := direction(session, destination)
 		if path.is_empty():
 			continue
-		seen[key] = true
 		var row := known.duplicate(true)
 		row.merge({"route_id": path.route.route_id, "hours": path.route.hours, "total_hours": path.total_hours,
 			"next_place": path.route.get("destination_name", session.context.locations.get(str(path.route.to_location_id), {}).get("display_name", "下一站"))})

@@ -72,8 +72,9 @@ static func options(session: Variant) -> Array:
 		rows.append(wait)
 	var clock: Dictionary = session.get_time_summary()
 	var current := int(clock.hour) * 60 + int(clock.get("minute", 0))
-	var target := 17 * 60 if current < 17 * 60 else 24 * 60 + 6 * 60
-	var timed := row("wait", str(target - current), "原地等到%s" % ("17:00" if current < 17 * 60 else "明早06:00"), "这是等待上限，不保证主人回来或有货；可见变化会提前打断。")
+	var target := 6 * 60 if current < 6 * 60 else (17 * 60 if current < 17 * 60 else 24 * 60 + 6 * 60)
+	var target_label := "06:00" if current < 6 * 60 else ("17:00" if current < 17 * 60 else "明早06:00")
+	var timed := row("wait", str(target - current), "原地等到%s" % target_label, "这是等待上限，不保证主人回来或有货；可见变化会提前打断。")
 	if target - current not in [10, 60]:
 		timed.merge({"minutes": target - current, "cost": "至多%d分钟" % (target - current), "life_group": "rest"}, true)
 		rows.append(timed)
@@ -197,7 +198,23 @@ static func journey(session: Variant, selected: Dictionary, introduction: String
 	var outcome: Dictionary = session.travel(str(selected.route_id))
 	if not outcome.get("success", false):
 		return outcome
-	return session.PlayerLife.feedback(outcome, introduction + "\n" + str(outcome.get("player_life_feedback", {}).get("body", "")))
+	var body := introduction + "\n" + str(outcome.get("player_life_feedback", {}).get("body", ""))
+	var arrival := ""
+	if selected.get("intent") == "pursue" and session.context.location_id == selected.get("destination_id") \
+		and session.get_snapshot().player.get("daily_route_id", "") == "":
+		if selected.get("lead_kind") == "danger":
+			arrival = "危险就在眼前，先决定如何应对。" if not session.get_combat_encounter_options().is_empty() else "已到消息所指的地方，眼下没有威胁拦住你；不代表这里以后都安全。"
+		else:
+			var person: Dictionary = session.get_snapshot().get_entity(str(selected.subject_id))
+			var name := str(person.get("display_name", "要找的人"))
+			arrival = "%s就在这里，可以当面交谈。" % name if Intents.present(person, str(session.context.location_id)) and person.get("states", {}).get("visible", false) else "这次没有看见%s。可以询问在场的人，也可以等候或离开。" % name
+	var concise := str(outcome.get("player_life_feedback", {}).get("body", ""))
+	if arrival != "":
+		body += "\n" + arrival
+		concise = arrival + "\n" + concise
+	var result: Dictionary = session.PlayerLife.feedback(outcome, body)
+	result.player_life_feedback["compact_body"] = concise if concise != "" else body
+	return result
 
 
 static func repair_options(session: Variant, snapshot: Variant, person: Dictionary) -> Array:

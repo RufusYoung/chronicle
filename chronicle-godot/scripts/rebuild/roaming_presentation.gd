@@ -44,7 +44,7 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 					result.body = current.body
 					if selected_subject == "":
 						selected_subject = str(current.subject_id)
-					result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("subject_id") == current.subject_id and c.get("life_group") == "situation")
+					result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("subject_id") == current.subject_id and c.get("life_group") == "situation" and c.get("intent") != "whereabouts")
 				else:
 					result.body = "眼下没有可交谈的人。可以原地等候，也可以沿道路离开。"
 				var notices: Array = view.get("situation_notices", [])

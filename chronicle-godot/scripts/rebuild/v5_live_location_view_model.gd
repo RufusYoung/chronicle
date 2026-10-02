@@ -547,7 +547,7 @@ func build_view_data() -> Dictionary:
 			view.decision.rule = "比较取法、时间与风险。可以放弃，也可以先离开准备；有限物资不会刷新。"
 		elif encounter_options.is_empty() and int(snapshot.player.get("daily_travel_remaining", 0)) == 0:
 			view.decision.question = "继续探索，和人打交道，还是在这里停一会儿？"
-			view.decision.rule = "泊台通向回水洞，哨棚通向废灯台或断崖；村中的客舍夜里仍接待行路人。"
+			view.decision.rule = "按已知去向找人，或沿现有道路探索；主人在家时才有客舍服务。" if session.Situations.enabled(session) else "泊台通向回水洞，哨棚通向废灯台或断崖；村中的客舍夜里仍接待行路人。"
 		preload("res://scripts/rebuild/journey_scene_projection.gd").apply(session, view)
 	return view
 
@@ -1146,6 +1146,9 @@ func _combat_action_rows(snapshot: Variant = null) -> Array:
 		if option.get("world_danger", false):
 			row.hint = str(option.effect_description)
 			row.known_effect = str(option.effect_description)
+			var growth: String = session.PlayerLife.Equipment.combat_growth_warning(session, approach_id)
+			if growth != "":
+				row.tradeoff += "\n" + growth
 		rows.append(row)
 	return rows
 
@@ -2394,6 +2397,7 @@ func _combat_encounter_feedback_view() -> Dictionary:
 		"status": str(narrative.get("outcome", "combat_encounter")),
 		"summary_details": [],
 		"title": str(narrative.get("title", "遭遇结果")),
+		"compact_body": str(narrative.get("summary", "局面已经产生结果。")) + "\n" + settlement_text,
 		"body": "%s（%s）\n%s\n\n%s" % [
 			formula,
 			outcome_text,
@@ -3037,7 +3041,7 @@ func _state_change_text(change: Dictionary, snapshot: Variant = null) -> String:
 		snapshot = session.get_snapshot()
 	var entity_id := str(change.get("entity_id", ""))
 	var key := str(change.get("key", ""))
-	if key in ["danger_round_hour", "danger_opponent_id", "danger_advantage", "hunger_sated_until", "hunger_strain_hours", "body_rules_version"]:
+	if key in ["danger_round_hour", "danger_opponent_id", "danger_advantage", "danger_grace_until", "danger_retreat_until", "danger_rest_nourished_until", "hunger_sated_until", "hunger_strain_hours", "body_rules_version"]:
 		return ""
 	if key == "visible" and bool(change.get("to", false)):
 		return "%s出现在现场" % _entity_name(entity_id, snapshot)
