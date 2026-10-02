@@ -6,7 +6,7 @@ export function allowedPath(path) {
   if (typeof path !== 'string' || path.includes('\\') || path.includes(':') || path.startsWith('/') || path.split('/').some(p => !p || p === '.' || p === '..')) return false;
   if (/(?:^|\/)(?:private|secrets?|node_modules|\.git|\.godot|work|builds|outputs|_archive)(?:\/|$)/i.test(path)) return false;
   if (/\.(?:env|pem|key|pfx|apk|pdf|jsonl|log)$/i.test(path) || /(?:credential|password|token|manual\.json)/i.test(path)) return false;
-  if (['AGENTS.md', '项目现状.md', 'chronicle-godot/project.godot', 'CHRONICLE_EMERGENT_SITUATION_BREAKTHROUGH_GUIDE_2026-09-30.md'].includes(path)) return true;
+  if (['AGENTS.md', '项目现状.md', 'chronicle-godot/project.godot', 'CHRONICLE_EMERGENT_SITUATION_BREAKTHROUGH_GUIDE_2026-09-30.md', 'CHRONICLE_CONTINUOUS_CHOICE_CHAIN_GUIDE_2026-10-02.md'].includes(path)) return true;
   if (/^(texts|log|chronicle-godot\/texts)\/.+\.md$/.test(path)) return true;
   if (/^chronicle-godot\/(scripts|tests)\/.+\.gd$/.test(path)) return true;
   if (/^chronicle-godot\/(data|config)\/.+\.json$/.test(path)) return true;

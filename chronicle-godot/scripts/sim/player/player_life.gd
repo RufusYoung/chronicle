@@ -229,6 +229,8 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 		var offered_item: Dictionary = session.stores.item_store.get_item(str(offer.item_instance_id))
 		var condition: Dictionary = offer.get("item", {}).get("condition", {})
 		var detail := "耐久%d/%d，耗尽后可尝试在作坊修补。" % [condition.durability, condition.maximum_durability] if condition.has("durability") else ""
+		if Equipment.enabled(session) and "equip" in offered_item.get("capabilities", []):
+			detail = Equipment.purchase_description(session, offered_item)
 		var uses: Array[String] = []
 		var uses_profiles: Array = []
 		for primary: Dictionary in session.npc_livelihood_profiles:
