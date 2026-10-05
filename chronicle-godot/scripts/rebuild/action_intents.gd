@@ -1,12 +1,15 @@
 extends RefCounted
 
 const LABELS := {"give_food": "分一份食物", "sell_food": "出售食物", "buy": "购买物品",
-	"eat": "吃一份食物", "ask_local": "问问本地人", "work": "制作与加工", "equip": "更换装备"}
+	"eat": "吃一份食物", "ask_local": "问问本地人", "work": "制作与加工", "equip": "更换装备",
+	"whereabouts": "打听其他人的去向"}
 
 
 static func family(action: Dictionary) -> String:
 	if action.get("event_type") != "player_life":
 		return ""
+	if action.get("intent") == "whereabouts" and not action.get("foreground", false):
+		return "whereabouts"
 	var prefix := str(action.get("action_id", "")).get_slice(":", 0)
 	return prefix if LABELS.has(prefix) else ""
 

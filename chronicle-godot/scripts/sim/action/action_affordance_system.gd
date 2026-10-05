@@ -94,6 +94,7 @@ func situation_candidates(session: Variant, snapshot: Variant, situation: Dictio
 				var host_inquiry: Dictionary = actions.row("whereabouts", subject,
 					"向%s打听店主去向" % person.display_name, "只问此人亲眼见过的店主去向；不知道就不会猜测。", host)
 				host_inquiry["wanted_id"] = host
+				host_inquiry["foreground"] = true
 				rows.append(host_inquiry)
 		for lead: Dictionary in actions.Continuity.knowledge(session, snapshot):
 			var wanted := str(lead.subject_id)

@@ -14,6 +14,16 @@ func _run() -> void:
 	viewer.initial_player_life = true
 	root.add_child(viewer)
 	await process_frame
+	var host_question := {"event_type": "player_life", "intent": "whereabouts", "foreground": true,
+		"action_id": "situation:whereabouts:witness:host", "label": "向见证者打听店主去向", "life_group": "situation"}
+	var ordinary_question := {"event_type": "player_life", "intent": "whereabouts",
+		"action_id": "situation:whereabouts:witness:other", "label": "向见证者打听旁人去向", "life_group": "situation"}
+	var projected: Array = viewer.ActionIntents.project([host_question, ordinary_question, ordinary_question.duplicate(true)])
+	_check(projected.size() == 2 and projected.any(func(row: Dictionary) -> bool:
+		return row.get("action_id") == "situation:whereabouts:witness:host"),
+		"absent host inquiry remains foreground while repeated whereabouts collapse")
+	_check(projected.any(func(row: Dictionary) -> bool: return row.get("action_id") == "intent:whereabouts"),
+		"generic whereabouts have a no-time expansion entry")
 	var target := _prepare_market(viewer.view_model.session)
 	viewer.refresh_view()
 	await process_frame

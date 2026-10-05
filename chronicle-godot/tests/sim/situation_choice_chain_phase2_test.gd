@@ -230,6 +230,7 @@ func _absent_host_case(base: Dictionary, host: Dictionary) -> void:
 	_check(questions.size() == 1, "absent innkeeper can be asked about without prior acquaintance")
 	if questions.is_empty():
 		return
+	_check(questions[0].get("foreground", false), "absent innkeeper question stays visible ahead of generic whereabouts")
 	var answer: Dictionary = session.PlayerLife.execute(session, questions[0].action_id)
 	_check(answer.success and (str(answer.player_life_feedback.body).contains("没有见到")
 		or str(answer.player_life_feedback.body).contains("小时前")), "witness either dates a sighting or says they do not know")
