@@ -173,6 +173,10 @@ func _process(_delta: float) -> void:
 		page = "scene"
 		family = ""
 		offset = 0
+	elif command == "set_goal":
+		page = "scene"
+		family = ""
+		offset = 0
 	_render()
 	if command in ["start", "load"]:
 		print("CHRONICLE_WORLD_READY " + JSON.stringify({"surface": "roaming", "journey_version": agent.model.session.fixture_source_data.get("journey_rules", {}).get("version"), "situation_version": agent.model.session.fixture_source_data.get("situation_rules", {}).get("version", 0), "elapsed_hours": agent.model.session.elapsed_hours_since_start}))
@@ -248,6 +252,7 @@ func _render() -> void:
 	_button(header, "新旅途", func() -> void: _ask("new", "开始新的旅途。原存档不会自动覆盖，直到你再次点击保存。"))
 	_button(header, "菜单", func() -> void: _menu.popup_centered())
 	_status = _label(_root, _status_text(), 18)
+	_render_goal_controls()
 	var nav := HBoxContainer.new()
 	nav.add_theme_constant_override("separation", 8)
 	_root.add_child(nav)
@@ -341,11 +346,57 @@ func _render() -> void:
 	var footer := HBoxContainer.new()
 	footer.add_theme_constant_override("separation", 8)
 	_root.add_child(footer)
-	for entry: Array in [["talk", "交谈"], ["trade", "买卖与赠送"], ["rest", "吃饭与休整"], ["work", "谋生 / 制作"]]:
+	for entry: Array in [["talk", "交谈"], ["trade", "买卖与赠送"], ["rest", "吃饭与休整"], ["work", "谋生 / 制作"], ["all", "更多行动"]]:
 		var key := str(entry[0])
 		_button(footer, str(entry[1]), func() -> void: _navigate(key))
 	if pending_result and page != "scene":
 		_button(footer, "回到行动结果", func() -> void: _navigate("scene"))
+
+
+func _render_goal_controls() -> void:
+	var pairing: Dictionary = response.get("observation", {}).get("goal_pressure", {})
+	if pairing.is_empty():
+		return
+	var bar := HBoxContainer.new()
+	bar.name = "GoalControls"
+	_root.add_child(bar)
+	var caption := _label(bar, "当前打算", 17)
+	caption.modulate = Color("bfaa7b")
+	caption.autowrap_mode = TextServer.AUTOWRAP_OFF
+	caption.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	var selector := OptionButton.new()
+	selector.name = "GoalSelector"
+	selector.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	selector.clip_text = true
+	selector.add_theme_font_size_override("font_size", 17)
+	selector.add_item("还没有选定，先看看眼前的事")
+	selector.set_item_metadata(0, "")
+	var selected: Dictionary = pairing.get("selected", {})
+	var selected_index := 0
+	for candidate: Dictionary in pairing.get("candidates", []):
+		selector.add_item(str(candidate.title))
+		var index := selector.item_count - 1
+		selector.set_item_metadata(index, str(candidate.id))
+		if candidate.id == selected.get("id", ""):
+			selected_index = index
+	if not selected.is_empty() and selected_index == 0:
+		selector.add_item(str(selected.title))
+		selected_index = selector.item_count - 1
+		selector.set_item_metadata(selected_index, str(selected.id))
+	selector.select(selected_index)
+	selector.disabled = busy
+	selector.item_selected.connect(func(index: int) -> void:
+		_begin("set_goal", {"goal_id": str(selector.get_item_metadata(index))}), CONNECT_DEFERRED)
+	bar.add_child(selector)
+	var clear := _button(bar, "暂时不管", func() -> void: _begin("set_goal", {"goal_id": ""}))
+	clear.disabled = busy or selected.is_empty()
+	if not selected.is_empty():
+		var pressure := _label(_root, str(pairing.get("pressure", "")), 17)
+		pressure.name = "GoalPressure"
+		pressure.max_lines_visible = 2
+		pressure.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		pressure.tooltip_text = pressure.text
+		pressure.modulate = Color("dfc787")
 
 
 func _render_result() -> void:
@@ -375,7 +426,9 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 		ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return Presentation.scene_rank(a) < Presentation.scene_rank(b))
 	for row: Dictionary in ordered:
 		var group := Presentation.family(row)
-		if page == "scene" and response.get("observation", {}).get("situation_mode", false) and row.get("kind") == "travel":
+		if page == "scene" and (int(row.get("goal_priority", 0)) > 0 or row.get("foreground", false)):
+			group = ""
+		if page == "scene" and response.get("observation", {}).get("situation_mode", false) and row.get("kind") == "travel" and int(row.get("goal_priority", 0)) == 0:
 			group = "选择去向"
 		if group != "":
 			if not groups.has(group):
@@ -401,7 +454,7 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 		_label(_choices, empty_text, 19)
 		return
 	var count := 4
-	if page == "scene":
+	if page in ["scene", "all"]:
 		count = 3
 		if rows.any(func(row: Dictionary) -> bool: return row.get("kind") == "combat_encounter"):
 			count = 3
@@ -428,7 +481,9 @@ func _action_button(parent: Node, row: Dictionary) -> Button:
 	var text := title + ("  ·  " + cost if cost != "" else "")
 	if not enabled:
 		text += "\n" + str(row.get("blocked_reason", "当前无法执行"))
-	elif hint != "" and row.kind != "combat_encounter" and page != "scene":
+	elif page == "scene" and row.get("goal_effect", "") != "":
+		text += "\n" + str(row.goal_effect)
+	elif hint != "" and row.kind != "combat_encounter" and page != "scene" and not (page == "all" and family == ""):
 		text += "\n" + hint
 	var button := _button(parent, text, func() -> void:
 		if row.kind == "combat_encounter" or row.get("requires_confirmation", false):

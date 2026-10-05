@@ -7,6 +7,9 @@
 /work/adventure-experience/
 /work/mcp/
 /work/phase2/
+/work/goal-pressure/
+/work/goal_pressure*.log
+/work/goal_ui_render.log
 /mcp/node_modules/
 /mcp/snapshot.json
 /work/situation-*

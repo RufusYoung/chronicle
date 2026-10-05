@@ -15,6 +15,7 @@ func save_model(model: Variant, path: String, overwrite: bool = false) -> Dictio
 		"version": 1, "latest_result": model.latest_result,
 		"latest_event_type": model.latest_event_type,
 		"action_history": model.action_history, "last_player_impact": model.last_player_impact,
+		"current_goal": model.current_goal,
 	}
 	var service := Saves.new()
 	envelope = service.finalize_envelope(envelope)
@@ -47,6 +48,9 @@ func load_model(model: Variant, path: String) -> Dictionary:
 		return _failure("live_surface_runtime_missing")
 	if not runtime.get("latest_result") is Dictionary or not runtime.get("last_player_impact") is Dictionary or not runtime.get("latest_event_type") is String or not runtime.get("action_history") is Array:
 		return _failure("live_surface_runtime_invalid")
+	var current_goal: Variant = runtime.get("current_goal", {})
+	if not current_goal is Dictionary or not current_goal.get("id", "") is String or not current_goal.get("title", "") is String:
+		return _failure("live_surface_goal_invalid")
 	for row: Variant in runtime.action_history:
 		if not row is Dictionary:
 			return _failure("live_surface_history_invalid")
@@ -59,6 +63,7 @@ func load_model(model: Variant, path: String) -> Dictionary:
 	model.latest_result = runtime.latest_result.duplicate(true)
 	model.latest_event_type = runtime.latest_event_type
 	model.last_player_impact = runtime.last_player_impact.duplicate(true)
+	model.current_goal = current_goal.duplicate(true)
 	model.action_history.assign(runtime.action_history)
 	return {"success": true, "path": path}
 

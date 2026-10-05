@@ -217,6 +217,7 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 			effect = "产物：%s。" % "、".join(outputs) + effect
 			effect += resource_hint(session, view, actor, profile)
 		rows.append(work_option(actor, entry.id, str(profile.label), effect, reason, int(profile.work_interval_hours)))
+		rows.back()["output_item_def_ids"] = profile.get("products", []).map(func(product: Dictionary) -> String: return str(product.item_def_id))
 		if Equipment.enabled(session):
 			if reason != "":
 				rows.back().known_effect = reason
@@ -246,6 +247,8 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 		rows.append(row("buy:" + str(offer.item_instance_id), "向%s买1件%s · %d铜币" % [offer.seller_name, offer.display_name, offer.unit_price],
 			detail + "真实现货归你携带；对方保留基本口粮和自用作业工具。",
 			"铜币不足" if Food.balance(view.get_items_for_holder(str(actor.id)), str(actor.id)) < int(offer.unit_price) else ""))
+		rows.back().merge({"item_instance_id": offer.item_instance_id, "item_def_id": offered_item.item_def_id,
+			"price": int(offer.unit_price)})
 	rows.append_array(Equipment.options(session))
 	rows.append_array(WorkTrade.options(session, view, actor))
 	Brief.decorate(session, rows)

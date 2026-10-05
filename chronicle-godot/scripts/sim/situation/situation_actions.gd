@@ -157,6 +157,8 @@ static func execute(session: Variant, selected: Dictionary) -> Dictionary:
 			var item: Dictionary = snapshot.get_item(str(selected.item_id))
 			result = Intents.gift(snapshot, actor, str(person.id), item, id, tick, selected.get("sources", []))
 			fact = result.facts_added[0]
+			fact["cleared_slots"] = selected.get("clear_slots", []).duplicate()
+			fact["item_def_id"] = item.item_def_id
 			for slot: String in selected.get("clear_slots", []):
 				result.add_equipment_change({"operation": "equipment_clear", "entity_id": actor, "slot_id": slot, "source_fact_ids": [id]})
 			if selected.has("clear_slots"):

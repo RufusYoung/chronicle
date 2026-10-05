@@ -25,6 +25,7 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 	var event: Dictionary = view.get("journey_event", {})
 	var combat: Array = choices.filter(func(c: Dictionary) -> bool: return c.kind == "combat_encounter")
 	var situations: Array = view.get("situations", [])
+	var selected_goal: Dictionary = view.get("goal_pressure", {}).get("selected", {})
 	var result := {"title": location.get("title", "镜湖北岸"), "body": location.get("description", ""),
 		"eyebrow": "自由漫游", "art": art(view), "choices": [], "page": page, "empty": ""}
 	match page:
@@ -35,10 +36,12 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 			elif view.get("situation_mode", false):
 				result.eyebrow = "眼前的局面"
 				var selected_subject := focus_subject
+				if selected_subject == "" and str(selected_goal.get("id", "")).get_slice(":", 0) in ["understand", "followup"]:
+					selected_subject = str(selected_goal.id).get_slice(":", 1)
 				if not situations.is_empty():
 					var current: Dictionary = situations[0]
 					for other: Dictionary in situations:
-						if other.subject_id == focus_subject:
+						if other.subject_id == selected_subject:
 							current = other
 					result.title = current.title
 					result.body = current.body
@@ -54,6 +57,8 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 					return c.kind == "travel" or c.id in ["continue", "journey_block"] \
 						or (c.get("intent") in ["follow", "pursue", "read_notice"] and (situations.is_empty() or c.get("subject_id") == selected_subject)) \
 						or (c.get("intent") == "wait" and c.get("minutes") == 10)))
+				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
+					return int(c.get("goal_priority", 0)) > 0 or c.get("foreground", false)))
 				result.empty = "可以查看地图、交谈或原地等候。没有强制的剧情入口。"
 			elif not event.is_empty():
 				result.merge({"title": event.title, "body": event.body, "eyebrow": "旅途中的一件事",
@@ -103,6 +108,12 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 			result.body = "长活会占去半天。冒险无需先做这些，缺钱或想留下生活时再考虑。"
 			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("life_group") == "work")
 			result.empty = "这里现在没有能做的工作。"
+		"all":
+			result.title = "在这里还能做什么"
+			result.eyebrow = "更多行动"
+			result.body = "按想做的事展开。查看与展开不会推进时间。"
+			result.choices = choices.duplicate(true)
+			result.empty = "当前没有其他可做的事。"
 	var seen := {}
 	result.choices = result.choices.filter(func(c: Dictionary) -> bool:
 		var id := str(c.choice_id)
@@ -151,5 +162,5 @@ static func family(row: Dictionary) -> String:
 static func scene_rank(row: Dictionary) -> int:
 	if row.get("kind") == "combat_encounter":
 		return 0
-	return {"aftermath": 0, "read_notice": 5, "ask": 10, "give": 20, "fund": 21, "repair": 22, "caution": 23,
+	return (1000 if not row.get("enabled", true) else 0) - 100 * int(row.get("goal_priority", 0)) + {"aftermath": 0, "read_notice": 5, "ask": 10, "give": 20, "fund": 21, "repair": 22, "caution": 23,
 		"sell": 24, "follow": 30, "pursue": 40, "whereabouts": 60, "wait": 90}.get(str(row.get("intent", "")), 50)

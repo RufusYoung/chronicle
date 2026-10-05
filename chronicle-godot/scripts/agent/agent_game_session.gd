@@ -10,6 +10,7 @@ const CACHE_LIMIT := 32
 const FIELDS := {
 	"start": ["mode", "scenario", "seed", "economy_variant"],
 	"observe": [], "act": ["choice_id", "confirm"],
+	"set_goal": ["goal_id"],
 	"advance": ["hours"], "inspect": ["kind", "offset", "limit"],
 	"save": ["slot", "overwrite"], "load": ["slot"],
 }
@@ -64,6 +65,7 @@ func handle(request: Variant) -> Dictionary:
 			"observe": result = _response()
 			"inspect": result = _inspect(request)
 			"act": result = _act(request)
+			"set_goal": result = _set_goal(request)
 			"advance": result = _advance(request)
 			"save": result = _save(request)
 			"load": result = _load(request)
@@ -170,7 +172,7 @@ func _refresh() -> void:
 	_view = {"visibility": "player_surface"}
 	# Never expose raw transaction history or save payloads through player observation.
 	for key: String in ["location", "playtest", "player", "journey_event", "journey_journal", "journey_guidance", "equipment_journal", "player_life_followups", "local_information", "time", "region_status", "region_map", "visible_people",
-		"visible_observations", "decision", "agency", "risk", "knowledge", "investigation",
+		"visible_observations", "decision", "agency", "risk", "knowledge", "investigation", "goal_pressure",
 		"chronicle", "feedback", "title", "subtitle", "phase_id", "day", "duration_days",
 		"complete", "objective", "ritual", "status", "market", "people", "incident", "completion"]:
 		if projected.has(key):
@@ -188,7 +190,7 @@ func _refresh() -> void:
 			_view["situation_mode"] = true
 			# The prototype publishes a bounded observation, never the old omniscient dashboard.
 			for key: String in _view.keys():
-				if key not in ["visibility", "location", "player", "time", "risk", "feedback", "equipment_journal", "situations", "situation_notices", "situation_mode"]:
+				if key not in ["visibility", "location", "player", "time", "risk", "feedback", "equipment_journal", "situations", "situation_notices", "situation_mode", "goal_pressure"]:
 					_view.erase(key)
 			_view["knowledge"] = []
 			for fact: Dictionary in _session().stores.fact_store.list_facts():
@@ -296,6 +298,18 @@ func _act(request: Dictionary) -> Dictionary:
 	return _settled(result, "agent_action", choice_id)
 
 
+func _set_goal(request: Dictionary) -> Dictionary:
+	if mode != "play" or surface != "location" or not _session().Situations.Continuity.enabled(_session()):
+		return _error("goal_selection_unavailable")
+	var goal_id: Variant = request.get("goal_id", "")
+	if not goal_id is String or goal_id.length() > 160:
+		return _error("invalid_goal_id")
+	var result: Dictionary = model.set_current_goal(goal_id)
+	if not result.get("success", false):
+		return _error(str(result.get("error", "goal_not_offered")))
+	return _settled(result, "goal_selection")
+
+
 func _enter_phase(id: String) -> Dictionary:
 	if id == "first_winter":
 		var transition: Dictionary = model.build_life_stage_transition()
@@ -371,6 +385,7 @@ func _save(request: Dictionary) -> Dictionary:
 	if surface == "location":
 		runtime["action_history"] = model.action_history
 		runtime["last_player_impact"] = model.last_player_impact
+		runtime["current_goal"] = model.current_goal
 	envelope["agent_control"] = runtime.duplicate(true)
 	var service := Saves.new()
 	envelope = service.finalize_envelope(envelope)
@@ -404,6 +419,9 @@ func _load(request: Dictionary) -> Dictionary:
 	if next_surface == "location":
 		if not runtime.get("action_history", []) is Array or not runtime.get("last_player_impact", {}) is Dictionary:
 			return _error("save_surface_runtime_invalid")
+		var saved_goal: Variant = runtime.get("current_goal", {})
+		if not saved_goal is Dictionary or not saved_goal.get("id", "") is String or not saved_goal.get("title", "") is String:
+			return _error("save_surface_goal_invalid")
 		for row: Variant in runtime.get("action_history", []):
 			if not row is Dictionary:
 				return _error("save_surface_runtime_invalid")
@@ -423,6 +441,7 @@ func _load(request: Dictionary) -> Dictionary:
 	if next_surface == "location":
 		next_model.action_history.assign(runtime.get("action_history", []))
 		next_model.last_player_impact = runtime.get("last_player_impact", {}).duplicate(true)
+		next_model.current_goal = runtime.get("current_goal", {}).duplicate(true)
 	model = next_model
 	surface = next_surface
 	return _settled({"success": true}, "load")
@@ -459,7 +478,7 @@ func _public_situation_choice(choice: Dictionary) -> Dictionary:
 		"requires_confirmation", "enabled", "can_execute", "blocked_reason", "event_type", "action_id", "action_type", "life_group",
 		"minutes", "hours", "intent", "subject_id", "wanted_id", "item_id", "item_instance_id", "item_def_id", "slot_id", "clear_slots",
 		"price", "amount", "quantity", "route_id", "destination_id", "destination_name", "source_fact_id", "lead_kind", "purpose", "lead_priority",
-		"approach_id", "required_roll", "check_label"]:
+		"approach_id", "required_roll", "check_label", "goal_priority", "goal_effect", "foreground", "output_item_def_ids"]:
 		if choice.has(key):
 			public[key] = choice[key]
 	return public

@@ -16,6 +16,27 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_selected_goal_is_optional_persistent_and_does_not_spend_time(self):
+        with client(timeout=90) as game:
+            opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,
+                                  economy_variant="world_situation_v2")
+            pair = opened["observation"]["goal_pressure"]
+            self.assertEqual(pair["selected"], {})
+            self.assertFalse(any(g["id"] == "replace_outerwear" for g in pair["candidates"]))
+            chosen = pair["candidates"][0]["id"]
+            selected = game.request("set_goal", goal_id=chosen)
+            self.assertTrue(selected["ok"], selected)
+            self.assertEqual(selected["observation"]["time"], opened["observation"]["time"])
+            self.assertEqual(selected["observation"]["player"], opened["observation"]["player"])
+            self.assertEqual({c["choice_id"] for c in selected["choices"]}, {c["choice_id"] for c in opened["choices"]})
+            self.assertFalse(game.request("set_goal", goal_id="visit:invented_place")["ok"])
+            slot = f"goal_protocol_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot, overwrite=True)["ok"])
+            cleared = game.request("set_goal", goal_id="")
+            self.assertEqual(cleared["observation"]["goal_pressure"]["selected"], {})
+            restored = game.request("load", slot=slot)
+            self.assertEqual(restored["observation"], selected["observation"])
+
     def test_continuity_profile_retains_dated_knowledge_and_resolves_real_road(self):
         with client(timeout=90) as game:
             response = game.request("start", mode="play", scenario="echo_realm", seed=81001,

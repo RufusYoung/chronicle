@@ -8,6 +8,7 @@ const LifeStageTransitionServiceModel = preload(
 const SimSessionModel = preload("res://scripts/sim/core/sim_session.gd")
 const WorldSave = preload("res://scripts/rebuild/live_world_save.gd")
 const RegionProjection = preload("res://scripts/rebuild/region_map_projection.gd")
+const GoalPressure = preload("res://scripts/rebuild/goal_pressure_projection.gd")
 const FoodStorage = preload("res://scripts/sim/economy/worksite_food_storage.gd")
 const FoodHauling = preload("res://scripts/sim/economy/household_food_hauling.gd")
 const RoutePressureQueryModel = preload(
@@ -48,6 +49,7 @@ var latest_result: Dictionary = {}
 var action_history: Array[Dictionary] = []
 var latest_event_type: String = ""
 var last_player_impact: Dictionary = {}
+var current_goal: Dictionary = {}
 
 
 func _init(source_session: Variant = null) -> void:
@@ -64,6 +66,7 @@ func start(options: Dictionary = {}) -> Dictionary:
 	latest_result = {}
 	latest_event_type = ""
 	last_player_impact = {}
+	current_goal = {}
 	var start_options := options.duplicate(true)
 	if scenario in ["generated_network", "echo_realm"] and not start_options.has("resident_daily_life_version"):
 		start_options["resident_daily_life_version"] = 1
@@ -97,6 +100,21 @@ func load_from_path(path: String) -> Dictionary:
 
 func is_ready() -> bool:
 	return session != null and session.is_ready()
+
+
+func set_current_goal(goal_id: String) -> Dictionary:
+	if not is_ready():
+		return {"success": false, "error": "session_not_initialized"}
+	if goal_id == "":
+		current_goal = {}
+		return {"success": true}
+	if current_goal.get("id") == goal_id:
+		return {"success": true}
+	for candidate: Dictionary in build_view_data().get("goal_pressure", {}).get("candidates", []):
+		if candidate.id == goal_id:
+			current_goal = {"id": goal_id, "title": str(candidate.title)}
+			return {"success": true}
+	return {"success": false, "error": "goal_not_offered"}
 
 
 func build_life_stage_transition() -> Dictionary:
@@ -549,6 +567,10 @@ func build_view_data() -> Dictionary:
 			view.decision.question = "继续探索，和人打交道，还是在这里停一会儿？"
 			view.decision.rule = "按已知去向找人，或沿现有道路探索；主人在家时才有客舍服务。" if session.Situations.enabled(session) else "泊台通向回水洞，哨棚通向废灯台或断崖；村中的客舍夜里仍接待行路人。"
 		preload("res://scripts/rebuild/journey_scene_projection.gd").apply(session, view)
+	if session.Situations.Continuity.enabled(session):
+		view["goal_pressure"] = GoalPressure.build(session, view, current_goal)
+		if not view.goal_pressure.selected.is_empty():
+			view.decision.question = "为了%s，你现在愿意先付出什么？" % str(view.goal_pressure.selected.title)
 	return view
 
 
@@ -1298,6 +1320,7 @@ func _travel_rows(snapshot: Variant = null) -> Array:
 			hint += "\n" + purpose + "；这说明地点用途，不是实时供货承诺。"
 		rows.append({
 			"route_id": str(option.get("route_id", "")),
+			"destination_id": str(option.get("to_location_id", "")),
 			"destination_name": str(option.get("destination_name", "未知地点")),
 			"label": "%s　%s" % [
 				str(option.get("label", "前往新的地点")),
