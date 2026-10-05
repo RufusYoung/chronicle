@@ -73,7 +73,11 @@
 
 源码集成17/17、追索专项62/62、实际界面4/4、公开协议28/28通过。尾部行程摘要改动后又通过追索专项与全部界面组。专项包括自然危险消息和冷到达、自然找到杜冬、三结果投影反例、远方变化不得改写旧观察、重复只读无副作用、当前态引用校验和伪造观察存档拒绝。初次新增检查误用`success`而非原生`ok`字段造成的测试异常已修正并重跑，不计作通过。私人MCP本地9/9通过，指导仅加入精确白名单。
 
-Windows导出、包内协议、新旧档一致性及公网MCP校验正在完成；交付状态以随后核验补记为准，不将预期写成通过。
+Windows包来自干净运行时`6a9ff125fc15b036f6feb50fc02794b21791a54f`，`build_manifest.json`记录`sourceDirty=false`。像素资产校验和实际EXE启动通过；包内28/28协议检查通过。图形启动探针分别验证新开局及46小时隔离续档到达可控首屏。上述两份本次自玩档与三份旧测试档，在源码和实包的完整公开观察、合法候选逐项一致，反复读取不改变结果；没有覆盖用户手动存档。
+
+程序位于`builds/h1-windows/Chronicle.exe`，须与同目录PCK一起使用。PCK SHA-256为`1AEF6624BA36E6F1F005DC74E3ED44731D6288F58402121E306A5B771FC44ED5`。验证脚本和结果在`work/interest-pursuit/release_probe.py`、`release_source.json`、`release_package.json`；实际图形首屏日志为`package_new.log`、`package_continued.log`。真实窗口追索截图在`user://tests/goal_pressure_render/interest_cold_1280.png`及900p、1080p对应文件。
+
+私人讨论MCP已通过公网认证、未登录401、PKCE、只读、路径隔离、刷新与撤销检查。快照随本次已提交代码和报告更新，精确版本以`project_overview`返回为准；未增加写入、真实玩家存档或后台游戏操作权限。这是公网协议证据，不是已在用户ChatGPT网页或手机账号完成连接的证据。
 
 ## 下一依赖
 
