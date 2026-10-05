@@ -2581,6 +2581,9 @@ func _validate_save_references(restored_hour: int = -1) -> Dictionary:
 	var continuity_error := preload("res://scripts/sim/situation/situation_continuity.gd").validate(self, restored_hour)
 	if continuity_error != "":
 		return _save_failure(continuity_error, "references")
+	var interest_error := preload("res://scripts/sim/situation/interest_projection.gd").validate(self, restored_hour)
+	if interest_error != "":
+		return _save_failure(interest_error, "references")
 	var journey_error := JourneySetup.validate_save(fixture_source_data, stores)
 	if journey_error != "":
 		return {"success": false, "error": journey_error}

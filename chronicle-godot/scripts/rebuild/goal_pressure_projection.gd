@@ -4,6 +4,7 @@ extends RefCounted
 const Gear = preload("res://scripts/sim/equipment/resident_equipment.gd")
 const Continuity = preload("res://scripts/sim/situation/situation_continuity.gd")
 const Equipment = preload("res://scripts/sim/player/player_equipment.gd")
+const Interest = preload("res://scripts/sim/situation/interest_projection.gd")
 
 
 static func build(session: Variant, view: Dictionary, selected: Dictionary) -> Dictionary:
@@ -13,6 +14,12 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 	var outer_missing := Gear.rating(snapshot.get_equipped_item(actor, "body_outer"), "body_outer") <= 0
 	var gifts: Array = facts.filter(func(f: Dictionary) -> bool: return f.get("fact_type") == "equipment_given")
 	var known := Continuity.knowledge(session, snapshot)
+	var interests := Interest.build(session, snapshot)
+	var interest := {}
+	for candidate: Dictionary in interests:
+		if candidate.id == selected.get("id"):
+			interest = candidate
+	var answered: bool = not interest.is_empty() and interest.question_status == "resolved"
 	var candidates: Array = []
 	for row: Dictionary in view.get("actions", []):
 		if row.get("intent") == "pursue" and row.get("lead_kind") == "danger":
@@ -36,11 +43,19 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 			break
 	var goal := selected.duplicate(true)
 	for candidate: Dictionary in candidates:
+		for question: Dictionary in interests:
+			if question.id == candidate.id:
+				candidate.title = question.title
+				candidate["why_care"] = question.why_care
+				candidate["uncertainty"] = question.uncertainty
 		if candidate.id == selected.get("id"):
 			goal = candidate.duplicate(true)
+	if not interest.is_empty():
+		goal["title"] = interest.title
 	var result := {"selected": goal, "candidates": candidates, "pressure": "", "affected_affordances": [],
 		"alternatives": [], "cost_categories": [], "urgency": "none", "evidence": [],
-		"provenance": "player_intent_plus_public_world_projection", "breakpoint": "NO_GOAL", "validation": "unverified"}
+		"provenance": "player_intent_plus_public_world_projection", "breakpoint": "NO_GOAL", "validation": "unverified",
+		"interest": interest, "interests": interests}
 	if goal.is_empty():
 		return result
 	var kind := str(goal.id).get_slice(":", 0)
@@ -51,7 +66,7 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 		if row.kind == "danger" and row.location_id == target:
 			danger = row
 			break
-	var exposed: bool = outer_missing and (kind == "replace_outerwear" or (kind == "visit" and not danger.is_empty() and (not arrived or view.get("risk", {}).get("encounter", false))))
+	var exposed: bool = outer_missing and (kind == "replace_outerwear" or (kind == "visit" and not danger.is_empty() and ((not arrived and not answered) or view.get("risk", {}).get("encounter", false))))
 	var reasons: Array[String] = []
 	if kind == "visit":
 		if arrived:
@@ -81,11 +96,11 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 		var score := 0
 		var costs: Array = []
 		var id := str(row.action_id)
-		if kind == "visit" and not arrived and row.get("intent") == "pursue" and row.get("destination_id") == target:
+		if kind == "visit" and not arrived and not answered and row.get("intent") == "pursue" and row.get("destination_id") == target:
 			score = 3
 			route_id = str(row.route_id)
 			costs = ["time", "safety"] if exposed else ["time"]
-		elif kind == "followup" and ((row.get("subject_id") == target and row.get("intent") in ["aftermath", "pursue", "follow"]) or (row.get("wanted_id") == target and row.get("intent") == "whereabouts")):
+		elif kind == "followup" and not answered and ((row.get("subject_id") == target and row.get("intent") in ["aftermath", "pursue", "follow"]) or (row.get("wanted_id") == target and row.get("intent") == "whereabouts")):
 			score = 3 if row.get("intent") == "aftermath" else 2
 			costs = ["time"]
 		elif kind == "understand" and row.get("subject_id") == target and row.get("intent") == "ask":
@@ -115,11 +130,13 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 		if score > 0:
 			_record(result, row, id, costs, bool(row.get("can_execute", false)))
 	for row: Dictionary in view.get("travel_options", []):
-		var relevant: bool = kind == "visit" and not arrived and row.get("destination_id") == target and route_id == ""
+		var relevant: bool = kind == "visit" and not arrived and not answered and row.get("destination_id") == target and route_id == ""
 		row["goal_priority"] = 3 if relevant else 0
 		if relevant:
 			_record(result, row, str(row.route_id), ["time", "safety"] if exposed else ["time"], bool(row.get("can_travel", false)))
 	result.pressure = " ".join(reasons)
+	if answered and not exposed:
+		result.pressure = "这条消息已经到场核查，答案见现场。可以放下这条线索，也可以另作打算。" if kind == "visit" else "已经听到本人的后续答复。可以放下这条线索，别人的生活仍会继续。"
 	result.urgency = "current" if exposed else "none"
 	var legal: Array = result.alternatives.filter(func(row: Dictionary) -> bool: return row.enabled and not str(row.id).begins_with("ask_local:"))
 	result.breakpoint = "NO_PRESSURE" if not exposed else ("NO_SURFACE" if result.alternatives.is_empty() else ("NO_TRADEOFF" if legal.size() < 2 else ""))

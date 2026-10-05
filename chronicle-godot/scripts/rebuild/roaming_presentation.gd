@@ -26,6 +26,8 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 	var combat: Array = choices.filter(func(c: Dictionary) -> bool: return c.kind == "combat_encounter")
 	var situations: Array = view.get("situations", [])
 	var selected_goal: Dictionary = view.get("goal_pressure", {}).get("selected", {})
+	var interest: Dictionary = view.get("goal_pressure", {}).get("interest", {})
+	var pursuit: Dictionary = view.get("feedback", {}).get("pursuit", {})
 	var result := {"title": location.get("title", "镜湖北岸"), "body": location.get("description", ""),
 		"eyebrow": "自由漫游", "art": art(view), "choices": [], "page": page, "empty": ""}
 	match page:
@@ -59,6 +61,16 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 						or (c.get("intent") == "wait" and c.get("minutes") == 10)))
 				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
 					return int(c.get("goal_priority", 0)) > 0 or c.get("foreground", false)))
+				if interest.is_empty() and pursuit.get("resolution_type") == "COLD_TRAIL" and focus_subject == "":
+					result.eyebrow = "这条线索已冷"
+					result.body = pursuit.answer
+					result.choices = result.choices.filter(func(c: Dictionary) -> bool: return c.get("intent") != "wait")
+				if not interest.is_empty() and focus_subject == "":
+					result.title = interest.title
+					result.eyebrow = {"ACTIVE_SITUATION": "亲眼确认", "AFTERMATH": "找到了后来的消息", "COLD_TRAIL": "这条线索已冷"}.get(str(interest.resolution_type), "你正在追索的问题")
+					result.body = str(interest.why_care) + ("\n" + str(interest.answer) if interest.answer != "" else "")
+					if interest.resolution_type == "COLD_TRAIL":
+						result.choices = result.choices.filter(func(c: Dictionary) -> bool: return c.get("intent") != "wait")
 				result.empty = "可以查看地图、交谈或原地等候。没有强制的剧情入口。"
 			elif not event.is_empty():
 				result.merge({"title": event.title, "body": event.body, "eyebrow": "旅途中的一件事",

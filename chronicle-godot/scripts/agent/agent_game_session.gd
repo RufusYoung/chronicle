@@ -448,6 +448,10 @@ func _load(request: Dictionary) -> Dictionary:
 
 
 func _settled(result: Dictionary, cause: String, choice_id: String = "") -> Dictionary:
+	# Both the shipped UI and code play use this executor. Reading, saving and selecting never record observations.
+	if cause == "agent_action" and mode == "play" and surface == "location" and result.get("success", false):
+		if not preload("res://scripts/sim/situation/interest_projection.gd").record_observation(_session()):
+			result = {"success": false, "error": "local_observation_rejected_after_action"}
 	revision += 1
 	_refresh()
 	var response := _response()

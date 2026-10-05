@@ -6,6 +6,7 @@ const Brief = preload("res://scripts/sim/player/brief_actions.gd")
 const Treasury = preload("res://scripts/sim/economy/treasury_transfer_planner.gd")
 const Result = preload("res://scripts/sim/transaction/transaction_result.gd")
 const Continuity = preload("res://scripts/sim/situation/situation_continuity.gd")
+const Interest = preload("res://scripts/sim/situation/interest_projection.gd")
 
 
 static func statement(session: Variant, snapshot: Variant, person: Dictionary) -> Dictionary:
@@ -200,22 +201,23 @@ static func journey(session: Variant, selected: Dictionary, introduction: String
 	var outcome: Dictionary = session.travel(str(selected.route_id))
 	if not outcome.get("success", false):
 		return outcome
-	var body := introduction + "\n" + str(outcome.get("player_life_feedback", {}).get("body", ""))
+	var travel_summary := str(outcome.get("player_life_feedback", {}).get("body", ""))
+	var body := introduction + "\n" + travel_summary
 	var arrival := ""
+	var pursuit := {}
 	if selected.get("intent") == "pursue" and session.context.location_id == selected.get("destination_id") \
 		and session.get_snapshot().player.get("daily_route_id", "") == "":
-		if selected.get("lead_kind") == "danger":
-			arrival = "危险就在眼前，先决定如何应对。" if not session.get_combat_encounter_options().is_empty() else "已到消息所指的地方，眼下没有威胁拦住你；不代表这里以后都安全。"
-		else:
-			var person: Dictionary = session.get_snapshot().get_entity(str(selected.subject_id))
-			var name := str(person.get("display_name", "要找的人"))
-			arrival = "%s就在这里，可以当面交谈。" % name if Intents.present(person, str(session.context.location_id)) and person.get("states", {}).get("visible", false) else "这次没有看见%s。可以询问在场的人，也可以等候或离开。" % name
-	var concise := str(outcome.get("player_life_feedback", {}).get("body", ""))
+		pursuit = Interest.arrival(session, selected)
+		arrival = str(pursuit.answer)
+	var concise := travel_summary
 	if arrival != "":
 		body += "\n" + arrival
 		concise = arrival + "\n" + concise
 	var result: Dictionary = session.PlayerLife.feedback(outcome, body)
 	result.player_life_feedback["compact_body"] = concise if concise != "" else body
+	if not pursuit.is_empty():
+		result.player_life_feedback["pursuit"] = pursuit
+		result.player_life_feedback["travel_summary"] = travel_summary
 	return result
 
 

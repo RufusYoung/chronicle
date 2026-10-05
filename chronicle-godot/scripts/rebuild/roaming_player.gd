@@ -158,6 +158,9 @@ func _process(_delta: float) -> void:
 			_begin("load", {"slot": slot})
 			return
 	if command == "act":
+		if before_view.get("location", {}).get("id") != response.observation.get("location", {}).get("id") \
+			or response.observation.get("goal_pressure", {}).get("interest", {}).get("question_status") == "resolved":
+			focus_subject = ""
 		_audio.play(WorldAudio.cue_for("act", settled.get("receipt", {}), before_view, response.observation))
 		pending_result = int(response.observation.player.get("health", 100)) <= 0 \
 			or int(before_player.get("health", 100)) - int(response.observation.player.get("health", 100)) >= 20
@@ -166,6 +169,7 @@ func _process(_delta: float) -> void:
 		offset = 0
 		delta_text = _changes(before_player, response.observation.player)
 	elif command in ["load", "start"]:
+		focus_subject = ""
 		pending_result = false
 		before_view = {}
 		before_player = {}
@@ -174,6 +178,7 @@ func _process(_delta: float) -> void:
 		family = ""
 		offset = 0
 	elif command == "set_goal":
+		focus_subject = ""
 		page = "scene"
 		family = ""
 		offset = 0
@@ -326,7 +331,11 @@ func _render() -> void:
 				full.visible = paragraph.get_line_count() > paragraph.max_lines_visible)
 		if page == "scene" and not before_view.is_empty():
 			var feedback: Dictionary = response.get("observation", {}).get("feedback", {})
-			var result_line := _label(_story, str(feedback.get("compact_body", feedback.get("body", ""))), 17)
+			var inline_text := str(feedback.get("compact_body", feedback.get("body", "")))
+			var pursuit: Dictionary = feedback.get("pursuit", {})
+			if not pursuit.is_empty() and str(projected.body).contains(str(pursuit.answer)):
+				inline_text = str(feedback.get("travel_summary", ""))
+			var result_line := _label(_story, inline_text, 17)
 			result_line.name = "InlineOutcome"
 			result_line.max_lines_visible = 2
 			result_line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -377,6 +386,7 @@ func _render_goal_controls() -> void:
 		selector.add_item(str(candidate.title))
 		var index := selector.item_count - 1
 		selector.set_item_metadata(index, str(candidate.id))
+		selector.set_item_tooltip(index, str(candidate.get("why_care", "")) + " " + str(candidate.get("uncertainty", "")))
 		if candidate.id == selected.get("id", ""):
 			selected_index = index
 	if not selected.is_empty() and selected_index == 0:
@@ -388,7 +398,7 @@ func _render_goal_controls() -> void:
 	selector.item_selected.connect(func(index: int) -> void:
 		_begin("set_goal", {"goal_id": str(selector.get_item_metadata(index))}), CONNECT_DEFERRED)
 	bar.add_child(selector)
-	var clear := _button(bar, "暂时不管", func() -> void: _begin("set_goal", {"goal_id": ""}))
+	var clear := _button(bar, "放下这条线索" if pairing.get("interest", {}).get("question_status") == "resolved" else "暂时不管", func() -> void: _begin("set_goal", {"goal_id": ""}))
 	clear.disabled = busy or selected.is_empty()
 	if not selected.is_empty():
 		var pressure := _label(_root, str(pairing.get("pressure", "")), 17)

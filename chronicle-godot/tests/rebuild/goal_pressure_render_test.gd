@@ -51,6 +51,20 @@ func run() -> void:
 	check(viewer._root.get_global_rect().end.y <= root.size.y, "more actions fits 720p")
 	check(viewer.Presentation.build(viewer.response, "all").choices.size() == viewer.response.choices.size(), "nothing removed by goal focus")
 	await capture("all_720")
+	await act_id(viewer, "generated_route.echo_terrace.reed_craft_to_commons")
+	await act_id(viewer, "situation:pursue:generated_resident.echo_terrace.008:generated_location.echo_terrace.terraces")
+	check(viewer.response.observation.goal_pressure.interest.resolution_type == "COLD_TRAIL", "formal UI arrives at cold lead without fabricated aftermath")
+	for viewport_size: Vector2i in [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)]:
+		root.size = viewport_size
+		root.content_scale_size = viewport_size
+		viewer._navigate("scene")
+		await process_frame
+		await process_frame
+		check(viewer._paragraph.text.contains("没有看见威胁"), "new knowledge visible in primary paragraph")
+		check(not viewer._story.find_child("InlineOutcome", false, false).text.contains("没有看见威胁"), "pursuit answer is not duplicated as inline action feedback")
+		check(viewer._paragraph.get_line_count() <= viewer._paragraph.max_lines_visible, "cold answer not clipped " + str(viewport_size))
+		check(viewer._root.get_global_rect().end.y <= root.size.y, "resolution layout fits " + str(viewport_size))
+		await capture("interest_cold_" + str(viewport_size.x))
 	viewer._begin("set_goal", {"goal_id": ""})
 	await settled(viewer)
 	check(viewer.response.observation.goal_pressure.selected.is_empty(), "goal can be abandoned")
