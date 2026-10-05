@@ -51,6 +51,11 @@ func load_model(model: Variant, path: String) -> Dictionary:
 	var current_goal: Variant = runtime.get("current_goal", {})
 	if not current_goal is Dictionary or not current_goal.get("id", "") is String or not current_goal.get("title", "") is String:
 		return _failure("live_surface_goal_invalid")
+	if current_goal.get("intent_basis", "legacy_unspecified") not in ["legacy_unspecified", "destination", "information"]:
+		return _failure("live_surface_goal_invalid")
+	var cursor: Variant = current_goal.get("own_fact_cursor", 0)
+	if not (cursor is int or cursor is float) or not is_finite(float(cursor)) or float(cursor) < 0 or float(cursor) != floor(float(cursor)):
+		return _failure("live_surface_goal_invalid")
 	for row: Variant in runtime.action_history:
 		if not row is Dictionary:
 			return _failure("live_surface_history_invalid")
@@ -64,6 +69,8 @@ func load_model(model: Variant, path: String) -> Dictionary:
 	model.latest_event_type = runtime.latest_event_type
 	model.last_player_impact = runtime.last_player_impact.duplicate(true)
 	model.current_goal = current_goal.duplicate(true)
+	if model.current_goal.has("own_fact_cursor"):
+		model.current_goal.own_fact_cursor = int(model.current_goal.own_fact_cursor)
 	model.action_history.assign(runtime.action_history)
 	return {"success": true, "path": path}
 

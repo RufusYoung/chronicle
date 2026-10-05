@@ -108,11 +108,14 @@ func set_current_goal(goal_id: String) -> Dictionary:
 	if goal_id == "":
 		current_goal = {}
 		return {"success": true}
-	if current_goal.get("id") == goal_id:
+	var goal_snapshot: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
+	if current_goal.get("id") == goal_id and current_goal.has("intent_basis") and current_goal.has("own_fact_cursor") \
+		and not GoalPressure.PersonalStake.destination_reached(goal_snapshot, current_goal):
 		return {"success": true}
 	for candidate: Dictionary in build_view_data().get("goal_pressure", {}).get("candidates", []):
 		if candidate.id == goal_id:
-			current_goal = {"id": goal_id, "title": str(candidate.title)}
+			current_goal = {"id": goal_id, "title": str(candidate.title), "intent_basis": str(candidate.intent_basis),
+				"own_fact_cursor": goal_snapshot.get_facts_by_actor(str(session.context.actor_id)).size()}
 			return {"success": true}
 	return {"success": false, "error": "goal_not_offered"}
 

@@ -5,7 +5,7 @@ $Logs = Join-Path (Split-Path $Project -Parent) "work/situation-verification"
 New-Item -ItemType Directory -Path $Logs -Force | Out-Null
 $Tests = @(
     "sim/situation_contract_test", "sim/situation_interaction_test", "sim/situation_consequence_test", "sim/situation_world_test", "sim/situation_continuity_test", "sim/situation_choice_chain_phase2_test", "sim/situation_selfplay_regression_test",
-    "sim/goal_pressure_test", "sim/interest_pursuit_test", "sim/work_recipe_contract_test", "sim/resident_equipment_contract_test", "sim/world_integration_contract_test",
+    "sim/goal_pressure_test", "sim/interest_pursuit_test", "sim/personal_stake_test", "sim/work_recipe_contract_test", "sim/resident_equipment_contract_test", "sim/world_integration_contract_test",
     "sim/combat_equipment_resolution_test", "sim/roaming_journey_contract_test",
     "sim/journey_experience_contract_test", "sim/journey_counterexample_test", "agent/agent_game_session_test"
 )

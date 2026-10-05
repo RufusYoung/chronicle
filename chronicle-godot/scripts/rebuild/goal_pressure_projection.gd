@@ -5,6 +5,7 @@ const Gear = preload("res://scripts/sim/equipment/resident_equipment.gd")
 const Continuity = preload("res://scripts/sim/situation/situation_continuity.gd")
 const Equipment = preload("res://scripts/sim/player/player_equipment.gd")
 const Interest = preload("res://scripts/sim/situation/interest_projection.gd")
+const PersonalStake = preload("res://scripts/rebuild/personal_stake_projection.gd")
 
 
 static func build(session: Variant, view: Dictionary, selected: Dictionary) -> Dictionary:
@@ -38,29 +39,25 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 			break
 	for row: Dictionary in view.get("travel_options", []):
 		if row.get("can_travel", false):
-			_add(candidates, "visit:" + str(row.get("destination_id", "")), "前往%s看看" % row.get("destination_name", "邻地"), str(row.route_id))
-		if candidates.size() >= 6:
-			break
+			_add(candidates, "visit:" + str(row.get("destination_id", "")), "前往%s看看" % row.get("destination_name", "邻地"), str(row.route_id), "destination")
 	var goal := selected.duplicate(true)
 	for candidate: Dictionary in candidates:
 		for question: Dictionary in interests:
 			if question.id == candidate.id:
-				candidate.title = question.title
+				if candidate.intent_basis != "destination":
+					candidate.title = question.title
 				candidate["why_care"] = question.why_care
 				candidate["uncertainty"] = question.uncertainty
-		if candidate.id == selected.get("id"):
-			goal = candidate.duplicate(true)
-	if not interest.is_empty():
-		goal["title"] = interest.title
 	var result := {"selected": goal, "candidates": candidates, "pressure": "", "affected_affordances": [],
 		"alternatives": [], "cost_categories": [], "urgency": "none", "evidence": [],
 		"provenance": "player_intent_plus_public_world_projection", "breakpoint": "NO_GOAL", "validation": "unverified",
 		"interest": interest, "interests": interests}
 	if goal.is_empty():
+		PersonalStake.apply(session, snapshot, view, result)
 		return result
 	var kind := str(goal.id).get_slice(":", 0)
 	var target := str(goal.id).get_slice(":", 1)
-	var arrived: bool = kind == "visit" and view.location.id == target
+	var arrived: bool = kind == "visit" and (view.location.id == target or PersonalStake.destination_reached(snapshot, goal))
 	var danger: Dictionary = {}
 	for row: Dictionary in known:
 		if row.kind == "danger" and row.location_id == target:
@@ -70,7 +67,7 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 	var reasons: Array[String] = []
 	if kind == "visit":
 		if arrived:
-			reasons.append("已经抵达。以眼前情况为准；可更换打算，也可留在这里行动。")
+			reasons.append("这趟行程已经抵达；后来的消息不代表你要重访。可另选打算，或明确重新选择此地。")
 		elif not danger.is_empty():
 			reasons.append("%s%d小时前提过危险，现况未确认。" % [danger.name, danger.age_hours])
 			result.evidence.append(danger.source_fact_id)
@@ -140,6 +137,7 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 	result.urgency = "current" if exposed else "none"
 	var legal: Array = result.alternatives.filter(func(row: Dictionary) -> bool: return row.enabled and not str(row.id).begins_with("ask_local:"))
 	result.breakpoint = "NO_PRESSURE" if not exposed else ("NO_SURFACE" if result.alternatives.is_empty() else ("NO_TRADEOFF" if legal.size() < 2 else ""))
+	PersonalStake.apply(session, snapshot, view, result)
 	return result
 
 
@@ -162,9 +160,13 @@ static func _improves(snapshot: Variant, actor: String, item: Dictionary, outer_
 	return false
 
 
-static func _add(rows: Array, id: String, title: String, source: String) -> void:
+static func _add(rows: Array, id: String, title: String, source: String, basis: String = "information") -> void:
 	if not rows.any(func(row: Dictionary) -> bool: return row.id == id):
-		rows.append({"id": id, "title": title, "source": source})
+		rows.append({"id": id, "title": title, "source": source, "intent_basis": basis})
+	elif basis == "destination":
+		for row: Dictionary in rows:
+			if row.id == id:
+				row.merge({"title": title, "source": source, "intent_basis": basis}, true)
 
 
 static func _record(result: Dictionary, row: Dictionary, id: String, costs: Array, enabled: bool) -> void:

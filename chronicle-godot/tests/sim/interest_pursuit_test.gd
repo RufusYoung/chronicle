@@ -70,6 +70,7 @@ func _person_pursuit() -> void:
 		response = _act_offered(game, response, "situation:pursue:generated_resident.echo_landing.002:generated_location.echo_landing.landing")
 	_check(response.observation.feedback.get("pursuit", {}).get("resolution_type") == "ACTIVE_SITUATION", "natural found person answers the destination question")
 	_check(response.observation.feedback.body.contains("见到了杜冬"), "finding someone is explicit information, not an invented reward")
+	_check(response.observation.goal_pressure.personal_stakes.is_empty() and response.observation.goal_pressure.stake_diagnostic == "NO_PERSONAL_STAKE", "81002 remains a genuine no-personal-stake counterexample")
 	var cold: Dictionary = response.observation.feedback.pursuit.duplicate(true)
 	Interest.resolve_place(cold, {"source_fact_id": "test_injection.absent", "observed_hour": 37, "people": [], "traces": []},
 		game.model.session.stores.fact_store.get_fact(cold.source), true)

@@ -422,6 +422,11 @@ func _load(request: Dictionary) -> Dictionary:
 		var saved_goal: Variant = runtime.get("current_goal", {})
 		if not saved_goal is Dictionary or not saved_goal.get("id", "") is String or not saved_goal.get("title", "") is String:
 			return _error("save_surface_goal_invalid")
+		if saved_goal.get("intent_basis", "legacy_unspecified") not in ["legacy_unspecified", "destination", "information"]:
+			return _error("save_surface_goal_invalid")
+		var cursor: Variant = saved_goal.get("own_fact_cursor", 0)
+		if not (cursor is int or cursor is float) or not is_finite(float(cursor)) or float(cursor) < 0 or float(cursor) != floor(float(cursor)):
+			return _error("save_surface_goal_invalid")
 		for row: Variant in runtime.get("action_history", []):
 			if not row is Dictionary:
 				return _error("save_surface_runtime_invalid")
@@ -442,6 +447,8 @@ func _load(request: Dictionary) -> Dictionary:
 		next_model.action_history.assign(runtime.get("action_history", []))
 		next_model.last_player_impact = runtime.get("last_player_impact", {}).duplicate(true)
 		next_model.current_goal = runtime.get("current_goal", {}).duplicate(true)
+		if next_model.current_goal.has("own_fact_cursor"):
+			next_model.current_goal.own_fact_cursor = int(next_model.current_goal.own_fact_cursor)
 	model = next_model
 	surface = next_surface
 	return _settled({"success": true}, "load")
@@ -482,7 +489,7 @@ func _public_situation_choice(choice: Dictionary) -> Dictionary:
 		"requires_confirmation", "enabled", "can_execute", "blocked_reason", "event_type", "action_id", "action_type", "life_group",
 		"minutes", "hours", "intent", "subject_id", "wanted_id", "item_id", "item_instance_id", "item_def_id", "slot_id", "clear_slots",
 		"price", "amount", "quantity", "route_id", "destination_id", "destination_name", "source_fact_id", "lead_kind", "purpose", "lead_priority",
-		"approach_id", "required_roll", "check_label", "goal_priority", "goal_effect", "foreground", "output_item_def_ids"]:
+		"approach_id", "required_roll", "check_label", "goal_priority", "goal_effect", "interest_promoted", "foreground", "output_item_def_ids"]:
 		if choice.has(key):
 			public[key] = choice[key]
 	return public

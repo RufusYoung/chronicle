@@ -57,7 +57,7 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 					result.body += "\n" + str(notices.back().text)
 				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
 					return c.kind == "travel" or c.id in ["continue", "journey_block"] \
-						or (c.get("intent") in ["follow", "pursue", "read_notice"] and (situations.is_empty() or c.get("subject_id") == selected_subject)) \
+						or (c.get("intent") in ["follow", "pursue", "read_notice"] and (situations.is_empty() or c.get("subject_id") == selected_subject) and (c.get("intent") != "pursue" or c.get("interest_promoted", false))) \
 						or (c.get("intent") == "wait" and c.get("minutes") == 10)))
 				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
 					return int(c.get("goal_priority", 0)) > 0 or c.get("foreground", false)))
@@ -65,10 +65,11 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 					result.eyebrow = "这条线索已冷"
 					result.body = pursuit.answer
 					result.choices = result.choices.filter(func(c: Dictionary) -> bool: return c.get("intent") != "wait")
-				if not interest.is_empty() and focus_subject == "":
-					result.title = interest.title
-					result.eyebrow = {"ACTIVE_SITUATION": "亲眼确认", "AFTERMATH": "找到了后来的消息", "COLD_TRAIL": "这条线索已冷"}.get(str(interest.resolution_type), "你正在追索的问题")
-					result.body = str(interest.why_care) + ("\n" + str(interest.answer) if interest.answer != "" else "")
+				if not interest.is_empty() and focus_subject == "" and (interest.get("promoted", false) or interest.question_status == "resolved"):
+					result.title = selected_goal.get("title", interest.title)
+					result.eyebrow = {"ACTIVE_SITUATION": "亲眼确认", "AFTERMATH": "找到了后来的消息", "COLD_TRAIL": "这条线索已冷"}.get(str(interest.resolution_type), "与你行程有关的消息")
+					result.body = str(interest.get("why_it_matters_to_you", "")) if interest.get("promoted", false) else str(interest.why_care)
+					result.body += "\n" + str(interest.answer) if interest.answer != "" else ""
 					if interest.resolution_type == "COLD_TRAIL":
 						result.choices = result.choices.filter(func(c: Dictionary) -> bool: return c.get("intent") != "wait")
 				result.empty = "可以查看地图、交谈或原地等候。没有强制的剧情入口。"
@@ -127,6 +128,9 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 			result.choices = choices.duplicate(true)
 			result.empty = "当前没有其他可做的事。"
 	var seen := {}
+	if page == "scene" and view.get("situation_mode", false):
+		result.choices = result.choices.filter(func(c: Dictionary) -> bool:
+			return c.get("intent") != "pursue" or c.get("interest_promoted", false))
 	result.choices = result.choices.filter(func(c: Dictionary) -> bool:
 		var id := str(c.choice_id)
 		if seen.has(id):

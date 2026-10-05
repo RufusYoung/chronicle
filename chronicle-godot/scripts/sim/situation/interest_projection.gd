@@ -93,7 +93,7 @@ static func build(session: Variant, snapshot: Variant) -> Array:
 			continue
 		var name := str(snapshot.get_entity(subject).get("display_name", "受赠者"))
 		var row := {"id": "followup:" + subject, "subject": subject, "known_fact": fact.summary, "source": fact.fact_id,
-			"age": maxi(Intents.now(snapshot.world_time) - Intents.now(fact), 0), "relevance": "relationship",
+			"age": maxi(Intents.now(snapshot.world_time) - Intents.now(fact), 0), "relevance": "own_contribution",
 			"possible_value": "了解交出的物品后来有何用途", "why_care": "你曾把自己的装备交给%s。" % name,
 			"title": "问%s，交出的装备后来怎样了" % name, "uncertainty": "对方后来如何使用，事情有没有办成？",
 			"cost_hint": "需要当面重逢；人不会原地等候", "provenance": "own_contribution",

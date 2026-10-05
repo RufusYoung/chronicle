@@ -388,6 +388,7 @@ func _render_goal_controls() -> void:
 		selector.set_item_metadata(index, str(candidate.id))
 		selector.set_item_tooltip(index, str(candidate.get("why_care", "")) + " " + str(candidate.get("uncertainty", "")))
 		if candidate.id == selected.get("id", ""):
+			selector.set_item_text(index, str(selected.title))
 			selected_index = index
 	if not selected.is_empty() and selected_index == 0:
 		selector.add_item(str(selected.title))
@@ -400,7 +401,7 @@ func _render_goal_controls() -> void:
 	bar.add_child(selector)
 	var clear := _button(bar, "放下这条线索" if pairing.get("interest", {}).get("question_status") == "resolved" else "暂时不管", func() -> void: _begin("set_goal", {"goal_id": ""}))
 	clear.disabled = busy or selected.is_empty()
-	if not selected.is_empty():
+	if not selected.is_empty() and not (page == "scene" and pairing.get("interest", {}).get("promoted", false) and focus_subject == ""):
 		var pressure := _label(_root, str(pairing.get("pressure", "")), 17)
 		pressure.name = "GoalPressure"
 		pressure.max_lines_visible = 2
