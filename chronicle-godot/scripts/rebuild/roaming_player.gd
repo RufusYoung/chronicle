@@ -9,7 +9,7 @@ const WorldAudio = preload("res://scripts/rebuild/world_audio.gd")
 
 var agent = Agent.new()
 var slot := "situation_manual"
-var economy_variant := "world_situation_v2"
+var economy_variant := "world_situation_v4"
 var initial_seed := 81001
 var auto_load := true
 var busy := false
@@ -244,6 +244,7 @@ func _confirm() -> void:
 func _render() -> void:
 	if _root == null:
 		return
+	_root.add_theme_constant_override("separation", 6 if get_viewport_rect().size.y < 800 else 10)
 	for child: Node in _root.get_children():
 		child.free()
 	var header := HBoxContainer.new()
@@ -287,9 +288,13 @@ func _render() -> void:
 	_story = VBoxContainer.new()
 	_story.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_story.size_flags_stretch_ratio = 1.55
-	_story.add_theme_constant_override("separation", 8)
+	_story.add_theme_constant_override("separation", 4 if get_viewport_rect().size.y < 800 else 8)
 	_body.add_child(_story)
 	var projected := Presentation.build(response, page, focus_subject)
+	var methods: Array = projected.choices.filter(func(row: Dictionary) -> bool: return row.get("wilderness_family", "") == family and family != "")
+	if not methods.is_empty():
+		projected.title = family
+		projected.body = str(methods[0].item_description) + "\n" + str(response.observation.wilderness.water.name) + "；可以返回选择，不必尝试。"
 	var path: String = result_art if pending_result and page == "scene" else str(projected.art)
 	if ResourceLoader.exists(path):
 		_picture.texture = load(path)
@@ -329,7 +334,7 @@ func _render() -> void:
 			var paragraph := _paragraph
 			paragraph.resized.connect(func() -> void:
 				full.visible = paragraph.get_line_count() > paragraph.max_lines_visible)
-		if page == "scene" and not before_view.is_empty():
+		if page == "scene" and not before_view.is_empty() and family == "":
 			var feedback: Dictionary = response.get("observation", {}).get("feedback", {})
 			var inline_text := str(feedback.get("compact_body", feedback.get("body", "")))
 			var pursuit: Dictionary = feedback.get("pursuit", {})
@@ -437,7 +442,7 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 		ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return Presentation.scene_rank(a) < Presentation.scene_rank(b))
 	for row: Dictionary in ordered:
 		var group := Presentation.family(row)
-		if page == "scene" and (int(row.get("goal_priority", 0)) > 0 or row.get("foreground", false)):
+		if page == "scene" and (int(row.get("goal_priority", 0)) > 0 or row.get("foreground", false)) and not str(row.id).begins_with("service:bed:") and not row.has("wilderness_family"):
 			group = ""
 		if page == "scene" and response.get("observation", {}).get("situation_mode", false) and row.get("kind") == "travel" and int(row.get("goal_priority", 0)) == 0:
 			group = "选择去向"
@@ -464,7 +469,7 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 	if visible_rows.is_empty():
 		_label(_choices, empty_text, 19)
 		return
-	var count := 4
+	var count := 3 if get_viewport_rect().size.y < 800 else 4
 	if page in ["scene", "all"]:
 		count = 3
 		if rows.any(func(row: Dictionary) -> bool: return row.get("kind") == "combat_encounter"):
@@ -472,10 +477,11 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 	offset = clampi(offset, 0, maxi(0, visible_rows.size() - 1))
 	for row: Dictionary in visible_rows.slice(offset, offset + count):
 		if row.has("group"):
-			_button(_choices, str(row.label), func() -> void:
+			var group_button := _button(_choices, str(row.label), func() -> void:
 				family = str(row.group)
 				offset = 0
 				_render())
+			group_button.add_theme_font_size_override("font_size", 17)
 		else:
 			_action_button(_choices, row)
 	if visible_rows.size() > count:
@@ -487,11 +493,14 @@ func _action_button(parent: Node, row: Dictionary) -> Button:
 	var title := str(row.get("purpose", row.get("label", "选择")))
 	var hint := str(row.get("hint", row.get("known_effect", "")))
 	if row.kind == "travel":
-		hint = str(row.get("label", ""))
+		title = "前往" + str(row.get("destination_name", row.get("label", "目的地")))
+		hint = str(row.get("purpose", "按正常脚程行进"))
 	var enabled: bool = row.get("enabled", true)
 	var text := title + ("  ·  " + cost if cost != "" else "")
 	if not enabled:
 		text += "\n" + str(row.get("blocked_reason", "当前无法执行"))
+	elif row.get("choice_summary", "") != "":
+		text += "\n" + str(row.choice_summary)
 	elif page == "scene" and row.get("goal_effect", "") != "":
 		text += "\n" + str(row.goal_effect)
 	elif hint != "" and row.kind != "combat_encounter" and page != "scene" and not (page == "all" and family == ""):
@@ -532,6 +541,8 @@ func _render_collection() -> void:
 		for lead: Dictionary in view.get("people_leads", []):
 			_label(log_box, "%s · %s · %d小时前%s\n%s" % [lead.name, lead.place, lead.age_hours,
 				"（消息已旧）" if lead.stale else "（不是实时位置）", lead.text], 18)
+		for note: Dictionary in view.get("exploration_notes", []):
+			_label(log_box, str(note.text), 18)
 		for entry: Variant in view.get("knowledge", []).duplicate():
 			_label(log_box, str(entry), 18)
 		return

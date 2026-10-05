@@ -56,6 +56,10 @@ func _probe_roaming(viewer: Variant) -> void:
 		ok = ok and elapsed > 2 and FileAccess.file_exists(viewer.Agent.SAVE_ROOT + "play/echo_realm/" + viewer.slot + ".json")
 	var prototype: bool = viewer.response.get("observation", {}).get("situation_mode", false)
 	var profile := "world_situation_v2" if viewer.response.get("observation", {}).get("situation_continuity", false) else ("world_situation_v1" if prototype else "world_roaming_v1")
+	if viewer.response.get("observation", {}).get("journey_utility_version", 0) == 1:
+		profile = "world_situation_v3"
+	if viewer.response.get("observation", {}).get("wilderness_version", 0) == 1:
+		profile = "world_situation_v4"
 	print("CHRONICLE_FIRST_CONTROLLABLE_FRAME " + JSON.stringify({"ok": ok, "elapsed_hours": elapsed, "surface": "roaming", "profile": profile, "renderer": RenderingServer.get_current_rendering_method()}))
 	get_tree().quit(0 if ok else 1)
 

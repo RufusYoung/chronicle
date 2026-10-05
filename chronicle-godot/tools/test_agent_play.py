@@ -16,6 +16,49 @@ def client(**kwargs):
 
 
 class TransportTest(unittest.TestCase):
+    def test_wilderness_public_survey_native_restore_and_wait(self):
+        with client(timeout=90) as game:
+            opened = game.request("start", mode="play", scenario="echo_realm", seed=81009,
+                                  economy_variant="world_situation_v4")
+            self.assertTrue(opened["ok"], opened)
+            self.assertEqual(opened["observation"]["wilderness_version"], 1)
+            self.assertEqual(opened["observation"]["wilderness"], {})
+            road = next(c for c in opened["choices"] if c["choice_id"].startswith("travel/wilderness_route."))
+            arrived = game.request("act", choice_id=road["choice_id"])
+            self.assertTrue(arrived["ok"], arrived)
+            self.assertTrue(all(not f["surveyed"] and not f["items"] for f in arrived["observation"]["wilderness"]["features"]))
+            survey = next(c for c in arrived["choices"] if c["choice_id"].startswith("player_life/shore_survey:"))
+            surveyed = game.request("act", choice_id=survey["choice_id"])
+            self.assertTrue(surveyed["ok"], surveyed)
+            self.assertNotIn(survey["choice_id"], [c["choice_id"] for c in surveyed["choices"]])
+            slot = f"wilderness_protocol_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot, overwrite=True)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], surveyed["observation"])
+            waited = game.request("act", choice_id="player_life/shore_wait")
+            self.assertTrue(waited["ok"], waited)
+            self.assertNotEqual(waited["observation"]["wilderness"]["water"]["phase"], surveyed["observation"]["wilderness"]["water"]["phase"])
+            self.assertEqual(len([c for c in waited["choices"] if c["kind"] == "travel"]), 2)
+
+    def test_utility_profile_pays_real_fatigue_and_keeps_native_rules(self):
+        with client(timeout=90) as game:
+            opened = game.request("start", mode="play", scenario="echo_realm", seed=81002,
+                                  economy_variant="world_situation_v3")
+            self.assertTrue(opened["ok"], opened)
+            self.assertEqual(opened["observation"]["journey_utility_version"], 1)
+            road = "generated_route.network.echo_shore_road.a_to_b"
+            slot = f"utility_protocol_{os.getpid()}"
+            self.assertTrue(game.request("save", slot=slot, overwrite=True)["ok"])
+            walk = game.request("act", choice_id="travel/" + road)
+            self.assertTrue(walk["ok"], walk)
+            self.assertTrue(game.request("load", slot=slot)["ok"])
+            rush = game.request("act", choice_id="player_life/rush:" + road)
+            self.assertTrue(rush["ok"], rush)
+            self.assertEqual(walk["observation"]["time"]["hour"] - rush["observation"]["time"]["hour"], 1)
+            self.assertEqual(rush["observation"]["player"]["fatigue"] - walk["observation"]["player"]["fatigue"], 2)
+            self.assertEqual(rush["observation"]["location"], walk["observation"]["location"])
+            self.assertTrue(game.request("save", slot=slot, overwrite=True)["ok"])
+            self.assertEqual(game.request("load", slot=slot)["observation"], rush["observation"])
+
     def test_selected_goal_is_optional_persistent_and_does_not_spend_time(self):
         with client(timeout=90) as game:
             opened = game.request("start", mode="play", scenario="echo_realm", seed=81001,

@@ -210,6 +210,7 @@ static func knowledge(session: Variant, snapshot: Variant) -> Array:
 		row["name"] = snapshot.get_entity(str(row.subject_id)).get("display_name", "认识的人")
 		row["place"] = session.context.locations.get(str(row.location_id), {}).get("display_name", "曾见地点")
 		row["age_hours"] = maxi(Intents.now(snapshot.world_time) - int(row.observed_hour), 0)
+		row["observed_hour"] = int(row.observed_hour)
 		row["stale"] = row.age_hours >= 6
 	list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.observed_hour > b.observed_hour if a.observed_hour != b.observed_hour else str(a.source_fact_id) < str(b.source_fact_id))
 	return list

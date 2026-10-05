@@ -6,6 +6,7 @@ const Continuity = preload("res://scripts/sim/situation/situation_continuity.gd"
 const Equipment = preload("res://scripts/sim/player/player_equipment.gd")
 const Interest = preload("res://scripts/sim/situation/interest_projection.gd")
 const PersonalStake = preload("res://scripts/rebuild/personal_stake_projection.gd")
+const JourneyUtility = preload("res://scripts/rebuild/journey_utility_projection.gd")
 
 
 static func build(session: Variant, view: Dictionary, selected: Dictionary) -> Dictionary:
@@ -54,6 +55,7 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 		"interest": interest, "interests": interests}
 	if goal.is_empty():
 		PersonalStake.apply(session, snapshot, view, result)
+		JourneyUtility.apply(session, snapshot, view, result)
 		return result
 	var kind := str(goal.id).get_slice(":", 0)
 	var target := str(goal.id).get_slice(":", 1)
@@ -138,6 +140,7 @@ static func build(session: Variant, view: Dictionary, selected: Dictionary) -> D
 	var legal: Array = result.alternatives.filter(func(row: Dictionary) -> bool: return row.enabled and not str(row.id).begins_with("ask_local:"))
 	result.breakpoint = "NO_PRESSURE" if not exposed else ("NO_SURFACE" if result.alternatives.is_empty() else ("NO_TRADEOFF" if legal.size() < 2 else ""))
 	PersonalStake.apply(session, snapshot, view, result)
+	JourneyUtility.apply(session, snapshot, view, result)
 	return result
 
 

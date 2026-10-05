@@ -25,6 +25,8 @@ const WorkTrade = preload("res://scripts/sim/player/player_work_trade.gd")
 const Journey = preload("res://scripts/sim/player/journey_events.gd")
 const Situations = preload("res://scripts/sim/situation/situation_actions.gd")
 const Services = preload("res://scripts/sim/player/local_services.gd")
+const Utility = preload("res://scripts/sim/player/journey_utility.gd")
+const Wilderness = preload("res://scripts/sim/player/wilderness_exploration.gd")
 const PROFILE := {"version": 1, "help_wage": 3, "employer_food_limit": 8}
 const PROFILE_V2 := {"version": 2, "help_wage": 3, "employer_food_limit": 8}
 
@@ -162,6 +164,8 @@ static func options(session: Variant, include_incidents: bool = true) -> Array:
 	if session.Situations.enabled(session):
 		rows.append_array(Situations.options(session))
 	rows.append_array(Services.options(session))
+	rows.append_array(Utility.options(session))
+	rows.append_array(Wilderness.options(session))
 	var food: Dictionary = Danger.recovery_food(view, str(actor.id))
 	if not food.is_empty() and actor.states.get("hunger", "none") != "none":
 		if session.fixture_source_data.get("content_extension", {}).get("version") == 2:
@@ -398,6 +402,10 @@ static func execute(session: Variant, id: String) -> Dictionary:
 		return Situations.execute(session, selected[0])
 	if id.begins_with("service:"):
 		return Services.execute(session, id)
+	if id.begins_with("rush:"):
+		return session.travel(str(selected[0].route_id), {"pace": "rush"})
+	if id == "shore_wait" or id.begins_with("shore_survey:") or id.begins_with("shore_take:"):
+		return Wilderness.execute(session, id)
 	if id.begins_with("equip:") or id.begins_with("unequip:"):
 		return Equipment.execute(session, selected[0])
 	if id.begins_with("sell_work:"):

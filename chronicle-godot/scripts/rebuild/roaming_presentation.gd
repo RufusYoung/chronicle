@@ -56,7 +56,7 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 				if not notices.is_empty() and situations.is_empty():
 					result.body += "\n" + str(notices.back().text)
 				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
-					return c.kind == "travel" or c.id in ["continue", "journey_block"] \
+					return c.kind == "travel" or c.get("life_group") == "travel" or c.id in ["continue", "journey_block"] \
 						or (c.get("intent") in ["follow", "pursue", "read_notice"] and (situations.is_empty() or c.get("subject_id") == selected_subject) and (c.get("intent") != "pursue" or c.get("interest_promoted", false))) \
 						or (c.get("intent") == "wait" and c.get("minutes") == 10)))
 				result.choices.append_array(choices.filter(func(c: Dictionary) -> bool:
@@ -73,6 +73,10 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 					if interest.resolution_type == "COLD_TRAIL":
 						result.choices = result.choices.filter(func(c: Dictionary) -> bool: return c.get("intent") != "wait")
 				result.empty = "可以查看地图、交谈或原地等候。没有强制的剧情入口。"
+				if not view.get("wilderness", {}).is_empty():
+					result.title = view.wilderness.title
+					result.body = view.wilderness.body
+					result.eyebrow = "浅岸探索 · 可随时从高处撤回"
 			elif not event.is_empty():
 				result.merge({"title": event.title, "body": event.body, "eyebrow": "旅途中的一件事",
 					"choices": choices.filter(func(c: Dictionary) -> bool: return str(c.id).begins_with("adventure:"))}, true)
@@ -86,7 +90,7 @@ static func build(response: Dictionary, page: String = "scene", focus_subject: S
 			result.title = "从这里出发"
 			result.eyebrow = "镜湖北岸 · 可走的路"
 			result.body = "当前位置：" + str(location.get("title", "")) + "\n道路只说明去向，不保证远处有人等你。"
-			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.kind == "travel" or c.id == "continue")
+			result.choices = choices.filter(func(c: Dictionary) -> bool: return c.kind == "travel" or c.get("life_group") == "travel" or c.id == "continue")
 			if view.get("situation_continuity", false):
 				result.choices = choices.filter(func(c: Dictionary) -> bool: return c.get("intent") in ["pursue", "follow", "read_notice"]) + result.choices
 				result.body = "循着亲见或听到的消息去找人，也可以另选道路。消息会过时，抵达后须重新确认。"
@@ -147,6 +151,8 @@ static func art(view: Dictionary) -> String:
 	if event.get("art", "") != "":
 		return LICENSED.get(str(event.art), LICENSED["1184"])
 	var place := str(view.get("location", {}).get("id", ""))
+	if place.begins_with("wilderness_location."):
+		return "res://art/environments/mirror_lake_cave_pixel_v1.png"
 	if "forest" in place:
 		return LICENSED["3536"]
 	if "bridge" in place:
@@ -167,6 +173,12 @@ static func art(view: Dictionary) -> String:
 
 
 static func family(row: Dictionary) -> String:
+	if row.has("wilderness_family"):
+		return str(row.wilderness_family)
+	if str(row.id).begins_with("service:bed:"):
+		return "借床休整"
+	if str(row.id).begins_with("rush:"):
+		return "加快脚程"
 	if row.get("action_type") == "situation":
 		if row.get("intent") == "give" and row.has("clear_slots"):
 			return "让出身上的装备"
@@ -178,5 +190,7 @@ static func family(row: Dictionary) -> String:
 static func scene_rank(row: Dictionary) -> int:
 	if row.get("kind") == "combat_encounter":
 		return 0
+	if row.get("life_group") == "exploration":
+		return 15 + (1000 if not row.get("enabled", true) else 0)
 	return (1000 if not row.get("enabled", true) else 0) - 100 * int(row.get("goal_priority", 0)) + {"aftermath": 0, "read_notice": 5, "ask": 10, "give": 20, "fund": 21, "repair": 22, "caution": 23,
 		"sell": 24, "follow": 30, "pursue": 40, "whereabouts": 60, "wait": 90}.get(str(row.get("intent", "")), 50)

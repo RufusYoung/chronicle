@@ -87,8 +87,10 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_scenario: Variant = request.get("scenario", "generated_network")
 	var seed: Variant = request.get("seed", 81001)
 	var variant: Variant = request.get("economy_variant", "default")
-	var situation_version := 2 if variant == "world_situation_v2" else 1
-	var situations: bool = variant in ["world_situation_v1", "world_situation_v2"]
+	var wilderness: bool = variant == "world_situation_v4"
+	var utility: bool = variant in ["world_situation_v3", "world_situation_v4"]
+	var situation_version := 2 if variant in ["world_situation_v2", "world_situation_v3", "world_situation_v4"] else 1
+	var situations: bool = variant in ["world_situation_v1", "world_situation_v2", "world_situation_v3", "world_situation_v4"]
 	var roaming: bool = variant == "world_roaming_v1" or situations
 	var short_actions: bool = variant == "world_adventure_v3" or roaming
 	var journey: bool = variant == "world_adventure_v2" or short_actions
@@ -108,6 +110,10 @@ func _start(request: Dictionary) -> Dictionary:
 	var next_model: Variant
 	var result: Dictionary
 	var options := {"challenge_seed_override": int(seed)}
+	if utility:
+		options["journey_utility_version"] = 1
+	if wilderness:
+		options["wilderness_version"] = 1
 	if situations:
 		options["situation_rules_version"] = situation_version
 	if body_rules:
@@ -200,6 +206,14 @@ func _refresh() -> void:
 				var snapshot: Variant = _session().PlayerLife.snapshot(_session().context, _session().stores, _session().get_time_summary())
 				_view["people_leads"] = _session().Situations.Continuity.knowledge(_session(), snapshot)
 				_view["situation_continuity"] = true
+				_view["journey_utility_version"] = int(_session().fixture_source_data.get("journey_utility_rules", {}).get("version", 0))
+				if _session().WildernessSetup.enabled(_session().fixture_source_data):
+					_view["wilderness_version"] = 1
+					_view["wilderness"] = _session().PlayerLife.Wilderness.outlook(_session())
+					_view["exploration_notes"] = _session().PlayerLife.Wilderness.notes(_session())
+					for fact: Dictionary in _session().stores.fact_store.list_facts():
+						if fact.get("actor_id") == _session().context.actor_id and fact.get("fact_type") in ["wilderness_survey", "wilderness_attempt"]:
+							_view.knowledge.append("第%d天%02d时：%s" % [fact.day, fact.hour, fact.summary])
 				for situation: Dictionary in _view.situations:
 					situation.affordances = situation.affordances.map(_public_situation_choice)
 	else:
@@ -489,7 +503,8 @@ func _public_situation_choice(choice: Dictionary) -> Dictionary:
 		"requires_confirmation", "enabled", "can_execute", "blocked_reason", "event_type", "action_id", "action_type", "life_group",
 		"minutes", "hours", "intent", "subject_id", "wanted_id", "item_id", "item_instance_id", "item_def_id", "slot_id", "clear_slots",
 		"price", "amount", "quantity", "route_id", "destination_id", "destination_name", "source_fact_id", "lead_kind", "purpose", "lead_priority",
-		"approach_id", "required_roll", "check_label", "goal_priority", "goal_effect", "interest_promoted", "foreground", "output_item_def_ids"]:
+		"approach_id", "required_roll", "check_label", "goal_priority", "goal_effect", "interest_promoted", "foreground", "output_item_def_ids",
+		"wilderness_family", "item_description", "choice_summary"]:
 		if choice.has(key):
 			public[key] = choice[key]
 	return public

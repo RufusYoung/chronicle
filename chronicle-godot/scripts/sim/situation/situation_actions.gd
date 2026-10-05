@@ -274,6 +274,9 @@ static func sale_options(session: Variant, snapshot: Variant, person: Dictionary
 
 static func visible_signature(session: Variant) -> String:
 	var rows: Array = []
+	var shore: Dictionary = session.PlayerLife.Wilderness.site_here(session)
+	if not shore.is_empty():
+		rows.append(["water", session.PlayerLife.Wilderness.conditions(session, shore).phase])
 	for situation: Dictionary in session.Situations.build(session):
 		rows.append([situation.subject_id, situation.body, situation.get("related_items", [])])
 	for service: Dictionary in session.PlayerLife.Services.options(session):

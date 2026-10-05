@@ -33,14 +33,15 @@ static func describe(item: Dictionary) -> String:
 	return "；".join(lines)
 
 
-static func purchase_description(session: Variant, item: Dictionary) -> String:
+static func purchase_description(session: Variant, item: Dictionary, acquisition: String = "买入") -> String:
 	var lines: Array[String] = [describe(item) + "。"]
 	for slot: String in item.get("equip_slots", []):
 		var old: String = session.stores.equipment_store.get_equipped_item_id(str(session.context.actor_id), slot)
 		var current: Dictionary = session.stores.item_store.get_item(old)
 		lines.append("当前%s：%s。" % [SLOT_NAMES.get(slot, slot),
 			"空" if current.is_empty() else str(current.display_name) + "（" + describe(current) + "）"])
-	lines.append("买入后需自行穿戴，不会自动替换。")
+	if not item.get("equip_slots", []).is_empty():
+		lines.append(acquisition + "后需自行穿戴，不会自动替换。")
 	return "".join(lines)
 
 

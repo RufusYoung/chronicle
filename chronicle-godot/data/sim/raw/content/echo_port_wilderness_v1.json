@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "source_note": "依据镜湖原设定的沿岸与沉没遗存，在北岸生成的浅岸局部细节。不是湖底主遗迹，不启用原稿魔法事件。漂来物为有限初始实物，不保证有货。",
+  "sites": [
+    {
+      "id": "north_shore_breach",
+      "parent": "generated_location.echo_landing.commons",
+      "other_exit": "generated_location.echo_terrace.commons",
+      "name": "镜湖北岸·坍堤浅岸",
+      "description": "旧石堤陷进浅水，断面仍露着层层砌石。近岸乱石与堤下裂隙夹住了后来漂来的杂物；沿高处小径还能通往另一片聚落。",
+      "purpose": "查看浅岸遗存与漂来物；绳具能降低取物风险，也可以沿高处小径穿过。是否有值得带走的东西须到场勘察。",
+      "hours": 1,
+      "other_hours": 2,
+      "period_hours": 6,
+      "features": [
+        {"id": "rubble", "name": "近岸乱石", "description": "脚下石块尚能踩稳，缝隙间留着漂来物的磨痕。", "exposure": 0, "items": [
+          {"item_def_id": "item.light_reed_cord", "maximum_quantity": 2},
+          {"item_def_id": "item.reed_quarterstaff", "maximum_quantity": 1}
+        ]},
+        {"id": "cleft", "name": "堤下裂隙", "description": "一道裂隙伸到水线下面，石沿很窄；先看水势，再决定是否把身体探过去。", "exposure": 2, "items": [
+          {"item_def_id": "item.rescue_harness", "maximum_quantity": 1},
+          {"item_def_id": "item.bound_reed_pike", "maximum_quantity": 1}
+        ]}
+      ]
+    }
+  ]
+}

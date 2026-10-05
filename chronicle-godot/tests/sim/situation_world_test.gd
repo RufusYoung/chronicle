@@ -7,6 +7,7 @@ const Session = preload("res://scripts/sim/core/sim_session.gd")
 func run() -> void:
 	var summaries: Array = []
 	for variant: String in ["untouched", "initial_protection", "no_active_threat"]:
+		var wall_started := Time.get_ticks_msec()
 		var agent := Agent.new()
 		var started := request(agent, "start", {"mode": "world", "scenario": "echo_realm", "seed": 81001, "economy_variant": "world_situation_v1"})
 		check(started.ok, "world starts " + variant)
@@ -48,6 +49,7 @@ func run() -> void:
 		var restored := Session.new()
 		var loaded: Dictionary = restored.load_from_path("user://tests/situations/world_" + variant + ".json")
 		check(loaded.get("success", false), "world native restore " + variant + ":" + str(loaded.get("error", "")))
+		print("SITUATION_WORLD_TIMING " + JSON.stringify({"variant": variant, "wall_ms": Time.get_ticks_msec() - wall_started}))
 	check(summaries[0].requests > 0 and summaries[0].contacts > 0, "unmodified world spontaneously produces the equipment-danger situation")
 	check(summaries[1].requests < summaries[0].requests, "initial protection changes later requests under identical rules")
 	check(summaries[2].contacts == 0 and summaries[2].requests == 0, "without active danger the supposed story never appears")

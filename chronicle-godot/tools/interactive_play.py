@@ -45,7 +45,7 @@ def main() -> None:
             choices = result.get("choices", choices)
             observation = result.get("observation", {})
             # Preserve the complete public observation in the log; omit bulky journals here.
-            visible = {key: observation[key] for key in ("time", "location", "feedback", "risk", "goal_pressure") if key in observation}
+            visible = {key: observation[key] for key in ("time", "location", "feedback", "risk", "goal_pressure", "wilderness") if key in observation}
             visible["player"] = {key: value for key, value in observation.get("player", {}).items() if key not in ("summary", "items", "inventory")}
             visible["situations"] = [{key: row[key] for key in ("title", "body") if key in row} for row in observation.get("situations", [])]
             print(json.dumps({"revision": result.get("revision"), "observation": visible}, ensure_ascii=False), flush=True)

@@ -97,6 +97,7 @@ const PlayerLife = preload("res://scripts/sim/player/player_life.gd")
 const Body = preload("res://scripts/sim/npc/body_condition.gd")
 const Integration = preload("res://scripts/sim/generation/world_integration.gd")
 const JourneySetup = preload("res://scripts/sim/generation/journey_content_setup.gd")
+const WildernessSetup = preload("res://scripts/sim/generation/wilderness_setup.gd")
 const Situations = preload("res://scripts/sim/situation/situation_builder.gd")
 const EquipmentIntents = preload("res://scripts/sim/situation/equipment_intents.gd")
 
@@ -305,6 +306,14 @@ func start_from_fixture_path(
 		fixture.journey_rules.events = []
 		fixture.journey_rules.sites = []
 		fixture.journey_rules.caches = []
+	if options.get("journey_utility_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_journey_utility_version")
+	if options.get("journey_utility_version", 0) == 1:
+		fixture["journey_utility_rules"] = PlayerLife.Utility.PROFILE.duplicate(true)
+	if options.get("wilderness_version", 0) not in [0, 1]:
+		return _start_failure("unsupported_wilderness_version")
+	if options.get("wilderness_version", 0) == 1:
+		fixture["wilderness_rules"] = WildernessSetup.load_rules()
 	var result := start_from_fixture_data(fixture, raw_rule_paths)
 	if bool(result.get("success", false)):
 		if (
@@ -495,6 +504,12 @@ func start_from_fixture_data(fixture: Dictionary, raw_rule_paths: Array) -> Dict
 				or not EquipmentIntents.RULES.keys().all(func(key: String) -> bool: return situation_rules.get(key) == EquipmentIntents.rules(int(situation_rules.version))[key]) \
 				or fixture.get("journey_rules", {}).get("version") != 3 or not fixture.get("journey_rules", {}).get("events", []).is_empty():
 			return _start_failure("situation_bootstrap_mismatch")
+	var utility_error := PlayerLife.Utility.validate(fixture)
+	if utility_error != "":
+		return _start_failure(utility_error)
+	var wilderness_error := WildernessSetup.configure(fixture, registry)
+	if wilderness_error != "":
+		return _start_failure(wilderness_error)
 	registry.load_action_rules(raw_rule_paths)
 	rules = registry.get_action_rules()
 	fixture_source_data = fixture.duplicate(true)
@@ -1557,6 +1572,14 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 		return _travel_failure("insufficient_food", route_id)
 
 	var from_location_id: String = str(context.location_id)
+	var rush: bool = metadata.get("pace", "walk") == "rush"
+	if metadata.get("pace", "walk") not in ["walk", "rush"]:
+		return _travel_failure("invalid_travel_pace", route_id)
+	if rush:
+		var denial: String = PlayerLife.Utility.rush_denial(self, route)
+		if denial != "":
+			return _travel_failure(denial, route_id)
+		hours -= int(PlayerLife.Utility.PROFILE.rush_hours_saved)
 	if PlayerLife.enabled(fixture_source_data):
 		if stores.state_store.get_state(str(context.actor_id), "daily_route_id", "") != "" or not get_combat_encounter_options().is_empty():
 			return _travel_failure("player_cannot_depart_now", route_id)
@@ -1565,6 +1588,10 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 		departure.add_fact({"fact_id": fact_id, "fact_type": "actor_departed", "actor_id": context.actor_id,
 			"location_id": from_location_id, "from_location_id": from_location_id, "to_location_id": to_location_id, "route_id": route_id,
 			"day": current_day, "hour": current_hour, "summary": "你动身前往%s，途中不能同时工作或交易。" % destination.display_name})
+		if rush:
+			departure.facts_added[0].merge({"pace": "rush", "travel_hours": hours, "extra_fatigue": PlayerLife.Utility.PROFILE.rush_fatigue_cost})
+			departure.facts_added[0].summary += "加快脚程省1小时，额外增加2疲劳。"
+			PlayerLife.set_state(departure, str(context.actor_id), "fatigue", int(pre_travel_snapshot.player.fatigue) + int(PlayerLife.Utility.PROFILE.rush_fatigue_cost))
 		PlayerLife.set_state(departure, str(context.actor_id), "daily_route_id", route_id)
 		PlayerLife.set_state(departure, str(context.actor_id), "daily_destination_id", to_location_id)
 		PlayerLife.set_state(departure, str(context.actor_id), "daily_travel_remaining", hours)
@@ -1582,10 +1609,12 @@ func travel(route_id: String, metadata: Dictionary = {}) -> Dictionary:
 				var continued: Dictionary = PlayerLife.Local.advance_block(self, {"action_id": "journey_block", "hours": remaining})
 				continued.merge({"route_id": route_id, "from_location_id": from_location_id, "to_location_id": to_location_id,
 					"hours": int(continued.get("hours", 0)) + 1, "time": get_time_summary()}, true)
-				return PlayerLife.feedback(continued, "动身并走过第一个小时后，" + str(continued.get("player_life_feedback", {}).get("body", "")))
+				return PlayerLife.feedback(continued, ("加快脚程，出发时已额外增加2疲劳。" if rush else "") + "动身并走过第一个小时后，" + str(continued.get("player_life_feedback", {}).get("body", "")))
 		var travel_summary := str(departure.facts_added[0].summary)
 		if first_hour.get("success", false) and context.location_id == to_location_id:
 			travel_summary = "沿路走了1小时，已经抵达%s。" % destination.display_name
+			if rush:
+				travel_summary += "加快脚程省1小时，额外增加2疲劳。"
 		return PlayerLife.feedback({"success": first_hour.get("success", false), "route_id": route_id,
 			"hours": 1, "from_location_id": from_location_id, "to_location_id": to_location_id,
 			"tick_result": first_hour, "time": get_time_summary()}, travel_summary)

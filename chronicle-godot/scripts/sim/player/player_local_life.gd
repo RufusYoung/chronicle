@@ -346,6 +346,10 @@ static func destination_guide(session: Variant, location: String) -> String:
 	if not enabled(session):
 		return ""
 	var place: Dictionary = session.context.locations.get(location, {})
+	if "wilderness_site" in place.get("tags", []):
+		var notes: Array = session.PlayerLife.Wilderness.notes(session).filter(func(n: Dictionary) -> bool: return n.location_id == location and n.items.any(func(i: Dictionary) -> bool: return int(i.quantity) > 0))
+		if not notes.is_empty():
+			return str(notes[0].text)
 	if place.has("journey_purpose"):
 		return str(place.journey_purpose)
 	var home: String = session.stores.state_store.get_state(str(session.context.actor_id), "settlement_id", "")
