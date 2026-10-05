@@ -95,6 +95,8 @@ static func _prepare_hand(session: Variant, snapshot: Variant, view: Dictionary,
 			result.personal_stakes.append(Stakes._stake(str(session.context.actor_id), "MONEY", "money.copper_coin", id,
 				"取得可实际穿戴的手持装备", "现有%d铜币；这件%d铜币%s" % [balance, price, "，买后余%d" % (balance - price) if balance >= price else "，目前付不起"],
 				"current", "只代表现在的当面现货，不保证稍后仍在", [id], "own_budget_and_formal_equipment_offer"))
+	if paths.any(func(id: String) -> bool: return id.begins_with("shore_take:")):
+		result.pressure = "已看见可用手持装备，但还在原处；先比较取物风险，也可等候或离开准备。取回后仍须穿戴。"
 	for route: Dictionary in view.travel_options:
 		var purpose: String = session.PlayerLife.Local.destination_guide(session, str(route.destination_id))
 		if "工具作坊" in purpose:

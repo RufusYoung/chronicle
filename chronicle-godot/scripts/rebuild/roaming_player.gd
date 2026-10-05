@@ -472,6 +472,10 @@ func _render_choices(rows: Array, empty_text: String) -> void:
 	var count := 3 if get_viewport_rect().size.y < 800 else 4
 	if page in ["scene", "all"]:
 		count = 3
+		if page == "scene" and get_viewport_rect().size.y < 800 \
+				and not response.get("observation", {}).get("wilderness", {}).is_empty() \
+				and not response.get("observation", {}).get("goal_pressure", {}).get("selected", {}).is_empty():
+			count = 2
 		if rows.any(func(row: Dictionary) -> bool: return row.get("kind") == "combat_encounter"):
 			count = 3
 	offset = clampi(offset, 0, maxi(0, visible_rows.size() - 1))

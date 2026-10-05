@@ -191,6 +191,6 @@ static func scene_rank(row: Dictionary) -> int:
 	if row.get("kind") == "combat_encounter":
 		return 0
 	if row.get("life_group") == "exploration":
-		return 15 + (1000 if not row.get("enabled", true) else 0)
+		return 15 + (1000 if not row.get("enabled", true) else 0) - 100 * int(row.get("goal_priority", 0))
 	return (1000 if not row.get("enabled", true) else 0) - 100 * int(row.get("goal_priority", 0)) + {"aftermath": 0, "read_notice": 5, "ask": 10, "give": 20, "fund": 21, "repair": 22, "caution": 23,
 		"sell": 24, "follow": 30, "pursue": 40, "whereabouts": 60, "wait": 90}.get(str(row.get("intent", "")), 50)
