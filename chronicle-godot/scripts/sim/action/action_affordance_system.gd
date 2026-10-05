@@ -81,6 +81,20 @@ func situation_candidates(session: Variant, snapshot: Variant, situation: Dictio
 				and intents.now(snapshot.world_time) - intents.now(fact) < 6:
 				asked_about[str(fact.subject_id)] = true
 		var known_people := {}
+		var host := str(session.context.location.get("journey_host_id", ""))
+		if host != "" and host != subject and not intents.present(snapshot.get_entity(host), str(session.context.location_id)):
+			known_people[host] = true
+			var last_answer := -1
+			for fact: Dictionary in snapshot.get_facts_by_actor(actor):
+				if fact.get("fact_type") in ["situation_whereabouts", "situation_unknown_whereabouts"] \
+						and fact.get("speaker_id") == subject and fact.get("subject_id") == host:
+					last_answer = maxi(last_answer, intents.now(fact))
+			var host_sighting: Dictionary = actions.Continuity.sightings(snapshot, subject).get(host, {})
+			if not asked_about.has(host) and (last_answer < 0 or int(host_sighting.get("observed_hour", -1)) > last_answer):
+				var host_inquiry: Dictionary = actions.row("whereabouts", subject,
+					"向%s打听店主去向" % person.display_name, "只问此人亲眼见过的店主去向；不知道就不会猜测。", host)
+				host_inquiry["wanted_id"] = host
+				rows.append(host_inquiry)
 		for lead: Dictionary in actions.Continuity.knowledge(session, snapshot):
 			var wanted := str(lead.subject_id)
 			if wanted == subject or known_people.has(wanted) or asked_about.has(wanted) \

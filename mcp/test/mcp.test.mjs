@@ -30,6 +30,7 @@ test('allowlist rejects secrets, saves, traversal, binary assets and working dir
   assert.equal(allowedPath(PLAN),true); assert.equal(allowedPath('chronicle-godot/data/test.json'),true);
   assert.equal(allowedPath('CHRONICLE_EMERGENT_SITUATION_BREAKTHROUGH_GUIDE_2026-09-30.md'),true);
   assert.equal(allowedPath('CHRONICLE_CONTINUOUS_CHOICE_CHAIN_GUIDE_2026-10-02.md'),true);
+  assert.equal(allowedPath('CHRONICLE_CONTINUOUS_CHOICE_CHAIN_PHASE2_GUIDE_2026-10-05.md'),true);
   assert.equal(allowedPath('unlisted-root-document.md'),false);
   assert.throws(()=>validateDocument('texts/source.md','-----BEGIN PRIVATE KEY-----'));
   assert.throws(()=>validateDocument('texts/source.md','a\0b'));

@@ -275,6 +275,11 @@ static func visible_signature(session: Variant) -> String:
 	for service: Dictionary in session.PlayerLife.Services.options(session):
 		if service.get("can_execute", true):
 			rows.append([service.get("action_id", "")])
+	var snapshot: Variant = session.PlayerLife.snapshot(session.context, session.stores, session.get_time_summary())
+	var actor: Dictionary = snapshot.get_entity(str(session.context.actor_id))
+	for offer: Dictionary in session.PlayerLife.offers(snapshot, actor,
+			session.fixture_source_data.resident_daily_life.food_access, session.stores, session.npc_livelihood_profiles):
+		rows.append(["market", offer.item_instance_id, offer.surplus, offer.unit_price])
 	return JSON.stringify(rows)
 
 

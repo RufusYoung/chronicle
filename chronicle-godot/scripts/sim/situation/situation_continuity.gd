@@ -232,6 +232,11 @@ static func leads(session: Variant, snapshot: Variant) -> Array:
 	var rows: Array = []
 	var seen := {}
 	var known_rows := knowledge(session, snapshot)
+	var checked_at := {}
+	for fact: Dictionary in snapshot.get_facts_by_actor(str(session.context.actor_id)):
+		if fact.get("fact_type") == "actor_arrived":
+			var location := str(fact.get("location_id", ""))
+			checked_at[location] = maxi(int(checked_at.get(location, -1)), Intents.now(fact))
 	# A stated destination supersedes the sighting made during that conversation.
 	# A later sighting supersedes that old intention; neither tracks remote truth.
 	known_rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
@@ -247,6 +252,10 @@ static func leads(session: Variant, snapshot: Variant) -> Array:
 		if seen.has(key):
 			continue
 		seen[key] = true
+		# The player has already checked this place after receiving this dated lead.
+		# A later witnessed clue has a newer observed_hour and can reopen the route.
+		if int(checked_at.get(destination, -1)) >= int(known.observed_hour):
+			continue
 		var person: Dictionary = snapshot.get_entity(str(known.subject_id))
 		if not is_danger and Intents.present(person, str(session.context.location_id)) and person.get("states", {}).get("visible", false):
 			continue
